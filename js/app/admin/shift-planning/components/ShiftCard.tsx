@@ -47,6 +47,15 @@ export default function ShiftCard({
           {wallClockTime(shift.startsAt)}
           {' - '}
           {wallClockTime(shift.endsAt)}
+          {shift.breakMinutes > 0 && (
+            <Tooltip
+              title={t('SHIFT_PLANNING_BREAK_MINUTES_TOOLTIP', {
+                minutes: shift.breakMinutes,
+              })}>
+              {' '}
+              <i className="fa fa-coffee" aria-hidden="true"></i>
+            </Tooltip>
+          )}
         </span>
         <span
           className={

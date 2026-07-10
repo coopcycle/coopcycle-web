@@ -50,6 +50,7 @@ type FormValues = {
   date: Dayjs;
   times: [Dayjs, Dayjs];
   slots: number;
+  breakMinutes: number;
   comment?: string;
   users: Uri[];
 };
@@ -86,6 +87,7 @@ export default function ShiftModal({
           dayjs(wallClock(state.shift.endsAt)),
         ],
         slots: state.shift.slots,
+        breakMinutes: state.shift.breakMinutes,
         comment: state.shift.comment ?? undefined,
         users: state.shift.assignments.map(a => a.user['@id']),
       });
@@ -98,6 +100,7 @@ export default function ShiftModal({
           (state.date || dayjs()).hour(17).minute(0),
         ],
         slots: 1,
+        breakMinutes: 0,
         comment: undefined,
         users: state.userUri ? [state.userUri] : [],
       });
@@ -159,6 +162,7 @@ export default function ShiftModal({
       startsAt: `${date}T${values.times[0].format('HH:mm:ss')}`,
       endsAt: `${date}T${values.times[1].format('HH:mm:ss')}`,
       slots: values.slots,
+      breakMinutes: values.breakMinutes,
       comment: values.comment || null,
       users: values.users,
     };
@@ -262,6 +266,12 @@ export default function ShiftModal({
           label={t('SHIFT_PLANNING_SLOTS')}
           rules={[{ required: true }]}>
           <InputNumber min={1} style={{ width: '100%' }} />
+        </Form.Item>
+        <Form.Item
+          name="breakMinutes"
+          label={t('SHIFT_PLANNING_BREAK_MINUTES')}
+          rules={[{ required: true }]}>
+          <InputNumber min={0} step={5} style={{ width: '100%' }} />
         </Form.Item>
         <Form.Item name="users" label={t('SHIFT_PLANNING_ASSIGNEES')}>
           <Select

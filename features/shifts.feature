@@ -21,6 +21,7 @@ Feature: Shifts
         "startsAt": "2026-06-29T09:00:00",
         "endsAt": "2026-06-29T17:00:00",
         "slots": 2,
+        "breakMinutes": 30,
         "comment": "Bring your own bike lock",
         "users": ["/api/users/1", "/api/users/2"]
       }
@@ -38,6 +39,7 @@ Feature: Shifts
         "startsAt":"@string@.isDateTime()",
         "endsAt":"@string@.isDateTime()",
         "slots":2,
+        "breakMinutes":30,
         "comment":"Bring your own bike lock",
         "assignments":[
           {
@@ -143,6 +145,7 @@ Feature: Shifts
             "startsAt":"@string@.isDateTime()",
             "endsAt":"@string@.isDateTime()",
             "slots":1,
+            "breakMinutes":0,
             "comment":"Bring your own bike lock",
             "assignments":"@array@"
           }
@@ -201,6 +204,7 @@ Feature: Shifts
         "startsAt":"@string@.isDateTime()",
         "endsAt":"@string@.isDateTime()",
         "slots":1,
+        "breakMinutes":0,
         "comment":null,
         "assignments":[
           {
@@ -428,6 +432,7 @@ Feature: Shifts
             "startsAt":"@string@.isDateTime()",
             "endsAt":"@string@.isDateTime()",
             "slots":2,
+            "breakMinutes":0,
             "comment":null,
             "assignments":[
               {

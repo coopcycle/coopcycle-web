@@ -83,6 +83,10 @@ class Shift
     protected int $slots = 1;
 
     #[Groups(['shift', 'shift_create'])]
+    #[Assert\Range(min: 0)]
+    protected int $breakMinutes = 0;
+
+    #[Groups(['shift', 'shift_create'])]
     #[Assert\Length(max: 65535)]
     protected ?string $comment = null;
 
@@ -157,6 +161,18 @@ class Shift
     public function setSlots(int $slots): self
     {
         $this->slots = $slots;
+
+        return $this;
+    }
+
+    public function getBreakMinutes(): int
+    {
+        return $this->breakMinutes;
+    }
+
+    public function setBreakMinutes(int $breakMinutes): self
+    {
+        $this->breakMinutes = $breakMinutes;
 
         return $this;
     }

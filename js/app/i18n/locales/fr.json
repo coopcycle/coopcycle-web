@@ -881,6 +881,8 @@
         "SHIFT_PLANNING_DATE": "Date",
         "SHIFT_PLANNING_TIME": "Horaires",
         "SHIFT_PLANNING_SLOTS": "Personnes nécessaires",
+        "SHIFT_PLANNING_BREAK_MINUTES": "Pause (minutes)",
+        "SHIFT_PLANNING_BREAK_MINUTES_TOOLTIP": "Pause de {{minutes}} min",
         "SHIFT_PLANNING_ASSIGNEES": "Assigné(e)s",
         "SHIFT_PLANNING_HOLIDAY_CONFLICT": "{{names}} a des congés approuvés ce jour-là",
         "SHIFT_PLANNING_SAVE": "Enregistrer",

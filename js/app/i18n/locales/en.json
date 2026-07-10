@@ -910,6 +910,8 @@
         "SHIFT_PLANNING_DATE": "Date",
         "SHIFT_PLANNING_TIME": "Time",
         "SHIFT_PLANNING_SLOTS": "People needed",
+        "SHIFT_PLANNING_BREAK_MINUTES": "Break (minutes)",
+        "SHIFT_PLANNING_BREAK_MINUTES_TOOLTIP": "{{minutes}} min break",
         "SHIFT_PLANNING_ASSIGNEES": "Assignees",
         "SHIFT_PLANNING_HOLIDAY_CONFLICT": "{{names}} has an approved holiday on this day",
         "SHIFT_PLANNING_SAVE": "Save",
