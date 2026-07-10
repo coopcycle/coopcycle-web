@@ -33,6 +33,10 @@ export type ShiftModalState = {
   shift?: Shift;
   date?: Dayjs;
   userUri?: Uri;
+  /** Prefill the type Select, e.g. when created from a Type-view row */
+  type?: string;
+  /** Prefill the start time, e.g. when created from a Calendar-view click; end defaults to start + 2h */
+  time?: Dayjs;
 } | null;
 
 type Props = {
@@ -92,13 +96,15 @@ export default function ShiftModal({
         users: state.shift.assignments.map(a => a.user['@id']),
       });
     } else {
+      const start = state.time || (state.date || dayjs()).hour(9).minute(0);
+      const end = state.time
+        ? state.time.add(2, 'hour')
+        : (state.date || dayjs()).hour(17).minute(0);
+
       form.setFieldsValue({
-        type: shiftTypes[0],
+        type: state.type || shiftTypes[0],
         date: state.date || dayjs(),
-        times: [
-          (state.date || dayjs()).hour(9).minute(0),
-          (state.date || dayjs()).hour(17).minute(0),
-        ],
+        times: [start, end],
         slots: 1,
         breakMinutes: 0,
         comment: undefined,

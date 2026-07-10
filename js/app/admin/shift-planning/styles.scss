@@ -207,6 +207,15 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+
+  &__assignees {
+    margin-top: 2px;
+    font-size: 11px;
+    color: rgba(0, 0, 0, 0.65);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 .shift-type-dot {
@@ -248,6 +257,78 @@
   &--pending {
     background: #e0f2f1;
     border-style: dashed;
+  }
+}
+
+.shift-planning-calendar {
+  &__container {
+    overflow-x: auto;
+  }
+
+  border: 1px solid #e8e8e8;
+  border-radius: 4px;
+  background: #fff;
+  min-width: 1000px;
+
+  &__header,
+  &__body {
+    display: flex;
+  }
+
+  &__hours-header,
+  &__hours {
+    width: 56px;
+    flex-shrink: 0;
+    background: #fafafa;
+    border-right: 1px solid #f0f0f0;
+  }
+
+  &__hours-header {
+    border-bottom: 1px solid #e8e8e8;
+  }
+
+  &__hour-label {
+    box-sizing: border-box;
+    padding: 2px 6px 0 0;
+    font-size: 11px;
+    color: rgba(0, 0, 0, 0.45);
+    text-align: right;
+    border-bottom: 1px solid #f5f5f5;
+  }
+
+  &__day-column {
+    flex: 1;
+    min-width: 120px;
+    position: relative;
+    box-sizing: border-box;
+    border-right: 1px solid #f0f0f0;
+    cursor: pointer;
+    background-image: linear-gradient(to bottom, #f0f0f0 1px, transparent 1px);
+    background-repeat: repeat-y;
+
+    &:hover {
+      background-color: #fafafa;
+    }
+  }
+
+  &__block {
+    position: absolute;
+    box-sizing: border-box;
+    padding-right: 2px;
+
+    .shift-card {
+      height: 100%;
+      margin-bottom: 0;
+      overflow: hidden;
+    }
+  }
+
+  // Day headers are shared with the grid views, but this layout is flex
+  // (one column per day) rather than CSS grid, so let them fill their share
+  .shift-planning__header-cell {
+    flex: 1;
+    min-width: 120px;
+    box-sizing: border-box;
   }
 }
 

@@ -48,7 +48,7 @@ type Props = {
   bankHolidays?: Record<string, string>;
 };
 
-export default function PlanningGrid({
+export default function EmployeeGrid({
   weekStart,
   shifts,
   holidayRequests,

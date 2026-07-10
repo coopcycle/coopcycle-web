@@ -11,6 +11,8 @@ type Props = {
   onClick?: (shift: Shift) => void;
   conflictWith?: Shift;
   typeColors?: Record<string, string>;
+  /** Show assignee usernames on the card, for views where the row doesn't already imply the user (type/calendar views) */
+  showAssignees?: boolean;
 };
 
 export default function ShiftCard({
@@ -18,6 +20,7 @@ export default function ShiftCard({
   onClick,
   conflictWith,
   typeColors,
+  showAssignees,
 }: Props) {
   const { t } = useTranslation();
 
@@ -67,6 +70,11 @@ export default function ShiftCard({
           {shift.assignments.length}/{shift.slots}
         </span>
       </div>
+      {showAssignees && shift.assignments.length > 0 && (
+        <div className="shift-card__assignees">
+          {shift.assignments.map(a => a.user.username).join(', ')}
+        </div>
+      )}
       {shift.comment && (
         <div className="shift-card__comment" title={shift.comment}>
           {shift.comment}
