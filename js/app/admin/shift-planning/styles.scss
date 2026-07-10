@@ -315,11 +315,46 @@
     position: absolute;
     box-sizing: border-box;
     padding-right: 2px;
+    cursor: grab;
+    // Pointer events drive drag & resize; disable native touch scrolling on blocks
+    touch-action: none;
 
     .shift-card {
       height: 100%;
       margin-bottom: 0;
       overflow: hidden;
+    }
+
+    &--ghost {
+      pointer-events: none;
+      opacity: 0.85;
+      z-index: 10;
+
+      .shift-card {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      }
+    }
+
+    // The block being dragged stays mounted so pointer capture isn't lost,
+    // but the ghost is what the user sees
+    &--source {
+      visibility: hidden;
+    }
+  }
+
+  &__resize-handle {
+    position: absolute;
+    left: 0;
+    right: 2px;
+    height: 6px;
+    cursor: ns-resize;
+
+    &--top {
+      top: 0;
+    }
+
+    &--bottom {
+      bottom: 0;
     }
   }
 

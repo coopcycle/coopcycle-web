@@ -429,6 +429,42 @@ export const apiSlice = createApi({
         body,
       }),
       invalidatesTags: ['Shift'],
+      // Optimistically patch the cached week(s) so the grid reflects the
+      // change on drop (calendar drag/resize) instead of snapping back until
+      // the invalidation refetch lands; undone if the request fails.
+      // Assignments are left untouched — the payload only has user IRIs, the
+      // refetch reconciles them.
+      async onQueryStarted(arg, { dispatch, getState, queryFulfilled }) {
+        const patches = apiSlice.util
+          .selectCachedArgsForQuery(getState(), 'getShifts')
+          .map(args =>
+            dispatch(
+              apiSlice.util.updateQueryData('getShifts', args, draft => {
+                const shift = draft['hydra:member'].find(
+                  s => s['@id'] === arg['@id'],
+                );
+                if (shift) {
+                  shift.type = arg.type;
+                  shift.startsAt = arg.startsAt;
+                  shift.endsAt = arg.endsAt;
+                  shift.slots = arg.slots;
+                  if (arg.breakMinutes !== undefined) {
+                    shift.breakMinutes = arg.breakMinutes;
+                  }
+                  if (arg.comment !== undefined) {
+                    shift.comment = arg.comment;
+                  }
+                }
+              }),
+            ),
+          );
+
+        try {
+          await queryFulfilled;
+        } catch {
+          patches.forEach(patch => patch.undo());
+        }
+      },
     }),
     deleteShift: builder.mutation<void, Uri>({
       query: uri => ({
