@@ -1181,6 +1181,113 @@ Feature: Zelty catalog push webhook
       {"zeltyOrderId": 55002, "state": "ready"}
       """
 
+  Scenario: Products removed from catalog are disabled on next push
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml  |
+      | zelty_restaurant.yml |
+    And the Zelty taxes API will return:
+      """
+      {"taxes":[{"id":1,"name":"TVA 10%","rate":1000}]}
+      """
+    When I add "Content-Type" header equal to "application/json"
+    And I send a "POST" request to "/api/zelty/webhook/catalog/1" with body:
+      """
+      {
+        "data": {
+          "id": 100,
+          "name": "Pizza Roma Catalog",
+          "locale": "fr",
+          "currency": "EUR",
+          "tags": [],
+          "items": [
+            {
+              "id": 10001,
+              "type": "dish",
+              "name": "Margherita",
+              "description": "Tomate, Mozzarella",
+              "img": null,
+              "disabled": false,
+              "is_sold_out": false,
+              "price": {"price": 1200, "is_fixed": true, "prevent_discounts": false, "overrides": []},
+              "tax_rules": {"tax_id": 1},
+              "option_ids": [],
+              "parts": []
+            },
+            {
+              "id": 10002,
+              "type": "dish",
+              "name": "Regina",
+              "description": "Tomate, Jambon",
+              "img": null,
+              "disabled": false,
+              "is_sold_out": false,
+              "price": {"price": 1400, "is_fixed": true, "prevent_discounts": false, "overrides": []},
+              "tax_rules": {"tax_id": 1},
+              "option_ids": [],
+              "parts": []
+            }
+          ],
+          "menuParts": [],
+          "options": [],
+          "optionValues": []
+        }
+      }
+      """
+    Then the response status code should be 200
+    And I see entity "AppBundle\Entity\Sylius\Product" with properties:
+      """
+      {"code": "10001", "enabled": true}
+      """
+    And I see entity "AppBundle\Entity\Sylius\Product" with properties:
+      """
+      {"code": "10002", "enabled": true}
+      """
+    When I add "Content-Type" header equal to "application/json"
+    And I send a "POST" request to "/api/zelty/webhook/catalog/1" with body:
+      """
+      {
+        "data": {
+          "id": 100,
+          "name": "Pizza Roma Catalog",
+          "locale": "fr",
+          "currency": "EUR",
+          "tags": [],
+          "items": [
+            {
+              "id": 10001,
+              "type": "dish",
+              "name": "Margherita",
+              "description": "Tomate, Mozzarella",
+              "img": null,
+              "disabled": false,
+              "is_sold_out": false,
+              "price": {"price": 1200, "is_fixed": true, "prevent_discounts": false, "overrides": []},
+              "tax_rules": {"tax_id": 1},
+              "option_ids": [],
+              "parts": []
+            }
+          ],
+          "menuParts": [],
+          "options": [],
+          "optionValues": []
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {"status":"success"}
+      """
+    And I see entity "AppBundle\Entity\Sylius\Product" with properties:
+      """
+      {"code": "10001", "enabled": true}
+      """
+    And I see entity "AppBundle\Entity\Sylius\Product" with properties:
+      """
+      {"code": "10002", "enabled": false}
+      """
+
   Scenario: Restaurant not found returns 404
     Given the fixtures files are loaded:
       | sylius_taxation.yml |

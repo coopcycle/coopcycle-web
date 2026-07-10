@@ -3,6 +3,7 @@
 namespace AppBundle\Integration\Zelty;
 
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\Sylius\ProductRepository;
 use AppBundle\Entity\Sylius\ProductTaxon;
 use AppBundle\Entity\Sylius\Taxon;
 use AppBundle\Integration\Zelty\Dto\ZeltyCatalog;
@@ -25,6 +26,7 @@ class ZeltyImportService
         private SlugifyInterface $slugify,
         private LocaleProviderInterface $localeProvider,
         private EntityManagerInterface $em,
+        private ProductRepository $productRepository,
         private ?LoggerInterface $logger = null,
     ) {}
 
@@ -49,10 +51,26 @@ class ZeltyImportService
         $productsMap = $this->importDishes($catalog, $restaurant, $optionsMap, $locale, $taxCategoryMap);
         $menusMap = $this->importMenus($catalog, $restaurant, $locale, $productsMap, $optionsMap, $taxCategoryMap);
 
+        $importedCodes = array_merge(array_keys($productsMap), array_keys($menusMap));
+        $this->disableRemovedProducts($restaurant, $importedCodes);
+
         $this->createOrGetMenusTaxon($restaurant, $rootTaxon, $locale, $menusMap);
         $this->taxonMapper->importTags($catalog->tags, $rootTaxon, $productsMap, $locale);
 
         $this->logInfo(sprintf('Completed Zelty catalog import for restaurant %d', $restaurant->getId()));
+    }
+
+    private function disableRemovedProducts(LocalBusiness $restaurant, array $importedCodes): void
+    {
+        $stale = $this->productRepository->findZeltyProductsForRestaurantNotIn($restaurant, $importedCodes);
+
+        foreach ($stale as $product) {
+            $product->setEnabled(false);
+        }
+
+        if (!empty($stale)) {
+            $this->logInfo(sprintf('Disabled %d products removed from Zelty catalog', count($stale)));
+        }
     }
 
     /**
