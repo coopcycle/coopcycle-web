@@ -323,6 +323,8 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected ?string $zeltyWebhookSecretKey = null;
 
+    protected ?int $zeltyDeliveryFeeDishId = null;
+
     protected $dayOfWeekAddresses;
 
     protected $dayOfWeekDeliveryPerimeterExpressions;
@@ -1293,6 +1295,16 @@ class LocalBusiness extends BaseLocalBusiness implements
     public function setZeltyWebhookSecretKey(?string $zeltyWebhookSecretKey): void
     {
         $this->zeltyWebhookSecretKey = $zeltyWebhookSecretKey;
+    }
+
+    public function getZeltyDeliveryFeeDishId(): ?int
+    {
+        return $this->zeltyDeliveryFeeDishId;
+    }
+
+    public function setZeltyDeliveryFeeDishId(?int $zeltyDeliveryFeeDishId): void
+    {
+        $this->zeltyDeliveryFeeDishId = $zeltyDeliveryFeeDishId;
     }
 
     public function getDayOfWeekAddresses()

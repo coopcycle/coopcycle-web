@@ -139,6 +139,7 @@
     </field>
     <field name="zeltyApiKey" type="string" column="zelty_api_key" nullable="true"/>
     <field name="zeltyWebhookSecretKey" type="string" column="zelty_webhook_secret_key" nullable="true"/>
+    <field name="zeltyDeliveryFeeDishId" type="integer" column="zelty_delivery_fee_dish_id" nullable="true"/>
     <many-to-one field="contract" target-entity="AppBundle\Entity\Contract" inversed-by="restaurants">
       <cascade>
         <cascade-persist/>

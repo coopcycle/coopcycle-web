@@ -3,6 +3,7 @@
 namespace AppBundle\Integration\Zelty;
 
 use AppBundle\Entity\Sylius\Customer;
+use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -23,7 +24,7 @@ class ZeltyOrderNormalizer implements NormalizerInterface
             'customer'         => $this->normalizeCustomer($order),
             'address'          => $this->normalizeAddress($order),
             'items'            => $this->normalizeItems($order),
-            'total'            => $order->getItemsTotal(),
+            'total'            => $order->getItemsTotal() + $this->deliveryFee($order),
         ];
 
         if ($order->getNotes() !== null) {
@@ -110,7 +111,23 @@ class ZeltyOrderNormalizer implements NormalizerInterface
             }
         }
 
+        $deliveryDishId = $order->getRestaurant()?->getZeltyDeliveryFeeDishId();
+        $deliveryFee    = $this->deliveryFee($order);
+
+        if ($deliveryDishId !== null && $deliveryFee > 0) {
+            $items[] = [
+                'id'    => $deliveryDishId,
+                'type'  => 'dish',
+                'price' => $deliveryFee,
+            ];
+        }
+
         return $items;
+    }
+
+    private function deliveryFee(OrderInterface $order): int
+    {
+        return $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT);
     }
 
     private function normalizeMenuDishes(mixed $variant): array

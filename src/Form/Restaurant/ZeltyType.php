@@ -4,6 +4,7 @@ namespace AppBundle\Form\Restaurant;
 
 use AppBundle\Integration\Zelty\ZeltyClient;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -58,6 +59,15 @@ class ZeltyType extends AbstractType
             $event->getForm()->get('zeltyWebhookSecretKey')->setData(
                 $this->maskSecretKey($secretKey)
             );
+
+            if ($restaurant?->hasZeltyApiKey()) {
+                $event->getForm()->add('zeltyDeliveryFeeDishId', HiddenType::class, [
+                    'mapped' => false,
+                    'attr'   => ['data-restaurant-id' => (string) $restaurant->getId()],
+                ]);
+                $event->getForm()->get('zeltyDeliveryFeeDishId')
+                    ->setData($restaurant->getZeltyDeliveryFeeDishId());
+            }
         });
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
@@ -70,6 +80,7 @@ class ZeltyType extends AbstractType
 
             $this->handleApiKey($form, $restaurant);
             $this->handleWebhookSecretKey($form, $restaurant);
+            $this->handleDeliveryFeeDishId($form, $restaurant);
         });
     }
 
@@ -131,6 +142,16 @@ class ZeltyType extends AbstractType
         }
 
         $restaurant->setZeltyWebhookSecretKey($newSecretKey);
+    }
+
+    private function handleDeliveryFeeDishId(\Symfony\Component\Form\FormInterface $form, mixed $restaurant): void
+    {
+        if (!$form->has('zeltyDeliveryFeeDishId')) {
+            return;
+        }
+
+        $dishId = $form->get('zeltyDeliveryFeeDishId')->getData();
+        $restaurant->setZeltyDeliveryFeeDishId($dishId !== null && $dishId !== '' ? (int) $dishId : null);
     }
 
     private function maskSecretKey(?string $secretKey): ?string

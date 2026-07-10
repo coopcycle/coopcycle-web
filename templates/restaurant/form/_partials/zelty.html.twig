@@ -2,3 +2,13 @@
 {% if form.zeltyWebhookSecretKey is defined %}
     {{ form_row(form.zeltyWebhookSecretKey) }}
 {% endif %}
+{% if form.zeltyDeliveryFeeDishId is defined %}
+    <div class="form-group">
+        <label class="control-label">{{ 'restaurant.form.zelty_delivery_fee_dish'|trans }}</label>
+        {{ form_widget(form.zeltyDeliveryFeeDishId) }}
+        <div {{ react_component('Restaurant/ZeltyDishSelect', {
+            restaurantId: form.zeltyDeliveryFeeDishId.vars.attr['data-restaurant-id'],
+            inputId: form.zeltyDeliveryFeeDishId.vars.id
+        }) }}></div>
+    </div>
+{% endif %}

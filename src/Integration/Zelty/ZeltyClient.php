@@ -110,6 +110,24 @@ class ZeltyClient
         return $this->upsertWebhooks([$event => $url]);
     }
 
+    public function getDishes(): array
+    {
+        $response = $this->zeltyClient->request('GET', 'catalog/dishes', array_merge($this->authOptions(), [
+            'query' => ['limit' => '2500'],
+        ]));
+        $data = json_decode($response->getContent(), true);
+        return $data['dishes'] ?? [];
+    }
+
+    public function createDish(array $fields): array
+    {
+        $response = $this->zeltyClient->request('POST', 'catalog/dishes', array_merge($this->authOptions(), [
+            'json' => [$fields],
+        ]));
+        $data = json_decode($response->getContent(), true);
+        return $data['dishes'][0] ?? [];
+    }
+
     public function getTaxes(): array
     {
         $response = $this->zeltyClient->request('GET', 'catalog/taxes', $this->authOptions());

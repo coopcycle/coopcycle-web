@@ -896,6 +896,12 @@
         "PAYMENT_METHOD": "Payment method",
         "PAYMENT_UPDATED_AT": "Last updated",
         "COUPON_CODE_NOT_USED": "Not used yet",
-        "COUPON_CODE_USED": "Used {{ago}}"
+        "COUPON_CODE_USED": "Used {{ago}}",
+        "ZELTY_DISH_SEARCH_PLACEHOLDER": "Search by name…",
+        "ZELTY_DISH_LOADING": "Loading dishes…",
+        "ZELTY_DISH_MANUAL_ID_PLACEHOLDER": "Or enter dish ID",
+        "ZELTY_DISH_CREATE_BUTTON": "Create \"Frais de livraison\" on Zelty",
+        "ZELTY_DISH_CREATE_ERROR": "Failed to create delivery dish on Zelty",
+        "ZELTY_DISH_LOAD_ERROR": "Failed to load dishes"
       }
 }

@@ -5,6 +5,7 @@ namespace AppBundle\MessageHandler\Zelty;
 use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Integration\Zelty\ZeltyClient;
 use AppBundle\Message\Zelty\PushOrder;
+use AppBundle\Sylius\Order\AdjustmentInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -29,7 +30,8 @@ class PushOrderHandler
 
         $this->zeltyClient->setAuth($restaurant->getZeltyApiKey());
         $zeltyOrderId = $this->zeltyClient->pushToZelty($order);
-        $this->zeltyClient->addTransaction($zeltyOrderId, $order->getItemsTotal());
+        $total = $order->getItemsTotal() + $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT);
+        $this->zeltyClient->addTransaction($zeltyOrderId, $total);
 
         $order->setZeltyOrderId($zeltyOrderId);
         $this->entityManager->flush();
