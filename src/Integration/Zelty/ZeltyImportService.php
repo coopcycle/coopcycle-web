@@ -4,7 +4,6 @@ namespace AppBundle\Integration\Zelty;
 
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Sylius\ProductRepository;
-use AppBundle\Entity\Sylius\ProductTaxon;
 use AppBundle\Entity\Sylius\Taxon;
 use AppBundle\Integration\Zelty\Dto\ZeltyCatalog;
 use Cocur\Slugify\SlugifyInterface;
@@ -54,8 +53,8 @@ class ZeltyImportService
         $importedCodes = array_merge(array_keys($productsMap), array_keys($menusMap));
         $this->disableRemovedProducts($restaurant, $importedCodes);
 
-        $this->createOrGetMenusTaxon($restaurant, $rootTaxon, $locale, $menusMap);
-        $this->taxonMapper->importTags($catalog->tags, $rootTaxon, $productsMap, $locale);
+        $allItemsMap = array_merge($productsMap, $menusMap);
+        $this->taxonMapper->importTags($catalog->tags, $rootTaxon, $allItemsMap, $locale);
 
         $this->logInfo(sprintf('Completed Zelty catalog import for restaurant %d', $restaurant->getId()));
     }
@@ -216,80 +215,10 @@ class ZeltyImportService
         return $taxon;
     }
 
-    /**
-     * Ensure the restaurant has the given taxon associated.
-     */
     private function ensureRestaurantHasTaxon(LocalBusiness $restaurant, Taxon $taxon): void
     {
         if (!$restaurant->getTaxons()->contains($taxon)) {
             $restaurant->addTaxon($taxon);
-        }
-    }
-
-    /**
-     * Create or retrieve the menus taxon with all menu products linked.
-     */
-    private function createOrGetMenusTaxon(
-        LocalBusiness $restaurant,
-        Taxon $rootTaxon,
-        string $locale,
-        array $menusMap
-    ): Taxon {
-        $code = 'zelty_menus_' . $restaurant->getId();
-
-        $taxon = $this->em->getRepository(Taxon::class)->findOneBy(['code' => $code]);
-
-        if ($taxon === null) {
-            $taxon = $this->createMenusTaxon($restaurant, $rootTaxon, $locale, $code, $this->em);
-        }
-
-        $this->linkMenuProductsToTaxon($this->em, $menusMap, $taxon);
-
-        return $taxon;
-    }
-
-    /**
-     * Create a new menus taxon.
-     */
-    private function createMenusTaxon(
-        LocalBusiness $restaurant,
-        Taxon $rootTaxon,
-        string $locale,
-        string $code,
-        $em
-    ): Taxon {
-        $taxon = new Taxon();
-        $taxon->setCode($code);
-        $taxon->setCurrentLocale($locale);
-        $taxon->setSlug($this->slugify->slugify('nos-menus-' . $restaurant->getId()));
-        $taxon->setName('Nos Menus');
-        $taxon->setEnabled(true);
-        $taxon->setParent($rootTaxon);
-
-        $em->persist($taxon);
-
-        return $taxon;
-    }
-
-    /**
-     * Link all menu products to the menus taxon.
-     */
-    private function linkMenuProductsToTaxon($em, array $menusMap, Taxon $taxon): void
-    {
-        foreach ($menusMap as $menuProduct) {
-            $existing = $em->getRepository(ProductTaxon::class)->findOneBy([
-                'product' => $menuProduct,
-                'taxon'   => $taxon,
-            ]);
-            if ($existing !== null) {
-                continue;
-            }
-
-            $productTaxon = new ProductTaxon();
-            $productTaxon->setProduct($menuProduct);
-            $productTaxon->setTaxon($taxon);
-            $productTaxon->setPosition(0);
-            $em->persist($productTaxon);
         }
     }
 }

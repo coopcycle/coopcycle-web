@@ -405,7 +405,7 @@ Feature: Zelty catalog push webhook
       {"status":"success"}
       """
     And I see 2 entities "AppBundle\Entity\Sylius\Product"
-    And I see 1 entities "AppBundle\Entity\Sylius\ProductTaxon"
+    And I see 0 entities "AppBundle\Entity\Sylius\ProductTaxon"
 
   Scenario: dish.update disables a product when disable flag is true
     Given the fixtures files are loaded:
