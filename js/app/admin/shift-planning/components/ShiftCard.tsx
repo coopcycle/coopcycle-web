@@ -75,6 +75,15 @@ export default function ShiftCard({
           {shift.assignments.map(a => a.user.username).join(', ')}
         </div>
       )}
+      {shift.requiredSkills.length > 0 && (
+        <div className="shift-card__skills">
+          {shift.requiredSkills.map(s => (
+            <span key={s['@id']} className="shift-card__skill">
+              {s.name}
+            </span>
+          ))}
+        </div>
+      )}
       {shift.comment && (
         <div className="shift-card__comment" title={shift.comment}>
           {shift.comment}

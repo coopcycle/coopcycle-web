@@ -81,6 +81,7 @@
         </inverse-join-columns>
       </join-table>
     </many-to-many>
+    <many-to-many field="skills" target-entity="AppBundle\Entity\Skill" mapped-by="users"/>
     <field name="stripeCustomerId" type="string" column="stripe_customer_id" nullable="true"/>
     <field name="emailAuthCode" type="string" column="email_auth_code" nullable="true"/>
     <many-to-one field="businessAccount" target-entity="AppBundle\Entity\BusinessAccount" inversed-by="employees">

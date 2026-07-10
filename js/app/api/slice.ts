@@ -60,13 +60,23 @@ import {
   BankHolidays,
   ShiftDashboard,
   GetShiftDashboardArgs,
+  Skill,
+  SkillWithUsers,
+  SkillPayload,
+  PutSkillRequest,
 } from './types';
 
 // Define our single API slice object
 export const apiSlice = createApi({
   reducerPath: 'api',
   baseQuery: baseQueryWithReauth,
-  tagTypes: ['PricingRuleSet', 'Shift', 'HolidayRequest', 'ShiftSettings'],
+  tagTypes: [
+    'PricingRuleSet',
+    'Shift',
+    'HolidayRequest',
+    'ShiftSettings',
+    'Skill',
+  ],
   // The "endpoints" represent operations and requests for this server
   // uri is passed in JSON-LD '@id' key, https://www.w3.org/TR/2014/REC-json-ld-20140116/#node-identifiers
   endpoints: builder => ({
@@ -538,6 +548,38 @@ export const apiSlice = createApi({
         'api/users?roles[]=ROLE_COURIER&roles[]=ROLE_DISPATCHER&roles[]=ROLE_ADMIN',
       transformResponse: (response: HydraCollection<PlanningUser>) =>
         response['hydra:member'],
+      // A user's skills come from here, so a skill (un)assignment must refresh it
+      providesTags: ['Skill'],
+    }),
+
+    getSkills: builder.query<SkillWithUsers[], void>({
+      query: () => 'api/skills',
+      transformResponse: (response: HydraCollection<SkillWithUsers>) =>
+        response['hydra:member'],
+      providesTags: ['Skill'],
+    }),
+    postSkill: builder.mutation<Skill, SkillPayload>({
+      query: body => ({
+        url: 'api/skills',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['Skill'],
+    }),
+    putSkill: builder.mutation<Skill, PutSkillRequest>({
+      query: ({ '@id': uri, ...body }) => ({
+        url: uri,
+        method: 'PUT',
+        body,
+      }),
+      invalidatesTags: ['Skill'],
+    }),
+    deleteSkill: builder.mutation<void, Uri>({
+      query: uri => ({
+        url: uri,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Skill'],
     }),
 
     getShiftSettings: builder.query<ShiftSettings, void>({
@@ -660,4 +702,8 @@ export const {
   useSyncDispatchMutation,
   useGetBankHolidaysQuery,
   useGetShiftDashboardQuery,
+  useGetSkillsQuery,
+  usePostSkillMutation,
+  usePutSkillMutation,
+  useDeleteSkillMutation,
 } = apiSlice;

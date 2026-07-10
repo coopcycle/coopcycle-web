@@ -29,9 +29,10 @@ import ShiftSettingsModal from './components/ShiftSettingsModal';
 import GenerateScheduleButton from './components/GenerateScheduleButton';
 import AddToDispatchButton from './components/AddToDispatchButton';
 import ShiftsDashboard from './components/ShiftsDashboard';
+import SkillsManager from './components/SkillsManager';
 import { syncWeekToUrl, weekFromParams } from './utils/weekUrl';
 
-type View = 'employee' | 'calendar' | 'type' | 'dashboard';
+type View = 'employee' | 'calendar' | 'type' | 'dashboard' | 'skills';
 
 dayjs.extend(isoWeek);
 
@@ -162,7 +163,10 @@ const Planning = ({ shiftTypes }: Props) => {
     setRemovedUris(uris => [...uris, uri]);
   };
 
-  const isPlanningView = view !== 'dashboard';
+  // The week grids (employee/calendar/type) share the week navigator and the
+  // planning toolbar; dashboard and skills are standalone management views
+  const isPlanningView =
+    view === 'employee' || view === 'calendar' || view === 'type';
 
   return (
     <div className="shift-planning">
@@ -176,6 +180,7 @@ const Planning = ({ shiftTypes }: Props) => {
               { label: t('SHIFT_PLANNING_VIEW_CALENDAR'), value: 'calendar' },
               { label: t('SHIFT_PLANNING_VIEW_TYPE'), value: 'type' },
               { label: t('SHIFT_PLANNING_DASHBOARD'), value: 'dashboard' },
+              { label: t('SHIFT_PLANNING_VIEW_SKILLS'), value: 'skills' },
             ]}
           />
           {isPlanningView && (
@@ -220,6 +225,7 @@ const Planning = ({ shiftTypes }: Props) => {
           }}
         />
       )}
+      {view === 'skills' && <SkillsManager />}
       {view === 'employee' && (
         <Spin spinning={isFetching}>
           <EmployeeGrid

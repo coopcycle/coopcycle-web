@@ -16,6 +16,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import {
   useDeleteShiftMutation,
+  useGetSkillsQuery,
   usePostShiftMutation,
   usePutShiftMutation,
 } from '../../../api/slice';
@@ -56,6 +57,7 @@ type FormValues = {
   slots: number;
   breakMinutes: number;
   comment?: string;
+  requiredSkills: Uri[];
   users: Uri[];
 };
 
@@ -76,6 +78,8 @@ export default function ShiftModal({
   const [putShift, { isLoading: isUpdating }] = usePutShiftMutation();
   const [deleteShift, { isLoading: isDeleting }] = useDeleteShiftMutation();
 
+  const { data: skills } = useGetSkillsQuery();
+
   const shift = state?.shift;
 
   useEffect(() => {
@@ -93,6 +97,7 @@ export default function ShiftModal({
         slots: state.shift.slots,
         breakMinutes: state.shift.breakMinutes,
         comment: state.shift.comment ?? undefined,
+        requiredSkills: state.shift.requiredSkills.map(s => s['@id']),
         users: state.shift.assignments.map(a => a.user['@id']),
       });
     } else {
@@ -108,6 +113,7 @@ export default function ShiftModal({
         slots: 1,
         breakMinutes: 0,
         comment: undefined,
+        requiredSkills: [],
         users: state.userUri ? [state.userUri] : [],
       });
     }
@@ -117,12 +123,33 @@ export default function ShiftModal({
   const selectedTimes = Form.useWatch('times', form);
   const selectedUsers = Form.useWatch('users', form) || [];
   const selectedSlots = Form.useWatch('slots', form);
+  const selectedSkills = Form.useWatch('requiredSkills', form) || [];
 
   const isOverstaffed =
     typeof selectedSlots === 'number' && selectedUsers.length > selectedSlots;
 
   const usernameOf = (uri: Uri) =>
     users.find(u => u['@id'] === uri)?.username || uri;
+
+  // Warn (never block) when an assigned user lacks a skill the shift requires.
+  // A user's skills come from the planning-users query (user.skills).
+  const skillGaps = selectedSkills.length
+    ? selectedUsers
+        .map(uri => {
+          const user = users.find(u => u['@id'] === uri);
+          const userSkillIds = new Set(
+            (user?.skills ?? []).map(s => s['@id']),
+          );
+          const missing = selectedSkills.filter(
+            skillUri => !userSkillIds.has(skillUri),
+          );
+          return { uri, missing };
+        })
+        .filter(g => g.missing.length > 0)
+    : [];
+
+  const skillNameOf = (uri: Uri) =>
+    skills?.find(s => s['@id'] === uri)?.name || uri;
 
   const conflicts = selectedDate
     ? selectedUsers.filter(uri =>
@@ -170,6 +197,7 @@ export default function ShiftModal({
       slots: values.slots,
       breakMinutes: values.breakMinutes,
       comment: values.comment || null,
+      requiredSkills: values.requiredSkills,
       users: values.users,
     };
 
@@ -279,6 +307,19 @@ export default function ShiftModal({
           rules={[{ required: true }]}>
           <InputNumber min={0} step={5} style={{ width: '100%' }} />
         </Form.Item>
+        <Form.Item
+          name="requiredSkills"
+          label={t('SHIFT_PLANNING_REQUIRED_SKILLS')}>
+          <Select
+            mode="multiple"
+            optionFilterProp="label"
+            placeholder={t('SHIFT_PLANNING_REQUIRED_SKILLS_PLACEHOLDER')}
+            options={(skills ?? []).map(s => ({
+              value: s['@id'],
+              label: s.name,
+            }))}
+          />
+        </Form.Item>
         <Form.Item name="users" label={t('SHIFT_PLANNING_ASSIGNEES')}>
           <Select
             mode="multiple"
@@ -292,6 +333,25 @@ export default function ShiftModal({
         <Form.Item name="comment" label={t('SHIFT_PLANNING_COMMENT')}>
           <Input.TextArea rows={2} maxLength={65535} />
         </Form.Item>
+        {skillGaps.length > 0 && (
+          <Alert
+            type="warning"
+            showIcon
+            className="mb-2"
+            message={
+              <>
+                {skillGaps.map(({ uri, missing }) => (
+                  <div key={uri}>
+                    {t('SHIFT_PLANNING_SKILL_GAP', {
+                      name: usernameOf(uri),
+                      skills: missing.map(skillNameOf).join(', '),
+                    })}
+                  </div>
+                ))}
+              </>
+            }
+          />
+        )}
         {conflicts.length > 0 && (
           <Alert
             type="warning"

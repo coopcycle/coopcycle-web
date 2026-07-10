@@ -94,6 +94,11 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface, 
     private ?string $emailAuthCode = null;
 
     /**
+     * Skills this user is trained for. Inverse side of the M2M (owned by Skill).
+     */
+    private $skills;
+
+    /**
      * Only to keep data in form flow
      */
     private $termsAndConditionsAndPrivacyPolicy;
@@ -105,6 +110,7 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface, 
         $this->stripeAccounts = new ArrayCollection();
         $this->remotePushTokens = new ArrayCollection();
         $this->optinConsents = new ArrayCollection();
+        $this->skills = new ArrayCollection();
 
         parent::__construct();
     }
@@ -468,6 +474,33 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface, 
     public function hasBusinessAccount(): bool
     {
         return null !== $this->businessAccount;
+    }
+
+    /**
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getSkills()
+    {
+        return $this->skills;
+    }
+
+    public function addSkill(Skill $skill): self
+    {
+        if (!$this->skills->contains($skill)) {
+            $this->skills->add($skill);
+            $skill->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSkill(Skill $skill): self
+    {
+        if ($this->skills->removeElement($skill)) {
+            $skill->removeUser($this);
+        }
+
+        return $this;
     }
 
     public function getTermsAndConditionsAndPrivacyPolicy() {

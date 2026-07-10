@@ -96,6 +96,15 @@ class Shift
     protected Collection $assignments;
 
     /**
+     * Skills a person must have to be a good fit for this shift. Informational
+     * — assigning someone without a required skill warns, never blocks.
+     *
+     * @var Collection<int, Skill>
+     */
+    #[Groups(['shift', 'shift_create'])]
+    protected Collection $requiredSkills;
+
+    /**
      * Virtual property (not persisted) used to assign users on create/update.
      *
      * @var User[]|null
@@ -110,6 +119,7 @@ class Shift
     public function __construct()
     {
         $this->assignments = new ArrayCollection();
+        $this->requiredSkills = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -256,6 +266,30 @@ class Shift
     public function setUsers(?array $users): self
     {
         $this->users = $users;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Skill>
+     */
+    public function getRequiredSkills(): Collection
+    {
+        return $this->requiredSkills;
+    }
+
+    public function addRequiredSkill(Skill $skill): self
+    {
+        if (!$this->requiredSkills->contains($skill)) {
+            $this->requiredSkills->add($skill);
+        }
+
+        return $this;
+    }
+
+    public function removeRequiredSkill(Skill $skill): self
+    {
+        $this->requiredSkills->removeElement($skill);
 
         return $this;
     }

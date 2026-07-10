@@ -611,11 +611,28 @@ export type PaymentMethodsOutput = {
 
 // Shift planning
 
+export type Skill = JsonLdEntity & {
+  id: number;
+  name: string;
+};
+
+export type SkillWithUsers = Skill & {
+  users: Uri[];
+};
+
+export type SkillPayload = {
+  name: string;
+  users?: Uri[];
+};
+
+export type PutSkillRequest = SkillPayload & { '@id': Uri };
+
 export type PlanningUser = JsonLdEntity & {
   username: string;
   roles?: string[];
   givenName?: string | null;
   familyName?: string | null;
+  skills?: Skill[];
 };
 
 export type ShiftAssignment = {
@@ -631,6 +648,7 @@ export type Shift = JsonLdEntity & {
   slots: number;
   breakMinutes: number;
   comment: string | null;
+  requiredSkills: Skill[];
   assignments: ShiftAssignment[];
 };
 
@@ -641,6 +659,7 @@ export type ShiftPayload = {
   slots: number;
   breakMinutes?: number;
   comment?: string | null;
+  requiredSkills?: Uri[];
   users: Uri[];
 };
 

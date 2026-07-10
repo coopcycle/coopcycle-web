@@ -41,6 +41,7 @@ Feature: Shifts
         "slots":2,
         "breakMinutes":30,
         "comment":"Bring your own bike lock",
+        "requiredSkills":[],
         "assignments":[
           {
             "@id":"@string@",
@@ -147,6 +148,7 @@ Feature: Shifts
             "slots":1,
             "breakMinutes":0,
             "comment":"Bring your own bike lock",
+            "requiredSkills":[],
             "assignments":"@array@"
           }
         ],
@@ -206,6 +208,7 @@ Feature: Shifts
         "slots":1,
         "breakMinutes":0,
         "comment":null,
+        "requiredSkills":[],
         "assignments":[
           {
             "@id":"@string@",
@@ -434,6 +437,7 @@ Feature: Shifts
             "slots":2,
             "breakMinutes":0,
             "comment":null,
+            "requiredSkills":[],
             "assignments":[
               {
                 "@id":"@string@",
