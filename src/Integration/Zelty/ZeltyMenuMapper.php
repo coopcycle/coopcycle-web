@@ -299,22 +299,27 @@ class ZeltyMenuMapper
         $productId = $menuProduct->getId();
         $optionId = $option->getId();
 
-        if ($menuProduct->hasOption($option)) {
-            // Option already linked in memory — update enabled on the join entity.
-            foreach ($menuProduct->getProductOptions() as $productOptions) {
-                if ($productOptions->getOption() === $option) {
-                    $productOptions->setEnabled($enabled);
-                    break;
+        if ($productId !== null && $optionId !== null) {
+            // The global DisabledFilter adds "enabled = true" to all ProductOptions queries.
+            // Dish options linked to menus use enabled=false (hidden from menu display), so the
+            // filter would hide them — causing hasOption() and findOneBy() to both miss the
+            // existing record on re-push, and addOption() to try inserting a duplicate row.
+            $filters = $this->em->getFilters();
+            $filterActive = $filters->isEnabled('disabled_filter');
+            if ($filterActive) {
+                $filters->disable('disabled_filter');
+            }
+            try {
+                $existing = $this->em->getRepository(ProductOptions::class)->findOneBy([
+                    'product' => $productId,
+                    'option'  => $optionId,
+                ]);
+            } finally {
+                if ($filterActive) {
+                    $filters->enable('disabled_filter');
                 }
             }
-            return;
-        }
 
-        if ($productId !== null && $optionId !== null) {
-            $existing = $this->em->getRepository(ProductOptions::class)->findOneBy([
-                'product' => $productId,
-                'option'  => $optionId,
-            ]);
             if ($existing !== null) {
                 $existing->setEnabled($enabled);
                 return;
@@ -323,11 +328,10 @@ class ZeltyMenuMapper
 
         $menuProduct->addOption($option);
 
-        // Set enabled on the newly created join entity.
         if (!$enabled) {
-            foreach ($menuProduct->getProductOptions() as $productOptions) {
-                if ($productOptions->getOption() === $option) {
-                    $productOptions->setEnabled(false);
+            foreach ($menuProduct->getProductOptions() as $po) {
+                if ($po->getOption() === $option) {
+                    $po->setEnabled(false);
                     break;
                 }
             }
