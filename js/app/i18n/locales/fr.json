@@ -552,6 +552,8 @@
         "THERE_IS_ALREADY_COUNT_REPORTS_FOR_THIS_INCIDENT": "Il y a déjà {{ count }} rapport(s) pour cet incident",
         "FAILURE_REASON": "Raison de l'échec",
         "PLEASE_SELECT_A_REASON": "Veuillez sélectionner une raison",
+        "NO_INCIDENTS_YET": "Aucun incident signalé",
+        "PRIOR_INCIDENTS": "Incidents précédents ({{count}})",
         "SELECT_THE_DATE_AND_TIME_OF_THE_INCIENT": "Sélectionnez la date et l'heure de l'incident.",
         "IMAGES_TO_INCLUDE_IN_THE_REPORT": "Images à inclure dans le rapport",
         "ARE_YOU_SURE": "Êtes-vous sûr ?",

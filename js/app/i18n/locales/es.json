@@ -613,6 +613,8 @@
         "THERE_IS_ALREADY_COUNT_REPORTS_FOR_THIS_INCIDENT": "Ya hay {{ count }} informe(s) para este incidente",
         "FAILURE_REASON": "Seleccione la incidencia",
         "PLEASE_SELECT_A_REASON": "Seleccione un motivo",
+        "NO_INCIDENTS_YET": "Aún no se han reportado incidencias",
+        "PRIOR_INCIDENTS": "Incidencias anteriores ({{count}})",
         "SELECT_THE_DATE_AND_TIME_OF_THE_INCIENT": "Seleccione la fecha y hora de la incidencia",
         "IMAGES_TO_INCLUDE_IN_THE_REPORT": "Imágenes para incluir en el informe",
         "ARE_YOU_SURE": "¿Estas seguro?",

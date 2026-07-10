@@ -326,6 +326,7 @@ services:
       $incidentImagesFilesystem: '@incident_images_filesystem'
       $edifactFilesystem: '@edi_messages_filesystem'
       $platformLocale: '%env(COOPCYCLE_LOCALE)%'
+      $rdcEnabled: '%env(bool:RDC_ENABLED)%'
 
   AppBundle\Controller\Admin\CustomerSegmentationController:
     arguments:
@@ -700,6 +701,8 @@ services:
       - { name: doctrine.orm.entity_listener }
 
   AppBundle\Entity\Listener\TaskRdcStatusListener:
+    arguments:
+      $rdcEnabled: '%env(bool:RDC_ENABLED)%'
     tags:
       - { name: doctrine.orm.entity_listener, event: postUpdate, entity: AppBundle\Entity\Task }
 
@@ -1731,8 +1734,34 @@ services:
     arguments:
       $logger: '@logger'
       $messageBus: '@messenger.default_bus'
+      $rdcEnabled: '%env(bool:RDC_ENABLED)%'
     tags:
       - { name: monolog.logger, channel: rdc }
+
+  AppBundle\Controller\DashboardController:
+    arguments:
+      $rdcEnabled: '%env(bool:RDC_ENABLED)%'
+
+  # RDC feature flag bindings
+  AppBundle\Entity\Listener\IncidentRdcListener:
+    arguments:
+      $rdcEnabled: '%env(bool:RDC_ENABLED)%'
+
+  AppBundle\MessageHandler\IncidentRdcMessageHandler:
+    arguments:
+      $rdcEnabled: '%env(bool:RDC_ENABLED)%'
+
+  AppBundle\MessageHandler\RdcMessageHandler:
+    arguments:
+      $rdcEnabled: '%env(bool:RDC_ENABLED)%'
+
+  AppBundle\MessageHandler\RdcPickupStatusUpdateMessageHandler:
+    arguments:
+      $rdcEnabled: '%env(bool:RDC_ENABLED)%'
+
+  AppBundle\MessageHandler\RdcDropoffStatusUpdateMessageHandler:
+    arguments:
+      $rdcEnabled: '%env(bool:RDC_ENABLED)%'
 
   AppBundle\Utils\Defaults: ~
 
