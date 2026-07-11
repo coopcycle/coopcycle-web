@@ -145,6 +145,7 @@ Feature: Skills
             "name":"cargo bike + trailer"
           }
         ],
+        "waitlist":[],
         "assignments":"@array@"
       }
       """
