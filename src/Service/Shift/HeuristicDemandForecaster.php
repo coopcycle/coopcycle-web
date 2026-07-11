@@ -8,18 +8,20 @@ namespace AppBundle\Service\Shift;
  * heavily, and demand is staffed to a service level (a quantile) rather than the
  * mean, using a normal approximation: predicted = mean + z(serviceLevel) * stddev.
  *
- * This is Phase 1. A Phase 2 forecaster can implement the same interface backed
- * by the Python service (Prophet) to add yearly seasonality & public holidays.
+ * Used as the fallback when the Prophet-backed forecaster (which adds yearly
+ * seasonality & public holidays) is unavailable or lacks history.
  */
 final class HeuristicDemandForecaster implements DemandForecaster
 {
+    public const SOURCE = 'heuristic';
+
     /**
      * How fast older weeks lose influence. A 4-week half-life means a sample
      * from 4 weeks ago counts half as much as last week's.
      */
     private const HALF_LIFE_WEEKS = 4.0;
 
-    public function forecast(array $samples, float $serviceLevel): array
+    public function forecast(array $samples, float $serviceLevel, ?\DateTimeImmutable $windowEnd = null, ?string $timezone = null): array
     {
         $z = self::inverseNormalCdf($serviceLevel);
 
@@ -33,6 +35,11 @@ final class HeuristicDemandForecaster implements DemandForecaster
         }
 
         return $forecast;
+    }
+
+    public function getLastSource(): string
+    {
+        return self::SOURCE;
     }
 
     /**

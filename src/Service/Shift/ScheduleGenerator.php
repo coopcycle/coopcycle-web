@@ -17,7 +17,10 @@ use AppBundle\Service\SettingsManager;
 final class ScheduleGenerator
 {
     public const DEFAULTS = [
-        'lookbackWeeks' => 12,
+        // Two years, so the Prophet forecaster can learn yearly seasonality.
+        // The heuristic fallback is unaffected: its recency weighting makes
+        // anything older than a couple of months negligible.
+        'lookbackWeeks' => 104,
         // Deliveries a single courier can complete per hour
         'throughput' => 2.5,
         // Demand quantile to staff for (0.8 = cover a busy week, not just average)
@@ -54,7 +57,7 @@ final class ScheduleGenerator
             $config['closeHour']
         );
 
-        $forecast = $this->forecaster->forecast($samples, $config['serviceLevel']);
+        $forecast = $this->forecaster->forecast($samples, $config['serviceLevel'], $windowEnd, $timezone);
 
         $shifts = [];
         $days = [];
@@ -121,6 +124,7 @@ final class ScheduleGenerator
                 'serviceLevel' => $config['serviceLevel'],
                 'throughput' => $config['throughput'],
                 'observations' => $totalObservations,
+                'forecaster' => $this->forecaster->getLastSource(),
             ],
         ];
     }

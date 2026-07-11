@@ -798,7 +798,8 @@ services:
 
   AppBundle\Entity\Task\RecurrenceRuleRepository: ~
 
-  AppBundle\Service\Shift\DemandForecaster: '@AppBundle\Service\Shift\HeuristicDemandForecaster'
+  # Prophet-backed (Python recommender service), falls back to the heuristic
+  AppBundle\Service\Shift\DemandForecaster: '@AppBundle\Service\Shift\ProphetDemandForecaster'
 
   AppBundle\Service\Routing\Osrm: ~
 

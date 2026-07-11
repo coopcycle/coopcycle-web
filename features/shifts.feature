@@ -708,7 +708,8 @@ Feature: Shifts
           "lookbackWeeks":@integer@,
           "serviceLevel":@double@,
           "throughput":@double@,
-          "observations":@integer@
+          "observations":@integer@,
+          "forecaster":@string@
         }
       }
       """

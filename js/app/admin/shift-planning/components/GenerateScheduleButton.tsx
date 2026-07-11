@@ -102,7 +102,14 @@ export default function GenerateScheduleButton({ weekStart }: Props) {
                   observations,
                   weeks: suggestion.meta.lookbackWeeks,
                   percentile: Math.round(suggestion.meta.serviceLevel * 100),
-                })}
+                })}{' '}
+                {suggestion.meta.forecaster === 'prophet' ? (
+                  <Tag color="purple">
+                    {t('SHIFT_PLANNING_FORECASTER_PROPHET')}
+                  </Tag>
+                ) : (
+                  <Tag>{t('SHIFT_PLANNING_FORECASTER_HEURISTIC')}</Tag>
+                )}
               </p>
 
               {thinHistory && (

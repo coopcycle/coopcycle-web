@@ -992,6 +992,8 @@
         "SHIFT_PLANNING_GENERATE_TITLE": "Suggested schedule — week of {{week}}",
         "SHIFT_PLANNING_GENERATE_EXPLAINER": "Based on {{observations}} deliveries over the last {{weeks}} weeks, staffed to the {{percentile}}th percentile of demand.",
         "SHIFT_PLANNING_THIN_HISTORY": "There isn't much delivery history yet, so review these suggestions carefully.",
+        "SHIFT_PLANNING_FORECASTER_PROPHET": "Seasonality-aware forecast (Prophet)",
+        "SHIFT_PLANNING_FORECASTER_HEURISTIC": "Simple forecast (recent weeks)",
         "SHIFT_PLANNING_NOT_ENOUGH_HISTORY": "Not enough delivery history to suggest a schedule for this week.",
         "SHIFT_PLANNING_DEMAND": "Demand",
         "SHIFT_PLANNING_COVERAGE": "Coverage",

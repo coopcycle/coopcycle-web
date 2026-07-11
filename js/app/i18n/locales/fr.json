@@ -963,6 +963,8 @@
         "SHIFT_PLANNING_GENERATE_TITLE": "Planning suggéré — semaine du {{week}}",
         "SHIFT_PLANNING_GENERATE_EXPLAINER": "D'après {{observations}} livraisons sur les {{weeks}} dernières semaines, dimensionné au {{percentile}}e centile de la demande.",
         "SHIFT_PLANNING_THIN_HISTORY": "L'historique de livraisons est encore limité, vérifiez ces suggestions attentivement.",
+        "SHIFT_PLANNING_FORECASTER_PROPHET": "Prévision saisonnière (Prophet)",
+        "SHIFT_PLANNING_FORECASTER_HEURISTIC": "Prévision simple (semaines récentes)",
         "SHIFT_PLANNING_NOT_ENOUGH_HISTORY": "Pas assez d'historique de livraisons pour suggérer un planning pour cette semaine.",
         "SHIFT_PLANNING_DEMAND": "Demande",
         "SHIFT_PLANNING_COVERAGE": "Couverture",

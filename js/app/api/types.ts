@@ -771,6 +771,7 @@ export type ShiftScheduleSuggestion = JsonLdEntity & {
     serviceLevel: number;
     throughput: number;
     observations: number;
+    forecaster: 'prophet' | 'heuristic';
   };
 };
 
