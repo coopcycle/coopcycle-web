@@ -5,6 +5,8 @@ namespace AppBundle\Api\State;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use AppBundle\Api\Resource\ShiftDashboard;
+use AppBundle\Entity\SchedulePublication;
+use AppBundle\Entity\SchedulePublicationRepository;
 use AppBundle\Entity\ShiftRepository;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
@@ -12,10 +14,6 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 final class ShiftDashboardProvider implements ProviderInterface
 {
-    const STATUS_DRAFT = 'draft';
-    const STATUS_IN_PROGRESS = 'in_progress';
-    const STATUS_COMPLETE = 'complete';
-
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly RequestStack $requestStack)
@@ -38,6 +36,13 @@ final class ShiftDashboardProvider implements ProviderInterface
             $byWeekStart[$row['week_start']] = $row;
         }
 
+        /** @var SchedulePublicationRepository $publicationRepository */
+        $publicationRepository = $this->entityManager->getRepository(SchedulePublication::class);
+        $publishedWeeks = $publicationRepository->findWeekStartsBetween(
+            $from,
+            $from->modify(sprintf('+%d weeks', $weeks))
+        );
+
         $result = [];
         for ($i = 0; $i < $weeks; $i++) {
             $weekStart = $from->modify(sprintf('+%d weeks', $i));
@@ -55,23 +60,10 @@ final class ShiftDashboardProvider implements ProviderInterface
                 'totalSlots' => $totalSlots,
                 'totalAssignments' => $totalAssignments,
                 'fillRate' => $fillRate,
-                'status' => $this->deriveStatus($fillRate),
+                'published' => in_array($key, $publishedWeeks, true),
             ];
         }
 
         return new ShiftDashboard($result);
-    }
-
-    private function deriveStatus(float $fillRate): string
-    {
-        if ($fillRate <= 0.0) {
-            return self::STATUS_DRAFT;
-        }
-
-        if ($fillRate >= 1.0) {
-            return self::STATUS_COMPLETE;
-        }
-
-        return self::STATUS_IN_PROGRESS;
     }
 }

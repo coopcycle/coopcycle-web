@@ -64,6 +64,8 @@ import {
   SkillWithUsers,
   SkillPayload,
   PutSkillRequest,
+  Me,
+  SchedulePublication,
 } from './types';
 
 // Define our single API slice object
@@ -76,6 +78,7 @@ export const apiSlice = createApi({
     'HolidayRequest',
     'ShiftSettings',
     'Skill',
+    'SchedulePublication',
   ],
   // The "endpoints" represent operations and requests for this server
   // uri is passed in JSON-LD '@id' key, https://www.w3.org/TR/2014/REC-json-ld-20140116/#node-identifiers
@@ -636,7 +639,54 @@ export const apiSlice = createApi({
         url: 'api/shifts/dashboard',
         params: weeks ? { weeks } : undefined,
       }),
-      providesTags: ['Shift'],
+      providesTags: ['Shift', 'SchedulePublication'],
+    }),
+
+    getMe: builder.query<Me, void>({
+      query: () => 'api/me',
+    }),
+    getSchedulePublications: builder.query<
+      SchedulePublication[],
+      { weekStart: string }
+    >({
+      query: ({ weekStart }) => ({
+        url: 'api/schedule_publications',
+        params: { weekStart },
+      }),
+      transformResponse: (response: HydraCollection<SchedulePublication>) =>
+        response['hydra:member'],
+      providesTags: ['SchedulePublication'],
+    }),
+    publishWeek: builder.mutation<void, { week: string }>({
+      query: body => ({
+        url: 'api/shifts/publish_week',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['SchedulePublication', 'Shift'],
+    }),
+    getOpenShifts: builder.query<HydraCollection<Shift>, DateRangeArgs>({
+      query: ({ after, before }) => ({
+        url: 'api/shifts/open',
+        params: { 'date[after]': after, 'date[before]': before },
+      }),
+      providesTags: ['Shift', 'SchedulePublication'],
+    }),
+    applyToShift: builder.mutation<Shift, Uri>({
+      query: uri => ({
+        url: `${uri}/apply`,
+        method: 'PUT',
+        body: {},
+      }),
+      invalidatesTags: ['Shift'],
+    }),
+    unapplyFromShift: builder.mutation<Shift, Uri>({
+      query: uri => ({
+        url: `${uri}/unapply`,
+        method: 'PUT',
+        body: {},
+      }),
+      invalidatesTags: ['Shift'],
     }),
   }),
 });
@@ -706,4 +756,10 @@ export const {
   usePostSkillMutation,
   usePutSkillMutation,
   useDeleteSkillMutation,
+  useGetMeQuery,
+  useGetSchedulePublicationsQuery,
+  usePublishWeekMutation,
+  useGetOpenShiftsQuery,
+  useApplyToShiftMutation,
+  useUnapplyFromShiftMutation,
 } = apiSlice;

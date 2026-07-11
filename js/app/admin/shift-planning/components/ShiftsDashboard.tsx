@@ -3,13 +3,6 @@ import { Card, Col, Row, Tag } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { useGetShiftDashboardQuery } from '../../../api/slice';
-import { ShiftDashboardWeekStatus } from '../../../api/types';
-
-const STATUS_COLORS: Record<ShiftDashboardWeekStatus, string> = {
-  draft: 'default',
-  in_progress: 'processing',
-  complete: 'success',
-};
 
 type Props = {
   onSelectWeek: (weekStart: Dayjs) => void;
@@ -33,8 +26,10 @@ export default function ShiftsDashboard({ onSelectWeek }: Props) {
               week: dayjs(week.weekStart).isoWeek(),
             })}
             extra={
-              <Tag color={STATUS_COLORS[week.status]}>
-                {t(`SHIFT_PLANNING_DASHBOARD_STATUS_${week.status.toUpperCase()}`)}
+              <Tag color={week.published ? 'success' : 'default'}>
+                {week.published
+                  ? t('SHIFT_PLANNING_PUBLISHED')
+                  : t('SHIFT_PLANNING_DASHBOARD_STATUS_DRAFT')}
               </Tag>
             }>
             <p className="mb-1">

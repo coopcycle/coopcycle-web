@@ -42,6 +42,7 @@ Feature: Shifts
         "breakMinutes":30,
         "comment":"Bring your own bike lock",
         "requiredSkills":[],
+        "waitlist":[],
         "assignments":[
           {
             "@id":"@string@",
@@ -149,6 +150,7 @@ Feature: Shifts
             "breakMinutes":0,
             "comment":"Bring your own bike lock",
             "requiredSkills":[],
+        "waitlist":[],
             "assignments":"@array@"
           }
         ],
@@ -209,6 +211,7 @@ Feature: Shifts
         "breakMinutes":0,
         "comment":null,
         "requiredSkills":[],
+        "waitlist":[],
         "assignments":[
           {
             "@id":"@string@",
@@ -438,6 +441,7 @@ Feature: Shifts
             "breakMinutes":0,
             "comment":null,
             "requiredSkills":[],
+        "waitlist":[],
             "assignments":[
               {
                 "@id":"@string@",
@@ -808,7 +812,7 @@ Feature: Shifts
             "totalSlots":2,
             "totalAssignments":1,
             "fillRate":0.5,
-            "status":"in_progress"
+            "published":false
           },
           {
             "weekStart":"2026-07-06",
@@ -816,7 +820,7 @@ Feature: Shifts
             "totalSlots":4,
             "totalAssignments":2,
             "fillRate":0.5,
-            "status":"in_progress"
+            "published":false
           },
           {
             "weekStart":"2026-07-13",
@@ -824,7 +828,7 @@ Feature: Shifts
             "totalSlots":0,
             "totalAssignments":0,
             "fillRate":0,
-            "status":"draft"
+            "published":false
           }
         ]
       }

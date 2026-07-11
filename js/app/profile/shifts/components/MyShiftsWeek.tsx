@@ -10,6 +10,7 @@ import {
 } from '../../../api/slice';
 import WeekNavigator from '../../../admin/shift-planning/components/WeekNavigator';
 import ShiftCard from '../../../admin/shift-planning/components/ShiftCard';
+import OpenShiftsWeek from './OpenShiftsWeek';
 import {
   shiftIsOnDay,
   sortByStart,
@@ -81,6 +82,8 @@ export default function MyShiftsWeek() {
           })
         )}
       </Spin>
+      <h4 className="mt-4">{t('SHIFT_PLANNING_OPEN_SHIFTS')}</h4>
+      <OpenShiftsWeek weekStart={weekStart} />
     </div>
   );
 }

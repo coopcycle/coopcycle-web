@@ -262,6 +262,26 @@
   }
 }
 
+// Courier-facing "open shifts" list: card + apply/unapply actions side by side
+.open-shift-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  &__card {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__actions {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 4px;
+  }
+}
+
 .holiday-bar {
   border-radius: 4px;
   padding: 2px 6px;

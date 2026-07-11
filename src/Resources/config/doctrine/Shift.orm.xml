@@ -51,5 +51,14 @@
         <order-by-field name="createdAt" direction="ASC" />
       </order-by>
     </one-to-many>
+    <one-to-many field="waitlist" target-entity="AppBundle\Entity\ShiftWaitlistEntry" mapped-by="shift" orphan-removal="true">
+      <cascade>
+        <cascade-persist />
+        <cascade-remove />
+      </cascade>
+      <order-by>
+        <order-by-field name="createdAt" direction="ASC" />
+      </order-by>
+    </one-to-many>
   </entity>
 </doctrine-mapping>

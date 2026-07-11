@@ -32,7 +32,7 @@ final class ShiftDashboard
      *     totalSlots: int,
      *     totalAssignments: int,
      *     fillRate: float,
-     *     status: string
+     *     published: bool
      * }>
      */
     #[Groups(['shift_dashboard'])]
@@ -45,7 +45,7 @@ final class ShiftDashboard
      *     totalSlots: int,
      *     totalAssignments: int,
      *     fillRate: float,
-     *     status: string
+     *     published: bool
      * }> $weeks
      */
     public function __construct(array $weeks = [])

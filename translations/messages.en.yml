@@ -1286,6 +1286,7 @@ notifications.tasks_changed: Tasks for %date% changed!
 notifications.tasks_changed_today: Your tasks for today have been updated
 notifications.shifts.assigned: You have been assigned a shift on %date%
 notifications.shifts.week_assigned: Your shifts for the week of %date% have been published
+notifications.shifts.waitlist_promoted: A spot opened up — you are now assigned to a shift on %date%
 notifications.holiday_request.approved: Your holiday request from %start% to %end% has been approved
 notifications.holiday_request.rejected: Your holiday request from %start% to %end% has been rejected
 notifications.restaurant.new_order: New order to accept

@@ -10,9 +10,13 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use AppBundle\Api\Dto\CopyWeekInput;
+use AppBundle\Api\Dto\PublishWeekInput;
 use AppBundle\Api\Filter\ShiftDateFilter;
 use AppBundle\Api\State\CopyWeekProcessor;
 use AppBundle\Api\State\MyShiftsProvider;
+use AppBundle\Api\State\OpenShiftsProvider;
+use AppBundle\Api\State\PublishWeekProcessor;
+use AppBundle\Api\State\ShiftApplicationProcessor;
 use AppBundle\Api\State\ShiftProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -38,6 +42,13 @@ use Symfony\Component\Validator\Constraints as Assert;
             security: 'is_granted(\'ROLE_DISPATCHER\')',
             status: 204
         ),
+        // Declared before /shifts/{id} so the router doesn't match "open" as an id
+        new GetCollection(
+            uriTemplate: '/shifts/open',
+            paginationEnabled: false,
+            provider: OpenShiftsProvider::class,
+            security: 'is_granted(\'ROLE_COURIER\')'
+        ),
         new Get(security: 'is_granted(\'ROLE_DISPATCHER\')'),
         new Put(
             security: 'is_granted(\'ROLE_DISPATCHER\')',
@@ -49,6 +60,26 @@ use Symfony\Component\Validator\Constraints as Assert;
             paginationEnabled: false,
             provider: MyShiftsProvider::class,
             security: 'is_granted(\'ROLE_COURIER\')'
+        ),
+        new Post(
+            uriTemplate: '/shifts/publish_week',
+            input: PublishWeekInput::class,
+            output: false,
+            processor: PublishWeekProcessor::class,
+            security: 'is_granted(\'ROLE_DISPATCHER\')',
+            status: 204
+        ),
+        new Put(
+            uriTemplate: '/shifts/{id}/apply',
+            security: 'is_granted(\'ROLE_COURIER\')',
+            processor: ShiftApplicationProcessor::class,
+            denormalizationContext: ['groups' => ['shift_apply']]
+        ),
+        new Put(
+            uriTemplate: '/shifts/{id}/unapply',
+            security: 'is_granted(\'ROLE_COURIER\')',
+            processor: ShiftApplicationProcessor::class,
+            denormalizationContext: ['groups' => ['shift_apply']]
         ),
     ],
     normalizationContext: ['groups' => ['shift']],
@@ -105,6 +136,15 @@ class Shift
     protected Collection $requiredSkills;
 
     /**
+     * Users queuing for a spot once the shift is full, ordered first come
+     * first served (see ShiftApplicationManager).
+     *
+     * @var Collection<int, ShiftWaitlistEntry>
+     */
+    #[Groups(['shift'])]
+    protected Collection $waitlist;
+
+    /**
      * Virtual property (not persisted) used to assign users on create/update.
      *
      * @var User[]|null
@@ -120,6 +160,7 @@ class Shift
     {
         $this->assignments = new ArrayCollection();
         $this->requiredSkills = new ArrayCollection();
+        $this->waitlist = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -268,6 +309,42 @@ class Shift
         $this->users = $users;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, ShiftWaitlistEntry>
+     */
+    public function getWaitlist(): Collection
+    {
+        return $this->waitlist;
+    }
+
+    public function addWaitlistEntry(ShiftWaitlistEntry $entry): self
+    {
+        if (!$this->waitlist->contains($entry)) {
+            $entry->setShift($this);
+            $this->waitlist->add($entry);
+        }
+
+        return $this;
+    }
+
+    public function removeWaitlistEntry(ShiftWaitlistEntry $entry): self
+    {
+        $this->waitlist->removeElement($entry);
+
+        return $this;
+    }
+
+    public function isWaitlisted(UserInterface $user): bool
+    {
+        foreach ($this->waitlist as $entry) {
+            if ($entry->getUser() === $user) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

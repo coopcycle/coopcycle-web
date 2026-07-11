@@ -640,6 +640,11 @@ export type ShiftAssignment = {
   createdAt: string;
 };
 
+export type ShiftWaitlistEntry = {
+  user: PlanningUser;
+  createdAt: string;
+};
+
 export type Shift = JsonLdEntity & {
   id: number;
   type: string;
@@ -650,6 +655,17 @@ export type Shift = JsonLdEntity & {
   comment: string | null;
   requiredSkills: Skill[];
   assignments: ShiftAssignment[];
+  waitlist: ShiftWaitlistEntry[];
+};
+
+export type Me = JsonLdEntity & {
+  username: string;
+  skills?: Skill[];
+};
+
+export type SchedulePublication = JsonLdEntity & {
+  weekStart: string;
+  createdAt: string;
 };
 
 export type ShiftPayload = {
@@ -711,15 +727,13 @@ export type PutShiftSettingsRequest = {
   serviceLevel?: number;
 };
 
-export type ShiftDashboardWeekStatus = 'draft' | 'in_progress' | 'complete';
-
 export type ShiftDashboardWeek = {
   weekStart: string;
   weekEnd: string;
   totalSlots: number;
   totalAssignments: number;
   fillRate: number;
-  status: ShiftDashboardWeekStatus;
+  published: boolean;
 };
 
 export type ShiftDashboard = JsonLdEntity & {

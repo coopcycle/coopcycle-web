@@ -30,6 +30,7 @@ import GenerateScheduleButton from './components/GenerateScheduleButton';
 import AddToDispatchButton from './components/AddToDispatchButton';
 import ShiftsDashboard from './components/ShiftsDashboard';
 import SkillsManager from './components/SkillsManager';
+import PublishWeekButton from './components/PublishWeekButton';
 import { syncWeekToUrl, weekFromParams } from './utils/weekUrl';
 
 type View = 'employee' | 'calendar' | 'type' | 'dashboard' | 'skills';
@@ -209,6 +210,7 @@ const Planning = ({ shiftTypes }: Props) => {
             <CopyWeekButton weekStart={weekStart} />
             <GenerateScheduleButton weekStart={weekStart} />
             <AddToDispatchButton weekStart={weekStart} />
+            <PublishWeekButton weekStart={weekStart} />
             <Button
               type="primary"
               onClick={() => setModalState({ date: weekStart })}>
