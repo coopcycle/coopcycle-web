@@ -34,6 +34,15 @@ jobs:
         uses: ./.github/actions/run-coopcycle-web
         timeout-minutes: 10
 
+      - name: Cache Valhalla tiles
+        if: matrix.routing_engine == 'valhalla'
+        uses: actions/cache@v4
+        with:
+          path: ./var/valhalla
+          key: valhalla-tiles-ile-de-france-v1
+          restore-keys: |
+            valhalla-tiles-
+
       - name: Start Valhalla (valhalla matrix entry only)
         if: matrix.routing_engine == 'valhalla'
         run: |
@@ -43,20 +52,31 @@ jobs:
       - name: Wait for Valhalla tiles to be ready
         if: matrix.routing_engine == 'valhalla'
         run: |
-          echo "Waiting for Valhalla to finish building tiles (Île-de-France)..."
-          for i in $(seq 1 90); do
-            status=$(curl -sf http://127.0.0.1:8002/status || echo "not ready")
-            if echo "$status" | grep -q '"ready"'; then
+          # The valhalla-scripted image downloads the OSM PBF and builds
+          # the routing graph on first boot. That can take 15-25 min on
+          # a CI runner for the Île-de-France extract (~70 MB PBF).
+          # We probe a real /route call so we know the service is
+          # actually serving routes, not just the entrypoint script
+          # returning "ready" prematurely.
+          ROUTE_JSON='{"locations":[{"lat":48.85,"lon":2.35},{"lat":48.86,"lon":2.36}],"costing":"bicycle","format":"osrm","shape_format":"polyline5"}'
+          echo "Polling Valhalla via /route (real routing request)..."
+          for i in $(seq 1 240); do
+            out=$(curl -sf -G --data-urlencode "json=$ROUTE_JSON" http://127.0.0.1:8002/route 2>/dev/null || echo "")
+            if echo "$out" | grep -q '"code":"Ok"'; then
               echo "Valhalla ready after ~$((i * 10)) seconds"
               exit 0
             fi
-            echo "Attempt $i/90: $status"
+            if [ $((i % 6)) -eq 0 ]; then
+              echo "--- Valhalla container logs at attempt $i ---"
+              docker compose logs --tail=20 valhalla || true
+              echo "--- end logs ---"
+            fi
             sleep 10
           done
-          echo "Valhalla did not become ready in 15 minutes"
+          echo "Valhalla did not become ready in 40 minutes"
           docker compose logs valhalla || true
           exit 1
-        timeout-minutes: 16
+        timeout-minutes: 45
 
       - name: Sanity-check Valhalla from the PHP container
         if: matrix.routing_engine == 'valhalla'
