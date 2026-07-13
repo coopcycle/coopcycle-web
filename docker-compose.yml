@@ -43,6 +43,19 @@ services:
     environment:
       - OSRM_FILENAME=data.osrm
 
+  valhalla:
+    image: ghcr.io/valhalla/valhalla-scripted:latest
+    profiles: ['valhalla']
+    ports:
+      - '8002:8002'
+    volumes:
+      - './var/valhalla:/custom_files'
+    environment:
+      # The valhalla-scripted image downloads the OSM PBF on first boot,
+      # builds the tile set, then starts the routing service on :8002.
+      - tile_urls=https://download.geofabrik.de/europe/france/ile-de-france-latest.osm.pbf
+    restart: unless-stopped
+
   php:
     build:
       dockerfile: './docker/php/Dockerfile'

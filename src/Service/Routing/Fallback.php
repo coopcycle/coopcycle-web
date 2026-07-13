@@ -96,4 +96,9 @@ class Fallback extends Base
             ]
         ];
     }
+
+    public function getTrip(GeoCoordinates ...$coordinates)
+    {
+        return $this->route(...$coordinates);
+    }
 }

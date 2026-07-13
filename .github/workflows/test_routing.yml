@@ -1,0 +1,84 @@
+name: Routing engine tests (OSRM + Valhalla)
+on: push
+
+env:
+  APP_ENV: test
+  NODE_ENV: test
+
+jobs:
+  ROUTING:
+    name: Routing engine (${{ matrix.routing_engine }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        routing_engine:
+          - osrm
+          - valhalla
+      fail-fast: false
+    env:
+      STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
+      STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+      STRIPE_CONNECT_CLIENT_ID: ${{ secrets.STRIPE_CONNECT_CLIENT_ID }}
+      GEOCODE_EARTH_API_KEY: ${{ secrets.GEOCODE_EARTH_API_KEY }}
+      PHP_VERSION: '8.4'
+      COOPCYCLE_ROUTING_ENGINE: ${{ matrix.routing_engine }}
+    steps:
+      - name: Set timezone
+        uses: szenius/set-timezone@v2.0
+        with:
+          timezoneLinux: "Europe/Paris"
+
+      - uses: actions/checkout@v4
+
+      - name: Run CoopCycle Web
+        uses: ./.github/actions/run-coopcycle-web
+        timeout-minutes: 10
+
+      - name: Start Valhalla (valhalla matrix entry only)
+        if: matrix.routing_engine == 'valhalla'
+        run: |
+          mkdir -p ./var/valhalla
+          docker compose --profile valhalla up -d valhalla
+
+      - name: Wait for Valhalla tiles to be ready
+        if: matrix.routing_engine == 'valhalla'
+        run: |
+          echo "Waiting for Valhalla to finish building tiles (Île-de-France)..."
+          for i in $(seq 1 90); do
+            status=$(curl -sf http://127.0.0.1:8002/status || echo "not ready")
+            if echo "$status" | grep -q '"ready"'; then
+              echo "Valhalla ready after ~$((i * 10)) seconds"
+              exit 0
+            fi
+            echo "Attempt $i/90: $status"
+            sleep 10
+          done
+          echo "Valhalla did not become ready in 15 minutes"
+          docker compose logs valhalla || true
+          exit 1
+        timeout-minutes: 16
+
+      - name: Sanity-check Valhalla from the PHP container
+        if: matrix.routing_engine == 'valhalla'
+        run: |
+          docker compose exec -T php curl -sf http://valhalla:8002/status
+
+      - name: Run PHPUnit (routing subset)
+        run: |
+          cp phpunit.xml.dist phpunit.xml
+          docker compose exec -T php vendor/bin/phpunit \
+            tests/AppBundle/Service/Routing/ \
+            tests/AppBundle/MessageHandler/CalculateTaskDistanceHandlerTest.php \
+            tests/AppBundle/Utils/RestaurantFilterTest.php
+
+      - name: Show Symfony warnings on failure
+        if: failure()
+        uses: ./.github/actions/show-symfony-warnings
+
+      - name: Upload Symfony logs on failure
+        if: failure()
+        uses: ./.github/actions/upload-symfony-logs
+
+      - name: Show Webpack logs on failure
+        if: failure()
+        run: docker compose logs webpack
