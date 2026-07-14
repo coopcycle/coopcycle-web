@@ -53,6 +53,8 @@ import {
   PlanningUser,
   ShiftSettings,
   PutShiftSettingsRequest,
+  EmployeeProfile,
+  EmployeeProfilePayload,
   ReportShiftTimeRequest,
   ShiftScheduleSuggestion,
   ShiftBatchResult,
@@ -82,6 +84,7 @@ export const apiSlice = createApi({
     'ShiftSettings',
     'Skill',
     'SchedulePublication',
+    'EmployeeProfile',
   ],
   // The "endpoints" represent operations and requests for this server
   // uri is passed in JSON-LD '@id' key, https://www.w3.org/TR/2014/REC-json-ld-20140116/#node-identifiers
@@ -558,6 +561,34 @@ export const apiSlice = createApi({
       providesTags: ['Skill'],
     }),
 
+    getEmployeeProfiles: builder.query<EmployeeProfile[], void>({
+      query: () => 'api/employee_profiles',
+      transformResponse: (response: HydraCollection<EmployeeProfile>) =>
+        response['hydra:member'],
+      providesTags: ['EmployeeProfile'],
+    }),
+    postEmployeeProfile: builder.mutation<
+      EmployeeProfile,
+      EmployeeProfilePayload
+    >({
+      query: body => ({
+        url: 'api/employee_profiles',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['EmployeeProfile'],
+    }),
+    putEmployeeProfile: builder.mutation<
+      EmployeeProfile,
+      EmployeeProfilePayload & { '@id': Uri }
+    >({
+      query: ({ '@id': uri, ...body }) => ({
+        url: uri,
+        method: 'PUT',
+        body,
+      }),
+      invalidatesTags: ['EmployeeProfile'],
+    }),
     getSkills: builder.query<SkillWithUsers[], void>({
       query: () => 'api/skills',
       transformResponse: (response: HydraCollection<SkillWithUsers>) =>
@@ -775,6 +806,9 @@ export const {
   useGetBankHolidaysQuery,
   useGetShiftDashboardQuery,
   useGetSkillsQuery,
+  useGetEmployeeProfilesQuery,
+  usePostEmployeeProfileMutation,
+  usePutEmployeeProfileMutation,
   usePostSkillMutation,
   usePutSkillMutation,
   useDeleteSkillMutation,

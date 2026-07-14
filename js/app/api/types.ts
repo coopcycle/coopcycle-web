@@ -627,6 +627,26 @@ export type SkillPayload = {
 
 export type PutSkillRequest = SkillPayload & { '@id': Uri };
 
+export type EmployeeProfile = JsonLdEntity & {
+  id: number;
+  // User IRI (the relation serializes as a reference)
+  user: Uri;
+  contractStartDate: string | null;
+  dateOfBirth: string | null;
+  addressStreet: string | null;
+  addressPostalCode: string | null;
+  addressLocality: string | null;
+  addressCountry: string | null;
+  salaryType: 'hourly' | 'monthly' | null;
+  salaryAmount: string | null;
+  weeklyContractedHours: string | null;
+};
+
+export type EmployeeProfilePayload = Omit<
+  EmployeeProfile,
+  keyof JsonLdEntity | 'id'
+>;
+
 export type PlanningUser = JsonLdEntity & {
   username: string;
   roles?: string[];

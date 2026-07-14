@@ -32,10 +32,11 @@ import AddToDispatchButton from './components/AddToDispatchButton';
 import PayrollExportButton from './components/PayrollExportButton';
 import ShiftsDashboard from './components/ShiftsDashboard';
 import SkillsManager from './components/SkillsManager';
+import EmployeesManager from './components/EmployeesManager';
 import PublishWeekButton from './components/PublishWeekButton';
 import { syncWeekToUrl, weekFromParams } from './utils/weekUrl';
 
-type View = 'employee' | 'calendar' | 'type' | 'dashboard' | 'skills';
+type View = 'employee' | 'calendar' | 'type' | 'dashboard' | 'skills' | 'hr';
 
 dayjs.extend(isoWeek);
 
@@ -184,6 +185,7 @@ const Planning = ({ shiftTypes }: Props) => {
               { label: t('SHIFT_PLANNING_VIEW_TYPE'), value: 'type' },
               { label: t('SHIFT_PLANNING_DASHBOARD'), value: 'dashboard' },
               { label: t('SHIFT_PLANNING_VIEW_SKILLS'), value: 'skills' },
+              { label: t('SHIFT_PLANNING_VIEW_HR'), value: 'hr' },
             ]}
           />
           {isPlanningView && (
@@ -231,6 +233,7 @@ const Planning = ({ shiftTypes }: Props) => {
         />
       )}
       {view === 'skills' && <SkillsManager />}
+      {view === 'hr' && <EmployeesManager />}
       {isPlanningView && <ComplianceAlert weekStart={weekStart} />}
       {view === 'employee' && (
         <Spin spinning={isFetching}>
