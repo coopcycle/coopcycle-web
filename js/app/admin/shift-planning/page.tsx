@@ -29,6 +29,7 @@ import ComplianceAlert from './components/ComplianceAlert';
 import ShiftSettingsModal from './components/ShiftSettingsModal';
 import GenerateScheduleButton from './components/GenerateScheduleButton';
 import AddToDispatchButton from './components/AddToDispatchButton';
+import PayrollExportButton from './components/PayrollExportButton';
 import ShiftsDashboard from './components/ShiftsDashboard';
 import SkillsManager from './components/SkillsManager';
 import PublishWeekButton from './components/PublishWeekButton';
@@ -211,6 +212,7 @@ const Planning = ({ shiftTypes }: Props) => {
             <CopyWeekButton weekStart={weekStart} />
             <GenerateScheduleButton weekStart={weekStart} />
             <AddToDispatchButton weekStart={weekStart} />
+            <PayrollExportButton />
             <PublishWeekButton weekStart={weekStart} />
             <Button
               type="primary"

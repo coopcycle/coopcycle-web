@@ -1291,6 +1291,12 @@ shifts.type.drive: Delivery shift
 shifts.type.dispatch: Dispatch shift
 shifts.type.admin: Admin shift
 shifts.calendar.break: 'Break: %minutes% min'
+payroll.export.username: Username
+payroll.export.name: Name
+payroll.export.planned_hours: Planned hours
+payroll.export.worked_hours: Worked hours
+payroll.export.overtime_hours: Overtime hours
+payroll.export.holiday_days: Holiday days
 notifications.holiday_request.approved: Your holiday request from %start% to %end% has been approved
 notifications.holiday_request.rejected: Your holiday request from %start% to %end% has been rejected
 notifications.restaurant.new_order: New order to accept

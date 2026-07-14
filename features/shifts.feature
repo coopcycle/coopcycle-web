@@ -1182,3 +1182,71 @@ Feature: Shifts
       }
       """
     Then the response status code should be 400
+
+  Scenario: Dispatcher exports monthly payroll variables
+    Given the courier "sarah" is loaded:
+      | email    | sarah@coopcycle.org |
+      | password | 123456              |
+    And the user "bob" is loaded:
+      | email    | bob@coopcycle.org |
+      | password | 123456            |
+    And the user "bob" has role "ROLE_DISPATCHER"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/shifts" with body:
+      """
+      {
+        "type": "drive",
+        "startsAt": "2026-07-13T09:00:00",
+        "endsAt": "2026-07-13T17:00:00",
+        "breakMinutes": 30,
+        "users": ["/api/users/1"]
+      }
+      """
+    Then the response status code should be 201
+    Given the user "sarah" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "PUT" request to "/api/shifts/1/report_time" with body:
+      """
+      {
+        "startsAt": "2026-07-13T09:00:00",
+        "endsAt": "2026-07-13T19:00:00",
+        "breakMinutes": 30
+      }
+      """
+    Then the response status code should be 200
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "POST" request to "/api/holiday_requests" with body:
+      """
+      {
+        "startDate": "2026-07-30",
+        "endDate": "2026-08-03",
+        "comment": "Long weekend"
+      }
+      """
+    Then the response status code should be 201
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/holiday_requests/1/approve" with body:
+      """
+      {}
+      """
+    Then the response status code should be 200
+    When the user "bob" sends a "GET" request to "/api/payroll_export?month=2026-07&format=csv"
+    Then the response status code should be 200
+    And the response should contain "sarah,,7.5,9.5,2,2"
+    When the user "bob" sends a "GET" request to "/api/payroll_export?month=2026-07&format=xlsx"
+    Then the response status code should be 200
+    When the user "bob" sends a "GET" request to "/api/payroll_export?month=2026-07&format=doc"
+    Then the response status code should be 400
+
+  Scenario: Courier can not export payroll variables
+    Given the courier "sarah" is loaded:
+      | email    | sarah@coopcycle.org |
+      | password | 123456              |
+    And the user "sarah" is authenticated
+    When the user "sarah" sends a "GET" request to "/api/payroll_export?month=2026-07&format=csv"
+    Then the response status code should be 403

@@ -797,6 +797,12 @@ shifts.type.drive: Créneau livraison
 shifts.type.dispatch: Créneau dispatch
 shifts.type.admin: Créneau administratif
 shifts.calendar.break: 'Pause : %minutes% min'
+payroll.export.username: Identifiant
+payroll.export.name: Nom
+payroll.export.planned_hours: Heures planifiées
+payroll.export.worked_hours: Heures travaillées
+payroll.export.overtime_hours: Heures supplémentaires
+payroll.export.holiday_days: Jours de congés
 notifications.holiday_request.approved: Votre demande de congés du %start% au %end% a été approuvée
 notifications.holiday_request.rejected: Votre demande de congés du %start% au %end% a été refusée
 notifications.restaurant.new_order: Nouvelle commande à confirmer
