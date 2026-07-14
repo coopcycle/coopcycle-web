@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Alert,
   App,
@@ -29,6 +29,7 @@ import {
 } from '../utils/date';
 import { shiftTypeColor } from '../utils/shiftTypeColor';
 import { datePickerProps } from '../../../utils/antd';
+import ReportTimeModal from './ReportTimeModal';
 
 export type ShiftModalState = {
   shift?: Shift;
@@ -81,6 +82,12 @@ export default function ShiftModal({
   const { data: skills } = useGetSkillsQuery();
 
   const shift = state?.shift;
+
+  // Worked-time reports are edited against the freshest version of the shift
+  // (the modal keeps a snapshot in `state`, but `shifts` refetches on change)
+  const freshShift =
+    (shift && shifts.find(s => s['@id'] === shift['@id'])) || shift;
+  const [reportUser, setReportUser] = useState<string | null>(null);
 
   useEffect(() => {
     if (!state) {
@@ -333,6 +340,40 @@ export default function ShiftModal({
         <Form.Item name="comment" label={t('SHIFT_PLANNING_COMMENT')}>
           <Input.TextArea rows={2} maxLength={65535} />
         </Form.Item>
+        {freshShift && freshShift.assignments.length > 0 && (
+          <Form.Item label={t('SHIFT_TIME_REPORT_SECTION')}>
+            <div className="shift-worked-time">
+              {freshShift.assignments.map(a => (
+                <div key={a.user['@id']} className="shift-worked-time__row">
+                  <span>
+                    <strong>{a.user.username}</strong>{' '}
+                    {a.adjustment ? (
+                      <span className="shift-worked-time__reported">
+                        {t('SHIFT_TIME_REPORT_SUMMARY', {
+                          start: wallClockTime(a.adjustment.startsAt),
+                          end: wallClockTime(a.adjustment.endsAt),
+                          break: a.adjustment.breakMinutes,
+                        })}
+                      </span>
+                    ) : (
+                      <span className="text-muted">
+                        {t('SHIFT_TIME_REPORT_AS_PLANNED')}
+                      </span>
+                    )}
+                  </span>
+                  <Button
+                    type="link"
+                    size="small"
+                    onClick={() => setReportUser(a.user.username)}>
+                    {a.adjustment
+                      ? t('SHIFT_TIME_REPORT_EDIT')
+                      : t('SHIFT_TIME_REPORT_BUTTON')}
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </Form.Item>
+        )}
         {skillGaps.length > 0 && (
           <Alert
             type="warning"
@@ -394,6 +435,18 @@ export default function ShiftModal({
           />
         )}
       </Form>
+      {freshShift && reportUser && (
+        <ReportTimeModal
+          shift={freshShift}
+          username={reportUser}
+          userUri={
+            freshShift.assignments.find(a => a.user.username === reportUser)
+              ?.user['@id']
+          }
+          open
+          onClose={() => setReportUser(null)}
+        />
+      )}
     </Modal>
   );
 }

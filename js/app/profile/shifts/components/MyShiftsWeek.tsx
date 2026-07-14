@@ -1,20 +1,24 @@
 import React, { useState } from 'react';
-import { Empty, Spin, Tooltip } from 'antd';
-import { StarFilled } from '@ant-design/icons';
+import { Button, Empty, Spin, Tooltip } from 'antd';
+import { FieldTimeOutlined, StarFilled } from '@ant-design/icons';
 import dayjs, { Dayjs } from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import {
   useGetBankHolidaysQuery,
+  useGetMeQuery,
   useGetMyShiftsQuery,
   useGetShiftSettingsQuery,
 } from '../../../api/slice';
 import WeekNavigator from '../../../admin/shift-planning/components/WeekNavigator';
 import ShiftCard from '../../../admin/shift-planning/components/ShiftCard';
+import ReportTimeModal from '../../../admin/shift-planning/components/ReportTimeModal';
 import OpenShiftsWeek from './OpenShiftsWeek';
 import {
   shiftIsOnDay,
   sortByStart,
+  wallClockTime,
 } from '../../../admin/shift-planning/utils/date';
+import { Shift } from '../../../api/types';
 
 export default function MyShiftsWeek() {
   const { t } = useTranslation();
@@ -27,6 +31,8 @@ export default function MyShiftsWeek() {
   const before = weekStart.add(6, 'day').format('YYYY-MM-DD');
 
   const { data, isFetching } = useGetMyShiftsQuery({ after, before });
+  const { data: me } = useGetMeQuery();
+  const [reportShift, setReportShift] = useState<Shift | null>(null);
   const { data: shiftSettings } = useGetShiftSettingsQuery();
   const { data: bankHolidaysData } = useGetBankHolidaysQuery({
     after,
@@ -70,13 +76,39 @@ export default function MyShiftsWeek() {
                   )}
                   {day.format('dddd DD MMM')}
                 </strong>
-                {dayShifts.map(shift => (
-                  <ShiftCard
-                    key={shift['@id']}
-                    shift={shift}
-                    typeColors={shiftSettings?.typeColors}
-                  />
-                ))}
+                {dayShifts.map(shift => {
+                  const adjustment = shift.assignments.find(
+                    a => a.user.username === me?.username,
+                  )?.adjustment;
+                  return (
+                    <div key={shift['@id']}>
+                      <ShiftCard
+                        shift={shift}
+                        typeColors={shiftSettings?.typeColors}
+                      />
+                      <div className="my-shift-actual">
+                        {adjustment && (
+                          <span className="my-shift-actual__summary">
+                            {t('SHIFT_TIME_REPORT_SUMMARY', {
+                              start: wallClockTime(adjustment.startsAt),
+                              end: wallClockTime(adjustment.endsAt),
+                              break: adjustment.breakMinutes,
+                            })}
+                          </span>
+                        )}
+                        <Button
+                          type="link"
+                          size="small"
+                          icon={<FieldTimeOutlined />}
+                          onClick={() => setReportShift(shift)}>
+                          {adjustment
+                            ? t('SHIFT_TIME_REPORT_EDIT')
+                            : t('SHIFT_TIME_REPORT_BUTTON')}
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             );
           })
@@ -84,6 +116,14 @@ export default function MyShiftsWeek() {
       </Spin>
       <h4 className="mt-4">{t('SHIFT_PLANNING_OPEN_SHIFTS')}</h4>
       <OpenShiftsWeek weekStart={weekStart} />
+      {reportShift && me && (
+        <ReportTimeModal
+          shift={reportShift}
+          username={me.username}
+          open
+          onClose={() => setReportShift(null)}
+        />
+      )}
     </div>
   );
 }

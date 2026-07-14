@@ -235,6 +235,7 @@ const Planning = ({ shiftTypes }: Props) => {
           <EmployeeGrid
             weekStart={weekStart}
             shifts={filteredShifts}
+            allShifts={shifts}
             holidayRequests={weekHolidays}
             users={visibleUsers}
             allUsers={sortedUsers}

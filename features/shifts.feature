@@ -52,7 +52,8 @@ Feature: Shifts
               "@type":"User",
               "username":"sarah"
             },
-            "createdAt":"@string@.isDateTime()"
+            "createdAt":"@string@.isDateTime()",
+            "adjustment":"@*@"
           },
           {
             "@id":"@string@",
@@ -62,7 +63,8 @@ Feature: Shifts
               "@type":"User",
               "username":"alice"
             },
-            "createdAt":"@string@.isDateTime()"
+            "createdAt":"@string@.isDateTime()",
+            "adjustment":"@*@"
           }
         ]
       }
@@ -221,7 +223,8 @@ Feature: Shifts
               "@type":"User",
               "username":"alice"
             },
-            "createdAt":"@string@.isDateTime()"
+            "createdAt":"@string@.isDateTime()",
+            "adjustment":"@*@"
           }
         ]
       }
@@ -451,7 +454,8 @@ Feature: Shifts
                   "@type":"User",
                   "username":"sarah"
                 },
-                "createdAt":"@string@.isDateTime()"
+                "createdAt":"@string@.isDateTime()",
+                "adjustment":"@*@"
               }
             ]
           }
@@ -1002,3 +1006,179 @@ Feature: Shifts
     When I add "Accept" header equal to "application/ld+json"
     And the user "sarah" sends a "GET" request to "/api/shifts/compliance?week=2026-07-22"
     Then the response status code should be 403
+
+  Scenario: Employee reports actual worked time, dispatcher adjusts it, employee reverts it
+    Given the courier "sarah" is loaded:
+      | email    | sarah@coopcycle.org |
+      | password | 123456              |
+    And the courier "alice" is loaded:
+      | email    | alice@coopcycle.org |
+      | password | 123456              |
+    And the user "bob" is loaded:
+      | email    | bob@coopcycle.org |
+      | password | 123456            |
+    And the user "bob" has role "ROLE_DISPATCHER"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/shifts" with body:
+      """
+      {
+        "type": "drive",
+        "startsAt": "2026-07-13T09:00:00",
+        "endsAt": "2026-07-13T17:00:00",
+        "breakMinutes": 30,
+        "users": ["/api/users/1"]
+      }
+      """
+    Then the response status code should be 201
+    Given the user "sarah" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "PUT" request to "/api/shifts/1/report_time" with body:
+      """
+      {
+        "startsAt": "2026-07-13T09:00:00",
+        "endsAt": "2026-07-13T18:30:00",
+        "breakMinutes": 30,
+        "comment": "Big delivery batch, stayed late"
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Shift",
+        "@id":"@string@",
+        "@type":"Shift",
+        "id":1,
+        "type":"drive",
+        "startsAt":"@string@.isDateTime()",
+        "endsAt":"@string@.isDateTime()",
+        "slots":1,
+        "breakMinutes":30,
+        "comment":null,
+        "requiredSkills":[],
+        "waitlist":[],
+        "assignments":[
+          {
+            "@id":"@string@",
+            "@type":"ShiftAssignment",
+            "user":{
+              "@id":"/api/users/1",
+              "@type":"User",
+              "username":"sarah"
+            },
+            "createdAt":"@string@.isDateTime()",
+            "adjustment":{
+              "@id":"@string@",
+              "@type":"ShiftTimeAdjustment",
+              "startsAt":"@string@.contains('2026-07-13T09:00:00')",
+              "endsAt":"@string@.contains('2026-07-13T18:30:00')",
+              "breakMinutes":30,
+              "comment":"Big delivery batch, stayed late",
+              "reportedBy":{
+                "@id":"/api/users/1",
+                "@type":"User",
+                "username":"sarah"
+              },
+              "updatedAt":"@string@.isDateTime()"
+            }
+          }
+        ]
+      }
+      """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/shifts/1/report_time" with body:
+      """
+      {
+        "user": "/api/users/1",
+        "startsAt": "2026-07-13T09:00:00",
+        "endsAt": "2026-07-13T18:00:00",
+        "breakMinutes": 45
+      }
+      """
+    Then the response status code should be 200
+    And the response should contain "18:00:00"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "PUT" request to "/api/shifts/1/report_time" with body:
+      """
+      { "clear": true }
+      """
+    Then the response status code should be 200
+    And the JSON should match:
+      """
+      {
+        "@context":"@string@",
+        "@id":"@string@",
+        "@type":"Shift",
+        "id":1,
+        "type":"drive",
+        "startsAt":"@string@.isDateTime()",
+        "endsAt":"@string@.isDateTime()",
+        "slots":1,
+        "breakMinutes":30,
+        "comment":null,
+        "requiredSkills":[],
+        "waitlist":[],
+        "assignments":[
+          {
+            "@id":"@string@",
+            "@type":"ShiftAssignment",
+            "user":"@*@",
+            "createdAt":"@string@.isDateTime()",
+            "adjustment":null
+          }
+        ]
+      }
+      """
+
+  Scenario: Employee can not report time for someone else or on a shift they are not assigned to
+    Given the courier "sarah" is loaded:
+      | email    | sarah@coopcycle.org |
+      | password | 123456              |
+    And the courier "alice" is loaded:
+      | email    | alice@coopcycle.org |
+      | password | 123456              |
+    And the user "bob" is loaded:
+      | email    | bob@coopcycle.org |
+      | password | 123456            |
+    And the user "bob" has role "ROLE_DISPATCHER"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/shifts" with body:
+      """
+      {
+        "type": "drive",
+        "startsAt": "2026-07-13T09:00:00",
+        "endsAt": "2026-07-13T17:00:00",
+        "users": ["/api/users/1"]
+      }
+      """
+    Then the response status code should be 201
+    Given the user "alice" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "alice" sends a "PUT" request to "/api/shifts/1/report_time" with body:
+      """
+      {
+        "user": "/api/users/1",
+        "startsAt": "2026-07-13T09:00:00",
+        "endsAt": "2026-07-13T18:00:00"
+      }
+      """
+    Then the response status code should be 403
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "alice" sends a "PUT" request to "/api/shifts/1/report_time" with body:
+      """
+      {
+        "startsAt": "2026-07-13T09:00:00",
+        "endsAt": "2026-07-13T18:00:00"
+      }
+      """
+    Then the response status code should be 400

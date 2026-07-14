@@ -63,6 +63,21 @@ export function holidayCoversDay(
   );
 }
 
+/** Net worked hours of a wall-clock interval, break deducted */
+export function netHours(
+  startIso: string,
+  endIso: string,
+  breakMinutes: number,
+): number {
+  const minutes =
+    (new Date(wallClock(endIso)).getTime() -
+      new Date(wallClock(startIso)).getTime()) /
+      60000 -
+    breakMinutes;
+
+  return Math.max(0, minutes) / 60;
+}
+
 export function minutesFromMidnight(iso: string): number {
   const [h, m] = wallClockTime(iso).split(':').map(Number);
   return h * 60 + m;

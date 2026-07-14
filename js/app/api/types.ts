@@ -635,9 +635,20 @@ export type PlanningUser = JsonLdEntity & {
   skills?: Skill[];
 };
 
+// Actual worked time reported for an assignment (null = worked as planned)
+export type ShiftTimeAdjustment = {
+  startsAt: string;
+  endsAt: string;
+  breakMinutes: number;
+  comment: string | null;
+  reportedBy: PlanningUser | null;
+  updatedAt: string;
+};
+
 export type ShiftAssignment = {
   user: PlanningUser;
   createdAt: string;
+  adjustment: ShiftTimeAdjustment | null;
 };
 
 export type ShiftWaitlistEntry = {
@@ -813,6 +824,18 @@ export type ShiftScheduleSuggestion = JsonLdEntity & {
 
 export type ShiftCalendar = JsonLdEntity & {
   feedUrl: string;
+};
+
+export type ReportShiftTimeRequest = {
+  uri: Uri;
+  // Dispatchers can report for any assignee; employees omit this (self)
+  user?: Uri;
+  startsAt?: string;
+  endsAt?: string;
+  breakMinutes?: number;
+  comment?: string | null;
+  // true = delete the report, back to "worked as planned"
+  clear?: boolean;
 };
 
 export type ShiftBatchResult = JsonLdEntity & {

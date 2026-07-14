@@ -53,6 +53,7 @@ import {
   PlanningUser,
   ShiftSettings,
   PutShiftSettingsRequest,
+  ReportShiftTimeRequest,
   ShiftScheduleSuggestion,
   ShiftBatchResult,
   ShiftDispatchSyncResult,
@@ -693,6 +694,14 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ['Shift'],
     }),
+    reportShiftTime: builder.mutation<Shift, ReportShiftTimeRequest>({
+      query: ({ uri, ...body }) => ({
+        url: `${uri}/report_time`,
+        method: 'PUT',
+        body,
+      }),
+      invalidatesTags: ['Shift'],
+    }),
     unapplyFromShift: builder.mutation<Shift, Uri>({
       query: uri => ({
         url: `${uri}/unapply`,
@@ -775,6 +784,7 @@ export const {
   useGetOpenShiftsQuery,
   useGetShiftComplianceQuery,
   useGetShiftCalendarQuery,
+  useReportShiftTimeMutation,
   useApplyToShiftMutation,
   useUnapplyFromShiftMutation,
 } = apiSlice;

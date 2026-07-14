@@ -48,13 +48,16 @@ final class ComplianceChecker
 
         $byUser = [];
         foreach ($shifts as $shift) {
-            $interval = [
-                'start' => \DateTimeImmutable::createFromMutable($shift->getStartsAt()),
-                'end' => \DateTimeImmutable::createFromMutable($shift->getEndsAt()),
-                'breakMinutes' => $shift->getBreakMinutes(),
-            ];
-            foreach ($shift->getAssignedUsers() as $user) {
-                $byUser[$user->getUserIdentifier()][] = $interval;
+            foreach ($shift->getAssignments() as $assignment) {
+                // When actual worked time was reported, compliance is checked
+                // against it rather than against the plan
+                $adjustment = $assignment->getAdjustment();
+
+                $byUser[$assignment->getUser()->getUserIdentifier()][] = [
+                    'start' => \DateTimeImmutable::createFromMutable($adjustment?->getStartsAt() ?? $shift->getStartsAt()),
+                    'end' => \DateTimeImmutable::createFromMutable($adjustment?->getEndsAt() ?? $shift->getEndsAt()),
+                    'breakMinutes' => $adjustment?->getBreakMinutes() ?? $shift->getBreakMinutes(),
+                ];
             }
         }
 

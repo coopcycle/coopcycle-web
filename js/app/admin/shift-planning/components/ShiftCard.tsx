@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tooltip } from 'antd';
-import { WarningFilled } from '@ant-design/icons';
+import { FieldTimeOutlined, WarningFilled } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { Shift } from '../../../api/types';
 import { shiftTypeColor } from '../utils/shiftTypeColor';
@@ -34,6 +34,11 @@ export default function ShiftCard({
       }}>
       <div className="shift-card__type">
         {shift.type}
+        {shift.assignments.some(a => a.adjustment) && (
+          <Tooltip title={t('SHIFT_TIME_REPORT_CARD_TOOLTIP')}>
+            <FieldTimeOutlined className="shift-card__adjusted" />
+          </Tooltip>
+        )}
         {conflictWith && (
           <Tooltip
             title={t('SHIFT_PLANNING_OVERLAP_TOOLTIP', {

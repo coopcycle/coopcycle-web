@@ -88,7 +88,8 @@ Feature: Shift applications
               "@type":"User",
               "username":"sarah"
             },
-            "createdAt":"@string@.isDateTime()"
+            "createdAt":"@string@.isDateTime()",
+            "adjustment":"@*@"
           }
         ],
         "waitlist":[],
@@ -118,7 +119,8 @@ Feature: Shift applications
               "@type":"User",
               "username":"sarah"
             },
-            "createdAt":"@string@.isDateTime()"
+            "createdAt":"@string@.isDateTime()",
+            "adjustment":"@*@"
           }
         ],
         "waitlist":[
@@ -159,7 +161,8 @@ Feature: Shift applications
               "@type":"User",
               "username":"alice"
             },
-            "createdAt":"@string@.isDateTime()"
+            "createdAt":"@string@.isDateTime()",
+            "adjustment":"@*@"
           }
         ],
         "waitlist":[],

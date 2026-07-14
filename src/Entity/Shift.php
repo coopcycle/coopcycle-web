@@ -11,6 +11,7 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use AppBundle\Api\Dto\CopyWeekInput;
 use AppBundle\Api\Dto\PublishWeekInput;
+use AppBundle\Api\Dto\ShiftTimeReportInput;
 use AppBundle\Api\Filter\ShiftDateFilter;
 use AppBundle\Api\State\CopyWeekProcessor;
 use AppBundle\Api\State\MyShiftsProvider;
@@ -18,6 +19,7 @@ use AppBundle\Api\State\OpenShiftsProvider;
 use AppBundle\Api\State\PublishWeekProcessor;
 use AppBundle\Api\State\ShiftApplicationProcessor;
 use AppBundle\Api\State\ShiftProcessor;
+use AppBundle\Api\State\ShiftTimeReportProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -80,6 +82,15 @@ use Symfony\Component\Validator\Constraints as Assert;
             security: 'is_granted(\'ROLE_COURIER\')',
             processor: ShiftApplicationProcessor::class,
             denormalizationContext: ['groups' => ['shift_apply']]
+        ),
+        new Put(
+            uriTemplate: '/shifts/{id}/report_time',
+            input: ShiftTimeReportInput::class,
+            processor: ShiftTimeReportProcessor::class,
+            // Assignees report their own hours, dispatchers anyone's;
+            // the processor enforces the self-only rule for couriers
+            security: 'is_granted(\'ROLE_COURIER\') or is_granted(\'ROLE_DISPATCHER\')',
+            denormalizationContext: ['groups' => ['shift_time_report']]
         ),
     ],
     normalizationContext: ['groups' => ['shift']],
