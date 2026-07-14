@@ -23,4 +23,13 @@ final class ShiftSettingsInput
      */
     #[Groups(['shift_settings'])]
     public ?float $serviceLevel = null;
+
+    /**
+     * Legal constraints: {template: string|null, rules: {<override>}}.
+     * Omit (null) to leave the current configuration untouched.
+     *
+     * @var array{template: ?string, rules?: array<string, float|int|null>}|null
+     */
+    #[Groups(['shift_settings'])]
+    public ?array $legal = null;
 }

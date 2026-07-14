@@ -7,12 +7,16 @@ use ApiPlatform\State\ProcessorInterface;
 use AppBundle\Api\Dto\ShiftSettingsInput;
 use AppBundle\Api\Resource\ShiftSettings;
 use AppBundle\Service\SettingsManager;
+use AppBundle\Service\Shift\Compliance\ConstraintTemplates;
+use AppBundle\Service\Shift\Compliance\LegalConfig;
 use AppBundle\Service\Shift\ScheduleGenerator;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 
 final class ShiftSettingsProcessor implements ProcessorInterface
 {
     public function __construct(
-        private readonly SettingsManager $settingsManager)
+        private readonly SettingsManager $settingsManager,
+        private readonly LegalConfig $legalConfig)
     {}
 
     /**
@@ -45,10 +49,25 @@ final class ShiftSettingsProcessor implements ProcessorInterface
         $this->settingsManager->set('shift_planning_config', json_encode($config));
         $this->settingsManager->flush();
 
+        if (null !== $data->legal) {
+            $template = $data->legal['template'] ?? null;
+            if (null !== $template && (!is_string($template) || !ConstraintTemplates::has($template))) {
+                throw new BadRequestException(sprintf('Unknown legal constraints template "%s"', is_string($template) ? $template : gettype($template)));
+            }
+
+            $rules = $data->legal['rules'] ?? [];
+            $this->legalConfig->save($template, is_array($rules) ? $rules : []);
+        }
+
         return new ShiftSettings(
             $typeColors,
             (float) ($config['throughput'] ?? ScheduleGenerator::DEFAULTS['throughput']),
-            (float) ($config['serviceLevel'] ?? ScheduleGenerator::DEFAULTS['serviceLevel'])
+            (float) ($config['serviceLevel'] ?? ScheduleGenerator::DEFAULTS['serviceLevel']),
+            [
+                'template' => $this->legalConfig->getTemplate(),
+                'rules' => $this->legalConfig->getOverrides(),
+            ],
+            ConstraintTemplates::TEMPLATES
         );
     }
 

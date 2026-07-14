@@ -58,6 +58,8 @@ import {
   ShiftDispatchSyncResult,
   ProposedShift,
   BankHolidays,
+  ShiftCalendar,
+  ShiftCompliance,
   ShiftDashboard,
   GetShiftDashboardArgs,
   Skill,
@@ -672,6 +674,17 @@ export const apiSlice = createApi({
       }),
       providesTags: ['Shift', 'SchedulePublication'],
     }),
+    getShiftCompliance: builder.query<ShiftCompliance, { week: string }>({
+      query: ({ week }) => ({
+        url: 'api/shifts/compliance',
+        params: { week },
+      }),
+      // Recheck whenever shifts change or the legal config is edited
+      providesTags: ['Shift', 'ShiftSettings'],
+    }),
+    getShiftCalendar: builder.query<ShiftCalendar, void>({
+      query: () => 'api/me/shift_calendar',
+    }),
     applyToShift: builder.mutation<Shift, Uri>({
       query: uri => ({
         url: `${uri}/apply`,
@@ -760,6 +773,8 @@ export const {
   useGetSchedulePublicationsQuery,
   usePublishWeekMutation,
   useGetOpenShiftsQuery,
+  useGetShiftComplianceQuery,
+  useGetShiftCalendarQuery,
   useApplyToShiftMutation,
   useUnapplyFromShiftMutation,
 } = apiSlice;

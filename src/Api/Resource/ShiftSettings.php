@@ -45,12 +45,37 @@ final class ShiftSettings
     public float $serviceLevel;
 
     /**
+     * Active legal constraints: the chosen template (null = disabled) and the
+     * admin's rule overrides (sparse; null value = that rule disabled).
+     *
+     * @var array{template: ?string, rules: array<string, float|int|null>}
+     */
+    #[Groups(['shift_settings'])]
+    public array $legal;
+
+    /**
+     * The shipped templates with their default rule values, so the UI can
+     * offer choices and show/reset defaults.
+     *
+     * @var array<string, array{country: string, sector: string, rules: array<string, float|int>}>
+     */
+    #[Groups(['shift_settings'])]
+    public array $legalTemplates;
+
+    /**
      * @param array<string, string> $typeColors
      */
-    public function __construct(array $typeColors = [], float $throughput = 0.0, float $serviceLevel = 0.0)
+    public function __construct(
+        array $typeColors = [],
+        float $throughput = 0.0,
+        float $serviceLevel = 0.0,
+        array $legal = ['template' => null, 'rules' => []],
+        array $legalTemplates = [])
     {
         $this->typeColors = $typeColors;
         $this->throughput = $throughput;
         $this->serviceLevel = $serviceLevel;
+        $this->legal = $legal;
+        $this->legalTemplates = $legalTemplates;
     }
 }

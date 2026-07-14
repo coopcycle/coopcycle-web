@@ -25,6 +25,7 @@ import CopyWeekButton from './components/CopyWeekButton';
 import ShiftTypeFilter, {
   ShiftTypeFilterHandle,
 } from './components/ShiftTypeFilter';
+import ComplianceAlert from './components/ComplianceAlert';
 import ShiftSettingsModal from './components/ShiftSettingsModal';
 import GenerateScheduleButton from './components/GenerateScheduleButton';
 import AddToDispatchButton from './components/AddToDispatchButton';
@@ -228,6 +229,7 @@ const Planning = ({ shiftTypes }: Props) => {
         />
       )}
       {view === 'skills' && <SkillsManager />}
+      {isPlanningView && <ComplianceAlert weekStart={weekStart} />}
       {view === 'employee' && (
         <Spin spinning={isFetching}>
           <EmployeeGrid

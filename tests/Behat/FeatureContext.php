@@ -24,6 +24,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\Urbantz\Hub as UrbantzHub;
 use AppBundle\Fixtures\DatabasePurger;
 use AppBundle\Service\SettingsManager;
+use AppBundle\Service\Shift\CalendarFeed;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderNumberAssigner;
 use AppBundle\Entity\Sylius\Product;
@@ -547,6 +548,28 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
         $this->restContext->iAddHeaderEqualTo('Authorization', 'Bearer ' . $this->tokens[$username]);
         $this->restContext->iSendARequestToWithParameters($method, $url, $data);
+    }
+
+    #[When('the user :username requests their shift calendar feed')]
+    public function theUserRequestsTheirShiftCalendarFeed($username)
+    {
+        $user = $this->userManager->findUserByUsername($username);
+
+        $feedUrl = $this->getContainer()->get('test.service_container')
+            ->get(CalendarFeed::class)
+            ->getFeedUrl($user);
+
+        // The feed is fetched anonymously (calendar apps have no session)
+        $this->restContext->iSendARequestTo('GET', $feedUrl);
+    }
+
+    #[When('the user :username requests their shift calendar feed with an invalid token')]
+    public function theUserRequestsTheirShiftCalendarFeedWithAnInvalidToken($username)
+    {
+        $user = $this->userManager->findUserByUsername($username);
+
+        $this->restContext->iSendARequestTo('GET',
+            sprintf('/calendar/shifts/%d/%s/shifts.ics', $user->getId(), str_repeat('0', 64)));
     }
 
     #[When('the OAuth client :clientName sends a :method request to :url')]

@@ -6,12 +6,15 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use AppBundle\Api\Resource\ShiftSettings;
 use AppBundle\Service\SettingsManager;
+use AppBundle\Service\Shift\Compliance\ConstraintTemplates;
+use AppBundle\Service\Shift\Compliance\LegalConfig;
 use AppBundle\Service\Shift\ScheduleGenerator;
 
 final class ShiftSettingsProvider implements ProviderInterface
 {
     public function __construct(
-        private readonly SettingsManager $settingsManager)
+        private readonly SettingsManager $settingsManager,
+        private readonly LegalConfig $legalConfig)
     {}
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): ShiftSettings
@@ -22,7 +25,12 @@ final class ShiftSettingsProvider implements ProviderInterface
         return new ShiftSettings(
             $typeColors,
             (float) ($config['throughput'] ?? ScheduleGenerator::DEFAULTS['throughput']),
-            (float) ($config['serviceLevel'] ?? ScheduleGenerator::DEFAULTS['serviceLevel'])
+            (float) ($config['serviceLevel'] ?? ScheduleGenerator::DEFAULTS['serviceLevel']),
+            [
+                'template' => $this->legalConfig->getTemplate(),
+                'rules' => $this->legalConfig->getOverrides(),
+            ],
+            ConstraintTemplates::TEMPLATES
         );
     }
 

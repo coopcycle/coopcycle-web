@@ -715,16 +715,52 @@ export type CopyWeekRequest = {
   targetWeek: string;
 };
 
+// null = that rule is disabled
+export type LegalRules = Record<string, number | null>;
+
+export type LegalConfig = {
+  template: string | null;
+  rules: LegalRules;
+};
+
+export type LegalTemplate = {
+  country: string;
+  sector: string;
+  rules: Record<string, number>;
+};
+
 export type ShiftSettings = JsonLdEntity & {
   typeColors: Record<string, string>;
   throughput: number;
   serviceLevel: number;
+  legal: LegalConfig;
+  legalTemplates: Record<string, LegalTemplate>;
 };
 
 export type PutShiftSettingsRequest = {
   typeColors: Record<string, string>;
   throughput?: number;
   serviceLevel?: number;
+  legal?: LegalConfig;
+};
+
+export type ComplianceViolation = {
+  username: string;
+  rule: string;
+  limit: number;
+  actual: number;
+  date?: string;
+  weeks?: number;
+  from?: string;
+  to?: string;
+  workedHours?: number;
+  thresholdHours?: number;
+};
+
+export type ShiftCompliance = JsonLdEntity & {
+  week: string;
+  template: string | null;
+  violations: ComplianceViolation[];
 };
 
 export type ShiftDashboardWeek = {
@@ -773,6 +809,10 @@ export type ShiftScheduleSuggestion = JsonLdEntity & {
     observations: number;
     forecaster: 'prophet' | 'heuristic';
   };
+};
+
+export type ShiftCalendar = JsonLdEntity & {
+  feedUrl: string;
 };
 
 export type ShiftBatchResult = JsonLdEntity & {

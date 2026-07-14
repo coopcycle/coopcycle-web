@@ -613,7 +613,9 @@ Feature: Shifts
         "@type":"ShiftSettings",
         "typeColors":[],
         "throughput":@double@,
-        "serviceLevel":@double@
+        "serviceLevel":@double@,
+        "legal":{"template":null,"rules":"@*@"},
+        "legalTemplates":"@*@"
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -639,7 +641,9 @@ Feature: Shifts
           "drive":"#ff0000"
         },
         "throughput":@double@,
-        "serviceLevel":@double@
+        "serviceLevel":@double@,
+        "legal":{"template":null,"rules":"@*@"},
+        "legalTemplates":"@*@"
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -657,7 +661,9 @@ Feature: Shifts
           "drive":"#ff0000"
         },
         "throughput":@double@,
-        "serviceLevel":@double@
+        "serviceLevel":@double@,
+        "legal":{"template":null,"rules":"@*@"},
+        "legalTemplates":"@*@"
       }
       """
 
@@ -843,4 +849,156 @@ Feature: Shifts
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the user "sarah" sends a "GET" request to "/api/shifts/dashboard"
+    Then the response status code should be 403
+
+  Scenario: Courier subscribes to their shift calendar feed
+    Given the courier "sarah" is loaded:
+      | email    | sarah@coopcycle.org |
+      | password | 123456              |
+    And the user "bob" is loaded:
+      | email    | bob@coopcycle.org |
+      | password | 123456            |
+    And the user "bob" has role "ROLE_DISPATCHER"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/shifts" with body:
+      """
+      {
+        "type": "drive",
+        "startsAt": "2026-07-13T09:00:00",
+        "endsAt": "2026-07-13T17:00:00",
+        "slots": 1,
+        "breakMinutes": 30,
+        "comment": "Bring your bike; and a lock",
+        "users": ["/api/users/1"]
+      }
+      """
+    Then the response status code should be 201
+    Given the user "sarah" is authenticated
+    When I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "GET" request to "/api/me/shift_calendar"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"@string@",
+        "@id":"@string@",
+        "@type":"ShiftCalendar",
+        "feedUrl":"@string@.contains('/calendar/shifts/')"
+      }
+      """
+    When the user "sarah" requests their shift calendar feed
+    Then the response status code should be 200
+    And the response should contain "BEGIN:VCALENDAR"
+    And the response should contain "BEGIN:VEVENT"
+    And the response should contain "DTSTART:20260713T"
+    And the response should contain "Bring your bike\; and a lock"
+    When the user "sarah" requests their shift calendar feed with an invalid token
+    Then the response status code should be 404
+
+  Scenario: Dispatcher configures legal constraints and sees violations
+    Given the courier "sarah" is loaded:
+      | email    | sarah@coopcycle.org |
+      | password | 123456              |
+    And the user "bob" is loaded:
+      | email    | bob@coopcycle.org |
+      | password | 123456            |
+    And the user "bob" has role "ROLE_DISPATCHER"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/shift_settings" with body:
+      """
+      {
+        "typeColors": {},
+        "legal": {
+          "template": "ccn_transport_fr",
+          "rules": { "maxDailyHours": 11 }
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/ShiftSettings",
+        "@id":"/api/shift_settings",
+        "@type":"ShiftSettings",
+        "typeColors":[],
+        "throughput":@double@,
+        "serviceLevel":@double@,
+        "legal":{
+          "template":"ccn_transport_fr",
+          "rules":{"maxDailyHours":11}
+        },
+        "legalTemplates":"@*@"
+      }
+      """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/shifts" with body:
+      """
+      {
+        "type": "drive",
+        "startsAt": "2026-07-20T06:00:00",
+        "endsAt": "2026-07-20T19:00:00",
+        "breakMinutes": 30,
+        "users": ["/api/users/1"]
+      }
+      """
+    Then the response status code should be 201
+    When I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/shifts/compliance?week=2026-07-22"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"@string@",
+        "@id":"@string@",
+        "@type":"ShiftCompliance",
+        "week":"2026-07-20",
+        "template":"ccn_transport_fr",
+        "violations":[
+          {
+            "username":"sarah",
+            "rule":"maxDailyHours",
+            "date":"2026-07-20",
+            "actual":12.5,
+            "limit":11
+          }
+        ]
+      }
+      """
+
+  Scenario: Compliance check is empty when no template is configured
+    Given the user "bob" is loaded:
+      | email    | bob@coopcycle.org |
+      | password | 123456            |
+    And the user "bob" has role "ROLE_DISPATCHER"
+    And the user "bob" is authenticated
+    When I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/shifts/compliance?week=2026-07-22"
+    Then the response status code should be 200
+    And the JSON should match:
+      """
+      {
+        "@context":"@string@",
+        "@id":"@string@",
+        "@type":"ShiftCompliance",
+        "week":"2026-07-20",
+        "template":null,
+        "violations":[]
+      }
+      """
+
+  Scenario: Courier can not read the compliance check
+    Given the courier "sarah" is loaded:
+      | email    | sarah@coopcycle.org |
+      | password | 123456              |
+    And the user "sarah" is authenticated
+    When I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "GET" request to "/api/shifts/compliance?week=2026-07-22"
     Then the response status code should be 403

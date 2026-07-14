@@ -793,6 +793,10 @@ notifications.tasks_changed_today: Vos tâches pour aujourd'hui ont été mises 
 notifications.shifts.assigned: Un créneau vous a été assigné le %date%
 notifications.shifts.week_assigned: Vos créneaux pour la semaine du %date% ont été publiés
 notifications.shifts.waitlist_promoted: Une place s'est libérée — vous êtes maintenant assigné(e) à un créneau le %date%
+shifts.type.drive: Créneau livraison
+shifts.type.dispatch: Créneau dispatch
+shifts.type.admin: Créneau administratif
+shifts.calendar.break: 'Pause : %minutes% min'
 notifications.holiday_request.approved: Votre demande de congés du %start% au %end% a été approuvée
 notifications.holiday_request.rejected: Votre demande de congés du %start% au %end% a été refusée
 notifications.restaurant.new_order: Nouvelle commande à confirmer

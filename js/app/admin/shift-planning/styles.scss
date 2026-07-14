@@ -459,3 +459,14 @@
     height: 120px;
   }
 }
+
+.shift-compliance-alert {
+  margin-bottom: 12px;
+
+  &__list {
+    margin: 0;
+    padding-left: 16px;
+    max-height: 160px;
+    overflow-y: auto;
+  }
+}
