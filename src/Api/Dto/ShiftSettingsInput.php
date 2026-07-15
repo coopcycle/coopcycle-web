@@ -28,7 +28,10 @@ final class ShiftSettingsInput
      * Legal constraints: {template: string|null, rules: {<override>}}.
      * Omit (null) to leave the current configuration untouched.
      *
-     * @var array{template: ?string, rules?: array<string, float|int|null>}|null
+     * Deserialized straight from the request body, so the shape is NOT
+     * guaranteed — the processor validates template and rules at runtime.
+     *
+     * @var array<string, mixed>|null
      */
     #[Groups(['shift_settings'])]
     public ?array $legal = null;
