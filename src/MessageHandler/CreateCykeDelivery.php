@@ -151,9 +151,20 @@ class CreateCykeDelivery
 
         $day = Carbon::instance($date)->startOfDay();
 
-        return [
-            $day->copy()->setTimeFromTimeString($opens),
-            $day->copy()->setTimeFromTimeString($closes),
-        ];
+        $slotStart = $day->copy()->setTimeFromTimeString($opens);
+        $slotEnd = $day->copy()->setTimeFromTimeString($closes);
+
+        // SyncTransportersCommand always schedules EDIFACT imports for "today"
+        // (see importScontrTask/importPickupTask), so by the time this message is
+        // processed the configured slot may have already started, or even ended.
+        // Cyke rejects a slot that has already begun, so roll it forward a day at
+        // a time until it's actually in the future.
+        $now = Carbon::now();
+        while ($slotStart->lte($now)) {
+            $slotStart->addDay();
+            $slotEnd->addDay();
+        }
+
+        return [$slotStart, $slotEnd];
     }
 }
