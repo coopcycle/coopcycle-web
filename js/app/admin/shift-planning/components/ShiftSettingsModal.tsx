@@ -107,9 +107,14 @@ export default function ShiftSettingsModal({ shiftTypes }: Props) {
 
   return (
     <>
-      <Button icon={<SettingOutlined />} onClick={() => setOpen(true)}>
-        {t('SHIFT_PLANNING_SETTINGS')}
-      </Button>
+      <Tooltip title={t('SHIFT_PLANNING_SETTINGS')}>
+        <Button
+          type="text"
+          icon={<SettingOutlined />}
+          aria-label={t('SHIFT_PLANNING_SETTINGS')}
+          onClick={() => setOpen(true)}
+        />
+      </Tooltip>
       <Modal
         open={open}
         title={t('SHIFT_PLANNING_SETTINGS')}

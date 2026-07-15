@@ -1,7 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Provider } from 'react-redux';
 import { Badge, Button, Segmented, Space, Spin } from 'antd';
-import { CarryOutOutlined } from '@ant-design/icons';
+import {
+  BarChartOutlined,
+  CarryOutOutlined,
+  TrophyOutlined,
+} from '@ant-design/icons';
 import { useHotkey } from '@tanstack/react-hotkeys';
 import dayjs, { Dayjs } from 'dayjs';
 import isoWeek from 'dayjs/plugin/isoWeek';
@@ -172,36 +176,77 @@ const Planning = ({ shiftTypes }: Props) => {
   const isPlanningView =
     view === 'employee' || view === 'calendar' || view === 'type';
 
+  // "Planning" covers the week grids plus the dashboard & skills views;
+  // "Employees" is the HR section
+  const section = view === 'hr' ? 'employees' : 'planning';
+
   return (
     <div className="shift-planning">
-      <div className="shift-planning__toolbar">
+      <div className="shift-planning__nav">
+        <nav className="shift-planning__nav-links">
+          <button
+            type="button"
+            className={
+              section === 'planning' ? 'shift-planning__nav-link--active' : ''
+            }
+            onClick={() => setView('employee')}>
+            {t('SHIFT_PLANNING_NAV_PLANNING')}
+          </button>
+          <button
+            type="button"
+            className={
+              section === 'employees' ? 'shift-planning__nav-link--active' : ''
+            }
+            onClick={() => setView('hr')}>
+            {t('SHIFT_PLANNING_NAV_EMPLOYEES')}
+          </button>
+        </nav>
         <Space>
-          <Segmented
-            value={view}
-            onChange={value => setView(value as View)}
-            options={[
-              { label: t('SHIFT_PLANNING_VIEW_EMPLOYEE'), value: 'employee' },
-              { label: t('SHIFT_PLANNING_VIEW_CALENDAR'), value: 'calendar' },
-              { label: t('SHIFT_PLANNING_VIEW_TYPE'), value: 'type' },
-              { label: t('SHIFT_PLANNING_DASHBOARD'), value: 'dashboard' },
-              { label: t('SHIFT_PLANNING_VIEW_SKILLS'), value: 'skills' },
-              { label: t('SHIFT_PLANNING_VIEW_HR'), value: 'hr' },
-            ]}
-          />
-          {isPlanningView && (
-            <>
-              <WeekNavigator value={weekStart} onChange={setWeekStart} />
-              <ShiftTypeFilter
-                ref={typeFilterRef}
-                shiftTypes={shiftTypes}
-                value={typeFilter}
-                onChange={setTypeFilter}
-                typeColors={typeColors}
-              />
-            </>
-          )}
+          <Button
+            type={view === 'dashboard' ? 'primary' : 'text'}
+            ghost={view === 'dashboard'}
+            icon={<BarChartOutlined />}
+            onClick={() => setView('dashboard')}>
+            {t('SHIFT_PLANNING_DASHBOARD')}
+          </Button>
+          <Button
+            type={view === 'skills' ? 'primary' : 'text'}
+            ghost={view === 'skills'}
+            icon={<TrophyOutlined />}
+            onClick={() => setView('skills')}>
+            {t('SHIFT_PLANNING_VIEW_SKILLS')}
+          </Button>
+          <PayrollExportButton />
+          <ShiftSettingsModal shiftTypes={shiftTypes} />
         </Space>
-        {isPlanningView && (
+      </div>
+      {isPlanningView && (
+        <div className="shift-planning__toolbar">
+          <Space>
+            <WeekNavigator value={weekStart} onChange={setWeekStart} />
+            <Segmented
+              value={view}
+              onChange={value => setView(value as View)}
+              options={[
+                {
+                  label: t('SHIFT_PLANNING_VIEW_EMPLOYEE'),
+                  value: 'employee',
+                },
+                {
+                  label: t('SHIFT_PLANNING_VIEW_CALENDAR'),
+                  value: 'calendar',
+                },
+                { label: t('SHIFT_PLANNING_VIEW_TYPE'), value: 'type' },
+              ]}
+            />
+            <ShiftTypeFilter
+              ref={typeFilterRef}
+              shiftTypes={shiftTypes}
+              value={typeFilter}
+              onChange={setTypeFilter}
+              typeColors={typeColors}
+            />
+          </Space>
           <Space>
             <Badge count={pendingCount}>
               <Button
@@ -210,11 +255,9 @@ const Planning = ({ shiftTypes }: Props) => {
                 {t('SHIFT_PLANNING_HOLIDAY_REQUESTS')}
               </Button>
             </Badge>
-            <ShiftSettingsModal shiftTypes={shiftTypes} />
             <CopyWeekButton weekStart={weekStart} />
             <GenerateScheduleButton weekStart={weekStart} />
             <AddToDispatchButton weekStart={weekStart} />
-            <PayrollExportButton />
             <PublishWeekButton weekStart={weekStart} />
             <Button
               type="primary"
@@ -222,8 +265,8 @@ const Planning = ({ shiftTypes }: Props) => {
               {t('SHIFT_PLANNING_NEW_SHIFT')}
             </Button>
           </Space>
-        )}
-      </div>
+        </div>
+      )}
       {view === 'dashboard' && (
         <ShiftsDashboard
           onSelectWeek={week => {

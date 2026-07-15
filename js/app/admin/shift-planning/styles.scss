@@ -524,3 +524,37 @@
     font-weight: normal;
   }
 }
+
+.shift-planning__nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  margin-bottom: 12px;
+}
+
+.shift-planning__nav-links {
+  display: flex;
+  gap: 8px;
+
+  button {
+    appearance: none;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 10px 12px;
+    font-size: 15px;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.55);
+    cursor: pointer;
+
+    &:hover {
+      color: rgba(0, 0, 0, 0.85);
+    }
+
+    &.shift-planning__nav-link--active {
+      color: #1677ff;
+      border-bottom-color: #1677ff;
+    }
+  }
+}

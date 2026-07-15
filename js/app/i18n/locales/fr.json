@@ -973,6 +973,8 @@
         "SHIFT_PLANNING_WEEK_HOURS_TOOLTIP": "Heures planifiées cette semaine / heures contractuelles hebdomadaires ({{max}})",
         "SHIFT_PLANNING_WEEK_HOURS_TOOLTIP_NO_LIMIT": "Heures planifiées cette semaine",
         "SHIFT_PLANNING_OVERTIME_TOOLTIP": "Écart entre le temps travaillé déclaré et le planning cette semaine",
+        "SHIFT_PLANNING_NAV_PLANNING": "Planning",
+        "SHIFT_PLANNING_NAV_EMPLOYEES": "Employés",
         "SHIFT_PLANNING_VIEW_HR": "RH",
         "SHIFT_HR_EMPLOYEE": "Employé",
         "SHIFT_HR_SEARCH_PLACEHOLDER": "Rechercher par nom ou compétence…",

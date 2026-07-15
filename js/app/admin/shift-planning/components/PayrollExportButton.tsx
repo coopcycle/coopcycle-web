@@ -53,7 +53,10 @@ export default function PayrollExportButton() {
 
   return (
     <>
-      <Button icon={<DownloadOutlined />} onClick={() => setOpen(true)}>
+      <Button
+        type="text"
+        icon={<DownloadOutlined />}
+        onClick={() => setOpen(true)}>
         {t('SHIFT_PAYROLL_EXPORT')}
       </Button>
       <Modal

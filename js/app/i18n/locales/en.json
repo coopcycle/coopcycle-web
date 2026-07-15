@@ -1002,6 +1002,8 @@
         "SHIFT_PLANNING_WEEK_HOURS_TOOLTIP": "Planned hours this week / contracted weekly hours ({{max}})",
         "SHIFT_PLANNING_WEEK_HOURS_TOOLTIP_NO_LIMIT": "Planned hours this week",
         "SHIFT_PLANNING_OVERTIME_TOOLTIP": "Difference between reported worked time and the plan this week",
+        "SHIFT_PLANNING_NAV_PLANNING": "Planning",
+        "SHIFT_PLANNING_NAV_EMPLOYEES": "Employees",
         "SHIFT_PLANNING_VIEW_HR": "HR",
         "SHIFT_HR_EMPLOYEE": "Employee",
         "SHIFT_HR_SEARCH_PLACEHOLDER": "Search by name or skill…",
