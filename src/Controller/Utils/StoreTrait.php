@@ -6,6 +6,7 @@ use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\Metadata\Exception\ItemNotFoundException;
 use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Api\Dto\DeliveryMapper;
+use AppBundle\Cyke\Client as CykeClient;
 use AppBundle\Entity\Address;
 use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Entity\Delivery;
@@ -53,6 +54,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Vich\UploaderBundle\Storage\StorageInterface;
 
@@ -236,7 +238,7 @@ trait StoreTrait
             }
 
             $rdcConnectionId = $store->getRdcConnectionId();
-            if (!empty($rdcConnectionId)) {
+            if ($this->rdcEnabled && !empty($rdcConnectionId)) {
                 $fstore = $this->entityManager->getRepository(Store::class)
                     ->findOneByRdcConnectionId($rdcConnectionId);
 
@@ -460,6 +462,32 @@ trait StoreTrait
         $routes = $request->attributes->get('routes');
 
         return $this->redirectToRoute($routes['store_recurrence_rules'], ['id' => $storeId]);
+    }
+
+    #[Route(path: '/admin/stores/cyke/package_types', name: 'admin_store_cyke_package_types', methods: ['POST'])]
+    public function storeCykePackageTypesAction(Request $request, CykeClient $cykeClient)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $data = json_decode($request->getContent(), true) ?? [];
+
+        $email = $data['email'] ?? null;
+        $token = $data['token'] ?? null;
+
+        if (empty($email) || empty($token)) {
+            return new JsonResponse(['error' => 'Missing email or token'], 400);
+        }
+
+        try {
+            $packageTypes = $cykeClient->getPackageTypes($email, $token);
+        } catch (\Throwable $e) {
+            return new JsonResponse(['error' => 'Unable to load package types from Cyke'], 400);
+        }
+
+        return new JsonResponse(array_map(fn($packageType) => [
+            'id' => $packageType['id'],
+            'label' => $packageType['type'],
+        ], $packageTypes));
     }
 
     public function storeAction($id, Request $request, TranslatorInterface $translator)

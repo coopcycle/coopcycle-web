@@ -223,6 +223,7 @@ class AdminController extends AbstractController
         protected SerializerInterface $serializer,
         protected string $environment,
         protected LoggerInterface $logger,
+        protected bool $rdcEnabled = false,
     )
     {}
 

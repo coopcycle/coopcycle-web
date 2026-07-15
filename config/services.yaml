@@ -71,6 +71,7 @@ parameters:
   rdc_connections_default: []
   rdc_connections: '%env(default:rdc_connections_default:json:RDC_CONNECTIONS)%'
   billing_enabled: '%env(bool:BILLING_ENABLED)%'
+  cyke_enabled: '%env(bool:CYKE_ENABLED)%'
   package_delivery_ui_price_breakdown_enabled_default: true
   package_delivery_ui_price_breakdown_enabled: '%env(default:package_delivery_ui_price_breakdown_enabled_default:bool:PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED)%'
 services:
@@ -324,6 +325,7 @@ services:
       $incidentImagesFilesystem: '@incident_images_filesystem'
       $edifactFilesystem: '@edi_messages_filesystem'
       $platformLocale: '%env(COOPCYCLE_LOCALE)%'
+      $rdcEnabled: '%env(bool:RDC_ENABLED)%'
 
   AppBundle\Controller\Admin\CustomerSegmentationController:
     arguments:
@@ -698,6 +700,8 @@ services:
       - { name: doctrine.orm.entity_listener }
 
   AppBundle\Entity\Listener\TaskRdcStatusListener:
+    arguments:
+      $rdcEnabled: '%env(bool:RDC_ENABLED)%'
     tags:
       - { name: doctrine.orm.entity_listener, event: postUpdate, entity: AppBundle\Entity\Task }
 
@@ -1143,6 +1147,11 @@ services:
       $country: "%country_iso%"
     tags:
       - { name: monolog.logger, channel: urbantz }
+      - { name: api_platform.state_processor }
+
+  AppBundle\Api\State\CykeWebhookProcessor:
+    tags:
+      - { name: monolog.logger, channel: cyke }
       - { name: api_platform.state_processor }
 
   AppBundle\Twig\CoopCycleExtension:
@@ -1621,6 +1630,8 @@ services:
     arguments:
       $lang: "%env(COOPCYCLE_LOCALE)%"
 
+  AppBundle\Cyke\Client: ~
+
   AppBundle\Assets\PlaceholderImageResolver:
     arguments:
       $pixabayApiKey: '%env(PIXABAY_API_KEY)%'
@@ -1722,8 +1733,34 @@ services:
     arguments:
       $logger: '@logger'
       $messageBus: '@messenger.default_bus'
+      $rdcEnabled: '%env(bool:RDC_ENABLED)%'
     tags:
       - { name: monolog.logger, channel: rdc }
+
+  AppBundle\Controller\DashboardController:
+    arguments:
+      $rdcEnabled: '%env(bool:RDC_ENABLED)%'
+
+  # RDC feature flag bindings
+  AppBundle\Entity\Listener\IncidentRdcListener:
+    arguments:
+      $rdcEnabled: '%env(bool:RDC_ENABLED)%'
+
+  AppBundle\MessageHandler\IncidentRdcMessageHandler:
+    arguments:
+      $rdcEnabled: '%env(bool:RDC_ENABLED)%'
+
+  AppBundle\MessageHandler\RdcMessageHandler:
+    arguments:
+      $rdcEnabled: '%env(bool:RDC_ENABLED)%'
+
+  AppBundle\MessageHandler\RdcPickupStatusUpdateMessageHandler:
+    arguments:
+      $rdcEnabled: '%env(bool:RDC_ENABLED)%'
+
+  AppBundle\MessageHandler\RdcDropoffStatusUpdateMessageHandler:
+    arguments:
+      $rdcEnabled: '%env(bool:RDC_ENABLED)%'
 
   AppBundle\Utils\Defaults: ~
 
@@ -1748,6 +1785,12 @@ services:
       - '%secret%'
 
   AppBundle\MessageHandler\Task\NotifyUrbantz: ~
+
+  AppBundle\MessageHandler\CreateCykeDelivery:
+    arguments:
+      $cykeEnabled: '%cyke_enabled%'
+    tags:
+      - { name: monolog.logger, channel: cyke }
 
   AppBundle\MessageHandler\Task\NotifyLoopeat:
     arguments:

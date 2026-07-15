@@ -40,6 +40,13 @@
           </a>
         </li>
         {% endif %}
+        {% if is_granted('ROLE_ADMIN') and cyke_enabled %}
+        <li role="presentation">
+          <a href="{% if store.id is not empty %}{{ path(store_route, { id: store.id }) }}{% endif %}#cyke" {% if is_main_screen %}role="tab" data-toggle="tab" aria-controls="cyke"{% endif %}>
+            {{ 'store.form.section.cyke'|trans }}
+          </a>
+        </li>
+        {% endif %}
         {% if store.id is not empty %}
         <li role="presentation" {% if app.request.attributes.get('_route') == store_addresses_route %}class="active"{% endif %}>
           <a href="{{ path(store_addresses_route, { id: store.id }) }}">

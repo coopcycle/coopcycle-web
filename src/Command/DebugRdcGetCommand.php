@@ -33,7 +33,7 @@ class DebugRdcGetCommand extends Command
         if (!$this->rdcEnabled) {
             $io->error('RDC feature is disabled');
 
-            return Command::FAILURE;
+            return Command::INVALID;
         }
 
         $url = $input->getArgument('url');

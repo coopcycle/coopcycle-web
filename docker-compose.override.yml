@@ -37,5 +37,9 @@ services:
     profiles:
       - devFrontend
 
+  recommender:
+    profiles:
+      - disabled
+
 volumes:
   node_modules_webpack:

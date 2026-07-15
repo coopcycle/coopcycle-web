@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client'
 import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard';
 import XHR from '@uppy/xhr-upload';
+import ClipboardJS from 'clipboard'
 
 import TagsSelect from '../../components/TagsSelect'
 import { addressMapper } from '../../widgets/addressForm'
@@ -196,6 +197,104 @@ if (packageSetSelect && packagesRequiredCheckbox) {
   packageSetSelect.addEventListener('change', updatePackagesRequiredState)
 }
 
+const cykePackageTypeWidget = document.querySelector('[data-widget="cyke-package-type"]')
+
+if (cykePackageTypeWidget) {
+  const endpoint = cykePackageTypeWidget.dataset.endpoint
+  const emailInput = document.querySelector(cykePackageTypeWidget.dataset.emailInput)
+  const tokenInput = document.querySelector(cykePackageTypeWidget.dataset.tokenInput)
+  const targetInput = document.querySelector(cykePackageTypeWidget.dataset.targetInput)
+  const select = cykePackageTypeWidget.querySelector('[data-role="select"]')
+  const placeholderText = select.querySelector('option').textContent
+
+  let debounceTimer = null
+
+  const populateOptions = (packageTypes) => {
+    const currentValue = targetInput.value
+
+    select.innerHTML = ''
+
+    const placeholder = document.createElement('option')
+    placeholder.value = ''
+    placeholder.textContent = placeholderText
+    select.appendChild(placeholder)
+
+    packageTypes.forEach(packageType => {
+      const option = document.createElement('option')
+      option.value = packageType.id
+      option.textContent = packageType.label
+      select.appendChild(option)
+    })
+
+    select.value = currentValue
+  }
+
+  const loadPackageTypes = () => {
+    const email = emailInput.value.trim()
+    const token = tokenInput.value.trim()
+
+    if (!email || !token) {
+      return
+    }
+
+    fetch(endpoint, {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, token }),
+    })
+      .then(res => res.ok ? res.json() : Promise.reject(res))
+      .then(packageTypes => populateOptions(packageTypes))
+      .catch(() => {
+        // Leave the select as-is (still showing the currently configured value, if any)
+        // when credentials are invalid or the Cyke API is unreachable.
+      })
+  }
+
+  select.addEventListener('change', () => {
+    targetInput.value = select.value
+  })
+
+  ;[emailInput, tokenInput].forEach(input => {
+    input.addEventListener('input', () => {
+      clearTimeout(debounceTimer)
+      debounceTimer = setTimeout(loadPackageTypes, 500)
+    })
+  })
+
+  if (targetInput.value) {
+    populateOptions([{ id: targetInput.value, label: targetInput.value }])
+  }
+
+  loadPackageTypes()
+}
+
+document.querySelectorAll('[data-role="toggle-visibility"]').forEach(toggleBtn => {
+  const inputGroup = toggleBtn.closest('.input-group')
+  const secretInput = inputGroup ? inputGroup.querySelector('[data-role="secret-input"]') : null
+
+  if (!secretInput) {
+    return
+  }
+
+  toggleBtn.addEventListener('click', () => {
+    const isHidden = secretInput.type === 'password'
+    secretInput.type = isHidden ? 'text' : 'password'
+    toggleBtn.querySelector('i').classList.toggle('fa-eye', !isHidden)
+    toggleBtn.querySelector('i').classList.toggle('fa-eye-slash', isHidden)
+    toggleBtn.setAttribute('title', isHidden ? toggleBtn.dataset.hideTitle : toggleBtn.dataset.showTitle)
+  })
+})
+
+if (document.querySelector('[data-clipboard-target]')) {
+  // Read the value directly, because browsers refuse to copy
+  // the selection of a password input (the webhook secret)
+  new ClipboardJS('[data-clipboard-target]', {
+    text: trigger => document.querySelector(trigger.getAttribute('data-clipboard-target')).value
+  })
+}
 
 // Delete confirmation
 $('#store_delete').on('click', e => {
