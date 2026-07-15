@@ -19,6 +19,8 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 #[AsMessageHandler]
 class CreateCykeDelivery
 {
+    private const DEFAULT_TIME_SLOT = '08:00-18:00';
+
     private $logger;
 
     public function __construct(
@@ -62,10 +64,17 @@ class CreateCykeDelivery
 
         $telephone = $address->getTelephone();
 
+        // EDIFACT-imported deliveries (see SyncTransportersCommand) carry no real
+        // time information, only a date — the task's After/Before end up spanning
+        // the whole day, which Cyke rejects (slot already begun/ended, or outside
+        // opening hours). We send the store's configured Cyke slot instead, on the
+        // dropoff's calendar date.
+        [$slotStart, $slotEnd] = $this->buildCykeSlot($dropoff->getAfter(), $store->getCykeTimeSlot());
+
         $payload = [
             'dropoff' => [
-                'slot_starting_at' => Carbon::instance($dropoff->getAfter())->toIso8601String(),
-                'slot_ending_at' => Carbon::instance($dropoff->getBefore())->toIso8601String(),
+                'slot_starting_at' => $slotStart->toIso8601String(),
+                'slot_ending_at' => $slotEnd->toIso8601String(),
                 'place' => [
                     'recipient_name' => $address->getContactName() ?: $address->getName(),
                     'recipient_phone' => $telephone ? $this->phoneNumberUtil->format($telephone, PhoneNumberFormat::E164) : null,
@@ -131,5 +140,20 @@ class CreateCykeDelivery
                 ['payload' => $payload]
             );
         }
+    }
+
+    /**
+     * @return array{0: Carbon, 1: Carbon}
+     */
+    private function buildCykeSlot(\DateTimeInterface $date, ?string $timeSlot): array
+    {
+        [$opens, $closes] = explode('-', $timeSlot ?: self::DEFAULT_TIME_SLOT);
+
+        $day = Carbon::instance($date)->startOfDay();
+
+        return [
+            $day->copy()->setTimeFromTimeString($opens),
+            $day->copy()->setTimeFromTimeString($closes),
+        ];
     }
 }
