@@ -5,18 +5,22 @@ namespace AppBundle\Integration\Zelty;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Message\Zelty\ProcessZeltyCatalog;
 use Doctrine\ORM\EntityManagerInterface;
+use League\Flysystem\Filesystem;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 class ZeltyCatalogProcessor implements ProcessorInterface
 {
     public function __construct(
-        private readonly ZeltyImportService $importService,
         private readonly EntityManagerInterface $em,
         private readonly RequestStack $requestStack,
+        private readonly MessageBusInterface $messageBus,
+        private readonly Filesystem $zeltyCatalogImportsFilesystem,
     ) {}
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): Response
@@ -31,17 +35,12 @@ class ZeltyCatalogProcessor implements ProcessorInterface
 
         $this->verifySignature($request, $restaurant);
 
-        $this->em->getConnection()->beginTransaction();
-        try {
-            $this->importService->import($data, $restaurant);
-            $this->em->flush();
-            $this->em->getConnection()->commit();
-        } catch (\Exception $e) {
-            $this->em->getConnection()->rollBack();
-            throw $e;
-        }
+        $s3Key = sprintf('catalog_%d_%s.json', $restaurantId, uniqid('', true));
+        $this->zeltyCatalogImportsFilesystem->write($s3Key, $request->getContent());
 
-        return new JsonResponse(['status' => 'success']);
+        $this->messageBus->dispatch(new ProcessZeltyCatalog($restaurantId, $s3Key));
+
+        return new JsonResponse(['status' => 'queued'], Response::HTTP_ACCEPTED);
     }
 
     private function verifySignature(\Symfony\Component\HttpFoundation\Request $request, LocalBusiness $restaurant): void

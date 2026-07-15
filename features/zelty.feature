@@ -46,11 +46,11 @@ Feature: Zelty catalog push webhook
         }
       }
       """
-    Then the response status code should be 200
+    Then the response status code should be 202
     And the response should be in JSON
     And the JSON should match:
       """
-      {"status":"success"}
+      {"status":"queued"}
       """
     And I see 1 entities "AppBundle\Entity\Sylius\Product"
     And I see entity "AppBundle\Entity\Sylius\Product" with properties:
@@ -151,11 +151,11 @@ Feature: Zelty catalog push webhook
         }
       }
       """
-    Then the response status code should be 200
+    Then the response status code should be 202
     And the response should be in JSON
     And the JSON should match:
       """
-      {"status":"success"}
+      {"status":"queued"}
       """
     And I see 3 entities "AppBundle\Entity\Sylius\Product"
     And I see entity "AppBundle\Entity\Sylius\Product" with properties:
@@ -266,11 +266,11 @@ Feature: Zelty catalog push webhook
         }
       }
       """
-    Then the response status code should be 200
+    Then the response status code should be 202
     And the response should be in JSON
     And the JSON should match:
       """
-      {"status":"success"}
+      {"status":"queued"}
       """
     And I see 1 entities "AppBundle\Entity\Sylius\Product"
     And I see entity "AppBundle\Entity\Sylius\Product" with properties:
@@ -349,7 +349,7 @@ Feature: Zelty catalog push webhook
         }
       }
       """
-    Then the response status code should be 200
+    Then the response status code should be 202
     When I add "Content-Type" header equal to "application/json"
     And I send a "POST" request to "/api/zelty/webhook/catalog/1" with body:
       """
@@ -398,11 +398,11 @@ Feature: Zelty catalog push webhook
         }
       }
       """
-    Then the response status code should be 200
+    Then the response status code should be 202
     And the response should be in JSON
     And the JSON should match:
       """
-      {"status":"success"}
+      {"status":"queued"}
       """
     And I see 2 entities "AppBundle\Entity\Sylius\Product"
     And I see 0 entities "AppBundle\Entity\Sylius\ProductTaxon"
@@ -476,7 +476,7 @@ Feature: Zelty catalog push webhook
         }
       }
       """
-    Then the response status code should be 200
+    Then the response status code should be 202
     When I add "Content-Type" header equal to "application/json"
     And I send a "POST" request to "/api/zelty/webhook/catalog/1" with body:
       """
@@ -538,11 +538,11 @@ Feature: Zelty catalog push webhook
         }
       }
       """
-    Then the response status code should be 200
+    Then the response status code should be 202
     And the response should be in JSON
     And the JSON should match:
       """
-      {"status":"success"}
+      {"status":"queued"}
       """
 
   Scenario: dish.update disables a product when disable flag is true
@@ -584,7 +584,7 @@ Feature: Zelty catalog push webhook
         }
       }
       """
-    Then the response status code should be 200
+    Then the response status code should be 202
     And I see entity "AppBundle\Entity\Sylius\Product" with properties:
       """
       {"code": "7001", "enabled": true}
@@ -656,7 +656,7 @@ Feature: Zelty catalog push webhook
         }
       }
       """
-    Then the response status code should be 200
+    Then the response status code should be 202
     And I see entity "AppBundle\Entity\Sylius\Product" with properties:
       """
       {"code": "7002", "enabled": true}
@@ -728,7 +728,7 @@ Feature: Zelty catalog push webhook
         }
       }
       """
-    Then the response status code should be 200
+    Then the response status code should be 202
     And I see entity "AppBundle\Entity\Sylius\Product" with properties:
       """
       {"code": "7003", "enabled": true}
@@ -817,7 +817,7 @@ Feature: Zelty catalog push webhook
         }
       }
       """
-    Then the response status code should be 200
+    Then the response status code should be 202
     And I see entity "AppBundle\Entity\Sylius\Product" with properties:
       """
       {"code": "8010", "enabled": true}
@@ -906,7 +906,7 @@ Feature: Zelty catalog push webhook
         }
       }
       """
-    Then the response status code should be 200
+    Then the response status code should be 202
     And I see entity "AppBundle\Entity\Sylius\Product" with properties:
       """
       {"code": "8020", "enabled": true}
@@ -995,7 +995,7 @@ Feature: Zelty catalog push webhook
         }
       }
       """
-    Then the response status code should be 200
+    Then the response status code should be 202
     And I see entity "AppBundle\Entity\Sylius\Product" with properties:
       """
       {"code": "8030", "enabled": true}
@@ -1096,7 +1096,7 @@ Feature: Zelty catalog push webhook
         }
       }
       """
-    Then the response status code should be 200
+    Then the response status code should be 202
     And I see entity "AppBundle\Entity\Sylius\ProductOptionValue" with properties:
       """
       {"price": 50, "enabled": true}
@@ -1215,7 +1215,7 @@ Feature: Zelty catalog push webhook
         }
       }
       """
-    Then the response status code should be 200
+    Then the response status code should be 202
     And I see 2 entities "AppBundle\Entity\Sylius\ProductOptionValue"
     When I add "Content-Type" header equal to "application/json"
     And I send a "POST" request to "/api/zelty/webhook/option_value.availability_update" with body:
@@ -1371,7 +1371,7 @@ Feature: Zelty catalog push webhook
         }
       }
       """
-    Then the response status code should be 200
+    Then the response status code should be 202
     And I see entity "AppBundle\Entity\Sylius\Product" with properties:
       """
       {"code": "10001", "enabled": true}
@@ -1411,11 +1411,11 @@ Feature: Zelty catalog push webhook
         }
       }
       """
-    Then the response status code should be 200
+    Then the response status code should be 202
     And the response should be in JSON
     And the JSON should match:
       """
-      {"status":"success"}
+      {"status":"queued"}
       """
     And I see entity "AppBundle\Entity\Sylius\Product" with properties:
       """
@@ -1505,11 +1505,11 @@ Feature: Zelty catalog push webhook
         }
       }
       """
-    Then the response status code should be 200
+    Then the response status code should be 202
     And the response should be in JSON
     And the JSON should match:
       """
-      {"status":"success"}
+      {"status":"queued"}
       """
     And I see 2 entities "AppBundle\Entity\Sylius\Product"
     And I see entity "AppBundle\Entity\Sylius\Taxon" with properties:
