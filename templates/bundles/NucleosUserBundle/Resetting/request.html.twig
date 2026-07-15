@@ -3,7 +3,13 @@
 {% block body %}
   {% block nucleos_user_content %}
   <div class="mx-auto px-4">
-  {% include "@NucleosUser/Resetting/request_content.html.twig" %}
+    <div class="flex justify-center my-8">
+      <div class="card bg-base-100 w-1/2 shadow-sm">
+        <div class="card-body">
+          {% include "@NucleosUser/Resetting/request_content.html.twig" %}
+        </div>
+      </div>
+    </div>
   </div>
   {% endblock nucleos_user_content %}
 {% endblock %}
