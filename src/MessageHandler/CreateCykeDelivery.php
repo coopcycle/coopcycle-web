@@ -5,8 +5,10 @@ namespace AppBundle\MessageHandler;
 use AppBundle\Entity\Cyke\Delivery as CykeDelivery;
 use AppBundle\Entity\Delivery;
 use AppBundle\Message\DeliveryCreated;
+use AppBundle\Service\SettingsManager;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
+use libphonenumber\PhoneNumber;
 use libphonenumber\PhoneNumberFormat;
 use libphonenumber\PhoneNumberUtil;
 use Psr\Log\LoggerInterface;
@@ -27,6 +29,7 @@ class CreateCykeDelivery
         private HttpClientInterface $cykeClient,
         private EntityManagerInterface $entityManager,
         private PhoneNumberUtil $phoneNumberUtil,
+        private SettingsManager $settingsManager,
         private bool $cykeEnabled = false,
         ?LoggerInterface $logger = null)
     {
@@ -63,6 +66,16 @@ class CreateCykeDelivery
         $address = $dropoff->getAddress();
 
         $telephone = $address->getTelephone();
+
+        // EDIFACT-imported deliveries don't always carry a recipient phone number,
+        // and Cyke requires one — fall back to the platform's own configured
+        // phone number rather than leaving it blank.
+        if (null === $telephone) {
+            $fallback = $this->settingsManager->get('phone_number');
+            if ($fallback instanceof PhoneNumber) {
+                $telephone = $fallback;
+            }
+        }
 
         // EDIFACT-imported deliveries (see SyncTransportersCommand) carry no real
         // time information, only a date — the task's After/Before end up spanning
