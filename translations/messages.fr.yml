@@ -1234,6 +1234,16 @@ deliveries.section.upcoming: À venir
 deliveries.section.past: Passées
 stores.address_book: Carnet d'adresses
 store.form.section.settings: Paramètres
+store.form.section.cyke: Cyke
+form.store.cyke_user_email: Email utilisateur Cyke
+form.store.cyke_user_token: Jeton API Cyke
+form.store.cyke_webhook_url.label: URL du webhook Cyke
+form.store.cyke_webhook_url.help: L'URL à utiliser lors de la création du webhook dans votre compte Cyke (Compte > Gérer mon entreprise > Webhooks)
+form.store.cyke_webhook_secret.label: Secret du webhook Cyke
+form.store.cyke_webhook_secret.help: Généré automatiquement. Copiez-le et collez-le comme secret lors de la création du webhook ci-dessus dans votre compte Cyke
+form.store.cyke_package_type_id.label: Type de colis
+form.store.cyke_package_type_id.help: Le type de colis envoyé à Cyke pour chaque livraison créée depuis cette boutique
+form.store.cyke_package_type_id.placeholder: Sélectionner un type de colis
 adminDashboard.hubs.title: Hubs
 adminDashboard.hubs.createNew: Créer un nouveau hub
 adminDashboard.hubs.help: Les hubs permettent de regrouper des boutiques partageant

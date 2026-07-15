@@ -1676,6 +1676,16 @@ organizations.new: New organization
 loopeat.incident.unexpected_returns: Unexpected number of zero waste returns
 form.local_business.iso_code.fr.siret.help: Find the SIRET number on <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">l'Annuaire des Entreprises</a>
 form.store.urbantz_hub_id: Urbantz Hub Id
+form.store.cyke_user_email: Cyke user email
+form.store.cyke_user_token: Cyke API token
+form.store.cyke_webhook_url.label: Cyke webhook URL
+form.store.cyke_webhook_url.help: The URL to use when creating the webhook in your Cyke account (Account > Manage my company > Webhooks)
+form.store.cyke_webhook_secret.label: Cyke webhook secret
+form.store.cyke_webhook_secret.help: Automatically generated. Copy it and paste it as the secret when creating the webhook above in your Cyke account
+form.store.cyke_package_type_id.label: Package type
+form.store.cyke_package_type_id.help: The package type sent to Cyke for every delivery created from this store
+form.store.cyke_package_type_id.placeholder: Select a package type
+store.form.section.cyke: Cyke
 form.payment.edenred.refund_amount.help: Edenred does not support partial refunds.
 restaurant.form.use_paygreen.label: Use Paygreen for this shop
 restaurant.meal_vouchers_transactions.emitter: Emitter

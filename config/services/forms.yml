@@ -99,6 +99,7 @@ services:
       $standtrackEnabled: '%env(STANDTRACK_API_KEY)%'
       $rdcConnections: '%rdc_connections%'
       $rdcEnabled: '%env(bool:RDC_ENABLED)%'
+      $cykeEnabled: '%cyke_enabled%'
     tags: [ form.type ]
 
   AppBundle\Form\MenuEditor\TaxonProductType:
