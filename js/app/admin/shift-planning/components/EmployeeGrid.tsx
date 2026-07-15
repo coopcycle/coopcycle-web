@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Button, Select, Tooltip } from 'antd';
 import { CloseOutlined, PlusOutlined, StarFilled } from '@ant-design/icons';
 import { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
-import { useGetShiftSettingsQuery } from '../../../api/slice';
+import { useGetEmployeeProfilesQuery } from '../../../api/slice';
 import { HolidayRequest, PlanningUser, Shift, Uri } from '../../../api/types';
 import Avatar from '../../../components/Avatar';
 import ShiftCard from './ShiftCard';
@@ -80,22 +80,21 @@ export default function EmployeeGrid({
   const sortedShifts = sortByStart(shifts);
   const openShifts = sortedShifts.filter(s => s.assignments.length < s.slots);
 
-  // Effective legal weekly maximum (template defaults + admin overrides),
-  // shown next to each user's planned hours when legal constraints are on
-  const { data: settings } = useGetShiftSettingsQuery();
-  const legalTemplate = settings?.legal?.template;
-  const templateRules =
-    (legalTemplate && settings?.legalTemplates?.[legalTemplate]?.rules) || {};
-  const overrides = settings?.legal?.rules ?? {};
-  const maxWeeklyValue = legalTemplate
-    ? 'maxWeeklyHours' in overrides
-      ? overrides.maxWeeklyHours
-      : templateRules.maxWeeklyHours
-    : null;
-  const maxWeeklyHours =
-    typeof maxWeeklyValue === 'number' && maxWeeklyValue > 0
-      ? maxWeeklyValue
-      : null;
+  // Each user's contracted weekly hours (from their HR profile), shown as
+  // the denominator next to their planned hours
+  const { data: profiles } = useGetEmployeeProfilesQuery();
+  const contractedHoursByUser = useMemo(() => {
+    const map = new Map<Uri, number>();
+    (profiles ?? []).forEach(profile => {
+      const hours = profile.weeklyContractedHours
+        ? parseFloat(profile.weeklyContractedHours)
+        : NaN;
+      if (!Number.isNaN(hours) && hours > 0) {
+        map.set(profile.user, hours);
+      }
+    });
+    return map;
+  }, [profiles]);
 
   // Planned net hours & reported overtime per user, over the whole week
   // (ignores the type filter, so the totals stay true while filtering)
@@ -189,8 +188,9 @@ export default function EmployeeGrid({
             planned: 0,
             overtime: 0,
           };
+          const contractedHours = contractedHoursByUser.get(user['@id']);
           const overLimit =
-            maxWeeklyHours !== null && hours.planned > maxWeeklyHours;
+            contractedHours !== undefined && hours.planned > contractedHours;
           const hasOvertime = Math.round(hours.overtime * 10) !== 0;
 
           return (
@@ -208,9 +208,9 @@ export default function EmployeeGrid({
                     <span className="shift-planning__user-hours">
                       <Tooltip
                         title={
-                          maxWeeklyHours !== null
+                          contractedHours !== undefined
                             ? t('SHIFT_PLANNING_WEEK_HOURS_TOOLTIP', {
-                                max: fmtHours(maxWeeklyHours),
+                                max: fmtHours(contractedHours),
                               })
                             : t('SHIFT_PLANNING_WEEK_HOURS_TOOLTIP_NO_LIMIT')
                         }>
@@ -221,8 +221,8 @@ export default function EmployeeGrid({
                               : undefined
                           }>
                           {fmtHours(hours.planned)}
-                          {maxWeeklyHours !== null &&
-                            `/${fmtHours(maxWeeklyHours)}`}
+                          {contractedHours !== undefined &&
+                            `/${fmtHours(contractedHours)}`}
                         </span>
                       </Tooltip>
                       {hasOvertime && (

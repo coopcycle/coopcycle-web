@@ -999,7 +999,7 @@
         "SHIFT_CALENDAR_SYNC_PRIVACY": "Anyone with this address can see your shifts — keep it private.",
         "SHIFT_CALENDAR_DOWNLOAD": "Download (.ics)",
         "SHIFT_CALENDAR_CLOSE": "Close",
-        "SHIFT_PLANNING_WEEK_HOURS_TOOLTIP": "Planned hours this week / legal weekly maximum ({{max}})",
+        "SHIFT_PLANNING_WEEK_HOURS_TOOLTIP": "Planned hours this week / contracted weekly hours ({{max}})",
         "SHIFT_PLANNING_WEEK_HOURS_TOOLTIP_NO_LIMIT": "Planned hours this week",
         "SHIFT_PLANNING_OVERTIME_TOOLTIP": "Difference between reported worked time and the plan this week",
         "SHIFT_PLANNING_VIEW_HR": "HR",
