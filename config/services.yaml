@@ -70,6 +70,7 @@ parameters:
   rdc_connections_default: []
   rdc_connections: '%env(default:rdc_connections_default:json:RDC_CONNECTIONS)%'
   billing_enabled: '%env(bool:BILLING_ENABLED)%'
+  cyke_enabled: '%env(bool:CYKE_ENABLED)%'
   package_delivery_ui_price_breakdown_enabled_default: true
   package_delivery_ui_price_breakdown_enabled: '%env(default:package_delivery_ui_price_breakdown_enabled_default:bool:PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED)%'
 
@@ -1148,6 +1149,11 @@ services:
       - { name: monolog.logger, channel: urbantz }
       - { name: api_platform.state_processor }
 
+  AppBundle\Api\State\CykeWebhookProcessor:
+    tags:
+      - { name: monolog.logger, channel: cyke }
+      - { name: api_platform.state_processor }
+
   AppBundle\Twig\CoopCycleExtension:
     arguments:
       $secret: '%secret%'
@@ -1624,6 +1630,8 @@ services:
     arguments:
       $lang: "%env(COOPCYCLE_LOCALE)%"
 
+  AppBundle\Cyke\Client: ~
+
   AppBundle\Assets\PlaceholderImageResolver:
     arguments:
       $pixabayApiKey: '%env(PIXABAY_API_KEY)%'
@@ -1777,6 +1785,12 @@ services:
       - '%secret%'
 
   AppBundle\MessageHandler\Task\NotifyUrbantz: ~
+
+  AppBundle\MessageHandler\CreateCykeDelivery:
+    arguments:
+      $cykeEnabled: '%cyke_enabled%'
+    tags:
+      - { name: monolog.logger, channel: cyke }
 
   AppBundle\MessageHandler\Task\NotifyLoopeat:
     arguments:

@@ -1,0 +1,62 @@
+{{ form_row(form.cykeUserEmail) }}
+
+<div class="form-group">
+  {{ form_label(form.cykeUserToken) }}
+  <div class="input-group">
+    {{ form_widget(form.cykeUserToken, { type: 'password', attr: { 'data-role': 'secret-input' } }) }}
+    <span class="input-group-btn">
+      <button type="button" class="btn btn-default" data-role="toggle-visibility"
+        title="{{ 'basics.show'|trans }}" data-show-title="{{ 'basics.show'|trans }}" data-hide-title="{{ 'basics.hide'|trans }}">
+        <i class="fa fa-eye"></i>
+      </button>
+    </span>
+  </div>
+  {{ form_errors(form.cykeUserToken) }}
+</div>
+
+<div class="form-group" data-widget="cyke-webhook-url">
+  <label>{{ 'form.store.cyke_webhook_url.label'|trans }}</label>
+  <div class="input-group">
+    <input type="text" class="form-control" id="store_cykeWebhookUrl" readonly
+      value="{{ url('_api_/cyke/webhook_post') }}">
+    <span class="input-group-btn">
+      <button type="button" class="btn btn-default" data-role="copy" data-clipboard-target="#store_cykeWebhookUrl" title="{{ 'basics.copy'|trans }}">
+        <i class="fa fa-copy"></i>
+      </button>
+    </span>
+  </div>
+  <span class="help-block">{{ 'form.store.cyke_webhook_url.help'|trans }}</span>
+</div>
+
+{% if store.cykeWebhookSecret is not empty %}
+<div class="form-group" data-widget="cyke-webhook-secret">
+  <label>{{ 'form.store.cyke_webhook_secret.label'|trans }}</label>
+  <div class="input-group">
+    <input type="password" class="form-control" id="store_cykeWebhookSecret" readonly
+      value="{{ store.cykeWebhookSecret }}" data-role="secret-input">
+    <span class="input-group-btn">
+      <button type="button" class="btn btn-default" data-role="toggle-visibility"
+        title="{{ 'basics.show'|trans }}" data-show-title="{{ 'basics.show'|trans }}" data-hide-title="{{ 'basics.hide'|trans }}">
+        <i class="fa fa-eye"></i>
+      </button>
+      <button type="button" class="btn btn-default" data-role="copy" data-clipboard-target="#store_cykeWebhookSecret" title="{{ 'basics.copy'|trans }}">
+        <i class="fa fa-copy"></i>
+      </button>
+    </span>
+  </div>
+  <span class="help-block">{{ 'form.store.cyke_webhook_secret.help'|trans }}</span>
+</div>
+{% endif %}
+
+<div class="form-group" data-widget="cyke-package-type"
+  data-endpoint="{{ path('admin_store_cyke_package_types') }}"
+  data-email-input="#{{ form.cykeUserEmail.vars.id }}"
+  data-token-input="#{{ form.cykeUserToken.vars.id }}"
+  data-target-input="#{{ form.cykePackageTypeId.vars.id }}">
+  <label>{{ 'form.store.cyke_package_type_id.label'|trans }}</label>
+  <select class="form-control" data-role="select">
+    <option value="">{{ 'form.store.cyke_package_type_id.placeholder'|trans }}</option>
+  </select>
+  <span class="help-block">{{ 'form.store.cyke_package_type_id.help'|trans }}</span>
+</div>
+{{ form_widget(form.cykePackageTypeId) }}

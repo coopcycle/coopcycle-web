@@ -74,6 +74,12 @@ security:
             stateless: true
             security: false
 
+        api_cyke_webhook:
+            pattern:   ^/api/cyke/webhook$
+            methods: [ POST ]
+            stateless: true
+            security: false
+
         api_deliveries:
             pattern:   ^/api/deliveries
             methods: [ GET, POST, PUT, DELETE ]
@@ -401,6 +407,7 @@ security:
         - { path: ^/api/urbantz, roles: [ ROLE_USER, ROLE_API_APP ], methods: [ GET, POST, PUT, DELETE ] }
         - { path: ^/api/woopit, roles: [ ROLE_USER, ROLE_API_APP ] }
         - { path: ^/api/v1/webhooks/rdc, roles: PUBLIC_ACCESS }
+        - { path: ^/api/cyke/webhook$, roles: PUBLIC_ACCESS, methods: [ POST ] }
 
         - { path: ^/api/products/[0-9]+/recommendations$, roles: PUBLIC_ACCESS, methods: [ GET ] }
 
