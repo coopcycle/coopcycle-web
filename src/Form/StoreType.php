@@ -20,6 +20,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 
 class StoreType extends LocalBusinessType
@@ -111,6 +112,24 @@ class StoreType extends LocalBusinessType
                         'label' => 'form.store.cyke_package_type_id.label',
                         'help' => 'form.store.cyke_package_type_id.help',
                         'required' => false,
+                    ])
+                    // Cyke validates the delivery slot we send against the store's
+                    // configured opening hours/slots in its own UI. EDIFACT-imported
+                    // deliveries (see SyncTransportersCommand) carry no time info, so
+                    // we fall back to this configurable slot (e.g. "Journée entière").
+                    ->add('cykeTimeSlot', TextType::class, [
+                        'label' => 'form.store.cyke_time_slot.label',
+                        'help' => 'form.store.cyke_time_slot.help',
+                        'required' => false,
+                        'attr' => [
+                            'placeholder' => 'form.store.cyke_time_slot.placeholder',
+                        ],
+                        'constraints' => [
+                            new Assert\Regex([
+                                'pattern' => '/^([01]\d|2[0-3]):[0-5]\d-([01]\d|2[0-3]):[0-5]\d$/',
+                                'message' => 'form.store.cyke_time_slot.invalid',
+                            ]),
+                        ],
                     ]);
                 // cykeWebhookSecret is intentionally *not* a form field: it's generated
                 // server-side (see the POST_SET_DATA listener below) and only ever
@@ -214,6 +233,14 @@ class StoreType extends LocalBusinessType
             if (null !== $store && null !== $store->getId() && $this->cykeEnabled
                 && empty($store->getCykeWebhookSecret())) {
                 $store->setCykeWebhookSecret(bin2hex(random_bytes(32)));
+                $this->entityManager->flush();
+            }
+
+            // Default to Cyke's own "Journée entière" fixed slot, so stores that
+            // never touch this setting still send a slot Cyke will accept.
+            if (null !== $store && null !== $store->getId() && $this->cykeEnabled
+                && empty($store->getCykeTimeSlot())) {
+                $store->setCykeTimeSlot('08:00-18:00');
                 $this->entityManager->flush();
             }
         });

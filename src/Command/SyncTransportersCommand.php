@@ -313,6 +313,9 @@ class SyncTransportersCommand extends Command {
                 }
             }
         }
+        if (!$this->dryRun) {
+            $this->entityManager->flush();
+        }
         $this->output->writeln("Remove files to acknowledge import");
         $this->transporterLogger->info("Remove files to acknowledge import", ['transporter' => $this->transporter]);
         $sync->flush($this->dryRun);
@@ -364,7 +367,6 @@ class SyncTransportersCommand extends Command {
             $this->entityManager->persist($dropoff);
             $this->entityManager->persist($delivery);
             $this->createOrderForDelivery($delivery);
-            $this->entityManager->flush();
         }
     }
 
@@ -408,7 +410,6 @@ class SyncTransportersCommand extends Command {
             $this->entityManager->persist($dropoff);
             $this->entityManager->persist($delivery);
             $this->createOrderForDelivery($delivery);
-            $this->entityManager->flush();
         }
     }
 

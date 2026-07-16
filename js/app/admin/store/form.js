@@ -289,7 +289,11 @@ document.querySelectorAll('[data-role="toggle-visibility"]').forEach(toggleBtn =
 })
 
 if (document.querySelector('[data-clipboard-target]')) {
-  new ClipboardJS('[data-clipboard-target]')
+  // Read the value directly, because browsers refuse to copy
+  // the selection of a password input (the webhook secret)
+  new ClipboardJS('[data-clipboard-target]', {
+    text: trigger => document.querySelector(trigger.getAttribute('data-clipboard-target')).value
+  })
 }
 
 // Delete confirmation

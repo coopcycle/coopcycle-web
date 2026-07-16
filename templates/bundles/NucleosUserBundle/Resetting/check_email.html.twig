@@ -4,13 +4,9 @@
 
 {% block body %}
   {% block nucleos_user_content %}
-  <div class="container">
-    <div class="row">
-      <div class="col-md-6 col-md-offset-3">
-      <p>
+  <div class="mx-auto px-4">
+    <div class="flex justify-center my-8">
       {{ 'resetting.check_email'|trans({'%tokenLifetime%': tokenLifetime})|nl2br }}
-      </p>
-      </div>
     </div>
   </div>
   {% endblock nucleos_user_content %}

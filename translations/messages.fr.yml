@@ -1244,6 +1244,10 @@ form.store.cyke_webhook_secret.help: Généré automatiquement. Copiez-le et col
 form.store.cyke_package_type_id.label: Type de colis
 form.store.cyke_package_type_id.help: Le type de colis envoyé à Cyke pour chaque livraison créée depuis cette boutique
 form.store.cyke_package_type_id.placeholder: Sélectionner un type de colis
+form.store.cyke_time_slot.label: Créneau horaire de livraison
+form.store.cyke_time_slot.help: 'Le créneau horaire envoyé à Cyke pour chaque livraison créée depuis cette boutique, correspondant à un des créneaux fixes configurés dans votre compte Cyke (par ex. 08:00-18:00 pour la "Journée entière")'
+form.store.cyke_time_slot.placeholder: '08:00-18:00'
+form.store.cyke_time_slot.invalid: 'Cette valeur doit respecter le format HH:MM-HH:MM, par ex. 08:00-18:00'
 adminDashboard.hubs.title: Hubs
 adminDashboard.hubs.createNew: Créer un nouveau hub
 adminDashboard.hubs.help: Les hubs permettent de regrouper des boutiques partageant

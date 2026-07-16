@@ -5,8 +5,10 @@ namespace AppBundle\MessageHandler;
 use AppBundle\Entity\Cyke\Delivery as CykeDelivery;
 use AppBundle\Entity\Delivery;
 use AppBundle\Message\DeliveryCreated;
+use AppBundle\Service\SettingsManager;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
+use libphonenumber\PhoneNumber;
 use libphonenumber\PhoneNumberFormat;
 use libphonenumber\PhoneNumberUtil;
 use Psr\Log\LoggerInterface;
@@ -19,12 +21,15 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 #[AsMessageHandler]
 class CreateCykeDelivery
 {
+    private const DEFAULT_TIME_SLOT = '08:00-18:00';
+
     private $logger;
 
     public function __construct(
         private HttpClientInterface $cykeClient,
         private EntityManagerInterface $entityManager,
         private PhoneNumberUtil $phoneNumberUtil,
+        private SettingsManager $settingsManager,
         private bool $cykeEnabled = false,
         ?LoggerInterface $logger = null)
     {
@@ -62,10 +67,27 @@ class CreateCykeDelivery
 
         $telephone = $address->getTelephone();
 
+        // EDIFACT-imported deliveries don't always carry a recipient phone number,
+        // and Cyke requires one — fall back to the platform's own configured
+        // phone number rather than leaving it blank.
+        if (null === $telephone) {
+            $fallback = $this->settingsManager->get('phone_number');
+            if ($fallback instanceof PhoneNumber) {
+                $telephone = $fallback;
+            }
+        }
+
+        // EDIFACT-imported deliveries (see SyncTransportersCommand) carry no real
+        // time information, only a date — the task's After/Before end up spanning
+        // the whole day, which Cyke rejects (slot already begun/ended, or outside
+        // opening hours). We send the store's configured Cyke slot instead, on the
+        // dropoff's calendar date.
+        [$slotStart, $slotEnd] = $this->buildCykeSlot($dropoff->getAfter(), $store->getCykeTimeSlot());
+
         $payload = [
             'dropoff' => [
-                'slot_starting_at' => Carbon::instance($dropoff->getAfter())->toIso8601String(),
-                'slot_ending_at' => Carbon::instance($dropoff->getBefore())->toIso8601String(),
+                'slot_starting_at' => $slotStart->toIso8601String(),
+                'slot_ending_at' => $slotEnd->toIso8601String(),
                 'place' => [
                     'recipient_name' => $address->getContactName() ?: $address->getName(),
                     'recipient_phone' => $telephone ? $this->phoneNumberUtil->format($telephone, PhoneNumberFormat::E164) : null,
@@ -131,5 +153,31 @@ class CreateCykeDelivery
                 ['payload' => $payload]
             );
         }
+    }
+
+    /**
+     * @return array{0: Carbon, 1: Carbon}
+     */
+    private function buildCykeSlot(\DateTimeInterface $date, ?string $timeSlot): array
+    {
+        [$opens, $closes] = explode('-', $timeSlot ?: self::DEFAULT_TIME_SLOT);
+
+        $day = Carbon::instance($date)->startOfDay();
+
+        $slotStart = $day->copy()->setTimeFromTimeString($opens);
+        $slotEnd = $day->copy()->setTimeFromTimeString($closes);
+
+        // SyncTransportersCommand always schedules EDIFACT imports for "today"
+        // (see importScontrTask/importPickupTask), so by the time this message is
+        // processed the configured slot may have already started, or even ended.
+        // Cyke rejects a slot that has already begun, so roll it forward a day at
+        // a time until it's actually in the future.
+        $now = Carbon::now();
+        while ($slotStart->lte($now)) {
+            $slotStart->addDay();
+            $slotEnd->addDay();
+        }
+
+        return [$slotStart, $slotEnd];
     }
 }
