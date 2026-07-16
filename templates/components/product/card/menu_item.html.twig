@@ -1,6 +1,12 @@
 {# TODO Skip if no variant is defined #}
 {% if product.enabled %}
-  <div class="card card-side h-full bg-base-300 text-base-content cursor-pointer transition-shadow hover:shadow-md">
+  <div class="card card-side h-full bg-base-300 text-base-content cursor-pointer transition-shadow hover:shadow-md"
+    data-modal="product-details"
+    data-form-action="{{ path('restaurant_add_product_to_cart', { id: product.restaurant.id, code: product.code })|e('html_attr') }}"
+    data-product="{{ product|serialize('jsonld', { groups: ['product'] })|e('html_attr') }}"
+    data-product-images="{{ product_images|json_encode|e('html_attr') }}"
+    data-product-price="{{ (product|sylius_resolve_variant).price|e('html_attr') }}"
+    data-product-options="{{ product.options|serialize('jsonld', { groups: ['restaurant_menu'] })|e('html_attr') }}">
     {% if card_product_image is not empty %}
     <figure>
       <img src="{{ card_product_image }}" />
@@ -9,13 +15,7 @@
     <div class="card-body w-2/3 flex flex-row justify-between">
       <button
         type="button"
-        class="w-full flex flex-row justify-between gap-4 cursor-pointer"
-        data-modal="product-details"
-        data-form-action="{{ path('restaurant_add_product_to_cart', { id: product.restaurant.id, code: product.code })|e('html_attr') }}"
-        data-product="{{ product|serialize('jsonld', { groups: ['product'] })|e('html_attr') }}"
-        data-product-images="{{ product_images|json_encode|e('html_attr') }}"
-        data-product-price="{{ (product|sylius_resolve_variant).price|e('html_attr') }}"
-        data-product-options="{{ product.options|serialize('jsonld', { groups: ['restaurant_menu'] })|e('html_attr') }}">
+        class="w-full flex flex-row justify-between gap-4 cursor-pointer">
         {% include 'components/product/card/menu_item_inner.html.twig' %}
         {% if product.hasOptions() %}
           <span class="btn btn-circle self-end">+</span>
