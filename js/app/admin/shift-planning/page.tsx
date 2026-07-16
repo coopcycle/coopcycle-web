@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Provider } from 'react-redux';
 import { Badge, Button, Segmented, Space, Spin } from 'antd';
-import { BarChartOutlined, CarryOutOutlined } from '@ant-design/icons';
+import { CarryOutOutlined } from '@ant-design/icons';
 import { useHotkey } from '@tanstack/react-hotkeys';
 import dayjs, { Dayjs } from 'dayjs';
 import isoWeek from 'dayjs/plugin/isoWeek';
@@ -30,13 +30,13 @@ import ShiftSettingsModal from './components/ShiftSettingsModal';
 import GenerateScheduleButton from './components/GenerateScheduleButton';
 import AddToDispatchButton from './components/AddToDispatchButton';
 import PayrollExportButton from './components/PayrollExportButton';
-import ShiftsDashboard from './components/ShiftsDashboard';
+import WeekOverviewStrip from './components/WeekOverviewStrip';
 import SkillsManager from './components/SkillsManager';
 import EmployeesManager from './components/EmployeesManager';
 import PublishWeekButton from './components/PublishWeekButton';
 import { syncWeekToUrl, weekFromParams } from './utils/weekUrl';
 
-type View = 'employee' | 'calendar' | 'type' | 'dashboard' | 'skills' | 'hr';
+type View = 'employee' | 'calendar' | 'type' | 'skills' | 'hr';
 
 dayjs.extend(isoWeek);
 
@@ -167,13 +167,14 @@ const Planning = ({ shiftTypes }: Props) => {
     setRemovedUris(uris => [...uris, uri]);
   };
 
-  // The week grids (employee/calendar/type) share the week navigator and the
-  // planning toolbar; dashboard and skills are standalone management views
+  // The week grids (employee/calendar/type) share the week navigator, the
+  // week overview strip and the planning toolbar; skills/hr are standalone
+  // management views
   const isPlanningView =
     view === 'employee' || view === 'calendar' || view === 'type';
 
-  // "Planning" covers the week grids & dashboard; "Employees" groups the HR
-  // section together with skills (a competency is an employee attribute)
+  // "Planning" covers the week grids; "Employees" groups the HR section
+  // together with skills (a competency is an employee attribute)
   const section =
     view === 'hr' || view === 'skills' ? 'employees' : 'planning';
 
@@ -199,16 +200,12 @@ const Planning = ({ shiftTypes }: Props) => {
           </button>
         </nav>
         <Space>
-          <Button
-            type={view === 'dashboard' ? 'primary' : 'text'}
-            ghost={view === 'dashboard'}
-            icon={<BarChartOutlined />}
-            onClick={() => setView('dashboard')}>
-            {t('SHIFT_PLANNING_DASHBOARD')}
-          </Button>
           <ShiftSettingsModal shiftTypes={shiftTypes} />
         </Space>
       </div>
+      {isPlanningView && (
+        <WeekOverviewStrip weekStart={weekStart} onSelectWeek={setWeekStart} />
+      )}
       {isPlanningView && (
         <div className="shift-planning__toolbar">
           <Space>
@@ -221,7 +218,26 @@ const Planning = ({ shiftTypes }: Props) => {
               typeColors={typeColors}
             />
           </Space>
-          <Space>
+          <Segmented
+            value={view}
+            onChange={value => setView(value as View)}
+            options={[
+              {
+                label: t('SHIFT_PLANNING_VIEW_EMPLOYEE'),
+                value: 'employee',
+              },
+              {
+                label: t('SHIFT_PLANNING_VIEW_CALENDAR'),
+                value: 'calendar',
+              },
+              { label: t('SHIFT_PLANNING_VIEW_TYPE'), value: 'type' },
+            ]}
+          />
+        </div>
+      )}
+      {isPlanningView && (
+        <div className="shift-planning__toolbar">
+          <Space wrap>
             <Badge count={pendingCount}>
               <Button
                 icon={<CarryOutOutlined />}
@@ -233,27 +249,12 @@ const Planning = ({ shiftTypes }: Props) => {
             <GenerateScheduleButton weekStart={weekStart} />
             <AddToDispatchButton weekStart={weekStart} />
             <PublishWeekButton weekStart={weekStart} />
-            <Button
-              type="primary"
-              onClick={() => setModalState({ date: weekStart })}>
-              {t('SHIFT_PLANNING_NEW_SHIFT')}
-            </Button>
-            <Segmented
-              value={view}
-              onChange={value => setView(value as View)}
-              options={[
-                {
-                  label: t('SHIFT_PLANNING_VIEW_EMPLOYEE'),
-                  value: 'employee',
-                },
-                {
-                  label: t('SHIFT_PLANNING_VIEW_CALENDAR'),
-                  value: 'calendar',
-                },
-                { label: t('SHIFT_PLANNING_VIEW_TYPE'), value: 'type' },
-              ]}
-            />
           </Space>
+          <Button
+            type="primary"
+            onClick={() => setModalState({ date: weekStart })}>
+            {t('SHIFT_PLANNING_NEW_SHIFT')}
+          </Button>
         </div>
       )}
       {section === 'employees' && (
@@ -268,14 +269,6 @@ const Planning = ({ shiftTypes }: Props) => {
           />
           <PayrollExportButton />
         </div>
-      )}
-      {view === 'dashboard' && (
-        <ShiftsDashboard
-          onSelectWeek={week => {
-            setWeekStart(week.startOf('isoWeek'));
-            setView('employee');
-          }}
-        />
       )}
       {view === 'skills' && <SkillsManager />}
       {view === 'hr' && <EmployeesManager />}
