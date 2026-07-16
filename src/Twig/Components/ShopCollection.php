@@ -75,6 +75,16 @@ abstract class ShopCollection
             ->andWhere('r.id IN (:ids)')
             ->setParameter('ids', $itemsIds);
 
-        return $qb->getQuery()->getResult();
+        $shopsById = [];
+        foreach ($qb->getQuery()->getResult() as $shop) {
+            $shopsById[$shop->getId()] = $shop;
+        }
+
+        // "WHERE id IN (...)" does not preserve the order of $itemsIds,
+        // so we need to reorder the results to match the order computed by doGetShops()
+        return array_values(array_filter(array_map(
+            fn($id) => $shopsById[$id] ?? null,
+            $itemsIds
+        )));
     }
 }
