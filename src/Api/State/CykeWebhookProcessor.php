@@ -53,11 +53,14 @@ final class CykeWebhookProcessor implements ProcessorInterface
             ->findOneBy(['cykeId' => (string) $deliveryPayload['id']]);
 
         if (null === $cykeDelivery) {
-            $this->logger->warning(
+            // We receive webhooks for every delivery created on Cyke, not just the
+            // ones we forwarded — most of them aren't ours, so this is expected
+            // and shouldn't be treated as an error by Cyke's webhook retry logic.
+            $this->logger->info(
                 sprintf('Received Cyke webhook for unknown delivery "%s"', $deliveryPayload['id'])
             );
 
-            throw new NotFoundHttpException();
+            return $data;
         }
 
         $delivery = $cykeDelivery->getDelivery();
