@@ -39,7 +39,7 @@ services:
 
   recommender:
     profiles:
-      - disabled
+      - ml
 
 volumes:
   node_modules_webpack:
