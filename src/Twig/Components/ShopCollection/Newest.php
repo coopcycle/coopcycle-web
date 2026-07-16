@@ -3,7 +3,6 @@
 namespace AppBundle\Twig\Components\ShopCollection;
 
 use AppBundle\Twig\Components\ShopCollection;
-use AppBundle\Utils\SortableRestaurantIterator;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
 #[AsTwigComponent(template: 'components/ShopCollection.html.twig')]
@@ -24,8 +23,7 @@ class Newest extends ShopCollection
     protected function doGetShops(): array
     {
         $news = $this->repository->findLatest();
-        $newsIterator = new SortableRestaurantIterator($news, $this->timingRegistry);
 
-        return iterator_to_array($newsIterator);
+        return $this->sortShops($news);
     }
 }

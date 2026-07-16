@@ -7,6 +7,8 @@ use AppBundle\Business\Context as BusinessContext;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Service\TimingRegistry;
+use AppBundle\Utils\RestaurantOrderStatsSorter;
+use AppBundle\Utils\SortableRestaurantIterator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -19,10 +21,17 @@ abstract class ShopCollection
 {
     const EXPIRES_AFTER = 300;
 
+    // Sort modes that rely on batched order-history queries, as opposed to
+    // the default (null) time-slot sort.
+    private const ORDER_STATS_SORT_MODES = ['historical_order_volume', 'ordering_potential', 'popularity'];
+
+    public ?string $sort = null;
+
     public function __construct(
         protected EntityManagerInterface $entityManager,
         protected LocalBusinessRepository $repository,
         protected TimingRegistry $timingRegistry,
+        protected RestaurantOrderStatsSorter $restaurantOrderStatsSorter,
         protected TranslatorInterface $translator,
         protected UrlGeneratorInterface $urlGenerator,
         protected CacheInterface $appCache,
@@ -36,6 +45,26 @@ abstract class ShopCollection
 
     abstract protected function doGetShops(): array;
 
+    /**
+     * Sorts the given shops using the algorithm selected via $this->sort,
+     * falling back to the default time-slot sort when null/unrecognized.
+     *
+     * @param LocalBusiness[] $shops
+     * @return LocalBusiness[]
+     */
+    protected function sortShops(array $shops): array
+    {
+        if (count($shops) === 0) {
+            return [];
+        }
+
+        if (in_array($this->sort, self::ORDER_STATS_SORT_MODES, true)) {
+            return $this->restaurantOrderStatsSorter->sort($shops, $this->sort);
+        }
+
+        return iterator_to_array(new SortableRestaurantIterator($shops, $this->timingRegistry));
+    }
+
     public function getCacheKey(): string
     {
         $parts = [
@@ -45,6 +74,8 @@ abstract class ShopCollection
         ];
 
         $parts = array_merge($parts, $this->getCacheKeyParts());
+
+        $parts[] = $this->sort ?? 'default';
 
         $user = $this->security->getUser();
         if (null !== $user && $user->hasBusinessAccount() && $this->businessContext->isActive()) {

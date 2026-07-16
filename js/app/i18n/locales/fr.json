@@ -822,7 +822,16 @@
                 },
                 "tools": {
                     "shop_collection": {
-                        "select_value": "Sélectionnez une valeur"
+                        "select_value": "Sélectionnez une valeur",
+                        "sort_placeholder": "Trier par",
+                        "sort_default": "Par défaut (prochain créneau disponible)",
+                        "sort_default_help": "Les restaurants sont triés par prochain créneau de livraison disponible, du plus proche au plus éloigné.",
+                        "sort_historical_order_volume": "Volume de commandes historique",
+                        "sort_historical_order_volume_help": "Les restaurants sont triés par nombre total de commandes complétées, depuis toujours.",
+                        "sort_ordering_potential": "Potentiel de commande",
+                        "sort_ordering_potential_help": "Les restaurants sont triés par nombre de commandes complétées au cours des 30 derniers jours.",
+                        "sort_popularity": "Popularité",
+                        "sort_popularity_help": "Les restaurants sont triés par nombre de clients distincts ayant complété une commande, depuis toujours."
                     },
                     "slider": {
                         "move_left": "Déplacer à gauche",

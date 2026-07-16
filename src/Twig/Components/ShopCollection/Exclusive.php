@@ -3,7 +3,6 @@
 namespace AppBundle\Twig\Components\ShopCollection;
 
 use AppBundle\Twig\Components\ShopCollection;
-use AppBundle\Utils\SortableRestaurantIterator;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
 #[AsTwigComponent(template: 'components/ShopCollection.html.twig')]
@@ -24,8 +23,7 @@ class Exclusive extends ShopCollection
     protected function doGetShops(): array
     {
         $exclusives = $this->repository->findExclusives();
-        $exclusivesIterator = new SortableRestaurantIterator($exclusives, $this->timingRegistry);
 
-        return iterator_to_array($exclusivesIterator);
+        return $this->sortShops($exclusives);
     }
 }
