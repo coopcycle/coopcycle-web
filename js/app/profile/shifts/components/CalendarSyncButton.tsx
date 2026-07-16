@@ -18,10 +18,7 @@ export default function CalendarSyncButton() {
 
   return (
     <>
-      <Button
-        size="small"
-        icon={<CalendarOutlined />}
-        onClick={() => setOpen(true)}>
+      <Button icon={<CalendarOutlined />} onClick={() => setOpen(true)}>
         {t('SHIFT_CALENDAR_SYNC')}
       </Button>
       <Modal

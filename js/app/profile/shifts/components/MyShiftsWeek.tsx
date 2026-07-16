@@ -12,6 +12,7 @@ import {
 import WeekNavigator from '../../../admin/shift-planning/components/WeekNavigator';
 import ShiftCard from '../../../admin/shift-planning/components/ShiftCard';
 import ReportTimeModal from '../../../admin/shift-planning/components/ReportTimeModal';
+import CalendarSyncButton from './CalendarSyncButton';
 import OpenShiftsWeek from './OpenShiftsWeek';
 import {
   shiftIsOnDay,
@@ -49,8 +50,15 @@ export default function MyShiftsWeek() {
 
   return (
     <div>
-      <div className="mb-3">
+      <div
+        className="mb-3"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}>
         <WeekNavigator value={weekStart} onChange={setWeekStart} />
+        <CalendarSyncButton />
       </div>
       <Spin spinning={isFetching}>
         {shifts.length === 0 ? (
