@@ -7,6 +7,7 @@ use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Edifact\EDIFACTMessageRepository;
+use AppBundle\Entity\Package;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\CalculateUsingPricingRules;
 use AppBundle\Service\DeliveryOrderManager;
@@ -168,6 +169,10 @@ class SyncTransportersCommand extends Command {
                 throw new Exception(sprintf('%s is not configured or enabled', $this->transporter));
             }
             $config = $config[$this->transporter];
+
+            $this->importFromPoint->setPackageMapping(
+                $this->resolvePackageMapping($config['package_mapping'] ?? [])
+            );
 
             if (isset($config['sync']['uri'])) {
                 $inFs = $outFs = $this->initTransporterSyncOptions($config['sync']);
@@ -476,6 +481,40 @@ class SyncTransportersCommand extends Command {
             $pushPath,
             $pullPath
         );
+    }
+
+    /**
+     * Resolves the `package_mapping` config (Transporter\Enum\ProductType
+     * case name => Package shortCode) into actual Package entities.
+     *
+     * @param array<string,string> $mapping
+     * @return array<string,Package>
+     */
+    private function resolvePackageMapping(array $mapping): array
+    {
+        if (empty($mapping)) {
+            return [];
+        }
+
+        $repo = $this->entityManager->getRepository(Package::class);
+        $resolved = [];
+        foreach ($mapping as $productType => $shortCode) {
+            $package = $repo->findOneBy(['shortCode' => $shortCode]);
+            if (is_null($package)) {
+                $this->transporterLogger->warning(
+                    sprintf(
+                        'Package mapping references unknown package shortCode "%s" for product type "%s"',
+                        $shortCode,
+                        $productType
+                    ),
+                    ['transporter' => $this->transporter]
+                );
+                continue;
+            }
+            $resolved[$productType] = $package;
+        }
+
+        return $resolved;
     }
 
     private function debugPoint(Point $point): void {

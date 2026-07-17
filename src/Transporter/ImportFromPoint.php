@@ -5,6 +5,7 @@ namespace AppBundle\Transporter;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Edifact\EDIFACTMessage;
+use AppBundle\Entity\Package;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
 use AppBundle\Service\Geocoder;
@@ -12,6 +13,7 @@ use Psr\Log\LoggerInterface;
 use Transporter\DTO\CommunicationMean;
 use Transporter\DTO\Mesurement;
 use Transporter\DTO\NameAndAddress;
+use Transporter\DTO\Package as TransporterPackage;
 use Transporter\DTO\Point;
 use Transporter\Enum\CommunicationMeanType;
 use Transporter\Enum\INOVERTMessageType;
@@ -22,6 +24,14 @@ use libphonenumber\PhoneNumberUtil;
 class ImportFromPoint {
 
     private GeoCoordinates $defaultCoordinates;
+
+    /**
+     * Maps a Transporter\Enum\ProductType case name (e.g. "PACKAGE",
+     * "HANDLING_UNIT") to the AppBundle\Entity\Package it corresponds to.
+     *
+     * @var array<string,Package>
+     */
+    private array $packageMapping = [];
 
     public function __construct(
         private Geocoder $geocoder,
@@ -86,9 +96,9 @@ class ImportFromPoint {
         ));
         $task->setWeight($weight * 1000);
 
-
-        //TODO: Maybe add package codes
-
+        foreach ($point->getPackages() as $package) {
+            $this->addPackageToTask($task, $package);
+        }
 
         return $task;
     }
@@ -128,6 +138,34 @@ class ImportFromPoint {
     ): void
     {
         $this->defaultCoordinates = $defaultCoordinates;
+    }
+
+    /**
+     * @param array<string,Package> $packageMapping Keyed by
+     *   Transporter\Enum\ProductType case name.
+     */
+    public function setPackageMapping(array $packageMapping): void
+    {
+        $this->packageMapping = $packageMapping;
+    }
+
+    private function addPackageToTask(Task $task, TransporterPackage $package): void
+    {
+        $productType = $package->getType()->name;
+
+        if (!isset($this->packageMapping[$productType])) {
+            $this->transporterLogger->warning(sprintf(
+                'No package mapping configured for product type "%s", skipping %d package(s)',
+                $productType,
+                $package->getQuantity()
+            ));
+            return;
+        }
+
+        $task->addPackageWithQuantity(
+            $this->packageMapping[$productType],
+            $package->getQuantity()
+        );
     }
 
     private function addressFromNAD(

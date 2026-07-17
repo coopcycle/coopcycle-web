@@ -33,6 +33,12 @@ class SyncTransportersCommandTest extends KernelTestCase {
     UNA:+,? ' UNB+UNOC:1+123456789:22+987654321:22+240325:1951+2206' UNH+1+SCONTR:3:2:GT:GTF210+ACG' BGM++240325' NAD+FW+12345678900935:05++DBSCHENKER TESTING INC' DTM+DEP+240325' NAD+DP+98765432100010:05++COOPCYCLE TESTING INC' TSR+++3' CAG+P+V' TDT++++3' DOC+730+++ACG+2278663' UNS+D' RFF+CN+JOY0123456789' GID++1:23+1:21' MSE+CGW+15:KG' NAD+CN+++JOHN DOE:ZIMP COMPANY+64 RUE ALEXANDRE DUMAS+PARIS++75+FR' CTA+IC+:JOHN DOE+06 01 02 03 04:AL' NAD+CO+++HOME DEPOT+54 ROUTE DE TREGUIER:BP 8+LOUANNEC++22+FR' DTM+DES+240322' NAD+FW+12345678900935:05++DBSCHENKER TESTING INC+LE BREHAT:ALLEE DES CHATELETS+PLOUFRAGAN++22440+FR' CAG+P+V+++++++++227004' TSR++D:E+3' TXT+DEL+TEL ?: 06 01 02 03 04 POUR PRENDRE UN RENDEZ VOUS DE LIVRAISON' GDS+G+DIVERS' PCI+23' GIN+BN+*2222121907222700470100691001300' DOC+WBL::JOY0123456789+++ACG+70100691+219072' DOC+824+++PRI+FRSBK830689437' UNS+S' UNT+26+1' UNZ+1+2206'
     EDI;
 
+    // Same as EDI_SAMPLE, except the GID segment carries 2 handling units
+    // and 3 packages (GID++2:23+3:21') instead of 1 of each.
+    const EDI_PACKAGES_SAMPLE = <<<EDI
+    UNA:+,? ' UNB+UNOC:1+123456789:22+987654321:22+240325:1951+2206' UNH+1+SCONTR:3:2:GT:GTF210+ACG' BGM++240325' NAD+FW+12345678900935:05++DBSCHENKER TESTING INC' DTM+DEP+240325' NAD+DP+98765432100010:05++COOPCYCLE TESTING INC' TSR+++3' CAG+P+V' TDT++++3' DOC+730+++ACG+2278663' UNS+D' RFF+CN+JOYPACKAGES0001' GID++2:23+3:21' MSE+CGW+15:KG' NAD+CN+++JOHN DOE:ZIMP COMPANY+64 RUE ALEXANDRE DUMAS+PARIS++75+FR' CTA+IC+:JOHN DOE+06 01 02 03 04:AL' NAD+CO+++HOME DEPOT+54 ROUTE DE TREGUIER:BP 8+LOUANNEC++22+FR' DTM+DES+240322' NAD+FW+12345678900935:05++DBSCHENKER TESTING INC+LE BREHAT:ALLEE DES CHATELETS+PLOUFRAGAN++22440+FR' CAG+P+V+++++++++227004' TSR++D:E+3' TXT+DEL+TEL ?: 06 01 02 03 04 POUR PRENDRE UN RENDEZ VOUS DE LIVRAISON' GDS+G+DIVERS' PCI+23' GIN+BN+*2222121907222700470100691001300' DOC+WBL::JOYPACKAGES0001+++ACG+70100691+219072' DOC+824+++PRI+FRSBK830689437' UNS+S' UNT+26+1' UNZ+1+2206'
+    EDI;
+
     const EDI_PICKUP_SAMPLE = <<<EDI
     UNA:+.? ' UNB+UNOC:1+311799456:22+423810365:22+251127:1251+3045' UNH+1+PICKUP:3:2:GT:GTF310' BGM++251127+251127' NAD+MS+31179945601800:05++DBSCHENKER TESTING INC' DTM+BOD+251127' NAD+MR+42381036500068:05++COOPCYCLE TESTING INC' NAD+PW+++TEST+ZA DE LA PRADE:RTE DE NANTES+LOMENER++56+FR' DTM+EDD+251127' TSR+E02++3' CAG+P+V' GDS+G+PALETTE' TDT++++3' DOC+ACO+++ACG' UNS+D' RFF+CN+JOY560000410920251001' GID++1:23+1:21' MSE+CGW+100:KG' NAD+IC+31179945601800++SCHENKER FRANCE+PARC D ACTIVITES SUD LANDES+LOMENER++56270+FR' NAD+CN+++OE / TESTS5+64 RUE ALEXANDRE DUMAS+PARIS++75+FR' NAD+PP+++SCHENKER FRANCE / EXPLOITATION' CAG+P+V+++++++++560000' TSR+E02++3' DOC+WBL+++PRI+00000000+219066' DOC+824+++PRI+FRLRT503000000' UNS+S' UNT+25+1' UNZ+1+3045'
     EDI;
@@ -718,6 +724,64 @@ class SyncTransportersCommandTest extends KernelTestCase {
             $dropoffReportEDIMessage->getPods()
         );
 
+    }
+
+    public function testValidSyncOneTaskWithPackages(): void
+    {
+        // Insert edi to sync
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/test.edi', self::FS_MASK_DBS),
+            self::EDI_PACKAGES_SAMPLE
+        );
+
+        // package_mapping maps the generic Transporter\Enum\ProductType
+        // (parsed from the GID segment's unit codes: 23 = HANDLING_UNIT,
+        // 21 = PACKAGE) to our own Package entities by shortCode.
+        $command = $this->buildCommandWithConfig([
+            'DBSCHENKER' => [
+                'enabled' => true,
+                'name' => 'DBSchenker test',
+                'legal_name' => 'DBSchenker Testing Inc.',
+                'legal_id' => '0000011',
+                'sync' => [
+                    'filemask' => self::FS_MASK_DBS,
+                    'uri' => $this->syncDBSchenkerFs,
+                ],
+                'package_mapping' => [
+                    'HANDLING_UNIT' => 'XL',
+                    'PACKAGE' => 'SM',
+                ],
+            ],
+        ]);
+
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'transporter' => 'DBSCHENKER'
+        ]);
+
+        $commandTester->assertCommandIsSuccessful();
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('imported 1 tasks', $output);
+
+        $delivery = $this->entityManager->getRepository(Delivery::class)->findAll();
+        $this->assertCount(1, $delivery);
+
+        /** @var Delivery $delivery */
+        $delivery = array_shift($delivery);
+
+        /** @var Task $dropoff */
+        $dropoff = $delivery->getDropoff();
+
+        // GID++2:23+3:21' -> 2 handling units + 3 packages = 5 packages total,
+        // same number of packages as declared in the EDIFACT file.
+        $this->assertEquals(5, $dropoff->totalPackages());
+        $this->assertCount(2, $dropoff->getPackages());
+
+        $packageQuantities = [];
+        foreach ($dropoff->getPackages() as $taskPackage) {
+            $packageQuantities[$taskPackage->getPackage()->getShortCode()] = $taskPackage->getQuantity();
+        }
+        $this->assertEquals(['XL' => 2, 'SM' => 3], $packageQuantities);
     }
 
     public function testValidSyncOnePickupTask(): void
