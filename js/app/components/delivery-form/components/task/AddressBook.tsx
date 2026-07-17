@@ -285,6 +285,7 @@ const AddressBook = ({
               {({ field }) => (
                 <Checkbox
                   {...field}
+                  className="mt-2"
                   checked={field.value}
                   onChange={e =>
                     setFieldValue(
