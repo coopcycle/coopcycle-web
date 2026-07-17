@@ -99,9 +99,10 @@ export default function (props) {
 
   const { t } = useTranslation()
 
-  const { showLabel, deliveryId } = {
+  const { showLabel, showText, deliveryId } = {
     showLabel: t("SHOW_BARCODES"),
-    deliveryId: null, 
+    showText: false,
+    deliveryId: null,
     ...props,
   }
 
@@ -130,7 +131,13 @@ export default function (props) {
 
   return (
     <>
-      <a onClick={() => setIsOpen(true)}>{showLabel}</a>
+      <a
+        onClick={() => setIsOpen(true)}
+        title={showLabel}
+        style={{ cursor: 'pointer' }}>
+        <i className="fa fa-barcode fa-lg" aria-hidden="true"></i>
+        {showText && <span className="ml-2">{showLabel}</span>}
+      </a>
       <Modal
         title="Barcodes"
         open={isOpen}

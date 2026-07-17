@@ -90,6 +90,9 @@
           <p>-</p>
         {% endif %}
       </td>
+      <td class="text-center" width="10%">
+        <small class="text-muted">{{ delivery.createdAt|time_diff }}</small>
+      </td>
       <td class="text-center">
         {% if delivery.hasImages() and store is defined %}
           <a href="{{ path(routes.download_images, { storeId: store.id, deliveryId: delivery.id }) }}">
@@ -97,13 +100,14 @@
           </a>
         {% endif %}
       </td>
-      <td class="text-center" width="10%">
-        <small class="text-muted">{{ delivery.createdAt|time_diff }}</small>
-      </td>
       <td class="text-right">
         <div {{ react_component('BarcodesModal', {
           deliveryId: delivery.id
-          }) }}></div>
+          }) }}>
+          <a title="{{ 'delivery.barcodes.show'|trans }}">
+            <i class="fa fa-barcode fa-lg" aria-hidden="true"></i>
+          </a>
+        </div>
       </td>
     </tr>
   {% endfor %}
