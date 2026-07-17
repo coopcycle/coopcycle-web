@@ -100,11 +100,13 @@ class CreateCykeDelivery
             ],
             // CoopCycle doesn't track per-delivery package details for every store,
             // and Cyke requires at least one package, so we always send the single
-            // default package type configured for the store, with a quantity of 1.
+            // default package type configured for the store, with the actual
+            // imported quantity (see ImportFromPoint::addPackageToTask) — or 1 if
+            // the delivery carries no package data (e.g. non-EDIFACT deliveries).
             'packages' => [
                 [
                     'package_type_id' => (int) $store->getCykePackageTypeId(),
-                    'amount' => 1,
+                    'amount' => $dropoff->totalPackages() ?: 1,
                 ],
             ],
             'comments' => $dropoff->getComments(),
