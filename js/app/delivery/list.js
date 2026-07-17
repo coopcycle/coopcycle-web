@@ -19,6 +19,18 @@ import './list.scss'
 // https://getbootstrap.com/docs/3.4/javascript/#tooltips
 $('[data-toggle="tooltip"]').tooltip();
 
+// Make delivery list rows clickable (navigate to the edit/view link),
+// while keeping inner interactive elements (links, buttons, modals…) working.
+document.addEventListener('click', function(e) {
+  if (e.target.closest('a, button, input, label, [role="button"], .modal')) {
+    return
+  }
+  const row = e.target.closest('tr[data-testid="delivery__list_item"][data-href]')
+  if (row) {
+    window.location.href = row.getAttribute('data-href')
+  }
+})
+
 ['start', 'end'].forEach(name => {
   const inputEl = document.querySelector(`#data_export_${name}`)
   const widgetEl = document.querySelector(`#data_export_${name}_widget`)

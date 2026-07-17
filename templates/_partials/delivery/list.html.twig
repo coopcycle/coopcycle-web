@@ -16,7 +16,7 @@
   </thead>
   <tbody>
   {% for delivery in deliveries %}
-    <tr data-testid="delivery__list_item">
+    <tr data-testid="delivery__list_item" data-href="{{ path(routes.view, { id: delivery.id }) }}" style="cursor: pointer;">
       <td>
         {% if is_granted('ROLE_DISPATCHER') %}
           {% if delivery.order is defined and delivery.order is not empty %}
@@ -101,12 +101,6 @@
         <small class="text-muted">{{ delivery.createdAt|time_diff }}</small>
       </td>
       <td class="text-right">
-        {% if is_granted('ROLE_DISPATCHER') %}
-          <a href="{{ path(routes.view, { id: delivery.id }) }}" data-testid="delivery_id">{{ 'basics.edit'|trans }}</a>
-        {% else %}
-          <a href="{{ path(routes.view, { id: delivery.id }) }}" data-testid="delivery_id">{{ 'basics.view'|trans }}</a>
-        {% endif %}
-
         <div {{ react_component('BarcodesModal', {
           deliveryId: delivery.id
           }) }}></div>
