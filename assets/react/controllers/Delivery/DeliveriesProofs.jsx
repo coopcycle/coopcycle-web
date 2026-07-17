@@ -187,7 +187,7 @@ export default function DeliveriesProofs({ store_id = null }) {
         onOk={_handleDownload}
         okText={t('DELIVERY_PROOFS_DOWNLOAD_BUTTON')}
         width={640}
-        destroyOnClose>
+        destroyOnHidden>
         <div className="mb-3">
           {t('DELIVERY_PROOFS_CHOOSE_WEEK')}:
           <DatePicker
