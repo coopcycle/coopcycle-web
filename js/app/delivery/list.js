@@ -29,7 +29,7 @@ document.addEventListener('click', function(e) {
   if (row) {
     window.location.href = row.getAttribute('data-href')
   }
-})
+});
 
 ['start', 'end'].forEach(name => {
   const inputEl = document.querySelector(`#data_export_${name}`)
