@@ -4,8 +4,7 @@
 
 # Uncomment to create Zelty webhooks using a tunnel (like ngrok)
 # services:
-#     AppBundle\Form\Restaurant\ZeltyType:
+#     AppBundle\Integration\Zelty\ZeltyConnectService:
 #         autowire: true
-#         tags: [ form.type ]
 #         arguments:
-#             $webhookBaseUrl: 'https://echo-take-skirt.ngrok-free.dev'
+#             $webhookBaseUrl: 'https://your-tunnel-subdomain.ngrok-free.dev'

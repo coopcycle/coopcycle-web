@@ -31,13 +31,15 @@ export default function ZeltyDishSelect({ restaurantId, inputId }) {
     return current != null ? String(current) : ''
   })
 
-  useEffect(() => {
+  const fetchDishes = () => {
     const client = getHttpClient()
     if (!client) {
       setLoading(false)
       setError(t('ZELTY_DISH_LOAD_ERROR'))
       return
     }
+    setLoading(true)
+    setError(null)
     client
       .get(`//${window.location.host}/admin/restaurant/${restaurantId}/zelty/dishes`)
       .then(({ response }) => {
@@ -48,6 +50,14 @@ export default function ZeltyDishSelect({ restaurantId, inputId }) {
         setLoading(false)
         setError(t('ZELTY_DISH_LOAD_ERROR'))
       })
+  }
+
+  useEffect(() => {
+    fetchDishes()
+    // Re-fetch once the API key has been saved via the "Connect" button,
+    // as the initial fetch returns an empty list without a key.
+    document.addEventListener('zelty:connected', fetchDishes)
+    return () => document.removeEventListener('zelty:connected', fetchDishes)
   }, [restaurantId])
 
   const applyValue = (val) => {

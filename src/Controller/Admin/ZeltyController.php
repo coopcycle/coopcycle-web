@@ -4,17 +4,66 @@ namespace AppBundle\Controller\Admin;
 
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Integration\Zelty\ZeltyClient;
+use AppBundle\Integration\Zelty\ZeltyConnectService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
 
 class ZeltyController extends AbstractController
 {
     public function __construct(
         private readonly ZeltyClient $zeltyClient,
+        private readonly ZeltyConnectService $zeltyConnectService,
         private readonly EntityManagerInterface $entityManager,
     ) {}
+
+    #[Route('/admin/restaurant/{id}/zelty/connect', name: 'admin_restaurant_zelty_connect', methods: ['POST'])]
+    public function connect(LocalBusiness $restaurant, Request $request): JsonResponse
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $data = json_decode($request->getContent(), true);
+        $apiKey = is_array($data) ? trim((string) ($data['apiKey'] ?? '')) : '';
+
+        // "•" is the placeholder shown for an already saved key — reject it as-is.
+        if ($apiKey === '' || str_contains($apiKey, '•') || str_contains($apiKey, '*')) {
+            return new JsonResponse(['error' => 'missing_or_masked_key'], 400);
+        }
+
+        try {
+            $secretSaved = $this->zeltyConnectService->connect($restaurant, $apiKey);
+        } catch (ClientExceptionInterface $e) {
+            return new JsonResponse(['error' => 'invalid_key'], 422);
+        } catch (ExceptionInterface $e) {
+            return new JsonResponse(['error' => 'zelty_unreachable'], 502);
+        }
+
+        $this->entityManager->flush();
+
+        return new JsonResponse(['status' => 'connected', 'secretSaved' => $secretSaved]);
+    }
+
+    #[Route('/admin/restaurant/{id}/zelty/webhook-secret', name: 'admin_restaurant_zelty_webhook_secret', methods: ['POST'])]
+    public function webhookSecret(LocalBusiness $restaurant, Request $request): JsonResponse
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $data = json_decode($request->getContent(), true);
+        $secretKey = is_array($data) ? trim((string) ($data['secretKey'] ?? '')) : '';
+
+        if ($secretKey === '' || str_contains($secretKey, '*') || str_contains($secretKey, '•')) {
+            return new JsonResponse(['error' => 'missing_or_masked_secret'], 400);
+        }
+
+        $restaurant->setZeltyWebhookSecretKey($secretKey);
+        $this->entityManager->flush();
+
+        return new JsonResponse(['status' => 'saved']);
+    }
 
     #[Route('/admin/restaurant/{id}/zelty/dishes', name: 'admin_restaurant_zelty_dishes', methods: ['GET'])]
     public function dishes(LocalBusiness $restaurant): JsonResponse
