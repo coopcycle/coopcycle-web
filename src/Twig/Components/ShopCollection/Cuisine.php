@@ -3,7 +3,6 @@
 namespace AppBundle\Twig\Components\ShopCollection;
 
 use AppBundle\Twig\Components\ShopCollection;
-use AppBundle\Utils\SortableRestaurantIterator;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
 #[AsTwigComponent(template: 'components/ShopCollection.html.twig')]
@@ -26,9 +25,8 @@ class Cuisine extends ShopCollection
     protected function doGetShops(): array
     {
         $shopsByCuisine = $this->repository->findByCuisine($this->cuisine);
-        $shopsByCuisineIterator = new SortableRestaurantIterator($shopsByCuisine, $this->timingRegistry);
 
-        return iterator_to_array($shopsByCuisineIterator);
+        return $this->sortShops($shopsByCuisine);
     }
 
     protected function getCacheKeyParts(): array

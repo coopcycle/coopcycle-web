@@ -1,6 +1,15 @@
-/* */
+@import '~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss';
 
 .ReactModal__Content--delivery-import-spreadsheet {
   width: calc(100% - 40px);
   height: calc(100% - 40px);
+}
+
+// Highlight clickable delivery list rows on hover
+tr[data-testid="delivery__list_item"][data-href] {
+  transition: background-color 0.15s ease-in-out;
+
+  &:hover {
+    background-color: $table-bg-hover;
+  }
 }

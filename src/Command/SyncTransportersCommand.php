@@ -7,6 +7,7 @@ use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Edifact\EDIFACTMessageRepository;
+use AppBundle\Entity\Package;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\CalculateUsingPricingRules;
 use AppBundle\Service\DeliveryOrderManager;
@@ -169,6 +170,10 @@ class SyncTransportersCommand extends Command {
             }
             $config = $config[$this->transporter];
 
+            $this->importFromPoint->setPackageMapping(
+                $this->resolvePackageMapping($config['package_mapping'] ?? [])
+            );
+
             if (isset($config['sync']['uri'])) {
                 $inFs = $outFs = $this->initTransporterSyncOptions($config['sync']);
             }
@@ -313,6 +318,9 @@ class SyncTransportersCommand extends Command {
                 }
             }
         }
+        if (!$this->dryRun) {
+            $this->entityManager->flush();
+        }
         $this->output->writeln("Remove files to acknowledge import");
         $this->transporterLogger->info("Remove files to acknowledge import", ['transporter' => $this->transporter]);
         $sync->flush($this->dryRun);
@@ -364,7 +372,6 @@ class SyncTransportersCommand extends Command {
             $this->entityManager->persist($dropoff);
             $this->entityManager->persist($delivery);
             $this->createOrderForDelivery($delivery);
-            $this->entityManager->flush();
         }
     }
 
@@ -408,7 +415,6 @@ class SyncTransportersCommand extends Command {
             $this->entityManager->persist($dropoff);
             $this->entityManager->persist($delivery);
             $this->createOrderForDelivery($delivery);
-            $this->entityManager->flush();
         }
     }
 
@@ -475,6 +481,40 @@ class SyncTransportersCommand extends Command {
             $pushPath,
             $pullPath
         );
+    }
+
+    /**
+     * Resolves the `package_mapping` config (Transporter\Enum\ProductType
+     * case name => Package shortCode) into actual Package entities.
+     *
+     * @param array<string,string> $mapping
+     * @return array<string,Package>
+     */
+    private function resolvePackageMapping(array $mapping): array
+    {
+        if (empty($mapping)) {
+            return [];
+        }
+
+        $repo = $this->entityManager->getRepository(Package::class);
+        $resolved = [];
+        foreach ($mapping as $productType => $shortCode) {
+            $package = $repo->findOneBy(['shortCode' => $shortCode]);
+            if (is_null($package)) {
+                $this->transporterLogger->warning(
+                    sprintf(
+                        'Package mapping references unknown package shortCode "%s" for product type "%s"',
+                        $shortCode,
+                        $productType
+                    ),
+                    ['transporter' => $this->transporter]
+                );
+                continue;
+            }
+            $resolved[$productType] = $package;
+        }
+
+        return $resolved;
     }
 
     private function debugPoint(Point $point): void {

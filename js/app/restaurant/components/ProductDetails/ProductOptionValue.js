@@ -1,5 +1,5 @@
 import React from 'react'
-import { getValuesRange, useProductOptions } from './useProductOptions'
+import { getValuesRange, isOptionQuantityMaxReached, useProductOptions } from './useProductOptions'
 import {
   DecrementQuantityButton,
   IncrementQuantityButton,
@@ -47,6 +47,7 @@ export const AdditionalOptionValue = ({
   const { getValueQuantity, setValueQuantity, incrementValueQuantity, decrementValueQuantity } = useProductOptions()
   const valuesRange = getValuesRange(option)
   const quantity = getValueQuantity(option, optionValue)
+  const maxReached = isOptionQuantityMaxReached(option)
 
   const inputProps = !valuesRange.isUpperInfinite ? { max: valuesRange.upper } : {}
 
@@ -79,8 +80,10 @@ export const AdditionalOptionValue = ({
         onChange={e => {
           setValueQuantity(option, optionValue, e.currentTarget.value)
         }}
+        disabled={ maxReached && quantity === 0 }
         {...inputProps} />
       <IncrementQuantityButton
+        disabled={ maxReached }
         onClick={ () => {
           incrementValueQuantity(option, optionValue)
         } } />

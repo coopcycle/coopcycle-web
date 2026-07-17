@@ -667,6 +667,8 @@ services:
 
   AppBundle\Utils\OrderTimelineCalculator: ~
 
+  AppBundle\Utils\RestaurantOrderStatsSorter: ~
+
   AppBundle\Utils\OrderTimeHelper:
     arguments:
       $country: "%country_iso%"

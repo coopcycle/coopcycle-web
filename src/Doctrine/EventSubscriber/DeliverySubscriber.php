@@ -64,5 +64,6 @@ class DeliverySubscriber
         }
 
         $this->deliveries = [];
+        $this->onFlushCalled = false;
     }
 }

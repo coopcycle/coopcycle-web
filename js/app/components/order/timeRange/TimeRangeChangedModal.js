@@ -194,6 +194,7 @@ export default function TimeRangeChangedModal() {
         trackEvent('Checkout', 'openTimeRangeChangedModal')
       }}
       contentLabel={t('CART_CHANGE_TIME_MODAL_LABEL')}
+      overlayClassName="ReactModal__Overlay"
       className="TimeRangeChangedModal__Content">
       <div data-testid="order.timeRangeChangedModal">
         <h4 className="font-bold text-lg mb-4">{t('CART_TIME_RANGE_CHANGED_MODAL_TITLE')}</h4>

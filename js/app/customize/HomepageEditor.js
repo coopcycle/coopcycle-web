@@ -19,7 +19,7 @@ const sanitizeBlocks = (blocks) => blocks.filter(block => block.type !== 'paragr
 const updatePreview = _.debounce((data) => channel.postMessage({ ...data, blocks: sanitizeBlocks(data.blocks) }), 500)
 
 // https://dev.to/sumankalia/how-to-integrate-editorjs-in-reactjs-2l6l
-const Editor = forwardRef(({ blocks, cuisines, shopTypes, uploadEndpoint, deliveryForms, shopCollections, edenredEnabled, t }, ref) => {
+const Editor = forwardRef(({ blocks, cuisines, shopTypes, uploadEndpoint, deliveryForms, shopCollections, edenredEnabled, isPreviewEnabledRef, t }, ref) => {
 
   useEffect(() => {
 
@@ -64,6 +64,9 @@ const Editor = forwardRef(({ blocks, cuisines, shopTypes, uploadEndpoint, delive
         // https://editorjs.io/i18n/
         i18n: t('HOMEPAGE_EDITOR', { returnObjects: true }),
         onChange: async (api, event) => {
+          if (!isPreviewEnabledRef.current) {
+            return;
+          }
           const data = await editor.save();
           updatePreview(data);
         },
@@ -90,8 +93,13 @@ export default function({ blocks, cuisines, shopTypes, uploadEndpoint, deliveryF
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false)
   const [isPreviewEnabled, setIsPreviewEnabled] = useState(false)
+  const isPreviewEnabledRef = useRef(isPreviewEnabled)
   const [isPublished, setIsPublished] = useState(false)
   const [isPublishLoading, setIsPublishLoading] = useState(false)
+
+  useEffect(() => {
+    isPreviewEnabledRef.current = isPreviewEnabled
+  }, [isPreviewEnabled])
 
   const httpClient = new window._auth.httpClient();
 
@@ -124,6 +132,7 @@ export default function({ blocks, cuisines, shopTypes, uploadEndpoint, deliveryF
         deliveryForms={deliveryForms}
         shopCollections={shopCollections}
         edenredEnabled={edenredEnabled}
+        isPreviewEnabledRef={isPreviewEnabledRef}
         t={t} />
       <Flex justify="flex-end" align="center" gap="small">
         <Typography.Text>{ t('HOMEPAGE_EDITOR.published') }</Typography.Text>

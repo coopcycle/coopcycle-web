@@ -217,6 +217,8 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     private ?string $cykePackageTypeId = null;
 
+    private ?string $cykeTimeSlot = null;
+
     public function __construct()
     {
         $this->deliveries = new ArrayCollection();
@@ -777,6 +779,18 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     public function setCykePackageTypeId(?string $cykePackageTypeId): Store
     {
         $this->cykePackageTypeId = $cykePackageTypeId;
+
+        return $this;
+    }
+
+    public function getCykeTimeSlot(): ?string
+    {
+        return $this->cykeTimeSlot;
+    }
+
+    public function setCykeTimeSlot(?string $cykeTimeSlot): Store
+    {
+        $this->cykeTimeSlot = $cykeTimeSlot;
 
         return $this;
     }
