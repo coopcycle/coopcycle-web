@@ -70,9 +70,9 @@
       <td width="10%">
         {% if delivery.pickup.isAssigned() and delivery.dropoff.isAssigned() %}
           {% if delivery.pickup.assignedCourier == delivery.dropoff.assignedCourier %}
-            <a href="{{ path('admin_user_details', { username: delivery.pickup.assignedCourier.username }) }}">
-              <img src="{{ path('user_avatar', { username: delivery.pickup.assignedCourier.username }) }}" width="20" height="20"> @{{ delivery.pickup.assignedCourier.username }}
-            </a>
+            <img src="{{ path('user_avatar', { username: delivery.pickup.assignedCourier.username }) }}" width="20" height="20"
+              data-toggle="tooltip" data-placement="top"
+              title="@{{ delivery.pickup.assignedCourier.username }}">
           {% endif %}
         {% endif %}
       </td>

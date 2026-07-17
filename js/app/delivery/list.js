@@ -15,6 +15,10 @@ import Centrifuge from 'centrifuge'
 
 import './list.scss'
 
+// Enable Bootstrap tooltips
+// https://getbootstrap.com/docs/3.4/javascript/#tooltips
+$('[data-toggle="tooltip"]').tooltip();
+
 ['start', 'end'].forEach(name => {
   const inputEl = document.querySelector(`#data_export_${name}`)
   const widgetEl = document.querySelector(`#data_export_${name}_widget`)
