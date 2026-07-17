@@ -65,8 +65,11 @@ const AddressBook = ({
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const [alreadyAskedForModification, setAlreadyAskedForModification] =
     useState<boolean>(false);
+  const initialAddressId = values.tasks[index].address['@id'];
   const [selectValue, setSelectValue] = useState<string>(
-    values.tasks[index].address['@id'],
+    addresses.some(address => address['@id'] === initialAddressId)
+      ? initialAddressId
+      : null,
   );
 
   /* To handle the case where the user picked a remembered address in select but change contactName, name or telephone value */
