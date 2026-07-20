@@ -260,7 +260,7 @@ class BarcodeController extends AbstractController
         return new Response($pdf, 200, [
             'Cache-Control' => 'private',
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('attachment; filename="label_%s.pdf"', $barcode->getRawBarcode())
+            'Content-Disposition' => sprintf('inline; filename="label_%s.pdf"', $barcode->getRawBarcode())
         ]);
     }
 }

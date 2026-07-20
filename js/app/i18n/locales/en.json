@@ -760,6 +760,8 @@
         "DELIVERY_PROOFS_CONTENTS_VALUE": "Photos & Reports",
         "DELIVERY_PROOFS_FILE_TYPE": "File Type",
         "DELIVERY_PROOFS_FILE_TYPE_VALUE": "ZIP archive",
+        "DELIVERY_PROOFS_LOAD_ERROR": "Could not load deliveries",
+        "DELIVERY_PROOFS_DOWNLOAD_ERROR": "Could not download deliveries",
         "DELIVERY_FORM_ADD_PICKUP": "Add a pickup",
         "DELIVERY_FORM_REMOVE_PICKUP": "Remove this pickup",
         "DELIVERY_FORM_MULTIPICKUP": "Multiple pickups are available",
@@ -830,7 +832,16 @@
             "messages": {
                 "tools": {
                     "shop_collection": {
-                        "select_value": "Select a value"
+                        "select_value": "Select a value",
+                        "sort_placeholder": "Sort by",
+                        "sort_default": "Default (next available time slot)",
+                        "sort_default_help": "Restaurants are sorted by their next available delivery time slot, soonest first.",
+                        "sort_historical_order_volume": "Historical order volume",
+                        "sort_historical_order_volume_help": "Restaurants are sorted by their total number of completed orders, all-time.",
+                        "sort_ordering_potential": "Ordering potential",
+                        "sort_ordering_potential_help": "Restaurants are sorted by their number of completed orders in the last 30 days.",
+                        "sort_popularity": "Popularity",
+                        "sort_popularity_help": "Restaurants are sorted by their number of distinct customers who have completed an order, all-time."
                     },
                     "slider": {
                         "move_left": "Move left",

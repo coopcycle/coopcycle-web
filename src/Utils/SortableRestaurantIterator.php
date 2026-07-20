@@ -59,7 +59,7 @@ class SortableRestaurantIterator extends \ArrayIterator
         $aStart = new \DateTime($aTimeInfo['range'][0]);
         $bStart = new \DateTime($bTimeInfo['range'][0]);
 
-        if ($aStart === $bStart) {
+        if ($aStart == $bStart) {
 
             return 0;
         }

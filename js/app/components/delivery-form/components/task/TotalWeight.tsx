@@ -42,10 +42,10 @@ const TotalWeight = ({ taskId }: Props) => {
       <div className="mb-2 font-weight-bold">
         {t('DELIVERY_FORM_TOTAL_WEIGHT')}
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <div style={{ display: 'flex', gap: 8 }}>
         <InputNumber
           name={`tasks[${index}].weight`}
-          style={{ width: '80%' }}
+          style={{ width: 140 }}
           min={0}
           placeholder={t('DELIVERY_FORM_WEIGHT')}
           value={numberValue}
@@ -54,7 +54,7 @@ const TotalWeight = ({ taskId }: Props) => {
           }}
         />
         <Select
-          style={{ width: '15%' }}
+          style={{ width: 90 }}
           value={weightUnit}
           onChange={(value: 'kg' | 'lbs') => setWeightUnit(value)}>
           <Option value="kg">Kg</Option>

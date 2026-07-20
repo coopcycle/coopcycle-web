@@ -60,8 +60,8 @@ class IncidentNormalizer implements NormalizerInterface
                 'name' => $restaurant?->getName()
             ],
             'customer' => [
-                'id' => $order?->getCustomer()?->getUser()->getId(),
-                'username' => $order?->getCustomer()?->getUser()->getUsername()
+                'id' => $order?->getCustomer()?->getUser()?->getId(),
+                'username' => $order?->getCustomer()?->getUser()?->getUsername()
             ]
         ];
 

@@ -656,7 +656,7 @@ const DeliveryForm = ({
                         }></i>
                     </a>
                     <div className="mt-2">
-                      <BarcodesModal deliveryId={deliveryId} />
+                      <BarcodesModal deliveryId={deliveryId} showText />
                     </div>
                   </div>
                 )}

@@ -1,0 +1,9 @@
+// antd colors the `.ant-badge` wrapper with its default text color (near-black),
+// so the FontAwesome bell — which inherits from it — ends up black regardless of
+// the navbar. Force the wrapper to inherit the surrounding font color instead, so
+// the bell matches the navbar link color (light on the dark store dashboard navbar,
+// white on the DaisyUI frontend navbar, etc.). The `#notifications` id keeps this
+// specific enough to win over antd's class-based rule without `!important`.
+#notifications .ant-badge {
+  color: inherit;
+}

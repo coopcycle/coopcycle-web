@@ -891,6 +891,7 @@ promotions.create_credit_note_coupon: Créer un avoir commercial
 delivery.table.heading.summary: Résumé
 delivery.table.heading.courier: Coursier
 delivery.table.heading.order: Commande
+delivery.barcodes.show: Voir les codes-barres
 search.users: Rechercher un utilisateur…
 allergens.CEREALS_CONTAINING_GLUTEN: Céréales contenant du gluten
 allergens.CRUSTACEANS: Crustacés
@@ -1677,6 +1678,7 @@ promotions.human_readable.coupon: "%description% avec le code %code%"
 promotions.human_readable.text: "%name% : %description%"
 form.offer_delivery.decrease_platform_fee.label: Diminuer les frais de plateforme
 form.offer_delivery.decrease_platform_fee.help: Les frais de plateforme seront diminués pour appliquer cette promotion
+basics.not_available_atm: Indisponible pour l'instant
 basics.more_results: Plus de résultats
 sylius.form.promotion_action.delivery_percentage_discount: 'Remise en pourcentage sur les frais de livraison'
 restaurant_promotion.rules.help: Ajoutez des règles pour définir ce qui déclenche l'application de la promotion

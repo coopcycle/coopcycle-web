@@ -377,4 +377,63 @@ class OrderRepository extends BaseOrderRepository
             'favoriteRestaurant' => $favoriteRestaurant,
         ];
     }
+
+    /**
+     * Returns a map of restaurant id => number of fulfilled orders,
+     * optionally restricted to orders created on/after $since.
+     * Restaurants with zero matching orders are simply absent from the map.
+     *
+     * @return array<int, int>
+     */
+    public function countFulfilledOrdersByRestaurants(array $restaurantIds, ?\DateTimeInterface $since = null): array
+    {
+        if (count($restaurantIds) === 0) {
+            return [];
+        }
+
+        $qb = $this->createQueryBuilder('o')
+            ->select('IDENTITY(v.restaurant) AS restaurant_id', 'COUNT(o.id) AS cnt')
+            ->leftJoin(OrderVendor::class, 'v', Join::WITH, 'v.order = o.id')
+            ->andWhere('v.restaurant IN (:restaurantIds)')
+            ->andWhere('o.state = :fulfilled')
+            ->setParameter('restaurantIds', $restaurantIds)
+            ->setParameter('fulfilled', OrderInterface::STATE_FULFILLED)
+            ->groupBy('v.restaurant');
+
+        if (null !== $since) {
+            $qb->andWhere('o.createdAt >= :since')
+                ->setParameter('since', $since);
+        }
+
+        $rows = $qb->getQuery()->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
+
+        return array_map('intval', array_column($rows, 'cnt', 'restaurant_id'));
+    }
+
+    /**
+     * Returns a map of restaurant id => number of distinct customers who
+     * completed a fulfilled order. Restaurants with zero matching orders
+     * are simply absent from the map.
+     *
+     * @return array<int, int>
+     */
+    public function countDistinctCustomersByRestaurants(array $restaurantIds): array
+    {
+        if (count($restaurantIds) === 0) {
+            return [];
+        }
+
+        $qb = $this->createQueryBuilder('o')
+            ->select('IDENTITY(v.restaurant) AS restaurant_id', 'COUNT(DISTINCT o.customer) AS cnt')
+            ->leftJoin(OrderVendor::class, 'v', Join::WITH, 'v.order = o.id')
+            ->andWhere('v.restaurant IN (:restaurantIds)')
+            ->andWhere('o.state = :fulfilled')
+            ->setParameter('restaurantIds', $restaurantIds)
+            ->setParameter('fulfilled', OrderInterface::STATE_FULFILLED)
+            ->groupBy('v.restaurant');
+
+        $rows = $qb->getQuery()->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
+
+        return array_map('intval', array_column($rows, 'cnt', 'restaurant_id'));
+    }
 }
