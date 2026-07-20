@@ -3,64 +3,21 @@
 namespace AppBundle\Action\Order;
 
 use AppBundle\Api\Dto\PaymentMethodsOutput;
-use AppBundle\Payment\GatewayResolver;
-use AppBundle\Service\PaygreenManager;
-use AppBundle\Service\SettingsManager;
-use Sylius\Component\Payment\Model\PaymentInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use AppBundle\Payment\PaymentMethodsResolver;
+use AppBundle\Sylius\Order\OrderInterface;
 
 class PaymentMethods
 {
-    private $cashEnabled;
-    private $edenredEnabled;
-
-    public function __construct(
-        private SettingsManager $settingsManager,
-        private GatewayResolver $gatewayResolver,
-        private PaygreenManager $paygreenManager,
-        bool $cashEnabled,
-        bool $edenredEnabled)
+    public function __construct(private PaymentMethodsResolver $paymentMethodsResolver)
     {
-        $this->cashEnabled = $cashEnabled;
-        $this->edenredEnabled = $edenredEnabled;
     }
 
-    public function __invoke($data): PaymentMethodsOutput
+    public function __invoke(OrderInterface $data): PaymentMethodsOutput
     {
         $output = new PaymentMethodsOutput();
 
-        if ($this->settingsManager->supportsCardPayments()) {
-            $output->addMethod('card');
-        }
-
-        if ($this->cashEnabled || $data->supportsCashOnDelivery()) {
-            $output->addMethod('cash_on_delivery');
-        }
-
-        if ($this->edenredEnabled && $data->supportsEdenred()) {
-            // TODO Also check if balance is > 0
-            $output->addMethod('edenred');
-        }
-
-        if (!$data->isMultiVendor() && 'paygreen' === $this->gatewayResolver->resolveForOrder($data)) {
-            $paygreenPlatforms = $this->paygreenManager->getEnabledPlatforms($data->getRestaurant()->getPaygreenShopId());
-
-            if (in_array('restoflash', $paygreenPlatforms)) {
-                $output->addMethod('restoflash');
-            }
-            if (in_array('conecs', $paygreenPlatforms)) {
-                $output->addMethod('conecs');
-            }
-            if (in_array('swile', $paygreenPlatforms)) {
-                $output->addMethod('swile');
-            }
-            if (in_array('google_pay', $paygreenPlatforms)) {
-                $output->addMethod('google_pay');
-            }
-            if (in_array('apple_pay', $paygreenPlatforms)) {
-                $output->addMethod('apple_pay');
-            }
+        foreach ($this->paymentMethodsResolver->resolveForApi($data) as $type) {
+            $output->addMethod($type);
         }
 
         return $output;
