@@ -1,3 +1,10 @@
 # Uncomment to send emails in dev
 # parameters:
 #     nucleos_profile.registration.confirmation.enabled: true
+
+# Uncomment to create Zelty webhooks using a tunnel (like ngrok)
+# services:
+#     AppBundle\Integration\Zelty\ZeltyConnectService:
+#         autowire: true
+#         arguments:
+#             $webhookBaseUrl: 'https://your-tunnel-subdomain.ngrok-free.dev'

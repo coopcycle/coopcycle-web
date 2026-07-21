@@ -19,6 +19,7 @@ use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Entity\ReusablePackagings;
 use AppBundle\Enum\Allergen;
 use AppBundle\Enum\RestrictedDiet;
+use AppBundle\Integration\Zelty\HasZeltyMetadata;
 use AppBundle\Sylius\Product\ProductInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -64,6 +65,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Product extends BaseProduct implements ProductInterface, Comparable, SoftDeleteableInterface
 {
     use SoftDeleteable;
+    use HasZeltyMetadata;
 
     protected $reusablePackagingEnabled = false;
     protected $reusablePackagings;

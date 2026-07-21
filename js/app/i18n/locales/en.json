@@ -907,6 +907,21 @@
         "PAYMENT_METHOD": "Payment method",
         "PAYMENT_UPDATED_AT": "Last updated",
         "COUPON_CODE_NOT_USED": "Not used yet",
-        "COUPON_CODE_USED": "Used {{ago}}"
+        "COUPON_CODE_USED": "Used {{ago}}",
+        "ZELTY_DISH_SEARCH_PLACEHOLDER": "Search by name…",
+        "ZELTY_DISH_LOADING": "Loading dishes…",
+        "ZELTY_DISH_MANUAL_ID_PLACEHOLDER": "Or enter dish ID",
+        "ZELTY_DISH_CREATE_BUTTON": "Create \"Frais de livraison\" on Zelty",
+        "ZELTY_DISH_CREATE_ERROR": "Failed to create delivery dish on Zelty",
+        "ZELTY_DISH_LOAD_ERROR": "Failed to load dishes",
+        "ZELTY_CONNECT_BUTTON": "Connect to Zelty",
+        "ZELTY_CONNECT_SUCCESS": "Connected! Webhooks have been configured, now select the delivery fee dish below.",
+        "ZELTY_CONNECT_INVALID_KEY": "Zelty rejected this API key",
+        "ZELTY_CONNECT_ERROR": "Failed to connect to Zelty, please try again",
+        "ZELTY_SECRET_PROMPT": "Zelty did not return the webhook secret key. Please paste it here, you can find it in your Zelty back-office.",
+        "ZELTY_SECRET_PLACEHOLDER": "Webhook secret key",
+        "ZELTY_SECRET_SAVE_BUTTON": "Save",
+        "ZELTY_SECRET_SAVE_SUCCESS": "Webhook secret key saved",
+        "ZELTY_SECRET_SAVE_ERROR": "Failed to save the webhook secret key"
       }
 }

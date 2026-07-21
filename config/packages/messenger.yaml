@@ -82,5 +82,7 @@ framework:
             'AppBundle\Message\ResetRushMode': async
             'AppBundle\Message\SoftDelete\CleanupProductOption': async
             'AppBundle\Message\Task\PublishLiveUpdate': async
+            'AppBundle\Message\Zelty\PushOrder': async
+            'AppBundle\Message\Zelty\ProcessZeltyCatalog': async
             'AppBundle\Message\RdcMessage': async
             'AppBundle\Message\IncidentRdcMessage': async

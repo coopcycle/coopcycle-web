@@ -897,6 +897,21 @@
         "PAYMENT_METHOD": "Moyen de paiement",
         "PAYMENT_UPDATED_AT": "Dernière mise à jour",
         "COUPON_CODE_NOT_USED": "Pas encore utilisé",
-        "COUPON_CODE_USED": "Utilisé {{ago}}"
+        "COUPON_CODE_USED": "Utilisé {{ago}}",
+        "ZELTY_DISH_SEARCH_PLACEHOLDER": "Rechercher par nom…",
+        "ZELTY_DISH_LOADING": "Chargement des plats…",
+        "ZELTY_DISH_MANUAL_ID_PLACEHOLDER": "Ou saisir l'ID du plat",
+        "ZELTY_DISH_CREATE_BUTTON": "Créer « Frais de livraison » sur Zelty",
+        "ZELTY_DISH_CREATE_ERROR": "Impossible de créer le plat de livraison sur Zelty",
+        "ZELTY_DISH_LOAD_ERROR": "Impossible de charger les plats",
+        "ZELTY_CONNECT_BUTTON": "Connecter à Zelty",
+        "ZELTY_CONNECT_SUCCESS": "Connecté ! Les webhooks ont été configurés, sélectionnez maintenant le plat « frais de livraison » ci-dessous.",
+        "ZELTY_CONNECT_INVALID_KEY": "Zelty a rejeté cette clé API",
+        "ZELTY_CONNECT_ERROR": "Impossible de se connecter à Zelty, veuillez réessayer",
+        "ZELTY_SECRET_PROMPT": "Zelty n'a pas renvoyé la clé secrète des webhooks. Veuillez la coller ici, vous pouvez la trouver dans votre back-office Zelty.",
+        "ZELTY_SECRET_PLACEHOLDER": "Clé secrète des webhooks",
+        "ZELTY_SECRET_SAVE_BUTTON": "Enregistrer",
+        "ZELTY_SECRET_SAVE_SUCCESS": "Clé secrète des webhooks enregistrée",
+        "ZELTY_SECRET_SAVE_ERROR": "Impossible d'enregistrer la clé secrète des webhooks"
     }
 }

@@ -253,6 +253,9 @@
     "m6web/daemon-bundle": {
         "version": "v6.0.1"
     },
+    "macpaw/behat-orm-context": {
+        "version": "v2.0.0"
+    },
     "nelmio/alice": {
         "version": "3.12",
         "recipe": {

@@ -6,6 +6,7 @@
         <option name="default">free</option>
       </options>
     </field>
+    <field name="metadata" type="json" column="metadata" nullable="true"/>
     <field name="additional" type="boolean" column="additional"/>
     <field name="deletedAt" type="datetime" column="deleted_at" nullable="true"/>
     <field name="valuesRange" type="numrange" column="values_range" nullable="true"/>
