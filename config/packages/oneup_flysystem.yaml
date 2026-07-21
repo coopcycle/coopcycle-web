@@ -70,6 +70,11 @@ oneup_flysystem:
                 client: s3_client
                 bucket: '%env(S3_BUCKET)%'
                 prefix: email_templates
+        zelty_catalog_imports:
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: zelty/catalogs
     filesystems:
         assets:
             adapter: assets
@@ -127,3 +132,7 @@ oneup_flysystem:
             adapter: email_templates
             alias: email_templates_filesystem
             mount: email_templates
+        zelty_catalog_imports:
+            adapter: zelty_catalog_imports
+            alias: zelty_catalog_imports_filesystem
+            mount: zelty_catalog_imports

@@ -1095,6 +1095,21 @@
         "SHIFT_PLANNING_ADD_TO_DISPATCH_CONFIRM": "Add every courier assigned to a shift this week to the dispatch (an empty task list for each of their working days)?",
         "SHIFT_PLANNING_DISPATCH_SYNCED": "{{count}} courier added to the dispatch",
         "SHIFT_PLANNING_DISPATCH_SYNCED_plural": "{{count}} couriers added to the dispatch",
-        "SHIFT_PLANNING_BANK_HOLIDAY": "Bank holiday: {{name}}"
+        "SHIFT_PLANNING_BANK_HOLIDAY": "Bank holiday: {{name}}",
+        "ZELTY_DISH_SEARCH_PLACEHOLDER": "Search by name…",
+        "ZELTY_DISH_LOADING": "Loading dishes…",
+        "ZELTY_DISH_MANUAL_ID_PLACEHOLDER": "Or enter dish ID",
+        "ZELTY_DISH_CREATE_BUTTON": "Create \"Frais de livraison\" on Zelty",
+        "ZELTY_DISH_CREATE_ERROR": "Failed to create delivery dish on Zelty",
+        "ZELTY_DISH_LOAD_ERROR": "Failed to load dishes",
+        "ZELTY_CONNECT_BUTTON": "Connect to Zelty",
+        "ZELTY_CONNECT_SUCCESS": "Connected! Webhooks have been configured, now select the delivery fee dish below.",
+        "ZELTY_CONNECT_INVALID_KEY": "Zelty rejected this API key",
+        "ZELTY_CONNECT_ERROR": "Failed to connect to Zelty, please try again",
+        "ZELTY_SECRET_PROMPT": "Zelty did not return the webhook secret key. Please paste it here, you can find it in your Zelty back-office.",
+        "ZELTY_SECRET_PLACEHOLDER": "Webhook secret key",
+        "ZELTY_SECRET_SAVE_BUTTON": "Save",
+        "ZELTY_SECRET_SAVE_SUCCESS": "Webhook secret key saved",
+        "ZELTY_SECRET_SAVE_ERROR": "Failed to save the webhook secret key"
       }
 }

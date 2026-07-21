@@ -79,6 +79,7 @@ use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Gesdinet\JWTRefreshTokenBundle\Entity\RefreshToken;
+use Tests\Integration\Zelty\TestZeltyTaxesMapper;
 use Typesense\Exceptions\ObjectNotFound;
 
 /**
@@ -227,6 +228,34 @@ class FeatureContext implements Context, SnippetAcceptingContext
                 print mb_substr($testResult->getException()->getTraceAsString(), 0, 250);
             }
         }
+    }
+
+    #[Given('the :filterName filter is disabled')]
+    public function theFilterIsDisabled(string $filterName): void
+    {
+        $this->entityManager->getFilters()->disable($filterName);
+    }
+
+    #[Given('the :filterName filter is enabled')]
+    public function theFilterIsEnabled(string $filterName): void
+    {
+        $this->entityManager->getFilters()->enable($filterName);
+    }
+
+    #[Given('there is a Zelty order with zelty id :zeltyId in state :state')]
+    public function thereIsAZeltyOrderInState(int $zeltyId, string $state): void
+    {
+        $restaurant = $this->doctrine->getRepository(LocalBusiness::class)
+            ->findOneBy(['zeltyApiKey' => 'test-zelty-api-key']);
+
+        $order = $this->getContainer()->get('sylius.factory.order')
+            ->createForRestaurant($restaurant);
+
+        $order->setState($state);
+        $order->setZeltyOrderId($zeltyId);
+
+        $this->entityManager->persist($order);
+        $this->entityManager->flush();
     }
 
     #[Given('the fixtures file :filename is loaded')]
@@ -1475,5 +1504,19 @@ class FeatureContext implements Context, SnippetAcceptingContext
         }
 
         $this->doctrine->getManagerForClass(Task::class)->flush();
+    }
+
+    #[BeforeScenario]
+    public function resetZeltyIntegration(): void
+    {
+        TestZeltyTaxesMapper::setStaticTaxCategoryMap([]);
+    }
+
+    #[Given('the Zelty taxes API will return:')]
+    public function theZeltyTaxesApiWillReturn(PyStringNode $string): void
+    {
+        // Use a non-empty sentinel so importTaxes() skips the real HTTP call.
+        // Products fall back to defaultTaxCategory; tests verify the HTTP response only.
+        TestZeltyTaxesMapper::setStaticTaxCategoryMap(['_loaded' => null]);
     }
 }

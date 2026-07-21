@@ -130,6 +130,13 @@
           </a>
         </li>
         {% endif %}
+        {% if form.zelty is defined %}
+        <li role="presentation">
+          <a role="tab" data-toggle="tab" href="#zelty" aria-controls="zelty">
+            Zelty
+          </a>
+        </li>
+        {% endif %}
         {% if form.vytalEnabled is defined %}
         <li role="presentation">
           <a role="tab" data-toggle="tab" href="#vytal" aria-controls="vytal">
@@ -180,6 +187,11 @@
         {% if form.loopeat is defined %}
         <div role="tabpanel" class="tab-pane" id="loopeat">
           {% include "restaurant/form/_partials/loopeat.html.twig" with { form: form.loopeat } %}
+        </div>
+        {% endif %}
+        {% if form.zelty is defined %}
+        <div role="tabpanel" class="tab-pane" id="zelty">
+          {% include "restaurant/form/_partials/zelty.html.twig" with { form: form.zelty } %}
         </div>
         {% endif %}
         {% if form.vytalEnabled is defined %}

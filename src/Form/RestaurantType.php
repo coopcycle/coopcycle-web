@@ -14,6 +14,7 @@ use AppBundle\Form\Restaurant\ShippingOptionsTrait;
 use AppBundle\Form\Restaurant\FulfillmentMethodsTrait;
 use AppBundle\Form\Type\LocalBusinessTypeChoiceType;
 use AppBundle\Form\Type\QueryBuilder\OrderByNameQueryBuilder;
+use AppBundle\Form\Restaurant\ZeltyType;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormEvent;
@@ -220,6 +221,14 @@ class RestaurantType extends LocalBusinessType
                             'label' => 'basics.delete',
                         ]);
                     }
+
+                    if ($this->zeltyEnabled) {
+                        $form->add('zelty', ZeltyType::class, [
+                            'mapped' => false,
+                        ]);
+                    }
+
+
                 }
 
                 $isFoodEstablishment = FoodEstablishment::isValid($restaurant->getType());
@@ -324,6 +333,7 @@ class RestaurantType extends LocalBusinessType
                     $usePaygreen = $form->get('usePaygreen')->getData();
                     $restaurant->setPaymentGateway($usePaygreen ? 'paygreen': 'stripe');
                 }
+
             }
         );
     }

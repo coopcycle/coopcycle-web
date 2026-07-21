@@ -1,0 +1,7 @@
+framework:
+    messenger:
+        transports:
+            zelty_catalog_sync:
+                dsn: 'sync://'
+        routing:
+            'AppBundle\Message\Zelty\ProcessZeltyCatalog': zelty_catalog_sync

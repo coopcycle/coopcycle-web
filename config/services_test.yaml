@@ -55,3 +55,7 @@ services:
         arguments:
             $center: '@app.map_center'
         tags: [ { name: nelmio_alice.faker.provider } ]
+
+    AppBundle\Integration\Zelty\ZeltyTaxesMapper:
+        class: Tests\Integration\Zelty\TestZeltyTaxesMapper
+        public: true

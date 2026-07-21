@@ -57,7 +57,7 @@ class OrderRepository extends BaseOrderRepository
 
     public function findCartById($id) : ?Order {
         $qb = $this->createOptimizedQueryBuilder('o');
-        
+
         return $qb->where('o.id = :id')
             ->andWhere('o.state = :state')
             ->setParameter('id', $id)
@@ -376,6 +376,11 @@ class OrderRepository extends BaseOrderRepository
             'lastOrderedAt'     => $lastOrderedAt  ? new \DateTime($lastOrderedAt)  : null,
             'favoriteRestaurant' => $favoriteRestaurant,
         ];
+    }
+
+    public function findByZeltyOrderId(int $zeltyOrderId): ?OrderInterface
+    {
+        return $this->findOneBy(['zeltyOrderId' => $zeltyOrderId]);
     }
 
     /**

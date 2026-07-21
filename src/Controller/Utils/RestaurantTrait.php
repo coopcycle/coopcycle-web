@@ -280,7 +280,7 @@ trait RestaurantTrait
 
         });
 
-        return $this->render($request->attributes->get('template'), $this->withRoutes([
+        return $this->render($request->attributes->get('template'), $this->auth($this->withRoutes([
             'restaurant' => $restaurant,
             'activationErrors' => $activationErrors,
             'formErrors' => $formErrors,
@@ -288,7 +288,7 @@ trait RestaurantTrait
             'layout' => $request->attributes->get('layout'),
             'loopeat_authorize_url' => $loopeatAuthorizeUrl,
             'cuisines' => $this->normalizer->normalize($cuisines, 'json', ['groups' => ['restaurant']]),
-        ], $routes));
+        ], $routes)));
     }
 
     public function restaurantAction($id, Request $request,

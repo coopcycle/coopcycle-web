@@ -560,6 +560,8 @@ class Order extends BaseOrder implements OrderInterface
 
     protected Collection $exports;
 
+    private ?int $zeltyOrderId = null;
+
     const SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA = [
         "type" => "object",
         "properties" => [
@@ -2056,5 +2058,15 @@ class Order extends BaseOrder implements OrderInterface
         }
 
         return $this->getRestaurant()->isEnBoitLePlatPlatformFee();
+    }
+
+    public function getZeltyOrderId(): ?int
+    {
+        return $this->zeltyOrderId;
+    }
+
+    public function setZeltyOrderId(?int $zeltyOrderId): void
+    {
+        $this->zeltyOrderId = $zeltyOrderId;
     }
 }
