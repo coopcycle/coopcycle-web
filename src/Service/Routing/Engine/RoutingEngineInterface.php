@@ -1,20 +1,15 @@
 <?php
 
-namespace AppBundle\Service;
+namespace AppBundle\Service\Routing\Engine;
 
 use AppBundle\Entity\Base\GeoCoordinates;
 
-interface RoutingInterface
+interface RoutingEngineInterface
 {
     /**
      * @param GeoCoordinates[] ...$coordinates
      */
     public function getPolyline(GeoCoordinates ...$coordinates);
-
-    /**
-     * @param GeoCoordinates[] ...$coordinates
-     */
-    public function getPoints(GeoCoordinates ...$coordinates);
 
     /**
      * @param GeoCoordinates[] ...$coordinates
@@ -33,13 +28,13 @@ interface RoutingInterface
 
     /**
      * @param GeoCoordinates[] ...$coordinates
-     * @return array
+     * @return array OSRM-shaped response
      */
     public function route(GeoCoordinates ...$coordinates);
 
     /**
      * @param GeoCoordinates[] ...$coordinates
-     * @return array
+     * @return array OSRM-shaped response (optimized trip)
      */
-    public function getTrip(GeoCoordinates ...$coordinates);
+    public function trip(GeoCoordinates ...$coordinates);
 }

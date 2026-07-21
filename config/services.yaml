@@ -45,6 +45,9 @@ parameters:
   transactional_address: "%env(COOPCYCLE_MAIL_SENDER_ADDRESS)%"
   transactional_sender_name: "%env(COOPCYCLE_MAIL_SENDER_NAME)%"
   osrm_host: "%env(COOPCYCLE_OSRM_HOST)%"
+  valhalla_host: "%env(COOPCYCLE_VALHALLA_HOST)%"
+  routing_engine: "%env(COOPCYCLE_ROUTING_ENGINE)%"
+  routing_profile: 'bicycle'
   is_demo: "%env(bool:COOPCYCLE_DEMO)%"
   sentry_public_dsn: "%env(COOPCYCLE_SENTRY_DSN)%"
   foodtech_enabled: "%env(bool:COOPCYCLE_FOODTECH_ENABLED)%"
@@ -796,9 +799,24 @@ services:
 
   AppBundle\Service\Routing\Osrm: ~
 
+  AppBundle\Service\Routing\Engine\OsrmRoutingEngine:
+    arguments:
+      $osrmClient: '@osrm.client'
+      $profile: '%routing_profile%'
+
+  AppBundle\Service\Routing\Engine\ValhallaRoutingEngine:
+    arguments:
+      $valhallaClient: '@valhalla.client'
+      $costing: '%routing_profile%'
+
+  AppBundle\Service\Routing\Valhalla: ~
+
   routing_service:
+    class: AppBundle\Service\RoutingInterface
     public: true
-    class: AppBundle\Service\Routing\OsrmWithFallback
+    factory: ['@AppBundle\Service\Routing\RoutingAdapterFactory', 'create']
+    arguments:
+      - '%routing_engine%'
 
   AppBundle\Api\Filter\DeliveryOrderFilter:
     autowire: false
@@ -851,6 +869,7 @@ services:
   AppBundle\Security\TwoFactor\TwoFactorCondition:
     arguments:
       $isDemo: "%is_demo%"
+      $env: '%env(APP_ENV)%'
 
   AppBundle\Service\RemotePushNotificationManager: ~
 
