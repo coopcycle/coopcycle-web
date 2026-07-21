@@ -48,6 +48,30 @@ Feature: Stores
     And the OAuth client "Acme2" sends a "GET" request to "/api/stores/1/deliveries?order[dropoff.before]=desc"
     Then the response status code should be 403
 
+  Scenario: Not authorized to list another store's addresses with JWT
+    Given the fixtures files are loaded:
+      | deliveries.yml      |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_STORE"
+    And the store with name "Acme" belongs to user "bob"
+    Given the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    When the user "bob" sends a "GET" request to "/api/stores/2/addresses"
+    Then the response status code should be 403
+
+  Scenario: Not authorized to list another store's addresses with OAuth
+    Given the fixtures files are loaded:
+      | deliveries.yml      |
+    Given the store with name "Acme2" has an OAuth client named "Acme2"
+    And the OAuth client with name "Acme2" has an access token
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme2" sends a "GET" request to "/api/stores/1/addresses"
+    Then the response status code should be 403
+
   Scenario: List my stores
     Given the fixtures files are loaded:
       | stores.yml          |
@@ -741,33 +765,47 @@ Feature: Stores
     Given the user "bob" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    When the user "bob" sends a "GET" request to "/api/stores/2/addresses?type=dropoff"
+    When the user "bob" sends a "GET" request to "/api/stores/1/addresses?type=dropoff"
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
       """
       {
         "@context":"/api/contexts/Address",
-        "@id":"/api/stores/2/addresses",
+        "@id":"/api/stores/1/addresses",
         "@type":"hydra:Collection",
         "hydra:member":[
           {
-            "@id":"@string@.startsWith('/api/addresses')",
+            "@id":"/api/addresses/1",
             "@type":"http://schema.org/Place",
             "contactName":null,
             "geo":{
               "@type":"GeoCoordinates",
-              "latitude":48.884625,
-              "longitude":2.322084
+              "latitude":48.864577,
+              "longitude":2.333338
             },
-            "streetAddress":"18 Rue des Batignolles",
+            "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
+            "telephone":null,
+            "name":null,
+            "description": null
+          , "provider": null},
+          {
+            "@id":"/api/addresses/2",
+            "@type":"http://schema.org/Place",
+            "contactName":null,
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":48.864577,
+              "longitude":2.333338
+            },
+            "streetAddress":"18, avenue Ledru-Rollin 75012 Paris 12ème",
             "telephone":null,
             "name":null,
             "description": null
           , "provider": null}],
-        "hydra:totalItems":1,
+        "hydra:totalItems":2,
         "hydra:view":{
-          "@id":"/api/stores/2/addresses?type=dropoff",
+          "@id":"/api/stores/1/addresses?type=dropoff",
           "@type":"hydra:PartialCollectionView"
         }
       }
