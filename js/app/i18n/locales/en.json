@@ -207,6 +207,7 @@
         "ADMIN_DASHBOARD_CAN_NOT_MOVE_FROM_GROUP_TO_ASSIGNED": "Can not move directly individual tasks from group to assigned",
         "ADMIN_DASHBOARD_CAN_NOT_MOVE_TASKS_BETWEEN_GROUPS": "Can not move directly tasks between groups",
         "ADMIN_DASHBOARD_GROUP_TO_UNASSIGNED": "Can not move group to unassigned tasks",
+        "ADMIN_DASHBOARD_MODIFY_TASK_LIST_ERROR": "The changes could not be saved, the task list has been restored. Please try again.",
         "ADMIN_DASHBOARD_ASSIGN_TASKS": "Assign task",
         "ADMIN_DASHBOARD_ASSIGN_TASKS_plural": "Assign {{count}} tasks",
         "ADMIN_DASHBOARD_ASSIGN_DELIVERIES_ORDERS": "Assign delivery/order",

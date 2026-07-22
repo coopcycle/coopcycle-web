@@ -2,6 +2,7 @@ import _ from "lodash";
 import {
   MODIFY_TASK_LIST_REQUEST,
   MODIFY_TASK_LIST_REQUEST_SUCCESS,
+  MODIFY_TASK_LIST_REQUEST_FAILURE,
   OPEN_NEW_TASK_MODAL,
   SET_CURRENT_TASK,
   TOGGLE_TOUR_LOADING,
@@ -42,6 +43,7 @@ export default (state = initialState, action) => {
       }
 
     case MODIFY_TASK_LIST_REQUEST_SUCCESS:
+    case MODIFY_TASK_LIST_REQUEST_FAILURE:
       return {
         ...state,
         taskListsLoading: false,

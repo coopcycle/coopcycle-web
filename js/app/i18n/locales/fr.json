@@ -145,6 +145,7 @@
         "ADMIN_DASHBOARD_CAN_NOT_MOVE_FROM_GROUP_TO_ASSIGNED": "Les tâches ne peuvent pas être déplacées individuellement du groupe vers le coursier",
         "ADMIN_DASHBOARD_CAN_NOT_MOVE_TASKS_BETWEEN_GROUPS": "Les tâches ne peuvent pas être déplacées individuellement entre les groupes",
         "ADMIN_DASHBOARD_GROUP_TO_UNASSIGNED": "Le groupe ne peut pas être déplacé vers les tâches non assignées",
+        "ADMIN_DASHBOARD_MODIFY_TASK_LIST_ERROR": "Les modifications n'ont pas pu être enregistrées, la liste des tâches a été restaurée. Veuillez réessayer.",
         "ADMIN_DASHBOARD_ASSIGN_TASKS": "Assigner la tâche",
         "ADMIN_DASHBOARD_ASSIGN_TASKS_plural": "Assigner {{count}} tâches",
         "ADMIN_DASHBOARD_ASSIGN_DELIVERIES_ORDERS": "Assigner la livraison/la commande",

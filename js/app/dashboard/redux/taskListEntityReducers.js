@@ -1,6 +1,7 @@
 import {
   MODIFY_TASK_LIST_REQUEST,
   MODIFY_TASK_LIST_REQUEST_SUCCESS,
+  MODIFY_TASK_LIST_REQUEST_FAILURE,
   TASK_LISTS_UPDATED,
   REMOVE_TASK,
   setTaskListVehicleRequest,
@@ -20,7 +21,10 @@ const selectors = taskListAdapter.getSelectors((state) => state)
  */
 export default (state = initialState, action) => {
   switch (action.type) {
+    // MODIFY_TASK_LIST_REQUEST_FAILURE carries the items to restore, so both actions
+    // are handled the same way here
     case MODIFY_TASK_LIST_REQUEST:
+    case MODIFY_TASK_LIST_REQUEST_FAILURE:
 
       let entity = selectors.selectById(state, action.username)
 

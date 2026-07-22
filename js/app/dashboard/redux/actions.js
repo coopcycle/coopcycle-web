@@ -1,5 +1,7 @@
 import _ from 'lodash'
 import moment from 'moment'
+import { toast } from 'react-toastify'
+import i18next from 'i18next'
 
 import { taskComparator, isInDateRange, withoutItemsIRIs } from './utils'
 import {
@@ -16,7 +18,7 @@ import {
   selectTaskLists,
 } from './selectors';
 import { createAction } from '@reduxjs/toolkit'
-import { selectTaskById, selectTaskListByUsername, selectItemAssignedTo } from '../../../shared/src/logistics/redux/selectors'
+import { selectTaskById, selectTaskListByUsername, selectItemAssignedTo, selectTourById } from '../../../shared/src/logistics/redux/selectors'
 import { createClient } from '../utils/client'
 
 export const UPDATE_TASK = 'UPDATE_TASK'
@@ -24,6 +26,7 @@ export const OPEN_ADD_USER = 'OPEN_ADD_USER'
 export const CLOSE_ADD_USER = 'CLOSE_ADD_USER'
 export const MODIFY_TASK_LIST_REQUEST = 'MODIFY_TASK_LIST_REQUEST'
 export const MODIFY_TASK_LIST_REQUEST_SUCCESS = 'MODIFY_TASK_LIST_REQUEST_SUCCESS'
+export const MODIFY_TASK_LIST_REQUEST_FAILURE = 'MODIFY_TASK_LIST_REQUEST_FAILURE'
 export const TASK_LISTS_UPDATED = 'TASK_LISTS_UPDATED'
 export const TOGGLE_POLYLINE = 'TOGGLE_POLYLINE'
 export const TOGGLE_TASK = 'TOGGLE_TASK'
@@ -221,16 +224,68 @@ export function closeAddUserModal() {
 }
 
 /**
- * @param {string} Username - Username of the rider to which we assign
+ * Expand a list of task list items (tasks *and* tours IRIs) into the list of
+ * task IRIs it actually contains.
+ * @param {Object} state - Redux state
+ * @param {Array.string} items - Items IRIs (tasks and tours)
+ * @returns {Array.string} Task IRIs
+ */
+function taskListItemsToTaskIds(state, items) {
+  return (items || []).reduce((acc, item) => {
+    if (item.startsWith('/api/tours')) {
+      const tour = selectTourById(state, item)
+      if (tour) {
+        acc.push(...tour.items)
+      }
+    } else {
+      acc.push(item)
+    }
+    return acc
+  }, [])
+}
+
+/**
+ * The task list is updated optimistically, i.e. before the API confirms the change.
+ * We need to reflect the assignment on the tasks themselves as well, otherwise
+ * `task.isAssigned` & `task.assignedTo` stay stale until the WebSocket event arrives,
+ * and the tasks may be filtered out of the dashboard in the meantime.
+ * @param {Object} state - Redux state
+ * @param {Array.string} items - New items IRIs (tasks and tours)
+ * @param {Array.string} previousItems - Previous items IRIs (tasks and tours)
+ */
+function assignmentChangeSet(state, items, previousItems) {
+  const assignedTaskIds = taskListItemsToTaskIds(state, items)
+  const unassignedTaskIds = taskListItemsToTaskIds(state, previousItems)
+    .filter(taskId => !assignedTaskIds.includes(taskId))
+
+  return { assignedTaskIds, unassignedTaskIds }
+}
+
+/**
+ * @param {string} username - Username of the rider to which we assign
  * @param {Array.string} items - Items to be assigned, list of tasks and tours URIs to be assigned
  * @param {Array.string} previousItems - Items to be assigned, list of tasks and tours URIs to be assigned
+ * @param {Array.string} assignedTaskIds - Task IRIs now assigned to username
+ * @param {Array.string} unassignedTaskIds - Task IRIs no longer assigned to username
  */
-export function modifyTaskListRequest(username, items, previousItems) {
-  return { type: MODIFY_TASK_LIST_REQUEST, username, items, previousItems }
+export function modifyTaskListRequest(username, items, previousItems, assignedTaskIds = [], unassignedTaskIds = []) {
+  return { type: MODIFY_TASK_LIST_REQUEST, username, items, previousItems, assignedTaskIds, unassignedTaskIds }
 }
 
 export function modifyTaskListRequestSuccess(taskList) {
   return { type: MODIFY_TASK_LIST_REQUEST_SUCCESS, taskList }
+}
+
+/**
+ * The PUT failed: roll back the optimistic update, so that the dispatcher does not
+ * keep working on (and later persist) a task list the API never accepted.
+ * @param {string} username - Username of the rider
+ * @param {Array.string} items - Items IRIs to restore
+ * @param {Array.string} assignedTaskIds - Task IRIs to mark as assigned to username again
+ * @param {Array.string} unassignedTaskIds - Task IRIs to mark as unassigned again
+ */
+export function modifyTaskListRequestFailure(username, items, assignedTaskIds = [], unassignedTaskIds = []) {
+  return { type: MODIFY_TASK_LIST_REQUEST_FAILURE, username, items, assignedTaskIds, unassignedTaskIds }
 }
 
 export const setTaskListsLoading = createAction('SET_TASKLISTS_LOADING')
@@ -275,7 +330,9 @@ export function putTaskListItems(username, items) {
     // support passing URIs directly - TODO uniformize behaviour
     const newItems = items.map((item) => item['@id'] || item)
 
-    dispatch(modifyTaskListRequest(username, newItems, previousItems))
+    const { assignedTaskIds, unassignedTaskIds } = assignmentChangeSet(state, newItems, previousItems)
+
+    dispatch(modifyTaskListRequest(username, newItems, previousItems, assignedTaskIds, unassignedTaskIds))
 
     const date = selectSelectedDate(state)
 
@@ -303,6 +360,14 @@ export function putTaskListItems(username, items) {
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error(error)
+
+      // Roll back the optimistic update, otherwise the dispatcher keeps seeing an
+      // assignment the API refused, and the next drag'n'drop would PUT (and thus
+      // persist) that bogus task list.
+      dispatch(modifyTaskListRequestFailure(username, previousItems, unassignedTaskIds, assignedTaskIds))
+      toast.error(i18next.t('ADMIN_DASHBOARD_MODIFY_TASK_LIST_ERROR'))
+
+      return
     }
 
     dispatch(modifyTaskListRequestSuccess(response.data))
@@ -1888,10 +1953,14 @@ export function removeTasksFromTaskList(items, username) {
       return
     }
 
-    const taskList = selectTaskListByUsername(getState(), {username: username}),
+    const state = getState()
+    const taskList = selectTaskListByUsername(state, {username: username}),
       toRemove = items.map(i => i['@id'])
 
-    dispatch(modifyTaskListRequest(username, withoutItemsIRIs(taskList.items, toRemove)))
+    const newItems = withoutItemsIRIs(taskList.items, toRemove)
+    const { assignedTaskIds, unassignedTaskIds } = assignmentChangeSet(state, newItems, taskList.items)
+
+    dispatch(modifyTaskListRequest(username, newItems, taskList.items, assignedTaskIds, unassignedTaskIds))
   }
 }
 
