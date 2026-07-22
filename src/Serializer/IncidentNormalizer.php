@@ -5,6 +5,7 @@ namespace AppBundle\Serializer;
 use ApiPlatform\JsonLd\Serializer\ItemNormalizer;
 use ApiPlatform\Metadata\Resource\Factory\ResourceMetadataCollectionFactoryInterface;
 use AppBundle\Entity\Incident\Incident;
+use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class IncidentNormalizer implements NormalizerInterface
@@ -22,6 +23,10 @@ class IncidentNormalizer implements NormalizerInterface
         // In our JS code, we often override the state with the entire response
         // This custom code makes sure it works like before, by tricking IriConverter
         $context['operation'] = $this->resourceMetadataFactory->create(Incident::class)->getOperation();
+        // The 'operation' key is excluded from the serializer cache key because serializing an API Platform
+        // Operation object pulls in a large object graph and causes out-of-memory errors.
+        // Same as in TaskNormalizer.
+        $context[AbstractObjectNormalizer::EXCLUDE_FROM_CACHE_KEY][] = 'operation';
 
         $data = $this->normalizer->normalize($object, $format, $context);
 
@@ -36,12 +41,19 @@ class IncidentNormalizer implements NormalizerInterface
             'username' => $createdBy?->getUsername()
         ];
 
+        // When the "task" group is not requested, the task is normalized as an IRI,
+        // and the incidents list needs those fields to be readable without an extra request.
+        // When it *is* requested (incident details page), we must not throw away
+        // the normalized task, which contains the address, the packages, etc.
         $task = $object->getTask();
-        $data['task'] = [
-            'id' => $task->getId(),
-            'status' => $task->getStatus(),
-            'type' => $task->getType()
-        ];
+        $data['task'] = array_merge(
+            is_array($data['task'] ?? null) ? $data['task'] : [],
+            [
+                'id' => $task->getId(),
+                'status' => $task->getStatus(),
+                'type' => $task->getType()
+            ]
+        );
 
         $delivery = $task?->getDelivery();
         $data['delivery'] = [

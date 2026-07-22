@@ -26,15 +26,15 @@
 
 import moment from 'moment'
 
-Cypress.Commands.add('terminal', command => {
+Cypress.Commands.add('terminal', (command, options = {}) => {
   cy.log(`exec: ${command}`)
 
   const prefix = Cypress.env('COMMAND_PREFIX')
-  cy.exec(prefix ? `${prefix} ${command}` : command, {timeout: 60000, log: false})
+  cy.exec(prefix ? `${prefix} ${command}` : command, {timeout: 60000, log: false, ...options})
 })
 
-Cypress.Commands.add('symfonyConsole', command => {
-  cy.terminal(`bin/console ${command} --env="test"`)
+Cypress.Commands.add('symfonyConsole', (command, options = {}) => {
+  cy.terminal(`bin/console ${command} --env="test"`, options)
 })
 
 Cypress.Commands.add('loadFixtures', (fixtures, setup=false) => {
@@ -100,8 +100,16 @@ Cypress.Commands.add('resetMockDateTime', () => {
   // cy.clock() will be reset automatically
 })
 
+// The "php_worker" container consumes the very same Redis stream, in the same consumer
+// group. When it acknowledges a message first, our consumer's XDEL returns 0 and the
+// Redis transport throws "Could not acknowledge redis message", which makes the command
+// exit with a non-zero status. That race is harmless — the message *was* handled, by one
+// worker or the other — so it must not fail the test.
 Cypress.Commands.add('consumeMessages', (timeLimitInSeconds = 5) => {
-  cy.symfonyConsole(`messenger:consume async --time-limit=${ timeLimitInSeconds }`);
+  cy.symfonyConsole(
+    `messenger:consume async --time-limit=${ timeLimitInSeconds }`,
+    { failOnNonZeroExit: false },
+  );
 })
 
 Cypress.Commands.add('antdSelect', (selector, text) => {

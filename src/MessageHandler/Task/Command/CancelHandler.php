@@ -18,8 +18,6 @@ use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
 #[AsMessageHandler(bus: 'command.bus')]
 class CancelHandler
 {
-    private bool $recalculatePrice;
-
     public function __construct(
         private readonly MessageBusInterface $eventBus,
         private readonly OrderManager $orderManager,
@@ -31,8 +29,6 @@ class CancelHandler
     {
         // TODO Reorder linked tasks?
 
-        $this->recalculatePrice = $command->shouldRecalculatePrice();
-
         foreach ($command->getTasks() as $task) {
             $event = new Event\TaskCancelled($task);
             $this->eventBus->dispatch(
@@ -42,13 +38,13 @@ class CancelHandler
             $task->setStatus(Task::STATUS_CANCELLED);
         }
 
-        $this->handleStateChangesForTasks($command->getTasks());
+        $this->handleStateChangesForTasks($command->getTasks(), $command->shouldRecalculatePrice());
     }
 
     /**
      * @param Task[] $cancelledTasks
      */
-    private function handleStateChangesForTasks(array $cancelledTasks): void
+    private function handleStateChangesForTasks(array $cancelledTasks, bool $recalculatePrice): void
     {
         // Track orders that need processing to avoid processing the same order multiple times
         $ordersToProcess = [];
@@ -87,11 +83,11 @@ class CancelHandler
 
         // Process all affected orders (outside the loop to avoid recalculating price of the same order multiple times)
         foreach ($ordersToProcess as $data) {
-            $this->processOrderIfNeeded($data);
+            $this->processOrderIfNeeded($data, $recalculatePrice);
         }
     }
 
-    private function processOrderIfNeeded(OrderInterface $order): void
+    private function processOrderIfNeeded(OrderInterface $order, bool $recalculatePrice): void
     {
         if ($order->isFoodtech()) {
             // It's not possible to cancel tasks for foodtech orders only an entire order can be cancelled
@@ -100,6 +96,6 @@ class CancelHandler
             return;
         }
 
-        $this->eventBus->dispatch(new ProcessOrderAfterTaskCancellation($order, $this->recalculatePrice));
+        $this->eventBus->dispatch(new ProcessOrderAfterTaskCancellation($order, $recalculatePrice));
     }
 }

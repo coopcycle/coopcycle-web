@@ -262,15 +262,17 @@ docker compose exec php ls -ld var/cache/test/sessions
 docker compose exec php sh -c 'chgrp -R www-data var/cache/test/sessions && chmod -R g+w var/cache/test/sessions'
 ```
 
-If a test that calls `cy.consumeMessages()` fails because an asynchronous side effect never happened (an order price that is not recalculated, an email that is not sent…), check whether the `php_worker` container is stealing the message. `MESSENGER_TRANSPORT_DSN` is the same for `dev` and `test`, so both environments consume from the same Redis stream and the same consumer group. Locally `php_worker` runs `messenger:consume async --env=dev`, so it can pick up a message dispatched by a test and process it against the `dev` database. To rule it out:
+If a test that calls `cy.consumeMessages()` fails because an asynchronous side effect never happened (an order price that is not recalculated, an import that stays pending…), the `php_worker` container is running in the wrong environment. `MESSENGER_TRANSPORT_DSN` is the same for `dev` and `test`, so both environments consume from the same Redis stream, in the same consumer group. By default `php_worker` runs `messenger:consume async --env=dev`, so it picks up messages dispatched by the tests and handles them against the **dev** database — the test then waits for a side effect that happened somewhere else.
+
+The CI does not have this problem, because it exports `APP_ENV=test` for the whole job. Do the same locally before running these tests:
 
 ```sh
-docker compose stop php_worker
-# … run the tests …
-docker compose start php_worker
+APP_ENV=test docker compose up -d php_worker
 ```
 
-(In the CI this does not happen, because `APP_ENV=test` is exported for the whole job, so `php_worker` consumes in the `test` environment too.)
+and put it back afterwards with `docker compose up -d php_worker`.
+
+Note that stopping `php_worker` altogether is *not* enough: `cy.consumeMessages()` only runs `messenger:consume` for a few seconds, and messages are dispatched at the end of the HTTP request, so the test's own consumer regularly misses them. The specs rely on a worker being there.
 
 
 ### Run linters (phpStan)

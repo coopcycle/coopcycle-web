@@ -72,6 +72,17 @@ const AddressBook = ({
       : null,
   );
 
+  // The store address book is fetched asynchronously, so it is usually still empty
+  // on the first render, when the initial value above is computed. Without this,
+  // the select of a task whose address comes from the address book stays on its
+  // placeholder, because nothing else sets it (only the pickup task is prefilled,
+  // by the effect below).
+  useEffect(() => {
+    if (addresses.some(address => address['@id'] === initialAddressId)) {
+      setSelectValue(initialAddressId);
+    }
+  }, [addresses, initialAddressId]);
+
   /* To handle the case where the user picked a remembered address in select but change contactName, name or telephone value */
   const handleModifyAddress = () => {
     if (
