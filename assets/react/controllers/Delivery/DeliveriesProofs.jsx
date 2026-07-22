@@ -180,11 +180,12 @@ export default function DeliveriesProofs({ store_id = null }) {
     <>
       <a
         href="#"
+        className="btn btn-default"
         onClick={e => {
           e.preventDefault()
           setOpen(true)
         }}>
-        <i className="fa fa-flag-checkered mr-2" aria-hidden="true"></i>
+        <i className="fa fa-camera mr-2" aria-hidden="true"></i>
         <span>{t('DELIVERY_PROOFS_LINK_TEXT')}</span>
       </a>
       <Modal
