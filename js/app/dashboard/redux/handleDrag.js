@@ -102,10 +102,11 @@ export function handleDragEnd(
       // No need to unassign via API, because the PUT operation will take care of this
       // This action just removes the previously assigned tasks, if any
       // It does *NOT* perform any HTTP request, it is to reflect change visually
-      dispatch(removePreviouslyAssignedTasks(tasksList.username, selectedItems))
+      // It returns what is needed to undo it, should the PUT below fail
+      const removedFromOtherTaskLists = dispatch(removePreviouslyAssignedTasks(tasksList.username, selectedItems)) ?? []
 
       // This will actually perform the PUT operation
-      dispatch(putTaskListItems(tasksList.username, newTasksListItems))
+      dispatch(putTaskListItems(tasksList.username, newTasksListItems, removedFromOtherTaskLists))
     }
 
     // dropped nowhere

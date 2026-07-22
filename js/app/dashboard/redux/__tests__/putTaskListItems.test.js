@@ -1,6 +1,6 @@
 import moment from 'moment'
 
-import { putTaskListItems, taskListsUpdated } from '../actions'
+import { putTaskListItems, removePreviouslyAssignedTasks, taskListsUpdated } from '../actions'
 import { storeFixture } from './storeFixture'
 import { createStoreFromPreloadedState } from '../store'
 import { selectTaskById, selectTaskListByUsername } from '../../../../shared/src/logistics/redux/selectors'
@@ -243,5 +243,131 @@ describe('taskListsUpdated', () => {
     }))
 
     expect(selectTaskListItems(store)).toEqual([ TOUR, UNASSIGNED_TASK ])
+  })
+})
+
+// task 728 assigned to a second rider, so we can move it over to admin
+const createStoreWithTwoRiders = () => {
+  const { logistics } = storeFixture
+
+  return createStoreFromPreloadedState({
+    ...storeFixture,
+    logistics: {
+      ...logistics,
+      date: moment(logistics.date),
+      entities: {
+        ...logistics.entities,
+        tasks: {
+          ...logistics.entities.tasks,
+          entities: {
+            ...logistics.entities.tasks.entities,
+            [UNASSIGNED_TASK]: {
+              ...logistics.entities.tasks.entities[UNASSIGNED_TASK],
+              isAssigned: true,
+              assignedTo: 'bob',
+            },
+          },
+        },
+        taskLists: {
+          ids: [ ...logistics.entities.taskLists.ids, 'bob' ],
+          entities: {
+            ...logistics.entities.taskLists.entities,
+            bob: {
+              '@id': '/api/task_lists/113',
+              '@type': 'TaskList',
+              username: 'bob',
+              date: '2024-01-09',
+              updatedAt: '2024-01-09T11:01:58+01:00',
+              items: [ UNASSIGNED_TASK ],
+            },
+          },
+        },
+      },
+    },
+  })
+}
+
+const itemsOf = (store, username) =>
+  selectTaskListByUsername(store.getState(), { username }).items
+
+// what handleDropInTaskList() does when tasks are moved from a rider to another
+const moveTaskToAdmin = (store, task) => {
+  const relatedChanges = store.dispatch(removePreviouslyAssignedTasks('admin', [ task ]))
+  return store.dispatch(putTaskListItems('admin', [ TOUR, task['@id'] ], relatedChanges))
+}
+
+describe('putTaskListItems, tasks moved between riders', () => {
+
+  it('gives the tasks back to the previous rider when the call fails', async () => {
+    const store = createStoreWithTwoRiders()
+
+    // eslint-disable-next-line no-console
+    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {})
+
+    mockRequest(() => Promise.reject(new Error('Internal Server Error')))
+
+    await moveTaskToAdmin(store, { '@id': UNASSIGNED_TASK })
+
+    expect(itemsOf(store, 'admin')).toEqual([ TOUR ])
+    expect(itemsOf(store, 'bob')).toEqual([ UNASSIGNED_TASK ])
+    // the task must not be left unassigned, nothing was ever persisted
+    expect(selectTaskById(store.getState(), UNASSIGNED_TASK)).toMatchObject({
+      isAssigned: true,
+      assignedTo: 'bob',
+    })
+
+    consoleError.mockRestore()
+  })
+
+  it('keeps the move when the call succeeds', async () => {
+    const store = createStoreWithTwoRiders()
+
+    mockRequest(() => Promise.resolve(taskListResponse([ TOUR, UNASSIGNED_TASK ])))
+
+    await moveTaskToAdmin(store, { '@id': UNASSIGNED_TASK })
+
+    expect(itemsOf(store, 'admin')).toEqual([ TOUR, UNASSIGNED_TASK ])
+    expect(itemsOf(store, 'bob')).toEqual([])
+    expect(selectTaskById(store.getState(), UNASSIGNED_TASK)).toMatchObject({
+      isAssigned: true,
+      assignedTo: 'admin',
+    })
+  })
+
+  it('does not give back tasks to a rider whose task list changed since', async () => {
+    const store = createStoreWithTwoRiders()
+
+    // eslint-disable-next-line no-console
+    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {})
+    const consoleDebug = jest.spyOn(console, 'debug').mockImplementation(() => {})
+
+    const failing = deferred()
+    const responses = [
+      failing.promise,
+      // bob's own modification goes through
+      Promise.resolve({
+        data: {
+          '@id': '/api/task_lists/113',
+          username: 'bob',
+          items: [ '/api/tasks/734' ],
+          updatedAt: '2024-01-09T11:03:00+01:00',
+        },
+      }),
+    ]
+    mockRequest(() => responses.shift())
+
+    const call = moveTaskToAdmin(store, { '@id': UNASSIGNED_TASK })
+
+    // meanwhile, bob's task list is modified again
+    await store.dispatch(putTaskListItems('bob', [ '/api/tasks/734' ]))
+
+    failing.reject(new Error('Internal Server Error'))
+    await call
+
+    // bob's newer state wins, restoring would have discarded it
+    expect(itemsOf(store, 'bob')).toEqual([ '/api/tasks/734' ])
+
+    consoleError.mockRestore()
+    consoleDebug.mockRestore()
   })
 })

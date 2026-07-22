@@ -26,7 +26,8 @@ describe('handleDragEnd', () => {
         [
           '/api/tours/114',
           '/api/tours/111',
-        ]
+        ],
+        []
       )
 
       expect(mockModifyTour).toHaveBeenCalledTimes(0)
@@ -51,7 +52,8 @@ describe('handleDragEnd', () => {
         [
           '/api/tours/111',
           '/api/tours/114',
-        ]
+        ],
+        []
       )
       expect(mockModifyTour).toHaveBeenCalledTimes(0)
 
@@ -85,7 +87,8 @@ describe('handleDragEnd', () => {
         [
           '/api/tours/111',
           '/api/tours/114',
-        ]
+        ],
+        []
       )
 
       expect(mockModifyTour).toHaveBeenCalledTimes(0)
@@ -135,7 +138,8 @@ describe('handleDragEnd', () => {
         [
           '/api/tours/111',
           '/api/tasks/736'
-        ]
+        ],
+        []
       )
       expect(mockModifyTour).toHaveBeenCalledTimes(0)
 
@@ -321,7 +325,8 @@ describe('handleDragEnd', () => {
          '/api/tasks/733',
          '/api/tasks/732',
          '/api/tours/111'
-        ]
+        ],
+        []
       )
     })
   })
@@ -455,7 +460,8 @@ describe('handleDragEnd - edge cases', () => {
 
     expect(mockModifyTaskList).toHaveBeenCalledWith(
       'admin',
-      ['/api/tours/111', '/api/tasks/729']
+      ['/api/tours/111', '/api/tasks/729'],
+      []
     )
   })
 
@@ -539,7 +545,8 @@ describe('handleDragEnd - edge cases', () => {
         '/api/tasks/735', // pickup must come first
         '/api/tasks/734', // dropoff after its pickup
         '/api/tours/111',
-      ]
+      ],
+      []
     )
   })
 

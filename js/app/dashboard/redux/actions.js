@@ -353,8 +353,11 @@ export function importError(token, message) {
  * PUT tasklist's items
  * @param {string} username - Username of the rider to which we assign
  * @param {Array.Objects} items - Items to be assigned, list of tasks and tours to be assigned
+ * @param {Array.Object} relatedChanges - Optimistic changes made to *other* task lists
+ *   as part of the same operation (typically tasks taken away from another rider).
+ *   They are undone as well if this request fails. @see removePreviouslyAssignedTasks
  */
-export function putTaskListItems(username, items) {
+export function putTaskListItems(username, items, relatedChanges = []) {
 
   return async function(dispatch, getState) {
 
@@ -420,6 +423,9 @@ export function putTaskListItems(username, items) {
         unassignedTaskIds: assignedTaskIds,
         requestId,
       }))
+      // Then give back to the other riders the tasks we took away from them, otherwise
+      // those tasks would be left unassigned although nothing was ever persisted.
+      dispatch(restoreTaskLists(relatedChanges))
       toast.error(i18next.t('ADMIN_DASHBOARD_MODIFY_TASK_LIST_ERROR'))
 
       return
@@ -2035,6 +2041,7 @@ export function loadWarehouses() {
  * Removes tasks from task list belonging to username
  * @param {Array.Object} items - Items (tasks) to be removed
  * @param {string} username - Username of the rider
+ * @returns {?Object} What is needed to undo this change, @see restoreTaskLists
  */
 export function removeTasksFromTaskList(items, username) {
 
@@ -2045,7 +2052,7 @@ export function removeTasksFromTaskList(items, username) {
   return function(dispatch, getState) {
 
     if (items.length === 0) {
-      return
+      return null
     }
 
     const state = getState()
@@ -2054,14 +2061,54 @@ export function removeTasksFromTaskList(items, username) {
 
     const newItems = withoutItemsIRIs(taskList.items, toRemove)
     const { assignedTaskIds, unassignedTaskIds } = assignmentChangeSet(state, newItems, taskList.items)
+    const requestId = nextTaskListRequestId()
 
     // No API call here (the PUT on the *other* task list takes care of it), but this
     // still supersedes any modification of this task list that is currently in flight
     dispatch(modifyTaskListRequest(username, newItems, taskList.items, {
       assignedTaskIds,
       unassignedTaskIds,
-      requestId: nextTaskListRequestId(),
+      requestId,
     }))
+
+    return {
+      username,
+      requestId,
+      items: taskList.items,
+      // the tasks we just removed were assigned to `username`
+      taskIds: unassignedTaskIds,
+    }
+  }
+}
+
+/**
+ * Undo the optimistic changes described by `snapshots`, typically because the API call
+ * they were paving the way for has failed. A rider whose task list has been modified
+ * again since is skipped: their current state is more recent than the snapshot.
+ * @param {Array.Object} snapshots - As returned by removeTasksFromTaskList()
+ */
+export function restoreTaskLists(snapshots) {
+
+  return function(dispatch, getState) {
+
+    snapshots.filter(Boolean).forEach(snapshot => {
+
+      const { username, requestId, items, taskIds } = snapshot
+
+      if (isTaskListRequestSuperseded(getState(), username, requestId)) {
+        // eslint-disable-next-line no-console
+        console.debug(`Not restoring the task list of ${username}, it has been modified since`)
+        return
+      }
+
+      const currentItems = selectTaskListByUsername(getState(), {username})?.items ?? []
+
+      // restoring is just another local modification, hence a new request id
+      dispatch(modifyTaskListRequest(username, items, currentItems, {
+        assignedTaskIds: taskIds,
+        requestId: nextTaskListRequestId(),
+      }))
+    })
   }
 }
 
@@ -2069,6 +2116,7 @@ export function removeTasksFromTaskList(items, username) {
  * Removes previously assigned tasks to others than username from the state
  * @param {string} username - Username of the rider
  * @param {Array.Object} items - Items (tasks) to be removed
+ * @returns {Array.Object} What is needed to undo these changes, @see restoreTaskLists
  */
 export function removePreviouslyAssignedTasks(username, items) {
 
@@ -2079,7 +2127,7 @@ export function removePreviouslyAssignedTasks(username, items) {
   return function(dispatch, getState) {
 
     if (items.length === 0) {
-      return
+      return []
     }
 
     const previouslyAssignedTo = items.reduce(
@@ -2098,9 +2146,9 @@ export function removePreviouslyAssignedTasks(username, items) {
       (v) => v.map(u => u.task)
     );
 
-    _.forEach(grouped, (tasks, username) => {
-      dispatch(removeTasksFromTaskList(tasks, username));
-    })
+    return _.map(grouped, (tasks, username) =>
+      dispatch(removeTasksFromTaskList(tasks, username))
+    ).filter(Boolean)
   }
 }
 
