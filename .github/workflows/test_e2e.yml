@@ -11,7 +11,6 @@ jobs:
       matrix:
         php_version:
           - '8.3'
-          - '8.4'
       fail-fast: false
     env:
       GEOCODE_EARTH_API_KEY: ${{ secrets.GEOCODE_EARTH_API_KEY }}
