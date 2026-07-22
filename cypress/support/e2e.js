@@ -31,14 +31,6 @@ Cypress.on('uncaught:exception', (err, runnable) => {
       return false
     }
 
-    // The restaurant cards render a lazy "FulfillmentBadge" live component, so a listing
-    // page has a POST to /_components/FulfillmentBadge in flight for a while. Navigating
-    // away aborts them, and the live component bundle does not catch the rejection.
-    // An aborted request is not an application error.
-    if (err.message.includes('Failed to fetch') || err.message.includes('Network Error')) {
-      return false
-    }
-
     // we still want to ensure there are no other unexpected
     // errors, so we let them fail the test
   })
