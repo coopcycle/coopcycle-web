@@ -1,5 +1,14 @@
 name: Run CoopCycle Web
 
+inputs:
+  wait-for-webpack:
+    description: >
+      Wait for the first webpack build to finish. Only needed by jobs that render
+      pages including the Encore entrypoints (the e2e suite). The API test suites do
+      not, and waiting costs ~2.5 minutes.
+    required: false
+    default: 'true'
+
 runs:
   using: "composite"
   steps:
@@ -38,6 +47,7 @@ runs:
     shell: bash
     run: until docker inspect --format='{{ .State.Health.Status }}' $(docker compose ps -q php) | grep -wq healthy; do sleep 5; done
   - name: Wait webpack
+    if: inputs.wait-for-webpack == 'true'
     shell: bash
     run: until [ -f "web/build/entrypoints.json" ]; do sleep 5; done
   - name: Create database
