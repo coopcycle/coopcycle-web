@@ -757,6 +757,7 @@
         "DELIVERY_PROOFS_CHOOSE_WEEK": "Choose a week",
         "DELIVERY_PROOFS_TOTAL_DELIVERIES": "Total Deliveries",
         "DELIVERY_PROOFS_DELIVERIES_COUNT": "{{count}} deliveries",
+        "DELIVERY_PROOFS_EMPTY": "No proof of delivery was uploaded during this week.",
         "DELIVERY_PROOFS_CONTENTS": "Contents",
         "DELIVERY_PROOFS_CONTENTS_VALUE": "Photos & Reports",
         "DELIVERY_PROOFS_FILE_TYPE": "File Type",

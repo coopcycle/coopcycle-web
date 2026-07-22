@@ -742,6 +742,7 @@
         "DELIVERY_PROOFS_CHOOSE_WEEK": "Choisir une semaine",
         "DELIVERY_PROOFS_TOTAL_DELIVERIES": "Total des Livraisons",
         "DELIVERY_PROOFS_DELIVERIES_COUNT": "{{count}} livraisons",
+        "DELIVERY_PROOFS_EMPTY": "Aucune preuve de livraison n'a été envoyée durant cette semaine.",
         "DELIVERY_PROOFS_CONTENTS": "Contenu",
         "DELIVERY_PROOFS_CONTENTS_VALUE": "Photos et Rapports",
         "DELIVERY_PROOFS_FILE_TYPE": "Type de Fichier",

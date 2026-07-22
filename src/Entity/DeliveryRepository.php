@@ -152,21 +152,45 @@ class DeliveryRepository extends EntityRepository
     /**
      * @return array<Delivery>
      */
-    public function findDeliveriesByStore(Store|int $store, \DateTimeInterface $dateA, \DateTimeInterface $dateB)
+    /**
+     * Deliveries of a store having at least one proof of delivery (a task image)
+     * uploaded within the given date range.
+     *
+     * The date range is matched against the images' creation date, *not* against
+     * the tasks' time windows, so that deliveries spanning several days
+     * (or completed later than planned) are not left out.
+     */
+    private function createProofsOfDeliveryQueryBuilder(Store|int $store, DateTimeInterface $from, DateTimeInterface $to): QueryBuilder
     {
-        $qb = $this->createQueryBuilderWithTasks()
-            ->leftJoin('t.images', 'p');
-
-        return $qb->andWhere('d.store = :store')
+        return $this->createQueryBuilderWithTasks()
+            ->join('t.images', 'p')
+            ->andWhere('d.store = :store')
             ->andWhere('t.type = :dropoff')
-            ->andWhere('t.doneAfter >= :dateA')
-            ->andWhere('t.doneBefore <= :dateB')
+            ->andWhere('p.createdAt BETWEEN :from AND :to')
             ->setParameter('dropoff', Task::TYPE_DROPOFF)
             ->setParameter('store', $store)
-            ->setParameter('dateA', $dateA)
-            ->setParameter('dateB', $dateB)
+            ->setParameter('from', $from)
+            ->setParameter('to', $to);
+    }
+
+    /**
+     * @return Delivery[]
+     */
+    public function findDeliveriesWithProofsOfDelivery(Store|int $store, DateTimeInterface $from, DateTimeInterface $to): array
+    {
+        return $this->createProofsOfDeliveryQueryBuilder($store, $from, $to)
+            ->select('DISTINCT d')
+            ->addOrderBy('d.createdAt', 'DESC')
             ->getQuery()
             ->getResult();
+    }
+
+    public function countDeliveriesWithProofsOfDelivery(Store|int $store, DateTimeInterface $from, DateTimeInterface $to): int
+    {
+        return (int) $this->createProofsOfDeliveryQueryBuilder($store, $from, $to)
+            ->select('COUNT(DISTINCT d.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
     public function findByLoUri(string $loUri): ?Delivery
