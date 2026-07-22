@@ -1,6 +1,6 @@
 import moment from 'moment'
 
-import { putTaskListItems } from '../actions'
+import { putTaskListItems, taskListsUpdated } from '../actions'
 import { storeFixture } from './storeFixture'
 import { createStoreFromPreloadedState } from '../store'
 import { selectTaskById, selectTaskListByUsername } from '../../../../shared/src/logistics/redux/selectors'
@@ -109,5 +109,139 @@ describe('putTaskListItems', () => {
 
     expect(selectTaskListItems(store)).toEqual([ TOUR, UNASSIGNED_TASK ])
     expect(store.getState().logistics.ui.taskListsLoading).toBe(false)
+  })
+})
+
+const deferred = () => {
+  let resolve, reject
+  const promise = new Promise((res, rej) => { resolve = res; reject = rej })
+  return { promise, resolve, reject }
+}
+
+const taskListResponse = items => ({
+  data: {
+    '@id': '/api/task_lists/112',
+    username: 'admin',
+    items,
+    updatedAt: '2024-01-09T11:02:30+01:00',
+  },
+})
+
+describe('putTaskListItems, concurrent modifications', () => {
+
+  it('discards a response that has been superseded by a newer modification', async () => {
+    const store = createStore()
+
+    const first = deferred()
+    const second = deferred()
+    const requests = [ first, second ]
+    mockRequest(() => requests.shift().promise)
+
+    const firstCall = store.dispatch(putTaskListItems('admin', [ TOUR ]))
+    const secondCall = store.dispatch(putTaskListItems('admin', [ TOUR, UNASSIGNED_TASK ]))
+
+    // the responses come back in the reverse order
+    second.resolve(taskListResponse([ TOUR, UNASSIGNED_TASK ]))
+    await secondCall
+    first.resolve(taskListResponse([ TOUR ]))
+    await firstCall
+
+    // the outdated response must not have reverted the latest modification
+    expect(selectTaskListItems(store)).toEqual([ TOUR, UNASSIGNED_TASK ])
+    expect(store.getState().logistics.ui.taskListsRequests.admin.pending).toBe(0)
+  })
+
+  it('keeps the task lists loading as long as a modification is in flight', async () => {
+    const store = createStore()
+
+    const first = deferred()
+    const second = deferred()
+    const requests = [ first, second ]
+    mockRequest(() => requests.shift().promise)
+
+    const firstCall = store.dispatch(putTaskListItems('admin', [ TOUR ]))
+    const secondCall = store.dispatch(putTaskListItems('admin', [ TOUR, UNASSIGNED_TASK ]))
+
+    second.resolve(taskListResponse([ TOUR, UNASSIGNED_TASK ]))
+    await secondCall
+
+    // drag'n'drop must stay disabled, the first modification is still in flight
+    expect(store.getState().logistics.ui.taskListsLoading).toBe(true)
+
+    first.resolve(taskListResponse([ TOUR ]))
+    await firstCall
+
+    expect(store.getState().logistics.ui.taskListsLoading).toBe(false)
+  })
+
+  it('does not roll back a superseded modification that failed', async () => {
+    const store = createStore()
+
+    // eslint-disable-next-line no-console
+    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {})
+
+    const first = deferred()
+    const second = deferred()
+    const requests = [ first, second ]
+    mockRequest(() => requests.shift().promise)
+
+    const firstCall = store.dispatch(putTaskListItems('admin', [ TOUR ]))
+    const secondCall = store.dispatch(putTaskListItems('admin', [ TOUR, UNASSIGNED_TASK ]))
+
+    second.resolve(taskListResponse([ TOUR, UNASSIGNED_TASK ]))
+    await secondCall
+    first.reject(new Error('Internal Server Error'))
+    await firstCall
+
+    expect(selectTaskListItems(store)).toEqual([ TOUR, UNASSIGNED_TASK ])
+
+    consoleError.mockRestore()
+  })
+})
+
+describe('taskListsUpdated', () => {
+
+  it('ignores an event received while we are modifying the task list', () => {
+    const store = createStore()
+
+    // never resolves, the modification stays in flight
+    mockRequest(() => new Promise(() => {}))
+    store.dispatch(putTaskListItems('admin', [ TOUR, UNASSIGNED_TASK ]))
+
+    store.dispatch(taskListsUpdated({
+      '@id': '/api/task_lists/112',
+      username: 'admin',
+      items: [],
+      updatedAt: '2024-01-09T11:02:30+01:00',
+    }))
+
+    expect(selectTaskListItems(store)).toEqual([ TOUR, UNASSIGNED_TASK ])
+  })
+
+  it('ignores an event older than the task list we already hold', () => {
+    const store = createStore()
+
+    store.dispatch(taskListsUpdated({
+      '@id': '/api/task_lists/112',
+      username: 'admin',
+      items: [],
+      // the fixture task list was updated at 11:01:58
+      updatedAt: '2024-01-09T10:00:00+01:00',
+    }))
+
+    expect(selectTaskListItems(store)).toEqual([ TOUR ])
+  })
+
+  it('applies an event newer than the task list we already hold', () => {
+    const store = createStore()
+
+    store.dispatch(taskListsUpdated({
+      '@id': '/api/task_lists/112',
+      username: 'admin',
+      items: [ TOUR, UNASSIGNED_TASK ],
+      updatedAt: '2024-01-09T12:00:00+01:00',
+    }))
+
+    expect(selectTaskListItems(store)).toEqual([ TOUR, UNASSIGNED_TASK ])
   })
 })

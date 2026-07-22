@@ -11,9 +11,11 @@ import {
   createTaskListFailure
 } from '../../coopcycle-frontend-js/logistics/redux'
 import {
+  isTaskListRequestSuperseded,
   selectExpandedTaskListPanelsIds,
   selectNav,
   selectNextWorkingDay,
+  selectPendingTaskListRequests,
   selectSelectedTasks,
   selectTaskLists,
 } from './selectors';
@@ -27,6 +29,7 @@ export const CLOSE_ADD_USER = 'CLOSE_ADD_USER'
 export const MODIFY_TASK_LIST_REQUEST = 'MODIFY_TASK_LIST_REQUEST'
 export const MODIFY_TASK_LIST_REQUEST_SUCCESS = 'MODIFY_TASK_LIST_REQUEST_SUCCESS'
 export const MODIFY_TASK_LIST_REQUEST_FAILURE = 'MODIFY_TASK_LIST_REQUEST_FAILURE'
+export const MODIFY_TASK_LIST_REQUEST_DISCARDED = 'MODIFY_TASK_LIST_REQUEST_DISCARDED'
 export const TASK_LISTS_UPDATED = 'TASK_LISTS_UPDATED'
 export const TOGGLE_POLYLINE = 'TOGGLE_POLYLINE'
 export const TOGGLE_TASK = 'TOGGLE_TASK'
@@ -262,18 +265,36 @@ function assignmentChangeSet(state, items, previousItems) {
 }
 
 /**
+ * Monotonic id, incremented for every task list modification we initiate. It lets us
+ * tell whether an API response (or a WebSocket event) still describes the most recent
+ * state we asked for, or whether it has been superseded in the meantime.
+ */
+let lastTaskListRequestId = 0
+
+export const nextTaskListRequestId = () => ++lastTaskListRequestId
+
+/**
  * @param {string} username - Username of the rider to which we assign
  * @param {Array.string} items - Items to be assigned, list of tasks and tours URIs to be assigned
  * @param {Array.string} previousItems - Items to be assigned, list of tasks and tours URIs to be assigned
- * @param {Array.string} assignedTaskIds - Task IRIs now assigned to username
- * @param {Array.string} unassignedTaskIds - Task IRIs no longer assigned to username
+ * @param {Object} options
+ * @param {Array.string} options.assignedTaskIds - Task IRIs now assigned to username
+ * @param {Array.string} options.unassignedTaskIds - Task IRIs no longer assigned to username
+ * @param {number} options.requestId - Id of this modification, @see nextTaskListRequestId
+ * @param {boolean} options.isApiRequest - Whether an API call is going to follow
  */
-export function modifyTaskListRequest(username, items, previousItems, assignedTaskIds = [], unassignedTaskIds = []) {
-  return { type: MODIFY_TASK_LIST_REQUEST, username, items, previousItems, assignedTaskIds, unassignedTaskIds }
+export function modifyTaskListRequest(username, items, previousItems, options = {}) {
+  const { assignedTaskIds = [], unassignedTaskIds = [], requestId = null, isApiRequest = false } = options
+
+  return {
+    type: MODIFY_TASK_LIST_REQUEST,
+    username, items, previousItems,
+    assignedTaskIds, unassignedTaskIds, requestId, isApiRequest,
+  }
 }
 
-export function modifyTaskListRequestSuccess(taskList) {
-  return { type: MODIFY_TASK_LIST_REQUEST_SUCCESS, taskList }
+export function modifyTaskListRequestSuccess(taskList, requestId = null) {
+  return { type: MODIFY_TASK_LIST_REQUEST_SUCCESS, taskList, username: taskList?.username, requestId }
 }
 
 /**
@@ -281,11 +302,26 @@ export function modifyTaskListRequestSuccess(taskList) {
  * keep working on (and later persist) a task list the API never accepted.
  * @param {string} username - Username of the rider
  * @param {Array.string} items - Items IRIs to restore
- * @param {Array.string} assignedTaskIds - Task IRIs to mark as assigned to username again
- * @param {Array.string} unassignedTaskIds - Task IRIs to mark as unassigned again
+ * @param {Object} options
+ * @param {Array.string} options.assignedTaskIds - Task IRIs to mark as assigned to username again
+ * @param {Array.string} options.unassignedTaskIds - Task IRIs to mark as unassigned again
+ * @param {number} options.requestId - Id of the modification that failed
  */
-export function modifyTaskListRequestFailure(username, items, assignedTaskIds = [], unassignedTaskIds = []) {
-  return { type: MODIFY_TASK_LIST_REQUEST_FAILURE, username, items, assignedTaskIds, unassignedTaskIds }
+export function modifyTaskListRequestFailure(username, items, options = {}) {
+  const { assignedTaskIds = [], unassignedTaskIds = [], requestId = null } = options
+
+  return { type: MODIFY_TASK_LIST_REQUEST_FAILURE, username, items, assignedTaskIds, unassignedTaskIds, requestId }
+}
+
+/**
+ * A newer modification of the same task list was initiated while this one was in
+ * flight: its outcome is obsolete, we only stop tracking it. Applying it would
+ * overwrite the more recent state the dispatcher is looking at.
+ * @param {string} username - Username of the rider
+ * @param {number} requestId - Id of the discarded modification
+ */
+export function modifyTaskListRequestDiscarded(username, requestId) {
+  return { type: MODIFY_TASK_LIST_REQUEST_DISCARDED, username, requestId }
 }
 
 export const setTaskListsLoading = createAction('SET_TASKLISTS_LOADING')
@@ -331,8 +367,14 @@ export function putTaskListItems(username, items) {
     const newItems = items.map((item) => item['@id'] || item)
 
     const { assignedTaskIds, unassignedTaskIds } = assignmentChangeSet(state, newItems, previousItems)
+    const requestId = nextTaskListRequestId()
 
-    dispatch(modifyTaskListRequest(username, newItems, previousItems, assignedTaskIds, unassignedTaskIds))
+    dispatch(modifyTaskListRequest(username, newItems, previousItems, {
+      assignedTaskIds,
+      unassignedTaskIds,
+      requestId,
+      isApiRequest: true,
+    }))
 
     const date = selectSelectedDate(state)
 
@@ -361,16 +403,40 @@ export function putTaskListItems(username, items) {
       // eslint-disable-next-line no-console
       console.error(error)
 
+      if (isTaskListRequestSuperseded(getState(), username, requestId)) {
+        // Rolling back to `previousItems` would also undo the modification that
+        // superseded this one, and that one may very well succeed.
+        dispatch(modifyTaskListRequestDiscarded(username, requestId))
+        toast.error(i18next.t('ADMIN_DASHBOARD_MODIFY_TASK_LIST_ERROR'))
+
+        return
+      }
+
       // Roll back the optimistic update, otherwise the dispatcher keeps seeing an
       // assignment the API refused, and the next drag'n'drop would PUT (and thus
       // persist) that bogus task list.
-      dispatch(modifyTaskListRequestFailure(username, previousItems, unassignedTaskIds, assignedTaskIds))
+      dispatch(modifyTaskListRequestFailure(username, previousItems, {
+        assignedTaskIds: unassignedTaskIds,
+        unassignedTaskIds: assignedTaskIds,
+        requestId,
+      }))
       toast.error(i18next.t('ADMIN_DASHBOARD_MODIFY_TASK_LIST_ERROR'))
 
       return
     }
 
-    dispatch(modifyTaskListRequestSuccess(response.data))
+    if (isTaskListRequestSuperseded(getState(), username, requestId)) {
+      // Responses may come back out of order; this one describes a state older than
+      // what the dispatcher is currently looking at, applying it would revert their
+      // latest drag'n'drop.
+      // eslint-disable-next-line no-console
+      console.debug(`Discarding outdated task list response for ${username}`)
+      dispatch(modifyTaskListRequestDiscarded(username, requestId))
+
+      return response.data
+    }
+
+    dispatch(modifyTaskListRequestSuccess(response.data, requestId))
     return response.data
   }
 }
@@ -466,8 +532,37 @@ export function togglePolyline(username) {
 }
 export const toggleTourPolyline = createAction('TOGGLE_TOUR_POLYLINE')
 
+/**
+ * A `v2:task_list:updated` event was received. These events are emitted for every
+ * change, ours included, and are delivered asynchronously: applying them blindly makes
+ * the task list revert to an older state under the dispatcher's eyes.
+ * @param {Object} taskList - TaskList as sent by the API
+ */
 export function taskListsUpdated(taskList) {
-  return { type: TASK_LISTS_UPDATED, taskList }
+
+  return function(dispatch, getState) {
+
+    const username = taskList.username
+
+    if (selectPendingTaskListRequests(getState(), username) > 0) {
+      // We are modifying this task list ourselves; the response of our own request is
+      // more recent than this event, and will be applied when it comes back.
+      // eslint-disable-next-line no-console
+      console.debug(`Discarding task list event for ${username}, a modification is in flight`)
+      return
+    }
+
+    const currentTaskList = selectTaskListByUsername(getState(), {username})
+
+    if (currentTaskList && currentTaskList.updatedAt && taskList.updatedAt
+      && moment(taskList.updatedAt).isBefore(currentTaskList.updatedAt)) {
+      // eslint-disable-next-line no-console
+      console.debug(`Discarding outdated task list event for ${username}`)
+      return
+    }
+
+    dispatch({ type: TASK_LISTS_UPDATED, taskList })
+  }
 }
 
 export function toggleTask(task, multiple = false) {
@@ -1960,7 +2055,13 @@ export function removeTasksFromTaskList(items, username) {
     const newItems = withoutItemsIRIs(taskList.items, toRemove)
     const { assignedTaskIds, unassignedTaskIds } = assignmentChangeSet(state, newItems, taskList.items)
 
-    dispatch(modifyTaskListRequest(username, newItems, taskList.items, assignedTaskIds, unassignedTaskIds))
+    // No API call here (the PUT on the *other* task list takes care of it), but this
+    // still supersedes any modification of this task list that is currently in flight
+    dispatch(modifyTaskListRequest(username, newItems, taskList.items, {
+      assignedTaskIds,
+      unassignedTaskIds,
+      requestId: nextTaskListRequestId(),
+    }))
   }
 }
 

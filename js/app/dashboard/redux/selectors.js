@@ -75,6 +75,26 @@ export const selectOptimLoading = state => state.logistics.ui.optimLoading
 export const selectUnassignedTasksLoading = state => state.logistics.ui.unassignedTasksLoading
 export const selectLoadingTaskIds = state => state.logistics.ui.loadingTaskIds ?? []
 export const selectOrderOfUnassignedTasks = state => state.logistics.ui.unassignedTasksIdsOrder
+
+// Task list modifications bookkeeping, @see js/app/dashboard/redux/uiReducers.js
+const selectTaskListRequests = (state, username) =>
+  state.logistics.ui.taskListsRequests?.[username]
+
+/**
+ * How many modifications of this rider's task list are currently waiting for the API.
+ */
+export const selectPendingTaskListRequests = (state, username) =>
+  selectTaskListRequests(state, username)?.pending ?? 0
+
+/**
+ * Whether a newer modification of this rider's task list was initiated since,
+ * which makes the outcome of `requestId` obsolete.
+ */
+export const isTaskListRequestSuperseded = (state, username, requestId) => {
+  const latestRequestId = selectTaskListRequests(state, username)?.latestRequestId
+
+  return latestRequestId !== undefined && latestRequestId !== null && latestRequestId !== requestId
+}
 export const selectOrderOfUnassignedToursAndGroups = state => state.logistics.ui.unassignedToursOrGroupsOrderIds
 
 // Settings selectors
