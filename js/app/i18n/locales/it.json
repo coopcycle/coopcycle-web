@@ -405,7 +405,7 @@
         "DELIVERY_FORM_VAT_PRICE": "Prezzo IVA inclusa",
         "DELIVERY_FORM_EXVAT_PRICE" : "Prezzo IVA esclusa",
         "DELIVERY_PROOFS_LINK_TEXT": "Prove di Consegna",
-        "DELIVERY_PROOFS_MODAL_TITLE": "Scarica Prove di Consegna",
+        "DELIVERY_PROOFS_MODAL_TITLE": "Scarica prove di consegna",
         "DELIVERY_PROOFS_DOWNLOAD_BUTTON": "Scarica",
         "DELIVERY_PROOFS_CHOOSE_WEEK": "Scegli una settimana",
         "DELIVERY_PROOFS_TOTAL_DELIVERIES": "Consegne Totali",
