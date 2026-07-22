@@ -10,13 +10,26 @@ runs:
   - name: Pull Docker images
     shell: bash
     run: docker compose pull --ignore-pull-failures
+  # Downloading the extract and running extract/partition/customize takes ~4 minutes,
+  # and the result only changes when the OSRM version or the profile changes — both of
+  # which are pinned by docker/osrm/Dockerfile, so it is part of the cache key.
+  - name: Restore OSRM data
+    id: osrm-cache
+    uses: actions/cache@v4
+    with:
+      path: var/osrm
+      key: osrm-paris-france-${{ hashFiles('docker/osrm/Dockerfile') }}
   - name: Prepare OSRM data
+    if: steps.osrm-cache.outputs.cache-hit != 'true'
     shell: bash
     run: |
       docker compose run -T --rm osrm wget --no-check-certificate https://coopcycle-assets.sfo2.digitaloceanspaces.com/osm/paris-france.osm.pbf -O /data/data.osm.pbf
       docker compose run -T --rm osrm osrm-extract -p /opt/bicycle.lua /data/data.osm.pbf
       docker compose run -T --rm osrm osrm-partition /data/data.osrm
       docker compose run -T --rm osrm osrm-customize /data/data.osrm
+      # osrm-routed only reads data.osrm* (see docker/osrm/start.sh), so the ~180 MB
+      # source extract does not need to be carried around in the cache.
+      docker compose run -T --rm osrm rm -f /data/data.osm.pbf
   - name: Start Docker containers
     shell: bash
     # specify -f docker-compose.yml explicitly, because we don't want to load docker-compose.override.yml
