@@ -18,31 +18,68 @@ import i18next from "i18next"
 const parseUsername = id => id.replace('assigned:', '')
 const parseTourId   = id => id.replace('tour:', '')
 
+/**
+ * Sort tasks the way they appear in `order`. Tasks missing from it keep their relative
+ * order and are put last - `findIndex` returning -1 would otherwise send them first.
+ * Returns a new array: `selectedTasks` often comes straight out of a memoized selector,
+ * sorting it in place would reorder derived state behind Redux's back.
+ * @param {Array.Object} selectedTasks - Tasks to sort
+ * @param {Array.string} order - Task IRIs, in the expected order
+ */
+function sortByOrder(selectedTasks, order) {
+  const rank = task => {
+    const index = order.findIndex(id => id === task['@id'])
+    return index === -1 ? Number.MAX_SAFE_INTEGER : index
+  }
+
+  return [...selectedTasks].sort((a, b) => rank(a) - rank(b))
+}
+
+/**
+ * @hello-pangea/dnd computes `index` as if the item being dragged had already been
+ * taken out of the list, but not the other selected ones. When several items move at
+ * once, every *other* selected item we remove from above the drop point shifts the list
+ * up by one, so the drop index has to be corrected by as much. Without this, dragging a
+ * multiple selection downwards inside a list lands too low.
+ * @see https://github.com/hello-pangea/dnd/blob/main/docs/patterns/multi-drag.md
+ * @param {number} index - The index dnd dropped at
+ * @param {Array.string} previousItems - Items IRIs of the list, before the drop
+ * @param {Array.Object} selectedItems - Items being moved
+ * @param {?string} primaryItemId - IRI of the item actually being dragged
+ */
+function dropIndex(index, previousItems, selectedItems, primaryItemId) {
+  const removedBeforeIndex = selectedItems.filter(item => {
+    if (item['@id'] === primaryItemId) {
+      return false
+    }
+    const itemIndex = previousItems.findIndex(it => it === item['@id'])
+
+    return itemIndex > -1 && itemIndex < index
+  }).length
+
+  return index - removedBeforeIndex
+}
+
 function sortSelectedTasks(selectedTasks, result, getState, isTourDrag) {
   if (isTourDrag) return selectedTasks
 
   const { source } = result
 
   if (source.droppableId === 'unassigned') {
-    const order = selectOrderOfUnassignedTasks(getState())
-    return selectedTasks.sort((a, b) =>
-      order.findIndex(id => id === a['@id']) - order.findIndex(id => id === b['@id'])
-    )
+    return sortByOrder(selectedTasks, selectOrderOfUnassignedTasks(getState()))
   }
   if (source.droppableId.startsWith('tour') || result.draggableId.startsWith('tour')) {
     const tourId = result.draggableId.startsWith('tour')
       ? parseTourId(result.draggableId)
       : parseTourId(source.droppableId)
     const tour = selectTourById(getState(), tourId)
-    return selectedTasks.sort((a, b) =>
-      tour.items.findIndex(id => id === a['@id']) - tour.items.findIndex(id => id === b['@id'])
-    )
+
+    return sortByOrder(selectedTasks, tour?.items ?? [])
   }
   if (source.droppableId.startsWith('assigned')) {
     const tasksList = selectTaskListByUsername(getState(), { username: parseUsername(source.droppableId) })
-    return selectedTasks.sort((a, b) =>
-      tasksList.items.findIndex(id => id === a['@id']) - tasksList.items.findIndex(id => id === b['@id'])
-    )
+
+    return sortByOrder(selectedTasks, tasksList?.items ?? [])
   }
   return selectedTasks
 }
@@ -83,9 +120,13 @@ export function handleDragEnd(
      * @param {Object} tasksList - TaskList to be modified
      * @param {Array.Objects} selectedItems - Items to be assigned, list of tasks and tours to be assigned
      * @param {number} index - The index at which we drop
+     * @param {?string} primaryItemId - IRI of the item actually being dragged, when it
+     *   belongs to `tasksList`. @hello-pangea/dnd computes `index` as if that one item
+     *   had already been taken out of the list, but not the other selected ones.
     */
-    const handleDropInTaskList = async (tasksList, selectedItems, index) => {
-      let newTasksListItems = [...tasksList.items]
+    const handleDropInTaskList = async (tasksList, selectedItems, index, primaryItemId = null) => {
+      const previousItems = tasksList.items
+      let newTasksListItems = [...previousItems]
 
       selectedItems.forEach((t) => {
         let itemIndex = newTasksListItems.findIndex((item) => item === t['@id'])
@@ -96,7 +137,11 @@ export function handleDragEnd(
 
       })
 
-      newTasksListItems.splice(index, 0, ...selectedItems.map(it => it['@id']))
+      newTasksListItems.splice(
+        dropIndex(index, previousItems, selectedItems, primaryItemId),
+        0,
+        ...selectedItems.map(it => it['@id'])
+      )
 
       // Tasks may have been moved between couriers
       // No need to unassign via API, because the PUT operation will take care of this
@@ -190,7 +235,8 @@ export function handleDragEnd(
         const items = isTourDrag
           ? [selectTourById(getState(), parseTourId(result.draggableId))]
           : selectedTasks
-        handleDropInTaskList(tasksList, items, destination.index)
+        const primaryItemId = isTourDrag ? parseTourId(result.draggableId) : result.draggableId
+        handleDropInTaskList(tasksList, items, destination.index, primaryItemId)
         return
       }
       // source === dest === 'tour:X': falls through to TASK DRAG below
@@ -204,7 +250,12 @@ export function handleDragEnd(
       }
       // destination is assigned:
       const tasksList = selectTaskListByUsername(getState(), { username: parseUsername(destination.droppableId) })
-      handleDropInTaskList(tasksList, [selectTourById(getState(), parseTourId(result.draggableId))], destination.index)
+      handleDropInTaskList(
+        tasksList,
+        [selectTourById(getState(), parseTourId(result.draggableId))],
+        destination.index,
+        parseTourId(result.draggableId)
+      )
       return
     }
 
@@ -221,7 +272,8 @@ export function handleDragEnd(
 
     if (destination.droppableId.startsWith('tour:')) {
       const tour = selectTourById(getState(), parseTourId(destination.droppableId))
-      const newTourItems = [...tour.items]
+      const previousTourItems = tour.items
+      const newTourItems = [...previousTourItems]
 
       if (source.droppableId === destination.droppableId) {
         _.remove(newTourItems, t => selectedTasks.find(st => st['@id'] === t))
@@ -231,7 +283,11 @@ export function handleDragEnd(
         dispatch(unassignTasks(parseUsername(source.droppableId), selectedTasks))
       }
 
-      newTourItems.splice(destination.index, 0, ...selectedTasks.map(t => t['@id']))
+      newTourItems.splice(
+        dropIndex(destination.index, previousTourItems, selectedTasks, result.draggableId),
+        0,
+        ...selectedTasks.map(t => t['@id'])
+      )
       dispatch(modifyTour(tour, newTourItems))
       return
     }
@@ -243,7 +299,8 @@ export function handleDragEnd(
     handleDropInTaskList(
       selectTaskListByUsername(getState(), { username: parseUsername(destination.droppableId) }),
       selectedTasks,
-      destination.index
+      destination.index,
+      result.draggableId
     )
   }
 }
