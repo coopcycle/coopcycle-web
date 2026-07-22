@@ -92,6 +92,15 @@ class DeliveryRepository extends EntityRepository
             ->setParameter('startOfToday', $today->clone()->startOfDay())
             ;
     }
+    public function createdAtRange(QueryBuilder $qb, \DateTimeInterface $start, \DateTimeInterface $end): QueryBuilder
+    {
+        return $qb
+            ->andWhere('d.createdAt BETWEEN :start AND :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ;
+    }
+
     /**
      * @return null|object
      */

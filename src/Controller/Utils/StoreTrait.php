@@ -566,19 +566,12 @@ trait StoreTrait
                 ->setParameter('store', $store);
         }
 
-        //TODO: Remove duplicated code (AdminController.php~L820)
-        if ($request->query->get('start_at') && $request->query->get('end_at')) {
-
-            $start = Carbon::parse($request->query->get('start_at'))->setTime(0, 0, 0)->toDateTime();
-            $end = Carbon::parse($request->query->get('end_at'))->setTime(23, 59, 59)->toDateTime();
+        if ($range = $this->getDeliveryDateRange($request)) {
 
             $filters['enabled'] = true;
-            $filters['range'] = [$start, $end];
+            $filters['range'] = $range;
 
-            $qb
-                ->andWhere('d.createdAt BETWEEN :start AND :end')
-                ->setParameter('start', $start)
-                ->setParameter('end', $end);
+            $deliveryRepository->createdAtRange($qb, $range[0], $range[1]);
         }
 
         $deliveries = $paginator->paginate(

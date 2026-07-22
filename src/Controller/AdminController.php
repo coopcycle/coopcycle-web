@@ -961,14 +961,10 @@ class AdminController extends AbstractController
             }
         }
 
-        if ($request->query->has('start_at') && $request->query->has('end_at')) {
-            $start = Carbon::parse($request->query->get('start_at'))->setTime(0, 0, 0)->toDateTime();
-            $end = Carbon::parse($request->query->get('end_at'))->setTime(23, 59, 59)->toDateTime();
-            $filters['range'] = [$start, $end];
+        if ($range = $this->getDeliveryDateRange($request)) {
+            $filters['range'] = $range;
 
-            $qb->andWhere('d.createdAt BETWEEN :start AND :end')
-            ->setParameter('start', $start)
-            ->setParameter('end', $end);
+            $deliveryRepository->createdAtRange($qb, $range[0], $range[1]);
         }
 
         // Allow filtering by store & restaurant with KnpPaginator
