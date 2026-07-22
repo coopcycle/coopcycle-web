@@ -10,14 +10,25 @@ jobs:
     env:
       STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
       STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+      # Some assertions compare formatted numbers, which depend on the ambient ICU
+      # locale. The webpack container this used to run in has no LANG set, so Node
+      # falls back to en-US; pin the same thing here.
+      LANG: C.UTF-8
     steps:
       - name: Set timezone
         uses: szenius/set-timezone@v2.0
         with:
           timezoneLinux: "Europe/Paris"
       - uses: actions/checkout@v4
-      - name: Run CoopCycle Web
-        uses: ./.github/actions/run-coopcycle-web
-        timeout-minutes: 10
+      # Jest only runs jsdom unit tests under js/, it needs neither the app nor any of
+      # the containers, so it does not use ./.github/actions/run-coopcycle-web. Node 22
+      # matches the "node:22-alpine" image these tests used to run in.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - name: Install dependencies
+        # The Cypress binary is not needed to run Jest, and takes a while to download
+        run: CYPRESS_INSTALL_BINARY=0 npm ci
       - name: Run Jest
-        run: docker compose exec -T webpack npm run jest
+        run: npm run jest
