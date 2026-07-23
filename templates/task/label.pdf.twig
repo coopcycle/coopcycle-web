@@ -17,111 +17,198 @@
         break-inside: avoid;
       }
     }
-    body > header,
-    body > footer {
-      display: flex;
-      justify-content: space-between;
-    }
-    body > header {
-      margin-bottom: 10mm;
-    }
-    body > header > *,
-    body > footer > * {
-      flex: 1;
+    body {
+      margin: 8px 10px;
+      font-family: Helvetica, Arial, sans-serif;
+      line-height: 1.35;
     }
     ul {
       list-style: none;
       padding: 0;
       margin: 0;
     }
-    hr {
-      height: 0px;
-      border: none;
-      border-top: 1px solid black;
-      padding: 0.3em 0;
-    }
     h1, h2 {
       margin: 0;
+    }
+    .rule {
+      border-top: 2px solid #000;
+    }
+    .brand {
+      position: relative;
+      padding-bottom: 0.4em;
+    }
+    .brand h1 {
+      text-align: center;
+      font-size: 2.6em;
+      letter-spacing: 0.02em;
+    }
+    .brand .powered-by {
+      position: absolute;
+      top: 0;
+      right: 0;
+      font-size: 0.62em;
+      text-align: right;
+      line-height: 1.3em;
+    }
+    /* Fixed height, so that the barcode always ends up at the same place,
+       and the label always fits on a single page */
+    .addresses {
+      display: flex;
+      gap: 1em;
+      box-sizing: border-box;
+      height: 210px;
+      overflow: hidden;
+      padding-top: 0.7em;
+      padding-bottom: 0.7em;
+    }
+    .addresses > div {
+      display: flex;
+      gap: 0.8em;
+      flex: 1;
+    }
+    .addresses .label {
+      white-space: nowrap;
+    }
+    .to {
+      font-size: 1.15em;
+      font-weight: bold;
+    }
+    /* Delivery instructions are free text, keep them to 2 lines */
+    .to .comments {
+      font-weight: normal;
+      padding-top: 1.2em;
+      max-height: 2.7em;
+      overflow: hidden;
+    }
+    .details {
+      display: flex;
+      align-items: flex-start;
+      padding-top: 0.6em;
+      padding-bottom: 0.6em;
+    }
+    .details .col {
+      flex: 1;
+    }
+    .details .col-ref {
+      flex: 2.2;
+    }
+    .details .col-zip {
+      flex: 2;
+      text-align: right;
+    }
+    .details .value {
+      font-size: 1.2em;
+    }
+    .details .zip-label {
+      font-size: 0.7em;
+    }
+    .details .zip-value {
+      font-size: 3.2em;
+      font-weight: bold;
+      line-height: 1;
+    }
+    .barcodes {
+      break-inside: avoid;
+      padding-top: 0.5em;
+    }
+    .barcodes > div {
+      text-align: center;
+      padding-bottom: 0.5em;
+    }
+    .barcodes svg {
+      display: block;
+      margin: 0 auto;
+      max-width: 100%;
     }
     </style>
   </head>
   <body class="landscape">
-    <div style="padding-top: 1em; padding-bottom: 1em;">
-      <h1 style="text-align: center; margin-bottom: 0">
-        {{ coopcycle_setting('brand_name')|upper }}
-      </h1>
-      <div style="font-size: 0.6em; text-align: right; line-height: 1em">
+    <div class="brand">
+      <h1>{{ coopcycle_setting('brand_name')|upper }}</h1>
+      <div class="powered-by">
         <ul>
           <li>- powered by CoopCycle</li>
           <li>Sustainable, cooperative logistics</li>
         </ul>
       </div>
     </div>
-    <div style="display: flex; gap: 1em; justify-content: space-between; border-top: 1px solid #000000; border-bottom: 1px solid #000000;">
-      <div style="display: flex; gap: 1em; flex: 1; padding-top: 1em; padding-bottom: 1em;">
-        <div>FROM:</div>
+    <div class="rule"></div>
+    <div class="addresses">
+      <div>
+        <div class="label">FROM:</div>
         <div>
         {% if from is not null %}
           <ul>
-            <li>{{ from.contactName }}</li>
-            <li>{{ from.streetAddress }}</li>
+            <li>{{ from.contactName|upper }}{% if fromPhone %} | {{ fromPhone }}{% endif %}</li>
+            <li>{{ from.streetAddress|upper }}</li>
+            {% if from.addressCountry %}
+              <li>{{ from.addressCountry|upper }}</li>
+            {% endif %}
           </ul>
         {% endif %}
         </div>
       </div>
-      <div style="display: flex; gap: 1em; flex: 1; padding-top: 1em; padding-bottom: 1em;">
-        <div>TO:</div>
-        <div style="font-size: 1.25em; font-weight: bold;">
+      <div>
+        <div class="label">TO:</div>
+        <div class="to">
           <ul>
-            <li>{{ task.address.contactName }}</li>
-            <li>{{ task.address.streetAddress }}</li>
-            <li>{{ phone }}</li>
+            <li>{{ task.address.contactName|upper }}</li>
+            {% if task.address.name %}
+              <li>{{ task.address.name|upper }}</li>
+            {% endif %}
+            <li>{{ task.address.streetAddress|upper }}</li>
+            {% if phone %}
+              <li>{{ phone }}</li>
+            {% endif %}
           </ul>
+          {% if task.address.description %}
+            <div class="comments">{{ task.address.description|nl2br }}</div>
+          {% endif %}
         </div>
       </div>
     </div>
-    <div style="padding-top: 1em; padding-bottom: 1em; border-bottom: 1px solid #000000;">
-      <h2 style="text-align: center; font-size: 2.5em;">
-        {{ task.address.postalCode }} {{ task.address.addressLocality|upper }}
-      </h2>
-    </div>
-    <div style="display: flex; padding-top: 1em; padding-bottom: 1em; border-bottom: 1px solid #000000;">
-      <div style="flex: 1">
+    <div class="rule"></div>
+    <div class="details">
+      <div class="col col-ref">
         <ul>
           <li><strong>Ref:</strong></li>
-          <li>{{ barcodes|first['code'] }}</li>
+          <li class="value">{{ barcodes|first['code'] }}</li>
           {% if package is not null %}
-            <li><strong>Package:</strong></li>
-            <li>{{ package }}</li>
+            <li class="value">Package: {{ package }}</li>
           {% endif %}
         </ul>
       </div>
-      <div style="flex: 1">
+      <div class="col">
         <ul>
           <li><strong>Weight:</strong></li>
           {% if task.weight > 0 %}
-            <li style="font-size: 1.4em">{{ (task.weight / 1000)|format_number }} Kg</li>
+            <li class="value">{{ (task.weight / 1000)|format_number }} Kg</li>
           {% else %}
-            <li>-</li>
+            <li class="value">-</li>
           {% endif %}
         </ul>
       </div>
-      <div style="flex: 1">
+      <div class="col">
         <ul>
           <li><strong>Parcel:</strong></li>
           {% if currentPackage is not null %}
-            <li style="font-size: 1.4em">{{ currentPackage }} / {{ totalPackages }}</li>
+            <li class="value">{{ currentPackage }} / {{ totalPackages }}</li>
           {% elseif totalPackages > 0 %}
-            <li style="font-size: 1.4em">{{ totalPackages }}</li>
+            <li class="value">{{ totalPackages }}</li>
           {% else %}
-            <li>-</li>
+            <li class="value">-</li>
           {% endif %}
         </ul>
       </div>
+      <div class="col col-zip">
+        <div class="zip-label">CP / ZIP</div>
+        <div class="zip-value">{{ task.address.postalCode }}</div>
+      </div>
     </div>
-    <div style="break-inside: avoid;  padding-top: 1em; padding-bottom: 1em;">
+    <div class="rule"></div>
+    <div class="barcodes">
     {% for barcode in barcodes %}
-      <div style="text-align: center">
+      <div>
         {{ barcode['svg']|raw }}
         <div>{{ barcode['code'] }}</div>
       </div>

@@ -165,6 +165,43 @@ class BarcodeController extends AbstractController
     }
 
 
+    // Height of the barcode, in CSS pixels
+    private const BARCODE_HEIGHT = 130.0;
+
+    // When there are several barcodes, they need to share the space left at the bottom of the label
+    private const BARCODE_HEIGHT_MULTIPLE = 50.0;
+
+    // Width available for the barcode on an A5 landscape page (210mm @ 96dpi), minus body margins
+    private const BARCODE_MAX_WIDTH = 740.0;
+
+    private const BARCODE_MIN_WIDTH_FACTOR = 1.4;
+    private const BARCODE_MAX_WIDTH_FACTOR = 4.0;
+
+    /**
+     * Computes the width of a single bar so that the barcode spans (almost) the whole label width,
+     * whatever the length of the code.
+     */
+    private function getBarcodeWidthFactor(BarcodeGeneratorSVG $generator, string $code): float
+    {
+        // Generate the barcode with a width factor of 1, to know how many modules it contains
+        $svg = $generator->getBarcode($code, $generator::TYPE_CODE_128, 1, 1);
+
+        if (1 !== preg_match('/<svg width="([0-9.]+)"/', $svg, $matches)) {
+            return self::BARCODE_MIN_WIDTH_FACTOR;
+        }
+
+        $modules = (float) $matches[1];
+
+        if ($modules <= 0) {
+            return self::BARCODE_MIN_WIDTH_FACTOR;
+        }
+
+        return max(
+            self::BARCODE_MIN_WIDTH_FACTOR,
+            min(self::BARCODE_MAX_WIDTH_FACTOR, self::BARCODE_MAX_WIDTH / $modules)
+        );
+    }
+
     #[Route(path: '/tasks/label', name: 'task_label_pdf')]
     public function viewLabelAction(
         PhoneNumberUtil $phoneUtil,
@@ -208,35 +245,33 @@ class BarcodeController extends AbstractController
 
         $from = $ressource->getDelivery()?->getPickup()?->getAddress();
 
-        $barcodeSVG = $generator->getBarcode(
-            barcode: $barcode->getRawBarcode(),
-            type: $generator::TYPE_CODE_128,
-            widthFactor: 1.4,
-            height: 55
-        );
+        $fromPhone = null;
+        if (!is_null($from) && !is_null($from->getTelephone())) {
+            $fromPhone = $phoneUtil->format($from->getTelephone(), PhoneNumberFormat::NATIONAL);
+        }
 
-
-        $barcodes = [[
-            'code' => $barcode->getRawBarcode(),
-            'svg' => $barcodeSVG
-        ]];
+        $codes = [$barcode->getRawBarcode()];
 
         if (isset($ressource->getMetadata()['barcode'])) {
-            $barcode_alt = $ressource->getMetadata()['barcode'];
-
-            $barcodes[] = [
-                'code' => $barcode_alt,
-                'svg' => $generator->getBarcode(
-                    barcode: $barcode_alt,
-                    type: $generator::TYPE_CODE_128,
-                    widthFactor: 1.4,
-                    height: 55
-                )
-            ];
+            $codes[] = $ressource->getMetadata()['barcode'];
         }
+
+        // Make the barcode as tall as possible while keeping the label on a single page
+        $height = count($codes) > 1 ? self::BARCODE_HEIGHT_MULTIPLE : self::BARCODE_HEIGHT;
+
+        $barcodes = array_map(fn (string $code) => [
+            'code' => $code,
+            'svg' => $generator->getBarcode(
+                barcode: $code,
+                type: $generator::TYPE_CODE_128,
+                widthFactor: $this->getBarcodeWidthFactor($generator, $code),
+                height: $height
+            )
+        ], $codes);
 
         $html = $this->twig->render('task/label.pdf.twig', [
             'from' => $from,
+            'fromPhone' => $fromPhone,
             'task' => $ressource,
             'phone' => $phone,
             'barcodes' => $barcodes,
