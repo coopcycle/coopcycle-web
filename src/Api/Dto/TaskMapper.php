@@ -106,11 +106,7 @@ class TaskMapper
         $packageData->quantity = $taskPackage->getQuantity();
 
         if (!is_null($task->getId())) {
-            $packageData->labels = $this->getLabels(
-                $task->getId(),
-                $package->getId(),
-                $taskPackage->getQuantity()
-            );
+            $packageData->labels = $this->getLabels($taskPackage);
         } else {
             $packageData->labels = [];
         }
@@ -153,10 +149,10 @@ class TaskMapper
     /**
      * @return string[]
      */
-    public function getLabels(int $taskId, int $packageId, int $quantity): array {
+    public function getLabels(Task\Package $taskPackage): array {
         $labels = [];
 
-        $barcodes = BarcodeUtils::getBarcodesFromTaskAndPackageIds($taskId, $packageId, $quantity);
+        $barcodes = BarcodeUtils::getBarcodesFromTaskPackage($taskPackage);
         foreach ($barcodes as $barcode) {
             $labelUrl = $this->urlGenerator->generate(
                 'task_label_pdf',
