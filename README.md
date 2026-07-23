@@ -275,7 +275,7 @@ and put it back afterwards with `docker compose up -d php_worker`.
 Note that stopping `php_worker` altogether is *not* enough: `cy.consumeMessages()` only runs `messenger:consume` for a few seconds, and messages are dispatched at the end of the HTTP request, so the test's own consumer regularly misses them. The specs rely on a worker being there.
 
 
-### Run linters (phpStan)
+### Run linters (PHPStan)
 
 ```sh
 docker compose exec php php vendor/bin/phpstan analyse -v
@@ -343,4 +343,3 @@ The code is licensed under the [Coopyleft License](https://wiki.coopcycle.org/en
 
 - You are matching with the social and common company’s criteria as define by their national law, or by the European Commission in its [October 25th, 2011 communication](http://www.europarl.europa.eu/meetdocs/2009_2014/documents/com/com_com(2011)0681_/com_com(2011)0681_en.pdf), or by default by the Article 1 of the French law [n°2014-856 of July 31st, 2014](https://www.legifrance.gouv.fr/affichTexte.do?cidTexte=JORFTEXT000029313296&categorieLien=id) “relative à l’économie sociale et solidaire”
 - You are using a cooperative model in which workers are employees
-
