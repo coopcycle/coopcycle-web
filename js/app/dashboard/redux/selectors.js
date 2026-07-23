@@ -111,6 +111,7 @@ export const selectTourPolylinesEnabledById = tourId => state => state.tourPolyl
 
 export const selectNav = state => state.config.nav
 export const selectInitialTask = state => state.config.initialTask
+export const selectTimezone = state => state.config.timezone
 
 export const selectAllTags = state => state.config.tags
 
@@ -283,7 +284,8 @@ export const selectVisibleTaskIds = createSelector(
   selectAllTasks,
   selectFiltersSetting,
   selectSelectedDate,
-  (tasks, filters, date) => filter(tasks, task => isTaskVisible(task, filters, date)).map(task => task['@id'])
+  selectTimezone,
+  (tasks, filters, date, timezone) => filter(tasks, task => isTaskVisible(task, filters, date, timezone)).map(task => task['@id'])
 )
 
 export const selectVisibleOnMapTaskIds = createSelector(

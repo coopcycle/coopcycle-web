@@ -1705,7 +1705,7 @@ class AdminController extends AbstractController
         }
 
         return $this->render('admin/settings.html.twig', [
-            'timezone' => ini_get('date.timezone'),
+            'timezone' => $settingsManager->get('timezone'),
             'form' => $form->createView(),
             'maintenance_form' => $maintenanceForm->createView(),
             'maintenance' => $redis->get('maintenance'),

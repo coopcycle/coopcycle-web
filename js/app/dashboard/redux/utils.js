@@ -117,7 +117,7 @@ export const nowToPercentage = (now) => {
   return nowAsSeconds / 86400
 }
 
-export const isTaskVisible = (task, filters, date) => {
+export const isTaskVisible = (task, filters, date, timezone) => {
 
   const {
     showFinishedTasks,
@@ -227,19 +227,21 @@ export const isTaskVisible = (task, filters, date) => {
     const endHour = end === 24 ? 23 : end
     const endMinute = end === 24 ? 59 : 0
 
-    // Anchor to the task's own offset (tenant timezone), not the browser's,
-    // for the same reason as isInDateRange() below.
-    const after = moment.parseZone(task.after ?? task.doneAfter)
-    const before = moment.parseZone(task.before ?? task.doneBefore)
-
-    const dateParts = { year: date.year(), month: date.month(), date: date.date() }
+    // Anchor the day boundaries to the tenant's own timezone, not the
+    // dashboard operator's browser timezone, otherwise a task scheduled
+    // late in the tenant's day can appear to fall on "tomorrow" for an
+    // operator further east and get wrongly filtered out.
+    const dateStr = date.format('YYYY-MM-DD')
 
     const dateAsRange = moment.range(
-      after.clone().set({ ...dateParts, hour: startHour, minute: 0 }),
-      after.clone().set({ ...dateParts, hour: endHour, minute: endMinute })
+      moment.tz(dateStr, timezone).set({ hour: startHour, minute: 0 }),
+      moment.tz(dateStr, timezone).set({ hour: endHour, minute: endMinute })
     )
 
-    const range = moment.range(after, before)
+    const range = moment.range(
+      moment.tz(task.after ?? task.doneAfter, timezone),
+      moment.tz(task.before ?? task.doneBefore, timezone)
+    )
 
     if (!range.overlaps(dateAsRange)) {
       return false
@@ -271,24 +273,24 @@ export const isOffline = (lastSeen) => {
 export const recurrenceTemplateToArray =
   template => template['@type'] === 'hydra:Collection' ? template['hydra:member'] : [ template ]
 
-export const isInDateRange = (task, date) => {
+export const isInDateRange = (task, date, timezone) => {
 
-  // Use parseZone() and anchor the day boundaries to the task's own offset
-  // (i.e. the tenant's timezone), not the browser's local timezone.
-  // Otherwise a task scheduled late in the tenant's day can appear to fall
-  // on "tomorrow" for a dashboard operator in a timezone further east,
-  // and get wrongly treated as no longer part of the selected day.
-  const after = moment.parseZone(task.after ?? task.doneAfter)
-  const before = moment.parseZone(task.before ?? task.doneBefore)
-
-  const dateParts = { year: date.year(), month: date.month(), date: date.date() }
+  // Anchor the day boundaries to the tenant's own timezone, not the
+  // dashboard operator's browser timezone. Otherwise a task scheduled
+  // late in the tenant's day can appear to fall on "tomorrow" for an
+  // operator further east, and get wrongly treated as no longer part
+  // of the selected day (and removed from the store).
+  const dateStr = date.format('YYYY-MM-DD')
 
   const dateAsRange = moment.range(
-    after.clone().set({ ...dateParts, hour: 0, minute: 0, second: 0 }),
-    after.clone().set({ ...dateParts, hour: 23, minute: 59, second: 59 })
+    moment.tz(dateStr, timezone).startOf('day'),
+    moment.tz(dateStr, timezone).endOf('day')
   )
 
-  const range = moment.range(after, before)
+  const range = moment.range(
+    moment.tz(task.after ?? task.doneAfter, timezone),
+    moment.tz(task.before ?? task.doneBefore, timezone)
+  )
 
   return range.overlaps(dateAsRange)
 }

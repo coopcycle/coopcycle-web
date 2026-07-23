@@ -338,7 +338,7 @@ describe('isInDateRange', () => {
 
     const date = moment('2019-11-20')
 
-    expect(isInDateRange(task, date)).toEqual(false)
+    expect(isInDateRange(task, date, 'UTC')).toEqual(false)
   })
 
   it('should return true (task inside the range)', () => {
@@ -352,14 +352,15 @@ describe('isInDateRange', () => {
 
     const date = moment('2019-11-20')
 
-    expect(isInDateRange(task, date)).toEqual(true)
+    expect(isInDateRange(task, date, 'UTC')).toEqual(true)
   })
 
-  it('should not depend on the browser timezone (task offset is authoritative)', () => {
+  it('should not depend on the browser timezone (the explicit tenant timezone is authoritative)', () => {
     // A task scheduled late in the tenant's day (Vancouver, -07:00) should stay
     // "in range" for that day even if the dashboard operator's own browser is
     // in a timezone far enough ahead that the same instant falls on the next
-    // calendar day locally (e.g. Europe).
+    // calendar day locally (e.g. Europe) — as long as the tenant's timezone is
+    // passed explicitly, the browser's own timezone must have no effect.
     const task = {
       '@id': 1,
       status: 'TODO',
@@ -373,7 +374,7 @@ describe('isInDateRange', () => {
     const originalTZ = process.env.TZ
     process.env.TZ = 'Europe/Paris'
     try {
-      expect(isInDateRange(task, date)).toEqual(true)
+      expect(isInDateRange(task, date, 'America/Vancouver')).toEqual(true)
     } finally {
       process.env.TZ = originalTZ
     }

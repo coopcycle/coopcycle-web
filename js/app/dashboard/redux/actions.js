@@ -18,6 +18,7 @@ import {
   selectPendingTaskListRequests,
   selectSelectedTasks,
   selectTaskLists,
+  selectTimezone,
 } from './selectors';
 import { createAction } from '@reduxjs/toolkit'
 import { selectTaskById, selectTaskListByUsername, selectItemAssignedTo, selectTourById } from '../../../shared/src/logistics/redux/selectors'
@@ -802,8 +803,9 @@ export function removeTask(task) {
 export function updateTask(task) {
   return function(dispatch, getState) {
     let date = selectSelectedDate(getState())
+    const timezone = selectTimezone(getState())
 
-    if (isInDateRange(task, date)) {
+    if (isInDateRange(task, date, timezone)) {
       dispatch(_updateTask(task))
     } else {
       dispatch(removeTask(task))
