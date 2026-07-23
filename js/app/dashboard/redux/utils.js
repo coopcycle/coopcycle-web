@@ -229,8 +229,8 @@ export const isTaskVisible = (task, filters, date) => {
 
     // Anchor to the task's own offset (tenant timezone), not the browser's,
     // for the same reason as isInDateRange() below.
-    const after = moment.parseZone(task.after)
-    const before = moment.parseZone(task.before)
+    const after = moment.parseZone(task.after ?? task.doneAfter)
+    const before = moment.parseZone(task.before ?? task.doneBefore)
 
     const dateParts = { year: date.year(), month: date.month(), date: date.date() }
 
@@ -278,8 +278,8 @@ export const isInDateRange = (task, date) => {
   // Otherwise a task scheduled late in the tenant's day can appear to fall
   // on "tomorrow" for a dashboard operator in a timezone further east,
   // and get wrongly treated as no longer part of the selected day.
-  const after = moment.parseZone(task.after)
-  const before = moment.parseZone(task.before)
+  const after = moment.parseZone(task.after ?? task.doneAfter)
+  const before = moment.parseZone(task.before ?? task.doneBefore)
 
   const dateParts = { year: date.year(), month: date.month(), date: date.date() }
 
