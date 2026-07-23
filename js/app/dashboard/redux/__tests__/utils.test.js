@@ -332,8 +332,8 @@ describe('isInDateRange', () => {
       '@id': 1,
       status: 'TODO',
       isAssigned: false,
-      doneAfter: '2019-11-21 09:00:00',
-      doneBefore: '2019-11-21 13:00:00',
+      after: '2019-11-21 09:00:00',
+      before: '2019-11-21 13:00:00',
     }
 
     const date = moment('2019-11-20')
@@ -346,13 +346,37 @@ describe('isInDateRange', () => {
       '@id': 1,
       status: 'TODO',
       isAssigned: false,
-      doneAfter: '2019-11-19 09:00:00',
-      doneBefore: '2019-11-21 19:00:00',
+      after: '2019-11-19 09:00:00',
+      before: '2019-11-21 19:00:00',
     }
 
     const date = moment('2019-11-20')
 
     expect(isInDateRange(task, date)).toEqual(true)
+  })
+
+  it('should not depend on the browser timezone (task offset is authoritative)', () => {
+    // A task scheduled late in the tenant's day (Vancouver, -07:00) should stay
+    // "in range" for that day even if the dashboard operator's own browser is
+    // in a timezone far enough ahead that the same instant falls on the next
+    // calendar day locally (e.g. Europe).
+    const task = {
+      '@id': 1,
+      status: 'TODO',
+      isAssigned: false,
+      after: '2026-07-23T16:30:00-07:00',
+      before: '2026-07-23T16:45:00-07:00',
+    }
+
+    const date = moment('2026-07-23')
+
+    const originalTZ = process.env.TZ
+    process.env.TZ = 'Europe/Paris'
+    try {
+      expect(isInDateRange(task, date)).toEqual(true)
+    } finally {
+      process.env.TZ = originalTZ
+    }
   })
 })
 
@@ -366,8 +390,8 @@ describe('isTaskVisible', () => {
     orgName: null,
     hasIncidents: false,
     assignedTo: null,
-    doneAfter: '2024-01-01 09:00:00',
-    doneBefore: '2024-01-01 10:00:00',
+    after: '2024-01-01 09:00:00',
+    before: '2024-01-01 10:00:00',
   }
 
   const baseFilters = {

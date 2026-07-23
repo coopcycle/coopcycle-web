@@ -227,15 +227,19 @@ export const isTaskVisible = (task, filters, date) => {
     const endHour = end === 24 ? 23 : end
     const endMinute = end === 24 ? 59 : 0
 
+    // Anchor to the task's own offset (tenant timezone), not the browser's,
+    // for the same reason as isInDateRange() below.
+    const after = moment.parseZone(task.after)
+    const before = moment.parseZone(task.before)
+
+    const dateParts = { year: date.year(), month: date.month(), date: date.date() }
+
     const dateAsRange = moment.range(
-      moment(date).set({ hour: startHour, minute: 0 }),
-      moment(date).set({ hour: endHour, minute: endMinute })
+      after.clone().set({ ...dateParts, hour: startHour, minute: 0 }),
+      after.clone().set({ ...dateParts, hour: endHour, minute: endMinute })
     )
 
-    const range = moment.range(
-      moment(task.doneAfter),
-      moment(task.doneBefore)
-    )
+    const range = moment.range(after, before)
 
     if (!range.overlaps(dateAsRange)) {
       return false
@@ -269,15 +273,22 @@ export const recurrenceTemplateToArray =
 
 export const isInDateRange = (task, date) => {
 
+  // Use parseZone() and anchor the day boundaries to the task's own offset
+  // (i.e. the tenant's timezone), not the browser's local timezone.
+  // Otherwise a task scheduled late in the tenant's day can appear to fall
+  // on "tomorrow" for a dashboard operator in a timezone further east,
+  // and get wrongly treated as no longer part of the selected day.
+  const after = moment.parseZone(task.after)
+  const before = moment.parseZone(task.before)
+
+  const dateParts = { year: date.year(), month: date.month(), date: date.date() }
+
   const dateAsRange = moment.range(
-    moment(date).set({ hour:  0, minute:  0, second:  0 }),
-    moment(date).set({ hour: 23, minute: 59, second: 59 })
+    after.clone().set({ ...dateParts, hour: 0, minute: 0, second: 0 }),
+    after.clone().set({ ...dateParts, hour: 23, minute: 59, second: 59 })
   )
 
-  const range = moment.range(
-    moment(task.doneAfter),
-    moment(task.doneBefore)
-  )
+  const range = moment.range(after, before)
 
   return range.overlaps(dateAsRange)
 }
