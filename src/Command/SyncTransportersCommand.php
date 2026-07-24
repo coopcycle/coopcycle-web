@@ -288,8 +288,17 @@ class SyncTransportersCommand extends Command {
     {
         $count = 0;
         foreach ($sync->pull() as $content) {
+            // Some transporters declare UNOC (ISO-8859-1) in the UNB segment
+            // but actually transmit UTF-8. The EDIFACT parser then strips
+            // bytes 0x80-0x9F per the UNOC charset, which shreds multi-byte
+            // UTF-8 "smart punctuation" (e.g. en-dash E2 80 93 -> dangling
+            // E2) and yields invalid UTF-8 that PostgreSQL rejects on insert.
+            // Normalize the payload before parsing; keep $content untouched so
+            // the original bytes are archived verbatim on S3 below.
+            $parseable = $this->normalizeEdifactPayload($content);
+
             [$type, $messages] = Transporter::parse(
-                $content,
+                $parseable,
                 TransporterName::from($this->transporter)
             );
 
@@ -515,6 +524,50 @@ class SyncTransportersCommand extends Command {
         }
 
         return $resolved;
+    }
+
+    /**
+     * Makes a UTF-8 EDIFACT payload safe to feed to a parser configured for
+     * the UNOC (ISO-8859-1) charset.
+     *
+     * The parser deletes bytes 0x80-0x9F, which are exactly the continuation
+     * bytes of the common UTF-8 "smart punctuation" characters. Left alone,
+     * that turns e.g. an en-dash into a lone 0xE2 lead byte (invalid UTF-8).
+     * We transliterate those characters to plain ASCII up-front so they
+     * survive as readable text, then guarantee the result is valid UTF-8.
+     *
+     * Accented Latin letters (é, è, à, ...) are intentionally left untouched:
+     * their UTF-8 continuation bytes are >= 0xA0 and pass through the parser
+     * unharmed, so there is no reason to strip their accents.
+     */
+    private function normalizeEdifactPayload(string $content): string
+    {
+        if (mb_check_encoding($content, 'ASCII')) {
+            return $content;
+        }
+
+        // Map the characters whose UTF-8 encoding contains a 0x80-0x9F byte
+        // (and would therefore be mangled) to ASCII equivalents.
+        $replacements = [
+            "\u{2013}" => '-',   // – en-dash
+            "\u{2014}" => '-',   // — em-dash
+            "\u{2018}" => "'",   // ‘ left single quote
+            "\u{2019}" => "'",   // ’ right single quote
+            "\u{201A}" => "'",   // ‚ single low quote
+            "\u{201C}" => '"',   // “ left double quote
+            "\u{201D}" => '"',   // ” right double quote
+            "\u{201E}" => '"',   // „ double low quote
+            "\u{2026}" => '...', // … ellipsis
+            "\u{2022}" => '*',   // • bullet
+            "\u{20AC}" => 'EUR', // € euro sign
+            "\u{00A0}" => ' ',   // non-breaking space
+        ];
+        $content = strtr($content, $replacements);
+
+        // Belt and suspenders: drop any remaining byte sequence that is not
+        // valid UTF-8 so a single malformed character can never abort the
+        // whole import batch.
+        return mb_convert_encoding($content, 'UTF-8', 'UTF-8');
     }
 
     private function debugPoint(Point $point): void {
