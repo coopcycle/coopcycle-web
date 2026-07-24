@@ -178,6 +178,33 @@ class CheckoutAddressType extends AbstractType
             }
         });
 
+        // When zero waste is mandatory, the "reusablePackagingEnabled" checkbox is
+        // rendered as disabled (pre-checked). Symfony ignores the submitted value of
+        // disabled fields and never maps it back to the order, so isReusablePackagingEnabled()
+        // would remain false. We force it here, before validation runs (priority > 0),
+        // so the order really has reusable packaging enabled and the LoopEatOrder
+        // constraint can validate the account connection and balance.
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+
+            $order = $event->getData();
+
+            if (null === $order) {
+                return;
+            }
+
+            $restaurant = $order->getRestaurant();
+
+            if (null !== $restaurant
+                && !$order->isMultiVendor()
+                && $order->isEligibleToReusablePackaging()
+                && $restaurant->isLoopeatEnabled()
+                && $restaurant->hasLoopEatCredentials()
+                && $restaurant->isLoopeatMandatory()) {
+
+                $order->setReusablePackagingEnabled(true);
+            }
+        }, 1);
+
     }
 
     private function disableChildForm(FormInterface $form, $name)

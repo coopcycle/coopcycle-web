@@ -7128,12 +7128,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/coopcycle/daisyui-form-bundle.git",
-                "reference": "a677ac68e20fcee79e3041694a673c056011f983"
+                "reference": "483e3490891176de2ce41175feb40c5bbbcf4a0c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coopcycle/daisyui-form-bundle/zipball/a677ac68e20fcee79e3041694a673c056011f983",
-                "reference": "a677ac68e20fcee79e3041694a673c056011f983",
+                "url": "https://api.github.com/repos/coopcycle/daisyui-form-bundle/zipball/483e3490891176de2ce41175feb40c5bbbcf4a0c",
+                "reference": "483e3490891176de2ce41175feb40c5bbbcf4a0c",
                 "shasum": ""
             },
             "require": {
@@ -7143,6 +7143,7 @@
             },
             "require-dev": {
                 "phpunit/phpunit": "^9.5 || ^10.0",
+                "symfony/dependency-injection": "^7.4",
                 "symfony/form": "^6.4 || ^7.0",
                 "symfony/intl": "^6.4 || ^7.0",
                 "symfony/security-csrf": "^6.4 || ^7.0",
@@ -7188,7 +7189,7 @@
                 "source": "https://github.com/coopcycle/daisyui-form-bundle/tree/main",
                 "issues": "https://github.com/coopcycle/daisyui-form-bundle/issues"
             },
-            "time": "2026-06-18T14:17:56+00:00"
+            "time": "2026-07-24T13:08:19+00:00"
         },
         {
             "name": "jaybizzle/crawler-detect",
@@ -30651,17 +30652,17 @@
     ],
     "minimum-stability": "dev",
     "stability-flags": {
-        "behatch/contexts": 20,
-        "coopcycle/transporter": 20,
         "drupal/core-vendor-hardening": 20,
+        "shahonseven/php-color-hash": 20,
+        "coopcycle/transporter": 20,
         "islesurlasorguetourisme/daisyui-form-bundle": 20,
-        "shahonseven/php-color-hash": 20
+        "behatch/contexts": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": ">=8.2"
     },
-    "platform-dev": {},
-    "plugin-api-version": "2.9.0"
+    "platform-dev": [],
+    "plugin-api-version": "2.3.0"
 }

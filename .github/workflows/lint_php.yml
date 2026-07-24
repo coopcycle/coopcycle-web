@@ -1,5 +1,8 @@
 name: Lint PHP
 on: push
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 env:
   APP_ENV: test
 jobs:

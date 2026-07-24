@@ -127,6 +127,61 @@ class OrderDepositRefundProcessorTest extends TestCase
         $this->orderDepositRefundProcessor->process($order);
     }
 
+    public function testLoopeatMandatoryForcesReusablePackagingEnabled()
+    {
+        $this->adjustmentFactory->createWithData(
+            Argument::cetera()
+        )->will(function ($args) {
+            $adjustment = new Adjustment();
+            $adjustment->setType($args[0]);
+            $adjustment->setLabel($args[1]);
+            $adjustment->setAmount($args[2]);
+
+            return $adjustment;
+        });
+
+        $order = new Order();
+        $restaurant = new LocalBusiness();
+
+        $restaurant->setLoopeatEnabled(true);
+        $restaurant->setLoopeatMandatory(true);
+        $order->setRestaurant($restaurant);
+
+        // The customer did not opt in, but zero waste is mandatory
+        $order->setReusablePackagingEnabled(false);
+
+        $this->orderDepositRefundProcessor->process($order);
+
+        $this->assertTrue($order->isReusablePackagingEnabled());
+    }
+
+    public function testLoopeatEnabledButNotMandatoryDoesNotForceReusablePackaging()
+    {
+        $this->adjustmentFactory->createWithData(
+            Argument::cetera()
+        )->will(function ($args) {
+            $adjustment = new Adjustment();
+            $adjustment->setType($args[0]);
+            $adjustment->setLabel($args[1]);
+            $adjustment->setAmount($args[2]);
+
+            return $adjustment;
+        });
+
+        $order = new Order();
+        $restaurant = new LocalBusiness();
+
+        $restaurant->setLoopeatEnabled(true);
+        $restaurant->setLoopeatMandatory(false);
+        $order->setRestaurant($restaurant);
+
+        $order->setReusablePackagingEnabled(false);
+
+        $this->orderDepositRefundProcessor->process($order);
+
+        $this->assertFalse($order->isReusablePackagingEnabled());
+    }
+
     public function testOrderDepositRefundEnabledAddAdjustment()
     {
         $reusablePackaging = new ReusablePackaging();

@@ -319,8 +319,50 @@ class LoopEatOrderValidatorTest extends ConstraintValidatorTestCase
         $constraint = new LoopEatOrderConstraint();
         $this->validator->validate($order->reveal(), $constraint);
 
+        // Mandatory: the checkbox is disabled, so the violation must target the root
+        // form (not the field) to actually block the checkout.
         $this->buildViolation($constraint->mandatory)
-            ->atPath('property.path.reusablePackagingEnabled')
+            ->atPath('property.path')
+            ->setParameter('%name%', 'Acme')
+            ->assertRaised();
+    }
+
+    public function testMandatoryAndAccountNotConnected()
+    {
+        $user = new User();
+
+        // No LoopEat credentials on the customer
+        $customer = new Customer();
+        $customer->setUser($user);
+
+        $restaurant = new Restaurant();
+        $restaurant->setLoopeatEnabled(true);
+        $restaurant->setLoopeatMandatory(true);
+
+        $order = $this->prophesize(Order::class);
+        $order
+            ->getRestaurant()
+            ->willReturn($restaurant);
+        $order
+            ->getCustomer()
+            ->willReturn($customer);
+        $order
+            ->getReusablePackagingQuantity()
+            ->willReturn(3);
+        $order
+            ->isReusablePackagingEnabled()
+            ->willReturn(true);
+
+        $this->loopeatClient
+            ->currentCustomer(Argument::type(LoopEatAdapter::class))
+            ->shouldNotBeCalled();
+
+        $constraint = new LoopEatOrderConstraint();
+        $this->validator->validate($order->reveal(), $constraint);
+
+        // Mandatory: violation on the root form so it blocks despite the disabled checkbox.
+        $this->buildViolation($constraint->accountNotConnected)
+            ->atPath('property.path')
             ->setParameter('%name%', 'Acme')
             ->assertRaised();
     }
