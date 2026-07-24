@@ -40,12 +40,26 @@ docker compose exec php php bin/console coopcycle:recommender:train
 
 Schedule this daily (e.g. 3 AM) via cron on the PHP container.
 
+## Demand forecasting (shift planning)
+
+`POST /forecast/demand` fits a [Prophet](https://facebook.github.io/prophet/) model on an
+hourly delivery-demand series and returns the requested quantile of predicted demand for
+each timestamp of the horizon (typically every open hour of the week being planned). It
+captures trend, daily/weekly/yearly seasonality (multiplicative) and public holidays
+(via `country_holidays`).
+
+The endpoint is stateless — the PHP side (`AppBundle\Service\Shift\ProphetDemandForecaster`)
+sends the full history on each call and falls back to a heuristic forecaster when the
+service is unreachable or history is under 28 days. Fitting 1-2 years of hourly buckets
+takes a few seconds.
+
 ## Stack
 
 - **Python 3.12** + **FastAPI** + **uvicorn**
 - **scikit-learn** (`NearestNeighbors`, cosine metric)
 - **scipy** sparse matrices (`csr_matrix`)
 - **joblib** for model persistence
+- **prophet** + **pandas** for demand forecasting
 
 ## Docker
 

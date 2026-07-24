@@ -23,6 +23,7 @@ import {default as TrailerIcon} from './icons/Trailer'
 import ExtraInformations from './TaskCollectionDetails'
 import Vehicle from './Vehicle'
 import Trailer from './Trailer'
+import ShiftIndicator from './ShiftIndicator'
 import { useContextMenu } from 'react-contexify'
 import TrailerSelectMenu from './context-menus/TrailerSelectMenu'
 import { formatDistance, formatDuration } from '../redux/utils'
@@ -173,6 +174,7 @@ export const TaskList = ({ username, distance, duration, taskListsLoading }) => 
           <Avatar username={ username } size="24" className="ml-2" />
           <strong className="mr-2">{ username }</strong>
           <span className="badge">{ tasks.length }</span>
+          <ShiftIndicator username={ username } />
           <Vehicle vehicleId={taskList.vehicle} />
           <Trailer trailerId={taskList.trailer} />
         </div>

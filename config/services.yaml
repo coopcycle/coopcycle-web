@@ -11,6 +11,8 @@ imports:
 # http://symfony.com/doc/current/book/service_container.html
 parameters:
   sylius_cart_restaurant_session_key_name: _coopcycle.sylius.cart.restaurant
+  shift_types: [ 'drive', 'dispatch', 'admin' ]
+  shift_planning_enabled: '%env(bool:SHIFT_PLANNING_ENABLED)%'
   apns_default_is_production_env: true
   env(COOPCYCLE_PUBLIC_KEY_FILE): "%kernel.project_dir%/var/jwt/public.pem"
   env(COOPCYCLE_PRIVATE_KEY_FILE): "%kernel.project_dir%/var/jwt/private.pem"
@@ -791,9 +793,17 @@ services:
 
   AppBundle\Entity\TaskListRepository: ~
 
+  AppBundle\Entity\TaskRepository:
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\Task
+
   AppBundle\Entity\TourRepository: ~
 
   AppBundle\Entity\Task\RecurrenceRuleRepository: ~
+
+  # Prophet-backed (Python recommender service), falls back to the heuristic
+  AppBundle\Service\Shift\DemandForecaster: '@AppBundle\Service\Shift\ProphetDemandForecaster'
 
   AppBundle\Service\Routing\Osrm: ~
 

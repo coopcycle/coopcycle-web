@@ -163,3 +163,7 @@ business_account.send_invitation.cta: Continue to activate
 
 two_factor.email.intro: "Your login verification code for <strong>%brand_name%</strong>:"
 two_factor.email.disclaimer: "This code expires shortly. Do not share it with anyone. If you did not attempt to log in, please secure your account."
+shift_week.published.subject: "Schedule published for the week of %date%"
+shift_week.published.intro: "The shift schedule for the week of %date% has been published."
+shift_week.published.cta: "You can now view your shifts and apply to open ones."
+shift_week.published.button: "View shifts"

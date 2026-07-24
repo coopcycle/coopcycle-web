@@ -28,6 +28,9 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\DeliveryRepository;
 use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
+use AppBundle\Entity\EmployeeProfile;
+use AppBundle\Entity\EmployeeProfileRepository;
+use AppBundle\Entity\HolidayRequestRepository;
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\BusinessAccount;
 use AppBundle\Entity\BusinessAccountInvitation;
@@ -57,6 +60,7 @@ use AppBundle\Form\CustomizeType;
 use AppBundle\Form\DataExportType;
 use AppBundle\Form\DeliveryImportType;
 use AppBundle\Form\EmbedSettingsType;
+use AppBundle\Form\EmployeeProfileType;
 use AppBundle\Form\GeoJSONUploadType;
 use AppBundle\Form\HubType;
 use AppBundle\Form\FailureReasonSetType;
@@ -790,7 +794,8 @@ class AdminController extends AbstractController
     }
 
     #[Route(path: '/admin/user/{username}/edit', name: 'admin_user_edit')]
-    public function userEditAction($username, Request $request, UserManagerInterface $userManager)
+    public function userEditAction($username, Request $request, UserManagerInterface $userManager,
+        EntityManagerInterface $entityManager)
     {
         $user = $userManager->findUserByUsername($username);
         $this->accessControl($user);
@@ -841,9 +846,45 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('admin_user_edit', ['username' => $user->getUsername()]);
         }
 
+        $isHrAdmin = $this->isGranted('ROLE_ADMIN');
+        $employeeProfileForm = null;
+        $holidayRequests = [];
+
+        if ($isHrAdmin) {
+            /** @var EmployeeProfileRepository $employeeProfileRepository */
+            $employeeProfileRepository = $entityManager->getRepository(EmployeeProfile::class);
+            $employeeProfile = $employeeProfileRepository->findOneByUser($user);
+            if (null === $employeeProfile) {
+                $employeeProfile = new EmployeeProfile();
+                $employeeProfile->setUser($user);
+            }
+
+            $employeeProfileForm = $this->createForm(EmployeeProfileType::class, $employeeProfile);
+            $employeeProfileForm->handleRequest($request);
+
+            if ($employeeProfileForm->isSubmitted() && $employeeProfileForm->isValid()) {
+                $entityManager->persist($employeeProfile);
+                $entityManager->flush();
+
+                $this->addFlash(
+                    'notice',
+                    $this->translator->trans('global.changesSaved')
+                );
+
+                return $this->redirectToRoute('admin_user_edit', ['username' => $user->getUsername()]);
+            }
+
+            /** @var HolidayRequestRepository $holidayRequestRepository */
+            $holidayRequestRepository = $entityManager->getRepository(\AppBundle\Entity\HolidayRequest::class);
+            $holidayRequests = $holidayRequestRepository->findByUser($user);
+        }
+
         return $this->render('admin/user_edit.html.twig', [
             'form' => $editForm->createView(),
             'user' => $user,
+            'is_hr_admin' => $isHrAdmin,
+            'employee_profile_form' => $employeeProfileForm?->createView(),
+            'holiday_requests' => $holidayRequests,
         ]);
     }
 
@@ -3163,6 +3204,20 @@ class AdminController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         return $this->render('admin/invoicing.html.twig', $this->auth([]));
+    }
+
+    #[Route(path: '/admin/shifts', name: 'admin_shift_planning')]
+    public function shiftPlanningAction()
+    {
+        if (!$this->getParameter('shift_planning_enabled')) {
+            throw $this->createNotFoundException();
+        }
+
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        return $this->render('admin/shift_planning.html.twig', $this->auth([
+            'shift_types' => $this->getParameter('shift_types'),
+        ]));
     }
 
     #[Route(path: '/admin/shop-collections/preview/{component}', name: 'admin_shop_collection_preview')]

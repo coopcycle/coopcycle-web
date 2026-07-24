@@ -1,0 +1,13 @@
+{% extends 'emails/layout.mjml.twig' %}
+
+{% block content %}
+  <mj-text align="left" line-height="24px">
+    {{ 'shift_week.published.intro'|trans({'%date%': weekStart|date('d/m/Y')}, 'emails') }}
+  </mj-text>
+  <mj-text align="left" line-height="24px">
+    {{ 'shift_week.published.cta'|trans({}, 'emails') }}
+  </mj-text>
+  <mj-button href="{{ url('profile_shifts') }}">
+    {{ 'shift_week.published.button'|trans({}, 'emails') }}
+  </mj-button>
+{% endblock %}

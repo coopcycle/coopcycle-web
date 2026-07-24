@@ -18,6 +18,8 @@ adminDashboard.tooltip.deliveries: Manage deliveries
 adminDashboard.tooltip.stores: Manage stores
 adminDashboard.tooltip.restaurants: Manage restaurants
 adminDashboard.tooltip.users: Manage user accounts
+adminDashboard.tooltip.shifts: Manage shift planning
+adminDashboard.shifts.title: Shifts
 adminDashboard.tooltip.organizations: Organization management
 adminDashboard.dashboard.title: Dashboard
 adminDashboard.dashboard.import: Import
@@ -294,6 +296,7 @@ profile.myRestaurants: My restaurants
 profile.myRestaurants.noRestaurants: You don't have any restaurants yet
 profile.myAccount: My account
 profile.myTracking: My tracking
+profile.myShifts: My shifts
 profile.myOrders: My orders
 profile.myAddresses: My addresses
 profile.myPersonalInfo: My personal information
@@ -1283,6 +1286,21 @@ notifications.tap_to_open: Tap to open
 notifications.delivery_created: A delivery to be picked up %date% has been created
 notifications.tasks_changed: Tasks for %date% changed!
 notifications.tasks_changed_today: Your tasks for today have been updated
+notifications.shifts.assigned: You have been assigned a shift on %date%
+notifications.shifts.week_assigned: Your shifts for the week of %date% have been published
+notifications.shifts.waitlist_promoted: A spot opened up — you are now assigned to a shift on %date%
+shifts.type.drive: Delivery shift
+shifts.type.dispatch: Dispatch shift
+shifts.type.admin: Admin shift
+shifts.calendar.break: 'Break: %minutes% min'
+payroll.export.username: Username
+payroll.export.name: Name
+payroll.export.planned_hours: Planned hours
+payroll.export.worked_hours: Worked hours
+payroll.export.overtime_hours: Overtime hours
+payroll.export.holiday_days: Holiday days
+notifications.holiday_request.approved: Your holiday request from %start% to %end% has been approved
+notifications.holiday_request.rejected: Your holiday request from %start% to %end% has been rejected
 notifications.restaurant.new_order: New order to accept
 notifications.restaurant.accepted_order: New order
 notifications.messenger_approaching: Hey %customer%! Our messenger %messenger% is
@@ -1894,3 +1912,21 @@ checkout.recommendations.dialog.github: See the source code on GitHub →
 checkout.recommendations.dialog.close: Close
 rfm.order_history: Order history
 customize.email_alert: New! Customize emails
+hr.tab.title: HR
+hr.contractStartDate: Contract start date
+hr.dateOfBirth: Date of birth
+hr.address.street: Street
+hr.address.postalCode: Postal code
+hr.address.locality: City
+hr.address.country: Country
+hr.salaryType: Salary type
+hr.salaryType.hourly: Hourly
+hr.salaryType.monthly: Monthly
+hr.salaryAmount: Gross salary amount
+hr.weeklyContractedHours: Weekly contracted hours
+hr.holidaysHistory.title: Holiday history
+hr.holidaysHistory.empty: No holiday requests yet.
+hr.holidaysHistory.from: From
+hr.holidaysHistory.to: To
+hr.holidaysHistory.status: Status
+hr.holidaysHistory.comment: Comment

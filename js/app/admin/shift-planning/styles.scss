@@ -1,0 +1,586 @@
+.shift-planning {
+  padding-bottom: 32px;
+
+  &__toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 16px 0;
+  }
+
+  &__grid-container {
+    overflow-x: auto;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 160px repeat(7, minmax(120px, 1fr));
+    border: 1px solid #e8e8e8;
+    border-radius: 4px;
+    background: #fff;
+    min-width: 1000px;
+  }
+
+  &__header-cell {
+    padding: 8px;
+    font-weight: 600;
+    background: #fafafa;
+    border-bottom: 1px solid #e8e8e8;
+    border-right: 1px solid #f0f0f0;
+    text-align: center;
+
+    &--today {
+      background: #e6f4ff;
+    }
+
+    // Visual indicator only — a bank holiday never blocks anything,
+    // so it layers on top of --today (a top accent) rather than
+    // fighting over the background color
+    &--holiday {
+      box-shadow: inset 0 2px 0 0 #d48806;
+    }
+  }
+
+  &__holiday-icon {
+    color: #d48806;
+    font-size: 10px;
+    margin-right: 4px;
+    vertical-align: 1px;
+  }
+
+  &__row-label {
+    padding: 8px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    border-bottom: 1px solid #f0f0f0;
+    border-right: 1px solid #e8e8e8;
+    background: #fafafa;
+  }
+
+  // The "Open slots" row is a summary of unfilled shifts,
+  // set apart from the per-rider rows below it
+  &__row-label--open-slots {
+    background: #eef2f8;
+    font-style: italic;
+    color: rgba(0, 0, 0, 0.6);
+    border-bottom: 2px solid #d0d7e2;
+  }
+
+  &__cell--open-slots {
+    background: #f6f8fc;
+    border-bottom: 2px solid #d0d7e2;
+
+    &.shift-planning__cell--clickable:hover {
+      background: #eef2f8;
+    }
+  }
+
+  &__user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+
+    img {
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+  }
+
+  &__user-names {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    line-height: 1.3;
+
+    > span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  &__user-fullname {
+    font-weight: 400;
+    font-size: 11px;
+    color: rgba(0, 0, 0, 0.55);
+  }
+
+  &__cell {
+    display: flex;
+    flex-direction: column;
+    padding: 4px;
+    min-height: 56px;
+    border-bottom: 1px solid #f0f0f0;
+    border-right: 1px solid #f0f0f0;
+
+    &--clickable {
+      cursor: pointer;
+
+      &:hover {
+        background: #f5f5f5;
+      }
+    }
+  }
+
+  &__add-shift {
+    align-self: flex-end;
+    margin-top: auto;
+    margin-right: 2px;
+    margin-bottom: 2px;
+    padding: 0;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed #d9d9d9;
+    border-radius: 4px;
+    background: transparent;
+    color: #999;
+    font-size: 12px;
+    line-height: 1;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity 0.2s, color 0.2s, border-color 0.2s;
+
+    &:hover {
+      opacity: 1;
+      color: #1677ff;
+      border-color: #1677ff;
+    }
+  }
+
+  &__cell--clickable:hover &__add-shift {
+    opacity: 1;
+  }
+}
+
+.shift-card {
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  padding: 2px 6px;
+  margin-bottom: 4px;
+  font-size: 12px;
+  line-height: 1.4;
+  cursor: pointer;
+  transition: box-shadow 0.15s, transform 0.15s, border-color 0.15s;
+
+  &:hover {
+    border-color: rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+  }
+
+  &__type {
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__conflict {
+    color: #d4380d;
+  }
+
+  &__count--over {
+    color: #d46b08;
+    font-weight: 700;
+  }
+
+  &__meta {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__comment {
+    margin-top: 2px;
+    font-size: 11px;
+    font-style: italic;
+    color: rgba(0, 0, 0, 0.55);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__assignees {
+    margin-top: 2px;
+    font-size: 11px;
+    color: rgba(0, 0, 0, 0.65);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__skills {
+    margin-top: 3px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+  }
+
+  &__skill {
+    font-size: 10px;
+    line-height: 1.3;
+    padding: 0 4px;
+    border-radius: 3px;
+    background: rgba(0, 0, 0, 0.08);
+    color: rgba(0, 0, 0, 0.7);
+  }
+}
+
+.shift-type-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.open-slot-card {
+  border-radius: 4px;
+  border: 1px dashed rgba(0, 0, 0, 0.35);
+  background: transparent;
+  padding: 2px 6px;
+  margin-bottom: 4px;
+  font-size: 12px;
+  line-height: 1.4;
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.65);
+  transition: box-shadow 0.15s, transform 0.15s, border-color 0.15s;
+
+  &:hover {
+    border-color: rgba(0, 0, 0, 0.6);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+  }
+}
+
+// Courier-facing "open shifts" list: card + apply/unapply actions side by side
+.open-shift-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  &__card {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__actions {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 4px;
+  }
+}
+
+.holiday-bar {
+  border-radius: 4px;
+  padding: 2px 6px;
+  margin-bottom: 4px;
+  font-size: 12px;
+  background: #b2dfdb;
+  border: 1px solid #4db6ac;
+
+  &--pending {
+    background: #e0f2f1;
+    border-style: dashed;
+  }
+}
+
+.shift-planning-calendar {
+  &__container {
+    overflow-x: auto;
+  }
+
+  border: 1px solid #e8e8e8;
+  border-radius: 4px;
+  background: #fff;
+  min-width: 1000px;
+
+  &__header,
+  &__body {
+    display: flex;
+  }
+
+  &__hours-header,
+  &__hours {
+    width: 56px;
+    flex-shrink: 0;
+    background: #fafafa;
+    border-right: 1px solid #f0f0f0;
+  }
+
+  &__hours-header {
+    border-bottom: 1px solid #e8e8e8;
+  }
+
+  &__hour-label {
+    box-sizing: border-box;
+    padding: 2px 6px 0 0;
+    font-size: 11px;
+    color: rgba(0, 0, 0, 0.45);
+    text-align: right;
+    border-bottom: 1px solid #f5f5f5;
+  }
+
+  &__day-column {
+    flex: 1;
+    min-width: 120px;
+    position: relative;
+    box-sizing: border-box;
+    border-right: 1px solid #f0f0f0;
+    cursor: pointer;
+    background-image: linear-gradient(to bottom, #f0f0f0 1px, transparent 1px);
+    background-repeat: repeat-y;
+
+    &:hover {
+      background-color: #fafafa;
+    }
+  }
+
+  &__block {
+    position: absolute;
+    box-sizing: border-box;
+    padding-right: 2px;
+    cursor: grab;
+    // Pointer events drive drag & resize; disable native touch scrolling on blocks
+    touch-action: none;
+
+    .shift-card {
+      height: 100%;
+      margin-bottom: 0;
+      overflow: hidden;
+    }
+
+    &--ghost {
+      pointer-events: none;
+      opacity: 0.85;
+      z-index: 10;
+
+      .shift-card {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      }
+    }
+
+    // The block being dragged stays mounted so pointer capture isn't lost,
+    // but the ghost is what the user sees
+    &--source {
+      visibility: hidden;
+    }
+  }
+
+  &__resize-handle {
+    position: absolute;
+    left: 0;
+    right: 2px;
+    height: 6px;
+    cursor: ns-resize;
+
+    &--top {
+      top: 0;
+    }
+
+    &--bottom {
+      bottom: 0;
+    }
+  }
+
+  // Day headers are shared with the grid views, but this layout is flex
+  // (one column per day) rather than CSS grid, so let them fill their share
+  .shift-planning__header-cell {
+    flex: 1;
+    min-width: 120px;
+    box-sizing: border-box;
+  }
+}
+
+.schedule-suggestion {
+  &__legend {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.65);
+    margin-bottom: 8px;
+
+    span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+  }
+
+  &__swatch {
+    display: inline-block;
+    width: 14px;
+    height: 3px;
+    border-radius: 2px;
+
+    &--demand {
+      background: rgba(22, 119, 255, 0.5);
+      border-top: 2px solid #1677ff;
+    }
+
+    &--coverage {
+      background: #52c41a;
+    }
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+  }
+
+  &__day {
+    border: 1px solid #f0f0f0;
+    border-radius: 6px;
+    padding: 8px;
+  }
+
+  &__day-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+    text-transform: capitalize;
+  }
+
+  &__chart {
+    height: 120px;
+  }
+}
+
+.shift-compliance-alert {
+  margin-bottom: 12px;
+
+  &__list {
+    margin: 0;
+    padding-left: 16px;
+    max-height: 160px;
+    overflow-y: auto;
+  }
+}
+
+.shift-card__adjusted {
+  margin-left: 6px;
+  opacity: 0.85;
+}
+
+.shift-worked-time {
+  &__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.report-time-modal__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.my-shift-actual {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 2px 0 8px;
+
+  &__summary {
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.55);
+  }
+}
+
+.shift-planning__user-hours {
+  display: flex;
+  gap: 6px;
+  font-size: 11px;
+  color: rgba(0, 0, 0, 0.45);
+
+  &--over {
+    color: #cf1322;
+    font-weight: 600;
+  }
+}
+
+.shift-planning__user-overtime {
+  color: #d46b08;
+  font-weight: 600;
+
+  &--negative {
+    color: rgba(0, 0, 0, 0.45);
+    font-weight: normal;
+  }
+}
+
+.shift-planning__nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  margin-bottom: 12px;
+}
+
+.shift-planning__nav-links {
+  display: flex;
+  gap: 8px;
+
+  button {
+    appearance: none;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 10px 12px;
+    font-size: 15px;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.55);
+    cursor: pointer;
+
+    &:hover {
+      color: rgba(0, 0, 0, 0.85);
+    }
+
+    &.shift-planning__nav-link--active {
+      color: #1677ff;
+      border-bottom-color: #1677ff;
+    }
+  }
+}
+
+.shift-planning__week-strip {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 12px 4px;
+  overflow-x: auto;
+}
+
+.shift-planning__week-strip-item {
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 4px;
+  border-radius: 50%;
+  cursor: pointer;
+  line-height: 0;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.04);
+  }
+
+  &.shift-planning__week-strip-item--active {
+    box-shadow: 0 0 0 2px #1677ff;
+  }
+}
