@@ -88,6 +88,8 @@ class LoopEatOrderValidatorTest extends ConstraintValidatorTestCase
 
         $customer = new Customer();
         $customer->setUser($user);
+        $customer->setLoopeatAccessToken('acce55');
+        $customer->setLoopeatRefreshToken('refre5h');
 
         $restaurant = new Restaurant();
         $restaurant->setLoopeatEnabled(true);
@@ -168,6 +170,8 @@ class LoopEatOrderValidatorTest extends ConstraintValidatorTestCase
 
         $customer = new Customer();
         $customer->setUser($user);
+        $customer->setLoopeatAccessToken('acce55');
+        $customer->setLoopeatRefreshToken('refre5h');
 
         $restaurant = new Restaurant();
         $restaurant->setLoopeatEnabled(true);
@@ -212,6 +216,8 @@ class LoopEatOrderValidatorTest extends ConstraintValidatorTestCase
 
         $customer = new Customer();
         $customer->setUser($user);
+        $customer->setLoopeatAccessToken('acce55');
+        $customer->setLoopeatRefreshToken('refre5h');
 
         $restaurant = new Restaurant();
         $restaurant->setLoopeatEnabled(true);
@@ -242,6 +248,108 @@ class LoopEatOrderValidatorTest extends ConstraintValidatorTestCase
 
         $constraint = new LoopEatOrderConstraint();
         $violations = $this->validator->validate($order->reveal(), $constraint);
+
+        $this->assertNoViolation();
+    }
+
+    public function testAccountNotConnected()
+    {
+        $user = new User();
+
+        // No LoopEat credentials on the customer
+        $customer = new Customer();
+        $customer->setUser($user);
+
+        $restaurant = new Restaurant();
+        $restaurant->setLoopeatEnabled(true);
+
+        $order = $this->prophesize(Order::class);
+        $order
+            ->getRestaurant()
+            ->willReturn($restaurant);
+        $order
+            ->getCustomer()
+            ->willReturn($customer);
+        $order
+            ->getReusablePackagingQuantity()
+            ->willReturn(3);
+        $order
+            ->isReusablePackagingEnabled()
+            ->willReturn(true);
+
+        $this->loopeatClient
+            ->currentCustomer(Argument::type(LoopEatAdapter::class))
+            ->shouldNotBeCalled();
+
+        $constraint = new LoopEatOrderConstraint();
+        $this->validator->validate($order->reveal(), $constraint);
+
+        $this->buildViolation($constraint->accountNotConnected)
+            ->atPath('property.path.reusablePackagingEnabled')
+            ->setParameter('%name%', 'Acme')
+            ->assertRaised();
+    }
+
+    public function testMandatoryButReusablePackagingDisabled()
+    {
+        $user = new User();
+
+        $customer = new Customer();
+        $customer->setUser($user);
+
+        $restaurant = new Restaurant();
+        $restaurant->setLoopeatEnabled(true);
+        $restaurant->setLoopeatMandatory(true);
+
+        $order = $this->prophesize(Order::class);
+        $order
+            ->getRestaurant()
+            ->willReturn($restaurant);
+        $order
+            ->getCustomer()
+            ->willReturn($customer);
+        $order
+            ->isReusablePackagingEnabled()
+            ->willReturn(false);
+
+        $this->loopeatClient
+            ->currentCustomer(Argument::type(LoopEatAdapter::class))
+            ->shouldNotBeCalled();
+
+        $constraint = new LoopEatOrderConstraint();
+        $this->validator->validate($order->reveal(), $constraint);
+
+        $this->buildViolation($constraint->mandatory)
+            ->atPath('property.path.reusablePackagingEnabled')
+            ->setParameter('%name%', 'Acme')
+            ->assertRaised();
+    }
+
+    public function testNotMandatoryAndReusablePackagingDisabled()
+    {
+        $customer = new Customer();
+
+        $restaurant = new Restaurant();
+        $restaurant->setLoopeatEnabled(true);
+        $restaurant->setLoopeatMandatory(false);
+
+        $order = $this->prophesize(Order::class);
+        $order
+            ->getRestaurant()
+            ->willReturn($restaurant);
+        $order
+            ->getCustomer()
+            ->willReturn($customer);
+        $order
+            ->isReusablePackagingEnabled()
+            ->willReturn(false);
+
+        $this->loopeatClient
+            ->currentCustomer(Argument::type(LoopEatAdapter::class))
+            ->shouldNotBeCalled();
+
+        $constraint = new LoopEatOrderConstraint();
+        $this->validator->validate($order->reveal(), $constraint);
 
         $this->assertNoViolation();
     }

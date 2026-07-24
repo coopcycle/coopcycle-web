@@ -1614,6 +1614,8 @@ form.checkout_address.reusable_packaging.loopeat.containers.label: Tienes <stron
 form.checkout_address.reusable_packaging.loopeat.connect: Por favor, crea o conecta
   su %name% cuenta con %brand_name% para liquidar su fianza, o desactivar la opción
   de residuo cero.
+form.checkout_address.reusable_packaging.loopeat.connect_mandatory: Por favor, crea
+  o conecta su %name% cuenta con %brand_name% para liquidar su fianza.
 form.checkout_address.reusable_packaging.loopeat.returns.label: Vas a devolver <strong>%count%</strong>
   tupers, por un total def <strong>%amount%</strong>|Vas a devolver <strong>%count%</strong>
   tupers, por un total de <strong>%amount%</strong>

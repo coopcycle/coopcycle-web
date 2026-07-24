@@ -764,6 +764,7 @@ form.checkout_address.reusable_packaging.loopeat.website: website %name%
 form.checkout_address.reusable_packaging.loopeat.how_it_works: How it works?
 form.checkout_address.reusable_packaging.loopeat.enable_zero_waste: Activate the zero waste option to benefit from a reusable box service for your order
 form.checkout_address.reusable_packaging.loopeat.connect: Please create or connect your %name% account to %brand_name% to settle your deposit, or disable the zero waste option.
+form.checkout_address.reusable_packaging.loopeat.connect_mandatory: Please create or connect your %name% account to %brand_name% to settle your deposit.
 form.checkout_address.reusable_packaging.loopeat.connect_account: Connect to %name%
 form.checkout_address.reusable_packaging.loopeat.add_credits: Add credits to my wallet
 form.checkout_address.reusable_packaging.loopeat.manage_deposit: Manage my deposit
