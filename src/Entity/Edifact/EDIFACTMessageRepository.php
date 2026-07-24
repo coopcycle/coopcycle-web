@@ -24,6 +24,28 @@ class EDIFACTMessageRepository extends EntityRepository {
         ->getSingleScalarResult();
     }
 
+    /**
+     * Whether an inbound message for this reference has already been imported
+     * for this transporter. Used to keep the import idempotent so a file that
+     * was processed but not acknowledged (e.g. after a mid-batch failure) is
+     * not imported twice on the next run.
+     */
+    public function hasInbound(string $reference, string $transporter): bool
+    {
+        $count = (int) $this->createQueryBuilder('e')
+            ->select('COUNT(e.id)')
+            ->where('e.reference = :reference')
+            ->andWhere('e.transporter = :transporter')
+            ->andWhere('e.direction = :direction')
+            ->setParameter('reference', $reference)
+            ->setParameter('transporter', $transporter)
+            ->setParameter('direction', EDIFACTMessage::DIRECTION_INBOUND)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return $count > 0;
+    }
+
     public function getUnsynced(string $transporter): mixed
     {
         $qb = $this->createQueryBuilder('e')
