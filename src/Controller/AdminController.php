@@ -89,6 +89,7 @@ use AppBundle\Service\EmailManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\PackageSetManager;
 use AppBundle\Service\PricingRuleSetManager;
+use AppBundle\Service\RfmSegmentCalculator;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TagManager;
 use AppBundle\Service\TimeSlotManager;
@@ -591,7 +592,8 @@ class AdminController extends AbstractController
     public function usersAction(Request $request,
         PaginatorInterface $paginator,
         EntityManagerInterface $entityManager,
-        SerializerInterface $serializer)
+        SerializerInterface $serializer,
+        RfmSegmentCalculator $rfmSegmentCalculator)
     {
         if (!$this->isGranted('ROLE_ADMIN')) {
             return new RedirectResponse($this->generateUrl('admin_users_invite'));
@@ -670,6 +672,12 @@ class AdminController extends AbstractController
                     ->setParameter('optin', $optinSelected);
 
                 $optinsResult = $optinsQB->getQuery()->getResult();
+
+                $segmentsByUsername = $rfmSegmentCalculator->getSegmentsByUsername();
+
+                foreach ($optinsResult as $i => $row) {
+                    $optinsResult[$i]['rfm_segment'] = $segmentsByUsername[$row['username']] ?? '';
+                }
 
                 $csv = $serializer->serialize($optinsResult, 'csv');
 
