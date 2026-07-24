@@ -47,6 +47,16 @@ class SyncTransportersCommandTest extends KernelTestCase {
     UNA:+,? ' UNB+UNOC:1+123456789:22+987654321:22+240325:1951+2206' UNH+1+SCONTR:3:2:GT:GTF210+ACG' BGM++240325' NAD+FW+12345678900935:05++DBSCHENKER TESTING INC' DTM+DEP+240325' NAD+DP+98765432100010:05++COOPCYCLE TESTING INC' TSR+++3' CAG+P+V' TDT++++3' DOC+730+++ACG+2278663' UNS+D' RFF+CN+JOY0123456789' GID++1:23+1:21' MSE+CGW+15:KG' NAD+CN+++JOHN DOE:ZIMP COMPANY+INVALID ADDRESS+VOID CITY++00+FR' NAD+CO+++HOME DEPOT+54 ROUTE DE TREGUIER:BP 8+LOUANNEC++22+FR' DTM+DES+240322' NAD+FW+12345678900935:05++DBSCHENKER TESTING INC+LE BREHAT:ALLEE DES CHATELETS+PLOUFRAGAN++22440+FR' CAG+P+V+++++++++227004' TSR++D:E+3' GDS+G+DIVERS' PCI+23' GIN+BN+*2222121907222700470100691001300' DOC+WBL::JOY0123456789+++ACG+70100691+219072' DOC+824+++PRI+FRSBK830689437' UNS+S' UNT+26+1' UNZ+1+2206'
     EDI;
 
+    // Same as EDI_SAMPLE, but the UNB declares UNOC (ISO-8859-1) while the
+    // TXT+DEL comment actually carries UTF-8 "smart punctuation": en-dashes
+    // (U+2013 = bytes E2 80 93). The EDIFACT parser strips bytes 0x80-0x9F per
+    // the UNOC charset, which shreds those characters into a dangling 0xE2 lead
+    // byte — invalid UTF-8 that PostgreSQL rejects on INSERT. Reproduces the
+    // production crash in SyncTransportersCommand.
+    const EDI_BAD_ENCODING_SAMPLE = <<<EDI
+    UNA:+,? ' UNB+UNOC:1+123456789:22+987654321:22+240325:1951+2206' UNH+1+SCONTR:3:2:GT:GTF210+ACG' BGM++240325' NAD+FW+12345678900935:05++DBSCHENKER TESTING INC' DTM+DEP+240325' NAD+DP+98765432100010:05++COOPCYCLE TESTING INC' TSR+++3' CAG+P+V' TDT++++3' DOC+730+++ACG+2278663' UNS+D' RFF+CN+JOYBADENCODING01' GID++1:23+1:21' MSE+CGW+15:KG' NAD+CN+++JOHN DOE:ZIMP COMPANY+64 RUE ALEXANDRE DUMAS+PARIS++75+FR' CTA+IC+:JOHN DOE+06 01 02 03 04:AL' NAD+CO+++HOME DEPOT+54 ROUTE DE TREGUIER:BP 8+LOUANNEC++22+FR' DTM+DES+240322' NAD+FW+12345678900935:05++DBSCHENKER TESTING INC+LE BREHAT:ALLEE DES CHATELETS+PLOUFRAGAN++22440+FR' CAG+P+V+++++++++227004' TSR++D:E+3' TXT+DEL+HORAIRES 10?:00–19?:30 – RDV CONSEILLE' GDS+G+DIVERS' PCI+23' GIN+BN+*2222121907222700470100691001300' DOC+WBL::JOYBADENCODING01+++ACG+70100691+219072' DOC+824+++PRI+FRSBK830689437' UNS+S' UNT+26+1' UNZ+1+2206'
+    EDI;
+
     const EDI_DISPOR_SAMPLE = <<<EDI
     UNA:+,? ' UNB+UNOC:1+349669192:22+942803198:22+260602:1341+999901484802' UNH+1484802+DISPOR:3:2:GT:GTF110' BGM++1484802' TSR+++3' CAG+P+V' NAD+CO+40017751500048:05++ORLEANS LOG PC LA ROSEE' DTM+DEP+260602' NAD+FW+94280319800020:05++CYCLOGIK' GDS+G+.' TDT++++3' DOC+730+++ACG+78822' UNS+D' RFF+SEN+LACOURSERIETEST' GID++1:23' MSE+CGW+16,000:KG' NAD+CN+++TEST LA COURSERIE+64 RUE ALEXANDRE DUMAS+PARIS++75+FR' CTA++:TEST MTO+06 01 02 03 04:TE+mtor@tel.fr:TM' NAD+OS+++ORLEANS LOG PC LA ROSEE+7 ROUTE DE BOIGNY+SAINT JEAN DE BRAYE++45800+FR' CAG+P+V+++++LRC++++LRC' TSR+++3' TXT+DEL+TEST A SUPPRIMER' GDS+G+TEST' PCI+23' GIN+BN+*69069000000000LRC01699848001300' DOC+WBL+++PRI+1699848' DOC+150+++PRI+LACOURSERIETEST' UNS+S' UNT+27+1484802' UNZ+1+999901484802'
     EDI;
@@ -519,6 +529,121 @@ class SyncTransportersCommandTest extends KernelTestCase {
 
     }
 
+
+    public function testUnocDeclaredButUtf8PayloadImportsWithoutCrashing(): void
+    {
+        // Regression for the production crash: a file that declares UNOC
+        // (ISO-8859-1) but carries UTF-8 en-dashes in its TXT comment. Before
+        // the fix, the mangled comment was invalid UTF-8 and PostgreSQL aborted
+        // the INSERT (and with it the whole sync).
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/badencoding.edi', self::FS_MASK_DBS),
+            self::EDI_BAD_ENCODING_SAMPLE
+        );
+
+        $command = $this->initCommand();
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'transporter' => 'DBSCHENKER'
+        ]);
+
+        $commandTester->assertCommandIsSuccessful();
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('imported 1 tasks', $output);
+
+        // A clean run acknowledges (deletes) the file.
+        $this->assertCount(
+            0,
+            $this->syncDBSchenkerFs->listContents(sprintf('to_%s', self::FS_MASK_DBS))->toArray()
+        );
+
+        $delivery = $this->entityManager->getRepository(Delivery::class)->findAll();
+        $this->assertCount(1, $delivery);
+
+        /** @var Delivery $delivery */
+        $delivery = array_shift($delivery);
+        /** @var Task $dropoff */
+        $dropoff = $delivery->getDropoff();
+
+        $comments = $dropoff->getComments();
+        // The stored comment is valid UTF-8 ...
+        $this->assertTrue(mb_check_encoding($comments, 'UTF-8'));
+        // ... the en-dash survived as a readable ASCII hyphen ...
+        $this->assertStringContainsString('10:00-19:30', $comments);
+        // ... and no dangling multi-byte artefact remains.
+        $this->assertStringNotContainsString("\xE2", $comments);
+    }
+
+    public function testOneUnparseableFileDoesNotAbortTheBatch(): void
+    {
+        // A valid file and an unparseable one are pulled together. The bad file
+        // must not prevent the good one from being imported.
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/valid.edi', self::FS_MASK_DBS),
+            self::EDI_SAMPLE
+        );
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/garbage.edi', self::FS_MASK_DBS),
+            'THIS IS NOT AN EDIFACT MESSAGE'
+        );
+
+        $command = $this->initCommand();
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'transporter' => 'DBSCHENKER'
+        ]);
+
+        // The batch completes despite the bad file ...
+        $commandTester->assertCommandIsSuccessful();
+        $output = $commandTester->getDisplay();
+        // ... the valid file was imported ...
+        $this->assertStringContainsString('imported 1 tasks', $output);
+        // ... and the failure is reported.
+        $this->assertStringContainsString('1 file(s) failed', $output);
+
+        // The valid delivery exists.
+        $this->assertCount(1, $this->entityManager->getRepository(Delivery::class)->findAll());
+
+        // Acknowledge is all-or-nothing: because a file failed, nothing is
+        // deleted so the good and bad files are both kept for a safe retry.
+        $this->assertCount(
+            2,
+            $this->syncDBSchenkerFs->listContents(sprintf('to_%s', self::FS_MASK_DBS))->toArray()
+        );
+    }
+
+    public function testReprocessingKeptFilesDoesNotDuplicate(): void
+    {
+        // First run: a valid file alongside a failing one keeps both files
+        // (all-or-nothing acknowledge).
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/valid.edi', self::FS_MASK_DBS),
+            self::EDI_SAMPLE
+        );
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/garbage.edi', self::FS_MASK_DBS),
+            'THIS IS NOT AN EDIFACT MESSAGE'
+        );
+
+        $command = $this->initCommand();
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'transporter' => 'DBSCHENKER'
+        ]);
+        $this->assertStringContainsString('imported 1 tasks', $commandTester->getDisplay());
+        $this->assertCount(1, $this->entityManager->getRepository(Delivery::class)->findAll());
+
+        // Second run over the same kept files: the valid task is recognised as
+        // already imported (dedup on reference) and skipped, so no duplicate
+        // delivery is created.
+        $commandTester->execute([
+            'transporter' => 'DBSCHENKER'
+        ]);
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('imported 0 tasks', $output);
+        $this->assertStringContainsString('1 already-imported', $output);
+        $this->assertCount(1, $this->entityManager->getRepository(Delivery::class)->findAll());
+    }
 
     public function testValidSyncOneTask(): void
     {
