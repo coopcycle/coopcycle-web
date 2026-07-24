@@ -15,7 +15,12 @@ class CartTop extends React.Component
   componentDidMount() {
 
     axios
-      .get(this.props.url)
+      // Send X-Requested-With so Symfony's ExceptionListener doesn't store
+      // this AJAX URL as the post-login target path (would redirect to
+      // /cart.json after login/2FA otherwise).
+      .get(this.props.url, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+      })
       .then((response) => {
         if (response.status === 200) {
           this.setState(response.data)

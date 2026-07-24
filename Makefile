@@ -46,16 +46,17 @@ cypress:
 # You can set the `TESTFILE` env var when running the target:
 #    make cypress-only TESTFILE=invoicing/export_data_for_invoicing.cy.js
 # Or just change here the `TESTFILE` env var to run the desired test
-cypress-only: TESTFILE?=local-commerce/@admin/update_price.cy.js
+cypress-only: TESTFILE?=pricing/setup_simple_km_based_pricing_rule.cy.js
 cypress-only:
-	@clear && cypress run --browser chrome --headless --no-runner-ui --spec cypress/e2e/${TESTFILE}
-cypress-only-until-fail: TESTFILE?=local-commerce/@admin/update_price.cy.js
+	@clear && npx cypress run --browser chrome --headless --no-runner-ui --spec cypress/e2e/${TESTFILE}
+cypress-only-until-fail: TESTFILE?=pricing/setup_simple_km_based_pricing_rule.cy.js
 cypress-only-until-fail:
-	@while clear && cypress run --browser chrome --headless --no-runner-ui --spec cypress/e2e/${TESTFILE}; do :; done
+	@while clear && npx cypress run --browser chrome --headless --no-runner-ui --spec cypress/e2e/${TESTFILE}; do :; done
 cypress-open:
 	@npm run cy:open
 cypress-install:
 	@npm install
+	@npx cypress install
 
 jest:
 	@docker compose exec -e APP_ENV=test -e NODE_ENV=test webpack npm run jest ${ARGS}

@@ -79,6 +79,7 @@ async function start(tasksRequest, tasksListsRequest, toursRequest) {
       JSON.parse(dashboardEl.dataset.rrules)
     ),
     config: {
+      timezone: dashboardEl.dataset.timezone,
       centrifugoToken: dashboardEl.dataset.centrifugoToken,
       centrifugoTrackingChannel: dashboardEl.dataset.centrifugoTrackingChannel,
       centrifugoEventsChannel: dashboardEl.dataset.centrifugoEventsChannel,

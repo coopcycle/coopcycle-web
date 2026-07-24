@@ -10,6 +10,8 @@ class LoopEatOrder extends Constraint
     public $insufficientQuantity = 'loopeat.insufficient_quantity';
     public $insufficientBalance = 'loopeat.insufficient_balance';
     public $requestFailed = 'loopeat.request_failed';
+    public $accountNotConnected = 'loopeat.account_not_connected';
+    public $mandatory = 'loopeat.mandatory';
 
     public function validatedBy(): string
     {

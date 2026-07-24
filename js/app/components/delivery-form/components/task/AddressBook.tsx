@@ -38,6 +38,11 @@ function getUnformattedValue(value: string | null): string {
   return value ?? '';
 }
 
+// Stands for "the address currently set on the task" when that address has no IRI,
+// so that the select still has a value to render a label for. It is never an option,
+// so it can never be produced by onChange.
+const CURRENT_TASK_ADDRESS = '__current_task_address__';
+
 type Props = {
   taskId: string;
   addresses: Address[];
@@ -67,10 +72,35 @@ const AddressBook = ({
     useState<boolean>(false);
   const initialAddressId = values.tasks[index].address['@id'];
   const [selectValue, setSelectValue] = useState<string>(
-    addresses.some(address => address['@id'] === initialAddressId)
-      ? initialAddressId
-      : null,
+    initialAddressId ?? null,
   );
+
+  // Keep the select in sync with the address actually set on the task, which changes
+  // when the form is (re)initialised, e.g. when editing an existing delivery.
+  useEffect(() => {
+    setSelectValue(initialAddressId ?? null);
+  }, [initialAddressId]);
+
+  const addressLabel = (address: Partial<Address>) =>
+    address?.name
+      ? `${address.name} - ${address.streetAddress}`
+      : address?.streetAddress;
+
+  // The select has to show the address the task is currently set to, but that address
+  // is rarely one of the options: saving a delivery snapshots its addresses, so they
+  // get their own IRIs, and recurrence rule templates store them inline without any
+  // IRI. Hence a sentinel value when there is no IRI to use (antd renders no label at
+  // all without a value), and a labelRender that resolves the label from the task
+  // itself (antd would otherwise display the raw value, i.e. the IRI).
+  const displayedValue =
+    selectValue ||
+    (values.tasks[index].address?.streetAddress ? CURRENT_TASK_ADDRESS : null);
+
+  const renderSelectedLabel = ({ value }: { value?: string | number }) =>
+    addressLabel(
+      addresses.find(address => address['@id'] === value) ??
+        values.tasks[index].address,
+    );
 
   /* To handle the case where the user picked a remembered address in select but change contactName, name or telephone value */
   const handleModifyAddress = () => {
@@ -151,7 +181,8 @@ const AddressBook = ({
             style={{ width: '100%' }}
             showSearch
             placeholder={t('TASK_FORM_SEARCH_SAVED_ADDRESS_BY_NAME')}
-            value={selectValue || null}
+            value={displayedValue}
+            labelRender={renderSelectedLabel}
             optionFilterProp="label"
             onChange={value => {
               handleAddressSelected(value);

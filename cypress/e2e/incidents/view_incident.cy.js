@@ -61,14 +61,12 @@ describe('Incident management (role: dispatcher)', () => {
 
       // verify extra info can be opened
       // expand the first row
-      //FIXME: why not localised?
-      cy.get('[aria-label="Expand row"]').first().click();
-      // cy.get('[aria-label="Développer la ligne"]').first().click();
+      // NB: match on the class rather than on the aria-label, which antd
+      // translates using the locale of the surrounding ConfigProvider
+      cy.get('.ant-table-row-expand-icon-collapsed').first().click();
 
       // verify that only the first row is expanded
-      //FIXME: why not localised?
-      cy.get('[aria-label="Collapse row"]').should('have.length', 1);
-      // cy.get('[aria-label="Réduire la ligne"]').should('have.length', 1);
+      cy.get('.ant-table-row-expand-icon-expanded').should('have.length', 1);
     });
 
     // verify incident summary is displayed

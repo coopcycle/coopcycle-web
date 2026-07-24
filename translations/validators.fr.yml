@@ -46,6 +46,8 @@ product.reusablePackagingUnit.mustBeGreaterThanZero: Vous devez spécifier une q
 loopeat.insufficient_balance: Votre cagnotte %name% est insuffisante pour bénéficier de la consigne, il manque %amount% pour finaliser votre commande. Veuillez rendre des boîtes ou recréditer votre cagnotte.
 loopeat.request_failed: Erreur de connection avec %name%
 loopeat.insufficient_stock: Quantité d'emballages zéro déchet insuffisante pour « %name% »
+loopeat.account_not_connected: Veuillez créer ou connecter votre compte %name% pour régler votre consigne et finaliser votre commande.
+loopeat.mandatory: Ce restaurant accepte uniquement les commandes en zéro déchet, vous devez connecter votre compte %name% pour finaliser votre commande.
 
 restaurant.contract.variableCustomerAmount.pickOne: Veuillez sélectionner une tarification
 restaurant.contract.variableDeliveryPrice.pickOne: Veuillez sélectionner une tarification

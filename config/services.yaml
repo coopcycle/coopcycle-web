@@ -1314,6 +1314,11 @@ services:
         private_key_secret: "%env(APNS_CERTIFICATE_PASS_PHRASE)%"
 
   Pushok\Client:
+    # Lazy, because building the auth provider reads APNS_PRIVATE_KEY_FILE, which throws
+    # "Unable to load the key" when APNS is not configured (it defaults to /dev/null).
+    # RemotePushNotificationManager only touches the client when there is an iOS token to
+    # push to, so without this every PushNotification message fails and gets retried.
+    lazy: true
     arguments:
       $isProductionEnv: "%env(default:apns_default_is_production_env:bool:APNS_IS_PRODUCTION_ENV)%"
 

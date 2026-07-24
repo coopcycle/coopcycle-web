@@ -191,11 +191,30 @@ export const useProductOptions = () => {
     })
   }
 
+  // Keeps only the option values that actually belong to this product,
+  // as an option value may depend on a value that is not part of the product (misconfiguration)
+  function filterExistingOptionValues(optionValueIds) {
+
+    const existingOptVals = _.flatMap(state.options, opt => opt.hasMenuItem.map(optVal => optVal['@id']))
+
+    return _.intersection(optionValueIds, existingOptVals)
+  }
+
+  // An option value is locked only if the values it depends on are present on the product,
+  // otherwise it would be impossible to unlock it
+  function isDisabledByDependency(optionValue) {
+
+    const dependsOn = filterExistingOptionValues(optionValue.dependsOn ?? [])
+
+    return dependsOn.length > 0 && !containsOptionValues(dependsOn)
+  }
+
   return {
     getValueQuantity: getValueQuantityInput,
     setValueQuantity,
     incrementValueQuantity,
     decrementValueQuantity,
     containsOptionValues,
+    isDisabledByDependency,
   }
 }

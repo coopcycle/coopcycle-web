@@ -428,6 +428,7 @@
         "DELIVERY_PROOFS_CHOOSE_WEEK": "Woche auswählen",
         "DELIVERY_PROOFS_TOTAL_DELIVERIES": "Lieferungen Gesamt",
         "DELIVERY_PROOFS_DELIVERIES_COUNT": "{{count}} Lieferungen",
+        "DELIVERY_PROOFS_EMPTY": "In dieser Woche wurde kein Liefernachweis hochgeladen.",
         "DELIVERY_PROOFS_CONTENTS": "Inhalt",
         "DELIVERY_PROOFS_CONTENTS_VALUE": "Fotos & Berichte",
         "DELIVERY_PROOFS_FILE_TYPE": "Dateityp",

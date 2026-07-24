@@ -51,4 +51,13 @@ php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis' --en
 php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis_topology' --env=test
 php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS pg_trgm' --env=test
 
+# In the test env, sessions are stored on the filesystem, inside the cache dir
+# (see framework.session.storage_factory_id in config/packages/test/framework.yaml).
+# PHP-FPM runs as www-data, but this directory is created by whichever process
+# needs a session first. When that is a console command running as root, every
+# request ends up as a 500 "Failed to open stream: Permission denied".
+mkdir -p var/cache/test/sessions
+chgrp -R www-data var/cache/test/sessions
+chmod -R g+w var/cache/test/sessions
+
 exec docker-php-entrypoint "$@"

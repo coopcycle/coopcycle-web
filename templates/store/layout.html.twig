@@ -59,6 +59,11 @@
             {{ 'stores.users'|trans }}
           </a>
         </li>
+        {% endif %}
+        {# These link to "admin_store_*" routes, which are behind ROLE_DISPATCHER
+           (see the "^/admin" access_control rule). They must be hidden from store
+           owners, who would get a 403, but stay visible to dispatchers. #}
+        {% if is_granted('ROLE_DISPATCHER') %}
         <li role="presentation">
           <a href="{{ path('admin_store_deliveries', { id: store.id }) }}">
             {{ 'stores.orders'|trans }}

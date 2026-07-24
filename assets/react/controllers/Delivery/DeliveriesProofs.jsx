@@ -23,12 +23,12 @@ function _saveBlob(blob, filename) {
 async function _fetchDeliveriesCount(id, range, signal) {
   const httpClient = new window._auth.httpClient()
   const { response, error } = await httpClient.get(
-    window.Routing.generate('_api_/stores/{id}/deliveries_get_collection', {
+    window.Routing.generate('_api_/stores/{id}/pod_export/count_get', {
       id,
     }),
     {
-      'pickup.after[after]': range.from.toISOString(),
-      'dropoff.before[before]': range.to.toISOString(),
+      from: range.from.toISOString(),
+      to: range.to.toISOString(),
     },
     {},
     { signal },
@@ -37,7 +37,7 @@ async function _fetchDeliveriesCount(id, range, signal) {
     throw error
   }
 
-  return response['hydra:totalItems']
+  return response.deliveries
 }
 
 async function _downloadZIP(id, range, signal) {
@@ -135,7 +135,12 @@ export default function DeliveriesProofs({ store_id = null }) {
       return
     }
 
+    if (controller.current) {
+      controller.current.abort()
+    }
     const ctl = new AbortController()
+    controller.current = ctl
+
     setDownloading(true)
     try {
       await _downloadZIP(storeID, range, ctl.signal)
@@ -148,6 +153,9 @@ export default function DeliveriesProofs({ store_id = null }) {
         })
       }
     } finally {
+      if (controller.current === ctl) {
+        controller.current = null
+      }
       setDownloading(false)
     }
   }
@@ -165,17 +173,19 @@ export default function DeliveriesProofs({ store_id = null }) {
     })
   }
 
-  const _canDownload = range !== null && !loading && !downloading && !error
+  const _canDownload =
+    range !== null && !loading && !downloading && !error && deliveries > 0
 
   return (
     <>
       <a
         href="#"
+        className="btn btn-default"
         onClick={e => {
           e.preventDefault()
           setOpen(true)
         }}>
-        <i className="fa fa-flag-checkered mr-2" aria-hidden="true"></i>
+        <i className="fa fa-camera mr-2" aria-hidden="true"></i>
         <span>{t('DELIVERY_PROOFS_LINK_TEXT')}</span>
       </a>
       <Modal
@@ -196,6 +206,14 @@ export default function DeliveriesProofs({ store_id = null }) {
             onChange={_handlePickWeek}
           />
         </div>
+        {!error && !loading && deliveries === 0 && (
+          <Alert
+            type="info"
+            showIcon
+            className="mb-3"
+            message={t('DELIVERY_PROOFS_EMPTY')}
+          />
+        )}
         {error && (
           <Alert
             type="error"

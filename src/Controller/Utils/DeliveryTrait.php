@@ -6,6 +6,7 @@ use AppBundle\Api\Dto\DeliveryMapper;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Service\OrderManager;
+use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -15,6 +16,25 @@ trait DeliveryTrait
      * @return array
      */
     abstract protected function getDeliveryRoutes();
+
+    /**
+     * Parses the "start_at" & "end_at" query parameters used to filter
+     * delivery lists (both in the admin & in the store dashboard).
+     *
+     * @return array{0: \DateTime, 1: \DateTime}|null
+     */
+    protected function getDeliveryDateRange(Request $request): ?array
+    {
+        if (!$request->query->get('start_at') || !$request->query->get('end_at')) {
+
+            return null;
+        }
+
+        return [
+            Carbon::parse($request->query->get('start_at'))->setTime(0, 0, 0)->toDateTime(),
+            Carbon::parse($request->query->get('end_at'))->setTime(23, 59, 59)->toDateTime(),
+        ];
+    }
 
     public function deliveryItemReactFormAction(
         $id,

@@ -80,6 +80,25 @@ class BarcodeUtils {
 
 
     /**
+     * Returns the list of barcodes for a package, numbering the units the same way
+     * Task::getBarcodes() does : the unit index is continuous across all the packages
+     * of the task, not restarted for every package.
+     * @return Barcode[]
+     */
+    public static function getBarcodesFromTaskPackage(Package $package): array
+    {
+        $start = 0;
+        foreach ($package->getTask()->getPackages() as $taskPackage) {
+            if ($taskPackage === $package) {
+                break;
+            }
+            $start += $taskPackage->getQuantity();
+        }
+
+        return self::getBarcodesFromPackage($package, $start);
+    }
+
+    /**
      * @param string|Barcode $barcode
      */
     public static function getToken($barcode): string

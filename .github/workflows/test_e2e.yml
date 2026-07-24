@@ -11,7 +11,10 @@ jobs:
       matrix:
         php_version:
           - '8.3'
-          - '8.4'
+        # The specs are split round-robin over the sorted spec list, see the
+        # "Select the specs for this shard" step. To split the suite further, add a
+        # shard here *and* bump SHARD_TOTAL below to match.
+        shard: [1, 2, 3, 4]
       fail-fast: false
     env:
       GEOCODE_EARTH_API_KEY: ${{ secrets.GEOCODE_EARTH_API_KEY }}
@@ -22,12 +25,28 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       PHP_VERSION: ${{ matrix.php_version }}
+      # Number of entries in matrix.shard. Deliberately not strategy.job-total, which
+      # would also count any other matrix dimension (a second PHP version, say) and
+      # would then silently make each shard run only a fraction of its specs.
+      SHARD_TOTAL: 4
     steps:
       - name: Set timezone
         uses: szenius/set-timezone@v2.0
         with:
           timezoneLinux: "Europe/Paris"
       - uses: actions/checkout@v4
+      # Round-robin over the sorted spec list rather than a hand-maintained list per
+      # shard: every spec is always picked up by exactly one shard, including new ones,
+      # and interleaving the sorted order spreads the slow directories evenly.
+      - name: Select the specs for this shard
+        id: shard
+        run: |
+          specs=$(find cypress/e2e -name '*.cy.js' | sort \
+            | awk -v i="${{ matrix.shard }}" -v n="$SHARD_TOTAL" '(NR - 1) % n == (i - 1)' \
+            | paste -sd, -)
+          if [ -z "$specs" ]; then echo "No spec selected for this shard" >&2; exit 1; fi
+          echo "Shard ${{ matrix.shard }}/$SHARD_TOTAL: $(echo "$specs" | tr ',' '\n' | wc -l) specs"
+          echo "specs=$specs" >> "$GITHUB_OUTPUT"
       - name: Run CoopCycle Web
         uses: ./.github/actions/run-coopcycle-web
         timeout-minutes: 10
@@ -43,14 +62,13 @@ jobs:
           # Install only Cypress binary; everything else is already installed by the webpack docker image
           # https://docs.cypress.io/app/continuous-integration/overview#Missing-binary
           install-command: npx cypress install
-          spec: |
-            cypress/e2e/**/*.cy.js
+          spec: ${{ steps.shard.outputs.specs }}
         # after the test run completes store videos and any screenshots
       - name: Upload images for failed tests
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: cypress-screenshots
+          name: cypress-screenshots-shard-${{ matrix.shard }}
           path: cypress/screenshots
           if-no-files-found: ignore # 'warn' or 'error' are also available, defaults to `warn`
       - name: Show Symfony warnings on failure
@@ -59,3 +77,5 @@ jobs:
       - name: Upload Symfony logs on failure
         if: failure()
         uses: ./.github/actions/upload-symfony-logs
+        with:
+          name: symfony-logs-shard-${{ matrix.shard }}

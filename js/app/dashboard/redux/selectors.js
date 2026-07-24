@@ -75,6 +75,26 @@ export const selectOptimLoading = state => state.logistics.ui.optimLoading
 export const selectUnassignedTasksLoading = state => state.logistics.ui.unassignedTasksLoading
 export const selectLoadingTaskIds = state => state.logistics.ui.loadingTaskIds ?? []
 export const selectOrderOfUnassignedTasks = state => state.logistics.ui.unassignedTasksIdsOrder
+
+// Task list modifications bookkeeping, @see js/app/dashboard/redux/uiReducers.js
+const selectTaskListRequests = (state, username) =>
+  state.logistics.ui.taskListsRequests?.[username]
+
+/**
+ * How many modifications of this rider's task list are currently waiting for the API.
+ */
+export const selectPendingTaskListRequests = (state, username) =>
+  selectTaskListRequests(state, username)?.pending ?? 0
+
+/**
+ * Whether a newer modification of this rider's task list was initiated since,
+ * which makes the outcome of `requestId` obsolete.
+ */
+export const isTaskListRequestSuperseded = (state, username, requestId) => {
+  const latestRequestId = selectTaskListRequests(state, username)?.latestRequestId
+
+  return latestRequestId !== undefined && latestRequestId !== null && latestRequestId !== requestId
+}
 export const selectOrderOfUnassignedToursAndGroups = state => state.logistics.ui.unassignedToursOrGroupsOrderIds
 
 // Settings selectors
@@ -91,6 +111,7 @@ export const selectTourPolylinesEnabledById = tourId => state => state.tourPolyl
 
 export const selectNav = state => state.config.nav
 export const selectInitialTask = state => state.config.initialTask
+export const selectTimezone = state => state.config.timezone
 
 export const selectAllTags = state => state.config.tags
 
@@ -263,7 +284,8 @@ export const selectVisibleTaskIds = createSelector(
   selectAllTasks,
   selectFiltersSetting,
   selectSelectedDate,
-  (tasks, filters, date) => filter(tasks, task => isTaskVisible(task, filters, date)).map(task => task['@id'])
+  selectTimezone,
+  (tasks, filters, date, timezone) => filter(tasks, task => isTaskVisible(task, filters, date, timezone)).map(task => task['@id'])
 )
 
 export const selectVisibleOnMapTaskIds = createSelector(

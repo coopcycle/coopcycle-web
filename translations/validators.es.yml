@@ -59,6 +59,8 @@ product.reusablePackagingUnit.mustBeGreaterThanZero: Se debe de especificar una 
 order.state.notModifiable: Pedido ya no puede ser modificado
 loopeat.insufficient_balance: Tu balance de LoopEat (X) no es suficiente para todo
   el pedido
+loopeat.account_not_connected: Por favor, crea o conecta tu cuenta %name% para pagar tu depósito y completar tu pedido.
+loopeat.mandatory: Este restaurante solo acepta pedidos de cero residuos, debes conectar tu cuenta %name% para completar tu pedido.
 restaurant.contract.variableCustomerAmount.pickOne: Elije como mínimo una tarfia
 restaurant.contract.variableDeliveryPrice.pickOne: Elije como mínimo una tarifa
 order.collection.not_available: El metodo de cumplimento "recogida en sitio" no esta

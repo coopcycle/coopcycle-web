@@ -30,10 +30,6 @@ class LoopEatOrderValidator extends ConstraintValidator
             throw new \InvalidArgumentException(sprintf('$object should be an instance of "%s"', OrderInterface::class));
         }
 
-        if (!$object->isReusablePackagingEnabled()) {
-            return;
-        }
-
         $restaurant = $object->getRestaurant();
 
         if (null === $restaurant) {
@@ -41,6 +37,22 @@ class LoopEatOrderValidator extends ConstraintValidator
         }
 
         if (!$restaurant->isLoopeatEnabled()) {
+            return;
+        }
+
+        // When zero waste is not mandatory, customers may opt out and skip validation.
+        // When it is mandatory, we enforce it even if a client (e.g. through the API)
+        // did not enable reusable packaging.
+        if (!$object->isReusablePackagingEnabled()) {
+
+            if ($restaurant->isLoopeatMandatory()) {
+
+                $this->context->buildViolation($constraint->mandatory)
+                    ->setParameter('%name%', $this->loopeatContext->name)
+                    ->atPath('reusablePackagingEnabled')
+                    ->addViolation();
+            }
+
             return;
         }
 
@@ -55,6 +67,17 @@ class LoopEatOrderValidator extends ConstraintValidator
         }
 
         $adapter = new LoopEatAdapter($object);
+
+        // The customer must have connected their zero waste account before
+        // being able to proceed to checkout (this is required to settle the deposit).
+        if (!$adapter->hasLoopEatCredentials()) {
+
+            $this->context->buildViolation($constraint->accountNotConnected)
+                ->setParameter('%name%', $this->loopeatContext->name)
+                ->atPath('reusablePackagingEnabled')
+                ->addViolation();
+            return;
+        }
 
         try {
 

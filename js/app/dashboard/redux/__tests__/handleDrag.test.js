@@ -3,6 +3,7 @@ import { handleDragStart, handleDragEnd } from '../handleDrag';
 import { clearSelectedTasks, insertInUnassignedTasks, insertInUnassignedTours, toggleTask } from '../actions';
 import { setIsTourDragging } from '../../../coopcycle-frontend-js/logistics/redux'
 import { createStoreFromPreloadedState } from '../store';
+import { selectSelectedTasks } from '../selectors';
 
 describe('handleDragEnd', () => {
     let store = createStoreFromPreloadedState(storeFixture)
@@ -26,7 +27,8 @@ describe('handleDragEnd', () => {
         [
           '/api/tours/114',
           '/api/tours/111',
-        ]
+        ],
+        []
       )
 
       expect(mockModifyTour).toHaveBeenCalledTimes(0)
@@ -51,7 +53,8 @@ describe('handleDragEnd', () => {
         [
           '/api/tours/111',
           '/api/tours/114',
-        ]
+        ],
+        []
       )
       expect(mockModifyTour).toHaveBeenCalledTimes(0)
 
@@ -85,7 +88,8 @@ describe('handleDragEnd', () => {
         [
           '/api/tours/111',
           '/api/tours/114',
-        ]
+        ],
+        []
       )
 
       expect(mockModifyTour).toHaveBeenCalledTimes(0)
@@ -135,7 +139,8 @@ describe('handleDragEnd', () => {
         [
           '/api/tours/111',
           '/api/tasks/736'
-        ]
+        ],
+        []
       )
       expect(mockModifyTour).toHaveBeenCalledTimes(0)
 
@@ -321,7 +326,8 @@ describe('handleDragEnd', () => {
          '/api/tasks/733',
          '/api/tasks/732',
          '/api/tours/111'
-        ]
+        ],
+        []
       )
     })
   })
@@ -455,7 +461,8 @@ describe('handleDragEnd - edge cases', () => {
 
     expect(mockModifyTaskList).toHaveBeenCalledWith(
       'admin',
-      ['/api/tours/111', '/api/tasks/729']
+      ['/api/tours/111', '/api/tasks/729'],
+      []
     )
   })
 
@@ -539,7 +546,8 @@ describe('handleDragEnd - edge cases', () => {
         '/api/tasks/735', // pickup must come first
         '/api/tasks/734', // dropoff after its pickup
         '/api/tours/111',
-      ]
+      ],
+      []
     )
   })
 
@@ -578,5 +586,117 @@ describe('handleDragEnd - edge cases', () => {
       ]
     )
     expect(mockModifyTaskList).not.toHaveBeenCalled()
+  })
+})
+
+describe('handleDragEnd, moving several items at once', () => {
+
+  // admin's task list holds plain tasks, so we can reorder inside it
+  const createStoreWithTasksAssignedToAdmin = (selectedTasks) => {
+    const { logistics } = storeFixture
+
+    return createStoreFromPreloadedState({
+      ...storeFixture,
+      selectedTasks,
+      logistics: {
+        ...logistics,
+        entities: {
+          ...logistics.entities,
+          taskLists: {
+            ...logistics.entities.taskLists,
+            entities: {
+              admin: {
+                ...logistics.entities.taskLists.entities.admin,
+                items: [
+                  '/api/tasks/736',
+                  '/api/tasks/737',
+                  '/api/tasks/738',
+                  '/api/tours/111',
+                ],
+              },
+            },
+          },
+        },
+      },
+    })
+  }
+
+  it('should insert a multiple selection at the dropped index inside a task list', () => {
+    const store = createStoreWithTasksAssignedToAdmin([ '/api/tasks/736', '/api/tasks/737' ])
+    const dispatch = jest.fn()
+    const mockModifyTaskList = jest.fn()
+
+    // 736 & 737 are selected, 737 is the one being dragged. Dropping it at index 2 puts
+    // it right after 738, so the whole selection must land there, before the tour.
+    handleDragEnd(
+      {
+        draggableId: '/api/tasks/737',
+        source: { droppableId: 'assigned:admin', index: 1 },
+        destination: { droppableId: 'assigned:admin', index: 2 },
+      },
+      mockModifyTaskList
+    )(dispatch, store.getState)
+
+    expect(mockModifyTaskList).toHaveBeenCalledWith(
+      'admin',
+      [
+        '/api/tasks/738',
+        '/api/tasks/736',
+        '/api/tasks/737',
+        '/api/tours/111',
+      ],
+      []
+    )
+  })
+
+  it('should insert a multiple selection at the dropped index inside a tour', () => {
+    const store = createStoreFromPreloadedState({
+      ...storeFixture,
+      selectedTasks: [ '/api/tasks/729', '/api/tasks/730' ],
+    })
+    const dispatch = jest.fn()
+    const mockModifyTaskList = jest.fn()
+    const mockModifyTour = jest.fn()
+
+    // Tour 111 items: [729, 730, 731, 727]; 729 & 730 are selected, 730 is dragged
+    handleDragEnd(
+      {
+        draggableId: '/api/tasks/730',
+        source: { droppableId: 'tour:/api/tours/111', index: 1 },
+        destination: { droppableId: 'tour:/api/tours/111', index: 2 },
+      },
+      mockModifyTaskList, mockModifyTour
+    )(dispatch, store.getState)
+
+    expect(mockModifyTour).toHaveBeenCalledWith(
+      expect.objectContaining({ '@id': '/api/tours/111' }),
+      [
+        '/api/tasks/731',
+        '/api/tasks/729',
+        '/api/tasks/730',
+        '/api/tasks/727',
+      ]
+    )
+  })
+
+  it('should not reorder the selected tasks held in the store', () => {
+    // the selection is in the reverse order of admin's task list
+    const store = createStoreWithTasksAssignedToAdmin([ '/api/tasks/737', '/api/tasks/736' ])
+    const dispatch = jest.fn()
+
+    handleDragEnd(
+      {
+        draggableId: '/api/tasks/737',
+        source: { droppableId: 'assigned:admin', index: 1 },
+        destination: { droppableId: 'assigned:admin', index: 2 },
+      },
+      jest.fn()
+    )(dispatch, store.getState)
+
+    // sorting the selection for the drop must not reorder the memoized selector output
+    expect(selectSelectedTasks(store.getState()).map(t => t['@id'])).toEqual([
+      '/api/tasks/737',
+      '/api/tasks/736',
+    ])
   })
 })

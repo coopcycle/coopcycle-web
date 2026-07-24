@@ -11,6 +11,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use AppBundle\Api\State\StoreAddressProcessor;
 use AppBundle\Action\MyStores;
+use AppBundle\Action\Delivery\PODCount as PODCountDelivery;
 use AppBundle\Action\Delivery\PODExport as PODExportDelivery;
 use AppBundle\Action\Store\AddAddress;
 use AppBundle\Action\Store\PaymentMethods as StorePaymentMethods;
@@ -85,6 +86,12 @@ use Doctrine\ORM\Mapping as ORM;
             /* input: DeliveryPODExportInput::class, */
             write: false,
             deserialize: false,
+            security: "is_granted('edit', object)",
+        ),
+        new Get(
+            uriTemplate: '/stores/{id}/pod_export/count',
+            controller: PODCountDelivery::class,
+            openapiContext: ['summary' => 'Count the deliveries included in a proofs of delivery export.'],
             security: "is_granted('edit', object)",
         ),
     ],

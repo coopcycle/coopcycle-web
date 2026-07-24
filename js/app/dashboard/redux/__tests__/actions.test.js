@@ -21,7 +21,10 @@ describe('updateTask', () => {
     const store = mockStore({
       logistics: {
         date: moment('2020-02-27'),
-      }
+      },
+      config: {
+        timezone: 'UTC',
+      },
     })
 
     const dispatch = jest.fn()
@@ -43,7 +46,10 @@ describe('updateTask', () => {
     const store = mockStore({
       logistics: {
         date: moment('2020-02-27'),
-      }
+      },
+      config: {
+        timezone: 'UTC',
+      },
     })
 
     const dispatch = jest.fn()
