@@ -280,9 +280,9 @@ class SyncTransportersCommand extends Command {
 
         // This is the name of the file that will be stored on our S3
         $filename = sprintf(
-                "REPORT-%s_%s.%s.edi", mb_strtolower($this->transporter),
-                date('Y-m-d_His'), uniqid()
-            );
+            "REPORT-%s_%s.%s.edi", mb_strtolower($this->transporter),
+            date('Y-m-d_His'), uniqid()
+        );
 
         $this->edifactFs->write($filename, $content);
         $sync->push($content);
@@ -457,7 +457,6 @@ class SyncTransportersCommand extends Command {
         $pickup->setNext($dropoff);
         $dropoff->setPrevious($pickup);
 
-
         [$pickupAfter, $pickupBefore] = $this->resolveDeliveryWindow($point);
         $pickup->setAfter($pickupAfter);
         $pickup->setBefore($pickupBefore);
@@ -481,8 +480,6 @@ class SyncTransportersCommand extends Command {
     private function createOrderForDelivery(Delivery $delivery): void {
         $this->deliveryOrderManager->createOrder($delivery, [
             'pricingStrategy' => new CalculateUsingPricingRules(),
-            /* 'persist' => false, */
-            /* 'throwException' => false, */
         ]);
     }
 
@@ -490,7 +487,6 @@ class SyncTransportersCommand extends Command {
         if ($this->output->isVerbose()) {
             $this->debugPoint($point);
         }
-
 
         // PICKUP SETUP
         $pickup = $this->importFromPoint->import($point, $edi);
@@ -594,7 +590,6 @@ class SyncTransportersCommand extends Command {
             $this->transporterLogger->critical($e->getMessage(), ['transporter' => $this->transporter]);
             throw $e;
         }
-
 
         return new TransporterSyncOptions(
             $fs,
