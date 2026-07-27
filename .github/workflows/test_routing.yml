@@ -1,0 +1,104 @@
+name: Routing engine tests (OSRM + Valhalla)
+on: push
+
+env:
+  APP_ENV: test
+  NODE_ENV: test
+
+jobs:
+  ROUTING:
+    name: Routing engine (${{ matrix.routing_engine }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        routing_engine:
+          - osrm
+          - valhalla
+      fail-fast: false
+    env:
+      STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
+      STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+      STRIPE_CONNECT_CLIENT_ID: ${{ secrets.STRIPE_CONNECT_CLIENT_ID }}
+      GEOCODE_EARTH_API_KEY: ${{ secrets.GEOCODE_EARTH_API_KEY }}
+      PHP_VERSION: '8.4'
+      COOPCYCLE_ROUTING_ENGINE: ${{ matrix.routing_engine }}
+    steps:
+      - name: Set timezone
+        uses: szenius/set-timezone@v2.0
+        with:
+          timezoneLinux: "Europe/Paris"
+
+      - uses: actions/checkout@v4
+
+      - name: Run CoopCycle Web
+        uses: ./.github/actions/run-coopcycle-web
+        timeout-minutes: 10
+
+      - name: Cache Valhalla tiles
+        if: matrix.routing_engine == 'valhalla'
+        uses: actions/cache@v4
+        with:
+          path: ./var/valhalla
+          key: valhalla-tiles-ile-de-france-v1
+          restore-keys: |
+            valhalla-tiles-
+
+      - name: Start Valhalla (valhalla matrix entry only)
+        if: matrix.routing_engine == 'valhalla'
+        run: |
+          mkdir -p ./var/valhalla
+          docker compose --profile valhalla up -d valhalla
+
+      - name: Wait for Valhalla tiles to be ready
+        if: matrix.routing_engine == 'valhalla'
+        run: |
+          # The valhalla-scripted image downloads the OSM PBF and builds
+          # the routing graph on first boot. That can take 15-25 min on
+          # a CI runner for the Île-de-France extract (~70 MB PBF).
+          # We probe a real /route call so we know the service is
+          # actually serving routes, not just the entrypoint script
+          # returning "ready" prematurely.
+          ROUTE_JSON='{"locations":[{"lat":48.85,"lon":2.35},{"lat":48.86,"lon":2.36}],"costing":"bicycle","format":"osrm","shape_format":"polyline5"}'
+          echo "Polling Valhalla via /route (real routing request)..."
+          for i in $(seq 1 240); do
+            out=$(curl -sf -G --data-urlencode "json=$ROUTE_JSON" http://127.0.0.1:8002/route 2>/dev/null || echo "")
+            if echo "$out" | grep -q '"code":"Ok"'; then
+              echo "Valhalla ready after ~$((i * 10)) seconds"
+              exit 0
+            fi
+            if [ $((i % 6)) -eq 0 ]; then
+              echo "--- Valhalla container logs at attempt $i ---"
+              docker compose logs --tail=20 valhalla || true
+              echo "--- end logs ---"
+            fi
+            sleep 10
+          done
+          echo "Valhalla did not become ready in 40 minutes"
+          docker compose logs valhalla || true
+          exit 1
+        timeout-minutes: 45
+
+      - name: Sanity-check Valhalla from the PHP container
+        if: matrix.routing_engine == 'valhalla'
+        run: |
+          docker compose exec -T php curl -sf http://valhalla:8002/status
+
+      - name: Run PHPUnit (routing subset)
+        run: |
+          cp phpunit.xml.dist phpunit.xml
+          docker compose exec -T php vendor/bin/phpunit \
+            tests/AppBundle/Service/Routing/ \
+            tests/AppBundle/MessageHandler/CalculateTaskDistanceHandlerTest.php \
+            tests/AppBundle/Utils/RestaurantFilterTest.php
+
+      - name: Show Symfony warnings on failure
+        if: failure()
+        uses: ./.github/actions/show-symfony-warnings
+
+      - name: Upload Symfony logs on failure
+        if: failure()
+        uses: ./.github/actions/upload-symfony-logs
+
+      - name: Show Webpack logs on failure
+        if: failure()
+        run: docker compose logs webpack

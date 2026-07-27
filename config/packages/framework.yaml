@@ -47,6 +47,9 @@ framework:
             osrm.client:
                 base_uri: "http://%osrm_host%"
                 timeout: 5.0
+            valhalla.client:
+                base_uri: "http://%valhalla_host%"
+                timeout: 5.0
             cubejs.client:
                 base_uri: "%env(CUBEJS_API_URL)%/"
             recommender.client:

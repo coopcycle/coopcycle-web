@@ -3,24 +3,17 @@
 namespace AppBundle\Action;
 
 use AppBundle\Entity\Base\GeoCoordinates;
-use AppBundle\Service\Routing\Osrm;
 use AppBundle\Service\RoutingInterface;
-use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 
 class Routing
 {
     /**
-     * @var Osrm
+     * @var RoutingInterface
      */
     private $routing;
 
-    /**
-     * @param Osrm $routing
-     */
     public function __construct(RoutingInterface $routing)
     {
         $this->routing = $routing;
@@ -48,14 +41,7 @@ class Routing
     #[Route(path: '/routing/trip/{coordinates}', name: 'routing_trip', methods: ['GET'])]
     public function tripAction($coordinates): JsonResponse
     {
-        $data = $this->routing->getServiceResponse(
-            'trip',
-            $this->decodeCoordinates($coordinates),
-            [
-                'steps' => 'true',
-                'overview' => 'full'
-            ]
-        );
+        $data = $this->routing->getTrip(...$this->decodeCoordinates($coordinates));
 
         return new JsonResponse($data);
     }
