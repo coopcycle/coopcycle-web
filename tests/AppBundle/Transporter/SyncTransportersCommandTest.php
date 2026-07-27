@@ -61,6 +61,14 @@ class SyncTransportersCommandTest extends KernelTestCase {
     UNA:+,? ' UNB+UNOC:1+349669192:22+942803198:22+260602:1341+999901484802' UNH+1484802+DISPOR:3:2:GT:GTF110' BGM++1484802' TSR+++3' CAG+P+V' NAD+CO+40017751500048:05++ORLEANS LOG PC LA ROSEE' DTM+DEP+260602' NAD+FW+94280319800020:05++CYCLOGIK' GDS+G+.' TDT++++3' DOC+730+++ACG+78822' UNS+D' RFF+SEN+LACOURSERIETEST' GID++1:23' MSE+CGW+16,000:KG' NAD+CN+++TEST LA COURSERIE+64 RUE ALEXANDRE DUMAS+PARIS++75+FR' CTA++:TEST MTO+06 01 02 03 04:TE+mtor@tel.fr:TM' NAD+OS+++ORLEANS LOG PC LA ROSEE+7 ROUTE DE BOIGNY+SAINT JEAN DE BRAYE++45800+FR' CAG+P+V+++++LRC++++LRC' TSR+++3' TXT+DEL+TEST A SUPPRIMER' GDS+G+TEST' PCI+23' GIN+BN+*69069000000000LRC01699848001300' DOC+WBL+++PRI+1699848' DOC+150+++PRI+LACOURSERIETEST' UNS+S' UNT+27+1484802' UNZ+1+999901484802'
     EDI;
 
+    const EDI_SAMPLE_WITH_DAD = <<<EDI
+    UNA:+,? ' UNB+UNOC:1+123456789:22+987654321:22+240325:1951+2206' UNH+1+SCONTR:3:2:GT:GTF210+ACG' BGM++240325' NAD+FW+12345678900935:05++DBSCHENKER TESTING INC' DTM+DEP+240325' NAD+DP+98765432100010:05++COOPCYCLE TESTING INC' TSR+++3' CAG+P+V' TDT++++3' DOC+730+++ACG+2278663' UNS+D' RFF+CN+JOYDAD0123456' GID++1:23+1:21' MSE+CGW+15:KG' NAD+CN+++JOHN DOE:ZIMP COMPANY+64 RUE ALEXANDRE DUMAS+PARIS++75+FR' CTA+IC+:JOHN DOE+06 01 02 03 04:AL' NAD+CO+++HOME DEPOT+54 ROUTE DE TREGUIER:BP 8+LOUANNEC++22+FR' DTM+DES+240322' DTM+DAD+270926' NAD+FW+12345678900935:05++DBSCHENKER TESTING INC+LE BREHAT:ALLEE DES CHATELETS+PLOUFRAGAN++22440+FR' CAG+P+V+++++++++227004' TSR++D:E+3' TXT+DEL+TEL ?: 06 01 02 03 04 POUR PRENDRE UN RENDEZ VOUS DE LIVRAISON' GDS+G+DIVERS' PCI+23' GIN+BN+*2222121907222700470100691001300' DOC+WBL::JOYDAD0123456+++ACG+70100691+219072' DOC+824+++PRI+FRSBK830689437' UNS+S' UNT+27+1' UNZ+1+2206'
+    EDI;
+
+    const EDI_DISPOR_SAMPLE_WITH_DAD = <<<EDI
+    UNA:+,? ' UNB+UNOC:1+349669192:22+942803198:22+260602:1341+999901484802' UNH+1484802+DISPOR:3:2:GT:GTF110' BGM++1484802' TSR+++3' CAG+P+V' NAD+CO+40017751500048:05++ORLEANS LOG PC LA ROSEE' DTM+DEP+260602' NAD+FW+94280319800020:05++CYCLOGIK' GDS+G+.' TDT++++3' DOC+730+++ACG+78822' UNS+D' RFF+SEN+LACOURSERIEDAD' GID++1:23' MSE+CGW+16,000:KG' NAD+CN+++TEST LA COURSERIE+64 RUE ALEXANDRE DUMAS+PARIS++75+FR' CTA++:TEST MTO+06 01 02 03 04:TE+mtor@tel.fr:TM' DTM+DAD+270926' NAD+OS+++ORLEANS LOG PC LA ROSEE+7 ROUTE DE BOIGNY+SAINT JEAN DE BRAYE++45800+FR' CAG+P+V+++++LRC++++LRC' TSR+++3' TXT+DEL+TEST A SUPPRIMER' GDS+G+TEST' PCI+23' GIN+BN+*69069000000000LRC01699848001300' DOC+WBL+++PRI+1699848' DOC+150+++PRI+LACOURSERIEDAD' UNS+S' UNT+27+1484802' UNZ+1+999901484802'
+    EDI;
+
     const PARTIAL_REPORT_EDI_SAMPLE = <<<EDI
     UNB+UNOC:1+4447190000:22+0000011:22+
     NAD+MR+4447190000:5++Coopcycle Testing Inc.'
@@ -1341,6 +1349,104 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->assertCount(0, $unsynced);
     }
 
+    public function testScontrTaskWithoutDadFallsBackToToday(): void
+    {
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/test.edi', self::FS_MASK_DBS),
+            self::EDI_SAMPLE
+        );
+
+        $command = $this->initCommand();
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(['transporter' => 'DBSCHENKER']);
+        $commandTester->assertCommandIsSuccessful();
+
+        /** @var Delivery $delivery */
+        $deliveries = $this->entityManager->getRepository(Delivery::class)->findAll();
+        $delivery = array_shift($deliveries);
+        $this->assertNotNull($delivery, 'A delivery should have been imported');
+
+        $pickup = $delivery->getPickup();
+        $dropoff = $delivery->getDropoff();
+
+        $today = new \DateTime('today');
+        $expectedAfter = (clone $today)->setTime(0, 0, 0, 0);
+        $expectedBefore = (clone $today)->setTime(23, 59, 59, 999999);
+
+        // The whole day is one window covering both pickup and dropoff.
+        $this->assertWindowEqualsDay($expectedAfter, $pickup->getAfter());
+        $this->assertWindowEqualsDay($expectedBefore, $pickup->getBefore());
+        $this->assertWindowEqualsDay($expectedAfter, $dropoff->getAfter());
+        $this->assertWindowEqualsDay($expectedBefore, $dropoff->getBefore());
+    }
+
+    public function testScontrTaskHonoursRequestedDeliveryDate(): void
+    {
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/test.edi', self::FS_MASK_DBS),
+            self::EDI_SAMPLE_WITH_DAD
+        );
+
+        $command = $this->initCommand();
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(['transporter' => 'DBSCHENKER']);
+        $commandTester->assertCommandIsSuccessful();
+
+        /** @var Delivery $delivery */
+        $deliveries = $this->entityManager->getRepository(Delivery::class)->findAll();
+        $delivery = array_shift($deliveries);
+        $this->assertNotNull($delivery, 'A delivery should have been imported');
+
+        $pickup = $delivery->getPickup();
+        $dropoff = $delivery->getDropoff();
+
+        $expectedAfter = new \DateTime('2027-09-26 00:00:00.000000');
+        $expectedBefore = new \DateTime('2027-09-26 23:59:59.999999');
+
+        $this->assertWindowEqualsDay($expectedAfter, $pickup->getAfter());
+        $this->assertWindowEqualsDay($expectedBefore, $pickup->getBefore());
+        $this->assertWindowEqualsDay($expectedAfter, $dropoff->getAfter());
+        $this->assertWindowEqualsDay($expectedBefore, $dropoff->getBefore());
+    }
+
+    public function testDisporTaskHonoursRequestedDeliveryDate(): void
+    {
+        $this->syncTaliaeFs->write(
+            sprintf('to_%s/test.edi', self::FS_MASK_TALIAE),
+            self::EDI_DISPOR_SAMPLE_WITH_DAD
+        );
+
+        $command = $this->initCommand();
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(['transporter' => 'TELIAE']);
+        $commandTester->assertCommandIsSuccessful();
+
+        /** @var Delivery $deliveries */
+        $deliveries = $this->entityManager->getRepository(Delivery::class)->findAll();
+        $delivery = array_shift($deliveries);
+        $this->assertNotNull($delivery, 'A delivery should have been imported');
+
+        $pickup = $delivery->getPickup();
+        $dropoff = $delivery->getDropoff();
+
+        $expectedAfter = new \DateTime('2027-09-26 00:00:00.000000');
+        $expectedBefore = new \DateTime('2027-09-26 23:59:59.999999');
+
+        $this->assertWindowEqualsDay($expectedAfter, $pickup->getAfter());
+        $this->assertWindowEqualsDay($expectedBefore, $pickup->getBefore());
+        $this->assertWindowEqualsDay($expectedAfter, $dropoff->getAfter());
+        $this->assertWindowEqualsDay($expectedBefore, $dropoff->getBefore());
+    }
+
+    private function assertWindowEqualsDay(\DateTime $expected, ?\DateTime $actual): void
+    {
+        $this->assertNotNull($actual, 'Window timestamp must not be null');
+        $this->assertSame(
+            $expected->format('Y-m-d H:i:s.u'),
+            $actual->format('Y-m-d H:i:s.u'),
+            sprintf('Expected %s, got %s', $expected->format('c'), $actual->format('c'))
+        );
+    }
 
     public function testParseSyncOptionsFtpDecodesUrlEncodedCredentials(): void
     {
