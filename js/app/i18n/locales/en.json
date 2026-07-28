@@ -797,6 +797,7 @@
         "INCIDENTS_TASK_DETAILS": "details",
         "INCIDENTS_ACTION_COMPLETED_SUCCESSFULLY": "Action completed successfully",
         "INCIDENTS_ACTION_FAILED": "Failed to perform action",
+        "INCIDENTS_ACTIONS_DISABLED_ON_CLOSED": "Actions cannot be taken on closed incident",
         "INCIDENTS_SUGGESTED_CHANGES": "Suggested changes",
         "INCIDENTS_ERROR_LOADING_SUGGESTED_PRICE_CHANGE": "We couldn't calculate the price with the suggested changes",
         "INCIDENTS_SUGGESTED_PRICE_CHANGE": "Suggested price change: {{diff}}",
