@@ -27,7 +27,10 @@ export default function DeleteIcon({ deleteUrl, objectId, objectName, errorMessa
       if (error)
       {
         setLoading(false)
-        alert(t(errorMessage))
+        const responseData = error.response?.data || error.data
+        const violationMessage = responseData?.violations?.map(violation => violation.message).filter(Boolean).join('\n')
+        const reason = violationMessage || responseData?.['hydra:description'] || responseData?.detail
+        alert(reason || t(errorMessage))
         return;
       } else {
         afterDeleteFetch()

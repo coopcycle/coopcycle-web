@@ -19,7 +19,12 @@ class WarehouseDeleteValidator extends ConstraintValidator
             throw new \InvalidArgumentException(sprintf('$object should be an instance of %s', Warehouse::class));
         }
 
-        if (count($object->getVehicles()) > 0) {
+        $activeVehicles = array_filter(
+            $object->getVehicles()->toArray(),
+            fn ($vehicle) => !$vehicle->isDeleted()
+        );
+
+        if (count($activeVehicles) > 0) {
             $this->context
                 ->buildViolation(
                     "Vehicles are linked to this warehouse"
