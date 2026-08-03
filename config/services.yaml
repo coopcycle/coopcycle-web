@@ -441,6 +441,24 @@ services:
     tags:
       - { name: sylius.order_processor, priority: 64 }
 
+  # Coupon code generation: replace Sylius' hex generator (16 symbols) with an
+  # unambiguous 31-symbol alphabet so codes are shorter and human-readable.
+  # The generator and its policy MUST share the same alphabet.
+  sylius.promotion_coupon_generator:
+    class: AppBundle\Sylius\Promotion\Generator\UnambiguousPromotionCouponGenerator
+    autoconfigure: false
+    arguments:
+      $couponFactory: "@sylius.factory.promotion_coupon"
+      $couponRepository: "@sylius.repository.promotion_coupon"
+      $objectManager: "@sylius.manager.promotion_coupon"
+      $generationPolicy: "@sylius.generator.percentage_generation_policy"
+
+  sylius.promotion_coupon_generator.percentage_policy:
+    class: AppBundle\Sylius\Promotion\Generator\AlphabetGenerationPolicy
+    autoconfigure: false
+    arguments:
+      $couponRepository: "@sylius.repository.promotion_coupon"
+
   # IMPORTANT
   # OrderDepositRefundProcessor must be executed *BEFORE* OrderFeeProcessor
   # because we need to increase the platform fee for LoopEat
