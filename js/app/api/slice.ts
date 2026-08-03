@@ -42,13 +42,50 @@ import {
   User,
   TaskEvent,
   PaymentMethodsOutput,
+  Shift,
+  ShiftPayload,
+  PutShiftRequest,
+  DateRangeArgs,
+  GetHolidayRequestsArgs,
+  HolidayRequest,
+  PostHolidayRequestRequest,
+  CopyWeekRequest,
+  PlanningUser,
+  ShiftSettings,
+  PutShiftSettingsRequest,
+  EmployeeProfile,
+  EmployeeProfilePayload,
+  ReportShiftTimeRequest,
+  ShiftScheduleSuggestion,
+  ShiftBatchResult,
+  ShiftDispatchSyncResult,
+  ProposedShift,
+  BankHolidays,
+  ShiftCalendar,
+  ShiftCompliance,
+  ShiftDashboard,
+  GetShiftDashboardArgs,
+  Skill,
+  SkillWithUsers,
+  SkillPayload,
+  PutSkillRequest,
+  Me,
+  SchedulePublication,
 } from './types';
 
 // Define our single API slice object
 export const apiSlice = createApi({
   reducerPath: 'api',
   baseQuery: baseQueryWithReauth,
-  tagTypes: ['PricingRuleSet'],
+  tagTypes: [
+    'PricingRuleSet',
+    'Shift',
+    'HolidayRequest',
+    'ShiftSettings',
+    'Skill',
+    'SchedulePublication',
+    'EmployeeProfile',
+  ],
   // The "endpoints" represent operations and requests for this server
   // uri is passed in JSON-LD '@id' key, https://www.w3.org/TR/2014/REC-json-ld-20140116/#node-identifiers
   endpoints: builder => ({
@@ -381,6 +418,329 @@ export const apiSlice = createApi({
         method: 'DELETE',
       }),
     }),
+
+    getShifts: builder.query<HydraCollection<Shift>, DateRangeArgs>({
+      query: ({ after, before }) => ({
+        url: 'api/shifts',
+        params: { 'date[after]': after, 'date[before]': before },
+      }),
+      providesTags: ['Shift'],
+    }),
+    getMyShifts: builder.query<HydraCollection<Shift>, DateRangeArgs>({
+      query: ({ after, before }) => ({
+        url: 'api/me/shifts',
+        params: { 'date[after]': after, 'date[before]': before },
+      }),
+      providesTags: ['Shift'],
+    }),
+    postShift: builder.mutation<Shift, ShiftPayload>({
+      query: body => ({
+        url: 'api/shifts',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['Shift'],
+    }),
+    putShift: builder.mutation<Shift, PutShiftRequest>({
+      query: ({ '@id': uri, ...body }) => ({
+        url: uri,
+        method: 'PUT',
+        body,
+      }),
+      invalidatesTags: ['Shift'],
+      // Optimistically patch the cached week(s) so the grid reflects the
+      // change on drop (calendar drag/resize) instead of snapping back until
+      // the invalidation refetch lands; undone if the request fails.
+      // Assignments are left untouched — the payload only has user IRIs, the
+      // refetch reconciles them.
+      async onQueryStarted(arg, { dispatch, getState, queryFulfilled }) {
+        const patches = apiSlice.util
+          .selectCachedArgsForQuery(getState(), 'getShifts')
+          .map(args =>
+            dispatch(
+              apiSlice.util.updateQueryData('getShifts', args, draft => {
+                const shift = draft['hydra:member'].find(
+                  s => s['@id'] === arg['@id'],
+                );
+                if (shift) {
+                  shift.type = arg.type;
+                  shift.startsAt = arg.startsAt;
+                  shift.endsAt = arg.endsAt;
+                  shift.slots = arg.slots;
+                  if (arg.breakMinutes !== undefined) {
+                    shift.breakMinutes = arg.breakMinutes;
+                  }
+                  if (arg.comment !== undefined) {
+                    shift.comment = arg.comment;
+                  }
+                }
+              }),
+            ),
+          );
+
+        try {
+          await queryFulfilled;
+        } catch {
+          patches.forEach(patch => patch.undo());
+        }
+      },
+    }),
+    deleteShift: builder.mutation<void, Uri>({
+      query: uri => ({
+        url: uri,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Shift'],
+    }),
+    copyWeek: builder.mutation<void, CopyWeekRequest>({
+      query: body => ({
+        url: 'api/shifts/copy_week',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['Shift'],
+    }),
+    getHolidayRequests: builder.query<
+      HydraCollection<HolidayRequest>,
+      GetHolidayRequestsArgs
+    >({
+      query: ({ after, before, status }) => {
+        const params = new URLSearchParams({
+          'date[after]': after,
+          'date[before]': before,
+        });
+        (status || []).forEach(s => params.append('status[]', s));
+        return { url: `api/holiday_requests?${params.toString()}` };
+      },
+      providesTags: ['HolidayRequest'],
+    }),
+    getMyHolidayRequests: builder.query<HydraCollection<HolidayRequest>, void>({
+      query: () => 'api/me/holiday_requests',
+      providesTags: ['HolidayRequest'],
+    }),
+    postHolidayRequest: builder.mutation<
+      HolidayRequest,
+      PostHolidayRequestRequest
+    >({
+      query: body => ({
+        url: 'api/holiday_requests',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['HolidayRequest'],
+    }),
+    approveHolidayRequest: builder.mutation<HolidayRequest, Uri>({
+      query: uri => ({
+        url: `${uri}/approve`,
+        method: 'PUT',
+        body: {},
+      }),
+      invalidatesTags: ['HolidayRequest'],
+    }),
+    rejectHolidayRequest: builder.mutation<HolidayRequest, Uri>({
+      query: uri => ({
+        url: `${uri}/reject`,
+        method: 'PUT',
+        body: {},
+      }),
+      invalidatesTags: ['HolidayRequest'],
+    }),
+    deleteHolidayRequest: builder.mutation<void, Uri>({
+      query: uri => ({
+        url: uri,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['HolidayRequest'],
+    }),
+    getPlanningUsers: builder.query<PlanningUser[], void>({
+      query: () =>
+        'api/users?roles[]=ROLE_COURIER&roles[]=ROLE_DISPATCHER&roles[]=ROLE_ADMIN',
+      transformResponse: (response: HydraCollection<PlanningUser>) =>
+        response['hydra:member'],
+      // A user's skills come from here, so a skill (un)assignment must refresh it
+      providesTags: ['Skill'],
+    }),
+
+    getEmployeeProfiles: builder.query<EmployeeProfile[], void>({
+      query: () => 'api/employee_profiles',
+      transformResponse: (response: HydraCollection<EmployeeProfile>) =>
+        response['hydra:member'],
+      providesTags: ['EmployeeProfile'],
+    }),
+    postEmployeeProfile: builder.mutation<
+      EmployeeProfile,
+      EmployeeProfilePayload
+    >({
+      query: body => ({
+        url: 'api/employee_profiles',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['EmployeeProfile'],
+    }),
+    putEmployeeProfile: builder.mutation<
+      EmployeeProfile,
+      EmployeeProfilePayload & { '@id': Uri }
+    >({
+      query: ({ '@id': uri, ...body }) => ({
+        url: uri,
+        method: 'PUT',
+        body,
+      }),
+      invalidatesTags: ['EmployeeProfile'],
+    }),
+    getSkills: builder.query<SkillWithUsers[], void>({
+      query: () => 'api/skills',
+      transformResponse: (response: HydraCollection<SkillWithUsers>) =>
+        response['hydra:member'],
+      providesTags: ['Skill'],
+    }),
+    postSkill: builder.mutation<Skill, SkillPayload>({
+      query: body => ({
+        url: 'api/skills',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['Skill'],
+    }),
+    putSkill: builder.mutation<Skill, PutSkillRequest>({
+      query: ({ '@id': uri, ...body }) => ({
+        url: uri,
+        method: 'PUT',
+        body,
+      }),
+      invalidatesTags: ['Skill'],
+    }),
+    deleteSkill: builder.mutation<void, Uri>({
+      query: uri => ({
+        url: uri,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Skill'],
+    }),
+
+    getShiftSettings: builder.query<ShiftSettings, void>({
+      query: () => 'api/shift_settings',
+      providesTags: ['ShiftSettings'],
+    }),
+    putShiftSettings: builder.mutation<
+      ShiftSettings,
+      PutShiftSettingsRequest
+    >({
+      query: body => ({
+        url: 'api/shift_settings',
+        method: 'PUT',
+        body,
+      }),
+      invalidatesTags: ['ShiftSettings'],
+    }),
+
+    generateSchedule: builder.mutation<ShiftScheduleSuggestion, { week: string }>({
+      query: body => ({
+        url: 'api/shifts/generate_schedule',
+        method: 'POST',
+        body,
+      }),
+    }),
+    batchCreateShifts: builder.mutation<
+      ShiftBatchResult,
+      { shifts: ProposedShift[] }
+    >({
+      query: body => ({
+        url: 'api/shifts/batch',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['Shift'],
+    }),
+    syncDispatch: builder.mutation<ShiftDispatchSyncResult, { week: string }>({
+      query: body => ({
+        url: 'api/shifts/dispatch_sync',
+        method: 'POST',
+        body,
+      }),
+    }),
+
+    getBankHolidays: builder.query<BankHolidays, DateRangeArgs>({
+      query: ({ after, before }) => ({
+        url: 'api/bank_holidays',
+        params: { 'date[after]': after, 'date[before]': before },
+      }),
+    }),
+
+    getShiftDashboard: builder.query<ShiftDashboard, GetShiftDashboardArgs>({
+      query: ({ weeks } = {}) => ({
+        url: 'api/shifts/dashboard',
+        params: weeks ? { weeks } : undefined,
+      }),
+      providesTags: ['Shift', 'SchedulePublication'],
+    }),
+
+    getMe: builder.query<Me, void>({
+      query: () => 'api/me',
+    }),
+    getSchedulePublications: builder.query<
+      SchedulePublication[],
+      { weekStart: string }
+    >({
+      query: ({ weekStart }) => ({
+        url: 'api/schedule_publications',
+        params: { weekStart },
+      }),
+      transformResponse: (response: HydraCollection<SchedulePublication>) =>
+        response['hydra:member'],
+      providesTags: ['SchedulePublication'],
+    }),
+    publishWeek: builder.mutation<void, { week: string }>({
+      query: body => ({
+        url: 'api/shifts/publish_week',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['SchedulePublication', 'Shift'],
+    }),
+    getOpenShifts: builder.query<HydraCollection<Shift>, DateRangeArgs>({
+      query: ({ after, before }) => ({
+        url: 'api/shifts/open',
+        params: { 'date[after]': after, 'date[before]': before },
+      }),
+      providesTags: ['Shift', 'SchedulePublication'],
+    }),
+    getShiftCompliance: builder.query<ShiftCompliance, { week: string }>({
+      query: ({ week }) => ({
+        url: 'api/shifts/compliance',
+        params: { week },
+      }),
+      // Recheck whenever shifts change or the legal config is edited
+      providesTags: ['Shift', 'ShiftSettings'],
+    }),
+    getShiftCalendar: builder.query<ShiftCalendar, void>({
+      query: () => 'api/me/shift_calendar',
+    }),
+    applyToShift: builder.mutation<Shift, Uri>({
+      query: uri => ({
+        url: `${uri}/apply`,
+        method: 'PUT',
+        body: {},
+      }),
+      invalidatesTags: ['Shift'],
+    }),
+    reportShiftTime: builder.mutation<Shift, ReportShiftTimeRequest>({
+      query: ({ uri, ...body }) => ({
+        url: `${uri}/report_time`,
+        method: 'PUT',
+        body,
+      }),
+      invalidatesTags: ['Shift'],
+    }),
+    unapplyFromShift: builder.mutation<Shift, Uri>({
+      query: uri => ({
+        url: `${uri}/unapply`,
+        method: 'PUT',
+        body: {},
+      }),
+      invalidatesTags: ['Shift'],
+    }),
   }),
 });
 
@@ -425,4 +785,40 @@ export const {
   useUpdateShopCollectionMutation,
   useCreateShopCollectionMutation,
   useDeleteShopCollectionMutation,
+  useGetShiftsQuery,
+  useGetMyShiftsQuery,
+  usePostShiftMutation,
+  usePutShiftMutation,
+  useDeleteShiftMutation,
+  useCopyWeekMutation,
+  useGetHolidayRequestsQuery,
+  useGetMyHolidayRequestsQuery,
+  usePostHolidayRequestMutation,
+  useApproveHolidayRequestMutation,
+  useRejectHolidayRequestMutation,
+  useDeleteHolidayRequestMutation,
+  useGetPlanningUsersQuery,
+  useGetShiftSettingsQuery,
+  usePutShiftSettingsMutation,
+  useGenerateScheduleMutation,
+  useBatchCreateShiftsMutation,
+  useSyncDispatchMutation,
+  useGetBankHolidaysQuery,
+  useGetShiftDashboardQuery,
+  useGetSkillsQuery,
+  useGetEmployeeProfilesQuery,
+  usePostEmployeeProfileMutation,
+  usePutEmployeeProfileMutation,
+  usePostSkillMutation,
+  usePutSkillMutation,
+  useDeleteSkillMutation,
+  useGetMeQuery,
+  useGetSchedulePublicationsQuery,
+  usePublishWeekMutation,
+  useGetOpenShiftsQuery,
+  useGetShiftComplianceQuery,
+  useGetShiftCalendarQuery,
+  useReportShiftTimeMutation,
+  useApplyToShiftMutation,
+  useUnapplyFromShiftMutation,
 } = apiSlice;

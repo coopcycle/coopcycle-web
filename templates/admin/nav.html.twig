@@ -43,6 +43,14 @@
             <span class="navbar-label">{% trans %}adminDashboard.deliveries.title{% endtrans %}</span>
           </a>
         </li>
+        {% if shift_planning_enabled and is_granted('ROLE_ADMIN') %}
+        <li data-toggle="tooltip" data-placement="bottom" title="{% trans %}adminDashboard.tooltip.shifts{% endtrans %}">
+          <a class="admin-navbar__link" href="{{ path('admin_shift_planning') }}">
+            <i class="fa fa-calendar"></i>
+            <span class="navbar-label">{% trans %}adminDashboard.shifts.title{% endtrans %}</span>
+          </a>
+        </li>
+        {% endif %}
         {% if is_granted('ROLE_ADMIN') %}
         <li data-toggle="tooltip" data-placement="bottom" title="{% trans %}adminDashboard.tooltip.restaurants{% endtrans %}">
           <a class="admin-navbar__link" href="{{ path('admin_restaurants') }}">

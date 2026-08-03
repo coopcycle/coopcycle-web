@@ -608,3 +608,269 @@ export type PaymentMethod = {
 export type PaymentMethodsOutput = {
   methods: PaymentMethod[];
 };
+
+// Shift planning
+
+export type Skill = JsonLdEntity & {
+  id: number;
+  name: string;
+};
+
+export type SkillWithUsers = Skill & {
+  users: Uri[];
+};
+
+export type SkillPayload = {
+  name: string;
+  users?: Uri[];
+};
+
+export type PutSkillRequest = SkillPayload & { '@id': Uri };
+
+export type EmployeeProfile = JsonLdEntity & {
+  id: number;
+  // User IRI (the relation serializes as a reference)
+  user: Uri;
+  contractStartDate: string | null;
+  dateOfBirth: string | null;
+  addressStreet: string | null;
+  addressPostalCode: string | null;
+  addressLocality: string | null;
+  addressCountry: string | null;
+  salaryType: 'hourly' | 'monthly' | null;
+  salaryAmount: string | null;
+  weeklyContractedHours: string | null;
+};
+
+export type EmployeeProfilePayload = Omit<
+  EmployeeProfile,
+  keyof JsonLdEntity | 'id'
+>;
+
+export type PlanningUser = JsonLdEntity & {
+  username: string;
+  roles?: string[];
+  givenName?: string | null;
+  familyName?: string | null;
+  skills?: Skill[];
+};
+
+// Actual worked time reported for an assignment (null = worked as planned)
+export type ShiftTimeAdjustment = {
+  startsAt: string;
+  endsAt: string;
+  breakMinutes: number;
+  comment: string | null;
+  reportedBy: PlanningUser | null;
+  updatedAt: string;
+};
+
+export type ShiftAssignment = {
+  user: PlanningUser;
+  createdAt: string;
+  adjustment: ShiftTimeAdjustment | null;
+};
+
+export type ShiftWaitlistEntry = {
+  user: PlanningUser;
+  createdAt: string;
+};
+
+export type Shift = JsonLdEntity & {
+  id: number;
+  type: string;
+  startsAt: string;
+  endsAt: string;
+  slots: number;
+  breakMinutes: number;
+  comment: string | null;
+  requiredSkills: Skill[];
+  assignments: ShiftAssignment[];
+  waitlist: ShiftWaitlistEntry[];
+};
+
+export type Me = JsonLdEntity & {
+  username: string;
+  skills?: Skill[];
+};
+
+export type SchedulePublication = JsonLdEntity & {
+  weekStart: string;
+  createdAt: string;
+};
+
+export type ShiftPayload = {
+  type: string;
+  startsAt: string;
+  endsAt: string;
+  slots: number;
+  breakMinutes?: number;
+  comment?: string | null;
+  requiredSkills?: Uri[];
+  users: Uri[];
+};
+
+export type PutShiftRequest = ShiftPayload & { '@id': Uri };
+
+export type DateRangeArgs = {
+  after: string;
+  before: string;
+};
+
+export type GetHolidayRequestsArgs = DateRangeArgs & {
+  status?: string[];
+};
+
+export type HolidayRequestStatus = 'pending' | 'approved' | 'rejected';
+
+export type HolidayRequest = JsonLdEntity & {
+  id: number;
+  user: PlanningUser;
+  startDate: string;
+  endDate: string;
+  status: HolidayRequestStatus;
+  comment: string | null;
+  actionedBy: PlanningUser | null;
+  actionedAt: string | null;
+  createdAt: string;
+};
+
+export type PostHolidayRequestRequest = {
+  startDate: string;
+  endDate: string;
+  comment?: string;
+};
+
+export type CopyWeekRequest = {
+  sourceWeek: string;
+  targetWeek: string;
+};
+
+// null = that rule is disabled
+export type LegalRules = Record<string, number | null>;
+
+export type LegalConfig = {
+  template: string | null;
+  rules: LegalRules;
+};
+
+export type LegalTemplate = {
+  country: string;
+  sector: string;
+  rules: Record<string, number>;
+};
+
+export type ShiftSettings = JsonLdEntity & {
+  typeColors: Record<string, string>;
+  throughput: number;
+  serviceLevel: number;
+  legal: LegalConfig;
+  legalTemplates: Record<string, LegalTemplate>;
+};
+
+export type PutShiftSettingsRequest = {
+  typeColors: Record<string, string>;
+  throughput?: number;
+  serviceLevel?: number;
+  legal?: LegalConfig;
+};
+
+export type ComplianceViolation = {
+  username: string;
+  rule: string;
+  limit: number;
+  actual: number;
+  date?: string;
+  weeks?: number;
+  from?: string;
+  to?: string;
+  workedHours?: number;
+  thresholdHours?: number;
+};
+
+export type ShiftCompliance = JsonLdEntity & {
+  week: string;
+  template: string | null;
+  violations: ComplianceViolation[];
+};
+
+export type ShiftDashboardWeek = {
+  weekStart: string;
+  weekEnd: string;
+  totalSlots: number;
+  totalAssignments: number;
+  fillRate: number;
+  published: boolean;
+};
+
+export type ShiftDashboard = JsonLdEntity & {
+  weeks: ShiftDashboardWeek[];
+};
+
+export type GetShiftDashboardArgs = {
+  weeks?: number;
+};
+
+export type ProposedShift = {
+  type: string;
+  startsAt: string;
+  endsAt: string;
+  slots: number;
+};
+
+export type DemandBucket = {
+  hour: number;
+  demand: number;
+  coverage: number;
+};
+
+export type ScheduleDay = {
+  date: string;
+  dow: number;
+  buckets: DemandBucket[];
+};
+
+export type ShiftScheduleSuggestion = JsonLdEntity & {
+  shifts: ProposedShift[];
+  days: ScheduleDay[];
+  meta: {
+    lookbackWeeks: number;
+    serviceLevel: number;
+    throughput: number;
+    observations: number;
+    forecaster: 'prophet' | 'heuristic';
+  };
+};
+
+export type ShiftCalendar = JsonLdEntity & {
+  feedUrl: string;
+};
+
+export type ReportShiftTimeRequest = {
+  uri: Uri;
+  // Dispatchers can report for any assignee; employees omit this (self)
+  user?: Uri;
+  startsAt?: string;
+  endsAt?: string;
+  breakMinutes?: number;
+  comment?: string | null;
+  // true = delete the report, back to "worked as planned"
+  clear?: boolean;
+};
+
+export type ShiftBatchResult = JsonLdEntity & {
+  created: number;
+};
+
+export type ShiftDispatchSyncResult = JsonLdEntity & {
+  added: number;
+};
+
+export type BankHoliday = {
+  date: string;
+  name: string;
+};
+
+export type BankHolidays = JsonLdEntity & {
+  holidays: BankHoliday[];
+};

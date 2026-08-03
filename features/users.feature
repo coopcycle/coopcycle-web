@@ -50,7 +50,8 @@ Feature: Users
         "roles":[
           "ROLE_USER"
         ],
-        "addresses":[]
+        "addresses":[],
+        "skills":@array@
       }
       """
 
@@ -84,7 +85,8 @@ Feature: Users
             "roles":[
               "ROLE_COURIER",
               "ROLE_USER"
-            ]
+            ],
+            "skills":@array@
           }
         ],
         "hydra:totalItems":1,
@@ -141,7 +143,8 @@ Feature: Users
         "roles":[
           "ROLE_USER"
         ],
-        "addresses":@array@
+        "addresses":@array@,
+        "skills":@array@
       }
       """
 
