@@ -2,10 +2,12 @@
 
 namespace Tests\AppBundle\Transporter;
 
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Command\SyncTransportersCommand;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Edifact\EDIFACTMessage;
+use AppBundle\Entity\Package;
 use AppBundle\Entity\Task;
 use AppBundle\Service\DeliveryOrderManager;
 use AppBundle\Service\SettingsManager;
@@ -220,7 +222,8 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::getContainer()->get(ImportFromPoint::class),
             self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs,
-            $this->deliveryOrderManager
+            $this->deliveryOrderManager,
+            self::getContainer()->get(IriConverterInterface::class)
         );
     }
 
@@ -262,6 +265,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs,
             $this->deliveryOrderManager,
+            self::getContainer()->get(IriConverterInterface::class)
         );
 
         $this->expectException(\Exception::class);
@@ -306,6 +310,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs,
             $this->deliveryOrderManager,
+            self::getContainer()->get(IriConverterInterface::class)
         );
 
         $this->expectException(\Exception::class);
@@ -350,6 +355,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs,
             $this->deliveryOrderManager,
+            self::getContainer()->get(IriConverterInterface::class)
         );
 
         $this->expectException(\Exception::class);
@@ -394,6 +400,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs,
             $this->deliveryOrderManager,
+            self::getContainer()->get(IriConverterInterface::class)
         );
 
         $this->expectException(\Exception::class);
@@ -434,6 +441,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs,
             $this->deliveryOrderManager,
+            self::getContainer()->get(IriConverterInterface::class)
         );
 
         $this->expectException(\Exception::class);
@@ -869,7 +877,17 @@ class SyncTransportersCommandTest extends KernelTestCase {
 
         // package_mapping maps the generic Transporter\Enum\ProductType
         // (parsed from the GID segment's unit codes: 23 = HANDLING_UNIT,
-        // 21 = PACKAGE) to our own Package entities by shortCode.
+        // 21 = PACKAGE) to our own Package entities by IRI. IRIs are used
+        // rather than short codes because short codes are not unique.
+        $iriConverter = self::getContainer()->get(IriConverterInterface::class);
+        $packageRepository = $this->entityManager->getRepository(Package::class);
+        $xlIri = $iriConverter->getIriFromResource(
+            $packageRepository->findOneBy(['shortCode' => 'XL'])
+        );
+        $smIri = $iriConverter->getIriFromResource(
+            $packageRepository->findOneBy(['shortCode' => 'SM'])
+        );
+
         $command = $this->buildCommandWithConfig([
             'DBSCHENKER' => [
                 'enabled' => true,
@@ -881,8 +899,8 @@ class SyncTransportersCommandTest extends KernelTestCase {
                     'uri' => $this->syncDBSchenkerFs,
                 ],
                 'package_mapping' => [
-                    'HANDLING_UNIT' => 'XL',
-                    'PACKAGE' => 'SM',
+                    'HANDLING_UNIT' => $xlIri,
+                    'PACKAGE' => $smIri,
                 ],
             ],
         ]);
@@ -1585,6 +1603,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs,
             $this->deliveryOrderManager,
+            self::getContainer()->get(IriConverterInterface::class)
         );
     }
 
