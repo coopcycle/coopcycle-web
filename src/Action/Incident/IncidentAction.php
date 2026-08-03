@@ -125,6 +125,10 @@ class IncidentAction extends Base
         ]);
 
         $this->taskManager->reschedule($task, $rescheduledAfter, $rescheduledBefore);
+
+        if ($params->getBoolean('close')) {
+            $data->setStatus(Incident::STATUS_CLOSED);
+        }
     }
 
     private function cancelTask(Incident &$data, IncidentEvent &$event): void

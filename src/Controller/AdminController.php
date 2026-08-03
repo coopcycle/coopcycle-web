@@ -121,7 +121,6 @@ use Redis;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponType;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
-use Sylius\Component\Promotion\Checker\Eligibility\PromotionCouponEligibilityCheckerInterface;
 use Sylius\Component\Promotion\Factory\PromotionCouponFactoryInterface;
 use Sylius\Component\Promotion\Model\PromotionCouponInterface;
 use Sylius\Component\Promotion\Model\PromotionInterface;
@@ -2036,24 +2035,43 @@ class AdminController extends AbstractController
     }
 
     #[Route(path: '/admin/promotions', name: 'admin_promotions')]
-    public function promotionsAction(EntityManagerInterface $entityManager,
-        PromotionCouponEligibilityCheckerInterface $promotionCouponExpirationChecker)
+    public function promotionsAction(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        PaginatorInterface $paginator)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $qb = $this->entityManager->getRepository(PromotionCouponInterface::class)->createQueryBuilder('c');
+        $repository = $this->entityManager->getRepository(PromotionCouponInterface::class);
 
-        $promotionCoupons = $qb->getQuery()->getResult();
+        // A coupon is "ongoing" while it has no expiry or has not expired yet,
+        // "past" once it has expired. This mirrors PromotionCouponDurationEligibilityChecker
+        // (expiresAt === null || now < expiresAt) so the split can be paginated in SQL.
+        $now = new \DateTime();
 
-        $ongoing = $past = [];
+        $ongoingQb = $repository->createQueryBuilder('c')
+            ->andWhere('c.expiresAt IS NULL OR c.expiresAt > :now')
+            ->setParameter('now', $now)
+            ->orderBy('c.id', 'DESC');
 
-        foreach ($promotionCoupons as $promotionCoupon) {
-            if (!$promotionCouponExpirationChecker->isEligible(new Order(), $promotionCoupon)) {
-                $past[] = $promotionCoupon;
-            } else {
-                $ongoing[] = $promotionCoupon;
-            }
-        }
+        $pastQb = $repository->createQueryBuilder('c')
+            ->andWhere('c.expiresAt IS NOT NULL AND c.expiresAt <= :now')
+            ->setParameter('now', $now)
+            ->orderBy('c.id', 'DESC');
+
+        $ongoing = $paginator->paginate(
+            $ongoingQb,
+            $request->query->getInt('ongoing_page', 1),
+            self::ITEMS_PER_PAGE,
+            [PaginatorInterface::PAGE_PARAMETER_NAME => 'ongoing_page']
+        );
+
+        $past = $paginator->paginate(
+            $pastQb,
+            $request->query->getInt('past_page', 1),
+            self::ITEMS_PER_PAGE,
+            [PaginatorInterface::PAGE_PARAMETER_NAME => 'past_page']
+        );
 
         return $this->render('admin/promotions.html.twig', [
             'ongoing' => $ongoing,

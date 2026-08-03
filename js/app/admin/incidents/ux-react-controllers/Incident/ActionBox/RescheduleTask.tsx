@@ -3,11 +3,11 @@ import moment from 'moment';
 import { Button, DatePicker } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-async function _handleResheduleSubmit(id, after, before) {
+async function _handleResheduleSubmit(id, after, before, close = false) {
   const httpClient = new window._auth.httpClient();
   return await httpClient.put(
     window.Routing.generate('_api_/incidents/{id}/action_put', { id }),
-    { action: 'rescheduled', after, before },
+    { action: 'rescheduled', after, before, close },
   );
 }
 
@@ -30,6 +30,24 @@ export default function ({ incident, task }) {
     ],
   };
 
+  const submit = async (close = false) => {
+    setSubmitting(true);
+    const after = value[0].set({ second: 0, millisecond: 0 });
+    const before = value[1].set({ second: 0, millisecond: 0 });
+    const { error } = await _handleResheduleSubmit(
+      incident.id,
+      after.format(),
+      before.format(),
+      close,
+    );
+    if (!error) {
+      location.reload();
+    } else {
+      setError(true);
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div>
       <DatePicker.RangePicker
@@ -45,27 +63,15 @@ export default function ({ incident, task }) {
       <p className="mt-3">
         <Button
           disabled={value === null || submitting}
-          onClick={async () => {
-            setSubmitting(true);
-            const after = value[0].set({ second: 0, millisecond: 0 });
-            const before = value[1].set({ second: 0, millisecond: 0 });
-            const { error } = await _handleResheduleSubmit(
-              incident.id,
-              after.format(),
-              before.format(),
-            );
-            if (!error) {
-              location.reload();
-            } else {
-              setError(true);
-              setSubmitting(false);
-            }
-          }}>
+          onClick={() => submit()}>
           {t('ADMIN_DASHBOARD_RESCHEDULE')}
         </Button>
       </p>
       <p>
-        <Button type="danger" ghost disabled={value === null || submitting}>
+        <Button
+          danger
+          disabled={value === null || submitting}
+          onClick={() => submit(true)}>
           {t('ADMIN_DASHBOARD_AND_CLOSE_THE_INCIDENT', {
             action: t('ADMIN_DASHBOARD_RESCHEDULE'),
           })}

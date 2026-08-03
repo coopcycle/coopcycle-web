@@ -30,6 +30,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Transporter\DTO\Mesurement;
 use Transporter\DTO\Point;
+use Transporter\Enum\DateEventType;
 use Transporter\Enum\INOVERTMessageType;
 use Transporter\Enum\NameAndAddressType;
 use Transporter\Enum\TransporterName;
@@ -279,9 +280,9 @@ class SyncTransportersCommand extends Command {
 
         // This is the name of the file that will be stored on our S3
         $filename = sprintf(
-                "REPORT-%s_%s.%s.edi", mb_strtolower($this->transporter),
-                date('Y-m-d_His'), uniqid()
-            );
+            "REPORT-%s_%s.%s.edi", mb_strtolower($this->transporter),
+            date('Y-m-d_His'), uniqid()
+        );
 
         $this->edifactFs->write($filename, $content);
         $sync->push($content);
@@ -456,11 +457,11 @@ class SyncTransportersCommand extends Command {
         $pickup->setNext($dropoff);
         $dropoff->setPrevious($pickup);
 
-
-        $pickup->setAfter($this->startOfDay());
-        $pickup->setBefore($this->endOfDay());
-        $dropoff->setAfter($this->startOfDay());
-        $dropoff->setBefore($this->endOfDay());
+        [$pickupAfter, $pickupBefore] = $this->resolveDeliveryWindow($point);
+        $pickup->setAfter($pickupAfter);
+        $pickup->setBefore($pickupBefore);
+        $dropoff->setAfter($pickupAfter);
+        $dropoff->setBefore($pickupBefore);
 
         // DELIVERY SETUP
         $delivery = new Delivery();
@@ -479,8 +480,6 @@ class SyncTransportersCommand extends Command {
     private function createOrderForDelivery(Delivery $delivery): void {
         $this->deliveryOrderManager->createOrder($delivery, [
             'pricingStrategy' => new CalculateUsingPricingRules(),
-            /* 'persist' => false, */
-            /* 'throwException' => false, */
         ]);
     }
 
@@ -488,7 +487,6 @@ class SyncTransportersCommand extends Command {
         if ($this->output->isVerbose()) {
             $this->debugPoint($point);
         }
-
 
         // PICKUP SETUP
         $pickup = $this->importFromPoint->import($point, $edi);
@@ -500,10 +498,11 @@ class SyncTransportersCommand extends Command {
         $pickup->setNext($dropoff);
         $dropoff->setPrevious($pickup);
 
-        $pickup->setAfter($this->startOfDay());
-        $pickup->setBefore($this->endOfDay());
-        $dropoff->setAfter($this->startOfDay());
-        $dropoff->setBefore($this->endOfDay());
+        [$pickupAfter, $pickupBefore] = $this->resolveDeliveryWindow($point);
+        $pickup->setAfter($pickupAfter);
+        $pickup->setBefore($pickupBefore);
+        $dropoff->setAfter($pickupAfter);
+        $dropoff->setBefore($pickupBefore);
 
         // DELIVERY SETUP
         $delivery = new Delivery();
@@ -517,6 +516,23 @@ class SyncTransportersCommand extends Command {
             $this->entityManager->persist($delivery);
             $this->createOrderForDelivery($delivery);
         }
+    }
+
+    /**
+     * @return array{0:\DateTime,1:\DateTime}
+     */
+    private function resolveDeliveryWindow(Point $point): array
+    {
+        $requested = $point->getDates(DateEventType::REQUESTED_DELIVERY_DATE);
+        if (count($requested) > 0) {
+            $carbon = Carbon::instance($requested[0]->getDate());
+            return [
+                $carbon->startOfDay()->toDateTime(),
+                $carbon->endOfDay()->toDateTime(),
+            ];
+        }
+
+        return [$this->startOfDay(), $this->endOfDay()];
     }
 
     private function startOfDay(): \DateTime {
@@ -574,7 +590,6 @@ class SyncTransportersCommand extends Command {
             $this->transporterLogger->critical($e->getMessage(), ['transporter' => $this->transporter]);
             throw $e;
         }
-
 
         return new TransporterSyncOptions(
             $fs,
