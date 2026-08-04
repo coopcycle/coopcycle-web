@@ -38,7 +38,7 @@ class TaskListManagerTest extends TestCase
     {
         $task = new Task();
         $task->setStatus($status);
-        $task->assignTo($courier, $date);
+        $task->assignTo($courier);
 
         // set_items resolves item IRIs through the IriConverter
         $this->iriConverter->getIriFromResource($task)->willReturn($iri);

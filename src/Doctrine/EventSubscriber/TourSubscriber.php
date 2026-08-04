@@ -97,7 +97,7 @@ class TourSubscriber
                 $item = $taskCollection->getTaskListItem();
                 $taskList = $item->getParent();
                 $this->logger->debug(sprintf('Tour modification: Task #%d needs to be assigned', $taskCollectionItem->getTask()->getId()));
-                $task->assignTo($taskList->getCourier(), $taskList->getDate());
+                $task->assignTo($taskList->getCourier());
             } else if ($removed && $task->isAssigned()) { // tour is assigned and the item was removed
                 $this->logger->debug(sprintf('Tour modification: Task #%d needs to be unassigned', $taskCollectionItem->getTask()->getId()));
                 $taskCollectionItem->getTask()->unassign();

@@ -422,11 +422,6 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     private $assignedTo;
 
     /**
-     * @var \DateTime|null
-     */
-    private $assignedOn;
-
-    /**
      * @var Collection<int,TaskImage>
      */
     #[Groups(['task_edit'])]
@@ -740,31 +735,17 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     {
         return $this->isAssigned() && $this->assignedTo === $courier;
     }
-    /**
-     * @return ?DateTime
-     */
-    public function getAssignedOn()
-    {
-        return $this->assignedOn;
-    }
-
     public function getAssignedCourier()
     {
         return $this->assignedTo;
     }
 
     /**
-     * @param \DateTime|null $date
      * @return void
      */
-    public function assignTo(User $courier, ?\DateTime $date = null)
+    public function assignTo(User $courier)
     {
-        if (null === $date) {
-            @trigger_error('Not specifying a date when calling assignTo() is deprecated', E_USER_DEPRECATED);
-        }
-
         $this->assignedTo = $courier;
-        $this->assignedOn = $date;
     }
     /**
      * @return void
@@ -772,7 +753,6 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     public function unassign()
     {
         $this->assignedTo = null;
-        $this->assignedOn = null;
     }
     /**
      * @return bool

@@ -259,19 +259,38 @@ class TaskListRepository extends ServiceEntityRepository
      * The task has been done in the context of this TaskList.
      */
     public function findLastTaskListByTask(Task $task) {
-        return $this->entityManager->createQueryBuilder()
+        return $this->findTaskListContainingTask($task);
+    }
+
+    /**
+     * Find the (most recent) task list that actually contains this task,
+     * whether directly or through a tour, optionally restricted to a courier.
+     *
+     * This is the source of truth for "which task list a task belongs to":
+     * it relies on the persisted TaskList\Item structure rather than guessing
+     * a date from the task (see issue #874).
+     */
+    public function findTaskListContainingTask(Task $task, ?UserInterface $courier = null): ?TaskList
+    {
+        $qb = $this->entityManager->createQueryBuilder()
             ->select('tl')
             ->from(TaskList::class, 'tl')
             ->leftJoin('tl.items', 'item')
             ->leftJoin('item.tour', 'tour')
             ->leftJoin('tour.items', 'tourItem')
-            ->where('item.task = :task')
-            ->orWhere('tourItem.task = :task')
+            // NB: keep the task match grouped, otherwise the courier filter
+            // below would bind to the tour branch only (AND binds tighter than OR).
+            ->where('item.task = :task OR tourItem.task = :task')
             ->setParameter('task', $task)
             ->orderBy('tl.date', 'desc')
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult();
+            ->setMaxResults(1);
+
+        if (null !== $courier) {
+            $qb->andWhere('tl.courier = :courier')
+                ->setParameter('courier', $courier);
+        }
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 
     private function getPaymentMethod($paymentMethodsByOrderId, ?int $orderId): ?string

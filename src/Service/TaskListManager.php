@@ -81,7 +81,7 @@ class TaskListManager {
         // Re-assign every task currently in the list (this includes the
         // completed tasks preserved above).
         foreach ($taskList->getTasks() as $task) {
-            $task->assignTo($taskList->getCourier(), $taskList->getDate());
+            $task->assignTo($taskList->getCourier());
         }
     }
 

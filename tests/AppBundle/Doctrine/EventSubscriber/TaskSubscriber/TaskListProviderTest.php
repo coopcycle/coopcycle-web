@@ -5,12 +5,13 @@ namespace Tests\AppBundle\Doctrine\EventSubscriber\TaskSubscriber;
 use AppBundle\Doctrine\EventSubscriber\TaskSubscriber\TaskListProvider;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
+use AppBundle\Entity\TaskListRepository;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ObjectRepository;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
+use Symfony\Component\Clock\MockClock;
 
 class TaskListProviderTest extends TestCase
 {
@@ -18,58 +19,111 @@ class TaskListProviderTest extends TestCase
 
     private $entityManager;
     private $taskListRepository;
-    private $provider;
 
     public function setUp(): void
     {
         $this->entityManager = $this->prophesize(EntityManagerInterface::class);
-        $this->taskListRepository = $this->prophesize(ObjectRepository::class);
+        $this->taskListRepository = $this->prophesize(TaskListRepository::class);
 
         $this->entityManager
             ->getRepository(TaskList::class)
             ->willReturn($this->taskListRepository->reveal());
 
-        // No task list exists yet for the resolved (date, courier), so a fresh
-        // one gets created with the date getTaskList() decided on.
-        $this->taskListRepository
-            ->findOneBy(Argument::any())
-            ->willReturn(null);
         $this->entityManager->persist(Argument::type(TaskList::class))->willReturn(null);
+    }
 
-        $this->provider = new TaskListProvider($this->entityManager->reveal());
+    private function provider(string $now): TaskListProvider
+    {
+        return new TaskListProvider($this->entityManager->reveal(), new MockClock($now));
+    }
+
+    private function multiDayTask(): Task
+    {
+        $task = new Task();
+        $task->setAfter(new \DateTime('2026-07-17 10:00:00'));
+        $task->setBefore(new \DateTime('2026-08-17 18:00:00'));
+
+        return $task;
     }
 
     /**
-     * Reproduces issue #874.
+     * Fix for issue #874.
      *
-     * A task whose time range spans several days is assigned through
-     * PUT /api/tasks/{id}/assign, i.e. AssignTrait::assign() -> Task::assignTo($user)
-     * with NO date, so assignedOn stays null.
-     *
-     * getTaskList() then falls back to doneBefore, filing the task on the LAST
-     * day of its range instead of the day it is actually being dispatched.
+     * A month-spanning task that is not in any list yet must be filed on the
+     * dispatch day (clamped to its own [doneAfter, doneBefore] window), NOT
+     * blindly on its doneBefore (last) day.
      */
-    public function testMultiDayTaskAssignedViaEndpointIsFiledOnDoneBefore()
+    public function testNotYetListedTaskIsFiledOnDispatchDayClampedToWindow()
     {
         $courier = new User();
         $courier->setUsername('bob');
 
-        // Month-spanning task, like the affected user's deliveries.
-        $task = new Task();
-        $task->setDoneAfter(new \DateTime('2026-07-17 10:00:00'));
-        $task->setDoneBefore(new \DateTime('2026-08-17 18:00:00'));
+        $task = $this->multiDayTask();
 
-        // Assigned via the endpoint => no date passed => assignedOn is null.
-        $task->assignTo($courier);
-        $this->assertNull($task->getAssignedOn());
+        // The task is not in any list yet.
+        $this->taskListRepository
+            ->findTaskListContainingTask($task, $courier)
+            ->willReturn(null);
+        $this->taskListRepository->findOneBy(Argument::any())->willReturn(null);
 
-        $taskList = $this->provider->getTaskList($task, $courier);
+        // "Today" is before the task's window => clamp up to its first day.
+        $taskList = $this->provider('2026-07-10')->getTaskList($task, $courier);
 
-        // The task must not be silently filed onto the last day of its range.
+        $this->assertEquals('2026-07-17', $taskList->getDate()->format('Y-m-d'));
         $this->assertNotEquals(
             $task->getDoneBefore()->format('Y-m-d'),
             $taskList->getDate()->format('Y-m-d'),
             'A multi-day task must not be filed onto its doneBefore (last) day (issue #874)'
         );
+    }
+
+    /**
+     * When "today" falls inside the task's window, the task is filed on today.
+     */
+    public function testNotYetListedTaskIsFiledOnToday()
+    {
+        $courier = new User();
+        $courier->setUsername('bob');
+
+        $task = $this->multiDayTask();
+
+        $this->taskListRepository
+            ->findTaskListContainingTask($task, $courier)
+            ->willReturn(null);
+        $this->taskListRepository->findOneBy(Argument::any())->willReturn(null);
+
+        $taskList = $this->provider('2026-07-25 09:00:00')->getTaskList($task, $courier);
+
+        $this->assertEquals('2026-07-25', $taskList->getDate()->format('Y-m-d'));
+    }
+
+    /**
+     * The persisted list that already contains the task is the source of truth:
+     * it is returned as-is, regardless of the task's date range, and no new list
+     * is created.
+     */
+    public function testReturnsExistingListContainingTask()
+    {
+        $courier = new User();
+        $courier->setUsername('bob');
+
+        // A persisted task (has an id) is looked up by the containing-list query.
+        $task = $this->multiDayTask();
+        $idProperty = new \ReflectionProperty(Task::class, 'id');
+        $idProperty->setValue($task, 1);
+
+        $existing = new TaskList();
+        $existing->setCourier($courier);
+        $existing->setDate(new \DateTime('2026-07-20'));
+
+        $this->taskListRepository
+            ->findTaskListContainingTask($task, $courier)
+            ->willReturn($existing);
+
+        $this->entityManager->persist(Argument::any())->shouldNotBeCalled();
+
+        $taskList = $this->provider('2026-07-25')->getTaskList($task, $courier);
+
+        $this->assertSame($existing, $taskList);
     }
 }
