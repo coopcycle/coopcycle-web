@@ -53,6 +53,8 @@ import {
   CLOSE_SEND_TO_WAREHOUSE_MODAL,
   OPEN_TASK_RESCHEDULE_MODAL,
   CLOSE_TASK_RESCHEDULE_MODAL,
+  OPEN_MOVE_TO_DAY_MODAL,
+  CLOSE_MOVE_TO_DAY_MODAL,
   CREATE_TOUR_REQUEST,
   CREATE_TOUR_REQUEST_SUCCESS,
   CREATE_GROUP_REQUEST,
@@ -101,6 +103,7 @@ const initialState = {
   isCreateTourModalVisible: false,
   isCreateTourButtonLoading: false,
   isTaskRescheduleModalVisible: false,
+  isMoveToDayModalVisible: false,
 }
 
 export const addModalIsOpen = (state = false, action) => {
@@ -528,6 +531,17 @@ export const isTaskRescheduleModalVisible = (state = initialState.isTaskReschedu
     case OPEN_TASK_RESCHEDULE_MODAL:
       return true
     case CLOSE_TASK_RESCHEDULE_MODAL:
+      return false
+    default:
+      return state
+  }
+}
+
+export const isMoveToDayModalVisible = (state = initialState.isMoveToDayModalVisible, action) => {
+  switch (action.type) {
+    case OPEN_MOVE_TO_DAY_MODAL:
+      return true
+    case CLOSE_MOVE_TO_DAY_MODAL:
       return false
     default:
       return state

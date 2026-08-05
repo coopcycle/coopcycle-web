@@ -22,6 +22,7 @@ import {
   closeReportIncidentModal,
   closeSendToWarehouseModal,
   closeTaskRescheduleModal,
+  closeMoveToDayModal,
 } from '../redux/actions';
 import TaskModalContent from './TaskModalContent';
 import FiltersModalContent from './FiltersModalContent';
@@ -37,6 +38,7 @@ import CreateTourModalContent from './CreateTourModalContent';
 import TaskRescheduleModalContent from './TaskRescheduleModalContent';
 import TaskReportIncidentModalContent from './TaskReportIncidentModalContent';
 import SendToWarehouseModalContent from './SendToWarehouseModalContent';
+import MoveToDayModalContent from './MoveToDayModalContent';
 import { usePreloadedState } from '../hooks/usePreloadedState';
 
 function Modals(props) {
@@ -187,6 +189,15 @@ function Modals(props) {
         shouldCloseOnOverlayClick={true}>
         <SendToWarehouseModalContent />
       </Modal>
+      <Modal
+        appElement={document.getElementById('dashboard')}
+        style={customStyle}
+        isOpen={props.isMoveToDayModalVisible}
+        onRequestClose={props.closeMoveToDayModal}
+        className="ReactModal__Content--select-courier"
+        shouldCloseOnOverlayClick={true}>
+        <MoveToDayModalContent />
+      </Modal>
     </React.Fragment>
   );
 }
@@ -207,6 +218,7 @@ function mapStateToProps(state) {
     isSendToWarehouseModalVisible: state.isSendToWarehouseModalVisible,
     isCreateTourModalVisible: state.isCreateTourModalVisible,
     isTaskRescheduleModalVisible: state.isTaskRescheduleModalVisible,
+    isMoveToDayModalVisible: state.isMoveToDayModalVisible,
     reportIncidentModalIsOpen: state.reportIncidentModalIsOpen,
   };
 }
@@ -230,6 +242,7 @@ function mapDispatchToProps(dispatch) {
     closeSendToWarehouseModal: () => dispatch(closeSendToWarehouseModal()),
     closeCreateTourModal: () => dispatch(closeCreateTourModal()),
     closeTaskRescheduleModal: () => dispatch(closeTaskRescheduleModal()),
+    closeMoveToDayModal: () => dispatch(closeMoveToDayModal()),
     closeReportIncidentModal: () => dispatch(closeReportIncidentModal()),
   };
 }

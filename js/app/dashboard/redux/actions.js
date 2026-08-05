@@ -118,6 +118,9 @@ export const CLOSE_SEND_TO_WAREHOUSE_MODAL = 'CLOSE_SEND_TO_WAREHOUSE_MODAL'
 export const OPEN_TASK_RESCHEDULE_MODAL = 'OPEN_TASK_RESCHEDULE_MODAL'
 export const CLOSE_TASK_RESCHEDULE_MODAL = 'CLOSE_TASK_RESCHEDULE_MODAL'
 
+export const OPEN_MOVE_TO_DAY_MODAL = 'OPEN_MOVE_TO_DAY_MODAL'
+export const CLOSE_MOVE_TO_DAY_MODAL = 'CLOSE_MOVE_TO_DAY_MODAL'
+
 export const CREATE_TOUR_REQUEST = 'CREATE_TOUR_REQUEST'
 export const CREATE_TOUR_REQUEST_SUCCESS = 'CREATE_TOUR_REQUEST_SUCCESS'
 export const MODIFY_TOUR_REQUEST = 'MODIFY_TOUR_REQUEST'
@@ -1319,6 +1322,53 @@ export function moveTasksToNextWorkingDay(tasks) {
   }
 }
 
+export function moveTasksToDay(tasks, day) {
+
+  return function(dispatch, getState) {
+
+    if (tasks.length === 0) {
+      return
+    }
+
+    const { jwt } = getState()
+
+    dispatch(createTaskRequest())
+
+    const httpClient = createClient(dispatch)
+
+    const dayProps = {
+      date:  moment(day).get('date'),
+      month: moment(day).get('month'),
+      year:  moment(day).get('year'),
+    }
+
+    const requests = tasks.map(task => {
+
+      return httpClient.request({
+        method: 'put',
+        url: task['@id'],
+        data: {
+          after: moment(task.after).set(dayProps).format(),
+          before: moment(task.before).set(dayProps).format(),
+        },
+        headers: {
+          'Authorization': `Bearer ${jwt}`,
+          'Accept': 'application/ld+json',
+          'Content-Type': 'application/ld+json'
+        }
+      })
+    })
+
+    Promise.all(requests)
+      .then(values => {
+        dispatch(createTaskSuccess())
+        values.forEach(response => dispatch(updateTask(response.data)))
+        dispatch(closeMoveToDayModal())
+      })
+      .catch(error => dispatch(cancelTaskFailure(error)))
+  }
+}
+
 export function updateRightPanelSize(size) {
   return { type: size > 40 ? RIGHT_PANEL_MORE_THAN_HALF : RIGHT_PANEL_LESS_THAN_HALF }
 }
@@ -1731,6 +1781,14 @@ export function openTaskRescheduleModal() {
 
 export function closeTaskRescheduleModal() {
   return { type: CLOSE_TASK_RESCHEDULE_MODAL }
+}
+
+export function openMoveToDayModal() {
+  return { type: OPEN_MOVE_TO_DAY_MODAL }
+}
+
+export function closeMoveToDayModal() {
+  return { type: CLOSE_MOVE_TO_DAY_MODAL }
 }
 
 export function openSendToWarehouseModal() {
