@@ -1839,14 +1839,13 @@ export function sendToWarehouse(tasks, warehouse) {
   return function(dispatch, getState) {
     const { jwt } = getState()
 
-    const pickup  = tasks.find(t => t.type === 'PICKUP')
-    const dropoff = tasks.find(t => t.type === 'DROPOFF')
-
+    // The backend resolves the linked pickup/dropoff pair from whatever tasks we send,
+    // so a single selected task (a pickup or a dropoff) is enough.
     createClient(dispatch).request({
       method: 'post',
       url: `${warehouse['@id']}/relay`,
       data: {
-        tasks: [pickup['@id'], dropoff['@id']],
+        tasks: tasks.map(t => t['@id']),
       },
       headers: {
         'Authorization': `Bearer ${jwt}`,
@@ -1855,11 +1854,9 @@ export function sendToWarehouse(tasks, warehouse) {
       }
     })
       .then((response) => {
-        dispatch(updateTask(response.data.hubDropoff))
-        dispatch(updateTask(response.data.hubPickup))
-        // The backend updated dropoff.previous → hubPickup. Mirror that in the store
-        // so groupLinkedTasks can colour all four tasks consistently right away.
-        dispatch(updateTask({ ...dropoff, previous: response.data.hubPickup['@id'] }))
+        // The response contains both the original tasks (whose previous-chain changed)
+        // and the tasks created by the relay operation.
+        response.data.tasks.forEach(task => dispatch(updateTask(task)))
         dispatch(closeSendToWarehouseModal())
       })
       .catch(() => {

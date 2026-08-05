@@ -257,6 +257,14 @@ export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, link
       actions.push(RESCHEDULE)
       actions.push(REPORT_INCIDENT)
 
+      // A single pickup or dropoff is enough to relay through a warehouse: the backend
+      // resolves the linked task. We only offer it when the task actually has a linked
+      // partner (i.e. belongs to a delivery/linked pair).
+      if ((selectedTask.type === 'PICKUP' || selectedTask.type === 'DROPOFF')
+        && linkedTasksIds.includes(selectedTask['@id'])) {
+        actions.push(SEND_TO_WAREHOUSE)
+      }
+
     }
 
     if (containsOnlyUnassignedTasks) {

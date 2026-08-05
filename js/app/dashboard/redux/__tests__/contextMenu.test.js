@@ -29,6 +29,28 @@ describe('updateTask', () => {
 
     })
 
+    it('should allow sending a single linked task to a warehouse', () => {
+
+        const selectedTasks = [{'@id': '/api/tasks/730', type: 'DROPOFF', assignedTo: '', previous: '/api/tasks/729', next: null, packages: [], tour: null}]
+        const unassignedTasks = [{'@id': '/api/tasks/730', type: 'DROPOFF', assignedTo: '', previous: '/api/tasks/729', next: null, packages: [], tour: null}]
+        const linkedTasksIds = ['/api/tasks/729', '/api/tasks/730']
+
+        const actions = getAvailableActionsForTasks(selectedTasks, unassignedTasks, linkedTasksIds)
+
+        expect(actions).toContain(SEND_TO_WAREHOUSE)
+    })
+
+    it('should not offer warehouse relay for a single unlinked task', () => {
+
+        const selectedTasks = [{'@id': '/api/tasks/730', type: 'DROPOFF', assignedTo: '', previous: null, next: null, packages: [], tour: null}]
+        const unassignedTasks = [{'@id': '/api/tasks/730', type: 'DROPOFF', assignedTo: '', previous: null, next: null, packages: [], tour: null}]
+        const linkedTasksIds = []
+
+        const actions = getAvailableActionsForTasks(selectedTasks, unassignedTasks, linkedTasksIds)
+
+        expect(actions).not.toContain(SEND_TO_WAREHOUSE)
+    })
+
     it('should return actions for a single assigned task', () => {
 
         const selectedTasks = [{'@id': '/api/tasks/730', assignedTo: 'admin', isAssigned: true, previous: null, next: null, packages: [], tour: null}]
