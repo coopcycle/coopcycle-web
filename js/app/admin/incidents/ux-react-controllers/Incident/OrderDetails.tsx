@@ -4,7 +4,6 @@ import { Button, Skeleton, Tooltip } from 'antd';
 import './OrderDetails.scss';
 import { money, weight } from '../../utils';
 import TaskStatusBadge from '../../../../dashboard/components/TaskStatusBadge';
-import moment from 'moment';
 
 import store from '../../[id]/redux/incidentStore';
 import {
