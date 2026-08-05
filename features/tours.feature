@@ -57,6 +57,34 @@ Feature: Tours
         "@*@":"@*@"
       }
       """
+    When the user "sarah" sends a "GET" request to "/api/tasks/1"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks/1",
+        "@type":"Task",
+        "after":"@string@.startsWith('2018-03-05')",
+        "before":"@string@.startsWith('2018-03-05')",
+        "@*@":"@*@"
+      }
+      """
+    When the user "sarah" sends a "GET" request to "/api/tasks/2"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks/2",
+        "@type":"Task",
+        "after":"@string@.startsWith('2018-03-05')",
+        "before":"@string@.startsWith('2018-03-05')",
+        "@*@":"@*@"
+      }
+      """
 
     Scenario: Delete a tour unauthorized
     Given the fixtures files are loaded:
