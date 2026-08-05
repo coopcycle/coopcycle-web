@@ -145,6 +145,7 @@ export type LocalBusiness = JsonLdEntity & {
 export type InvoiceLineItemGroupedByOrganization = {
   storeId: number;
   organizationLegalName: string;
+  storeName: string;
   ordersCount: number;
   subTotal: number;
   tax: number;

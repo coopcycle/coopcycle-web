@@ -313,6 +313,7 @@ Feature: Invoicing
             "@id": @string@,
             "storeId":@integer@,
             "organizationLegalName":@string@,
+            "storeName":@string@,
             "ordersCount":@integer@,
             "subTotal":@integer@,
             "tax":@integer@,
