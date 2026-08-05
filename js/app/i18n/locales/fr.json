@@ -336,6 +336,8 @@
         "ADMIN_DASHBOARD_MOVE_TO_ANOTHER_DAY_MULTI": "Déplacer {{count}} tâches à un autre jour",
         "ADMIN_DASHBOARD_MOVE_TO_ANOTHER_DAY": "Déplacer à un autre jour",
         "ADMIN_DASHBOARD_MOVE_TO_ANOTHER_DAY_CONFIRM": "Déplacer {{count}} tâches",
+        "ADMIN_DASHBOARD_MOVE_TOUR_TO_ANOTHER_DAY": "Déplacer la tournée à un autre jour",
+        "ADMIN_DASHBOARD_MOVE_TOUR_TO_ANOTHER_DAY_CONFIRM": "Déplacer la tournée",
         "ADMIN_DASHBOARD_VIEW_MODE_DROPOFF_ASC": "Afficher par dépôt croissant",
         "ADMIN_DASHBOARD_DELETE_GROUP_CONFIRM": "Voulez vous supprimer toutes les tâches de ce groupe ?",
         "ADMIN_DASHBOARD_DELETE_TOUR_CONFIRM": "Supprimer cette tournée et remettre les tâches en \"Non assignées\"",

@@ -104,6 +104,7 @@ const initialState = {
   isCreateTourButtonLoading: false,
   isTaskRescheduleModalVisible: false,
   isMoveToDayModalVisible: false,
+  moveToDayModalTour: null,
 }
 
 export const addModalIsOpen = (state = false, action) => {
@@ -543,6 +544,17 @@ export const isMoveToDayModalVisible = (state = initialState.isMoveToDayModalVis
       return true
     case CLOSE_MOVE_TO_DAY_MODAL:
       return false
+    default:
+      return state
+  }
+}
+
+export const moveToDayModalTour = (state = initialState.moveToDayModalTour, action) => {
+  switch (action.type) {
+    case OPEN_MOVE_TO_DAY_MODAL:
+      return action.tour
+    case CLOSE_MOVE_TO_DAY_MODAL:
+      return null
     default:
       return state
   }

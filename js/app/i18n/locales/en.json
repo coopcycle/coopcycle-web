@@ -185,6 +185,8 @@
         "ADMIN_DASHBOARD_MOVE_TO_ANOTHER_DAY_MULTI": "Move {{count}} tasks to another day",
         "ADMIN_DASHBOARD_MOVE_TO_ANOTHER_DAY": "Move to another day",
         "ADMIN_DASHBOARD_MOVE_TO_ANOTHER_DAY_CONFIRM": "Move {{count}} tasks",
+        "ADMIN_DASHBOARD_MOVE_TOUR_TO_ANOTHER_DAY": "Move tour to another day",
+        "ADMIN_DASHBOARD_MOVE_TOUR_TO_ANOTHER_DAY_CONFIRM": "Move tour",
         "ADMIN_DASHBOARD_VIEW_MODE_DROPOFF_ASC": "Display by dropoff asc.",
         "ADMIN_DASHBOARD_RECURRENCE_RULE_MODAL_TITLE": "Recurrence rule",
         "ADMIN_DASHBOARD_SHOW_RECURRENCE_RULES": "Show recurrence rules",

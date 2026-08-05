@@ -24,6 +24,40 @@ Feature: Tours
       }
       """
 
+    Scenario: Move a tour to another day
+    Given the fixtures files are loaded:
+      | tasks.yml           |
+    And the courier "sarah" is loaded:
+      | email     | sarah@coopcycle.org |
+      | password  | 123456              |
+      | telephone | 0033612345678       |
+    And the user "sarah" has role "ROLE_ADMIN"
+    And the user "sarah" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "PUT" request to "/api/tours/1" with body:
+      """
+      {
+        "date": "2018-03-05",
+        "tasks": [
+          "/api/tasks/1",
+          "/api/tasks/2"
+        ]
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Tour",
+        "@id":"/api/tours/1",
+        "@type":"Tour",
+        "date":"2018-03-05",
+        "@*@":"@*@"
+      }
+      """
+
     Scenario: Delete a tour unauthorized
     Given the fixtures files are loaded:
       | tasks.yml           |

@@ -1369,6 +1369,42 @@ export function moveTasksToDay(tasks, day) {
   }
 }
 
+export function moveTourToDay(tour, day) {
+
+  return function(dispatch, getState) {
+
+    const { jwt } = getState()
+
+    dispatch(toggleTourLoading(tour['@id']))
+
+    createClient(dispatch).request({
+      method: 'put',
+      url: tour['@id'],
+      data: {
+        name: tour.name,
+        date: moment(day).format('YYYY-MM-DD'),
+        tasks: tour.items,
+      },
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    })
+      .then(() => {
+        // The tour now belongs to another day, so it leaves the current view.
+        dispatch(deleteTourSuccess(tour['@id']))
+        dispatch(toggleTourLoading(tour['@id']))
+        dispatch(closeMoveToDayModal())
+      })
+      .catch(error => {
+        // eslint-disable-next-line no-console
+        console.error(error)
+        dispatch(toggleTourLoading(tour['@id']))
+      })
+  }
+}
+
 export function updateRightPanelSize(size) {
   return { type: size > 40 ? RIGHT_PANEL_MORE_THAN_HALF : RIGHT_PANEL_LESS_THAN_HALF }
 }
@@ -1783,8 +1819,8 @@ export function closeTaskRescheduleModal() {
   return { type: CLOSE_TASK_RESCHEDULE_MODAL }
 }
 
-export function openMoveToDayModal() {
-  return { type: OPEN_MOVE_TO_DAY_MODAL }
+export function openMoveToDayModal(tour = null) {
+  return { type: OPEN_MOVE_TO_DAY_MODAL, tour }
 }
 
 export function closeMoveToDayModal() {

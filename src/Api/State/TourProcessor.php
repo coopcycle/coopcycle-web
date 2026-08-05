@@ -31,6 +31,10 @@ class TourProcessor implements ProcessorInterface
                 $tour->setName($data->name);
             }
 
+            if (!empty($data->date)) {
+                $tour->setDate(new \DateTime($data->date));
+            }
+
             $tour->setTasks($data->tasks);
 
         } else {
