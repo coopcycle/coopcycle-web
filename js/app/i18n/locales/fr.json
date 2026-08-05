@@ -333,6 +333,7 @@
         "CART_PRODUCT_OPTIONS_VALUES_RANGE_UP_TO": "Vous pouvez choisir jusqu'à {{count}} valeur(s)",
         "RESTAURANTS_AND_STORES": "Restaurants et magasins",
         "ADMIN_DASHBOARD_MOVE_TO_NEXT_DAY_MULTI": "Déplacer {{count}} tâches au prochain jour",
+        "ADMIN_DASHBOARD_MOVE_TO_NEXT_DAY": "Déplacer au prochain jour",
         "ADMIN_DASHBOARD_MOVE_TO_ANOTHER_DAY_MULTI": "Déplacer {{count}} tâches à un autre jour",
         "ADMIN_DASHBOARD_MOVE_TO_ANOTHER_DAY": "Déplacer à un autre jour",
         "ADMIN_DASHBOARD_MOVE_TO_ANOTHER_DAY_CONFIRM": "Déplacer {{count}} tâches",

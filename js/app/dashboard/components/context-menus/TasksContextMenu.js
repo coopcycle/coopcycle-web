@@ -11,7 +11,6 @@ import {
   completeTasks,
   createTaskList,
   putTaskListItems,
-  moveTasksToNextDay,
   openMoveToDayModal,
   moveToBottom,
   moveToTop,
@@ -49,7 +48,6 @@ export const UNASSIGN_MULTI = 'UNASSIGN_MULTI'
 export const CANCEL_MULTI = 'CANCEL_MULTI'
 export const MOVE_TO_TOP = 'MOVE_TO_TOP'
 export const MOVE_TO_BOTTOM = 'MOVE_TO_BOTTOM'
-export const MOVE_TO_NEXT_DAY_MULTI = 'MOVE_TO_NEXT_DAY_MULTI'
 export const MOVE_TO_ANOTHER_DAY_MULTI = 'MOVE_TO_ANOTHER_DAY_MULTI'
 export const START_TASKS_MULTI = 'START_TASKS_MULTI'
 export const CREATE_GROUP = 'CREATE_GROUP'
@@ -262,7 +260,6 @@ export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, link
     }
 
     if (containsOnlyUnassignedTasks) {
-      actions.push(MOVE_TO_NEXT_DAY_MULTI)
       actions.push(MOVE_TO_ANOTHER_DAY_MULTI)
       if (!containsOnlyGroupedTasks) {
         actions.push(ADD_TO_GROUP)
@@ -483,12 +480,6 @@ const DynamicMenu = () => {
         onClick={ () => dispatch(openCreateTourModal()) }
       >
         { t('ADMIN_DASHBOARD_CREATE_TOUR') }
-      </Item>
-      <Item
-        hidden={ !actions.includes(MOVE_TO_NEXT_DAY_MULTI) }
-        onClick={ () => dispatch(moveTasksToNextDay(selectedTasks)) }
-      >
-        { t('ADMIN_DASHBOARD_MOVE_TO_NEXT_DAY_MULTI', { count: selectedTasks.length }) }
       </Item>
       <Item
         hidden={ !actions.includes(MOVE_TO_ANOTHER_DAY_MULTI) }
