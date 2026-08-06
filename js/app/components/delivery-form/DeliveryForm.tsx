@@ -6,6 +6,7 @@ import { InfoCircleOutlined } from '@ant-design/icons'
 
 import Spinner from '../../components/core/Spinner.js';
 import BarcodesModal from '../../../../assets/react/controllers/BarcodesModal.jsx';
+import EdifactModal from '../../../../assets/react/controllers/EdifactModal.jsx';
 import Task from './components/task/Task';
 import { usePrevious } from '../../dashboard/redux/utils';
 
@@ -658,6 +659,14 @@ const DeliveryForm = ({
                     <div className="mt-2">
                       <BarcodesModal deliveryId={deliveryId} showText />
                     </div>
+                    {isDispatcher && delivery?.hasEdifactImport ? (
+                      <div className="mt-2">
+                        <EdifactModal
+                          deliveryId={deliveryId}
+                          label={t('DELIVERY_FORM_VIEW_EDIFACT_DATA')}
+                        />
+                      </div>
+                    ) : null}
                   </div>
                 )}
 

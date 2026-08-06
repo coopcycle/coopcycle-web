@@ -740,6 +740,7 @@
         "DELIVERY_FORM_NEW_PRICE": "New price",
         "DELIVERY_FORM_OLD_PRICE": "Old price",
         "DELIVERY_FORM_TRACKING_LINK": "Tracking link",
+        "DELIVERY_FORM_VIEW_EDIFACT_DATA": "View EDIFACT data",
         "DELIVERY_FROM_TRACKING_LINK_COPY": "Copy tracking link",
         "DELIVERY_FORM_SUPPLEMENTS": "Supplements",
         "DELIVERY_FORM_SET_MANUALLY_PRICE": "Set the price manually",

@@ -975,6 +975,9 @@ services:
 
   AppBundle\Transporter\ImportFromPoint: ~
   AppBundle\Transporter\ReportFromCC: ~
+  AppBundle\Transporter\EdifactMessageParser:
+    arguments:
+      $edifactFs: '@edi_messages_filesystem'
 
   AppBundle\Action\Register:
     public: true

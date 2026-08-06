@@ -15,6 +15,7 @@ use AppBundle\Action\Delivery\Cancel as CancelDelivery;
 use AppBundle\Action\Delivery\Drop as DropDelivery;
 use AppBundle\Action\Delivery\Pick as PickDelivery;
 use AppBundle\Action\Delivery\BulkAsync as BulkAsyncDelivery;
+use AppBundle\Action\Delivery\GetEdifactData as GetEdifactDataController;
 use AppBundle\Action\Delivery\SuggestOptimizations as SuggestOptimizationsController;
 use AppBundle\Api\Dto\DeliveryFromTasksInput;
 use AppBundle\Api\Dto\DeliveryInputDto;
@@ -44,6 +45,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
     types: ['http://schema.org/ParcelDelivery'],
     operations: [
         new Get(security: 'is_granted(\'view\', object)'),
+        new Get(
+            uriTemplate: '/deliveries/{id}/edifact',
+            controller: GetEdifactDataController::class,
+            openapiContext: ['summary' => 'Get the parsed EDIFACT data a Delivery was imported from'],
+            security: 'is_granted(\'view\', object)'
+        ),
         new Put(
             denormalizationContext: ['groups' => ['delivery_create']],
             security: 'is_granted(\'edit\', object)',
@@ -619,6 +626,23 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     public function hasImages()
     {
         return count($this->getImages()) > 0;
+    }
+
+    /**
+     * Whether any of this delivery's tasks was imported from an EDIFACT
+     * message. Used by the delivery form to conditionally show the
+     * "View EDIFACT data" link.
+     */
+    #[Groups(['delivery'])]
+    public function getHasEdifactImport(): bool
+    {
+        foreach ($this->getTasks() as $task) {
+            if (!is_null($task->getImportMessage())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function getEdifactMessagesTimeline(): array

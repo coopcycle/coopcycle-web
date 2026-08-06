@@ -351,6 +351,7 @@ export type Delivery = JsonLdEntity & {
   tasks: Task[];
   order?: PackageDeliveryOrderMinimal;
   trackingUrl?: string;
+  hasEdifactImport?: boolean;
 };
 
 // Delivery Template for RecurrenceRule
