@@ -93,6 +93,7 @@ class EdifactMessageParser
             'createdAt' => $message->getCreatedAt()?->format(\DateTimeInterface::ATOM),
             'file' => $filename,
             'point' => $this->pointToArray($point),
+            'raw' => $this->normalize($content),
         ];
     }
 

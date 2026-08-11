@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Modal, Descriptions, Table, Typography, Tag, Divider, Empty, Spin } from 'antd'
+import { Modal, Descriptions, Table, Typography, Tag, Divider, Empty, Spin, Tabs } from 'antd'
 import moment from 'moment'
 
 const baseURL = location.protocol + '//' + location.host
@@ -176,17 +176,11 @@ function PackagesTable({ packages, measurements }) {
   )
 }
 
-function EdifactMessage({ message, index, total }) {
+function ParsedMessage({ message }) {
   const { point } = message
 
   return (
     <div>
-      {index > 0 && <Divider />}
-      {total > 1 && (
-        <Title level={4}>
-          {message.taskType} — {message.reference}
-        </Title>
-      )}
       <Descriptions bordered size="small" column={2} className="mb-3">
         <Descriptions.Item label="Reference">
           {message.reference}
@@ -212,6 +206,50 @@ function EdifactMessage({ message, index, total }) {
       <PackagesTable
         packages={point.packages}
         measurements={point.measurements}
+      />
+    </div>
+  )
+}
+
+function RawMessage({ message }) {
+  return (
+    <pre
+      style={{
+        fontFamily: 'monospace',
+        whiteSpace: 'pre-wrap',
+        wordBreak: 'break-all',
+        maxHeight: '60vh',
+        overflow: 'auto',
+        margin: 0,
+      }}>
+      {message.raw}
+    </pre>
+  )
+}
+
+function EdifactMessage({ message, index, total }) {
+  return (
+    <div>
+      {index > 0 && <Divider />}
+      {total > 1 && (
+        <Title level={4}>
+          {message.taskType} — {message.reference}
+        </Title>
+      )}
+      <Tabs
+        defaultActiveKey="parsed"
+        items={[
+          {
+            key: 'parsed',
+            label: 'Parsed',
+            children: <ParsedMessage message={message} />,
+          },
+          {
+            key: 'raw',
+            label: 'Raw',
+            children: <RawMessage message={message} />,
+          },
+        ]}
       />
     </div>
   )
