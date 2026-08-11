@@ -86,7 +86,7 @@
     data-store-node-id="{{ store|get_iri_from_item }}"
     data-delivery-id="{{ delivery.id }}"
     data-delivery-node-id="{{ is_new ? '' : delivery|get_iri_from_item }}"
-    data-delivery="{{ is_new ? '' : delivery|serialize('jsonld', {groups: ['delivery', 'address', 'barcode']}) }}"
+    data-delivery="{{ is_new ? '' : delivery|serialize('jsonld', {groups: ['delivery', 'address', 'barcode', 'delivery_edifact']}) }}"
     data-order="{{ order ? order|serialize('jsonld', {groups: ['order', 'pricing_deliveries']}) : '' }}"
     data-form-data="{{ formData ? formData|serialize('jsonld', {groups: ['delivery', 'address', 'barcode']}) : '' }}"
     data-is-dispatcher="{{ isDispatcher ? 'true' : 'false' }}"

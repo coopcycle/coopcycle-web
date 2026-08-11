@@ -633,7 +633,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
      * message. Used by the delivery form to conditionally show the
      * "View EDIFACT data" link.
      */
-    #[Groups(['delivery'])]
+    #[Groups(['delivery_edifact'])]
     public function getHasEdifactImport(): bool
     {
         foreach ($this->getTasks() as $task) {
