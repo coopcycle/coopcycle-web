@@ -64,6 +64,13 @@ final class OrderDepositRefundProcessor implements OrderProcessorInterface
             return;
         }
 
+        // When the restaurant makes zero waste (LoopEat) mandatory, reusable packaging
+        // is always enabled: the customer cannot opt out. We force it here so the whole
+        // application (cart, checkout, API) sees a consistent state.
+        if ($restaurant->isLoopeatEnabled() && $restaurant->isLoopeatMandatory()) {
+            $order->setReusablePackagingEnabled(true);
+        }
+
         if ($restaurant->isDepositRefundOptin()) {
             if (!$order->isReusablePackagingEnabled()) {
                 return;

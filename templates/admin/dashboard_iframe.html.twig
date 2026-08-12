@@ -22,6 +22,7 @@
     data-centrifugo-tracking-channel="{{ centrifugo_tracking_channel }}"
     data-centrifugo-events-channel="{{ centrifugo_events_channel }}"
     data-date="{{ date|date('Y-m-d') }}"
+    data-timezone="{{ timezone }}"
     data-tags="{{ tags|json_encode|e('html_attr') }}"
     data-couriers-list="{{ couriers|json_encode|e('html_attr') }}"
     data-uploader-endpoint="{{ oneup_uploader_endpoint('tasks') }}"

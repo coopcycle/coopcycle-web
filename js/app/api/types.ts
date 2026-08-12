@@ -145,6 +145,7 @@ export type LocalBusiness = JsonLdEntity & {
 export type InvoiceLineItemGroupedByOrganization = {
   storeId: number;
   organizationLegalName: string;
+  storeName: string;
   ordersCount: number;
   subTotal: number;
   tax: number;
@@ -350,6 +351,7 @@ export type Delivery = JsonLdEntity & {
   tasks: Task[];
   order?: PackageDeliveryOrderMinimal;
   trackingUrl?: string;
+  hasEdifactImport?: boolean;
 };
 
 // Delivery Template for RecurrenceRule

@@ -15,6 +15,9 @@ use AppBundle\Service\SettingsManager;
 use AppBundle\Transporter\ImportFromPoint;
 use AppBundle\Transporter\ReportFromCC;
 use AppBundle\Transporter\TransporterHelpers;
+use ApiPlatform\Api\IriConverterInterface;
+use ApiPlatform\Exception\InvalidArgumentException;
+use ApiPlatform\Exception\ItemNotFoundException;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -30,6 +33,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Transporter\DTO\Mesurement;
 use Transporter\DTO\Point;
+use Transporter\Enum\DateEventType;
 use Transporter\Enum\INOVERTMessageType;
 use Transporter\Enum\NameAndAddressType;
 use Transporter\Enum\TransporterName;
@@ -66,6 +70,7 @@ class SyncTransportersCommand extends Command {
         private ReportFromCC $reportFromCC,
         private Filesystem $edifactFs,
         private DeliveryOrderManager $deliveryOrderManager,
+        private IriConverterInterface $iriConverter,
     )
     { parent::__construct(); }
 
@@ -224,6 +229,17 @@ class SyncTransportersCommand extends Command {
                 throw $e;
             }
 
+            // If a flush failure closed the EntityManager during the import,
+            // it can no longer be used to build/persist reports. Skip reporting
+            // for this run; it will be picked up on the next one.
+            if (!$this->entityManager->isOpen()) {
+                $this->transporterLogger->warning(
+                    'Skipping report sending: EntityManager was closed during import',
+                    ['transporter' => $this->transporter]
+                );
+                return Command::FAILURE;
+            }
+
             try {
                 $this->sendReports($sync, $opts);
             } catch (Exception $e) {
@@ -268,9 +284,9 @@ class SyncTransportersCommand extends Command {
 
         // This is the name of the file that will be stored on our S3
         $filename = sprintf(
-                "REPORT-%s_%s.%s.edi", mb_strtolower($this->transporter),
-                date('Y-m-d_His'), uniqid()
-            );
+            "REPORT-%s_%s.%s.edi", mb_strtolower($this->transporter),
+            date('Y-m-d_His'), uniqid()
+        );
 
         $this->edifactFs->write($filename, $content);
         $sync->push($content);
@@ -286,46 +302,136 @@ class SyncTransportersCommand extends Command {
      */
     private function importAllTasks(TransporterSync $sync): void
     {
-        $count = 0;
+        $imported = 0;
+        $skipped = 0;
+        $failedFiles = 0;
+
+        // Each file is imported in isolation so a single malformed or
+        // otherwise unimportable file cannot abort the whole batch.
         foreach ($sync->pull() as $content) {
-            [$type, $messages] = Transporter::parse(
-                $content,
-                TransporterName::from($this->transporter)
-            );
-
-            if (count($messages) > 1) {
-                $this->transporterLogger->notice(
-                    sprintf("%s messages to import from a single EDIFACT", count($messages)),
+            try {
+                [$imp, $skp] = $this->importFileContent($content);
+                $imported += $imp;
+                $skipped += $skp;
+            } catch (\Throwable $e) {
+                $failedFiles++;
+                $this->output->writeln(sprintf(
+                    '<error>Failed to import a file (kept on the remote for retry): %s</error>',
+                    $e->getMessage()
+                ));
+                $this->transporterLogger->error(
+                    sprintf('Failed to import an EDIFACT file, it will be retried on the next run: %s', $e->getMessage()),
+                    ['transporter' => $this->transporter, 'exception' => $e]
                 );
-            }
 
-            $filename = sprintf(
-                "%s-%s_%s.%s.edi",
-                mb_strtoupper($type->value),
-                mb_strtolower($this->transporter),
-                date('Y-m-d_His'), uniqid()
-            );
-
-            if (!$this->dryRun) {
-                $this->edifactFs->write($filename, $content);
-            }
-
-            foreach ($messages as $tasks) {
-                foreach ($tasks->getTasks() as $task) {
-                    $edifactMessage = $this->storeInboundEdi($task, $filename);
-                    $this->importTask($task, $edifactMessage);
-                    $count++;
+                // Most failures (parse, geocoding, validation) happen before any
+                // DB flush and leave the EntityManager usable, so we just move on
+                // to the next file. A failure *during* a flush, however, closes
+                // the EntityManager and it cannot be reused; in that case stop
+                // early. Everything not yet processed stays on the remote and is
+                // retried next run, and dedup on reference prevents duplicates.
+                if (!$this->entityManager->isOpen()) {
+                    $this->output->writeln('<error>Database session closed after a failure; stopping early. Remaining files will be retried on the next run.</error>');
+                    $this->transporterLogger->error(
+                        'EntityManager closed after a failure; stopping import early',
+                        ['transporter' => $this->transporter]
+                    );
+                    break;
                 }
             }
         }
-        if (!$this->dryRun) {
-            $this->entityManager->flush();
+
+        if ($failedFiles === 0) {
+            // Everything imported cleanly: acknowledge the files on the remote.
+            $this->output->writeln("Remove files to acknowledge import");
+            $this->transporterLogger->info("Remove files to acknowledge import", ['transporter' => $this->transporter]);
+            $sync->flush($this->dryRun);
+        } else {
+            // At least one file failed. The remote acknowledge is all-or-nothing,
+            // so we keep every file in place to avoid losing the failed ones.
+            // Import is idempotent (dedup on reference), so the next run skips
+            // what already landed and retries only what failed.
+            $this->output->writeln(sprintf(
+                '<comment>%d file(s) failed; keeping all files on the remote for retry (already-imported tasks are skipped).</comment>',
+                $failedFiles
+            ));
+            $this->transporterLogger->warning(
+                sprintf('%d EDIFACT file(s) failed to import; all files kept on the remote for retry', $failedFiles),
+                ['transporter' => $this->transporter]
+            );
         }
-        $this->output->writeln("Remove files to acknowledge import");
-        $this->transporterLogger->info("Remove files to acknowledge import", ['transporter' => $this->transporter]);
-        $sync->flush($this->dryRun);
-        $this->output->writeln("Done syncing, imported $count tasks");
-        $this->transporterLogger->info("Done syncing, imported $count tasks", ['transporter' => $this->transporter]);
+
+        $summary = "Done syncing, imported $imported tasks ($skipped already-imported, $failedFiles file(s) failed)";
+        $this->output->writeln($summary);
+        $this->transporterLogger->info($summary, ['transporter' => $this->transporter]);
+    }
+
+    /**
+     * Imports a single EDIFACT file's tasks.
+     *
+     * @return array{0:int,1:int} [imported, skipped]
+     * @throws FilesystemException
+     * @throws TransporterException
+     */
+    private function importFileContent(string $content): array
+    {
+        // Some transporters declare UNOC (ISO-8859-1) in the UNB segment but
+        // actually transmit UTF-8. The EDIFACT parser then strips bytes
+        // 0x80-0x9F per the UNOC charset, which shreds multi-byte UTF-8 "smart
+        // punctuation" (e.g. en-dash E2 80 93 -> dangling E2) and yields
+        // invalid UTF-8 that PostgreSQL rejects on insert. Normalize the
+        // payload before parsing; keep $content untouched so the original bytes
+        // are archived verbatim on S3 below.
+        $parseable = $this->normalizeEdifactPayload($content);
+
+        [$type, $messages] = Transporter::parse(
+            $parseable,
+            TransporterName::from($this->transporter)
+        );
+
+        if (count($messages) > 1) {
+            $this->transporterLogger->notice(
+                sprintf("%s messages to import from a single EDIFACT", count($messages)),
+            );
+        }
+
+        $filename = sprintf(
+            "%s-%s_%s.%s.edi",
+            mb_strtoupper($type->value),
+            mb_strtolower($this->transporter),
+            date('Y-m-d_His'), uniqid()
+        );
+
+        if (!$this->dryRun) {
+            $this->edifactFs->write($filename, $content);
+        }
+
+        /** @var EDIFACTMessageRepository $ediRepo */
+        $ediRepo = $this->entityManager->getRepository(EDIFACTMessage::class);
+
+        $imported = 0;
+        $skipped = 0;
+        foreach ($messages as $tasks) {
+            foreach ($tasks->getTasks() as $task) {
+                // Idempotency: skip tasks already imported for this transporter
+                // (e.g. a file re-processed after a mid-batch failure, or a
+                // resend of the same consignment).
+                if (!$this->dryRun && $ediRepo->hasInbound($task->getId(), $this->transporter)) {
+                    $skipped++;
+                    $this->transporterLogger->info(
+                        sprintf('Task %s already imported, skipping', $task->getId()),
+                        ['transporter' => $this->transporter]
+                    );
+                    continue;
+                }
+
+                $edifactMessage = $this->storeInboundEdi($task, $filename);
+                $this->importTask($task, $edifactMessage);
+                $imported++;
+            }
+        }
+
+        return [$imported, $skipped];
     }
 
     private function importTask(Point $point, EDIFACTMessage $edi): void {
@@ -355,11 +461,11 @@ class SyncTransportersCommand extends Command {
         $pickup->setNext($dropoff);
         $dropoff->setPrevious($pickup);
 
-
-        $pickup->setAfter($this->startOfDay());
-        $pickup->setBefore($this->endOfDay());
-        $dropoff->setAfter($this->startOfDay());
-        $dropoff->setBefore($this->endOfDay());
+        [$pickupAfter, $pickupBefore] = $this->resolveDeliveryWindow($point);
+        $pickup->setAfter($pickupAfter);
+        $pickup->setBefore($pickupBefore);
+        $dropoff->setAfter($pickupAfter);
+        $dropoff->setBefore($pickupBefore);
 
         // DELIVERY SETUP
         $delivery = new Delivery();
@@ -378,8 +484,6 @@ class SyncTransportersCommand extends Command {
     private function createOrderForDelivery(Delivery $delivery): void {
         $this->deliveryOrderManager->createOrder($delivery, [
             'pricingStrategy' => new CalculateUsingPricingRules(),
-            /* 'persist' => false, */
-            /* 'throwException' => false, */
         ]);
     }
 
@@ -387,7 +491,6 @@ class SyncTransportersCommand extends Command {
         if ($this->output->isVerbose()) {
             $this->debugPoint($point);
         }
-
 
         // PICKUP SETUP
         $pickup = $this->importFromPoint->import($point, $edi);
@@ -399,10 +502,11 @@ class SyncTransportersCommand extends Command {
         $pickup->setNext($dropoff);
         $dropoff->setPrevious($pickup);
 
-        $pickup->setAfter($this->startOfDay());
-        $pickup->setBefore($this->endOfDay());
-        $dropoff->setAfter($this->startOfDay());
-        $dropoff->setBefore($this->endOfDay());
+        [$pickupAfter, $pickupBefore] = $this->resolveDeliveryWindow($point);
+        $pickup->setAfter($pickupAfter);
+        $pickup->setBefore($pickupBefore);
+        $dropoff->setAfter($pickupAfter);
+        $dropoff->setBefore($pickupBefore);
 
         // DELIVERY SETUP
         $delivery = new Delivery();
@@ -416,6 +520,23 @@ class SyncTransportersCommand extends Command {
             $this->entityManager->persist($delivery);
             $this->createOrderForDelivery($delivery);
         }
+    }
+
+    /**
+     * @return array{0:\DateTime,1:\DateTime}
+     */
+    private function resolveDeliveryWindow(Point $point): array
+    {
+        $requested = $point->getDates(DateEventType::REQUESTED_DELIVERY_DATE);
+        if (count($requested) > 0) {
+            $carbon = Carbon::instance($requested[0]->getDate());
+            return [
+                $carbon->startOfDay()->toDateTime(),
+                $carbon->endOfDay()->toDateTime(),
+            ];
+        }
+
+        return [$this->startOfDay(), $this->endOfDay()];
     }
 
     private function startOfDay(): \DateTime {
@@ -474,7 +595,6 @@ class SyncTransportersCommand extends Command {
             throw $e;
         }
 
-
         return new TransporterSyncOptions(
             $fs,
             $attributes,
@@ -485,7 +605,10 @@ class SyncTransportersCommand extends Command {
 
     /**
      * Resolves the `package_mapping` config (Transporter\Enum\ProductType
-     * case name => Package shortCode) into actual Package entities.
+     * case name => Package IRI, e.g. "/api/packages/1") into actual Package
+     * entities. IRIs are used rather than short codes because short codes are
+     * not unique (several packages can share the same one), which made the
+     * mapping ambiguous.
      *
      * @param array<string,string> $mapping
      * @return array<string,Package>
@@ -496,25 +619,82 @@ class SyncTransportersCommand extends Command {
             return [];
         }
 
-        $repo = $this->entityManager->getRepository(Package::class);
         $resolved = [];
-        foreach ($mapping as $productType => $shortCode) {
-            $package = $repo->findOneBy(['shortCode' => $shortCode]);
-            if (is_null($package)) {
+        foreach ($mapping as $productType => $iri) {
+            try {
+                $package = $this->iriConverter->getResourceFromIri($iri);
+            } catch (InvalidArgumentException|ItemNotFoundException $e) {
                 $this->transporterLogger->warning(
                     sprintf(
-                        'Package mapping references unknown package shortCode "%s" for product type "%s"',
-                        $shortCode,
+                        'Package mapping references unknown package IRI "%s" for product type "%s"',
+                        $iri,
                         $productType
                     ),
                     ['transporter' => $this->transporter]
                 );
                 continue;
             }
+
+            if (!$package instanceof Package) {
+                $this->transporterLogger->warning(
+                    sprintf(
+                        'Package mapping IRI "%s" for product type "%s" does not resolve to a Package',
+                        $iri,
+                        $productType
+                    ),
+                    ['transporter' => $this->transporter]
+                );
+                continue;
+            }
+
             $resolved[$productType] = $package;
         }
 
         return $resolved;
+    }
+
+    /**
+     * Makes a UTF-8 EDIFACT payload safe to feed to a parser configured for
+     * the UNOC (ISO-8859-1) charset.
+     *
+     * The parser deletes bytes 0x80-0x9F, which are exactly the continuation
+     * bytes of the common UTF-8 "smart punctuation" characters. Left alone,
+     * that turns e.g. an en-dash into a lone 0xE2 lead byte (invalid UTF-8).
+     * We transliterate those characters to plain ASCII up-front so they
+     * survive as readable text, then guarantee the result is valid UTF-8.
+     *
+     * Accented Latin letters (é, è, à, ...) are intentionally left untouched:
+     * their UTF-8 continuation bytes are >= 0xA0 and pass through the parser
+     * unharmed, so there is no reason to strip their accents.
+     */
+    private function normalizeEdifactPayload(string $content): string
+    {
+        if (mb_check_encoding($content, 'ASCII')) {
+            return $content;
+        }
+
+        // Map the characters whose UTF-8 encoding contains a 0x80-0x9F byte
+        // (and would therefore be mangled) to ASCII equivalents.
+        $replacements = [
+            "\u{2013}" => '-',   // – en-dash
+            "\u{2014}" => '-',   // — em-dash
+            "\u{2018}" => "'",   // ‘ left single quote
+            "\u{2019}" => "'",   // ’ right single quote
+            "\u{201A}" => "'",   // ‚ single low quote
+            "\u{201C}" => '"',   // “ left double quote
+            "\u{201D}" => '"',   // ” right double quote
+            "\u{201E}" => '"',   // „ double low quote
+            "\u{2026}" => '...', // … ellipsis
+            "\u{2022}" => '*',   // • bullet
+            "\u{20AC}" => 'EUR', // € euro sign
+            "\u{00A0}" => ' ',   // non-breaking space
+        ];
+        $content = strtr($content, $replacements);
+
+        // Belt and suspenders: drop any remaining byte sequence that is not
+        // valid UTF-8 so a single malformed character can never abort the
+        // whole import batch.
+        return mb_convert_encoding($content, 'UTF-8', 'UTF-8');
     }
 
     private function debugPoint(Point $point): void {

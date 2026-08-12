@@ -4,8 +4,15 @@ import { Dropdown, Flex, Row, Select, Statistic, notification } from 'antd';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import PageHeader from '../../../../components/PageHeader';
-import { connectWithRedux } from '../../[id]/redux/incidentStore';
-import { selectIncident, selectLoaded } from '../../[id]/redux/incidentSlice';
+import {
+  connectWithRedux,
+  useAppDispatch,
+} from '../../[id]/redux/incidentStore';
+import {
+  selectIncident,
+  selectLoaded,
+  setIncident,
+} from '../../[id]/redux/incidentSlice';
 import { useUsername } from '../../[id]/hooks/useUsername';
 import ActionBox from './ActionBox';
 
@@ -16,10 +23,12 @@ async function _handleStatusSubmit(id, body) {
     body,
   );
 }
-async function syncData(id, body, t) {
-  const { error } = await _handleStatusSubmit(id, body);
+async function syncData(id, body, t, dispatch, incident) {
+  const { error, data } = await _handleStatusSubmit(id, body);
   if (error) {
     notification.error({ message: t('SOMETHING_WENT_WRONG') });
+  } else {
+    dispatch(setIncident({ ...incident, ...body }));
   }
 }
 
@@ -52,6 +61,7 @@ function _statusBtn(status) {
 }
 
 export default connectWithRedux(function ({ isLastmile }) {
+  const dispatch = useAppDispatch();
   const loaded = useSelector(selectLoaded);
   const incident = useSelector(selectIncident);
   const [priority, setPriority] = useState(incident.priority);
@@ -61,7 +71,6 @@ export default connectWithRedux(function ({ isLastmile }) {
   const username = useUsername(incident.createdBy);
 
   const { t } = useTranslation();
-
   if (!loaded) {
     return null;
   }
@@ -78,13 +87,13 @@ export default connectWithRedux(function ({ isLastmile }) {
             key="close"
             onClick={() => {
               setStatus(next);
-              syncData(incident.id, { status: next }, t);
+              syncData(incident.id, { status: next }, t, dispatch, incident);
             }}
             menu={{
               onClick: ({ key }) => {
                 key = parseInt(key);
                 setPriority(key);
-                syncData(incident.id, { priority: key }, t);
+                syncData(incident.id, { priority: key }, t, dispatch, incident);
               },
               items: [
                 {
@@ -135,7 +144,7 @@ export default connectWithRedux(function ({ isLastmile }) {
         <Select
           mode="tags"
           placeholder={t('PLUS_ADD_TAGS')}
-          onBlur={() => syncData(incident.id, { tags }, t)}
+          onBlur={() => syncData(incident.id, { tags }, t, dispatch, incident)}
           onChange={tags => setTags(tags)}
           options={tags.map(t => ({ label: t, value: t }))}
           style={{ marginLeft: '2px', width: '300px' }}

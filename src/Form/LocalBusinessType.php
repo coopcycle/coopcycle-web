@@ -48,6 +48,7 @@ abstract class LocalBusinessType extends AbstractType
         protected array $transportersConfig = [],
         protected bool $billingEnabled = false,
         ?string $standtrackEnabled = null,
+        protected bool $zeltyEnabled = false,
         array $rdcConnections = [],
         bool $rdcEnabled = false,
         protected bool $cykeEnabled = false

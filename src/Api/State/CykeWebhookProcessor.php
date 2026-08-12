@@ -52,6 +52,29 @@ final class CykeWebhookProcessor implements ProcessorInterface
             ->getRepository(CykeDelivery::class)
             ->findOneBy(['cykeId' => (string) $deliveryPayload['id']]);
 
+        $originalDeliveryId = $deliveryPayload['original_delivery_id'] ?? null;
+
+        if (null === $cykeDelivery && !empty($originalDeliveryId)) {
+            // A failed delivery was rescheduled on Cyke's side under a new delivery id,
+            // pointing back to the original one. If we recognize the original, this is
+            // a re-delivery of a delivery of ours: repoint our mapping to the new id so
+            // that subsequent webhooks (which will reference the new id) keep matching.
+            $cykeDelivery = $this->entityManager
+                ->getRepository(CykeDelivery::class)
+                ->findOneBy(['cykeId' => (string) $originalDeliveryId]);
+
+            if (null !== $cykeDelivery) {
+                $this->logger->info(sprintf(
+                    'Cyke delivery "%s" re-delivered as "%s" for CoopCycle delivery #%d, updating mapping',
+                    $originalDeliveryId,
+                    $deliveryPayload['id'],
+                    $cykeDelivery->getDelivery()->getId()
+                ));
+
+                $cykeDelivery->setCykeId((string) $deliveryPayload['id']);
+            }
+        }
+
         if (null === $cykeDelivery) {
             // We receive webhooks for every delivery created on Cyke, not just the
             // ones we forwarded — most of them aren't ours, so this is expected

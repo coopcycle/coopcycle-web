@@ -220,10 +220,10 @@ export const storeFixture = {
               },
               after: '2024-01-09T00:00:00+01:00',
               before: '2024-01-09T23:59:59+01:00',
-              isAssigned: true,
+              isAssigned: false,
               doneAfter: '2024-01-09T00:00:00+01:00',
               doneBefore: '2024-01-09T23:59:59+01:00',
-              assignedTo: 'admin',
+              assignedTo: null,
               previous: null,
               next: null
             },

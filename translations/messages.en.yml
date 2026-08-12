@@ -764,6 +764,7 @@ form.checkout_address.reusable_packaging.loopeat.website: website %name%
 form.checkout_address.reusable_packaging.loopeat.how_it_works: How it works?
 form.checkout_address.reusable_packaging.loopeat.enable_zero_waste: Activate the zero waste option to benefit from a reusable box service for your order
 form.checkout_address.reusable_packaging.loopeat.connect: Please create or connect your %name% account to %brand_name% to settle your deposit, or disable the zero waste option.
+form.checkout_address.reusable_packaging.loopeat.connect_mandatory: Please create or connect your %name% account to %brand_name% to settle your deposit.
 form.checkout_address.reusable_packaging.loopeat.connect_account: Connect to %name%
 form.checkout_address.reusable_packaging.loopeat.add_credits: Add credits to my wallet
 form.checkout_address.reusable_packaging.loopeat.manage_deposit: Manage my deposit
@@ -994,6 +995,7 @@ delivery.table.heading.summary: Summary
 delivery.table.heading.courier: Courier
 delivery.table.heading.order: Order
 delivery.table.heading.owner: Owner
+delivery.barcodes.show: View barcodes
 search.users: Search a user…
 search.orders: Search an order (number, customer email…)
 allergens.CEREALS_CONTAINING_GLUTEN: Cereals containing gluten
@@ -1396,6 +1398,12 @@ localBusiness.form.business_address.help: This address will be used in receipts
 form.local_business.mercadopago.connected: Connected
 restaurant.form.section.en_boite_le_plat: En Boîte Le Plat
 restaurant.form.en_boite_le_plat_enabled.label: Enable En Boîte Le Plat deposit-refund system
+restaurant.form.zelty_api_key: Zelty API key
+restaurant.form.zelty_api_key.help: 'Activate the CoopCycle app on the <a href="https://bo.zelty.fr/marketplace/coopcycle/status" target="_blank">Zelty Marketplace</a> to obtain your API key.'
+restaurant.form.zelty_webhook_secret_key: Zelty Webhook Secret Key
+restaurant.form.zelty_webhook_secret_key.help: 'Zelty may return an obfuscated webhook secret when registering webhooks. If the secret was not saved automatically, find the real value in your Zelty back-office and enter it here. It is used to verify the authenticity of incoming webhook calls. Leave blank to skip signature verification.'
+restaurant.form.zelty_delivery_fee_dish: Delivery fee dish
+restaurant.form.zelty_delivery_fee_dish.placeholder: 'None (delivery fee not sent to Zelty)'
 form.checkout_address.reusable_packaging_en_boite_le_plat_enabled.label: 'I want <a href="%url%" target="_blank">En Boîte Le Plat</a> reusable containers.'
 order.cart.donation: Donation
 order.cart.donation.disclaimer: We offer you to donate %percentage% of the revenue from your order to one of our partner associations. You will not pay more.
@@ -1667,10 +1675,10 @@ form.store.cyke_webhook_secret.help: Automatically generated. Copy it and paste 
 form.store.cyke_package_type_id.label: Package type
 form.store.cyke_package_type_id.help: The package type sent to Cyke for every delivery created from this store
 form.store.cyke_package_type_id.placeholder: Select a package type
-form.store.cyke_time_slot.label: Delivery time slot
-form.store.cyke_time_slot.help: 'The time slot sent to Cyke for every delivery created from this store, matching one of the fixed slots configured in your Cyke account (e.g. 08:00-18:00 for "Journée entière")'
-form.store.cyke_time_slot.placeholder: '08:00-18:00'
-form.store.cyke_time_slot.invalid: 'This value should match the format HH:MM-HH:MM, e.g. 08:00-18:00'
+form.store.cyke_time_slot.label: Delivery opening hours
+form.store.cyke_time_slot.help: 'The opening hours used to schedule deliveries sent to Cyke, in schema.org format (e.g. "Mo-Fr 09:00-18:00, Sa 09:00-16:00"). They must match the opening hours configured in your Cyke account, so deliveries are never scheduled outside them.'
+form.store.cyke_time_slot.placeholder: 'Mo-Fr 09:00-18:00, Sa 09:00-16:00'
+form.store.cyke_time_slot.invalid: 'This value should match the schema.org opening hours format, e.g. "Mo-Fr 09:00-18:00, Sa 09:00-16:00"'
 store.form.section.cyke: Cyke
 form.payment.edenred.refund_amount.help: Edenred does not support partial refunds.
 restaurant.form.use_paygreen.label: Use Paygreen for this shop

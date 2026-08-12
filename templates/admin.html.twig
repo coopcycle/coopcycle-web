@@ -39,6 +39,11 @@
     {% block breadcrumb %}{% endblock %}
   </ol>
   {% block subnav %}{% endblock %}
+  {% if block('dashboard_actions') %}
+    <section class="mb-4">
+      {% block dashboard_actions %}{% endblock %}
+    </section>
+  {% endif %}
   <div class="mb-4">{% block content %}{% endblock %}</div>
 </div>
 {% endblock %}

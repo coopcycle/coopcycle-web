@@ -118,7 +118,15 @@ export const selectAssignedTasks = createSelector(
 export const selectUnassignedTasks = createSelector(
   selectAllTasks,
   selectAssignedTasks,
-  (allTasks, assignedTasks) => _.filter(allTasks, task => !assignedTasks.find(t => t['@id'] === task['@id']))
+  // A task is unassigned only if it has no courier AND is not in any task list
+  // loaded for the selected day. Checking `assignedTo` (kept in sync optimistically,
+  // see taskEntityReducers) is what prevents a task assigned on another day from
+  // showing up as unassigned here: `api/tasks?date=D` returns a task on every day
+  // its [after, before] window overlaps, but its task list item lives on a
+  // single day, so the task-list check alone misclassifies it on the other days.
+  (allTasks, assignedTasks) => _.filter(allTasks, task =>
+    !task.assignedTo && !assignedTasks.find(t => t['@id'] === task['@id'])
+  )
 )
 
 export const selectAllTours = createSelector(

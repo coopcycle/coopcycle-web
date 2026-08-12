@@ -140,6 +140,12 @@ security:
             stateless: true
             bearer_token: true
 
+        api_store_addresses:
+            pattern:   ^/api/stores/[0-9]+/addresses$
+            methods: [ GET, POST ]
+            stateless: true
+            bearer_token: true
+
         api_stores:
             pattern:   ^/api/stores/[0-9]+$
             methods: [ GET ]
@@ -309,6 +315,10 @@ security:
 
         api_root:
             pattern:   ^/api$
+            security: false
+
+        api_zelty_webhook:
+            pattern:   ^/api/zelty/webhook
             security: false
 
         api:

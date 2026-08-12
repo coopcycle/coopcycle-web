@@ -89,6 +89,7 @@ use AppBundle\Service\EmailManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\PackageSetManager;
 use AppBundle\Service\PricingRuleSetManager;
+use AppBundle\Service\RfmSegmentCalculator;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TagManager;
 use AppBundle\Service\TimeSlotManager;
@@ -116,7 +117,6 @@ use Redis;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponType;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
-use Sylius\Component\Promotion\Checker\Eligibility\PromotionCouponEligibilityCheckerInterface;
 use Sylius\Component\Promotion\Factory\PromotionCouponFactoryInterface;
 use Sylius\Component\Promotion\Model\PromotionCouponInterface;
 use Sylius\Component\Promotion\Model\PromotionInterface;
@@ -591,7 +591,8 @@ class AdminController extends AbstractController
     public function usersAction(Request $request,
         PaginatorInterface $paginator,
         EntityManagerInterface $entityManager,
-        SerializerInterface $serializer)
+        SerializerInterface $serializer,
+        RfmSegmentCalculator $rfmSegmentCalculator)
     {
         if (!$this->isGranted('ROLE_ADMIN')) {
             return new RedirectResponse($this->generateUrl('admin_users_invite'));
@@ -670,6 +671,12 @@ class AdminController extends AbstractController
                     ->setParameter('optin', $optinSelected);
 
                 $optinsResult = $optinsQB->getQuery()->getResult();
+
+                $segmentsByUsername = $rfmSegmentCalculator->getSegmentsByUsername();
+
+                foreach ($optinsResult as $i => $row) {
+                    $optinsResult[$i]['rfm_segment'] = $segmentsByUsername[$row['username']] ?? '';
+                }
 
                 $csv = $serializer->serialize($optinsResult, 'csv');
 
@@ -961,14 +968,10 @@ class AdminController extends AbstractController
             }
         }
 
-        if ($request->query->has('start_at') && $request->query->has('end_at')) {
-            $start = Carbon::parse($request->query->get('start_at'))->setTime(0, 0, 0)->toDateTime();
-            $end = Carbon::parse($request->query->get('end_at'))->setTime(23, 59, 59)->toDateTime();
-            $filters['range'] = [$start, $end];
+        if ($range = $this->getDeliveryDateRange($request)) {
+            $filters['range'] = $range;
 
-            $qb->andWhere('d.createdAt BETWEEN :start AND :end')
-            ->setParameter('start', $start)
-            ->setParameter('end', $end);
+            $deliveryRepository->createdAtRange($qb, $range[0], $range[1]);
         }
 
         // Allow filtering by store & restaurant with KnpPaginator
@@ -1709,7 +1712,7 @@ class AdminController extends AbstractController
         }
 
         return $this->render('admin/settings.html.twig', [
-            'timezone' => ini_get('date.timezone'),
+            'timezone' => $settingsManager->get('timezone'),
             'form' => $form->createView(),
             'maintenance_form' => $maintenanceForm->createView(),
             'maintenance' => $redis->get('maintenance'),
@@ -1991,24 +1994,43 @@ class AdminController extends AbstractController
     }
 
     #[Route(path: '/admin/promotions', name: 'admin_promotions')]
-    public function promotionsAction(EntityManagerInterface $entityManager,
-        PromotionCouponEligibilityCheckerInterface $promotionCouponExpirationChecker)
+    public function promotionsAction(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        PaginatorInterface $paginator)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $qb = $this->entityManager->getRepository(PromotionCouponInterface::class)->createQueryBuilder('c');
+        $repository = $this->entityManager->getRepository(PromotionCouponInterface::class);
 
-        $promotionCoupons = $qb->getQuery()->getResult();
+        // A coupon is "ongoing" while it has no expiry or has not expired yet,
+        // "past" once it has expired. This mirrors PromotionCouponDurationEligibilityChecker
+        // (expiresAt === null || now < expiresAt) so the split can be paginated in SQL.
+        $now = new \DateTime();
 
-        $ongoing = $past = [];
+        $ongoingQb = $repository->createQueryBuilder('c')
+            ->andWhere('c.expiresAt IS NULL OR c.expiresAt > :now')
+            ->setParameter('now', $now)
+            ->orderBy('c.id', 'DESC');
 
-        foreach ($promotionCoupons as $promotionCoupon) {
-            if (!$promotionCouponExpirationChecker->isEligible(new Order(), $promotionCoupon)) {
-                $past[] = $promotionCoupon;
-            } else {
-                $ongoing[] = $promotionCoupon;
-            }
-        }
+        $pastQb = $repository->createQueryBuilder('c')
+            ->andWhere('c.expiresAt IS NOT NULL AND c.expiresAt <= :now')
+            ->setParameter('now', $now)
+            ->orderBy('c.id', 'DESC');
+
+        $ongoing = $paginator->paginate(
+            $ongoingQb,
+            $request->query->getInt('ongoing_page', 1),
+            self::ITEMS_PER_PAGE,
+            [PaginatorInterface::PAGE_PARAMETER_NAME => 'ongoing_page']
+        );
+
+        $past = $paginator->paginate(
+            $pastQb,
+            $request->query->getInt('past_page', 1),
+            self::ITEMS_PER_PAGE,
+            [PaginatorInterface::PAGE_PARAMETER_NAME => 'past_page']
+        );
 
         return $this->render('admin/promotions.html.twig', [
             'ongoing' => $ongoing,

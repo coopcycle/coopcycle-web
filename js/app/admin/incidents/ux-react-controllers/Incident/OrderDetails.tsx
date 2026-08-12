@@ -4,7 +4,6 @@ import { Button, Skeleton, Tooltip } from 'antd';
 import './OrderDetails.scss';
 import { money, weight } from '../../utils';
 import TaskStatusBadge from '../../../../dashboard/components/TaskStatusBadge';
-import moment from 'moment';
 
 import store from '../../[id]/redux/incidentStore';
 import {
@@ -262,9 +261,11 @@ export default function ({ delivery }) {
         </span>{' '}
         {t('INCIDENTS_TASK_DETAILS')}
       </h5>
-      <p data-testid="task-address-name">{task.address.name}</p>
-      <p data-testid="task-address-street">{task.address.streetAddress}</p>
-      <p data-testid="task-address-telephone">{task.address.telephone}</p>
+      {task.address?.name ? (
+        <p data-testid="task-address-name">{task.address.name}</p>
+      ) : null}
+      <p data-testid="task-address-street">{task.address?.streetAddress}</p>
+      <p data-testid="task-address-telephone">{task.address?.telephone}</p>
       {task.weight ? (
         <p data-testid="task-weight">{weight(task.weight)}</p>
       ) : null}

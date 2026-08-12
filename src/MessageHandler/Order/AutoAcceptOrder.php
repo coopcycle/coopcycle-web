@@ -27,7 +27,7 @@ class AutoAcceptOrder
             return;
         }
 
-        if ($restaurant->isAutoAcceptOrdersEnabled()) {
+        if ($restaurant->isAutoAcceptOrdersEnabled() || !empty($restaurant->getZeltyApiKey())) {
             $this->orderManager->accept($order);
             $this->checkoutLogger->info('AutoAcceptOrder | accepted', ['order' => $this->loggingUtils->getOrderId($order)]);
         }

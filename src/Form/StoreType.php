@@ -114,9 +114,11 @@ class StoreType extends LocalBusinessType
                         'required' => false,
                     ])
                     // Cyke validates the delivery slot we send against the store's
-                    // configured opening hours/slots in its own UI. EDIFACT-imported
-                    // deliveries (see SyncTransportersCommand) carry no time info, so
-                    // we fall back to this configurable slot (e.g. "Journée entière").
+                    // configured opening hours in its own UI (which may close earlier
+                    // on some days). EDIFACT-imported deliveries (see
+                    // SyncTransportersCommand) carry no time info, so we compute a slot
+                    // that fits these per-day opening hours, expressed in schema.org's
+                    // openingHours format, e.g. "Mo-Fr 09:00-18:00, Sa 09:00-16:00".
                     ->add('cykeTimeSlot', TextType::class, [
                         'label' => 'form.store.cyke_time_slot.label',
                         'help' => 'form.store.cyke_time_slot.help',
@@ -126,7 +128,9 @@ class StoreType extends LocalBusinessType
                         ],
                         'constraints' => [
                             new Assert\Regex([
-                                'pattern' => '/^([01]\d|2[0-3]):[0-5]\d-([01]\d|2[0-3]):[0-5]\d$/',
+                                // One or more schema.org openingHours entries, e.g.
+                                // "Mo-Fr 09:00-18:00, Sa 09:00-16:00".
+                                'pattern' => '/^(?:(?:Mo|Tu|We|Th|Fr|Sa|Su)(?:[,-](?:Mo|Tu|We|Th|Fr|Sa|Su))*\s+([01]\d|2[0-3]):[0-5]\d-([01]\d|2[0-3]):[0-5]\d)(?:\s*,\s*(?:Mo|Tu|We|Th|Fr|Sa|Su)(?:[,-](?:Mo|Tu|We|Th|Fr|Sa|Su))*\s+([01]\d|2[0-3]):[0-5]\d-([01]\d|2[0-3]):[0-5]\d)*$/',
                                 'message' => 'form.store.cyke_time_slot.invalid',
                             ]),
                         ],

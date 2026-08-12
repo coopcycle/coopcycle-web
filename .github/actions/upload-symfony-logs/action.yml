@@ -1,5 +1,11 @@
 name: Upload Symfony logs
 
+inputs:
+  name:
+    description: 'Name of the artifact. Must be unique inside a workflow run, so it has to include the shard when the job runs in a matrix.'
+    required: false
+    default: 'symfony-logs'
+
 runs:
   using: "composite"
   steps:
@@ -9,5 +15,5 @@ runs:
     - name: Upload Symfony logs
       uses: actions/upload-artifact@v4
       with:
-        name: symfony-logs
+        name: ${{ inputs.name }}
         path: symfony_logs.log
