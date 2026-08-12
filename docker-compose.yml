@@ -53,7 +53,7 @@ services:
     environment:
       # The valhalla-scripted image downloads the OSM PBF on first boot,
       # builds the tile set, then starts the routing service on :8002.
-      - tile_urls=https://download.geofabrik.de/europe/france/ile-de-france-latest.osm.pbf
+      - tile_urls=https://coopcycle-assets.sfo2.digitaloceanspaces.com/osm/paris-france.osm.pbf
     restart: unless-stopped
 
   php:
