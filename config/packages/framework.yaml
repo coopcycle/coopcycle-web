@@ -50,6 +50,9 @@ framework:
             valhalla.client:
                 base_uri: "http://%valhalla_host%"
                 timeout: 5.0
+                # Lazy so an unset/invalid COOPCYCLE_VALHALLA_HOST only fails
+                # when Valhalla is actually called, not at container boot.
+                lazy: true
             cubejs.client:
                 base_uri: "%env(CUBEJS_API_URL)%/"
             recommender.client:
