@@ -3,7 +3,7 @@
 namespace AppBundle\Service\Routing;
 
 use AppBundle\Entity\Base\GeoCoordinates;
-use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
 
 class ValhallaWithFallback extends Base
 {
@@ -29,7 +29,7 @@ class ValhallaWithFallback extends Base
     {
         try {
             return $this->valhalla->getPolyline(...$coordinates);
-        } catch (HttpExceptionInterface $e) {
+        } catch (ExceptionInterface $e) {
             return $this->fallback->getPolyline(...$coordinates);
         }
     }
@@ -41,7 +41,7 @@ class ValhallaWithFallback extends Base
     {
         try {
             return $this->valhalla->getDistance(...$coordinates);
-        } catch (HttpExceptionInterface $e) {
+        } catch (ExceptionInterface $e) {
             return $this->fallback->getDistance(...$coordinates);
         }
     }
@@ -53,7 +53,7 @@ class ValhallaWithFallback extends Base
     {
         try {
             return $this->valhalla->getDuration(...$coordinates);
-        } catch (HttpExceptionInterface $e) {
+        } catch (ExceptionInterface $e) {
             return $this->fallback->getDuration(...$coordinates);
         }
     }
@@ -65,7 +65,7 @@ class ValhallaWithFallback extends Base
     {
         try {
             return $this->valhalla->getDistances($source, ...$destinations);
-        } catch (HttpExceptionInterface $e) {
+        } catch (ExceptionInterface $e) {
             return $this->fallback->getDistances($source, ...$destinations);
         }
     }
@@ -74,7 +74,7 @@ class ValhallaWithFallback extends Base
     {
         try {
             return $this->valhalla->route(...$coordinates);
-        } catch (HttpExceptionInterface $e) {
+        } catch (ExceptionInterface $e) {
             return $this->fallback->route(...$coordinates);
         }
     }
@@ -83,7 +83,7 @@ class ValhallaWithFallback extends Base
     {
         try {
             return $this->valhalla->getTrip(...$coordinates);
-        } catch (HttpExceptionInterface $e) {
+        } catch (ExceptionInterface $e) {
             return $this->fallback->route(...$coordinates);
         }
     }

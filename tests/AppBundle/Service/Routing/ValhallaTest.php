@@ -62,7 +62,6 @@ class ValhallaTest extends TestCase
         $this->assertEquals('osrm', $decoded['format']);
         $this->assertEquals('polyline5', $decoded['shape_format']);
         $this->assertEquals('bicycle', $decoded['costing']);
-        $this->assertTrue($decoded['id_match']);
         $this->assertCount(3, $decoded['locations']);
     }
 

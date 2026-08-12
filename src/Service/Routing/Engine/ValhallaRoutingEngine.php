@@ -3,6 +3,7 @@
 namespace AppBundle\Service\Routing\Engine;
 
 use AppBundle\Entity\Base\GeoCoordinates;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
  * Valhalla-backed routing engine.
@@ -21,7 +22,7 @@ class ValhallaRoutingEngine extends AbstractRoutingEngine
 {
     private string $costing;
 
-    public function __construct(\Symfony\Contracts\HttpClient\HttpClientInterface $valhallaClient, string $costing = 'bicycle')
+    public function __construct(HttpClientInterface $valhallaClient, string $costing = 'bicycle')
     {
         parent::__construct($valhallaClient);
         $this->costing = $costing;
@@ -38,7 +39,6 @@ class ValhallaRoutingEngine extends AbstractRoutingEngine
             'format' => 'osrm',
             'shape_format' => 'polyline5',
             'costing' => $this->costing,
-            'id_match' => true,
         ];
     }
 

@@ -3,6 +3,7 @@
 namespace AppBundle\Service\Routing\Engine;
 
 use AppBundle\Entity\Base\GeoCoordinates;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
  * OSRM-backed routing engine.
@@ -19,7 +20,7 @@ class OsrmRoutingEngine extends AbstractRoutingEngine
 {
     private string $profile;
 
-    public function __construct(\Symfony\Contracts\HttpClient\HttpClientInterface $osrmClient, string $profile = 'bicycle')
+    public function __construct(HttpClientInterface $osrmClient, string $profile = 'bicycle')
     {
         parent::__construct($osrmClient);
         $this->profile = $profile;
