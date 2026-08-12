@@ -824,6 +824,11 @@ services:
       $profile: '%routing_profile%'
 
   AppBundle\Service\Routing\Engine\ValhallaRoutingEngine:
+    # Lazy so the valhalla.client scoped HTTP client (and its base_uri
+    # validation) is only built when Valhalla is actually called, not at
+    # container boot. Lets the app boot on OSRM even with an unset/invalid
+    # COOPCYCLE_VALHALLA_HOST.
+    lazy: true
     arguments:
       $valhallaClient: '@valhalla.client'
       $costing: '%routing_profile%'
