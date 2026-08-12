@@ -7,13 +7,10 @@ use Scheb\TwoFactorBundle\Security\TwoFactor\Condition\TwoFactorConditionInterfa
 
 class TwoFactorCondition implements TwoFactorConditionInterface
 {
-    public function __construct(
-        private string $env,
-        private bool $isDemo
-    ) {}
+    public function __construct(private bool $isDemo) {}
 
     public function shouldPerformTwoFactorAuthentication(AuthenticationContextInterface $context): bool
     {
-        return !$this->isDemo && strtolower($this->env) !== 'dev';
+        return !$this->isDemo;
     }
 }

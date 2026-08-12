@@ -888,7 +888,6 @@ services:
   AppBundle\Security\TwoFactor\TwoFactorCondition:
     arguments:
       $isDemo: "%is_demo%"
-      $env: '%env(APP_ENV)%'
 
   AppBundle\Service\RemotePushNotificationManager: ~
 
