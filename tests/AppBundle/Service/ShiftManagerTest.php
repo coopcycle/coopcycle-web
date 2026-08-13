@@ -7,6 +7,8 @@ use AppBundle\Entity\HolidayRequestRepository;
 use AppBundle\Entity\Shift;
 use AppBundle\Entity\ShiftAssignment;
 use AppBundle\Entity\ShiftRepository;
+use AppBundle\Entity\ShiftTemplate;
+use AppBundle\Entity\ShiftTemplateShift;
 use AppBundle\Entity\TaskList;
 use AppBundle\Entity\TaskListRepository;
 use AppBundle\Entity\User;
@@ -388,5 +390,162 @@ class ShiftManagerTest extends TestCase
         );
 
         $this->assertSame([$alice], $copies[0]->getAssignedUsers());
+    }
+
+    public function testCreateTemplateFromWeekSnapshotsShapeAndAssignees()
+    {
+        $alice = $this->createUser('alice');
+
+        $shift = new Shift();
+        $shift->setType('drive');
+        $shift->setSlots(2);
+        $shift->setBreakMinutes(30);
+        $shift->setComment('note');
+        $shift->setStartsAt(new \DateTime('2026-06-24 09:00:00')); // a Wednesday
+        $shift->setEndsAt(new \DateTime('2026-06-24 17:00:00'));
+
+        $assignment = new ShiftAssignment();
+        $assignment->setUser($alice);
+        $shift->addAssignment($assignment);
+
+        $this->shiftRepository
+            ->findOverlappingRange(Argument::cetera())
+            ->willReturn([$shift]);
+
+        $this->entityManager->persist(Argument::type(ShiftTemplate::class))->willReturn(null);
+        $this->entityManager->flush()->shouldBeCalled();
+
+        $template = $this->shiftManager->createTemplateFromWeek(
+            'My template',
+            new \DateTimeImmutable('2026-06-22'),
+            $this->createUser('dispatcher')
+        );
+
+        $this->assertSame('My template', $template->getName());
+        $this->assertCount(1, $template->getShifts());
+
+        $line = $template->getShifts()->first();
+        $this->assertSame('drive', $line->getType());
+        $this->assertSame(3, $line->getDayOfWeek()); // Wednesday = ISO 3
+        $this->assertSame('09:00', $line->getStartTime()->format('H:i'));
+        $this->assertSame('17:00', $line->getEndTime()->format('H:i'));
+        $this->assertSame(2, $line->getSlots());
+        $this->assertSame(30, $line->getBreakMinutes());
+        $this->assertSame('note', $line->getComment());
+        $this->assertSame([$alice], $line->getAssignedUsers()->toArray());
+    }
+
+    private function makeTemplateLine(int $dayOfWeek, string $start, string $end, int $slots = 1, int $breakMinutes = 0): ShiftTemplateShift
+    {
+        $line = new ShiftTemplateShift();
+        $line->setType('drive');
+        $line->setDayOfWeek($dayOfWeek);
+        $line->setStartTime(new \DateTime($start));
+        $line->setEndTime(new \DateTime($end));
+        $line->setSlots($slots);
+        $line->setBreakMinutes($breakMinutes);
+
+        return $line;
+    }
+
+    public function testApplyTemplateCreatesShiftsOnTheRightDayAndTime()
+    {
+        $template = new ShiftTemplate();
+        $template->addShift($this->makeTemplateLine(1, '09:00', '17:00', 2, 30)); // Monday
+        $template->addShift($this->makeTemplateLine(4, '12:00', '15:00'));        // Thursday
+
+        $this->entityManager->persist(Argument::type(Shift::class))->willReturn(null);
+        $this->entityManager->flush()->shouldBeCalled();
+
+        $created = $this->shiftManager->applyTemplate(
+            $template,
+            new \DateTimeImmutable('2026-07-06'), // a Monday
+            false
+        );
+
+        $this->assertCount(2, $created);
+
+        $this->assertSame('2026-07-06 09:00:00', $created[0]->getStartsAt()->format('Y-m-d H:i:s'));
+        $this->assertSame('2026-07-06 17:00:00', $created[0]->getEndsAt()->format('Y-m-d H:i:s'));
+        $this->assertSame(2, $created[0]->getSlots());
+        $this->assertSame(30, $created[0]->getBreakMinutes());
+
+        $this->assertSame('2026-07-09 12:00:00', $created[1]->getStartsAt()->format('Y-m-d H:i:s'));
+        $this->assertSame('2026-07-09 15:00:00', $created[1]->getEndsAt()->format('Y-m-d H:i:s'));
+    }
+
+    public function testApplyTemplateWithoutIncludeAssigneesCreatesNoAssignments()
+    {
+        $alice = $this->createUser('alice');
+
+        $line = $this->makeTemplateLine(1, '09:00', '17:00');
+        $line->addAssignedUser($alice);
+
+        $template = new ShiftTemplate();
+        $template->addShift($line);
+
+        $this->entityManager->persist(Argument::type(Shift::class))->willReturn(null);
+        $this->entityManager->flush()->shouldBeCalled();
+
+        $created = $this->shiftManager->applyTemplate(
+            $template,
+            new \DateTimeImmutable('2026-07-06'),
+            false
+        );
+
+        $this->assertSame([], $created[0]->getAssignedUsers());
+    }
+
+    public function testApplyTemplateWithIncludeAssigneesCopiesAssignmentsAndSkipsHolidayUsers()
+    {
+        $alice = $this->createUser('alice');
+        $bob = $this->createUser('bob');
+
+        $line = $this->makeTemplateLine(1, '09:00', '17:00');
+        $line->addAssignedUser($alice);
+        $line->addAssignedUser($bob);
+
+        $template = new ShiftTemplate();
+        $template->addShift($line);
+
+        $this->holidayRequestRepository
+            ->hasApprovedHolidayOnDate($bob, Argument::any())
+            ->willReturn(true);
+        $this->holidayRequestRepository
+            ->hasApprovedHolidayOnDate($alice, Argument::any())
+            ->willReturn(false);
+
+        $this->entityManager->persist(Argument::type(Shift::class))->willReturn(null);
+        $this->entityManager->flush()->shouldBeCalled();
+
+        $created = $this->shiftManager->applyTemplate(
+            $template,
+            new \DateTimeImmutable('2026-07-06'),
+            true
+        );
+
+        $this->assertSame([$alice], $created[0]->getAssignedUsers());
+    }
+
+    public function testApplyTemplateCopiesRequiredSkills()
+    {
+        $skill = new \AppBundle\Entity\Skill();
+
+        $line = $this->makeTemplateLine(1, '09:00', '17:00');
+        $line->addRequiredSkill($skill);
+
+        $template = new ShiftTemplate();
+        $template->addShift($line);
+
+        $this->entityManager->persist(Argument::type(Shift::class))->willReturn(null);
+        $this->entityManager->flush()->shouldBeCalled();
+
+        $created = $this->shiftManager->applyTemplate(
+            $template,
+            new \DateTimeImmutable('2026-07-06'),
+            false
+        );
+
+        $this->assertSame([$skill], $created[0]->getRequiredSkills()->toArray());
     }
 }

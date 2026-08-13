@@ -584,3 +584,12 @@
     box-shadow: 0 0 0 2px #1677ff;
   }
 }
+
+.shift-template-list {
+  max-height: 220px;
+  overflow-y: auto;
+
+  .ant-tag {
+    margin-left: 6px;
+  }
+}

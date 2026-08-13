@@ -50,6 +50,10 @@ import {
   HolidayRequest,
   PostHolidayRequestRequest,
   CopyWeekRequest,
+  ShiftTemplate,
+  CreateShiftTemplateRequest,
+  ApplyShiftTemplateRequest,
+  ApplyShiftTemplateResult,
   PlanningUser,
   ShiftSettings,
   PutShiftSettingsRequest,
@@ -85,6 +89,7 @@ export const apiSlice = createApi({
     'Skill',
     'SchedulePublication',
     'EmployeeProfile',
+    'ShiftTemplate',
   ],
   // The "endpoints" represent operations and requests for this server
   // uri is passed in JSON-LD '@id' key, https://www.w3.org/TR/2014/REC-json-ld-20140116/#node-identifiers
@@ -500,6 +505,41 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ['Shift'],
     }),
+    getShiftTemplates: builder.query<ShiftTemplate[], void>({
+      query: () => 'api/shift_templates',
+      transformResponse: (response: HydraCollection<ShiftTemplate>) =>
+        response['hydra:member'],
+      providesTags: ['ShiftTemplate'],
+    }),
+    createShiftTemplate: builder.mutation<
+      ShiftTemplate,
+      CreateShiftTemplateRequest
+    >({
+      query: body => ({
+        url: 'api/shift_templates',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['ShiftTemplate'],
+    }),
+    deleteShiftTemplate: builder.mutation<void, Uri>({
+      query: uri => ({
+        url: uri,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['ShiftTemplate'],
+    }),
+    applyShiftTemplate: builder.mutation<
+      ApplyShiftTemplateResult,
+      ApplyShiftTemplateRequest
+    >({
+      query: ({ uri, ...body }) => ({
+        url: `${uri}/apply`,
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['Shift'],
+    }),
     getHolidayRequests: builder.query<
       HydraCollection<HolidayRequest>,
       GetHolidayRequestsArgs
@@ -791,6 +831,10 @@ export const {
   usePutShiftMutation,
   useDeleteShiftMutation,
   useCopyWeekMutation,
+  useGetShiftTemplatesQuery,
+  useCreateShiftTemplateMutation,
+  useDeleteShiftTemplateMutation,
+  useApplyShiftTemplateMutation,
   useGetHolidayRequestsQuery,
   useGetMyHolidayRequestsQuery,
   usePostHolidayRequestMutation,

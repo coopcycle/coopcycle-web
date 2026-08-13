@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\ShiftTemplateShift" table="shift_template_shift">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="type" type="string" column="type" length="32"/>
+    <field name="dayOfWeek" type="smallint" column="day_of_week"/>
+    <field name="startTime" type="time" column="start_time"/>
+    <field name="endTime" type="time" column="end_time"/>
+    <field name="slots" type="integer" column="slots">
+      <options>
+        <option name="default">1</option>
+      </options>
+    </field>
+    <field name="breakMinutes" type="integer" column="break_minutes">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
+    <field name="comment" type="text" column="comment" nullable="true"/>
+    <many-to-one field="template" target-entity="AppBundle\Entity\ShiftTemplate" inversed-by="shifts">
+      <join-columns>
+        <join-column name="template_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-many field="requiredSkills" target-entity="AppBundle\Entity\Skill">
+      <join-table name="shift_template_shift_required_skill">
+        <join-columns>
+          <join-column name="shift_template_shift_id" referenced-column-name="id" on-delete="CASCADE"/>
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="skill_id" referenced-column-name="id" on-delete="CASCADE"/>
+        </inverse-join-columns>
+      </join-table>
+    </many-to-many>
+    <many-to-many field="assignedUsers" target-entity="AppBundle\Entity\User">
+      <join-table name="shift_template_shift_user">
+        <join-columns>
+          <join-column name="shift_template_shift_id" referenced-column-name="id" on-delete="CASCADE"/>
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="user_id" referenced-column-name="id" on-delete="CASCADE"/>
+        </inverse-join-columns>
+      </join-table>
+    </many-to-many>
+  </entity>
+</doctrine-mapping>

@@ -748,6 +748,41 @@ export type CopyWeekRequest = {
   targetWeek: string;
 };
 
+export type ShiftTemplateShift = {
+  '@id': Uri;
+  type: string;
+  dayOfWeek: number;
+  startTime: string; // "HH:MM"
+  endTime: string; // "HH:MM"
+  slots: number;
+  breakMinutes: number;
+  comment: string | null;
+  requiredSkills: Skill[];
+};
+
+export type ShiftTemplate = JsonLdEntity & {
+  id: number;
+  name: string;
+  shifts: ShiftTemplateShift[];
+  shiftCount: number;
+  hasAssignees: boolean;
+};
+
+export type CreateShiftTemplateRequest = {
+  name: string;
+  week: string;
+};
+
+export type ApplyShiftTemplateRequest = {
+  uri: Uri;
+  targetWeek: string;
+  includeAssignees: boolean;
+};
+
+export type ApplyShiftTemplateResult = JsonLdEntity & {
+  created: number;
+};
+
 // null = that rule is disabled
 export type LegalRules = Record<string, number | null>;
 

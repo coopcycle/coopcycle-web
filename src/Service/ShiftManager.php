@@ -5,6 +5,8 @@ namespace AppBundle\Service;
 use AppBundle\Entity\HolidayRequestRepository;
 use AppBundle\Entity\Shift;
 use AppBundle\Entity\ShiftAssignment;
+use AppBundle\Entity\ShiftTemplate;
+use AppBundle\Entity\ShiftTemplateShift;
 use AppBundle\Entity\TaskList;
 use AppBundle\Message\PushNotification;
 use Doctrine\ORM\EntityManagerInterface;
@@ -184,6 +186,121 @@ class ShiftManager
         }
 
         return $copies;
+    }
+
+    /**
+     * Snapshots every shift overlapping the given week into a new, reusable
+     * ShiftTemplate: one line per shift, expressed as (day of week, time of
+     * day) so it can later be applied to any week (see applyTemplate()).
+     * Assignees are always captured when present — whether they're actually
+     * used is decided per-application, not at save time.
+     */
+    public function createTemplateFromWeek(string $name, \DateTimeImmutable $weekMonday, UserInterface $createdBy): ShiftTemplate
+    {
+        $start = $weekMonday->setTime(0, 0);
+        $end = $start->modify('+7 days');
+
+        $shiftRepository = $this->entityManager->getRepository(Shift::class);
+
+        $template = new ShiftTemplate();
+        $template->setName($name);
+        $template->setCreatedBy($createdBy);
+
+        foreach ($shiftRepository->findOverlappingRange($start, $end) as $shift) {
+            $line = new ShiftTemplateShift();
+            $line->setType($shift->getType());
+            $line->setDayOfWeek((int) $shift->getStartsAt()->format('N'));
+            $line->setStartTime(clone $shift->getStartsAt());
+            $line->setEndTime(clone $shift->getEndsAt());
+            $line->setSlots($shift->getSlots());
+            $line->setBreakMinutes($shift->getBreakMinutes());
+            $line->setComment($shift->getComment());
+
+            foreach ($shift->getRequiredSkills() as $skill) {
+                $line->addRequiredSkill($skill);
+            }
+
+            foreach ($shift->getAssignedUsers() as $user) {
+                $line->addAssignedUser($user);
+            }
+
+            $template->addShift($line);
+        }
+
+        $this->entityManager->persist($template);
+        $this->entityManager->flush();
+
+        return $template;
+    }
+
+    /**
+     * Creates real shifts in the target week from a ShiftTemplate's lines.
+     * Like copyWeek(), skips assignees who have an approved holiday on the
+     * target day (only relevant when $includeAssignees is true).
+     *
+     * @return Shift[] the newly created shifts
+     */
+    public function applyTemplate(ShiftTemplate $template, \DateTimeImmutable $targetMonday, bool $includeAssignees): array
+    {
+        /** @var HolidayRequestRepository $holidayRequestRepository */
+        $holidayRequestRepository = $this->entityManager->getRepository(\AppBundle\Entity\HolidayRequest::class);
+
+        $created = [];
+        $assignedUsers = [];
+
+        foreach ($template->getShifts() as $line) {
+            $date = $targetMonday->modify(sprintf('+%d days', $line->getDayOfWeek() - 1));
+
+            $shift = new Shift();
+            $shift->setType($line->getType());
+            $shift->setSlots($line->getSlots());
+            $shift->setBreakMinutes($line->getBreakMinutes());
+            $shift->setComment($line->getComment());
+            $shift->setStartsAt(\DateTime::createFromImmutable($date)->setTime(
+                (int) $line->getStartTime()->format('H'),
+                (int) $line->getStartTime()->format('i')
+            ));
+            $shift->setEndsAt(\DateTime::createFromImmutable($date)->setTime(
+                (int) $line->getEndTime()->format('H'),
+                (int) $line->getEndTime()->format('i')
+            ));
+
+            foreach ($line->getRequiredSkills() as $skill) {
+                $shift->addRequiredSkill($skill);
+            }
+
+            if ($includeAssignees) {
+                foreach ($line->getAssignedUsers() as $user) {
+
+                    if ($holidayRequestRepository->hasApprovedHolidayOnDate($user, $shift->getStartsAt())
+                    ||  $holidayRequestRepository->hasApprovedHolidayOnDate($user, $shift->getEndsAt())) {
+                        continue;
+                    }
+
+                    $assignment = new ShiftAssignment();
+                    $assignment->setUser($user);
+                    $shift->addAssignment($assignment);
+
+                    $assignedUsers[$user->getUsername()] = $user;
+                }
+            }
+
+            $this->entityManager->persist($shift);
+            $created[] = $shift;
+        }
+
+        $this->entityManager->flush();
+
+        if (count($assignedUsers) > 0) {
+            $this->notify(
+                $this->translator->trans('notifications.shifts.week_assigned', [
+                    '%date%' => $targetMonday->format('Y-m-d'),
+                ]),
+                array_values($assignedUsers)
+            );
+        }
+
+        return $created;
     }
 
     /**
