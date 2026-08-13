@@ -31,7 +31,17 @@ class TourProcessor implements ProcessorInterface
                 $tour->setName($data->name);
             }
 
+            if (!empty($data->date)) {
+                $tour->setDate(new \DateTime($data->date));
+            }
+
             $tour->setTasks($data->tasks);
+
+            // Moving a tour to another day propagates the date to its tasks,
+            // keeping each task's time-of-day untouched.
+            if (!empty($data->date)) {
+                $this->moveTasksToDate($tour->getTasks(), $tour->getDate());
+            }
 
         } else {
 
@@ -57,5 +67,29 @@ class TourProcessor implements ProcessorInterface
         $tour->setDistance(ceil($distance));
 
         return $this->persistProcessor->process($tour, $operation, $uriVariables, $context);
+    }
+
+    /**
+     * @param Task[] $tasks
+     */
+    private function moveTasksToDate(array $tasks, \DateTime $date): void
+    {
+        $year  = (int) $date->format('Y');
+        $month = (int) $date->format('m');
+        $day   = (int) $date->format('d');
+
+        foreach ($tasks as $task) {
+            $after = $task->getAfter();
+            if (null !== $after) {
+                // Set a new instance so Doctrine detects the change
+                // (mutating a DateTime in place goes unnoticed).
+                $task->setAfter((clone $after)->setDate($year, $month, $day));
+            }
+
+            $before = $task->getBefore();
+            if (null !== $before) {
+                $task->setBefore((clone $before)->setDate($year, $month, $day));
+            }
+        }
     }
 }

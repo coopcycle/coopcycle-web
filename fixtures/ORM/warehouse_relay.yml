@@ -8,6 +8,7 @@ AppBundle\Entity\Warehouse:
     address: "@address_3"
 
 AppBundle\Entity\Task:
+  # First linked pair: pickup (#1) → dropoff (#2)
   task_pickup:
     type: PICKUP
     address: "@address_1"
@@ -19,3 +20,23 @@ AppBundle\Entity\Task:
     doneAfter: <identity(new \DateTime('2018-12-01 14:00:00'))>
     doneBefore: <identity(new \DateTime('2018-12-01 18:30:00'))>
     weight: 500
+    previous: "@task_pickup"
+  # Second linked pair: pickup (#3) → dropoff (#4)
+  task_pickup_2:
+    type: PICKUP
+    address: "@address_4"
+    doneAfter: <identity(new \DateTime('2018-12-01 10:00:00'))>
+    doneBefore: <identity(new \DateTime('2018-12-01 12:00:00'))>
+    weight: 300
+  task_dropoff_2:
+    address: "@address_1"
+    doneAfter: <identity(new \DateTime('2018-12-01 14:00:00'))>
+    doneBefore: <identity(new \DateTime('2018-12-01 18:30:00'))>
+    weight: 300
+    previous: "@task_pickup_2"
+  # Orphan task (#5): not linked to anything, cannot be relayed on its own
+  task_orphan:
+    address: "@address_2"
+    doneAfter: <identity(new \DateTime('2018-12-01 14:00:00'))>
+    doneBefore: <identity(new \DateTime('2018-12-01 18:30:00'))>
+    weight: 100

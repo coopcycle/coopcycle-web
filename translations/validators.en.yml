@@ -87,3 +87,5 @@ delivery.price.error.noPricingRuleSet: No pricing configured
 incident.metadata.suggestion.invalid: The suggestion field in metadata is not valid
 
 store.packages_required.package_set_required: A package set must be selected when packages are required
+
+failure_reason.code.unique: This code is already in use

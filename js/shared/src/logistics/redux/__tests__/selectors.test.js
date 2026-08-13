@@ -138,6 +138,34 @@ describe('Selectors', () => {
         },
       ])
     })
+
+    it('excludes a task assigned to a courier even when it is not in a task list for the day', () => {
+      // e.g. a month-spanning task returned by api/tasks?date=D because its
+      // [doneAfter, doneBefore] window overlaps D, while its task list item
+      // lives on another day (see #874). It must not show up as unassigned.
+      const state = {
+        logistics: {
+          date,
+          entities: {
+            tasks: {
+              ids: ['/api/tasks/5'],
+              entities: {
+                '/api/tasks/5': {
+                  '@id': '/api/tasks/5',
+                  id: 5,
+                  assignedTo: 'bot_1',
+                },
+              },
+            },
+            taskLists: { ids: [], entities: {} },
+            tours: { ids: [], entities: {} },
+          },
+          ui: { taskListsLoading: false },
+        },
+      }
+
+      expect(selectUnassignedTasks(state)).toEqual([])
+    })
   })
 
   describe('selectTasksWithColor', () => {

@@ -9,9 +9,11 @@ use AppBundle\Entity\Task;
 use AppBundle\Security\TokenStoreExtractor;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
 
 #[AsDoctrineListener(event: Events::prePersist, connection: 'default')]
+#[AsDoctrineListener(event: Events::onFlush, connection: 'default')]
 class OrganizationSubscriber
 {
     private $storeExtractor;
@@ -69,6 +71,42 @@ class OrganizationSubscriber
                     if (null !== $restaurant) {
                         $entity->setOrganization($restaurant->getOrganization());
                     }
+                }
+            }
+        }
+    }
+
+    /**
+     * Keeps the Organization name in sync when a LocalBusiness or a Store
+     * is renamed (the name is only copied on creation in prePersist()).
+     */
+    public function onFlush(OnFlushEventArgs $args)
+    {
+        $entityManager = $args->getObjectManager();
+        $unitOfWork = $entityManager->getUnitOfWork();
+
+        foreach ($unitOfWork->getScheduledEntityUpdates() as $entity) {
+
+            if (!$entity instanceof LocalBusiness && !$entity instanceof Store) {
+                continue;
+            }
+
+            $organization = $entity->getOrganization();
+            if (null === $organization) {
+                continue;
+            }
+
+            $changeSet = $unitOfWork->getEntityChangeSet($entity);
+
+            if (isset($changeSet['name'])) {
+                [, $newName] = $changeSet['name'];
+
+                if ($organization->getName() !== $newName) {
+                    $organization->setName($newName);
+                    $unitOfWork->computeChangeSet(
+                        $entityManager->getClassMetadata(Organization::class),
+                        $organization
+                    );
                 }
             }
         }

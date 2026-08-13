@@ -595,6 +595,14 @@ describe('handleDragEnd, moving several items at once', () => {
   const createStoreWithTasksAssignedToAdmin = (selectedTasks) => {
     const { logistics } = storeFixture
 
+    // Tasks placed in admin's list must be assigned to admin, otherwise the
+    // multi-select is rejected as "mixing assigned/unassigned tasks".
+    const assignedTaskIds = ['/api/tasks/736', '/api/tasks/737', '/api/tasks/738']
+    const taskEntities = { ...logistics.entities.tasks.entities }
+    assignedTaskIds.forEach(id => {
+      taskEntities[id] = { ...taskEntities[id], isAssigned: true, assignedTo: 'admin' }
+    })
+
     return createStoreFromPreloadedState({
       ...storeFixture,
       selectedTasks,
@@ -602,6 +610,10 @@ describe('handleDragEnd, moving several items at once', () => {
         ...logistics,
         entities: {
           ...logistics.entities,
+          tasks: {
+            ...logistics.entities.tasks,
+            entities: taskEntities,
+          },
           taskLists: {
             ...logistics.entities.taskLists,
             entities: {

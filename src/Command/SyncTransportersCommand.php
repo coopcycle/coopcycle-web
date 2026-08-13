@@ -15,6 +15,9 @@ use AppBundle\Service\SettingsManager;
 use AppBundle\Transporter\ImportFromPoint;
 use AppBundle\Transporter\ReportFromCC;
 use AppBundle\Transporter\TransporterHelpers;
+use ApiPlatform\Api\IriConverterInterface;
+use ApiPlatform\Exception\InvalidArgumentException;
+use ApiPlatform\Exception\ItemNotFoundException;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -67,6 +70,7 @@ class SyncTransportersCommand extends Command {
         private ReportFromCC $reportFromCC,
         private Filesystem $edifactFs,
         private DeliveryOrderManager $deliveryOrderManager,
+        private IriConverterInterface $iriConverter,
     )
     { parent::__construct(); }
 
@@ -601,7 +605,10 @@ class SyncTransportersCommand extends Command {
 
     /**
      * Resolves the `package_mapping` config (Transporter\Enum\ProductType
-     * case name => Package shortCode) into actual Package entities.
+     * case name => Package IRI, e.g. "/api/packages/1") into actual Package
+     * entities. IRIs are used rather than short codes because short codes are
+     * not unique (several packages can share the same one), which made the
+     * mapping ambiguous.
      *
      * @param array<string,string> $mapping
      * @return array<string,Package>
@@ -612,21 +619,34 @@ class SyncTransportersCommand extends Command {
             return [];
         }
 
-        $repo = $this->entityManager->getRepository(Package::class);
         $resolved = [];
-        foreach ($mapping as $productType => $shortCode) {
-            $package = $repo->findOneBy(['shortCode' => $shortCode]);
-            if (is_null($package)) {
+        foreach ($mapping as $productType => $iri) {
+            try {
+                $package = $this->iriConverter->getResourceFromIri($iri);
+            } catch (InvalidArgumentException|ItemNotFoundException $e) {
                 $this->transporterLogger->warning(
                     sprintf(
-                        'Package mapping references unknown package shortCode "%s" for product type "%s"',
-                        $shortCode,
+                        'Package mapping references unknown package IRI "%s" for product type "%s"',
+                        $iri,
                         $productType
                     ),
                     ['transporter' => $this->transporter]
                 );
                 continue;
             }
+
+            if (!$package instanceof Package) {
+                $this->transporterLogger->warning(
+                    sprintf(
+                        'Package mapping IRI "%s" for product type "%s" does not resolve to a Package',
+                        $iri,
+                        $productType
+                    ),
+                    ['transporter' => $this->transporter]
+                );
+                continue;
+            }
+
             $resolved[$productType] = $package;
         }
 

@@ -22,6 +22,11 @@ class PhoneNumberNormalizer extends BasePhoneNumberNormalizer
             return null;
         }
 
+        // Ignore empty phone numbers instead of throwing a parsing error
+        if (\is_string($data) && '' === trim($data)) {
+            return null;
+        }
+
         return parent::denormalize($data, $class, $format, $context);
     }
 
