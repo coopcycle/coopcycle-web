@@ -74,6 +74,7 @@ export default function SkillsManager() {
 
   return (
     <div className="shift-planning__skills">
+      <p className="text-muted">{t('SHIFT_PLANNING_SKILL_HELP')}</p>
       <div className="mb-3">
         <Button
           type="primary"

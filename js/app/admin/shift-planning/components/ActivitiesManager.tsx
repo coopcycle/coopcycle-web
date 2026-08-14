@@ -73,6 +73,7 @@ export default function ActivitiesManager() {
 
   return (
     <div className="shift-planning__activities">
+      <p className="text-muted">{t('SHIFT_ACTIVITY_HELP')}</p>
       <div className="mb-3">
         <Button
           type="primary"

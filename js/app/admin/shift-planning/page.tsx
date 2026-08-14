@@ -264,8 +264,8 @@ const Planning = () => {
             onChange={value => setView(value as View)}
             options={[
               { label: t('SHIFT_PLANNING_NAV_EMPLOYEES'), value: 'hr' },
-              { label: t('SHIFT_PLANNING_VIEW_SKILLS'), value: 'skills' },
               { label: t('SHIFT_ACTIVITY_NAV'), value: 'activities' },
+              { label: t('SHIFT_PLANNING_VIEW_SKILLS'), value: 'skills' },
             ]}
           />
           <PayrollExportButton />
