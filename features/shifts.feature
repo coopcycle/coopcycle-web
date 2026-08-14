@@ -598,7 +598,7 @@ Feature: Shifts
       """
     Then the response status code should be 403
 
-  Scenario: Dispatcher customizes shift type colors
+  Scenario: Dispatcher reads and updates shift settings
     Given the user "bob" is loaded:
       | email    | bob@coopcycle.org |
       | password | 123456            |
@@ -615,7 +615,6 @@ Feature: Shifts
         "@context":"/api/contexts/ShiftSettings",
         "@id":"/api/shift_settings",
         "@type":"ShiftSettings",
-        "typeColors":[],
         "throughput":@double@,
         "serviceLevel":@double@,
         "legal":{"template":null,"rules":"@*@"},
@@ -627,10 +626,7 @@ Feature: Shifts
     And the user "bob" sends a "PUT" request to "/api/shift_settings" with body:
       """
       {
-        "typeColors": {
-          "drive": "#ff0000",
-          "dispatch": "not-a-color"
-        }
+        "throughput": 3.5
       }
       """
     Then the response status code should be 200
@@ -641,30 +637,7 @@ Feature: Shifts
         "@context":"/api/contexts/ShiftSettings",
         "@id":"/api/shift_settings",
         "@type":"ShiftSettings",
-        "typeColors":{
-          "drive":"#ff0000"
-        },
-        "throughput":@double@,
-        "serviceLevel":@double@,
-        "legal":{"template":null,"rules":"@*@"},
-        "legalTemplates":"@*@"
-      }
-      """
-    When I add "Content-Type" header equal to "application/ld+json"
-    And I add "Accept" header equal to "application/ld+json"
-    And the user "bob" sends a "GET" request to "/api/shift_settings"
-    Then the response status code should be 200
-    And the response should be in JSON
-    And the JSON should match:
-      """
-      {
-        "@context":"/api/contexts/ShiftSettings",
-        "@id":"/api/shift_settings",
-        "@type":"ShiftSettings",
-        "typeColors":{
-          "drive":"#ff0000"
-        },
-        "throughput":@double@,
+        "throughput":3.5,
         "serviceLevel":@double@,
         "legal":{"template":null,"rules":"@*@"},
         "legalTemplates":"@*@"
@@ -685,7 +658,7 @@ Feature: Shifts
     And the user "sarah" sends a "PUT" request to "/api/shift_settings" with body:
       """
       {
-        "typeColors": { "drive": "#ff0000" }
+        "throughput": 3.5
       }
       """
     Then the response status code should be 403
@@ -916,7 +889,6 @@ Feature: Shifts
     And the user "bob" sends a "PUT" request to "/api/shift_settings" with body:
       """
       {
-        "typeColors": {},
         "legal": {
           "template": "ccn_transport_fr",
           "rules": { "maxDailyHours": 11 }
@@ -930,7 +902,6 @@ Feature: Shifts
         "@context":"/api/contexts/ShiftSettings",
         "@id":"/api/shift_settings",
         "@type":"ShiftSettings",
-        "typeColors":[],
         "throughput":@double@,
         "serviceLevel":@double@,
         "legal":{

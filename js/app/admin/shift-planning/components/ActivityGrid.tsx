@@ -33,7 +33,6 @@ type Props = {
   shifts: Shift[];
   onCreate: (day: Dayjs, activity: string) => void;
   onEdit: (shift: Shift) => void;
-  typeColors?: Record<string, string>;
   bankHolidays?: Record<string, string>;
 };
 
@@ -49,7 +48,6 @@ export default function ActivityGrid({
   shifts,
   onCreate,
   onEdit,
-  typeColors,
   bankHolidays,
 }: Props) {
   const { t } = useTranslation();
@@ -100,7 +98,7 @@ export default function ActivityGrid({
                   <span
                     className="shift-type-dot"
                     style={{
-                      backgroundColor: shiftTypeColor(activity.slug, typeColors),
+                      backgroundColor: activity.color || shiftTypeColor(activity.slug),
                     }}
                   />
                   {activityDisplayLabel(activity, t)}
@@ -118,7 +116,6 @@ export default function ActivityGrid({
                         key={shift['@id']}
                         shift={shift}
                         onClick={onEdit}
-                        typeColors={typeColors}
                         activities={activities}
                         showAssignees
                       />

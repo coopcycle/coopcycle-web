@@ -24,16 +24,6 @@ final class ShiftSettingsProcessor implements ProcessorInterface
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = []): ShiftSettings
     {
-        $typeColors = [];
-        foreach ($data->typeColors as $type => $color) {
-            if (is_string($type) && '' !== $type
-                && is_string($color) && preg_match('/^#[0-9a-fA-F]{3,8}$/', $color)) {
-                $typeColors[$type] = $color;
-            }
-        }
-
-        $this->settingsManager->set('shift_type_colors', json_encode($typeColors));
-
         // Merge the tunables into the schedule-generation config blob, keeping any
         // existing keys not exposed by this endpoint (lookback, hours, min/max)
         $config = $this->currentConfig();
@@ -60,7 +50,6 @@ final class ShiftSettingsProcessor implements ProcessorInterface
         }
 
         return new ShiftSettings(
-            $typeColors,
             (float) ($config['throughput'] ?? ScheduleGenerator::DEFAULTS['throughput']),
             (float) ($config['serviceLevel'] ?? ScheduleGenerator::DEFAULTS['serviceLevel']),
             [

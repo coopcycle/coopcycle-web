@@ -9,7 +9,6 @@ import { useTranslation } from 'react-i18next';
 import {
   useDeleteShiftActivityMutation,
   useGetShiftActivitiesQuery,
-  useGetShiftSettingsQuery,
 } from '../../../api/slice';
 import { ShiftActivity } from '../../../api/types';
 import { activityDisplayLabel } from '../utils/activityLabel';
@@ -21,7 +20,6 @@ export default function ActivitiesManager() {
   const { message } = App.useApp();
 
   const { data: activities, isFetching } = useGetShiftActivitiesQuery();
-  const { data: shiftSettings } = useGetShiftSettingsQuery();
   const [deleteShiftActivity] = useDeleteShiftActivityMutation();
 
   const [modalState, setModalState] = useState<ActivityModalState>(null);
@@ -44,10 +42,7 @@ export default function ActivitiesManager() {
           <span
             className="shift-type-dot"
             style={{
-              backgroundColor: shiftTypeColor(
-                activity.slug,
-                shiftSettings?.typeColors,
-              ),
+              backgroundColor: activity.color || shiftTypeColor(activity.slug),
             }}
           />
           {activityDisplayLabel(activity, t)}

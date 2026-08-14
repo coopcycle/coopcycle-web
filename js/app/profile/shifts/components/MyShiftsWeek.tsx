@@ -7,7 +7,7 @@ import {
   useGetBankHolidaysQuery,
   useGetMeQuery,
   useGetMyShiftsQuery,
-  useGetShiftSettingsQuery,
+  useGetShiftActivitiesQuery,
 } from '../../../api/slice';
 import WeekNavigator from '../../../admin/shift-planning/components/WeekNavigator';
 import ShiftCard from '../../../admin/shift-planning/components/ShiftCard';
@@ -34,7 +34,7 @@ export default function MyShiftsWeek() {
   const { data, isFetching } = useGetMyShiftsQuery({ after, before });
   const { data: me } = useGetMeQuery();
   const [reportShift, setReportShift] = useState<Shift | null>(null);
-  const { data: shiftSettings } = useGetShiftSettingsQuery();
+  const { data: activities } = useGetShiftActivitiesQuery();
   const { data: bankHolidaysData } = useGetBankHolidaysQuery({
     after,
     before,
@@ -90,10 +90,7 @@ export default function MyShiftsWeek() {
                   )?.adjustment;
                   return (
                     <div key={shift['@id']}>
-                      <ShiftCard
-                        shift={shift}
-                        typeColors={shiftSettings?.typeColors}
-                      />
+                      <ShiftCard shift={shift} activities={activities} />
                       <div className="my-shift-actual">
                         {adjustment && (
                           <span className="my-shift-actual__summary">

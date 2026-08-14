@@ -54,7 +54,6 @@ type Props = {
   users: PlanningUser[];
   holidayRequests: HolidayRequest[];
   shifts: Shift[];
-  typeColors?: Record<string, string>;
   onClose: () => void;
 };
 
@@ -75,7 +74,6 @@ export default function ShiftModal({
   users,
   holidayRequests,
   shifts,
-  typeColors,
   onClose,
 }: Props) {
   const { t } = useTranslation();
@@ -279,7 +277,7 @@ export default function ShiftModal({
                   <span
                     className="shift-type-dot"
                     style={{
-                      backgroundColor: shiftTypeColor(a.slug, typeColors),
+                      backgroundColor: a.color || shiftTypeColor(a.slug),
                     }}
                   />
                   {activityDisplayLabel(a, t)}

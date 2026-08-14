@@ -1,14 +1,13 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Shift, ShiftActivity } from '../../../api/types';
-import { shiftTypeColor } from '../utils/shiftTypeColor';
+import { activityColor } from '../utils/shiftTypeColor';
 import { activityLabel } from '../utils/activityLabel';
 import { wallClockTime } from '../utils/date';
 
 type Props = {
   shift: Shift;
   onClick?: (shift: Shift) => void;
-  typeColors?: Record<string, string>;
   activities?: ShiftActivity[];
 };
 
@@ -16,12 +15,7 @@ type Props = {
  * A "ghost" card representing the unfilled capacity of a shift,
  * shown in the "Open slots" row of the planning grid.
  */
-export default function OpenSlotCard({
-  shift,
-  onClick,
-  typeColors,
-  activities,
-}: Props) {
+export default function OpenSlotCard({ shift, onClick, activities }: Props) {
   const { t } = useTranslation();
 
   const remaining = shift.slots - shift.assignments.length;
@@ -37,7 +31,7 @@ export default function OpenSlotCard({
         <span>
           <span
             className="shift-type-dot"
-            style={{ backgroundColor: shiftTypeColor(shift.activity, typeColors) }}
+            style={{ backgroundColor: activityColor(shift.activity, activities) }}
           />
           {activityLabel(shift.activity, activities, t)}
         </span>

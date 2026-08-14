@@ -7,12 +7,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
 final class ShiftSettingsInput
 {
     /**
-     * @var array<string, string>
-     */
-    #[Groups(['shift_settings'])]
-    public array $typeColors = [];
-
-    /**
      * Deliveries a single courier can complete per hour (drives capacity).
      */
     #[Groups(['shift_settings'])]

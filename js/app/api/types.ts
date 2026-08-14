@@ -633,10 +633,12 @@ export type ShiftActivity = JsonLdEntity & {
   id: number;
   slug: string;
   label: string;
+  color: string | null;
 };
 
 export type ShiftActivityPayload = {
   label: string;
+  color?: string | null;
 };
 
 export type PutShiftActivityRequest = ShiftActivityPayload & { '@id': Uri };
@@ -810,7 +812,6 @@ export type LegalTemplate = {
 };
 
 export type ShiftSettings = JsonLdEntity & {
-  typeColors: Record<string, string>;
   throughput: number;
   serviceLevel: number;
   legal: LegalConfig;
@@ -818,7 +819,6 @@ export type ShiftSettings = JsonLdEntity & {
 };
 
 export type PutShiftSettingsRequest = {
-  typeColors: Record<string, string>;
   throughput?: number;
   serviceLevel?: number;
   legal?: LegalConfig;

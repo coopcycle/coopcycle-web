@@ -32,12 +32,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
 )]
 final class ShiftSettings
 {
-    /**
-     * @var array<string, string>
-     */
-    #[Groups(['shift_settings'])]
-    public array $typeColors;
-
     #[Groups(['shift_settings'])]
     public float $throughput;
 
@@ -62,17 +56,12 @@ final class ShiftSettings
     #[Groups(['shift_settings'])]
     public array $legalTemplates;
 
-    /**
-     * @param array<string, string> $typeColors
-     */
     public function __construct(
-        array $typeColors = [],
         float $throughput = 0.0,
         float $serviceLevel = 0.0,
         array $legal = ['template' => null, 'rules' => []],
         array $legalTemplates = [])
     {
-        $this->typeColors = $typeColors;
         $this->throughput = $throughput;
         $this->serviceLevel = $serviceLevel;
         $this->legal = $legal;

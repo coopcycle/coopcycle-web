@@ -56,9 +56,6 @@ export default function ShiftSettingsModal() {
   const onSave = async () => {
     try {
       await putShiftSettings({
-        // Activity colors are edited from the Activities page, not here —
-        // pass the current value through so this save doesn't wipe them
-        typeColors: data?.typeColors ?? {},
         throughput,
         serviceLevel,
         legal: { template: legalTemplate, rules: legalOverrides },

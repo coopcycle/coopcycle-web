@@ -20,11 +20,10 @@ type Props = {
   activities: ShiftActivity[];
   value: string[];
   onChange: (value: string[]) => void;
-  typeColors?: Record<string, string>;
 };
 
 const ShiftTypeFilter = forwardRef<ShiftTypeFilterHandle, Props>(
-  ({ activities, value, onChange, typeColors }, ref) => {
+  ({ activities, value, onChange }, ref) => {
     const { t } = useTranslation();
     const selectRef = useRef<RefSelectProps>(null);
     const [open, setOpen] = useState(false);
@@ -58,7 +57,7 @@ const ShiftTypeFilter = forwardRef<ShiftTypeFilterHandle, Props>(
             <span>
               <span
                 className="shift-type-dot"
-                style={{ backgroundColor: shiftTypeColor(a.slug, typeColors) }}
+                style={{ backgroundColor: a.color || shiftTypeColor(a.slug) }}
               />
               {activityDisplayLabel(a, t)}
             </span>

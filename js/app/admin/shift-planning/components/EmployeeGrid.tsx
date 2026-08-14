@@ -57,7 +57,6 @@ type Props = {
   onEdit: (shift: Shift) => void;
   onAddUser: (userUri: Uri) => void;
   onRemoveUser: (userUri: Uri) => void;
-  typeColors?: Record<string, string>;
   activities?: ShiftActivity[];
   /** Map of "YYYY-MM-DD" -> bank holiday name, for the day header highlight */
   bankHolidays?: Record<string, string>;
@@ -74,7 +73,6 @@ export default function EmployeeGrid({
   onEdit,
   onAddUser,
   onRemoveUser,
-  typeColors,
   activities,
   bankHolidays,
 }: Props) {
@@ -172,7 +170,6 @@ export default function EmployeeGrid({
                 key={shift['@id']}
                 shift={shift}
                 onClick={onEdit}
-                typeColors={typeColors}
                 activities={activities}
               />
             ))}
@@ -277,7 +274,6 @@ export default function EmployeeGrid({
                       shift={shift}
                       onClick={onEdit}
                       conflictWith={findOverlappingShift(shift, userShifts)}
-                      typeColors={typeColors}
                       activities={activities}
                     />
                   ))}

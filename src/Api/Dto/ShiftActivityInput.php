@@ -15,4 +15,8 @@ final class ShiftActivityInput
     #[Assert\NotBlank]
     #[Assert\Length(max: 255)]
     public ?string $label = null;
+
+    #[Groups(['shift_activity_write'])]
+    #[Assert\Regex(pattern: '/^#[0-9a-fA-F]{6}$/', message: 'This is not a valid hex color.')]
+    public ?string $color = null;
 }

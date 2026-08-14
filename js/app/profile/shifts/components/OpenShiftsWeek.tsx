@@ -6,7 +6,7 @@ import {
   useApplyToShiftMutation,
   useGetMeQuery,
   useGetOpenShiftsQuery,
-  useGetShiftSettingsQuery,
+  useGetShiftActivitiesQuery,
   useUnapplyFromShiftMutation,
 } from '../../../api/slice';
 import { Shift } from '../../../api/types';
@@ -36,7 +36,7 @@ export default function OpenShiftsWeek({ weekStart }: Props) {
 
   const { data, isFetching } = useGetOpenShiftsQuery({ after, before });
   const { data: me } = useGetMeQuery();
-  const { data: shiftSettings } = useGetShiftSettingsQuery();
+  const { data: activities } = useGetShiftActivitiesQuery();
 
   const [applyToShift, { isLoading: isApplying }] = useApplyToShiftMutation();
   const [unapplyFromShift, { isLoading: isUnapplying }] =
@@ -161,10 +161,7 @@ export default function OpenShiftsWeek({ weekStart }: Props) {
               {dayShifts.map(shift => (
                 <div key={shift['@id']} className="open-shift-row">
                   <div className="open-shift-row__card">
-                    <ShiftCard
-                      shift={shift}
-                      typeColors={shiftSettings?.typeColors}
-                    />
+                    <ShiftCard shift={shift} activities={activities} />
                   </div>
                   <div className="open-shift-row__actions">
                     {renderAction(shift)}

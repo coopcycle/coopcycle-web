@@ -66,6 +66,14 @@ class ShiftActivity
     #[Assert\Length(max: 255)]
     protected ?string $label = null;
 
+    /**
+     * Hex color (e.g. "#ffadad") shown for this activity across the planning
+     * grids. Null falls back to a deterministic color derived from the slug.
+     */
+    #[Groups(['shift_activity'])]
+    #[Assert\Regex(pattern: '/^#[0-9a-fA-F]{6}$/', message: 'This is not a valid hex color.')]
+    protected ?string $color = null;
+
     protected $createdAt;
 
     protected $updatedAt;
@@ -95,6 +103,18 @@ class ShiftActivity
     public function setLabel(string $label): self
     {
         $this->label = $label;
+
+        return $this;
+    }
+
+    public function getColor(): ?string
+    {
+        return $this->color;
+    }
+
+    public function setColor(?string $color): self
+    {
+        $this->color = $color;
 
         return $this;
     }

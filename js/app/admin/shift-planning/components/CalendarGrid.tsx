@@ -22,7 +22,6 @@ type Props = {
   shifts: Shift[];
   onCreate: (day: Dayjs, time: Dayjs) => void;
   onEdit: (shift: Shift) => void;
-  typeColors?: Record<string, string>;
   activities?: ShiftActivity[];
   bankHolidays?: Record<string, string>;
 };
@@ -68,7 +67,6 @@ export default function CalendarGrid({
   shifts,
   onCreate,
   onEdit,
-  typeColors,
   activities,
   bankHolidays,
 }: Props) {
@@ -296,7 +294,6 @@ export default function CalendarGrid({
         <ShiftCard
           shift={displayShift}
           onClick={onEdit}
-          typeColors={typeColors}
           activities={activities}
           showAssignees
         />

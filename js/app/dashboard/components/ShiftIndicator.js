@@ -2,17 +2,19 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import axios from 'axios'
 import { Tooltip } from 'antd'
+import { useTranslation } from 'react-i18next'
 
 import { selectSelectedDate } from '../../coopcycle-frontend-js/logistics/redux'
-import { shiftTypeColor } from '../../admin/shift-planning/utils/shiftTypeColor'
+import { activityColor } from '../../admin/shift-planning/utils/shiftTypeColor'
+import { activityLabel } from '../../admin/shift-planning/utils/activityLabel'
 import { sortByStart, wallClockTime } from '../../admin/shift-planning/utils/date'
 
 // The shifts of the day are fetched once, and shared by all the task lists
 const cache = new Map()
 
-// The shift type colors setting rarely changes and is shared by every task list,
+// The activity catalog rarely changes and is shared by every task list,
 // so it's fetched once and cached for the lifetime of the page
-let settingsCache = null
+let activitiesCache = null
 
 function isEnabled() {
   const el = document.querySelector('#dashboard')
@@ -39,28 +41,29 @@ function getShifts(jwt, date) {
   return cache.get(date)
 }
 
-function getShiftSettings(jwt) {
-  if (!settingsCache) {
-    settingsCache = axios
-      .get('/api/shift_settings', {
+function getShiftActivities(jwt) {
+  if (!activitiesCache) {
+    activitiesCache = axios
+      .get('/api/shift_activities', {
         headers: {
           Authorization: `Bearer ${jwt}`,
           Accept: 'application/ld+json',
         },
       })
-      .then(response => response.data.typeColors || {})
-      .catch(() => ({}))
+      .then(response => response.data['hydra:member'] || [])
+      .catch(() => [])
   }
 
-  return settingsCache
+  return activitiesCache
 }
 
 export default ({ username }) => {
   const jwt = useSelector(state => state.jwt)
   const date = useSelector(selectSelectedDate).format('YYYY-MM-DD')
+  const { t } = useTranslation()
 
   const [shifts, setShifts] = useState([])
-  const [typeColors, setTypeColors] = useState({})
+  const [activities, setActivities] = useState([])
 
   useEffect(() => {
     if (!isEnabled()) {
@@ -73,9 +76,9 @@ export default ({ username }) => {
         setShifts(allShifts)
       }
     })
-    getShiftSettings(jwt).then(colors => {
+    getShiftActivities(jwt).then(fetchedActivities => {
       if (!cancelled) {
-        setTypeColors(colors)
+        setActivities(fetchedActivities)
       }
     })
 
@@ -99,11 +102,13 @@ export default ({ username }) => {
   return (
     <span className="shift-indicator">
       {myShifts.map(shift => (
-        <Tooltip key={shift['@id']} title={shift.type}>
+        <Tooltip
+          key={shift['@id']}
+          title={activityLabel(shift.activity, activities, t)}>
           <span
             className="badge ml-1"
             style={{
-              backgroundColor: shiftTypeColor(shift.type, typeColors),
+              backgroundColor: activityColor(shift.activity, activities),
               color: 'rgba(0, 0, 0, 0.75)',
             }}>
             {wallClockTime(shift.startsAt)}-{wallClockTime(shift.endsAt)}

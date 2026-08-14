@@ -1,31 +1,30 @@
-export const DEFAULT_SHIFT_TYPE_COLORS: Record<string, string> = {
-  delivery: '#ffadad',
-  dispatch: '#a0c4ff',
-  administration: '#fdffb6',
-};
+import { ShiftActivity } from '../../../api/types';
 
 const FALLBACKS = ['#caffbf', '#ffd6a5', '#bdb2ff', '#ffc6ff', '#9bf6ff'];
 
 /**
- * @param overrides Custom colors configured in the shift planning settings,
- * takes precedence over the built-in defaults
+ * Deterministic color derived from the slug, used when an activity has no
+ * color of its own yet (e.g. the "new activity" form, or a slug that no
+ * longer resolves to an activity in the catalog).
  */
-export function shiftTypeColor(
-  type: string,
-  overrides?: Record<string, string>,
-): string {
-  if (overrides?.[type]) {
-    return overrides[type];
-  }
-
-  if (DEFAULT_SHIFT_TYPE_COLORS[type]) {
-    return DEFAULT_SHIFT_TYPE_COLORS[type];
-  }
-
+export function shiftTypeColor(slug: string): string {
   let hash = 0;
-  for (let i = 0; i < type.length; i++) {
-    hash = (hash * 31 + type.charCodeAt(i)) | 0;
+  for (let i = 0; i < slug.length; i++) {
+    hash = (hash * 31 + slug.charCodeAt(i)) | 0;
   }
 
   return FALLBACKS[Math.abs(hash) % FALLBACKS.length];
+}
+
+/**
+ * The color to render for a shift's activity: the color stored on the
+ * ShiftActivity itself if set, otherwise the deterministic fallback.
+ */
+export function activityColor(
+  slug: string,
+  activities: ShiftActivity[] | undefined,
+): string {
+  const activity = activities?.find(a => a.slug === slug);
+
+  return activity?.color || shiftTypeColor(slug);
 }

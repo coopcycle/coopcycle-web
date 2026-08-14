@@ -12,7 +12,6 @@ import {
   useGetHolidayRequestsQuery,
   useGetPlanningUsersQuery,
   useGetShiftActivitiesQuery,
-  useGetShiftSettingsQuery,
   useGetShiftsQuery,
 } from '../../api/slice';
 import { Shift, Uri } from '../../api/types';
@@ -74,8 +73,6 @@ const Planning = () => {
     status: ['approved', 'pending'],
   });
   const { data: users } = useGetPlanningUsersQuery();
-  const { data: shiftSettings } = useGetShiftSettingsQuery();
-  const typeColors = shiftSettings?.typeColors;
   const { data: activities } = useGetShiftActivitiesQuery();
 
   const { data: bankHolidaysData } = useGetBankHolidaysQuery({
@@ -217,7 +214,6 @@ const Planning = () => {
               activities={activities ?? []}
               value={typeFilter}
               onChange={setTypeFilter}
-              typeColors={typeColors}
             />
           </Space>
           <Segmented
@@ -292,7 +288,6 @@ const Planning = () => {
             onEdit={(shift: Shift) => setModalState({ shift })}
             onAddUser={addUser}
             onRemoveUser={removeUser}
-            typeColors={typeColors}
             activities={activities}
             bankHolidays={bankHolidays}
           />
@@ -308,7 +303,6 @@ const Planning = () => {
               setModalState({ date: day, activity })
             }
             onEdit={(shift: Shift) => setModalState({ shift })}
-            typeColors={typeColors}
             bankHolidays={bankHolidays}
           />
         </Spin>
@@ -322,7 +316,6 @@ const Planning = () => {
               setModalState({ date: day, time })
             }
             onEdit={(shift: Shift) => setModalState({ shift })}
-            typeColors={typeColors}
             activities={activities}
             bankHolidays={bankHolidays}
           />
@@ -334,7 +327,6 @@ const Planning = () => {
         users={sortedUsers}
         holidayRequests={weekHolidays}
         shifts={shifts}
-        typeColors={typeColors}
         onClose={() => setModalState(null)}
       />
       <HolidayRequestsDrawer

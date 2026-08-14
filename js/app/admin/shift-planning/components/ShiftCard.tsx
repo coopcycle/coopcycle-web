@@ -3,7 +3,7 @@ import { Tooltip } from 'antd';
 import { FieldTimeOutlined, WarningFilled } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { Shift, ShiftActivity } from '../../../api/types';
-import { shiftTypeColor } from '../utils/shiftTypeColor';
+import { activityColor } from '../utils/shiftTypeColor';
 import { activityLabel } from '../utils/activityLabel';
 import { wallClockTime } from '../utils/date';
 
@@ -11,7 +11,6 @@ type Props = {
   shift: Shift;
   onClick?: (shift: Shift) => void;
   conflictWith?: Shift;
-  typeColors?: Record<string, string>;
   activities?: ShiftActivity[];
   /** Show assignee usernames on the card, for views where the row doesn't already imply the user (type/calendar views) */
   showAssignees?: boolean;
@@ -21,7 +20,6 @@ export default function ShiftCard({
   shift,
   onClick,
   conflictWith,
-  typeColors,
   activities,
   showAssignees,
 }: Props) {
@@ -30,7 +28,7 @@ export default function ShiftCard({
   return (
     <div
       className="shift-card"
-      style={{ backgroundColor: shiftTypeColor(shift.activity, typeColors) }}
+      style={{ backgroundColor: activityColor(shift.activity, activities) }}
       onClick={e => {
         e.stopPropagation();
         onClick && onClick(shift);

@@ -3,10 +3,8 @@ import { App, Button, ColorPicker, Form, Input, Modal, Space, Tooltip } from 'an
 import { UndoOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import {
-  useGetShiftSettingsQuery,
   usePostShiftActivityMutation,
   usePutShiftActivityMutation,
-  usePutShiftSettingsMutation,
 } from '../../../api/slice';
 import { ShiftActivity } from '../../../api/types';
 import { shiftTypeColor } from '../utils/shiftTypeColor';
@@ -28,12 +26,10 @@ export default function ActivityModal({ state, onClose }: Props) {
   const { message } = App.useApp();
   const [form] = Form.useForm<FormValues>();
 
-  const { data: shiftSettings } = useGetShiftSettingsQuery();
   const [postShiftActivity, { isLoading: isCreating }] =
     usePostShiftActivityMutation();
   const [putShiftActivity, { isLoading: isUpdating }] =
     usePutShiftActivityMutation();
-  const [putShiftSettings] = usePutShiftSettingsMutation();
 
   const activity = state?.activity;
   const color = Form.useWatch('color', form);
@@ -44,35 +40,24 @@ export default function ActivityModal({ state, onClose }: Props) {
     }
     form.setFieldsValue({
       label: state.activity?.label ?? '',
-      color: state.activity
-        ? shiftTypeColor(state.activity.slug, shiftSettings?.typeColors)
-        : shiftTypeColor(''),
+      color:
+        state.activity?.color ||
+        shiftTypeColor(state.activity?.slug ?? ''),
     });
-    // Only re-seed when the modal opens for a (possibly different) activity —
-    // not on every settings refetch, or the picker would jump while editing
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state, form]);
 
   const onFinish = async (values: FormValues) => {
     try {
-      let slug = activity?.slug;
       if (activity) {
         await putShiftActivity({
           '@id': activity['@id'],
           label: values.label,
+          color: values.color,
         }).unwrap();
       } else {
-        const created = await postShiftActivity({
+        await postShiftActivity({
           label: values.label,
-        }).unwrap();
-        slug = created.slug;
-      }
-      if (slug) {
-        await putShiftSettings({
-          typeColors: {
-            ...(shiftSettings?.typeColors ?? {}),
-            [slug]: values.color,
-          },
+          color: values.color,
         }).unwrap();
       }
       message.success(t('SHIFT_PLANNING_SAVED'));
