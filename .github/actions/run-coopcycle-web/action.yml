@@ -32,9 +32,7 @@ runs:
     if: steps.osrm-cache.outputs.cache-hit != 'true'
     shell: bash
     run: |
-      mkdir -p var/osrm
-      curl -o var/osrm/data.osm.pbf https://coopcycle-assets.sfo2.digitaloceanspaces.com/osm/paris-france.osm.pbf
-      ls -l var/osrm
+      curl --create-dirs -o var/osrm/data.osm.pbf https://coopcycle-assets.sfo2.digitaloceanspaces.com/osm/paris-france.osm.pbf
       docker compose run -T --rm osrm osrm-extract -p /opt/bicycle.lua /data/data.osm.pbf
       docker compose run -T --rm osrm osrm-partition /data/data.osrm
       docker compose run -T --rm osrm osrm-customize /data/data.osrm
