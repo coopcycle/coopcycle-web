@@ -35,13 +35,14 @@ services:
       - 'webpack_php_cache:/srv/coopcycle/var/cache'
 
   osrm:
-    build: './docker/osrm'
+    image: ${OSRM_IMAGE:-ghcr.io/project-osrm/osrm-backend:26.7-debian}
     ports:
       - '5000:5000'
     volumes:
       - './var/osrm:/data'
     environment:
       - OSRM_FILENAME=data.osrm
+    command: sh -c "if [ -f \"/data/$$OSRM_FILENAME.mldgr\" ]; then osrm-routed --algorithm mld \"/data/$$OSRM_FILENAME\"; else echo \"Missing /data/$$OSRM_FILENAME.mldgr. Run 'make osrm'.\"; fi"
 
   valhalla:
     image: ghcr.io/valhalla/valhalla-scripted:latest

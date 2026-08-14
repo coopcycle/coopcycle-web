@@ -15,7 +15,7 @@ install-db:
 
 osrm:
 	@printf "\e[0;32mCalculating cycling routes for Paris..\e[0m\n"
-	@docker compose run --rm osrm wget --no-check-certificate https://coopcycle-assets.sfo2.digitaloceanspaces.com/osm/paris-france.osm.pbf -O /data/data.osm.pbf
+	@curl -o var/osrm/data.osm.pbf https://coopcycle-assets.sfo2.digitaloceanspaces.com/osm/paris-france.osm.pbf
 	@docker compose run --rm osrm osrm-extract -p /opt/bicycle.lua /data/data.osm.pbf
 	@docker compose run --rm osrm osrm-partition /data/data.osrm
 	@docker compose run --rm osrm osrm-customize /data/data.osrm
