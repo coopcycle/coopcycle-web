@@ -14,7 +14,7 @@ const MIN_BLOCK_HEIGHT = 20;
 const HOURS = [...Array(24)].map((_, h) => h);
 // Must match the CSS width of .shift-planning-calendar__hours
 const HOURS_GUTTER = 56;
-const SNAP_MINUTES = 15;
+const SNAP_MINUTES = 5;
 const MIN_DURATION = 15;
 
 type Props = {

@@ -298,7 +298,7 @@ export default function ShiftModal({
           <TimePicker.RangePicker
             style={{ width: '100%' }}
             format="HH:mm"
-            minuteStep={15}
+            minuteStep={5}
             allowClear={false}
           />
         </Form.Item>
