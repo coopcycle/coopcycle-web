@@ -21,9 +21,7 @@ import TypeGrid from './components/TypeGrid';
 import CalendarGrid from './components/CalendarGrid';
 import ShiftModal, { ShiftModalState } from './components/ShiftModal';
 import HolidayRequestsDrawer from './components/HolidayRequestsDrawer';
-import CopyWeekButton from './components/CopyWeekButton';
-import SaveAsTemplateButton from './components/SaveAsTemplateButton';
-import LoadTemplateButton from './components/LoadTemplateButton';
+import WeekActionsMenu from './components/WeekActionsMenu';
 import ShiftTypeFilter, {
   ShiftTypeFilterHandle,
 } from './components/ShiftTypeFilter';
@@ -247,9 +245,7 @@ const Planning = ({ shiftTypes }: Props) => {
                 {t('SHIFT_PLANNING_HOLIDAY_REQUESTS')}
               </Button>
             </Badge>
-            <CopyWeekButton weekStart={weekStart} />
-            <LoadTemplateButton weekStart={weekStart} />
-            <SaveAsTemplateButton weekStart={weekStart} />
+            <WeekActionsMenu weekStart={weekStart} />
             <GenerateScheduleButton weekStart={weekStart} />
             <AddToDispatchButton weekStart={weekStart} />
             <PublishWeekButton weekStart={weekStart} />

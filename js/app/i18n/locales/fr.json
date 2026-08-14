@@ -955,6 +955,7 @@
         "SHIFT_PLANNING_APPROVE_CONFIRM": "Approuver cette demande de congés ?",
         "SHIFT_PLANNING_REJECT": "Refuser",
         "SHIFT_PLANNING_REJECT_CONFIRM": "Refuser cette demande de congés ?",
+        "SHIFT_PLANNING_WEEK_ACTIONS": "Dupliquer la semaine",
         "SHIFT_PLANNING_COPY_LAST_WEEK": "Copier la semaine dernière",
         "SHIFT_PLANNING_COPY_CONFIRM": "Copier tous les créneaux de la semaine du {{source}} vers la semaine du {{target}} ?",
         "SHIFT_PLANNING_COPY_CONFIRM_NOTE": "Les livreurs en congés approuvés seront ignorés.",

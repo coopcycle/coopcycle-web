@@ -984,6 +984,7 @@
         "SHIFT_PLANNING_APPROVE_CONFIRM": "Approve this holiday request?",
         "SHIFT_PLANNING_REJECT": "Reject",
         "SHIFT_PLANNING_REJECT_CONFIRM": "Reject this holiday request?",
+        "SHIFT_PLANNING_WEEK_ACTIONS": "Duplicate week",
         "SHIFT_PLANNING_COPY_LAST_WEEK": "Copy last week",
         "SHIFT_PLANNING_COPY_CONFIRM": "Copy all shifts from the week of {{source}} to the week of {{target}}?",
         "SHIFT_PLANNING_COPY_CONFIRM_NOTE": "Riders on approved holiday will be skipped.",
