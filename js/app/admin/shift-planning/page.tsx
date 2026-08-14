@@ -22,6 +22,7 @@ import CalendarGrid from './components/CalendarGrid';
 import ShiftModal, { ShiftModalState } from './components/ShiftModal';
 import HolidayRequestsDrawer from './components/HolidayRequestsDrawer';
 import WeekActionsMenu from './components/WeekActionsMenu';
+import ClearWeekButton from './components/ClearWeekButton';
 import ShiftTypeFilter, {
   ShiftTypeFilterHandle,
 } from './components/ShiftTypeFilter';
@@ -246,6 +247,7 @@ const Planning = () => {
             <WeekActionsMenu weekStart={weekStart} />
             <GenerateScheduleButton weekStart={weekStart} />
             <AddToDispatchButton weekStart={weekStart} />
+            <ClearWeekButton weekStart={weekStart} />
             <PublishWeekButton weekStart={weekStart} />
           </Space>
           <Button

@@ -188,6 +188,36 @@ class ShiftManagerTest extends TestCase
         $this->assertEquals(new \DateTime('2026-07-13 13:00:00'), $copies[0]->getEndsAt());
     }
 
+    public function testClearWeekDeletesEveryShiftOverlappingTheWeek()
+    {
+        $shift1 = new Shift();
+        $shift1->setActivity('delivery');
+        $shift1->setStartsAt(new \DateTime('2026-06-23 09:00:00'));
+        $shift1->setEndsAt(new \DateTime('2026-06-23 17:00:00'));
+
+        $shift2 = new Shift();
+        $shift2->setActivity('dispatch');
+        $shift2->setStartsAt(new \DateTime('2026-06-25 08:00:00'));
+        $shift2->setEndsAt(new \DateTime('2026-06-25 13:00:00'));
+
+        $this->shiftRepository
+            ->findOverlappingRange(Argument::type(\DateTimeInterface::class), Argument::type(\DateTimeInterface::class))
+            ->willReturn([$shift1, $shift2]);
+
+        $removed = [];
+        $this->entityManager
+            ->remove(Argument::type(Shift::class))
+            ->will(function ($args) use (&$removed) {
+                $removed[] = $args[0];
+            });
+        $this->entityManager->flush()->shouldBeCalled();
+
+        $cleared = $this->shiftManager->clearWeek(new \DateTimeImmutable('2026-06-22'));
+
+        $this->assertSame(2, $cleared);
+        $this->assertSame([$shift1, $shift2], $removed);
+    }
+
     public function testAddToDispatchCreatesTaskListForCourier()
     {
         $sarah = $this->createUser('sarah');

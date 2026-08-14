@@ -304,6 +304,29 @@ class ShiftManager
     }
 
     /**
+     * Deletes every shift overlapping the given week. Only meant to be
+     * called on a non-published week — the caller (ShiftWeekClearProcessor)
+     * enforces that.
+     *
+     * @return int the number of shifts deleted
+     */
+    public function clearWeek(\DateTimeImmutable $weekMonday): int
+    {
+        $start = $weekMonday->setTime(0, 0);
+        $end = $start->modify('+7 days');
+
+        $shifts = $this->entityManager->getRepository(Shift::class)->findOverlappingRange($start, $end);
+
+        foreach ($shifts as $shift) {
+            $this->entityManager->remove($shift);
+        }
+
+        $this->entityManager->flush();
+
+        return count($shifts);
+    }
+
+    /**
      * @param UserInterface[] $users
      */
     public function notify(string $message, array $users, array $data = []): void

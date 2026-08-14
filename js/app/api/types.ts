@@ -762,6 +762,10 @@ export type CopyWeekRequest = {
   targetWeek: string;
 };
 
+export type ClearWeekRequest = {
+  week: string;
+};
+
 export type ShiftTemplateShift = {
   '@id': Uri;
   activity: string;
@@ -913,6 +917,10 @@ export type ShiftBatchResult = JsonLdEntity & {
 
 export type ShiftDispatchSyncResult = JsonLdEntity & {
   added: number;
+};
+
+export type ShiftWeekClearResult = JsonLdEntity & {
+  cleared: number;
 };
 
 export type BankHoliday = {

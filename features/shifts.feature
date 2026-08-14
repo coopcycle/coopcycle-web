@@ -466,6 +466,136 @@ Feature: Shifts
       }
       """
 
+  Scenario: Dispatcher clears all the shifts of a week
+    Given the user "bob" is loaded:
+      | email    | bob@coopcycle.org |
+      | password | 123456            |
+    And the user "bob" has role "ROLE_DISPATCHER"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/shifts" with body:
+      """
+      {
+        "activity": "delivery",
+        "startsAt": "2026-06-22T09:00:00",
+        "endsAt": "2026-06-22T17:00:00",
+        "users": []
+      }
+      """
+    Then the response status code should be 201
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/shifts" with body:
+      """
+      {
+        "activity": "dispatch",
+        "startsAt": "2026-06-25T08:00:00",
+        "endsAt": "2026-06-25T13:00:00",
+        "users": []
+      }
+      """
+    Then the response status code should be 201
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/shifts/clear_week" with body:
+      """
+      {
+        "week": "2026-06-22"
+      }
+      """
+    Then the response status code should be 200
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/ShiftWeekClear",
+        "@id":"@string@",
+        "@type":"ShiftWeekClear",
+        "cleared":2
+      }
+      """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/shifts?date[after]=2026-06-22&date[before]=2026-06-28"
+    Then the response status code should be 200
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Shift",
+        "@id":"/api/shifts",
+        "@type":"hydra:Collection",
+        "hydra:member":[],
+        "hydra:totalItems":0,
+        "@*@":"@*@"
+      }
+      """
+
+  Scenario: Clearing a published week is rejected
+    Given the user "bob" is loaded:
+      | email    | bob@coopcycle.org |
+      | password | 123456            |
+    And the user "bob" has role "ROLE_DISPATCHER"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/shifts" with body:
+      """
+      {
+        "activity": "delivery",
+        "startsAt": "2026-06-29T09:00:00",
+        "endsAt": "2026-06-29T17:00:00",
+        "users": []
+      }
+      """
+    Then the response status code should be 201
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/shifts/publish_week" with body:
+      """
+      {
+        "week": "2026-06-29"
+      }
+      """
+    Then the response status code should be 204
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/shifts/clear_week" with body:
+      """
+      {
+        "week": "2026-06-29"
+      }
+      """
+    Then the response status code should be 400
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/shifts?date[after]=2026-06-29&date[before]=2026-07-05"
+    Then the response status code should be 200
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Shift",
+        "@id":"/api/shifts",
+        "@type":"hydra:Collection",
+        "hydra:totalItems":1,
+        "@*@":"@*@"
+      }
+      """
+
+  Scenario: Courier can not clear a week
+    Given the courier "sarah" is loaded:
+      | email    | sarah@coopcycle.org |
+      | password | 123456              |
+    And the user "sarah" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "POST" request to "/api/shifts/clear_week" with body:
+      """
+      {
+        "week": "2026-06-29"
+      }
+      """
+    Then the response status code should be 403
+
   Scenario: Assigning a courier to a shift does NOT automatically add them to the dispatch
     Given the courier "sarah" is loaded:
       | email    | sarah@coopcycle.org |

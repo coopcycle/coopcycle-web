@@ -50,6 +50,8 @@ import {
   HolidayRequest,
   PostHolidayRequestRequest,
   CopyWeekRequest,
+  ClearWeekRequest,
+  ShiftWeekClearResult,
   ShiftTemplate,
   CreateShiftTemplateRequest,
   ApplyShiftTemplateRequest,
@@ -509,6 +511,14 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ['Shift'],
     }),
+    clearWeek: builder.mutation<ShiftWeekClearResult, ClearWeekRequest>({
+      query: body => ({
+        url: 'api/shifts/clear_week',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['Shift'],
+    }),
     getShiftTemplates: builder.query<ShiftTemplate[], void>({
       query: () => 'api/shift_templates',
       transformResponse: (response: HydraCollection<ShiftTemplate>) =>
@@ -865,6 +875,7 @@ export const {
   usePutShiftMutation,
   useDeleteShiftMutation,
   useCopyWeekMutation,
+  useClearWeekMutation,
   useGetShiftTemplatesQuery,
   useCreateShiftTemplateMutation,
   useDeleteShiftTemplateMutation,
