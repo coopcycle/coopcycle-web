@@ -35,13 +35,27 @@ services:
       - 'webpack_php_cache:/srv/coopcycle/var/cache'
 
   osrm:
-    build: './docker/osrm'
+    image: ${OSRM_IMAGE:-ghcr.io/project-osrm/osrm-backend:26.7-debian}
     ports:
       - '5000:5000'
     volumes:
       - './var/osrm:/data'
     environment:
       - OSRM_FILENAME=data.osrm
+    command: sh -c "if [ -f \"/data/$$OSRM_FILENAME.mldgr\" ]; then osrm-routed --algorithm mld \"/data/$$OSRM_FILENAME\"; else echo \"Missing /data/$$OSRM_FILENAME.mldgr. Run 'make osrm'.\"; fi"
+
+  valhalla:
+    image: ghcr.io/valhalla/valhalla-scripted:latest
+    profiles: ['valhalla']
+    ports:
+      - '8002:8002'
+    volumes:
+      - './var/valhalla:/custom_files'
+    environment:
+      # The valhalla-scripted image downloads the OSM PBF on first boot,
+      # builds the tile set, then starts the routing service on :8002.
+      - tile_urls=https://coopcycle-assets.sfo2.digitaloceanspaces.com/osm/paris-france.osm.pbf
+    restart: unless-stopped
 
   php:
     build:

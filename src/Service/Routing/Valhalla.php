@@ -3,29 +3,18 @@
 namespace AppBundle\Service\Routing;
 
 use AppBundle\Entity\Base\GeoCoordinates;
-use AppBundle\Service\Routing\Engine\OsrmRoutingEngine;
+use AppBundle\Service\Routing\Engine\ValhallaRoutingEngine;
 
-class Osrm extends Base
+class Valhalla extends Base
 {
     /**
-     * @var OsrmRoutingEngine
+     * @var ValhallaRoutingEngine
      */
     private $engine;
 
-    public function __construct(OsrmRoutingEngine $engine)
+    public function __construct(ValhallaRoutingEngine $engine)
     {
         $this->engine = $engine;
-    }
-
-    /**
-     * Backwards-compatible generic OSRM access used by
-     * AppBundle\Action\Routing::tripAction().
-     *
-     * @return array
-     */
-    public function getServiceResponse($service, array $coordinates, array $options = [])
-    {
-        return $this->engine->getServiceResponse($service, $coordinates, $options);
     }
 
     /**
