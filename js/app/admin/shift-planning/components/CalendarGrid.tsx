@@ -279,6 +279,17 @@ export default function CalendarGrid({
             e.preventDefault();
             e.stopPropagation();
           }
+        }}
+        // Claims every click within the block — including ones landing on the
+        // resize handles below, which are siblings of ShiftCard and have no
+        // click handler of their own — so it can never fall through to the
+        // day column's onClick and open the "create shift" modal instead of
+        // editing this one. ShiftCard already stopPropagation()s on its own
+        // clicks, so this only ever fires for handle clicks (suppressed after
+        // a real drag by the onClickCapture guard above).
+        onClick={isGhost ? undefined : e => {
+          e.stopPropagation();
+          onEdit(shift);
         }}>
         <ShiftCard
           shift={displayShift}
