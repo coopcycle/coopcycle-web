@@ -9,7 +9,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Per-week slot fill rate (assignments/slots) for the shift planning grid,
- * over the next N weeks (?weeks=, default 5). Used by the "dashboard" view
+ * over N weeks (?weeks=, default 5) starting at ?from= (any date, aligned to
+ * its Monday; defaults to the current week). Used by the week overview strip
  * next to the weekly grid to show staffing completeness at a glance.
  */
 #[ApiResource(

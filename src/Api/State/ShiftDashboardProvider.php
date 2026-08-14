@@ -25,7 +25,10 @@ final class ShiftDashboardProvider implements ProviderInterface
         $weeksParam = $request?->query->get('weeks');
         $weeks = null !== $weeksParam ? max(1, (int) $weeksParam) : 5;
 
-        $from = \DateTimeImmutable::createFromInterface(Carbon::now()->startOfWeek());
+        $fromParam = $request?->query->get('from');
+        $from = null !== $fromParam
+            ? (new \DateTimeImmutable($fromParam))->modify('monday this week')
+            : \DateTimeImmutable::createFromInterface(Carbon::now()->startOfWeek());
 
         /** @var ShiftRepository $shiftRepository */
         $shiftRepository = $this->entityManager->getRepository(\AppBundle\Entity\Shift::class);

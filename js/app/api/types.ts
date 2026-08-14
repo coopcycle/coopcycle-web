@@ -862,6 +862,7 @@ export type ShiftDashboard = JsonLdEntity & {
 
 export type GetShiftDashboardArgs = {
   weeks?: number;
+  from?: string;
 };
 
 export type ProposedShift = {

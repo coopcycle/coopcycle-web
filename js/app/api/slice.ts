@@ -753,9 +753,9 @@ export const apiSlice = createApi({
     }),
 
     getShiftDashboard: builder.query<ShiftDashboard, GetShiftDashboardArgs>({
-      query: ({ weeks } = {}) => ({
+      query: ({ weeks, from } = {}) => ({
         url: 'api/shifts/dashboard',
-        params: weeks ? { weeks } : undefined,
+        params: { ...(weeks ? { weeks } : {}), ...(from ? { from } : {}) },
       }),
       providesTags: ['Shift', 'SchedulePublication'],
     }),

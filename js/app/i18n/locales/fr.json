@@ -932,6 +932,8 @@
         "SHIFT_ACTIVITY_DEFAULT_ADMINISTRATION": "Administration",
         "SHIFT_PLANNING_WEEK_STRIP_TOOLTIP": "Semaine {{week}} ({{start}} → {{end}}) : {{assigned}}/{{slots}} assignés · {{status}}",
         "SHIFT_PLANNING_WEEK_STRIP_EMPTY": "Aucune semaine à venir à afficher",
+        "SHIFT_PLANNING_WEEK_STRIP_PREV": "Afficher les semaines précédentes",
+        "SHIFT_PLANNING_WEEK_STRIP_NEXT": "Afficher les semaines suivantes",
         "SHIFT_PLANNING_DASHBOARD_STATUS_DRAFT": "Brouillon",
         "SHIFT_PLANNING_DASHBOARD_STATUS_IN_PROGRESS": "En cours",
         "SHIFT_PLANNING_DASHBOARD_STATUS_COMPLETE": "Complet",

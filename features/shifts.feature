@@ -948,6 +948,45 @@ Feature: Shifts
       }
       """
 
+  Scenario: Dispatcher navigates the shifts dashboard to an arbitrary week
+    Given the current time is "2026-06-29 10:00:00"
+    And the user "bob" is loaded:
+      | email    | bob@coopcycle.org |
+      | password | 123456            |
+    And the user "bob" has role "ROLE_DISPATCHER"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/shifts/dashboard?weeks=2&from=2026-01-14"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"@string@",
+        "@id":"@string@",
+        "@type":"ShiftDashboard",
+        "weeks":[
+          {
+            "weekStart":"2026-01-12",
+            "weekEnd":"2026-01-18",
+            "totalSlots":0,
+            "totalAssignments":0,
+            "fillRate":0,
+            "published":false
+          },
+          {
+            "weekStart":"2026-01-19",
+            "weekEnd":"2026-01-25",
+            "totalSlots":0,
+            "totalAssignments":0,
+            "fillRate":0,
+            "published":false
+          }
+        ]
+      }
+      """
+
   Scenario: Courier can not view the shifts dashboard
     Given the courier "sarah" is loaded:
       | email    | sarah@coopcycle.org |
