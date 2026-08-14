@@ -4,7 +4,7 @@
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
-    <field name="type" type="string" column="type" length="32"/>
+    <field name="activity" type="string" column="activity" length="64"/>
     <field name="dayOfWeek" type="smallint" column="day_of_week"/>
     <field name="startTime" type="time" column="start_time"/>
     <field name="endTime" type="time" column="end_time"/>

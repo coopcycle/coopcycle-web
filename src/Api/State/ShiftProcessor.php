@@ -5,8 +5,11 @@ namespace AppBundle\Api\State;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use AppBundle\Entity\Shift;
+use AppBundle\Entity\ShiftActivity;
 use AppBundle\Service\ShiftManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ShiftProcessor implements ProcessorInterface
@@ -15,7 +18,8 @@ class ShiftProcessor implements ProcessorInterface
         private readonly ProcessorInterface $persistProcessor,
         private readonly ShiftManager $shiftManager,
         private readonly Security $security,
-        private readonly TranslatorInterface $translator)
+        private readonly TranslatorInterface $translator,
+        private readonly EntityManagerInterface $entityManager)
     {}
 
     /**
@@ -25,6 +29,12 @@ class ShiftProcessor implements ProcessorInterface
     {
         if (null === $data->getId()) {
             $data->setCreatedBy($this->security->getUser());
+        }
+
+        $activity = $this->entityManager->getRepository(ShiftActivity::class)
+            ->findOneBySlug($data->getActivity());
+        if (null === $activity) {
+            throw new BadRequestHttpException(sprintf('Unknown shift activity "%s"', $data->getActivity()));
         }
 
         $added = [];

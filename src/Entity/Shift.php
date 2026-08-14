@@ -99,17 +99,19 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiFilter(filterClass: ShiftDateFilter::class, properties: ['date'])]
 class Shift
 {
-    const TYPE_DRIVE = 'drive';
-    const TYPE_DISPATCH = 'dispatch';
-    const TYPE_ADMIN = 'admin';
-
     #[Groups(['shift'])]
     protected $id;
 
+    /**
+     * The slug of a ShiftActivity (e.g. "delivery", "dispatch",
+     * "commercial-prospection") — a plain string, not an IRI, so the JSON
+     * representation of a shift never needs a lookup to know what it's for.
+     * Validated against the live activity catalog in ShiftProcessor.
+     */
     #[Groups(['shift', 'shift_create'])]
     #[Assert\NotBlank]
-    #[Assert\Length(max: 32)]
-    protected ?string $type = null;
+    #[Assert\Length(max: 64)]
+    protected ?string $activity = null;
 
     #[Groups(['shift', 'shift_create'])]
     #[Assert\NotBlank]
@@ -179,14 +181,14 @@ class Shift
         return $this->id;
     }
 
-    public function getType(): ?string
+    public function getActivity(): ?string
     {
-        return $this->type;
+        return $this->activity;
     }
 
-    public function setType(string $type): self
+    public function setActivity(string $activity): self
     {
-        $this->type = $type;
+        $this->activity = $activity;
 
         return $this;
     }

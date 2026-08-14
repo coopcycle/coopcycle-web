@@ -3233,9 +3233,7 @@ class AdminController extends AbstractController
 
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        return $this->render('admin/shift_planning.html.twig', $this->auth([
-            'shift_types' => $this->getParameter('shift_types'),
-        ]));
+        return $this->render('admin/shift_planning.html.twig', $this->auth([]));
     }
 
     #[Route(path: '/admin/shop-collections/preview/{component}', name: 'admin_shop_collection_preview')]

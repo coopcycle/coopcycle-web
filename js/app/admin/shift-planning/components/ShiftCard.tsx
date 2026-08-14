@@ -2,8 +2,9 @@ import React from 'react';
 import { Tooltip } from 'antd';
 import { FieldTimeOutlined, WarningFilled } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
-import { Shift } from '../../../api/types';
+import { Shift, ShiftActivity } from '../../../api/types';
 import { shiftTypeColor } from '../utils/shiftTypeColor';
+import { activityLabel } from '../utils/activityLabel';
 import { wallClockTime } from '../utils/date';
 
 type Props = {
@@ -11,6 +12,7 @@ type Props = {
   onClick?: (shift: Shift) => void;
   conflictWith?: Shift;
   typeColors?: Record<string, string>;
+  activities?: ShiftActivity[];
   /** Show assignee usernames on the card, for views where the row doesn't already imply the user (type/calendar views) */
   showAssignees?: boolean;
 };
@@ -20,6 +22,7 @@ export default function ShiftCard({
   onClick,
   conflictWith,
   typeColors,
+  activities,
   showAssignees,
 }: Props) {
   const { t } = useTranslation();
@@ -27,13 +30,13 @@ export default function ShiftCard({
   return (
     <div
       className="shift-card"
-      style={{ backgroundColor: shiftTypeColor(shift.type, typeColors) }}
+      style={{ backgroundColor: shiftTypeColor(shift.activity, typeColors) }}
       onClick={e => {
         e.stopPropagation();
         onClick && onClick(shift);
       }}>
       <div className="shift-card__type">
-        {shift.type}
+        {activityLabel(shift.activity, activities, t)}
         {shift.assignments.some(a => a.adjustment) && (
           <Tooltip title={t('SHIFT_TIME_REPORT_CARD_TOOLTIP')}>
             <FieldTimeOutlined className="shift-card__adjusted" />
@@ -42,7 +45,7 @@ export default function ShiftCard({
         {conflictWith && (
           <Tooltip
             title={t('SHIFT_PLANNING_OVERLAP_TOOLTIP', {
-              type: conflictWith.type,
+              type: activityLabel(conflictWith.activity, activities, t),
               start: wallClockTime(conflictWith.startsAt),
               end: wallClockTime(conflictWith.endsAt),
             })}>

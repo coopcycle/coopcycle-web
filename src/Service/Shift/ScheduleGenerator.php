@@ -2,7 +2,6 @@
 
 namespace AppBundle\Service\Shift;
 
-use AppBundle\Entity\Shift;
 use AppBundle\Entity\TaskRepository;
 use AppBundle\Service\SettingsManager;
 
@@ -31,8 +30,8 @@ final class ScheduleGenerator
         'maxShiftHours' => 8,
     ];
 
-    // Demand-driven shifts are delivery ("drive") shifts
-    private const SHIFT_TYPE = Shift::TYPE_DRIVE;
+    // Demand-driven shifts are for the "delivery" activity
+    private const SHIFT_ACTIVITY = 'delivery';
 
     public function __construct(
         private readonly TaskRepository $taskRepository,
@@ -101,7 +100,7 @@ final class ScheduleGenerator
                 }
 
                 $shifts[] = [
-                    'type' => self::SHIFT_TYPE,
+                    'activity' => self::SHIFT_ACTIVITY,
                     // Wall-clock local time, matching how the planning UI handles shifts
                     'startsAt' => sprintf('%sT%02d:00:00', $date->format('Y-m-d'), $block['start']),
                     'endsAt' => sprintf('%sT%02d:00:00', $date->format('Y-m-d'), $block['end']),

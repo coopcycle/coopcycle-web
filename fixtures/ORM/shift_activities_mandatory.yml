@@ -1,0 +1,10 @@
+AppBundle\Entity\ShiftActivity:
+  shift_activity_delivery:
+    slug: delivery
+    label: Delivery
+  shift_activity_dispatch:
+    slug: dispatch
+    label: Dispatch
+  shift_activity_administration:
+    slug: administration
+    label: Administration

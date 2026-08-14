@@ -1,7 +1,7 @@
 export const DEFAULT_SHIFT_TYPE_COLORS: Record<string, string> = {
-  drive: '#ffadad',
+  delivery: '#ffadad',
   dispatch: '#a0c4ff',
-  admin: '#fdffb6',
+  administration: '#fdffb6',
 };
 
 const FALLBACKS = ['#caffbf', '#ffd6a5', '#bdb2ff', '#ffc6ff', '#9bf6ff'];

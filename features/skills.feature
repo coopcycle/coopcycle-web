@@ -115,7 +115,7 @@ Feature: Skills
     And the user "bob" sends a "POST" request to "/api/shifts" with body:
       """
       {
-        "type": "drive",
+        "activity": "delivery",
         "startsAt": "2026-06-29T09:00:00",
         "endsAt": "2026-06-29T17:00:00",
         "slots": 1,
@@ -131,7 +131,7 @@ Feature: Skills
         "@id":"/api/shifts/1",
         "@type":"Shift",
         "id":1,
-        "type":"drive",
+        "activity":"delivery",
         "startsAt":"@string@.isDateTime()",
         "endsAt":"@string@.isDateTime()",
         "slots":1,

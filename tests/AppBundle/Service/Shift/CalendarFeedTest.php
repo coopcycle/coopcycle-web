@@ -3,6 +3,8 @@
 namespace Tests\AppBundle\Service\Shift;
 
 use AppBundle\Entity\Shift;
+use AppBundle\Entity\ShiftActivity;
+use AppBundle\Entity\ShiftActivityRepository;
 use AppBundle\Entity\ShiftRepository;
 use AppBundle\Entity\User;
 use AppBundle\Service\SettingsManager;
@@ -22,11 +24,22 @@ class CalendarFeedTest extends TestCase
     {
         $this->shiftRepository = $this->createMock(ShiftRepository::class);
 
+        $activity = new ShiftActivity();
+        $activity->setSlug('delivery');
+        $activity->setLabel('Delivery shift');
+
+        $shiftActivityRepository = $this->createMock(ShiftActivityRepository::class);
+        $shiftActivityRepository
+            ->method('findAll')
+            ->willReturn([$activity]);
+
         $entityManager = $this->createMock(EntityManagerInterface::class);
         $entityManager
             ->method('getRepository')
-            ->with(Shift::class)
-            ->willReturn($this->shiftRepository);
+            ->willReturnMap([
+                [Shift::class, $this->shiftRepository],
+                [ShiftActivity::class, $shiftActivityRepository],
+            ]);
 
         $settingsManager = $this->createMock(SettingsManager::class);
         $settingsManager
@@ -40,7 +53,6 @@ class CalendarFeedTest extends TestCase
         $translator
             ->method('trans')
             ->willReturnCallback(fn ($id, $params = []) => match ($id) {
-                'shifts.type.drive' => 'Delivery shift',
                 'shifts.calendar.break' => sprintf('Break: %s min', $params['%minutes%'] ?? ''),
                 'profile.myShifts' => 'My shifts',
                 default => $id,
@@ -76,7 +88,7 @@ class CalendarFeedTest extends TestCase
     private function shift(int $id, string $startsAt, string $endsAt, int $breakMinutes = 0, ?string $comment = null): Shift
     {
         $shift = new Shift();
-        $shift->setType('drive');
+        $shift->setActivity('delivery');
         $shift->setStartsAt(new \DateTime($startsAt));
         $shift->setEndsAt(new \DateTime($endsAt));
         $shift->setBreakMinutes($breakMinutes);

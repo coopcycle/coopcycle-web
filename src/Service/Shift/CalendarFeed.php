@@ -3,6 +3,7 @@
 namespace AppBundle\Service\Shift;
 
 use AppBundle\Entity\Shift;
+use AppBundle\Entity\ShiftActivity;
 use AppBundle\Entity\User;
 use AppBundle\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -68,6 +69,12 @@ final class CalendarFeed
         $host = $this->urlGenerator->getContext()->getHost();
         $now = gmdate('Ymd\THis\Z');
 
+        // slug => label, loaded once rather than per shift
+        $activityLabels = [];
+        foreach ($this->entityManager->getRepository(ShiftActivity::class)->findAll() as $activity) {
+            $activityLabels[$activity->getSlug()] = $activity->getLabel();
+        }
+
         $lines = [
             'BEGIN:VCALENDAR',
             'VERSION:2.0',
@@ -83,13 +90,9 @@ final class CalendarFeed
         ];
 
         foreach ($shifts as $shift) {
-            // Shift types are instance-configurable; fall back to the raw
-            // type name when there is no translation for it
-            $typeKey = sprintf('shifts.type.%s', $shift->getType());
-            $summary = $this->translator->trans($typeKey);
-            if ($summary === $typeKey) {
-                $summary = ucfirst($shift->getType());
-            }
+            // Activities are dispatcher-managed; fall back to the raw slug if
+            // the shift references one that's since been deleted from the catalog
+            $summary = $activityLabels[$shift->getActivity()] ?? ucfirst($shift->getActivity());
 
             $description = [];
             if ($shift->getBreakMinutes() > 0) {

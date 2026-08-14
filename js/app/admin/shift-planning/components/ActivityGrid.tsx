@@ -4,10 +4,11 @@ import { PlusOutlined, StarFilled } from '@ant-design/icons';
 import { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
-import { Shift } from '../../../api/types';
+import { Shift, ShiftActivity } from '../../../api/types';
 import ShiftCard from './ShiftCard';
 import { shiftIsOnDay, sortByStart } from '../utils/date';
 import { shiftTypeColor } from '../utils/shiftTypeColor';
+import { activityDisplayLabel } from '../utils/activityLabel';
 
 function AddShiftButton({ onClick }: { onClick: () => void }) {
   const { t } = useTranslation();
@@ -28,22 +29,23 @@ function AddShiftButton({ onClick }: { onClick: () => void }) {
 
 type Props = {
   weekStart: Dayjs;
-  shiftTypes: string[];
+  activities: ShiftActivity[];
   shifts: Shift[];
-  onCreate: (day: Dayjs, type: string) => void;
+  onCreate: (day: Dayjs, activity: string) => void;
   onEdit: (shift: Shift) => void;
   typeColors?: Record<string, string>;
   bankHolidays?: Record<string, string>;
 };
 
 /**
- * Rows = shift types (the configured list, not just types with shifts this
- * week, so a dispatcher can create the first shift of a type too), columns =
- * days. Cards show assignee usernames since the row no longer implies a user.
+ * Rows = activities (the configured list, not just activities with shifts
+ * this week, so a dispatcher can create the first shift of an activity too),
+ * columns = days. Cards show assignee usernames since the row no longer
+ * implies a user.
  */
-export default function TypeGrid({
+export default function ActivityGrid({
   weekStart,
-  shiftTypes,
+  activities,
   shifts,
   onCreate,
   onEdit,
@@ -86,37 +88,42 @@ export default function TypeGrid({
           );
         })}
 
-        {shiftTypes.map(type => {
-          const typeShifts = sortedShifts.filter(s => s.type === type);
+        {activities.map(activity => {
+          const activityShifts = sortedShifts.filter(
+            s => s.activity === activity.slug,
+          );
 
           return (
-            <React.Fragment key={type}>
+            <React.Fragment key={activity.slug}>
               <div className="shift-planning__row-label">
                 <span>
                   <span
                     className="shift-type-dot"
                     style={{
-                      backgroundColor: shiftTypeColor(type, typeColors),
+                      backgroundColor: shiftTypeColor(activity.slug, typeColors),
                     }}
                   />
-                  {type}
+                  {activityDisplayLabel(activity, t)}
                 </span>
               </div>
               {days.map(day => (
                 <div
                   key={day.format('YYYY-MM-DD')}
                   className="shift-planning__cell shift-planning__cell--clickable"
-                  onClick={() => onCreate(day, type)}>
-                  {typeShifts.filter(s => shiftIsOnDay(s, day)).map(shift => (
-                    <ShiftCard
-                      key={shift['@id']}
-                      shift={shift}
-                      onClick={onEdit}
-                      typeColors={typeColors}
-                      showAssignees
-                    />
-                  ))}
-                  <AddShiftButton onClick={() => onCreate(day, type)} />
+                  onClick={() => onCreate(day, activity.slug)}>
+                  {activityShifts
+                    .filter(s => shiftIsOnDay(s, day))
+                    .map(shift => (
+                      <ShiftCard
+                        key={shift['@id']}
+                        shift={shift}
+                        onClick={onEdit}
+                        typeColors={typeColors}
+                        activities={activities}
+                        showAssignees
+                      />
+                    ))}
+                  <AddShiftButton onClick={() => onCreate(day, activity.slug)} />
                 </div>
               ))}
             </React.Fragment>

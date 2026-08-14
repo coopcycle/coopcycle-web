@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import {
   App,
   Button,
-  ColorPicker,
   Divider,
   InputNumber,
   Modal,
@@ -18,11 +17,6 @@ import {
   usePutShiftSettingsMutation,
 } from '../../../api/slice';
 import { LegalRules } from '../../../api/types';
-import { shiftTypeColor } from '../utils/shiftTypeColor';
-
-type Props = {
-  shiftTypes: string[];
-};
 
 // Editable legal rules, in display order, with their unit and input step
 const LEGAL_RULES: { key: string; unit: 'h' | 'min' | 'weeks' | 'days'; step: number }[] = [
@@ -37,12 +31,11 @@ const LEGAL_RULES: { key: string; unit: 'h' | 'min' | 'weeks' | 'days'; step: nu
   { key: 'maxConsecutiveDays', unit: 'days', step: 1 },
 ];
 
-export default function ShiftSettingsModal({ shiftTypes }: Props) {
+export default function ShiftSettingsModal() {
   const { t } = useTranslation();
   const { message } = App.useApp();
 
   const [open, setOpen] = useState(false);
-  const [colors, setColors] = useState<Record<string, string>>({});
   const [throughput, setThroughput] = useState<number>(2.5);
   const [serviceLevel, setServiceLevel] = useState<number>(0.8);
   const [legalTemplate, setLegalTemplate] = useState<string | null>(null);
@@ -52,27 +45,20 @@ export default function ShiftSettingsModal({ shiftTypes }: Props) {
   const [putShiftSettings, { isLoading }] = usePutShiftSettingsMutation();
 
   useEffect(() => {
-    if (open) {
-      // Seed the form with the effective color of every type (custom or default),
-      // so the picker always reflects what's actually shown on the grid
-      const seed: Record<string, string> = {};
-      shiftTypes.forEach(type => {
-        seed[type] = shiftTypeColor(type, data?.typeColors);
-      });
-      setColors(seed);
-      if (data) {
-        setThroughput(data.throughput);
-        setServiceLevel(data.serviceLevel);
-        setLegalTemplate(data.legal?.template ?? null);
-        setLegalOverrides(data.legal?.rules ?? {});
-      }
+    if (open && data) {
+      setThroughput(data.throughput);
+      setServiceLevel(data.serviceLevel);
+      setLegalTemplate(data.legal?.template ?? null);
+      setLegalOverrides(data.legal?.rules ?? {});
     }
-  }, [open, shiftTypes, data]);
+  }, [open, data]);
 
   const onSave = async () => {
     try {
       await putShiftSettings({
-        typeColors: colors,
+        // Activity colors are edited from the Activities page, not here —
+        // pass the current value through so this save doesn't wipe them
+        typeColors: data?.typeColors ?? {},
         throughput,
         serviceLevel,
         legal: { template: legalTemplate, rules: legalOverrides },
@@ -132,47 +118,6 @@ export default function ShiftSettingsModal({ shiftTypes }: Props) {
             {t('SHIFT_PLANNING_SAVE')}
           </Button>,
         ]}>
-        <p>{t('SHIFT_PLANNING_TYPE_COLORS_HELP')}</p>
-        <Space direction="vertical" style={{ width: '100%' }}>
-          {shiftTypes.map(type => (
-            <div
-              key={type}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}>
-              <span>{type}</span>
-              <Space>
-                <ColorPicker
-                  disabledAlpha
-                  showText
-                  value={colors[type]}
-                  onChangeComplete={color =>
-                    setColors(c => ({ ...c, [type]: color.toHexString() }))
-                  }
-                />
-                <Tooltip title={t('SHIFT_PLANNING_RESET_COLOR')}>
-                  <Button
-                    type="text"
-                    size="small"
-                    icon={<UndoOutlined />}
-                    disabled={colors[type] === shiftTypeColor(type)}
-                    onClick={() =>
-                      setColors(c => ({
-                        ...c,
-                        [type]: shiftTypeColor(type),
-                      }))
-                    }
-                  />
-                </Tooltip>
-              </Space>
-            </div>
-          ))}
-        </Space>
-
-        <Divider />
-
         <p>{t('SHIFT_PLANNING_DEMAND_SETTINGS_HELP')}</p>
         <div
           style={{

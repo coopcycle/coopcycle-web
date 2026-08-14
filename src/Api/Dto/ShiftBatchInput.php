@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 final class ShiftBatchInput
 {
     /**
-     * Shifts to create: [{ type, startsAt, endsAt, slots }]
+     * Shifts to create: [{ activity, startsAt, endsAt, slots }]
      *
      * @var array<int, array<string, mixed>>
      */

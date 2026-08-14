@@ -7,7 +7,7 @@
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
-    <field name="type" type="string" column="type" length="32"/>
+    <field name="activity" type="string" column="activity" length="64"/>
     <field name="startsAt" type="datetime" column="starts_at"/>
     <field name="endsAt" type="datetime" column="ends_at"/>
     <field name="slots" type="integer" column="slots">

@@ -9,20 +9,22 @@ import type { RefSelectProps } from 'antd/es/select';
 import { FilterOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { shiftTypeColor } from '../utils/shiftTypeColor';
+import { activityDisplayLabel } from '../utils/activityLabel';
+import { ShiftActivity } from '../../../api/types';
 
 export type ShiftTypeFilterHandle = {
   focus: () => void;
 };
 
 type Props = {
-  shiftTypes: string[];
+  activities: ShiftActivity[];
   value: string[];
   onChange: (value: string[]) => void;
   typeColors?: Record<string, string>;
 };
 
 const ShiftTypeFilter = forwardRef<ShiftTypeFilterHandle, Props>(
-  ({ shiftTypes, value, onChange, typeColors }, ref) => {
+  ({ activities, value, onChange, typeColors }, ref) => {
     const { t } = useTranslation();
     const selectRef = useRef<RefSelectProps>(null);
     const [open, setOpen] = useState(false);
@@ -50,15 +52,15 @@ const ShiftTypeFilter = forwardRef<ShiftTypeFilterHandle, Props>(
         value={value}
         onChange={onChange}
         optionFilterProp="value"
-        options={shiftTypes.map(type => ({
-          value: type,
+        options={activities.map(a => ({
+          value: a.slug,
           label: (
             <span>
               <span
                 className="shift-type-dot"
-                style={{ backgroundColor: shiftTypeColor(type, typeColors) }}
+                style={{ backgroundColor: shiftTypeColor(a.slug, typeColors) }}
               />
-              {type}
+              {activityDisplayLabel(a, t)}
             </span>
           ),
         }))}

@@ -73,6 +73,9 @@ import {
   SkillWithUsers,
   SkillPayload,
   PutSkillRequest,
+  ShiftActivity,
+  ShiftActivityPayload,
+  PutShiftActivityRequest,
   Me,
   SchedulePublication,
 } from './types';
@@ -87,6 +90,7 @@ export const apiSlice = createApi({
     'HolidayRequest',
     'ShiftSettings',
     'Skill',
+    'ShiftActivity',
     'SchedulePublication',
     'EmployeeProfile',
     'ShiftTemplate',
@@ -468,7 +472,7 @@ export const apiSlice = createApi({
                   s => s['@id'] === arg['@id'],
                 );
                 if (shift) {
-                  shift.type = arg.type;
+                  shift.activity = arg.activity;
                   shift.startsAt = arg.startsAt;
                   shift.endsAt = arg.endsAt;
                   shift.slots = arg.slots;
@@ -657,6 +661,36 @@ export const apiSlice = createApi({
         method: 'DELETE',
       }),
       invalidatesTags: ['Skill'],
+    }),
+
+    getShiftActivities: builder.query<ShiftActivity[], void>({
+      query: () => 'api/shift_activities',
+      transformResponse: (response: HydraCollection<ShiftActivity>) =>
+        response['hydra:member'],
+      providesTags: ['ShiftActivity'],
+    }),
+    postShiftActivity: builder.mutation<ShiftActivity, ShiftActivityPayload>({
+      query: body => ({
+        url: 'api/shift_activities',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['ShiftActivity'],
+    }),
+    putShiftActivity: builder.mutation<ShiftActivity, PutShiftActivityRequest>({
+      query: ({ '@id': uri, ...body }) => ({
+        url: uri,
+        method: 'PUT',
+        body,
+      }),
+      invalidatesTags: ['ShiftActivity'],
+    }),
+    deleteShiftActivity: builder.mutation<void, Uri>({
+      query: uri => ({
+        url: uri,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['ShiftActivity'],
     }),
 
     getShiftSettings: builder.query<ShiftSettings, void>({
@@ -856,6 +890,10 @@ export const {
   usePostSkillMutation,
   usePutSkillMutation,
   useDeleteSkillMutation,
+  useGetShiftActivitiesQuery,
+  usePostShiftActivityMutation,
+  usePutShiftActivityMutation,
+  useDeleteShiftActivityMutation,
   useGetMeQuery,
   useGetSchedulePublicationsQuery,
   usePublishWeekMutation,

@@ -11,7 +11,6 @@ imports:
 # http://symfony.com/doc/current/book/service_container.html
 parameters:
   sylius_cart_restaurant_session_key_name: _coopcycle.sylius.cart.restaurant
-  shift_types: [ 'drive', 'dispatch', 'admin' ]
   shift_planning_enabled: '%env(bool:SHIFT_PLANNING_ENABLED)%'
   apns_default_is_production_env: true
   env(COOPCYCLE_PUBLIC_KEY_FILE): "%kernel.project_dir%/var/jwt/public.pem"

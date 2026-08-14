@@ -20,7 +20,13 @@ import {
   usePostShiftMutation,
   usePutShiftMutation,
 } from '../../../api/slice';
-import { HolidayRequest, PlanningUser, Shift, Uri } from '../../../api/types';
+import {
+  HolidayRequest,
+  PlanningUser,
+  Shift,
+  ShiftActivity,
+  Uri,
+} from '../../../api/types';
 import {
   holidayCoversDay,
   rangesOverlap,
@@ -28,6 +34,7 @@ import {
   wallClockTime,
 } from '../utils/date';
 import { shiftTypeColor } from '../utils/shiftTypeColor';
+import { activityLabel, activityDisplayLabel } from '../utils/activityLabel';
 import { datePickerProps } from '../../../utils/antd';
 import ReportTimeModal from './ReportTimeModal';
 
@@ -35,15 +42,15 @@ export type ShiftModalState = {
   shift?: Shift;
   date?: Dayjs;
   userUri?: Uri;
-  /** Prefill the type Select, e.g. when created from a Type-view row */
-  type?: string;
+  /** Prefill the activity Select, e.g. when created from a Type-view row */
+  activity?: string;
   /** Prefill the start time, e.g. when created from a Calendar-view click; end defaults to start + 2h */
   time?: Dayjs;
 } | null;
 
 type Props = {
   state: ShiftModalState;
-  shiftTypes: string[];
+  activities: ShiftActivity[];
   users: PlanningUser[];
   holidayRequests: HolidayRequest[];
   shifts: Shift[];
@@ -52,7 +59,7 @@ type Props = {
 };
 
 type FormValues = {
-  type: string;
+  activity: string;
   date: Dayjs;
   times: [Dayjs, Dayjs];
   slots: number;
@@ -64,7 +71,7 @@ type FormValues = {
 
 export default function ShiftModal({
   state,
-  shiftTypes,
+  activities,
   users,
   holidayRequests,
   shifts,
@@ -95,7 +102,7 @@ export default function ShiftModal({
     }
     if (state.shift) {
       form.setFieldsValue({
-        type: state.shift.type,
+        activity: state.shift.activity,
         date: dayjs(wallClock(state.shift.startsAt)),
         times: [
           dayjs(wallClock(state.shift.startsAt)),
@@ -114,7 +121,7 @@ export default function ShiftModal({
         : (state.date || dayjs()).hour(17).minute(0);
 
       form.setFieldsValue({
-        type: state.type || shiftTypes[0],
+        activity: state.activity || activities[0]?.slug,
         date: state.date || dayjs(),
         times: [start, end],
         slots: 1,
@@ -124,7 +131,7 @@ export default function ShiftModal({
         users: state.userUri ? [state.userUri] : [],
       });
     }
-  }, [state, form, shiftTypes]);
+  }, [state, form, activities]);
 
   const selectedDate = Form.useWatch('date', form);
   const selectedTimes = Form.useWatch('times', form);
@@ -198,7 +205,7 @@ export default function ShiftModal({
   const onFinish = async (values: FormValues) => {
     const date = values.date.format('YYYY-MM-DD');
     const payload = {
-      type: values.type,
+      activity: values.activity,
       startsAt: `${date}T${values.times[0].format('HH:mm:ss')}`,
       endsAt: `${date}T${values.times[1].format('HH:mm:ss')}`,
       slots: values.slots,
@@ -261,21 +268,21 @@ export default function ShiftModal({
       ]}>
       <Form form={form} layout="vertical" onFinish={onFinish}>
         <Form.Item
-          name="type"
+          name="activity"
           label={t('SHIFT_PLANNING_TYPE')}
           rules={[{ required: true }]}>
           <Select
-            options={shiftTypes.map(type => ({
-              value: type,
+            options={activities.map(a => ({
+              value: a.slug,
               label: (
                 <span>
                   <span
                     className="shift-type-dot"
                     style={{
-                      backgroundColor: shiftTypeColor(type, typeColors),
+                      backgroundColor: shiftTypeColor(a.slug, typeColors),
                     }}
                   />
-                  {type}
+                  {activityDisplayLabel(a, t)}
                 </span>
               ),
             }))}
@@ -424,7 +431,7 @@ export default function ShiftModal({
                   <div key={`${uri}|${s['@id']}`}>
                     {t('SHIFT_PLANNING_SHIFT_CONFLICT', {
                       name: usernameOf(uri),
-                      type: s.type,
+                      type: activityLabel(s.activity, activities, t),
                       start: wallClockTime(s.startsAt),
                       end: wallClockTime(s.endsAt),
                     })}

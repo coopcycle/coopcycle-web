@@ -10,12 +10,10 @@ import './styles.scss';
 document.addEventListener('DOMContentLoaded', () => {
   const container = document.getElementById('react-root');
   if (container) {
-    const shiftTypes = JSON.parse(container.dataset.shiftTypes || '[]');
-
     const root = createRoot(container);
     root.render(
       <AppRootWithDefaults>
-        <Page shiftTypes={shiftTypes} />
+        <Page />
       </AppRootWithDefaults>,
     );
   }

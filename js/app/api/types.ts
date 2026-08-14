@@ -629,6 +629,18 @@ export type SkillPayload = {
 
 export type PutSkillRequest = SkillPayload & { '@id': Uri };
 
+export type ShiftActivity = JsonLdEntity & {
+  id: number;
+  slug: string;
+  label: string;
+};
+
+export type ShiftActivityPayload = {
+  label: string;
+};
+
+export type PutShiftActivityRequest = ShiftActivityPayload & { '@id': Uri };
+
 export type EmployeeProfile = JsonLdEntity & {
   id: number;
   // User IRI (the relation serializes as a reference)
@@ -680,7 +692,7 @@ export type ShiftWaitlistEntry = {
 
 export type Shift = JsonLdEntity & {
   id: number;
-  type: string;
+  activity: string;
   startsAt: string;
   endsAt: string;
   slots: number;
@@ -702,7 +714,7 @@ export type SchedulePublication = JsonLdEntity & {
 };
 
 export type ShiftPayload = {
-  type: string;
+  activity: string;
   startsAt: string;
   endsAt: string;
   slots: number;
@@ -750,7 +762,7 @@ export type CopyWeekRequest = {
 
 export type ShiftTemplateShift = {
   '@id': Uri;
-  type: string;
+  activity: string;
   dayOfWeek: number;
   startTime: string; // "HH:MM"
   endTime: string; // "HH:MM"
@@ -849,7 +861,7 @@ export type GetShiftDashboardArgs = {
 };
 
 export type ProposedShift = {
-  type: string;
+  activity: string;
   startsAt: string;
   endsAt: string;
   slots: number;

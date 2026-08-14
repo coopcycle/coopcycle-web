@@ -122,7 +122,7 @@ class ShiftManagerTest extends TestCase
         $bob = $this->createUser('bob');
 
         $shift = new Shift();
-        $shift->setType('drive');
+        $shift->setActivity('delivery');
         $shift->setSlots(2);
         $shift->setStartsAt(new \DateTime('2026-06-23 09:00:00'));
         $shift->setEndsAt(new \DateTime('2026-06-23 17:00:00'));
@@ -158,7 +158,7 @@ class ShiftManagerTest extends TestCase
         $this->assertCount(1, $persisted);
 
         $copy = $copies[0];
-        $this->assertEquals('drive', $copy->getType());
+        $this->assertEquals('delivery', $copy->getActivity());
         $this->assertEquals(2, $copy->getSlots());
         $this->assertEquals(new \DateTime('2026-06-30 09:00:00'), $copy->getStartsAt());
         $this->assertEquals(new \DateTime('2026-06-30 17:00:00'), $copy->getEndsAt());
@@ -168,7 +168,7 @@ class ShiftManagerTest extends TestCase
     public function testCopyWeekSupportsMultiWeekGap()
     {
         $shift = new Shift();
-        $shift->setType('dispatch');
+        $shift->setActivity('dispatch');
         $shift->setStartsAt(new \DateTime('2026-06-22 08:00:00'));
         $shift->setEndsAt(new \DateTime('2026-06-22 13:00:00'));
 
@@ -252,7 +252,7 @@ class ShiftManagerTest extends TestCase
         $sarah->addRole('ROLE_COURIER');
 
         $shift = new Shift();
-        $shift->setType('drive');
+        $shift->setActivity('delivery');
         $shift->setStartsAt(new \DateTime('2026-06-23 09:00:00'));
         $shift->setEndsAt(new \DateTime('2026-06-23 17:00:00'));
 
@@ -290,7 +290,7 @@ class ShiftManagerTest extends TestCase
         $bob->addRole('ROLE_DISPATCHER');
 
         $shift = new Shift();
-        $shift->setType('drive');
+        $shift->setActivity('delivery');
         $shift->setStartsAt(new \DateTime('2026-06-29 09:00:00'));
         $shift->setEndsAt(new \DateTime('2026-06-29 17:00:00'));
 
@@ -329,7 +329,7 @@ class ShiftManagerTest extends TestCase
         $sarah->addRole('ROLE_COURIER');
 
         $shift = new Shift();
-        $shift->setType('drive');
+        $shift->setActivity('delivery');
         $shift->setStartsAt(new \DateTime('2026-06-29 09:00:00'));
         $shift->setEndsAt(new \DateTime('2026-06-29 17:00:00'));
 
@@ -359,7 +359,7 @@ class ShiftManagerTest extends TestCase
         $bob = $this->createUser('bob');
 
         $shift = new Shift();
-        $shift->setType('drive');
+        $shift->setActivity('delivery');
         $shift->setStartsAt(new \DateTime('2026-06-23 09:00:00'));
         $shift->setEndsAt(new \DateTime('2026-06-23 17:00:00'));
 
@@ -397,7 +397,7 @@ class ShiftManagerTest extends TestCase
         $alice = $this->createUser('alice');
 
         $shift = new Shift();
-        $shift->setType('drive');
+        $shift->setActivity('delivery');
         $shift->setSlots(2);
         $shift->setBreakMinutes(30);
         $shift->setComment('note');
@@ -425,7 +425,7 @@ class ShiftManagerTest extends TestCase
         $this->assertCount(1, $template->getShifts());
 
         $line = $template->getShifts()->first();
-        $this->assertSame('drive', $line->getType());
+        $this->assertSame('delivery', $line->getActivity());
         $this->assertSame(3, $line->getDayOfWeek()); // Wednesday = ISO 3
         $this->assertSame('09:00', $line->getStartTime()->format('H:i'));
         $this->assertSame('17:00', $line->getEndTime()->format('H:i'));
@@ -438,7 +438,7 @@ class ShiftManagerTest extends TestCase
     private function makeTemplateLine(int $dayOfWeek, string $start, string $end, int $slots = 1, int $breakMinutes = 0): ShiftTemplateShift
     {
         $line = new ShiftTemplateShift();
-        $line->setType('drive');
+        $line->setActivity('delivery');
         $line->setDayOfWeek($dayOfWeek);
         $line->setStartTime(new \DateTime($start));
         $line->setEndTime(new \DateTime($end));

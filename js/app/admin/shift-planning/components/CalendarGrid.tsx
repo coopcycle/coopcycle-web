@@ -5,7 +5,7 @@ import { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { usePutShiftMutation } from '../../../api/slice';
-import { Shift } from '../../../api/types';
+import { Shift, ShiftActivity } from '../../../api/types';
 import ShiftCard from './ShiftCard';
 import { layoutOverlapping, minutesFromMidnight, shiftIsOnDay } from '../utils/date';
 
@@ -23,6 +23,7 @@ type Props = {
   onCreate: (day: Dayjs, time: Dayjs) => void;
   onEdit: (shift: Shift) => void;
   typeColors?: Record<string, string>;
+  activities?: ShiftActivity[];
   bankHolidays?: Record<string, string>;
 };
 
@@ -68,6 +69,7 @@ export default function CalendarGrid({
   onCreate,
   onEdit,
   typeColors,
+  activities,
   bankHolidays,
 }: Props) {
   const { t } = useTranslation();
@@ -169,7 +171,7 @@ export default function CalendarGrid({
     try {
       await putShift({
         '@id': shift['@id'],
-        type: shift.type,
+        activity: shift.activity,
         startsAt: `${date}T${toTime(current.startMin)}`,
         endsAt: `${date}T${toTime(current.endMin)}`,
         slots: shift.slots,
@@ -295,6 +297,7 @@ export default function CalendarGrid({
           shift={displayShift}
           onClick={onEdit}
           typeColors={typeColors}
+          activities={activities}
           showAssignees
         />
         {!isGhost && (

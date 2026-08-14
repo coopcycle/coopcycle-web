@@ -150,7 +150,7 @@ class ShiftManager
         foreach ($shiftRepository->findOverlappingRange($sourceStart, $sourceEnd) as $shift) {
 
             $copy = new Shift();
-            $copy->setType($shift->getType());
+            $copy->setActivity($shift->getActivity());
             $copy->setSlots($shift->getSlots());
             $copy->setStartsAt((clone $shift->getStartsAt())->add($interval));
             $copy->setEndsAt((clone $shift->getEndsAt())->add($interval));
@@ -208,7 +208,7 @@ class ShiftManager
 
         foreach ($shiftRepository->findOverlappingRange($start, $end) as $shift) {
             $line = new ShiftTemplateShift();
-            $line->setType($shift->getType());
+            $line->setActivity($shift->getActivity());
             $line->setDayOfWeek((int) $shift->getStartsAt()->format('N'));
             $line->setStartTime(clone $shift->getStartsAt());
             $line->setEndTime(clone $shift->getEndsAt());
@@ -252,7 +252,7 @@ class ShiftManager
             $date = $targetMonday->modify(sprintf('+%d days', $line->getDayOfWeek() - 1));
 
             $shift = new Shift();
-            $shift->setType($line->getType());
+            $shift->setActivity($line->getActivity());
             $shift->setSlots($line->getSlots());
             $shift->setBreakMinutes($line->getBreakMinutes());
             $shift->setComment($line->getComment());

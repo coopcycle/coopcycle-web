@@ -14,7 +14,7 @@ Feature: Shift applications
     And the user "bob" sends a "POST" request to "/api/shifts" with body:
       """
       {
-        "type": "drive",
+        "activity": "delivery",
         "startsAt": "2026-06-29T09:00:00",
         "endsAt": "2026-06-29T17:00:00",
         "slots": 1,
@@ -48,7 +48,7 @@ Feature: Shift applications
     And the user "bob" sends a "POST" request to "/api/shifts" with body:
       """
       {
-        "type": "drive",
+        "activity": "delivery",
         "startsAt": "2026-06-29T09:00:00",
         "endsAt": "2026-06-29T17:00:00",
         "slots": 1,
@@ -193,7 +193,7 @@ Feature: Shift applications
     And the user "bob" sends a "POST" request to "/api/shifts" with body:
       """
       {
-        "type": "drive",
+        "activity": "delivery",
         "startsAt": "2026-06-29T09:00:00",
         "endsAt": "2026-06-29T17:00:00",
         "slots": 1,
@@ -252,7 +252,7 @@ Feature: Shift applications
     And the user "bob" sends a "POST" request to "/api/shifts" with body:
       """
       {
-        "type": "drive",
+        "activity": "delivery",
         "startsAt": "2026-06-29T09:00:00",
         "endsAt": "2026-06-29T17:00:00",
         "slots": 1,
@@ -265,7 +265,7 @@ Feature: Shift applications
     And the user "bob" sends a "POST" request to "/api/shifts" with body:
       """
       {
-        "type": "drive",
+        "activity": "delivery",
         "startsAt": "2026-07-06T09:00:00",
         "endsAt": "2026-07-06T17:00:00",
         "slots": 1,

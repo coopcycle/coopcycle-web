@@ -14,7 +14,7 @@ Feature: Shift templates
     And the user "bob" sends a "POST" request to "/api/shifts" with body:
       """
       {
-        "type": "drive",
+        "activity": "delivery",
         "startsAt": "2026-07-13T09:00:00",
         "endsAt": "2026-07-13T17:00:00",
         "slots": 1,
@@ -29,7 +29,7 @@ Feature: Shift templates
     And the user "bob" sends a "POST" request to "/api/shifts" with body:
       """
       {
-        "type": "drive",
+        "activity": "delivery",
         "startsAt": "2026-07-16T12:00:00",
         "endsAt": "2026-07-16T15:00:00",
         "slots": 2,
@@ -60,7 +60,7 @@ Feature: Shift templates
           {
             "@type":"ShiftTemplateShift",
             "@id":"@string@",
-            "type":"drive",
+            "activity":"delivery",
             "dayOfWeek":1,
             "slots":1,
             "breakMinutes":30,
@@ -72,7 +72,7 @@ Feature: Shift templates
           {
             "@type":"ShiftTemplateShift",
             "@id":"@string@",
-            "type":"drive",
+            "activity":"delivery",
             "dayOfWeek":4,
             "slots":2,
             "breakMinutes":0,
@@ -132,7 +132,7 @@ Feature: Shift templates
             "@id":"@string@",
             "@type":"Shift",
             "id":"@integer@",
-            "type":"drive",
+            "activity":"delivery",
             "startsAt":"2026-08-03T09:00:00+02:00",
             "endsAt":"2026-08-03T17:00:00+02:00",
             "slots":1,
@@ -146,7 +146,7 @@ Feature: Shift templates
             "@id":"@string@",
             "@type":"Shift",
             "id":"@integer@",
-            "type":"drive",
+            "activity":"delivery",
             "startsAt":"2026-08-06T12:00:00+02:00",
             "endsAt":"2026-08-06T15:00:00+02:00",
             "slots":2,
@@ -180,7 +180,7 @@ Feature: Shift templates
     And the user "bob" sends a "POST" request to "/api/shifts" with body:
       """
       {
-        "type": "drive",
+        "activity": "delivery",
         "startsAt": "2026-07-13T09:00:00",
         "endsAt": "2026-07-13T17:00:00",
         "users": ["/api/users/1", "/api/users/2"]
@@ -236,7 +236,7 @@ Feature: Shift templates
             "@id":"@string@",
             "@type":"Shift",
             "id":"@integer@",
-            "type":"drive",
+            "activity":"delivery",
             "startsAt":"2026-08-03T09:00:00+02:00",
             "endsAt":"2026-08-03T17:00:00+02:00",
             "slots":1,
@@ -276,7 +276,7 @@ Feature: Shift templates
     And the user "bob" sends a "POST" request to "/api/shifts" with body:
       """
       {
-        "type": "drive",
+        "activity": "delivery",
         "startsAt": "2026-07-13T09:00:00",
         "endsAt": "2026-07-13T17:00:00"
       }

@@ -30,7 +30,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 final class ShiftScheduleSuggestion
 {
     /**
-     * Proposed shifts: [{ type, startsAt, endsAt, slots }]
+     * Proposed shifts: [{ activity, startsAt, endsAt, slots }]
      * @var array<int, array<string, mixed>>
      */
     #[Groups(['shift_schedule'])]

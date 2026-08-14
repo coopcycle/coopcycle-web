@@ -19,7 +19,7 @@ class ShiftTemplateShift
     protected ?ShiftTemplate $template = null;
 
     #[Groups(['shift_template'])]
-    protected ?string $type = null;
+    protected ?string $activity = null;
 
     /**
      * ISO day of week, 1 (Monday) to 7 (Sunday).
@@ -77,14 +77,14 @@ class ShiftTemplateShift
         return $this;
     }
 
-    public function getType(): ?string
+    public function getActivity(): ?string
     {
-        return $this->type;
+        return $this->activity;
     }
 
-    public function setType(string $type): self
+    public function setActivity(string $activity): self
     {
-        $this->type = $type;
+        $this->activity = $activity;
 
         return $this;
     }

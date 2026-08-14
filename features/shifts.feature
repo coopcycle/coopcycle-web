@@ -17,7 +17,7 @@ Feature: Shifts
     And the user "bob" sends a "POST" request to "/api/shifts" with body:
       """
       {
-        "type": "drive",
+        "activity": "delivery",
         "startsAt": "2026-06-29T09:00:00",
         "endsAt": "2026-06-29T17:00:00",
         "slots": 2,
@@ -35,7 +35,7 @@ Feature: Shifts
         "@id":"/api/shifts/1",
         "@type":"Shift",
         "id":1,
-        "type":"drive",
+        "activity":"delivery",
         "startsAt":"@string@.isDateTime()",
         "endsAt":"@string@.isDateTime()",
         "slots":2,
@@ -80,7 +80,7 @@ Feature: Shifts
     And the user "sarah" sends a "POST" request to "/api/shifts" with body:
       """
       {
-        "type": "drive",
+        "activity": "delivery",
         "startsAt": "2026-06-29T09:00:00",
         "endsAt": "2026-06-29T17:00:00"
       }
@@ -108,7 +108,7 @@ Feature: Shifts
     And the user "bob" sends a "POST" request to "/api/shifts" with body:
       """
       {
-        "type": "drive",
+        "activity": "delivery",
         "startsAt": "2026-06-29T09:00:00",
         "endsAt": "2026-06-29T17:00:00",
         "comment": "Bring your own bike lock",
@@ -121,7 +121,7 @@ Feature: Shifts
     And the user "bob" sends a "POST" request to "/api/shifts" with body:
       """
       {
-        "type": "dispatch",
+        "activity": "dispatch",
         "startsAt": "2026-06-30T09:00:00",
         "endsAt": "2026-06-30T17:00:00",
         "users": ["/api/users/2"]
@@ -145,7 +145,7 @@ Feature: Shifts
             "@id":"/api/shifts/1",
             "@type":"Shift",
             "id":1,
-            "type":"drive",
+            "activity":"delivery",
             "startsAt":"@string@.isDateTime()",
             "endsAt":"@string@.isDateTime()",
             "slots":1,
@@ -179,7 +179,7 @@ Feature: Shifts
     And the user "bob" sends a "POST" request to "/api/shifts" with body:
       """
       {
-        "type": "drive",
+        "activity": "delivery",
         "startsAt": "2026-06-29T09:00:00",
         "endsAt": "2026-06-29T17:00:00",
         "users": ["/api/users/1"]
@@ -191,7 +191,7 @@ Feature: Shifts
     And the user "bob" sends a "PUT" request to "/api/shifts/1" with body:
       """
       {
-        "type": "drive",
+        "activity": "delivery",
         "startsAt": "2026-06-29T09:00:00",
         "endsAt": "2026-06-29T17:00:00",
         "users": ["/api/users/2"]
@@ -206,7 +206,7 @@ Feature: Shifts
         "@id":"/api/shifts/1",
         "@type":"Shift",
         "id":1,
-        "type":"drive",
+        "activity":"delivery",
         "startsAt":"@string@.isDateTime()",
         "endsAt":"@string@.isDateTime()",
         "slots":1,
@@ -384,7 +384,7 @@ Feature: Shifts
     And the user "bob" sends a "POST" request to "/api/shifts" with body:
       """
       {
-        "type": "drive",
+        "activity": "delivery",
         "startsAt": "2026-06-23T09:00:00",
         "endsAt": "2026-06-23T17:00:00",
         "slots": 2,
@@ -437,7 +437,7 @@ Feature: Shifts
             "@id":"/api/shifts/2",
             "@type":"Shift",
             "id":2,
-            "type":"drive",
+            "activity":"delivery",
             "startsAt":"@string@.isDateTime()",
             "endsAt":"@string@.isDateTime()",
             "slots":2,
@@ -480,7 +480,7 @@ Feature: Shifts
     And the user "bob" sends a "POST" request to "/api/shifts" with body:
       """
       {
-        "type": "drive",
+        "activity": "delivery",
         "startsAt": "2026-06-29T09:00:00",
         "endsAt": "2026-06-29T17:00:00",
         "users": ["/api/users/1"]
@@ -519,7 +519,7 @@ Feature: Shifts
     And the user "bob" sends a "POST" request to "/api/shifts" with body:
       """
       {
-        "type": "drive",
+        "activity": "delivery",
         "startsAt": "2026-06-29T09:00:00",
         "endsAt": "2026-06-29T17:00:00",
         "users": ["/api/users/1"]
@@ -749,8 +749,8 @@ Feature: Shifts
       """
       {
         "shifts": [
-          { "type": "drive", "startsAt": "2026-07-13T12:00:00", "endsAt": "2026-07-13T15:00:00", "slots": 2 },
-          { "type": "drive", "startsAt": "2026-07-13T19:00:00", "endsAt": "2026-07-13T22:00:00", "slots": 1 }
+          { "activity": "delivery", "startsAt": "2026-07-13T12:00:00", "endsAt": "2026-07-13T15:00:00", "slots": 2 },
+          { "activity": "delivery", "startsAt": "2026-07-13T19:00:00", "endsAt": "2026-07-13T22:00:00", "slots": 1 }
         ]
       }
       """
@@ -784,7 +784,7 @@ Feature: Shifts
     And the user "bob" sends a "POST" request to "/api/shifts" with body:
       """
       {
-        "type": "drive",
+        "activity": "delivery",
         "startsAt": "2026-06-29T09:00:00",
         "endsAt": "2026-06-29T17:00:00",
         "slots": 2,
@@ -797,7 +797,7 @@ Feature: Shifts
     And the user "bob" sends a "POST" request to "/api/shifts" with body:
       """
       {
-        "type": "drive",
+        "activity": "delivery",
         "startsAt": "2026-07-06T09:00:00",
         "endsAt": "2026-07-06T17:00:00",
         "slots": 4,
@@ -869,7 +869,7 @@ Feature: Shifts
     And the user "bob" sends a "POST" request to "/api/shifts" with body:
       """
       {
-        "type": "drive",
+        "activity": "delivery",
         "startsAt": "2026-07-13T09:00:00",
         "endsAt": "2026-07-13T17:00:00",
         "slots": 1,
@@ -945,7 +945,7 @@ Feature: Shifts
     And the user "bob" sends a "POST" request to "/api/shifts" with body:
       """
       {
-        "type": "drive",
+        "activity": "delivery",
         "startsAt": "2026-07-20T06:00:00",
         "endsAt": "2026-07-20T19:00:00",
         "breakMinutes": 30,
@@ -1024,7 +1024,7 @@ Feature: Shifts
     And the user "bob" sends a "POST" request to "/api/shifts" with body:
       """
       {
-        "type": "drive",
+        "activity": "delivery",
         "startsAt": "2026-07-13T09:00:00",
         "endsAt": "2026-07-13T17:00:00",
         "breakMinutes": 30,
@@ -1053,7 +1053,7 @@ Feature: Shifts
         "@id":"@string@",
         "@type":"Shift",
         "id":1,
-        "type":"drive",
+        "activity":"delivery",
         "startsAt":"@string@.isDateTime()",
         "endsAt":"@string@.isDateTime()",
         "slots":1,
@@ -1116,7 +1116,7 @@ Feature: Shifts
         "@id":"@string@",
         "@type":"Shift",
         "id":1,
-        "type":"drive",
+        "activity":"delivery",
         "startsAt":"@string@.isDateTime()",
         "endsAt":"@string@.isDateTime()",
         "slots":1,
@@ -1153,7 +1153,7 @@ Feature: Shifts
     And the user "bob" sends a "POST" request to "/api/shifts" with body:
       """
       {
-        "type": "drive",
+        "activity": "delivery",
         "startsAt": "2026-07-13T09:00:00",
         "endsAt": "2026-07-13T17:00:00",
         "users": ["/api/users/1"]
@@ -1197,7 +1197,7 @@ Feature: Shifts
     And the user "bob" sends a "POST" request to "/api/shifts" with body:
       """
       {
-        "type": "drive",
+        "activity": "delivery",
         "startsAt": "2026-07-13T09:00:00",
         "endsAt": "2026-07-13T17:00:00",
         "breakMinutes": 30,

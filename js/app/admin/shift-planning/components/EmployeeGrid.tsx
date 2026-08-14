@@ -5,7 +5,13 @@ import { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { useGetEmployeeProfilesQuery } from '../../../api/slice';
-import { HolidayRequest, PlanningUser, Shift, Uri } from '../../../api/types';
+import {
+  HolidayRequest,
+  PlanningUser,
+  Shift,
+  ShiftActivity,
+  Uri,
+} from '../../../api/types';
 import Avatar from '../../../components/Avatar';
 import ShiftCard from './ShiftCard';
 import OpenSlotCard from './OpenSlotCard';
@@ -52,6 +58,7 @@ type Props = {
   onAddUser: (userUri: Uri) => void;
   onRemoveUser: (userUri: Uri) => void;
   typeColors?: Record<string, string>;
+  activities?: ShiftActivity[];
   /** Map of "YYYY-MM-DD" -> bank holiday name, for the day header highlight */
   bankHolidays?: Record<string, string>;
 };
@@ -68,6 +75,7 @@ export default function EmployeeGrid({
   onAddUser,
   onRemoveUser,
   typeColors,
+  activities,
   bankHolidays,
 }: Props) {
   const { t } = useTranslation();
@@ -165,6 +173,7 @@ export default function EmployeeGrid({
                 shift={shift}
                 onClick={onEdit}
                 typeColors={typeColors}
+                activities={activities}
               />
             ))}
             <AddShiftButton onClick={() => onCreate(day)} />
@@ -269,6 +278,7 @@ export default function EmployeeGrid({
                       onClick={onEdit}
                       conflictWith={findOverlappingShift(shift, userShifts)}
                       typeColors={typeColors}
+                      activities={activities}
                     />
                   ))}
                   <AddShiftButton

@@ -11,13 +11,14 @@ import {
   useGetBankHolidaysQuery,
   useGetHolidayRequestsQuery,
   useGetPlanningUsersQuery,
+  useGetShiftActivitiesQuery,
   useGetShiftSettingsQuery,
   useGetShiftsQuery,
 } from '../../api/slice';
 import { Shift, Uri } from '../../api/types';
 import WeekNavigator from './components/WeekNavigator';
 import EmployeeGrid from './components/EmployeeGrid';
-import TypeGrid from './components/TypeGrid';
+import ActivityGrid from './components/ActivityGrid';
 import CalendarGrid from './components/CalendarGrid';
 import ShiftModal, { ShiftModalState } from './components/ShiftModal';
 import HolidayRequestsDrawer from './components/HolidayRequestsDrawer';
@@ -32,19 +33,16 @@ import AddToDispatchButton from './components/AddToDispatchButton';
 import PayrollExportButton from './components/PayrollExportButton';
 import WeekOverviewStrip from './components/WeekOverviewStrip';
 import SkillsManager from './components/SkillsManager';
+import ActivitiesManager from './components/ActivitiesManager';
 import EmployeesManager from './components/EmployeesManager';
 import PublishWeekButton from './components/PublishWeekButton';
 import { syncWeekToUrl, weekFromParams } from './utils/weekUrl';
 
-type View = 'employee' | 'calendar' | 'type' | 'skills' | 'hr';
+type View = 'employee' | 'calendar' | 'type' | 'skills' | 'activities' | 'hr';
 
 dayjs.extend(isoWeek);
 
-type Props = {
-  shiftTypes: string[];
-};
-
-const Planning = ({ shiftTypes }: Props) => {
+const Planning = () => {
   const { t } = useTranslation();
 
   const [weekStart, setWeekStart] = useState<Dayjs>(
@@ -78,6 +76,7 @@ const Planning = ({ shiftTypes }: Props) => {
   const { data: users } = useGetPlanningUsersQuery();
   const { data: shiftSettings } = useGetShiftSettingsQuery();
   const typeColors = shiftSettings?.typeColors;
+  const { data: activities } = useGetShiftActivitiesQuery();
 
   const { data: bankHolidaysData } = useGetBankHolidaysQuery({
     after,
@@ -109,7 +108,7 @@ const Planning = ({ shiftTypes }: Props) => {
     () =>
       typeFilter.length === 0
         ? shifts
-        : shifts.filter(s => typeFilter.includes(s.type)),
+        : shifts.filter(s => typeFilter.includes(s.activity)),
     [shifts, typeFilter],
   );
 
@@ -174,9 +173,12 @@ const Planning = ({ shiftTypes }: Props) => {
     view === 'employee' || view === 'calendar' || view === 'type';
 
   // "Planning" covers the week grids; "Employees" groups the HR section
-  // together with skills (a competency is an employee attribute)
+  // together with skills (a competency is an employee attribute) and
+  // activities (the shift-activity catalog)
   const section =
-    view === 'hr' || view === 'skills' ? 'employees' : 'planning';
+    view === 'hr' || view === 'skills' || view === 'activities'
+      ? 'employees'
+      : 'planning';
 
   return (
     <div className="shift-planning">
@@ -200,7 +202,7 @@ const Planning = ({ shiftTypes }: Props) => {
           </button>
         </nav>
         <Space>
-          <ShiftSettingsModal shiftTypes={shiftTypes} />
+          <ShiftSettingsModal />
         </Space>
       </div>
       {isPlanningView && (
@@ -212,7 +214,7 @@ const Planning = ({ shiftTypes }: Props) => {
             <WeekNavigator value={weekStart} onChange={setWeekStart} />
             <ShiftTypeFilter
               ref={typeFilterRef}
-              shiftTypes={shiftTypes}
+              activities={activities ?? []}
               value={typeFilter}
               onChange={setTypeFilter}
               typeColors={typeColors}
@@ -260,17 +262,19 @@ const Planning = ({ shiftTypes }: Props) => {
       {section === 'employees' && (
         <div className="shift-planning__toolbar">
           <Segmented
-            value={view === 'skills' ? 'skills' : 'hr'}
+            value={view === 'skills' || view === 'activities' ? view : 'hr'}
             onChange={value => setView(value as View)}
             options={[
               { label: t('SHIFT_PLANNING_NAV_EMPLOYEES'), value: 'hr' },
               { label: t('SHIFT_PLANNING_VIEW_SKILLS'), value: 'skills' },
+              { label: t('SHIFT_ACTIVITY_NAV'), value: 'activities' },
             ]}
           />
           <PayrollExportButton />
         </div>
       )}
       {view === 'skills' && <SkillsManager />}
+      {view === 'activities' && <ActivitiesManager />}
       {view === 'hr' && <EmployeesManager />}
       {isPlanningView && <ComplianceAlert weekStart={weekStart} />}
       {view === 'employee' && (
@@ -289,18 +293,19 @@ const Planning = ({ shiftTypes }: Props) => {
             onAddUser={addUser}
             onRemoveUser={removeUser}
             typeColors={typeColors}
+            activities={activities}
             bankHolidays={bankHolidays}
           />
         </Spin>
       )}
       {view === 'type' && (
         <Spin spinning={isFetching}>
-          <TypeGrid
+          <ActivityGrid
             weekStart={weekStart}
-            shiftTypes={shiftTypes}
+            activities={activities ?? []}
             shifts={filteredShifts}
-            onCreate={(day: Dayjs, type: string) =>
-              setModalState({ date: day, type })
+            onCreate={(day: Dayjs, activity: string) =>
+              setModalState({ date: day, activity })
             }
             onEdit={(shift: Shift) => setModalState({ shift })}
             typeColors={typeColors}
@@ -318,13 +323,14 @@ const Planning = ({ shiftTypes }: Props) => {
             }
             onEdit={(shift: Shift) => setModalState({ shift })}
             typeColors={typeColors}
+            activities={activities}
             bankHolidays={bankHolidays}
           />
         </Spin>
       )}
       <ShiftModal
         state={modalState}
-        shiftTypes={shiftTypes}
+        activities={activities ?? []}
         users={sortedUsers}
         holidayRequests={weekHolidays}
         shifts={shifts}
@@ -340,10 +346,10 @@ const Planning = ({ shiftTypes }: Props) => {
   );
 };
 
-export default ({ shiftTypes }: Props) => {
+export default () => {
   return (
     <Provider store={store}>
-      <Planning shiftTypes={shiftTypes} />
+      <Planning />
     </Provider>
   );
 };
