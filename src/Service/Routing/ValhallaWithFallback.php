@@ -5,14 +5,20 @@ namespace AppBundle\Service\Routing;
 use AppBundle\Entity\Base\GeoCoordinates;
 use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
 
-class OsrmWithFallback extends Base
+class ValhallaWithFallback extends Base
 {
-    private $osrm;
+    /**
+     * @var Valhalla
+     */
+    private $valhalla;
+    /**
+     * @var Fallback
+     */
     private $fallback;
 
-    public function __construct(Osrm $osrm, Fallback $fallback)
+    public function __construct(Valhalla $valhalla, Fallback $fallback)
     {
-        $this->osrm = $osrm;
+        $this->valhalla = $valhalla;
         $this->fallback = $fallback;
     }
 
@@ -22,7 +28,7 @@ class OsrmWithFallback extends Base
     public function getPolyline(GeoCoordinates ...$coordinates)
     {
         try {
-            return $this->osrm->getPolyline(...$coordinates);
+            return $this->valhalla->getPolyline(...$coordinates);
         } catch (ExceptionInterface $e) {
             return $this->fallback->getPolyline(...$coordinates);
         }
@@ -34,7 +40,7 @@ class OsrmWithFallback extends Base
     public function getDistance(GeoCoordinates ...$coordinates)
     {
         try {
-            return $this->osrm->getDistance(...$coordinates);
+            return $this->valhalla->getDistance(...$coordinates);
         } catch (ExceptionInterface $e) {
             return $this->fallback->getDistance(...$coordinates);
         }
@@ -46,7 +52,7 @@ class OsrmWithFallback extends Base
     public function getDuration(GeoCoordinates ...$coordinates)
     {
         try {
-            return $this->osrm->getDuration(...$coordinates);
+            return $this->valhalla->getDuration(...$coordinates);
         } catch (ExceptionInterface $e) {
             return $this->fallback->getDuration(...$coordinates);
         }
@@ -58,7 +64,7 @@ class OsrmWithFallback extends Base
     public function getDistances(GeoCoordinates $source, GeoCoordinates ...$destinations)
     {
         try {
-            return $this->osrm->getDistances($source, ...$destinations);
+            return $this->valhalla->getDistances($source, ...$destinations);
         } catch (ExceptionInterface $e) {
             return $this->fallback->getDistances($source, ...$destinations);
         }
@@ -67,7 +73,7 @@ class OsrmWithFallback extends Base
     public function route(GeoCoordinates ...$coordinates)
     {
         try {
-            return $this->osrm->route(...$coordinates);
+            return $this->valhalla->route(...$coordinates);
         } catch (ExceptionInterface $e) {
             return $this->fallback->route(...$coordinates);
         }
@@ -76,9 +82,9 @@ class OsrmWithFallback extends Base
     public function getTrip(GeoCoordinates ...$coordinates)
     {
         try {
-            return $this->osrm->getTrip(...$coordinates);
+            return $this->valhalla->getTrip(...$coordinates);
         } catch (ExceptionInterface $e) {
-            return $this->fallback->getTrip(...$coordinates);
+            return $this->fallback->route(...$coordinates);
         }
     }
 }

@@ -36,4 +36,10 @@ interface RoutingInterface
      * @return array
      */
     public function route(GeoCoordinates ...$coordinates);
+
+    /**
+     * @param GeoCoordinates[] ...$coordinates
+     * @return array
+     */
+    public function getTrip(GeoCoordinates ...$coordinates);
 }

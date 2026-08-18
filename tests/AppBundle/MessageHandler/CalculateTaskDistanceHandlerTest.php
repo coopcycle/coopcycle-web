@@ -87,7 +87,7 @@ class CalculateTaskDistanceHandlerTest extends KernelTestCase
         call_user_func_array($this->handler, [ $msg ]);
 
         $this->assertEquals(41, $task->getEmittedCo2());
-        $this->assertEquals(4175, $task->getTraveledDistanceMeter());
+        $this->assertEquals(4179, $task->getTraveledDistanceMeter());
 
         // task not in a tour
         $task = $taskList->getTasks()[4];
@@ -97,7 +97,7 @@ class CalculateTaskDistanceHandlerTest extends KernelTestCase
         call_user_func_array($this->handler, [ $msg ]);
 
         $this->assertEquals(40, $task->getEmittedCo2());
-        $this->assertEquals(4045, $task->getTraveledDistanceMeter());
+        $this->assertEquals(4051, $task->getTraveledDistanceMeter());
 
     }
 
@@ -132,7 +132,7 @@ class CalculateTaskDistanceHandlerTest extends KernelTestCase
         call_user_func_array($this->handler, [ $msg ]);
 
         $this->assertEquals(0, $task->getEmittedCo2());
-        $this->assertEquals(4045, $task->getTraveledDistanceMeter());
+        $this->assertEquals(4051, $task->getTraveledDistanceMeter());
 
     }
 }

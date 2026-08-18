@@ -1,4 +1,4 @@
-.PHONY: setup install install-db osrm phpunit phpunit-only behat behat-only cypress cypress-only cypress-only-until-fail cypress-open cypress-install jest migrations migrations-diff migrations-migrate email-preview enable-xdebug start start-fresh fresh fresh-db perms lint test testdata-dispatch testdata-foodtech testdata-high-volume-instance demodata testserver console log log-requests ftp
+.PHONY: setup install install-db osrm valhalla phpunit phpunit-only behat behat-only cypress cypress-only cypress-only-until-fail cypress-open cypress-install jest migrations migrations-diff migrations-migrate email-preview enable-xdebug start start-fresh fresh fresh-db perms lint test testdata-dispatch testdata-foodtech testdata-high-volume-instance demodata testserver console log log-requests ftp
 
 setup: install migrations perms demodata
 
@@ -15,11 +15,16 @@ install-db:
 
 osrm:
 	@printf "\e[0;32mCalculating cycling routes for Paris..\e[0m\n"
-	@docker compose run --rm osrm wget --no-check-certificate https://coopcycle-assets.sfo2.digitaloceanspaces.com/osm/paris-france.osm.pbf -O /data/data.osm.pbf
+	@curl --create-dirs -o var/osrm/data.osm.pbf https://coopcycle-assets.sfo2.digitaloceanspaces.com/osm/paris-france.osm.pbf
 	@docker compose run --rm osrm osrm-extract -p /opt/bicycle.lua /data/data.osm.pbf
 	@docker compose run --rm osrm osrm-partition /data/data.osrm
 	@docker compose run --rm osrm osrm-customize /data/data.osrm
 	@docker compose restart osrm
+
+valhalla:
+	@printf "\e[0;32mStarting Valhalla (Île-de-France, tiles built on first run)..\e[0m\n"
+	@mkdir -p ./var/valhalla
+	@docker compose --profile valhalla up -d valhalla
 
 phpunit:
 	@docker compose exec php php bin/console doctrine:schema:update --env=test --force --no-interaction --quiet
