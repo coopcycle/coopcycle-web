@@ -12,6 +12,8 @@ use Transporter\DTO\NameAndAddress;
 use Transporter\DTO\Package;
 use Transporter\DTO\Point;
 use Transporter\Enum\INOVERTMessageType;
+use Transporter\Enum\ReportReason;
+use Transporter\Enum\ReportSituation;
 use Transporter\Enum\TransporterName;
 use Transporter\Transporter;
 
@@ -94,6 +96,45 @@ class EdifactMessageParser
             'file' => $filename,
             'point' => $this->pointToArray($point),
             'raw' => $this->normalize($content),
+        ];
+    }
+
+    /**
+     * Builds a human-readable structure for an outbound REPORT message (data
+     * we push back to the transporter about a delivery's outcome). Unlike
+     * inbound messages, REPORT content isn't re-parsed via the transporter
+     * library: the situation/reason/pods/appointment are read directly off
+     * the entity, since that's exactly the data used to generate the report.
+     *
+     * @return array<string,mixed>
+     */
+    public function parseReport(EDIFACTMessage $message): array
+    {
+        $situation = null;
+        $reason = null;
+        if (!empty($message->getSubMessageType()) && str_contains($message->getSubMessageType(), '|')) {
+            [$situation, $reason] = explode('|', $message->getSubMessageType());
+        }
+
+        $filename = $message->getEdiMessage();
+        $raw = null;
+        if (!empty($filename) && $this->edifactFs->fileExists($filename)) {
+            $raw = $this->normalize($this->edifactFs->read($filename));
+        }
+
+        return [
+            'reference' => $message->getReference(),
+            'transporter' => $message->getTransporter(),
+            'situation' => $situation,
+            'situationLabel' => $situation ? (ReportSituation::tryFrom($situation)?->value ?? $situation) : null,
+            'reason' => $reason,
+            'reasonLabel' => $reason ? (ReportReason::tryFrom($reason)?->value ?? $reason) : null,
+            'pods' => $message->getPods(),
+            'appointment' => $message->getAppointment()?->format(\DateTimeInterface::ATOM),
+            'createdAt' => $message->getCreatedAt()?->format(\DateTimeInterface::ATOM),
+            'syncedAt' => $message->getSyncedAt()?->format(\DateTimeInterface::ATOM),
+            'file' => $filename,
+            'raw' => $raw,
         ];
     }
 
