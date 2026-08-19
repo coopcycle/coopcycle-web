@@ -5,6 +5,7 @@ namespace AppBundle\Controller\Admin;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Integration\Zelty\ZeltyClient;
 use AppBundle\Integration\Zelty\ZeltyConnectService;
+use AppBundle\Sylius\Taxation\TaxesHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,6 +20,7 @@ class ZeltyController extends AbstractController
         private readonly ZeltyClient $zeltyClient,
         private readonly ZeltyConnectService $zeltyConnectService,
         private readonly EntityManagerInterface $entityManager,
+        private readonly TaxesHelper $taxesHelper,
     ) {}
 
     #[Route('/admin/restaurant/{id}/zelty/connect', name: 'admin_restaurant_zelty_connect', methods: ['POST'])]
@@ -96,10 +98,21 @@ class ZeltyController extends AbstractController
 
         $this->zeltyClient->setAuth($restaurant->getZeltyApiKey());
 
-        $dish = $this->zeltyClient->createDish([
-            'name'  => 'Frais de livraison',
-            'price' => 0,
-        ]);
+        // Zelty expects VAT rates as an integer, where 1000 = 10%.
+        $serviceTaxRate = $this->taxesHelper->getServiceTaxRate();
+        $tax = $serviceTaxRate !== null ? (int) round($serviceTaxRate->getAmount() * 10000) : 0;
+
+        try {
+            $dish = $this->zeltyClient->createDish([
+                'name'         => 'Frais de livraison',
+                'price'        => 0,
+                'tax'          => $tax,
+                'tax_takeaway' => $tax,
+                'tax_delivery' => $tax,
+            ]);
+        } catch (ExceptionInterface $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 502);
+        }
 
         if (empty($dish['id'])) {
             return new JsonResponse(['error' => 'Zelty did not return a dish ID'], 500);

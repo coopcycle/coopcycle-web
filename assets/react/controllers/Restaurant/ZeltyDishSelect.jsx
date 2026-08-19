@@ -86,17 +86,20 @@ export default function ZeltyDishSelect({ restaurantId, inputId }) {
     setCreating(true)
     setError(null)
     try {
-      const { response } = await client.post(
+      const { response, error } = await client.post(
         `//${window.location.host}/admin/restaurant/${restaurantId}/zelty/delivery-dish`,
         {}
       )
-      if (response?.id) {
-        const newDish = { id: response.id, name: response.name }
-        setDishes(prev =>
-          [...prev, newDish].sort((a, b) => a.name.localeCompare(b.name))
-        )
-        applyValue(response.id)
+      // The http client resolves on errors too, so check the payload explicitly.
+      if (error || !response?.id) {
+        setError(t('ZELTY_DISH_CREATE_ERROR'))
+        return
       }
+      const newDish = { id: response.id, name: response.name }
+      setDishes(prev =>
+        [...prev, newDish].sort((a, b) => a.name.localeCompare(b.name))
+      )
+      applyValue(response.id)
     } catch {
       setError(t('ZELTY_DISH_CREATE_ERROR'))
     } finally {
