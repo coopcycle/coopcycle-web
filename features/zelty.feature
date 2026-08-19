@@ -183,6 +183,123 @@ Feature: Zelty catalog push webhook
       {"code": "3001_variant", "price": 1500}
       """
 
+  Scenario: A menu part shared by two menus creates a single product option
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml  |
+      | zelty_restaurant.yml |
+    And the Zelty taxes API will return:
+      """
+      {"taxes":[{"id":1,"name":"TVA 10%","rate":1000}]}
+      """
+    When I add "Content-Type" header equal to "application/json"
+    And I send a "POST" request to "/api/zelty/webhook/catalog/1" with body:
+      """
+      {
+        "data": {
+          "id": 100,
+          "name": "Pizza Roma Catalog",
+          "locale": "fr",
+          "currency": "EUR",
+          "tags": [],
+          "items": [
+            {
+              "id": 2001,
+              "type": "dish",
+              "name": "Margherita",
+              "description": "Tomate, Mozzarella",
+              "img": null,
+              "disabled": false,
+              "is_sold_out": false,
+              "price": {
+                "price": 1200,
+                "is_fixed": true,
+                "prevent_discounts": false,
+                "overrides": []
+              },
+              "tax_rules": {"tax_id": 1},
+              "option_ids": [],
+              "parts": []
+            },
+            {
+              "id": 2002,
+              "type": "dish",
+              "name": "Regina",
+              "description": "Tomate, Jambon, Champignons",
+              "img": null,
+              "disabled": false,
+              "is_sold_out": false,
+              "price": {
+                "price": 1400,
+                "is_fixed": true,
+                "prevent_discounts": false,
+                "overrides": []
+              },
+              "tax_rules": {"tax_id": 1},
+              "option_ids": [],
+              "parts": []
+            },
+            {
+              "id": 3001,
+              "type": "menu",
+              "name": "Formule Déjeuner",
+              "description": "Pizza au choix",
+              "img": null,
+              "disabled": false,
+              "is_sold_out": false,
+              "price": {
+                "price": 1500,
+                "is_fixed": true,
+                "prevent_discounts": false,
+                "overrides": []
+              },
+              "tax_rules": {"tax_id": 1},
+              "option_ids": [],
+              "parts": [
+                {"menu_part_id": 101, "has_combination": false, "prevent_customisation": false}
+              ]
+            },
+            {
+              "id": 3002,
+              "type": "menu",
+              "name": "Formule Dîner",
+              "description": "Pizza au choix",
+              "img": null,
+              "disabled": false,
+              "is_sold_out": false,
+              "price": {
+                "price": 1800,
+                "is_fixed": true,
+                "prevent_discounts": false,
+                "overrides": []
+              },
+              "tax_rules": {"tax_id": 1},
+              "option_ids": [],
+              "parts": [
+                {"menu_part_id": 101, "has_combination": false, "prevent_customisation": false}
+              ]
+            }
+          ],
+          "menuParts": [
+            {
+              "id": 101,
+              "name": "Choisissez votre pizza",
+              "dish_ids": [2001, 2002]
+            }
+          ],
+          "options": [],
+          "optionValues": []
+        }
+      }
+      """
+    Then the response status code should be 202
+    And I see 4 entities "AppBundle\Entity\Sylius\Product"
+    And I see 1 entities "AppBundle\Entity\Sylius\ProductOption"
+    And I see entity "AppBundle\Entity\Sylius\ProductOption" with properties:
+      """
+      {"code": "101"}
+      """
+    And I see 2 entities "AppBundle\Entity\Sylius\ProductOptionValue"
+
   Scenario: Import catalog with a dish having options
     Given the fixtures files are loaded:
       | sylius_taxation.yml  |
