@@ -211,7 +211,7 @@ function ParsedMessage({ message }) {
   )
 }
 
-function RawMessage({ message }) {
+function RawText({ text }) {
   return (
     <pre
       style={{
@@ -222,12 +222,92 @@ function RawMessage({ message }) {
         overflow: 'auto',
         margin: 0,
       }}>
-      {message.raw}
+      {text}
     </pre>
   )
 }
 
+function ReportItem({ report, index }) {
+  return (
+    <div>
+      {index > 0 && <Divider />}
+      <Descriptions bordered size="small" column={2} className="mb-3">
+        <Descriptions.Item label="Situation">
+          {report.situationLabel || '—'}
+        </Descriptions.Item>
+        <Descriptions.Item label="Reason">
+          {report.reasonLabel || '—'}
+        </Descriptions.Item>
+        <Descriptions.Item label="Created at">
+          {report.createdAt ? moment(report.createdAt).format('L LT') : '—'}
+        </Descriptions.Item>
+        <Descriptions.Item label="Synced at">
+          {report.syncedAt
+            ? moment(report.syncedAt).format('L LT')
+            : 'Not synced yet'}
+        </Descriptions.Item>
+        {report.appointment && (
+          <Descriptions.Item label="Appointment" span={2}>
+            {moment(report.appointment).format('L LT')}
+          </Descriptions.Item>
+        )}
+        {report.pods && report.pods.length > 0 && (
+          <Descriptions.Item label="Proof of delivery" span={2}>
+            {report.pods.map((url, i) => (
+              <div key={i}>
+                <a href={url} target="_blank" rel="noreferrer">
+                  {url}
+                </a>
+              </div>
+            ))}
+          </Descriptions.Item>
+        )}
+      </Descriptions>
+      {report.raw && (
+        <div className="mb-3">
+          <RawText text={report.raw} />
+        </div>
+      )}
+    </div>
+  )
+}
+
+function ReportsMessage({ reports }) {
+  if (!reports || reports.length === 0) {
+    return <Empty description="No report data available" />
+  }
+
+  return reports.map((report, index) => (
+    <ReportItem key={index} report={report} index={index} />
+  ))
+}
+
 function EdifactMessage({ message, index, total }) {
+  const hasReports = message.reports && message.reports.length > 0
+
+  const items = []
+  if (message.point) {
+    items.push({
+      key: 'parsed',
+      label: 'Parsed',
+      children: <ParsedMessage message={message} />,
+    })
+  }
+  if (message.raw) {
+    items.push({
+      key: 'raw',
+      label: 'Raw',
+      children: <RawText text={message.raw} />,
+    })
+  }
+  if (hasReports) {
+    items.push({
+      key: 'reports',
+      label: `Reports (${message.reports.length})`,
+      children: <ReportsMessage reports={message.reports} />,
+    })
+  }
+
   return (
     <div>
       {index > 0 && <Divider />}
@@ -236,21 +316,7 @@ function EdifactMessage({ message, index, total }) {
           {message.taskType} — {message.reference}
         </Title>
       )}
-      <Tabs
-        defaultActiveKey="parsed"
-        items={[
-          {
-            key: 'parsed',
-            label: 'Parsed',
-            children: <ParsedMessage message={message} />,
-          },
-          {
-            key: 'raw',
-            label: 'Raw',
-            children: <RawMessage message={message} />,
-          },
-        ]}
-      />
+      <Tabs defaultActiveKey={items[0]?.key} items={items} />
     </div>
   )
 }

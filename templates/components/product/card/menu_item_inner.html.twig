@@ -8,7 +8,7 @@
         <small class="line-clamp-3">{{ product.description|nl2br }}</small>
       {% endif %}
     {% else %}
-      <small>{{ 'restaurant.unavailable'|trans }}</small>
+      <small class="inline-block mt-1 rounded px-2 py-0.5 text-xs font-semibold uppercase tracking-wide bg-base-content/10">{{ 'restaurant.unavailable'|trans }}</small>
     {% endif %}
   </div>
   <div class="flex overflow-hidden">

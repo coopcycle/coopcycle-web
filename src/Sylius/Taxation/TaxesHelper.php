@@ -3,6 +3,7 @@
 namespace AppBundle\Sylius\Taxation;
 
 use AppBundle\Entity\Sylius\TaxCategory;
+use AppBundle\Entity\Sylius\TaxRate;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -127,9 +128,9 @@ class TaxesHelper
     }
 
     /**
-     * @return string|null
+     * @return TaxRate|null
      */
-    public function getServiceTaxRateCode()
+    public function getServiceTaxRate()
     {
         $subjectToVat = $this->settingsManager->get('subject_to_vat');
         $code = $subjectToVat ? 'SERVICE' : 'SERVICE_TAX_EXEMPT';
@@ -143,7 +144,15 @@ class TaxesHelper
             ->setParameter('code', $code)
             ;
 
-        $rate = $qb->getQuery()->getOneOrNullResult();
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getServiceTaxRateCode()
+    {
+        $rate = $this->getServiceTaxRate();
 
         if ($rate) {
             return $rate->getCode();
