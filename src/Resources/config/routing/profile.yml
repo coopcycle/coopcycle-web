@@ -150,7 +150,21 @@ dashboard_restaurant_menu_taxons:
             menu: dashboard_restaurant_menu_taxon
             menu_activate: dashboard_restaurant_menu_taxon_activate
             menu_taxon: dashboard_restaurant_menu_taxon
+            zelty_catalogs: dashboard_restaurant_zelty_catalogs
+            zelty_pull_catalog: dashboard_restaurant_zelty_pull_catalog
     methods: [ GET, POST ]
+
+dashboard_restaurant_zelty_catalogs:
+    path: /dashboard/restaurants/{id}/zelty/catalogs
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::restaurantZeltyCatalogsAction
+    methods: [ GET ]
+
+dashboard_restaurant_zelty_pull_catalog:
+    path: /dashboard/restaurants/{id}/zelty/catalogs/{catalogId}/pull
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::pullRestaurantZeltyCatalogAction
+    methods: [ POST ]
 
 dashboard_restaurant_menu_taxon:
     path: /dashboard/restaurants/{restaurantId}/menus/{menuId}

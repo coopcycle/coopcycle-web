@@ -197,7 +197,21 @@ admin_restaurant_menu_taxons:
             menu: admin_restaurant_menu_taxon
             menu_activate: admin_restaurant_menu_taxon_activate
             menu_taxon: admin_restaurant_menu_taxon
+            zelty_catalogs: admin_restaurant_zelty_catalogs
+            zelty_pull_catalog: admin_restaurant_zelty_pull_catalog
     methods: [ GET, POST ]
+
+admin_restaurant_zelty_catalogs:
+    path: /admin/restaurants/{id}/zelty/catalogs
+    defaults:
+        _controller: AppBundle\Controller\AdminController::restaurantZeltyCatalogsAction
+    methods: [ GET ]
+
+admin_restaurant_zelty_pull_catalog:
+    path: /admin/restaurants/{id}/zelty/catalogs/{catalogId}/pull
+    defaults:
+        _controller: AppBundle\Controller\AdminController::pullRestaurantZeltyCatalogAction
+    methods: [ POST ]
 
 admin_restaurant_menu_taxon:
     path: /admin/restaurants/{restaurantId}/menus/{menuId}

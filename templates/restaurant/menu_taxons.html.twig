@@ -8,8 +8,11 @@
 
 {% block content %}
   <p class="text-right">
-    {% if zelty_enabled and restaurant.hasZeltyApiKey and is_granted('ROLE_ADMIN') %}
-      <span class="mr-2" {{ react_component('Restaurant/ZeltyCatalogPull', { restaurantId: restaurant.id }) }}></span>
+    {% if zelty_enabled and restaurant.hasZeltyApiKey %}
+      <span class="mr-2" {{ react_component('Restaurant/ZeltyCatalogPull', {
+        catalogsUrl: path(zelty_catalogs_route, { id: restaurant.id }),
+        pullUrlTemplate: path(zelty_pull_catalog_route, { id: restaurant.id, catalogId: '__CATALOG_ID__' })
+      }) }}></span>
     {% endif %}
     <a class="btn btn-success" href="#"
       data-toggle="modal" data-target="#newTaxonModal">
