@@ -939,6 +939,22 @@
         "ZELTY_ORDERS_TOGGLE_OFF_HELP": "Les nouvelles commandes ne sont PAS envoyées à la caisse Zelty. Le catalogue et la clé API ne sont pas affectés.",
         "ZELTY_ORDERS_TOGGLE_ON_LABEL": "ON",
         "ZELTY_ORDERS_TOGGLE_OFF_LABEL": "OFF",
-        "ZELTY_ORDERS_TOGGLE_ERROR": "Impossible d'enregistrer ce réglage, veuillez réessayer"
+        "ZELTY_ORDERS_TOGGLE_ERROR": "Impossible d'enregistrer ce réglage, veuillez réessayer",
+        "ZELTY_LOGS_REFRESH": "Actualiser",
+        "ZELTY_LOGS_HELP": "Requêtes envoyées à Zelty et webhooks reçus de Zelty. Cliquez sur une ligne pour voir les contenus.",
+        "ZELTY_LOGS_EMPTY": "Aucun appel API enregistré pour le moment",
+        "ZELTY_LOGS_LOAD_ERROR": "Impossible de charger le journal des appels API",
+        "ZELTY_LOGS_LOAD_MORE": "Charger plus",
+        "ZELTY_LOGS_COLUMN_DATE": "Date",
+        "ZELTY_LOGS_COLUMN_DIRECTION": "Sens",
+        "ZELTY_LOGS_COLUMN_ENDPOINT": "Endpoint",
+        "ZELTY_LOGS_COLUMN_STATUS": "Statut",
+        "ZELTY_LOGS_COLUMN_DURATION": "Durée",
+        "ZELTY_LOGS_DIRECTION_OUTGOING": "Vers Zelty",
+        "ZELTY_LOGS_DIRECTION_INCOMING": "Depuis Zelty",
+        "ZELTY_LOGS_STATUS_FAILED": "Échec",
+        "ZELTY_LOGS_REQUEST_BODY": "Contenu de la requête",
+        "ZELTY_LOGS_RESPONSE_BODY": "Contenu de la réponse",
+        "ZELTY_LOGS_NO_BODY": "Aucun contenu enregistré pour cet appel"
     }
 }

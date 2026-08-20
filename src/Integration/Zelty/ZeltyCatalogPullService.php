@@ -24,7 +24,7 @@ class ZeltyCatalogPullService
      */
     public function listCatalogs(LocalBusiness $restaurant): array
     {
-        $this->zeltyClient->setAuth($restaurant->getZeltyApiKey());
+        $this->zeltyClient->setRestaurant($restaurant);
 
         return $this->zeltyClient->getCatalogs();
     }
@@ -34,7 +34,7 @@ class ZeltyCatalogPullService
      */
     public function pull(LocalBusiness $restaurant, string $catalogId): void
     {
-        $this->zeltyClient->setAuth($restaurant->getZeltyApiKey());
+        $this->zeltyClient->setRestaurant($restaurant);
 
         $catalog = $this->zeltyClient->getCatalog($catalogId);
 

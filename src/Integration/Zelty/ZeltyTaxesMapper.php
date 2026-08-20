@@ -2,6 +2,7 @@
 
 namespace AppBundle\Integration\Zelty;
 
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Sylius\TaxCategory;
 use AppBundle\Entity\Sylius\TaxRate;
 use AppBundle\Sylius\Taxation\TaxesHelper;
@@ -27,6 +28,14 @@ class ZeltyTaxesMapper implements ResetInterface
     public function setZeltyApiKey(string $key): void
     {
         $this->zeltyClient->setAuth($key);
+    }
+
+    /**
+     * Same as setZeltyApiKey(), but the API log can attribute the calls to the shop.
+     */
+    public function setRestaurant(LocalBusiness $restaurant): void
+    {
+        $this->zeltyClient->setRestaurant($restaurant);
     }
 
     /**

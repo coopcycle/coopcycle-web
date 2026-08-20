@@ -25,7 +25,9 @@ class ZeltyConnectService
      */
     public function connect(LocalBusiness $restaurant, string $apiKey): bool
     {
+        // The key is not saved on the restaurant yet, so set both explicitly.
         $this->zeltyClient->setAuth($apiKey);
+        $this->zeltyClient->setRestaurantId($restaurant->getId());
 
         // Cheap authenticated GET to reject a bad key before registering webhooks.
         $this->zeltyClient->getTaxes();

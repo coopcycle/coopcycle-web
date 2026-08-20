@@ -2,18 +2,24 @@
 
 namespace AppBundle\Integration\Zelty;
 
+use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\Zelty\ApiLog;
 use AppBundle\Sylius\Order\OrderInterface;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Contracts\HttpClient\ResponseInterface;
 
 class ZeltyClient
 {
     private ?string $authToken = null;
 
+    private ?int $restaurantId = null;
+
     public function __construct(
         private HttpClientInterface $zeltyClient,
         private \Psr\Log\LoggerInterface $logger,
         private ZeltyOrderNormalizer $orderNormalizer,
+        private ?\Psr\Log\LoggerInterface $zeltyLogger = null,
     ) {}
 
     public function setAuth(string $token): void
@@ -21,9 +27,72 @@ class ZeltyClient
         $this->authToken = $token;
     }
 
+    /**
+     * Same as setAuth(), but also tells the API log which shop the calls belong to.
+     */
+    public function setRestaurant(LocalBusiness $restaurant): void
+    {
+        $this->setAuth((string) $restaurant->getZeltyApiKey());
+        $this->restaurantId = $restaurant->getId();
+    }
+
+    public function setRestaurantId(?int $restaurantId): void
+    {
+        $this->restaurantId = $restaurantId;
+    }
+
     private function authOptions(): array
     {
         return $this->authToken !== null ? ['auth_bearer' => $this->authToken] : [];
+    }
+
+    /**
+     * Single entry point for every call to Zelty, so all traffic ends up in the API log.
+     */
+    private function send(string $method, string $path, array $options = []): ResponseInterface
+    {
+        $startedAt = microtime(true);
+        $requestBody = $options['json'] ?? null;
+
+        try {
+            $response = $this->zeltyClient->request($method, $path, array_merge($this->authOptions(), $options));
+
+            // Reading the body here does not swallow errors: the caller's getContent()
+            // still throws for a 4xx/5xx, it just replays the buffered response.
+            $statusCode = $response->getStatusCode();
+            $responseBody = $response->getContent(false);
+        } catch (\Throwable $e) {
+            $this->logApiCall($method, $path, $requestBody, null, null, $startedAt, $e->getMessage());
+
+            throw $e;
+        }
+
+        $this->logApiCall($method, $path, $requestBody, $statusCode, $responseBody, $startedAt);
+
+        return $response;
+    }
+
+    private function logApiCall(
+        string $method,
+        string $path,
+        mixed $requestBody,
+        ?int $statusCode,
+        ?string $responseBody,
+        float $startedAt,
+        ?string $error = null
+    ): void {
+        $this->zeltyLogger?->log($error !== null || ($statusCode !== null && $statusCode >= 400) ? 'error' : 'info',
+            sprintf('%s %s', $method, $path), [
+                'direction'     => ApiLog::DIRECTION_OUTGOING,
+                'restaurant_id' => $this->restaurantId,
+                'method'        => $method,
+                'endpoint'      => $path,
+                'status_code'   => $statusCode,
+                'request_body'  => $requestBody,
+                'response_body' => $responseBody,
+                'duration_ms'   => (int) round((microtime(true) - $startedAt) * 1000),
+                'error'         => $error,
+            ]);
     }
 
     public function pushToZelty(OrderInterface $order): int
@@ -36,9 +105,7 @@ class ZeltyClient
         ]);
 
         try {
-            $response = $this->zeltyClient->request('POST', 'orders', array_merge($this->authOptions(), [
-                'json' => $payload,
-            ]));
+            $response = $this->send('POST', 'orders', ['json' => $payload]);
             $data = json_decode($response->getContent(), true);
             return $data['order']['id'];
         } catch (ClientExceptionInterface $e) {
@@ -52,12 +119,12 @@ class ZeltyClient
         $this->logger->info('Zelty add transaction', ['zelty_order_id' => $zeltyOrderId, 'amount' => $amount]);
 
         try {
-            $this->zeltyClient->request('POST', sprintf('orders/%d/transactions', $zeltyOrderId), array_merge($this->authOptions(), [
+            $this->send('POST', sprintf('orders/%d/transactions', $zeltyOrderId), [
                 'json' => [
                     'transactions'  => [['name' => 'CB', 'price' => $amount]],
                     'close_if_paid' => false,
                 ],
-            ]));
+            ]);
         } catch (ClientExceptionInterface $e) {
             $body = $e->getResponse()->getContent(false);
             $this->logger->error('Zelty add transaction failed', [
@@ -72,7 +139,7 @@ class ZeltyClient
         $this->logger->info('Zelty close order', ['zelty_order_id' => $zeltyOrderId]);
 
         try {
-            $this->zeltyClient->request('POST', sprintf('orders/%d/closure', $zeltyOrderId), $this->authOptions());
+            $this->send('POST', sprintf('orders/%d/closure', $zeltyOrderId));
         } catch (ClientExceptionInterface $e) {
             $body = $e->getResponse()->getContent(false);
             $this->logger->error('Zelty close order failed', [
@@ -96,9 +163,7 @@ class ZeltyClient
             $payload[$event] = $url !== null ? ['target' => $url, 'version' => 'v2'] : null;
         }
 
-        $response = $this->zeltyClient->request('POST', 'webhooks', array_merge($this->authOptions(), [
-            'json' => ['webhooks' => $payload],
-        ]));
+        $response = $this->send('POST', 'webhooks', ['json' => ['webhooks' => $payload]]);
 
         $data = json_decode($response->getContent(), true);
 
@@ -112,18 +177,14 @@ class ZeltyClient
 
     public function getDishes(): array
     {
-        $response = $this->zeltyClient->request('GET', 'catalog/dishes', array_merge($this->authOptions(), [
-            'query' => ['limit' => '2500'],
-        ]));
+        $response = $this->send('GET', 'catalog/dishes', ['query' => ['limit' => '2500']]);
         $data = json_decode($response->getContent(), true);
         return $data['dishes'] ?? [];
     }
 
     public function createDish(array $fields): array
     {
-        $response = $this->zeltyClient->request('POST', 'catalog/dishes', array_merge($this->authOptions(), [
-            'json' => [$fields],
-        ]));
+        $response = $this->send('POST', 'catalog/dishes', ['json' => [$fields]]);
         $data = json_decode($response->getContent(), true);
         return $data['dishes'][0] ?? [];
     }
@@ -133,7 +194,7 @@ class ZeltyClient
      */
     public function getCatalogs(): array
     {
-        $response = $this->zeltyClient->request('GET', 'catalogs', $this->authOptions());
+        $response = $this->send('GET', 'catalogs');
         $data = json_decode($response->getContent(), true);
         return $data['catalogs'] ?? [];
     }
@@ -143,14 +204,14 @@ class ZeltyClient
      */
     public function getCatalog(string $catalogId): array
     {
-        $response = $this->zeltyClient->request('GET', sprintf('catalogs/%s', $catalogId), $this->authOptions());
+        $response = $this->send('GET', sprintf('catalogs/%s', $catalogId));
         $data = json_decode($response->getContent(), true);
         return $data['catalog'] ?? [];
     }
 
     public function getTaxes(): array
     {
-        $response = $this->zeltyClient->request('GET', 'catalog/taxes', $this->authOptions());
+        $response = $this->send('GET', 'catalog/taxes');
         return json_decode($response->getContent(), true);
     }
 }

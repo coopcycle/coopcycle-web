@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\Zelty\ApiLog" table="zelty_api_log">
+    <indexes>
+      <index name="idx_zelty_api_log_restaurant_created" columns="restaurant_id,created_at"/>
+      <index name="idx_zelty_api_log_created" columns="created_at"/>
+    </indexes>
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="direction" type="string" column="direction" length="16"/>
+    <field name="method" type="string" column="method" length="10" nullable="true"/>
+    <field name="endpoint" type="text" column="endpoint" nullable="true"/>
+    <field name="statusCode" type="integer" column="status_code" nullable="true"/>
+    <field name="requestBody" type="text" column="request_body" nullable="true"/>
+    <field name="responseBody" type="text" column="response_body" nullable="true"/>
+    <field name="durationMs" type="integer" column="duration_ms" nullable="true"/>
+    <field name="level" type="string" column="level" length="16" nullable="true"/>
+    <field name="message" type="text" column="message" nullable="true"/>
+    <field name="error" type="text" column="error" nullable="true"/>
+    <field name="createdAt" type="datetime" column="created_at"/>
+    <many-to-one field="restaurant" target-entity="AppBundle\Entity\LocalBusiness">
+      <join-columns>
+        <join-column name="restaurant_id" referenced-column-name="id" nullable="true" on-delete="CASCADE"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

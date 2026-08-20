@@ -949,6 +949,22 @@
         "ZELTY_ORDERS_TOGGLE_OFF_HELP": "New orders are NOT sent to the Zelty POS. The catalog and the API key are untouched.",
         "ZELTY_ORDERS_TOGGLE_ON_LABEL": "ON",
         "ZELTY_ORDERS_TOGGLE_OFF_LABEL": "OFF",
-        "ZELTY_ORDERS_TOGGLE_ERROR": "Could not save this setting, please try again"
+        "ZELTY_ORDERS_TOGGLE_ERROR": "Could not save this setting, please try again",
+        "ZELTY_LOGS_REFRESH": "Refresh",
+        "ZELTY_LOGS_HELP": "Requests sent to Zelty and webhooks received from Zelty. Click a row to see the bodies.",
+        "ZELTY_LOGS_EMPTY": "No API call logged yet",
+        "ZELTY_LOGS_LOAD_ERROR": "Failed to load the API log",
+        "ZELTY_LOGS_LOAD_MORE": "Load more",
+        "ZELTY_LOGS_COLUMN_DATE": "Date",
+        "ZELTY_LOGS_COLUMN_DIRECTION": "Direction",
+        "ZELTY_LOGS_COLUMN_ENDPOINT": "Endpoint",
+        "ZELTY_LOGS_COLUMN_STATUS": "Status",
+        "ZELTY_LOGS_COLUMN_DURATION": "Duration",
+        "ZELTY_LOGS_DIRECTION_OUTGOING": "To Zelty",
+        "ZELTY_LOGS_DIRECTION_INCOMING": "From Zelty",
+        "ZELTY_LOGS_STATUS_FAILED": "Failed",
+        "ZELTY_LOGS_REQUEST_BODY": "Request body",
+        "ZELTY_LOGS_RESPONSE_BODY": "Response body",
+        "ZELTY_LOGS_NO_BODY": "No body recorded for this call"
       }
 }

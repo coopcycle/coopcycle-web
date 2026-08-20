@@ -29,6 +29,11 @@ services:
   AppBundle\Integration\Zelty\ZeltyOrderStatusWebhookProcessor: ~
   AppBundle\MessageHandler\Order\CloseZeltyOrder: ~
 
+  AppBundle\Monolog\ZeltyApiLogHandler:
+    arguments:
+      $connection: '@doctrine.dbal.default_connection'
+
+
   # Excluded from autoconfigure to prevent it from being registered in the
   # global serializer chain — it is only used internally by ZeltyClient.
   AppBundle\Integration\Zelty\ZeltyOrderNormalizer:

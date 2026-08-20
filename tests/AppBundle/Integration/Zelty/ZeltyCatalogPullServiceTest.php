@@ -40,16 +40,18 @@ class ZeltyCatalogPullServiceTest extends TestCase
         return $restaurant;
     }
 
-    public function testListCatalogsAuthenticatesWithTheRestaurantKey(): void
+    public function testListCatalogsAuthenticatesWithTheRestaurant(): void
     {
-        $this->zeltyClient->expects($this->once())->method('setAuth')->with('secret-key');
+        $restaurant = $this->restaurant();
+
+        $this->zeltyClient->expects($this->once())->method('setRestaurant')->with($restaurant);
         $this->zeltyClient->method('getCatalogs')->willReturn([
             ['id' => 'a1642a0f', 'name' => 'Deliveroo'],
         ]);
 
         $this->assertSame(
             [['id' => 'a1642a0f', 'name' => 'Deliveroo']],
-            $this->pullService->listCatalogs($this->restaurant())
+            $this->pullService->listCatalogs($restaurant)
         );
     }
 

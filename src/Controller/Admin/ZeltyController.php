@@ -3,6 +3,7 @@
 namespace AppBundle\Controller\Admin;
 
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\Zelty\ApiLog;
 use AppBundle\Integration\Zelty\ZeltyClient;
 use AppBundle\Integration\Zelty\ZeltyConnectService;
 use AppBundle\Sylius\Taxation\TaxesHelper;
@@ -84,6 +85,48 @@ class ZeltyController extends AbstractController
         return new JsonResponse(['enabled' => $restaurant->isZeltyOrdersEnabled()]);
     }
 
+    #[Route('/admin/restaurant/{id}/zelty/logs', name: 'admin_restaurant_zelty_logs', methods: ['GET'])]
+    public function logs(LocalBusiness $restaurant, Request $request): JsonResponse
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $limit = min(max($request->query->getInt('limit', 25), 1), 100);
+        $offset = max($request->query->getInt('offset'), 0);
+
+        $qb = $this->entityManager->getRepository(ApiLog::class)->createQueryBuilder('l');
+        $qb
+            // Brand-wide webhooks (dish.update…) carry no restaurant: Zelty does not
+            // tell us which shop they belong to, so they are shown everywhere.
+            ->andWhere($qb->expr()->orX('l.restaurant = :restaurant', 'l.restaurant IS NULL'))
+            ->setParameter('restaurant', $restaurant)
+            ->orderBy('l.createdAt', 'DESC')
+            ->addOrderBy('l.id', 'DESC')
+            ->setMaxResults($limit + 1)
+            ->setFirstResult($offset);
+
+        $logs = $qb->getQuery()->getResult();
+
+        $hasMore = count($logs) > $limit;
+        $logs = array_slice($logs, 0, $limit);
+
+        return new JsonResponse([
+            'hasMore' => $hasMore,
+            'logs'    => array_map(fn(ApiLog $log) => [
+                'id'           => $log->getId(),
+                'createdAt'    => $log->getCreatedAt()?->format(\DateTimeInterface::ATOM),
+                'direction'    => $log->getDirection(),
+                'method'       => $log->getMethod(),
+                'endpoint'     => $log->getEndpoint(),
+                'statusCode'   => $log->getStatusCode(),
+                'durationMs'   => $log->getDurationMs(),
+                'requestBody'  => $log->getRequestBody(),
+                'responseBody' => $log->getResponseBody(),
+                'error'        => $log->getError(),
+                'successful'   => $log->isSuccessful(),
+            ], $logs),
+        ]);
+    }
+
     #[Route('/admin/restaurant/{id}/zelty/dishes', name: 'admin_restaurant_zelty_dishes', methods: ['GET'])]
     public function dishes(LocalBusiness $restaurant): JsonResponse
     {
@@ -93,7 +136,7 @@ class ZeltyController extends AbstractController
             return new JsonResponse([]);
         }
 
-        $this->zeltyClient->setAuth($restaurant->getZeltyApiKey());
+        $this->zeltyClient->setRestaurant($restaurant);
         $dishes = $this->zeltyClient->getDishes();
 
         usort($dishes, fn($a, $b) => strcmp($a['name'] ?? '', $b['name'] ?? ''));
@@ -113,7 +156,7 @@ class ZeltyController extends AbstractController
             return new JsonResponse(['error' => 'No Zelty API key configured'], 400);
         }
 
-        $this->zeltyClient->setAuth($restaurant->getZeltyApiKey());
+        $this->zeltyClient->setRestaurant($restaurant);
 
         // Zelty expects VAT rates as an integer, where 1000 = 10%.
         $serviceTaxRate = $this->taxesHelper->getServiceTaxRate();

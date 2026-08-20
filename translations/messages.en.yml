@@ -1408,6 +1408,7 @@ restaurant.form.zelty_api_key.help: 'Activate the CoopCycle app on the <a href="
 restaurant.form.zelty_webhook_secret_key: Zelty Webhook Secret Key
 restaurant.form.zelty_webhook_secret_key.help: 'Zelty may return an obfuscated webhook secret when registering webhooks. If the secret was not saved automatically, find the real value in your Zelty back-office and enter it here. It is used to verify the authenticity of incoming webhook calls. Leave blank to skip signature verification.'
 restaurant.form.zelty_delivery_fee_dish: Delivery fee dish
+restaurant.form.zelty_api_log: API log
 restaurant.form.zelty_delivery_fee_dish.placeholder: 'None (delivery fee not sent to Zelty)'
 form.checkout_address.reusable_packaging_en_boite_le_plat_enabled.label: 'I want <a href="%url%" target="_blank">En Boîte Le Plat</a> reusable containers.'
 order.cart.donation: Donation
