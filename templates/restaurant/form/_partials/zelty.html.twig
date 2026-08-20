@@ -1,8 +1,17 @@
-{{ form_row(form.zeltyApiKey) }}
 {% if form.zeltyDeliveryFeeDishId is defined %}
     {% set zeltyRestaurant = form.parent.vars.value %}
     {% set zeltyRestaurantId = form.zeltyDeliveryFeeDishId.vars.attr['data-restaurant-id'] %}
     {% set zeltySecret = zeltyRestaurant.zeltyWebhookSecretKey %}
+    <div class="form-group">
+        <div {{ react_component('Restaurant/ZeltyOrdersToggle', {
+            restaurantId: zeltyRestaurantId,
+            enabled: zeltyRestaurant.zeltyOrdersEnabled,
+            visible: zeltyRestaurant.hasZeltyApiKey
+        }) }}></div>
+    </div>
+{% endif %}
+{{ form_row(form.zeltyApiKey) }}
+{% if form.zeltyDeliveryFeeDishId is defined %}
     <div class="form-group">
         <div {{ react_component('Restaurant/ZeltyConnect', {
             restaurantId: zeltyRestaurantId,

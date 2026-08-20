@@ -9,7 +9,7 @@ function getHttpClient() {
   return window._auth ? new window._auth.httpClient() : null
 }
 
-export default function ZeltyCatalogPull({ restaurantId }) {
+export default function ZeltyCatalogPull({ catalogsUrl, pullUrlTemplate }) {
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -17,8 +17,6 @@ export default function ZeltyCatalogPull({ restaurantId }) {
   const [pulling, setPulling] = useState(null)
   const [status, setStatus] = useState(null)
   const [search, setSearch] = useState('')
-
-  const baseUrl = `//${window.location.host}/admin/restaurant/${restaurantId}/zelty/catalogs`
 
   const handleOpen = async () => {
     setOpen(true)
@@ -33,7 +31,7 @@ export default function ZeltyCatalogPull({ restaurantId }) {
       return
     }
 
-    const { response, error } = await client.get(baseUrl)
+    const { response, error } = await client.get(catalogsUrl)
 
     setLoading(false)
 
@@ -52,7 +50,10 @@ export default function ZeltyCatalogPull({ restaurantId }) {
     setPulling(catalog.id)
     setStatus(null)
 
-    const { error } = await client.post(`${baseUrl}/${catalog.id}/pull`, {})
+    const { error } = await client.post(
+      pullUrlTemplate.replace('__CATALOG_ID__', encodeURIComponent(catalog.id)),
+      {}
+    )
 
     setPulling(null)
 

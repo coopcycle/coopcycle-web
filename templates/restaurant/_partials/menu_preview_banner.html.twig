@@ -1,0 +1,11 @@
+{# Shown to shop editors when ?preview_menu=… is in the URL #}
+<div class="bg-warning text-warning-content px-4 py-3">
+  <div class="mx-auto flex flex-wrap items-center gap-2">
+    <i class="fa fa-eye"></i>
+    <strong>{{ 'restaurant.menu_preview.title'|trans }}</strong>
+    <span>{{ 'restaurant.menu_preview.help'|trans({ '%menu%': preview_menu.name }) }}</span>
+    <a class="underline" href="{{ path('restaurant', { id: restaurant.id, slug: restaurant.name|slugify }) }}">
+      {{ 'restaurant.menu_preview.exit'|trans }}
+    </a>
+  </div>
+</div>

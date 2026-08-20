@@ -257,6 +257,11 @@ restaurant.contract.takeAwayFeeRate.help: This percentage will be retained by th
   platform on the total of the products
 restaurant.menus.noMenus: You have not created any menu for the moment.
 restaurant.menus.activate: Activate
+restaurant.menus.preview: Preview
+restaurant.menu_preview.title: 'Preview mode'
+restaurant.menu_preview.help: 'You are viewing the menu « %menu% », which is not the
+  active one. Customers still see the active menu.'
+restaurant.menu_preview.exit: Back to the active menu
 restaurant.menus.activated: The menu « %menu_name% » has been activated. It will now
   be displayed on the restaurant page
 restaurant.closingForm.title: Add a temporary closure

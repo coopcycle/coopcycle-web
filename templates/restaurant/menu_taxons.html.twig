@@ -8,8 +8,11 @@
 
 {% block content %}
   <p class="text-right">
-    {% if zelty_enabled and restaurant.hasZeltyApiKey and is_granted('ROLE_ADMIN') %}
-      <span class="mr-2" {{ react_component('Restaurant/ZeltyCatalogPull', { restaurantId: restaurant.id }) }}></span>
+    {% if zelty_enabled and restaurant.hasZeltyApiKey %}
+      <span class="mr-2" {{ react_component('Restaurant/ZeltyCatalogPull', {
+        catalogsUrl: path(zelty_catalogs_route, { id: restaurant.id }),
+        pullUrlTemplate: path(zelty_pull_catalog_route, { id: restaurant.id, catalogId: '__CATALOG_ID__' })
+      }) }}></span>
     {% endif %}
     <a class="btn btn-success" href="#"
       data-toggle="modal" data-target="#newTaxonModal">
@@ -21,6 +24,7 @@
     <thead>
       <th></th>
       <th>Name</th>
+      <th></th>
       <th></th>
       <th></th>
       <th></th>
@@ -44,6 +48,12 @@
               </button>
             </form>
           {% endif %}
+        </td>
+        <td class="text-right" width="10%">
+          <a class="btn btn-xs btn-default" target="_blank" rel="noopener"
+            href="{{ path('restaurant', { id: restaurant.id, slug: restaurant.name|slugify, preview_menu: menu.id }) }}">
+            <i class="fa fa-eye"></i> {{ 'restaurant.menus.preview'|trans }}
+          </a>
         </td>
         <td class="text-right" width="10%">
           <a class="btn btn-xs btn-default" href="{{ path(menu_route, { restaurantId: restaurant.id, menuId: menu.id }) }}">

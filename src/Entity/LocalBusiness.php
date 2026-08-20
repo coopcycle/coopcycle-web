@@ -325,6 +325,11 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected ?int $zeltyDeliveryFeeDishId = null;
 
+    /**
+     * Kill switch to stop sending orders to Zelty, without losing the API key setup.
+     */
+    protected bool $zeltyOrdersEnabled = true;
+
     protected $dayOfWeekAddresses;
 
     protected $dayOfWeekDeliveryPerimeterExpressions;
@@ -1305,6 +1310,16 @@ class LocalBusiness extends BaseLocalBusiness implements
     public function setZeltyDeliveryFeeDishId(?int $zeltyDeliveryFeeDishId): void
     {
         $this->zeltyDeliveryFeeDishId = $zeltyDeliveryFeeDishId;
+    }
+
+    public function isZeltyOrdersEnabled(): bool
+    {
+        return $this->zeltyOrdersEnabled;
+    }
+
+    public function setZeltyOrdersEnabled(bool $enabled): void
+    {
+        $this->zeltyOrdersEnabled = $enabled;
     }
 
     public function getDayOfWeekAddresses()
