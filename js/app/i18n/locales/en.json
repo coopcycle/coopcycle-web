@@ -931,6 +931,17 @@
         "ZELTY_SECRET_PLACEHOLDER": "Webhook secret key",
         "ZELTY_SECRET_SAVE_BUTTON": "Save",
         "ZELTY_SECRET_SAVE_SUCCESS": "Webhook secret key saved",
-        "ZELTY_SECRET_SAVE_ERROR": "Failed to save the webhook secret key"
+        "ZELTY_SECRET_SAVE_ERROR": "Failed to save the webhook secret key",
+        "ZELTY_CATALOG_PULL_BUTTON": "Pull Zelty catalog",
+        "ZELTY_CATALOG_PULL_TITLE": "Pull a catalog from Zelty",
+        "ZELTY_CATALOG_PULL_ACTION": "Pull",
+        "ZELTY_CATALOG_PULL_CLOSE": "Close",
+        "ZELTY_CATALOG_PULL_QUEUED": "Import started. The catalog will be imported in the background, it may take a few minutes.",
+        "ZELTY_CATALOG_PULL_ERROR": "Failed to pull this catalog from Zelty",
+        "ZELTY_CATALOGS_LOAD_ERROR": "Failed to load the catalogs from Zelty",
+        "ZELTY_CATALOGS_EMPTY": "No catalog available on Zelty",
+        "ZELTY_CATALOGS_SEARCH_PLACEHOLDER": "Search by name…",
+        "ZELTY_CATALOG_PULL_CONFIRM": "Import \"{{name}}\" into this shop? Existing products will be updated.",
+        "ZELTY_CATALOG_PULL_CANCEL": "Cancel"
       }
 }

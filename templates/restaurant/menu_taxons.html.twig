@@ -8,6 +8,9 @@
 
 {% block content %}
   <p class="text-right">
+    {% if zelty_enabled and restaurant.hasZeltyApiKey and is_granted('ROLE_ADMIN') %}
+      <span class="mr-2" {{ react_component('Restaurant/ZeltyCatalogPull', { restaurantId: restaurant.id }) }}></span>
+    {% endif %}
     <a class="btn btn-success" href="#"
       data-toggle="modal" data-target="#newTaxonModal">
       <i class="fa fa-plus"></i> {{ 'basics.add'|trans }}

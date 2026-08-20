@@ -4,6 +4,7 @@ namespace AppBundle\Controller\Admin;
 
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Integration\Zelty\ZeltyClient;
+use AppBundle\Integration\Zelty\ZeltyCatalogPullService;
 use AppBundle\Integration\Zelty\ZeltyConnectService;
 use AppBundle\Sylius\Taxation\TaxesHelper;
 use Doctrine\ORM\EntityManagerInterface;
@@ -21,6 +22,7 @@ class ZeltyController extends AbstractController
         private readonly ZeltyConnectService $zeltyConnectService,
         private readonly EntityManagerInterface $entityManager,
         private readonly TaxesHelper $taxesHelper,
+        private readonly ZeltyCatalogPullService $catalogPullService,
     ) {}
 
     #[Route('/admin/restaurant/{id}/zelty/connect', name: 'admin_restaurant_zelty_connect', methods: ['POST'])]
@@ -65,6 +67,46 @@ class ZeltyController extends AbstractController
         $this->entityManager->flush();
 
         return new JsonResponse(['status' => 'saved']);
+    }
+
+    #[Route('/admin/restaurant/{id}/zelty/catalogs', name: 'admin_restaurant_zelty_catalogs', methods: ['GET'])]
+    public function catalogs(LocalBusiness $restaurant): JsonResponse
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        if (!$restaurant->hasZeltyApiKey()) {
+            return new JsonResponse(['error' => 'No Zelty API key configured'], 400);
+        }
+
+        try {
+            $catalogs = $this->catalogPullService->listCatalogs($restaurant);
+        } catch (ExceptionInterface $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 502);
+        }
+
+        return new JsonResponse(array_values(array_map(fn(array $c) => [
+            'id'          => $c['id'],
+            'name'        => $c['name'] ?? $c['id'],
+            'description' => $c['description'] ?? null,
+        ], $catalogs)));
+    }
+
+    #[Route('/admin/restaurant/{id}/zelty/catalogs/{catalogId}/pull', name: 'admin_restaurant_zelty_pull_catalog', methods: ['POST'])]
+    public function pullCatalog(LocalBusiness $restaurant, string $catalogId): JsonResponse
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        if (!$restaurant->hasZeltyApiKey()) {
+            return new JsonResponse(['error' => 'No Zelty API key configured'], 400);
+        }
+
+        try {
+            $this->catalogPullService->pull($restaurant, $catalogId);
+        } catch (ExceptionInterface $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 502);
+        }
+
+        return new JsonResponse(['status' => 'queued'], 202);
     }
 
     #[Route('/admin/restaurant/{id}/zelty/dishes', name: 'admin_restaurant_zelty_dishes', methods: ['GET'])]
