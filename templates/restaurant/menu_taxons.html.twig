@@ -27,6 +27,7 @@
       <th></th>
       <th></th>
       <th></th>
+      <th></th>
     </thead>
     <tbody>
       {% for menu in menus %}
@@ -47,6 +48,12 @@
               </button>
             </form>
           {% endif %}
+        </td>
+        <td class="text-right" width="10%">
+          <a class="btn btn-xs btn-default" target="_blank" rel="noopener"
+            href="{{ path('restaurant', { id: restaurant.id, slug: restaurant.name|slugify, preview_menu: menu.id }) }}">
+            <i class="fa fa-eye"></i> {{ 'restaurant.menus.preview'|trans }}
+          </a>
         </td>
         <td class="text-right" width="10%">
           <a class="btn btn-xs btn-default" href="{{ path(menu_route, { restaurantId: restaurant.id, menuId: menu.id }) }}">

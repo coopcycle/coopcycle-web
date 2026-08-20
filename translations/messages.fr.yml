@@ -210,6 +210,11 @@ restaurant.contract.calculation_info: Vous pouvez facturer au restaurant un mont
   distance).
 restaurant.menus.noMenus: Vous n'avez pas créé de menu pour le moment.
 restaurant.menus.activate: Activer
+restaurant.menus.preview: Aperçu
+restaurant.menu_preview.title: 'Mode aperçu'
+restaurant.menu_preview.help: 'Vous consultez le menu « %menu% », qui n''est pas le
+  menu actif. Les clients voient toujours le menu actif.'
+restaurant.menu_preview.exit: Revenir au menu actif
 restaurant.menus.activated: Le menu « %menu_name% » a bien été activé. Il sera désormais
   affiché sur la page du restaurant
 restaurant.closingForm.title: Ajouter une fermeture temporaire

@@ -46,7 +46,12 @@
 {% endblock %}
 
 {% block body %}
+  {% set preview_menu = preview_menu|default(null) %}
   <div id="restaurant-body" class="bg-base-100 text-base-content">
+
+    {% if preview_menu is not null %}
+      {% include 'restaurant/_partials/menu_preview_banner.html.twig' %}
+    {% endif %}
 
     <header class="mx-auto px-4">
       {% block restaurant_nav %}
@@ -167,7 +172,7 @@
       </div>
     </header>
 
-    {% set menu = restaurant_menu(restaurant) %}
+    {% set menu = preview_menu ?? restaurant_menu(restaurant) %}
     {% set sections = [] %}
     {% if menu is not null %}
       {% for child in menu.children %}
@@ -192,10 +197,15 @@
               We cache the following block for performance
               Iterating through all products, options… is a lot of database requests
               #}
-              {% set cache_key = restaurant|cache_key(restaurant_menu_cache_annotation ~ (business_context.active ? '_business' : '')) %}
-              {% cache cache_key ttl(300) %}
+              {% if preview_menu is not null %}
+                {# Never cache a preview: it is not what the public sees #}
                 {% include 'restaurant/_partials/menu_content.html.twig' %}
-              {% endcache %}
+              {% else %}
+                {% set cache_key = restaurant|cache_key(restaurant_menu_cache_annotation ~ (business_context.active ? '_business' : '')) %}
+                {% cache cache_key ttl(300) %}
+                  {% include 'restaurant/_partials/menu_content.html.twig' %}
+                {% endcache %}
+              {% endif %}
             </div>
           </div>
           {#
