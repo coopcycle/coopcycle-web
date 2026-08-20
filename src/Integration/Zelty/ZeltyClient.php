@@ -128,6 +128,26 @@ class ZeltyClient
         return $data['dishes'][0] ?? [];
     }
 
+    /**
+     * List the catalogs available for the authenticated API key.
+     */
+    public function getCatalogs(): array
+    {
+        $response = $this->zeltyClient->request('GET', 'catalogs', $this->authOptions());
+        $data = json_decode($response->getContent(), true);
+        return $data['catalogs'] ?? [];
+    }
+
+    /**
+     * Fetch a full catalog, in the same shape as the "catalog.push" webhook payload.
+     */
+    public function getCatalog(string $catalogId): array
+    {
+        $response = $this->zeltyClient->request('GET', sprintf('catalogs/%s', $catalogId), $this->authOptions());
+        $data = json_decode($response->getContent(), true);
+        return $data['catalog'] ?? [];
+    }
+
     public function getTaxes(): array
     {
         $response = $this->zeltyClient->request('GET', 'catalog/taxes', $this->authOptions());

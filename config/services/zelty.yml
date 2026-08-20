@@ -15,6 +15,7 @@ services:
   AppBundle\Integration\Zelty\ZeltyTaxesMapper: ~
   AppBundle\Integration\Zelty\ZeltyClient: ~
   AppBundle\Integration\Zelty\ZeltyConnectService: ~
+  AppBundle\Integration\Zelty\ZeltyCatalogPullService: ~
   AppBundle\Integration\Zelty\ZeltyImportService: ~
   AppBundle\Integration\Zelty\ZeltyCatalogDenormalizer: ~
   AppBundle\Integration\Zelty\ZeltyCatalogProcessor: ~

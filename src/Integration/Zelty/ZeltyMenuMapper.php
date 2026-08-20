@@ -21,6 +21,20 @@ use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
  */
 class ZeltyMenuMapper
 {
+    /**
+     * Entities created during the current import, indexed by code.
+     * Nothing is flushed until the whole catalog has been mapped, so a
+     * database lookup can't see them yet.
+     *
+     * @var array<string, ProductOption>
+     */
+    private array $optionsByCode = [];
+
+    /**
+     * @var array<string, ProductOptionValue>
+     */
+    private array $optionValuesByCode = [];
+
     public function __construct(
         private ProductFactoryInterface $productFactory,
         private ProductVariantFactoryInterface $variantFactory,
@@ -49,6 +63,8 @@ class ZeltyMenuMapper
         ?TaxCategory $defaultTaxCategory = null
     ): array {
         $menuProductMap = [];
+        $this->optionsByCode = [];
+        $this->optionValuesByCode = [];
 
         foreach ($menus as $menu) {
             $menuProduct = $this->importMenu($menu, $menuPartsMap, $productsMap, $optionsMap, $restaurant, $locale, $defaultTaxCategory);
@@ -255,6 +271,11 @@ class ZeltyMenuMapper
             return $existingOptions[$optionCode];
         }
 
+        // A menu part can be shared by several menus of the same catalog.
+        if (isset($this->optionsByCode[$optionCode])) {
+            return $this->optionsByCode[$optionCode];
+        }
+
         $option = $this->em->getRepository(ProductOption::class)->findOneBy([
             'code' => $optionCode,
         ]);
@@ -262,6 +283,8 @@ class ZeltyMenuMapper
         if ($option === null) {
             $option = $this->createMenuPartOption($part, $partId, $restaurant, $locale);
         }
+
+        $this->optionsByCode[$optionCode] = $option;
 
         return $option;
     }
@@ -304,21 +327,12 @@ class ZeltyMenuMapper
             // Dish options linked to menus use enabled=false (hidden from menu display), so the
             // filter would hide them — causing hasOption() and findOneBy() to both miss the
             // existing record on re-push, and addOption() to try inserting a duplicate row.
-            $filters = $this->em->getFilters();
-            $filterActive = $filters->isEnabled('disabled_filter');
-            if ($filterActive) {
-                $filters->disable('disabled_filter');
-            }
-            try {
-                $existing = $this->em->getRepository(ProductOptions::class)->findOneBy([
+            $existing = $this->withoutDisabledFilter(fn () =>
+                $this->em->getRepository(ProductOptions::class)->findOneBy([
                     'product' => $productId,
                     'option'  => $optionId,
-                ]);
-            } finally {
-                if ($filterActive) {
-                    $filters->enable('disabled_filter');
-                }
-            }
+                ])
+            );
 
             if ($existing !== null) {
                 $existing->setEnabled($enabled);
@@ -419,10 +433,18 @@ class ZeltyMenuMapper
         ZeltyItem $menu,
         string $locale
     ): ProductOptionValue {
+        if (isset($this->optionValuesByCode[$valueCode])) {
+            return $this->optionValuesByCode[$valueCode];
+        }
+
+        // Values belonging to a disabled menu are stored with enabled=false, and the
+        // global DisabledFilter would hide them here, leading to a duplicate insert.
         /** @var ProductOptionValue|null $value */
-        $value = $this->em->getRepository(ProductOptionValue::class)->findOneBy([
-            'code' => $valueCode,
-        ]);
+        $value = $this->withoutDisabledFilter(fn () =>
+            $this->em->getRepository(ProductOptionValue::class)->findOneBy([
+                'code' => $valueCode,
+            ])
+        );
 
         if ($value === null) {
             $value = new ProductOptionValue();
@@ -437,6 +459,8 @@ class ZeltyMenuMapper
 
             $this->em->persist($value);
         }
+
+        $this->optionValuesByCode[$valueCode] = $value;
 
         return $value;
     }
@@ -459,5 +483,27 @@ class ZeltyMenuMapper
         ];
 
         return [$dishProduct->getName(), $metadata];
+    }
+
+    /**
+     * Run a lookup with the global DisabledFilter turned off, so rows with
+     * enabled=false are visible.
+     */
+    private function withoutDisabledFilter(callable $callback)
+    {
+        $filters = $this->em->getFilters();
+        $filterActive = $filters->isEnabled('disabled_filter');
+
+        if ($filterActive) {
+            $filters->disable('disabled_filter');
+        }
+
+        try {
+            return $callback();
+        } finally {
+            if ($filterActive) {
+                $filters->enable('disabled_filter');
+            }
+        }
     }
 }

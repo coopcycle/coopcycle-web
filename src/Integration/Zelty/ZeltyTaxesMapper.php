@@ -6,11 +6,12 @@ use AppBundle\Entity\Sylius\TaxCategory;
 use AppBundle\Entity\Sylius\TaxRate;
 use AppBundle\Sylius\Taxation\TaxesHelper;
 use Psr\Log\LoggerInterface;
+use Symfony\Contracts\Service\ResetInterface;
 
 /**
  * Maps Zelty tax data to Sylius tax categories and rates.
  */
-class ZeltyTaxesMapper
+class ZeltyTaxesMapper implements ResetInterface
 {
     private array $taxCategoryMap = [];
 
@@ -26,6 +27,16 @@ class ZeltyTaxesMapper
     public function setZeltyApiKey(string $key): void
     {
         $this->zeltyClient->setAuth($key);
+    }
+
+    /**
+     * The mapped tax categories are Doctrine entities, and this service outlives
+     * the entity manager in a long-running worker: drop them when it is reset,
+     * otherwise the next import would work with detached entities.
+     */
+    public function reset(): void
+    {
+        $this->taxCategoryMap = [];
     }
 
     /**

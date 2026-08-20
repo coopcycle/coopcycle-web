@@ -1144,6 +1144,17 @@
         "ZELTY_SECRET_PLACEHOLDER": "Clé secrète des webhooks",
         "ZELTY_SECRET_SAVE_BUTTON": "Enregistrer",
         "ZELTY_SECRET_SAVE_SUCCESS": "Clé secrète des webhooks enregistrée",
-        "ZELTY_SECRET_SAVE_ERROR": "Impossible d'enregistrer la clé secrète des webhooks"
+        "ZELTY_SECRET_SAVE_ERROR": "Impossible d'enregistrer la clé secrète des webhooks",
+        "ZELTY_CATALOG_PULL_BUTTON": "Récupérer un catalogue Zelty",
+        "ZELTY_CATALOG_PULL_TITLE": "Récupérer un catalogue depuis Zelty",
+        "ZELTY_CATALOG_PULL_ACTION": "Récupérer",
+        "ZELTY_CATALOG_PULL_CLOSE": "Fermer",
+        "ZELTY_CATALOG_PULL_QUEUED": "Import lancé. Le catalogue sera importé en arrière-plan, cela peut prendre quelques minutes.",
+        "ZELTY_CATALOG_PULL_ERROR": "Impossible de récupérer ce catalogue depuis Zelty",
+        "ZELTY_CATALOGS_LOAD_ERROR": "Impossible de charger les catalogues depuis Zelty",
+        "ZELTY_CATALOGS_EMPTY": "Aucun catalogue disponible sur Zelty",
+        "ZELTY_CATALOGS_SEARCH_PLACEHOLDER": "Rechercher par nom…",
+        "ZELTY_CATALOG_PULL_CONFIRM": "Importer \"{{name}}\" dans cette boutique ? Les produits existants seront mis à jour.",
+        "ZELTY_CATALOG_PULL_CANCEL": "Annuler"
     }
 }
