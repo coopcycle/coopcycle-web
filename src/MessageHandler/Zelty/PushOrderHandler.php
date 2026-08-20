@@ -33,7 +33,7 @@ class PushOrderHandler
             return;
         }
 
-        $this->zeltyClient->setAuth($restaurant->getZeltyApiKey());
+        $this->zeltyClient->setRestaurant($restaurant);
         $zeltyOrderId = $this->zeltyClient->pushToZelty($order);
         $total = $order->getItemsTotal() + $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT);
         $this->zeltyClient->addTransaction($zeltyOrderId, $total);

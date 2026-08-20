@@ -29,4 +29,12 @@
             inputId: form.zeltyDeliveryFeeDishId.vars.id
         }) }}></div>
     </div>
+    {% if is_granted('ROLE_ADMIN') %}
+    <div class="form-group">
+        <label class="control-label">{{ 'restaurant.form.zelty_api_log'|trans }}</label>
+        <div {{ react_component('Restaurant/ZeltyApiLogs', {
+            restaurantId: zeltyRestaurantId
+        }) }}></div>
+    </div>
+    {% endif %}
 {% endif %}

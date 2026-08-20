@@ -43,7 +43,7 @@ class ZeltyImportService
         $locale = $this->localeProvider->getDefaultLocaleCode();
 
         $this->taxesMapper->reset();
-        $this->taxesMapper->setZeltyApiKey($restaurant->getZeltyApiKey());
+        $this->taxesMapper->setRestaurant($restaurant);
         $taxCategoryMap = $this->taxesMapper->importTaxes();
 
         $rootTaxon = $this->createOrGetRootTaxon($restaurant, $catalog, $locale);

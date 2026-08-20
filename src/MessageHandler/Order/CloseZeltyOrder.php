@@ -25,7 +25,7 @@ class CloseZeltyOrder
             return;
         }
 
-        $this->zeltyClient->setAuth($restaurant->getZeltyApiKey());
+        $this->zeltyClient->setRestaurant($restaurant);
         $this->zeltyClient->closeOrder($zeltyOrderId);
     }
 }
