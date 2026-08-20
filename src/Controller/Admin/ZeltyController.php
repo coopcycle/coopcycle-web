@@ -67,6 +67,23 @@ class ZeltyController extends AbstractController
         return new JsonResponse(['status' => 'saved']);
     }
 
+    #[Route('/admin/restaurant/{id}/zelty/orders-enabled', name: 'admin_restaurant_zelty_orders_enabled', methods: ['POST'])]
+    public function ordersEnabled(LocalBusiness $restaurant, Request $request): JsonResponse
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $data = json_decode($request->getContent(), true);
+
+        if (!is_array($data) || !array_key_exists('enabled', $data) || !is_bool($data['enabled'])) {
+            return new JsonResponse(['error' => 'missing_enabled_flag'], 400);
+        }
+
+        $restaurant->setZeltyOrdersEnabled($data['enabled']);
+        $this->entityManager->flush();
+
+        return new JsonResponse(['enabled' => $restaurant->isZeltyOrdersEnabled()]);
+    }
+
     #[Route('/admin/restaurant/{id}/zelty/dishes', name: 'admin_restaurant_zelty_dishes', methods: ['GET'])]
     public function dishes(LocalBusiness $restaurant): JsonResponse
     {

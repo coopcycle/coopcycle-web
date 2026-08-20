@@ -942,6 +942,13 @@
         "ZELTY_CATALOGS_EMPTY": "No catalog available on Zelty",
         "ZELTY_CATALOGS_SEARCH_PLACEHOLDER": "Search by name…",
         "ZELTY_CATALOG_PULL_CONFIRM": "Import \"{{name}}\" into this shop? Existing products will be updated.",
-        "ZELTY_CATALOG_PULL_CANCEL": "Cancel"
+        "ZELTY_CATALOG_PULL_CANCEL": "Cancel",
+        "ZELTY_ORDERS_TOGGLE_ON_TITLE": "Zelty order sync is ON",
+        "ZELTY_ORDERS_TOGGLE_ON_HELP": "New orders are sent to the Zelty POS.",
+        "ZELTY_ORDERS_TOGGLE_OFF_TITLE": "Zelty order sync is OFF",
+        "ZELTY_ORDERS_TOGGLE_OFF_HELP": "New orders are NOT sent to the Zelty POS. The catalog and the API key are untouched.",
+        "ZELTY_ORDERS_TOGGLE_ON_LABEL": "ON",
+        "ZELTY_ORDERS_TOGGLE_OFF_LABEL": "OFF",
+        "ZELTY_ORDERS_TOGGLE_ERROR": "Could not save this setting, please try again"
       }
 }

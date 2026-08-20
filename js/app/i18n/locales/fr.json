@@ -932,6 +932,13 @@
         "ZELTY_CATALOGS_EMPTY": "Aucun catalogue disponible sur Zelty",
         "ZELTY_CATALOGS_SEARCH_PLACEHOLDER": "Rechercher par nom…",
         "ZELTY_CATALOG_PULL_CONFIRM": "Importer \"{{name}}\" dans cette boutique ? Les produits existants seront mis à jour.",
-        "ZELTY_CATALOG_PULL_CANCEL": "Annuler"
+        "ZELTY_CATALOG_PULL_CANCEL": "Annuler",
+        "ZELTY_ORDERS_TOGGLE_ON_TITLE": "Envoi des commandes à Zelty ACTIVÉ",
+        "ZELTY_ORDERS_TOGGLE_ON_HELP": "Les nouvelles commandes sont envoyées à la caisse Zelty.",
+        "ZELTY_ORDERS_TOGGLE_OFF_TITLE": "Envoi des commandes à Zelty DÉSACTIVÉ",
+        "ZELTY_ORDERS_TOGGLE_OFF_HELP": "Les nouvelles commandes ne sont PAS envoyées à la caisse Zelty. Le catalogue et la clé API ne sont pas affectés.",
+        "ZELTY_ORDERS_TOGGLE_ON_LABEL": "ON",
+        "ZELTY_ORDERS_TOGGLE_OFF_LABEL": "OFF",
+        "ZELTY_ORDERS_TOGGLE_ERROR": "Impossible d'enregistrer ce réglage, veuillez réessayer"
     }
 }

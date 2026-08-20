@@ -28,6 +28,11 @@ class PushOrderHandler
 
         $restaurant = $order->getRestaurant();
 
+        // Checked again here: the switch may have been flipped while the message was queued.
+        if ($restaurant === null || !$restaurant->isZeltyOrdersEnabled()) {
+            return;
+        }
+
         $this->zeltyClient->setAuth($restaurant->getZeltyApiKey());
         $zeltyOrderId = $this->zeltyClient->pushToZelty($order);
         $total = $order->getItemsTotal() + $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT);

@@ -25,6 +25,15 @@ class DispatchZeltyPushOrder
             return;
         }
 
+        if (!$restaurant->isZeltyOrdersEnabled()) {
+            $this->logger->info('Zelty order sync is disabled for this restaurant, skipping push', [
+                'order_id'      => $order->getId(),
+                'restaurant_id' => $restaurant->getId(),
+            ]);
+
+            return;
+        }
+
         try {
             $this->commandBus->dispatch(new PushOrder($order->getId()));
         } catch (\Throwable $e) {
