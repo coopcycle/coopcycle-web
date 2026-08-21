@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Alert, Button, Empty, Space, Table, Tag, Typography } from 'antd'
 import { useTranslation } from 'react-i18next'
 import { AntdConfigProvider } from '../../../../js/app/utils/antd'
@@ -6,6 +6,15 @@ import { AntdConfigProvider } from '../../../../js/app/utils/antd'
 const { Text, Paragraph } = Typography
 
 const PAGE_SIZE = 25
+const MAX_PAGE_SIZE = 100
+const POLL_INTERVAL = 30000
+
+function formatAgo(seconds) {
+  if (seconds < 60) {
+    return `${seconds}s`
+  }
+  return `${Math.floor(seconds / 60)}m`
+}
 
 function getHttpClient() {
   return window._auth ? new window._auth.httpClient() : null
@@ -47,12 +56,17 @@ export default function ZeltyApiLogs({ restaurantId }) {
   const [logs, setLogs] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [offset, setOffset] = useState(0)
   const [hasMore, setHasMore] = useState(false)
+  const [updatedAt, setUpdatedAt] = useState(null)
+  const [secondsAgo, setSecondsAgo] = useState(0)
+
+  // Read from the polling interval, which must not close over a stale value
+  const loadedCountRef = useRef(0)
+  const inFlightRef = useRef(false)
 
   const baseUrl = `//${window.location.host}/admin/restaurant/${restaurantId}/zelty/logs`
 
-  const fetchLogs = async (nextOffset = 0) => {
+  const fetchLogs = async (nextOffset = 0, { background = false, limit = PAGE_SIZE } = {}) => {
     const client = getHttpClient()
     if (!client) {
       setLoading(false)
@@ -60,28 +74,79 @@ export default function ZeltyApiLogs({ restaurantId }) {
       return
     }
 
-    setLoading(true)
+    if (inFlightRef.current) {
+      return
+    }
+    inFlightRef.current = true
+
+    if (!background) {
+      setLoading(true)
+    }
     setError(null)
 
     const { response, error } = await client.get(
-      `${baseUrl}?limit=${PAGE_SIZE}&offset=${nextOffset}`,
+      `${baseUrl}?limit=${limit}&offset=${nextOffset}`,
     )
 
-    setLoading(false)
+    inFlightRef.current = false
+
+    if (!background) {
+      setLoading(false)
+    }
 
     if (error || !response) {
       setError(t('ZELTY_LOGS_LOAD_ERROR'))
       return
     }
 
-    setLogs(nextOffset === 0 ? response.logs : prev => [...prev, ...response.logs])
+    if (nextOffset === 0) {
+      setLogs(response.logs)
+      loadedCountRef.current = response.logs.length
+    } else {
+      setLogs(prev => {
+        const merged = [...prev, ...response.logs]
+        loadedCountRef.current = merged.length
+        return merged
+      })
+    }
+
     setHasMore(response.hasMore)
-    setOffset(nextOffset)
+    setUpdatedAt(Date.now())
+    setSecondsAgo(0)
   }
 
   useEffect(() => {
     fetchLogs(0)
   }, [restaurantId])
+
+  // Poll in the background, keeping however many pages are already loaded
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (document.hidden) {
+        return
+      }
+      const limit = Math.min(
+        MAX_PAGE_SIZE,
+        Math.max(PAGE_SIZE, loadedCountRef.current),
+      )
+      fetchLogs(0, { background: true, limit })
+    }, POLL_INTERVAL)
+
+    return () => clearInterval(interval)
+  }, [restaurantId])
+
+  // Ticker for the "last update" indicator
+  useEffect(() => {
+    if (updatedAt === null) {
+      return
+    }
+    const interval = setInterval(
+      () => setSecondsAgo(Math.round((Date.now() - updatedAt) / 1000)),
+      1000,
+    )
+
+    return () => clearInterval(interval)
+  }, [updatedAt])
 
   const columns = [
     {
@@ -132,10 +197,15 @@ export default function ZeltyApiLogs({ restaurantId }) {
   return (
     <AntdConfigProvider>
       <Space direction="vertical" style={{ width: '100%' }}>
-        <Space>
+        <Space wrap>
           <Button onClick={() => fetchLogs(0)} loading={loading}>
             {t('ZELTY_LOGS_REFRESH')}
           </Button>
+          {updatedAt !== null && (
+            <Text type="secondary">
+              {t('ZELTY_LOGS_LAST_UPDATE', { ago: formatAgo(secondsAgo) })}
+            </Text>
+          )}
           <Text type="secondary">{t('ZELTY_LOGS_HELP')}</Text>
         </Space>
         {error && <Alert type="error" showIcon message={error} />}
@@ -177,7 +247,7 @@ export default function ZeltyApiLogs({ restaurantId }) {
           }}
         />
         {hasMore && (
-          <Button onClick={() => fetchLogs(offset + PAGE_SIZE)} loading={loading}>
+          <Button onClick={() => fetchLogs(loadedCountRef.current)} loading={loading}>
             {t('ZELTY_LOGS_LOAD_MORE')}
           </Button>
         )}

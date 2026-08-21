@@ -1159,6 +1159,7 @@
         "ZELTY_ORDERS_TOGGLE_OFF_LABEL": "OFF",
         "ZELTY_ORDERS_TOGGLE_ERROR": "Impossible d'enregistrer ce réglage, veuillez réessayer",
         "ZELTY_LOGS_REFRESH": "Actualiser",
+        "ZELTY_LOGS_LAST_UPDATE": "Dernière mise à jour : il y a {{ago}}",
         "ZELTY_LOGS_HELP": "Requêtes envoyées à Zelty et webhooks reçus de Zelty. Cliquez sur une ligne pour voir les contenus.",
         "ZELTY_LOGS_EMPTY": "Aucun appel API enregistré pour le moment",
         "ZELTY_LOGS_LOAD_ERROR": "Impossible de charger le journal des appels API",

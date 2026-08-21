@@ -1169,6 +1169,7 @@
         "ZELTY_ORDERS_TOGGLE_OFF_LABEL": "OFF",
         "ZELTY_ORDERS_TOGGLE_ERROR": "Could not save this setting, please try again",
         "ZELTY_LOGS_REFRESH": "Refresh",
+        "ZELTY_LOGS_LAST_UPDATE": "Last update: {{ago}} ago",
         "ZELTY_LOGS_HELP": "Requests sent to Zelty and webhooks received from Zelty. Click a row to see the bodies.",
         "ZELTY_LOGS_EMPTY": "No API call logged yet",
         "ZELTY_LOGS_LOAD_ERROR": "Failed to load the API log",
