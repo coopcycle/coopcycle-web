@@ -275,6 +275,7 @@ export default function EmployeeGrid({
                       onClick={onEdit}
                       conflictWith={findOverlappingShift(shift, userShifts)}
                       activities={activities}
+                      allowDuplicate
                     />
                   ))}
                   <AddShiftButton

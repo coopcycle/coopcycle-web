@@ -118,6 +118,7 @@ export default function ActivityGrid({
                         onClick={onEdit}
                         activities={activities}
                         showAssignees
+                        allowDuplicate
                       />
                     ))}
                   <AddShiftButton onClick={() => onCreate(day, activity.slug)} />

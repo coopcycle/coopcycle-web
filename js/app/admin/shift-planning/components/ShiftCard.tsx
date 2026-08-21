@@ -1,11 +1,16 @@
 import React from 'react';
-import { Tooltip } from 'antd';
-import { FieldTimeOutlined, WarningFilled } from '@ant-design/icons';
+import { App, Dropdown, Tooltip } from 'antd';
+import type { MenuProps } from 'antd';
+import { CopyOutlined, FieldTimeOutlined, WarningFilled } from '@ant-design/icons';
+import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
+import { usePostShiftMutation } from '../../../api/slice';
 import { Shift, ShiftActivity } from '../../../api/types';
 import { activityColor } from '../utils/shiftTypeColor';
 import { activityLabel } from '../utils/activityLabel';
 import { wallClockTime } from '../utils/date';
+
+const DATETIME_FORMAT = 'YYYY-MM-DDTHH:mm:ss';
 
 type Props = {
   shift: Shift;
@@ -14,6 +19,8 @@ type Props = {
   activities?: ShiftActivity[];
   /** Show assignee usernames on the card, for views where the row doesn't already imply the user (type/calendar views) */
   showAssignees?: boolean;
+  /** Right-click quick actions — only where creating shifts makes sense (dispatcher planning grids) */
+  allowDuplicate?: boolean;
 };
 
 export default function ShiftCard({
@@ -22,10 +29,46 @@ export default function ShiftCard({
   conflictWith,
   activities,
   showAssignees,
+  allowDuplicate,
 }: Props) {
   const { t } = useTranslation();
+  const { message } = App.useApp();
+  const [postShift] = usePostShiftMutation();
 
-  return (
+  const duplicateShift = async (offsetDays: number) => {
+    try {
+      await postShift({
+        activity: shift.activity,
+        startsAt: dayjs(shift.startsAt).add(offsetDays, 'day').format(DATETIME_FORMAT),
+        endsAt: dayjs(shift.endsAt).add(offsetDays, 'day').format(DATETIME_FORMAT),
+        slots: shift.slots,
+        breakMinutes: shift.breakMinutes,
+        comment: shift.comment,
+        requiredSkills: shift.requiredSkills.map(s => s['@id']),
+        users: shift.assignments.map(a => a.user['@id']),
+      }).unwrap();
+      message.success(t('SHIFT_PLANNING_DUPLICATE_SUCCESS'));
+    } catch {
+      message.error(t('SHIFT_PLANNING_ERROR'));
+    }
+  };
+
+  const contextMenuItems: MenuProps['items'] = [
+    {
+      key: 'duplicate-day',
+      icon: <CopyOutlined />,
+      label: t('SHIFT_PLANNING_DUPLICATE_DAY'),
+      onClick: () => duplicateShift(1),
+    },
+    {
+      key: 'duplicate-week',
+      icon: <CopyOutlined />,
+      label: t('SHIFT_PLANNING_DUPLICATE_WEEK'),
+      onClick: () => duplicateShift(7),
+    },
+  ];
+
+  const card = (
     <div
       className="shift-card"
       style={{ backgroundColor: activityColor(shift.activity, activities) }}
@@ -96,5 +139,15 @@ export default function ShiftCard({
         </div>
       )}
     </div>
+  );
+
+  if (!allowDuplicate) {
+    return card;
+  }
+
+  return (
+    <Dropdown menu={{ items: contextMenuItems }} trigger={['contextMenu']}>
+      {card}
+    </Dropdown>
   );
 }

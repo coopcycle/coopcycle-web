@@ -296,6 +296,7 @@ export default function CalendarGrid({
           onClick={onEdit}
           activities={activities}
           showAssignees
+          allowDuplicate={!isGhost}
         />
         {!isGhost && (
           <>
