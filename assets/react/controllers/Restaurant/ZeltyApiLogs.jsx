@@ -135,6 +135,25 @@ export default function ZeltyApiLogs({ restaurantId }) {
     return () => clearInterval(interval)
   }, [restaurantId])
 
+  // Coming back to a backgrounded tab should not show a stale timestamp
+  useEffect(() => {
+    const onVisibilityChange = () => {
+      if (!document.hidden) {
+        fetchLogs(0, {
+          background: true,
+          limit: Math.min(
+            MAX_PAGE_SIZE,
+            Math.max(PAGE_SIZE, loadedCountRef.current),
+          ),
+        })
+      }
+    }
+
+    document.addEventListener('visibilitychange', onVisibilityChange)
+    return () =>
+      document.removeEventListener('visibilitychange', onVisibilityChange)
+  }, [restaurantId])
+
   // Ticker for the "last update" indicator
   useEffect(() => {
     if (updatedAt === null) {
