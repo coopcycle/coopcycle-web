@@ -698,6 +698,10 @@ form.menu_taxon.add_child.label: Add category
 form.menu_taxon.child_name.placeholder: "Example: main courses, desserts…\n"
 form.menu_editor.products_panel.title: Products
 form.menu_editor.save.label: Save Changes
+form.menu_editor.zelty.help: 'This menu is imported from Zelty. Sections and products
+  are managed in Zelty, so they cannot be edited here — the next import would overwrite
+  the changes. You can still reorder the sections: that order is only used for the
+  display on CoopCycle.'
 form.menu_editor.help: "Use the editor below to compose the menu items\n<br>\nDrag\
   \ and drop the products into the sections on the left\n<br>\nIf you want to remove\
   \ a product from the menu, drop it in the « Products » section on the right\n<br>\n\
@@ -1422,6 +1426,13 @@ restaurant.form.zelty_api_key: Zelty API key
 restaurant.form.zelty_api_key.help: 'Activate the CoopCycle app on the <a href="https://bo.zelty.fr/marketplace/coopcycle/status" target="_blank">Zelty Marketplace</a> to obtain your API key.'
 restaurant.form.zelty_delivery_fee_dish: Delivery fee dish
 restaurant.form.zelty_api_log: API log
+restaurant.form.zelty.no_catalog: 'Zelty is connected. Next step: import a catalog,
+  either by pulling one from Zelty or by asking the restaurant to push it from their
+  Zelty back-office.'
+restaurant.form.zelty.catalog_not_active: 'The catalog imported from Zelty (« %menu%
+  ») is not the menu currently shown to customers. As long as another menu is active,
+  orders are not sent to Zelty.'
+restaurant.form.zelty.go_to_catalogs: Go to catalogs
 restaurant.form.zelty_delivery_fee_dish.placeholder: 'None (delivery fee not sent to Zelty)'
 form.checkout_address.reusable_packaging_en_boite_le_plat_enabled.label: 'I want <a href="%url%" target="_blank">En Boîte Le Plat</a> reusable containers.'
 order.cart.donation: Donation

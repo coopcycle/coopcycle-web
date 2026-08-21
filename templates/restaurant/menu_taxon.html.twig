@@ -11,18 +11,29 @@
 
   {% if menu.id is not null %}
 
-    <div class="alert alert-info">
-      <i class="fa fa-info-circle mr-2"></i>{% trans %}form.menu_editor.help{% endtrans %}
-    </div>
+    {% set isZeltyMenu = menu.code starts with 'zelty_import_' %}
+
+    {% if isZeltyMenu %}
+      <div class="alert alert-warning">
+        <i class="fa fa-lock mr-2"></i>{% trans %}form.menu_editor.zelty.help{% endtrans %}
+      </div>
+    {% else %}
+      <div class="alert alert-info">
+        <i class="fa fa-info-circle mr-2"></i>{% trans %}form.menu_editor.help{% endtrans %}
+      </div>
+    {% endif %}
 
     <div id="menu-editor"
       data-restaurant="{{ restaurant|serialize('jsonld', { groups: ['restaurant'] })|e('html_attr') }}"
       data-menu="{{ menu|serialize('jsonld', { groups: ['restaurant_menu_without_options'] })|e('html_attr') }}"
+      data-read-only="{{ isZeltyMenu ? '1' : '0' }}"
     ></div>
 
+    {% if not isZeltyMenu %}
     <p class="help-block">
       {% trans with { '%products_url%': path(products_route, { id: restaurant.id }) } %}form.menu_editor.products.help{% endtrans %}
     </p>
+    {% endif %}
 
   {% endif %}
 

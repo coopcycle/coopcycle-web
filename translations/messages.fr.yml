@@ -559,6 +559,10 @@ form.menu_taxon.add_child.label: Ajouter une section
 form.menu_taxon.child_name.placeholder: "Exemple : plats, desserts…\n"
 form.menu_editor.products_panel.title: Produits
 form.menu_editor.save.label: Enregistrer les modifications
+form.menu_editor.zelty.help: 'Ce menu est importé depuis Zelty. Les sections et les
+  produits sont gérés dans Zelty et ne peuvent donc pas être modifiés ici : le prochain
+  import écraserait les changements. Vous pouvez toujours réordonner les sections :
+  cet ordre ne sert qu''à l''affichage sur CoopCycle.'
 form.menu_editor.help: "Utilisez l'éditeur ci-dessous pour composer les élements du\
   \ menu\n<br>\nGlissez-déposez les produits dans les sections sur la gauche pour\
   \ les rendre disponibles à la vente\n<br>\nSi vous souhaitez retirer un produit\
@@ -1726,6 +1730,13 @@ restaurant.form.zelty_api_key: Clé API Zelty
 restaurant.form.zelty_api_key.help: "Activez l'application CoopCycle sur le <a href=\"https://bo.zelty.fr/marketplace/coopcycle/status\" target=\"_blank\">Marketplace Zelty</a> pour obtenir votre clé API."
 restaurant.form.zelty_delivery_fee_dish: Plat frais de livraison
 restaurant.form.zelty_api_log: Journal des appels API
+restaurant.form.zelty.no_catalog: 'Zelty est connecté. Prochaine étape : importer
+  un catalogue, en le récupérant depuis Zelty ou en demandant au restaurant de le
+  pousser depuis son back-office Zelty.'
+restaurant.form.zelty.catalog_not_active: 'Le catalogue importé depuis Zelty (« %menu%
+  ») n''est pas le menu actuellement affiché aux clients. Tant qu''un autre menu est
+  actif, les commandes ne sont pas envoyées à Zelty.'
+restaurant.form.zelty.go_to_catalogs: Voir les catalogues
 restaurant.form.zelty_delivery_fee_dish.placeholder: 'Aucun (les frais de livraison ne sont pas envoyés à Zelty)'
 
 # Éditeur d'emails
