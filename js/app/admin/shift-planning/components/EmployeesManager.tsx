@@ -3,18 +3,24 @@ import {
   App,
   Button,
   DatePicker,
+  Divider,
   Drawer,
   Form,
   Input,
   InputNumber,
+  Popconfirm,
   Select,
+  Space,
   Table,
   Tag,
 } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import dayjs, { Dayjs } from 'dayjs';
+import isoWeek from 'dayjs/plugin/isoWeek';
 import { useTranslation } from 'react-i18next';
 import {
+  useDeleteAvailabilityRuleMutation,
+  useGetAvailabilityRulesQuery,
   useGetEmployeeProfilesQuery,
   useGetPlanningUsersQuery,
   useGetSkillsQuery,
@@ -22,9 +28,25 @@ import {
   usePutEmployeeProfileMutation,
   usePutSkillMutation,
 } from '../../../api/slice';
-import { EmployeeProfile, PlanningUser, Uri } from '../../../api/types';
+import {
+  AvailabilityRule,
+  AvailabilityRuleType,
+  EmployeeProfile,
+  PlanningUser,
+  Uri,
+} from '../../../api/types';
 import Avatar from '../../../components/Avatar';
 import { datePickerProps } from '../../../utils/antd';
+import AvailabilityRuleModal, {
+  AvailabilityRuleModalState,
+} from './AvailabilityRuleModal';
+
+dayjs.extend(isoWeek);
+
+const AVAILABILITY_TYPE_COLORS: Record<AvailabilityRuleType, string> = {
+  available: 'green',
+  unavailable: 'red',
+};
 
 type FormValues = {
   skills: Uri[];
@@ -60,20 +82,44 @@ export default function EmployeesManager() {
   const { data: users, isFetching } = useGetPlanningUsersQuery();
   const { data: profiles } = useGetEmployeeProfilesQuery();
   const { data: skills } = useGetSkillsQuery();
+  const { data: availabilityRules } = useGetAvailabilityRulesQuery();
 
   const [postProfile] = usePostEmployeeProfileMutation();
   const [putProfile] = usePutEmployeeProfileMutation();
   const [putSkill] = usePutSkillMutation();
+  const [deleteAvailabilityRule] = useDeleteAvailabilityRuleMutation();
   const [isSaving, setIsSaving] = useState(false);
 
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState<PlanningUser | null>(null);
+  const [availabilityModalState, setAvailabilityModalState] =
+    useState<AvailabilityRuleModalState>(null);
 
   const profileByUser = useMemo(() => {
     const map = new Map<Uri, EmployeeProfile>();
     (profiles ?? []).forEach(p => map.set(p.user, p));
     return map;
   }, [profiles]);
+
+  const selectedAvailabilityRules = useMemo(() => {
+    if (!selected) {
+      return [];
+    }
+    return (availabilityRules ?? [])
+      .filter(rule => rule.user === selected['@id'])
+      .sort(
+        (a, b) => a.dayOfWeek - b.dayOfWeek || a.startTime.localeCompare(b.startTime),
+      );
+  }, [availabilityRules, selected]);
+
+  const onDeleteAvailabilityRule = async (rule: AvailabilityRule) => {
+    try {
+      await deleteAvailabilityRule(rule['@id']).unwrap();
+      message.success(t('SHIFT_PLANNING_DELETED'));
+    } catch {
+      message.error(t('SHIFT_PLANNING_ERROR'));
+    }
+  };
 
   const filteredUsers = useMemo(() => {
     const needle = search.trim().toLowerCase();
@@ -340,7 +386,77 @@ export default function EmployeesManager() {
             <InputNumber min={0} max={60} step={0.5} addonAfter="h" />
           </Form.Item>
         </Form>
+        <Divider />
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginBottom: 12,
+          }}>
+          <strong>{t('SHIFT_PLANNING_AVAILABILITY_TITLE')}</strong>
+          <Button
+            type="text"
+            size="small"
+            icon={<PlusOutlined />}
+            onClick={() =>
+              selected &&
+              setAvailabilityModalState({ user: selected['@id'] })
+            }>
+            {t('SHIFT_PLANNING_AVAILABILITY_ADD')}
+          </Button>
+        </div>
+        {selectedAvailabilityRules.length === 0 ? (
+          <span className="text-muted">
+            {t('SHIFT_PLANNING_AVAILABILITY_EMPTY')}
+          </span>
+        ) : (
+          selectedAvailabilityRules.map(rule => (
+            <div
+              key={rule['@id']}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginBottom: 8,
+              }}>
+              <span>
+                {dayjs().isoWeekday(rule.dayOfWeek).format('dddd')}{' '}
+                {rule.startTime}
+                {' - '}
+                {rule.endTime}{' '}
+                <Tag color={AVAILABILITY_TYPE_COLORS[rule.type]}>
+                  {t(
+                    `SHIFT_PLANNING_AVAILABILITY_TYPE_${rule.type.toUpperCase()}`,
+                  )}
+                </Tag>
+              </span>
+              <Space>
+                <Button
+                  type="text"
+                  size="small"
+                  icon={<EditOutlined />}
+                  onClick={() => setAvailabilityModalState({ rule })}
+                />
+                <Popconfirm
+                  title={t('SHIFT_PLANNING_DELETE_CONFIRM')}
+                  onConfirm={() => onDeleteAvailabilityRule(rule)}>
+                  <Button
+                    type="text"
+                    size="small"
+                    danger
+                    icon={<DeleteOutlined />}
+                  />
+                </Popconfirm>
+              </Space>
+            </div>
+          ))
+        )}
       </Drawer>
+      <AvailabilityRuleModal
+        state={availabilityModalState}
+        onClose={() => setAvailabilityModalState(null)}
+      />
     </div>
   );
 }

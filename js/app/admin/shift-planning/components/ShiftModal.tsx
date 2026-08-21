@@ -21,6 +21,7 @@ import {
   usePutShiftMutation,
 } from '../../../api/slice';
 import {
+  AvailabilityRule,
   HolidayRequest,
   PlanningUser,
   Shift,
@@ -35,6 +36,7 @@ import {
 } from '../utils/date';
 import { shiftTypeColor } from '../utils/shiftTypeColor';
 import { activityLabel, activityDisplayLabel } from '../utils/activityLabel';
+import { availabilityConflict } from '../utils/availability';
 import { datePickerProps } from '../../../utils/antd';
 import ReportTimeModal from './ReportTimeModal';
 
@@ -53,6 +55,7 @@ type Props = {
   activities: ShiftActivity[];
   users: PlanningUser[];
   holidayRequests: HolidayRequest[];
+  availabilityRules: AvailabilityRule[];
   shifts: Shift[];
   onClose: () => void;
 };
@@ -73,6 +76,7 @@ export default function ShiftModal({
   activities,
   users,
   holidayRequests,
+  availabilityRules,
   shifts,
   onClose,
 }: Props) {
@@ -175,6 +179,23 @@ export default function ShiftModal({
     : [];
 
   const conflictNames = conflicts.map(usernameOf).join(', ');
+
+  const availabilityConflicts =
+    selectedDate && selectedTimes?.[0] && selectedTimes?.[1]
+      ? selectedUsers.filter(uri =>
+          availabilityConflict(
+            availabilityRules,
+            uri,
+            selectedDate,
+            selectedTimes[0].format('HH:mm'),
+            selectedTimes[1].format('HH:mm'),
+          ),
+        )
+      : [];
+
+  const availabilityConflictNames = availabilityConflicts
+    .map(usernameOf)
+    .join(', ');
 
   // Other shifts the selected users are already assigned to at the same time
   let shiftConflicts: { uri: Uri; shift: Shift }[] = [];
@@ -405,6 +426,16 @@ export default function ShiftModal({
             className="mb-2"
             message={t('SHIFT_PLANNING_HOLIDAY_CONFLICT', {
               names: conflictNames,
+            })}
+          />
+        )}
+        {availabilityConflicts.length > 0 && (
+          <Alert
+            type="warning"
+            showIcon
+            className="mb-2"
+            message={t('SHIFT_PLANNING_AVAILABILITY_CONFLICT', {
+              names: availabilityConflictNames,
             })}
           />
         )}

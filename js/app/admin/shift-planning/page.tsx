@@ -8,6 +8,7 @@ import isoWeek from 'dayjs/plugin/isoWeek';
 import { useTranslation } from 'react-i18next';
 import { store } from './redux/store';
 import {
+  useGetAvailabilityRulesQuery,
   useGetBankHolidaysQuery,
   useGetHolidayRequestsQuery,
   useGetPlanningUsersQuery,
@@ -75,6 +76,7 @@ const Planning = () => {
   });
   const { data: users } = useGetPlanningUsersQuery();
   const { data: activities } = useGetShiftActivitiesQuery();
+  const { data: availabilityRules } = useGetAvailabilityRulesQuery();
 
   const { data: bankHolidaysData } = useGetBankHolidaysQuery({
     after,
@@ -328,6 +330,7 @@ const Planning = () => {
         activities={activities ?? []}
         users={sortedUsers}
         holidayRequests={weekHolidays}
+        availabilityRules={availabilityRules ?? []}
         shifts={shifts}
         onClose={() => setModalState(null)}
       />

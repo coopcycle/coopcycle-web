@@ -762,6 +762,37 @@ export type CopyWeekRequest = {
   targetWeek: string;
 };
 
+export type AvailabilityRuleType = 'available' | 'unavailable';
+
+export type AvailabilityRule = JsonLdEntity & {
+  id: number;
+  user: Uri;
+  type: AvailabilityRuleType;
+  // ISO day of week, 1 (Monday) to 7 (Sunday)
+  dayOfWeek: number;
+  startTime: string; // "HH:MM"
+  endTime: string; // "HH:MM"
+  comment: string | null;
+};
+
+export type AvailabilityRulePayload = {
+  type: AvailabilityRuleType;
+  dayOfWeek: number;
+  startTime: string;
+  endTime: string;
+  comment?: string | null;
+};
+
+// Only honored when the requester is a dispatcher creating a rule on behalf
+// of an employee; couriers are always forced to themselves server-side.
+export type PostAvailabilityRuleRequest = AvailabilityRulePayload & {
+  user?: Uri;
+};
+
+export type PutAvailabilityRuleRequest = AvailabilityRulePayload & {
+  '@id': Uri;
+};
+
 export type ClearWeekRequest = {
   week: string;
 };

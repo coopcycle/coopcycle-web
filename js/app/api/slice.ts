@@ -49,6 +49,9 @@ import {
   GetHolidayRequestsArgs,
   HolidayRequest,
   PostHolidayRequestRequest,
+  AvailabilityRule,
+  PostAvailabilityRuleRequest,
+  PutAvailabilityRuleRequest,
   CopyWeekRequest,
   ClearWeekRequest,
   ShiftWeekClearResult,
@@ -90,6 +93,7 @@ export const apiSlice = createApi({
     'PricingRuleSet',
     'Shift',
     'HolidayRequest',
+    'AvailabilityRule',
     'ShiftSettings',
     'Skill',
     'ShiftActivity',
@@ -606,6 +610,48 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ['HolidayRequest'],
     }),
+    getAvailabilityRules: builder.query<AvailabilityRule[], void>({
+      query: () => 'api/availability_rules',
+      transformResponse: (response: HydraCollection<AvailabilityRule>) =>
+        response['hydra:member'],
+      providesTags: ['AvailabilityRule'],
+    }),
+    getMyAvailabilityRules: builder.query<
+      HydraCollection<AvailabilityRule>,
+      void
+    >({
+      query: () => 'api/me/availability_rules',
+      providesTags: ['AvailabilityRule'],
+    }),
+    postAvailabilityRule: builder.mutation<
+      AvailabilityRule,
+      PostAvailabilityRuleRequest
+    >({
+      query: body => ({
+        url: 'api/availability_rules',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['AvailabilityRule'],
+    }),
+    putAvailabilityRule: builder.mutation<
+      AvailabilityRule,
+      PutAvailabilityRuleRequest
+    >({
+      query: ({ '@id': uri, ...body }) => ({
+        url: uri,
+        method: 'PUT',
+        body,
+      }),
+      invalidatesTags: ['AvailabilityRule'],
+    }),
+    deleteAvailabilityRule: builder.mutation<void, Uri>({
+      query: uri => ({
+        url: uri,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['AvailabilityRule'],
+    }),
     getPlanningUsers: builder.query<PlanningUser[], void>({
       query: () =>
         'api/users?roles[]=ROLE_COURIER&roles[]=ROLE_DISPATCHER&roles[]=ROLE_ADMIN',
@@ -886,6 +932,11 @@ export const {
   useApproveHolidayRequestMutation,
   useRejectHolidayRequestMutation,
   useDeleteHolidayRequestMutation,
+  useGetAvailabilityRulesQuery,
+  useGetMyAvailabilityRulesQuery,
+  usePostAvailabilityRuleMutation,
+  usePutAvailabilityRuleMutation,
+  useDeleteAvailabilityRuleMutation,
   useGetPlanningUsersQuery,
   useGetShiftSettingsQuery,
   usePutShiftSettingsMutation,

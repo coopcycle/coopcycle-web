@@ -8,6 +8,8 @@ import { store } from './redux/store';
 import MyShiftsWeek from './components/MyShiftsWeek';
 import HolidayRequestForm from './components/HolidayRequestForm';
 import MyHolidayRequestsList from './components/MyHolidayRequestsList';
+import AvailabilityRuleForm from './components/AvailabilityRuleForm';
+import MyAvailabilityRulesList from './components/MyAvailabilityRulesList';
 
 dayjs.extend(isoWeek);
 
@@ -26,6 +28,11 @@ const MyShifts = () => {
         <Divider />
         <h4>{t('SHIFT_PLANNING_MY_REQUESTS')}</h4>
         <MyHolidayRequestsList />
+        <Divider />
+        <h4>{t('SHIFT_PLANNING_AVAILABILITY_TITLE')}</h4>
+        <p className="text-muted">{t('SHIFT_PLANNING_AVAILABILITY_HELP')}</p>
+        <AvailabilityRuleForm />
+        <MyAvailabilityRulesList />
       </Col>
     </Row>
   );
