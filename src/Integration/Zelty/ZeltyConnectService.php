@@ -18,12 +18,9 @@ class ZeltyConnectService
     ) {}
 
     /**
-     * Returns TRUE when a usable (non-obfuscated) webhook secret is stored on
-     * the restaurant afterwards, FALSE when the user needs to provide it manually.
-     *
      * @throws \Symfony\Contracts\HttpClient\Exception\ExceptionInterface when the key is invalid or Zelty is unreachable
      */
-    public function connect(LocalBusiness $restaurant, string $apiKey): bool
+    public function connect(LocalBusiness $restaurant, string $apiKey): void
     {
         // The key is not saved on the restaurant yet, so set both explicitly.
         $this->zeltyClient->setAuth($apiKey);
@@ -45,20 +42,11 @@ class ZeltyConnectService
             'order.status.update'              => $this->webhookUrl('_api_/zelty/webhook/order.status.update_post'),
         ];
 
-        $returnedSecret = $this->zeltyClient->upsertWebhooks($webhooks);
+        // The secret Zelty returns here is ignored: it is the same for the whole
+        // instance and is configured as ZELTY_WEBHOOK_SECRET.
+        $this->zeltyClient->upsertWebhooks($webhooks);
 
         $restaurant->setZeltyApiKey($apiKey);
-
-        // Zelty sometimes returns an obfuscated secret (e.g. "******b286") — only save when it's the real value.
-        if (!str_contains($returnedSecret, '*')) {
-            $restaurant->setZeltyWebhookSecretKey($returnedSecret);
-        }
-
-        // An obfuscated response usually means the webhooks already existed, so a
-        // previously stored secret remains valid.
-        $secret = $restaurant->getZeltyWebhookSecretKey();
-
-        return $secret !== null && $secret !== '' && !str_contains($secret, '*');
     }
 
     private function webhookUrl(string $route, array $params = []): string

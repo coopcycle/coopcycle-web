@@ -1,5 +1,7 @@
 parameters:
   zelty_enabled: '%env(bool:ZELTY_ENABLED)%'
+  # Zelty signs every webhook with the same secret for the whole instance
+  zelty_webhook_secret: '%env(ZELTY_WEBHOOK_SECRET)%'
 
 services:
 
@@ -18,7 +20,9 @@ services:
   AppBundle\Integration\Zelty\ZeltyCatalogPullService: ~
   AppBundle\Integration\Zelty\ZeltyImportService: ~
   AppBundle\Integration\Zelty\ZeltyCatalogDenormalizer: ~
-  AppBundle\Integration\Zelty\ZeltyCatalogProcessor: ~
+  AppBundle\Integration\Zelty\ZeltyCatalogProcessor:
+    arguments:
+      $webhookSecret: '%zelty_webhook_secret%'
   AppBundle\Integration\Zelty\ZeltyDishWebhookDenormalizer: ~
   AppBundle\Integration\Zelty\ZeltyDishWebhookProcessor: ~
   AppBundle\Integration\Zelty\ZeltyMenuWebhookDenormalizer: ~

@@ -21,6 +21,7 @@ class ZeltyCatalogProcessor implements ProcessorInterface
         private readonly RequestStack $requestStack,
         private readonly MessageBusInterface $messageBus,
         private readonly Filesystem $zeltyCatalogImportsFilesystem,
+        private readonly string $webhookSecret = '',
     ) {}
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): Response
@@ -33,7 +34,7 @@ class ZeltyCatalogProcessor implements ProcessorInterface
             return new JsonResponse(['error' => 'Restaurant not found'], Response::HTTP_NOT_FOUND);
         }
 
-        $this->verifySignature($request, $restaurant);
+        $this->verifySignature($request);
 
         $s3Key = sprintf('catalog_%d_%s.json', $restaurantId, uniqid('', true));
         $this->zeltyCatalogImportsFilesystem->write($s3Key, $request->getContent());
@@ -43,10 +44,11 @@ class ZeltyCatalogProcessor implements ProcessorInterface
         return new JsonResponse(['status' => 'queued'], Response::HTTP_ACCEPTED);
     }
 
-    private function verifySignature(\Symfony\Component\HttpFoundation\Request $request, LocalBusiness $restaurant): void
+    private function verifySignature(\Symfony\Component\HttpFoundation\Request $request): void
     {
-        $secretKey = $restaurant->getZeltyWebhookSecretKey();
-        if ($secretKey === null || str_contains($secretKey, '*')) {
+        // Zelty uses one secret for the whole instance, configured as ZELTY_WEBHOOK_SECRET.
+        $secretKey = $this->webhookSecret;
+        if ($secretKey === '') {
             return;
         }
 
