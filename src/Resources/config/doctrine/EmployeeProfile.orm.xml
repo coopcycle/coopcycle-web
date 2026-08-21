@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd" xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
+  <entity repository-class="AppBundle\Entity\EmployeeProfileRepository" name="AppBundle\Entity\EmployeeProfile" table="employee_profile">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="contractStartDate" type="date" column="contract_start_date" nullable="true"/>
+    <field name="dateOfBirth" type="date" column="date_of_birth" nullable="true"/>
+    <field name="addressStreet" type="string" column="address_street" nullable="true"/>
+    <field name="addressPostalCode" type="string" column="address_postal_code" nullable="true"/>
+    <field name="addressLocality" type="string" column="address_locality" nullable="true"/>
+    <field name="addressCountry" type="string" column="address_country" nullable="true"/>
+    <field name="salaryType" type="string" column="salary_type" length="16" nullable="true"/>
+    <field name="salaryAmount" type="decimal" column="salary_amount" precision="10" scale="2" nullable="true"/>
+    <field name="weeklyContractedHours" type="decimal" column="weekly_contracted_hours" precision="5" scale="2" nullable="true"/>
+    <field name="createdAt" type="datetime" column="created_at">
+      <gedmo:timestampable on="create"/>
+    </field>
+    <field name="updatedAt" type="datetime" column="updated_at">
+      <gedmo:timestampable on="update"/>
+    </field>
+    <one-to-one field="user" target-entity="AppBundle\Entity\User">
+      <join-columns>
+        <join-column name="user_id" referenced-column-name="id" nullable="false"/>
+      </join-columns>
+    </one-to-one>
+  </entity>
+</doctrine-mapping>

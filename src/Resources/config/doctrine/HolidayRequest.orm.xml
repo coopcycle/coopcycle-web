@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd" xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
+  <entity repository-class="AppBundle\Entity\HolidayRequestRepository" name="AppBundle\Entity\HolidayRequest" table="holiday_request">
+    <indexes>
+      <index columns="start_date,end_date"/>
+      <index columns="status"/>
+    </indexes>
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="startDate" type="date" column="start_date"/>
+    <field name="endDate" type="date" column="end_date"/>
+    <field name="status" type="string" column="status" length="16"/>
+    <field name="comment" type="text" column="comment" nullable="true"/>
+    <field name="actionedAt" type="datetime" column="actioned_at" nullable="true"/>
+    <field name="createdAt" type="datetime" column="created_at">
+      <gedmo:timestampable on="create"/>
+    </field>
+    <field name="updatedAt" type="datetime" column="updated_at">
+      <gedmo:timestampable on="update"/>
+    </field>
+    <many-to-one field="user" target-entity="AppBundle\Entity\User">
+      <join-columns>
+        <join-column name="user_id" referenced-column-name="id" nullable="false"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="actionedBy" target-entity="AppBundle\Entity\User">
+      <join-columns>
+        <join-column name="actioned_by_id" referenced-column-name="id" nullable="true"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

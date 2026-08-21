@@ -4,18 +4,14 @@ namespace AppBundle\Api\State;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
-use AppBundle\Entity\TaskList;
+use AppBundle\Api\Dto\MyTaskListDto;
 use AppBundle\Entity\TaskListRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\SecurityBundle\Security;
 
 final class MyTasksProvider implements ProviderInterface
 {
     public function __construct(
         private readonly Security $security,
-        private readonly EntityManagerInterface $entityManager,
         private readonly TaskListRepository $taskListRepository)
     {}
 
@@ -27,21 +23,21 @@ final class MyTasksProvider implements ProviderInterface
         $taskListDto = $this->taskListRepository->findMyTaskListAsDto($user, $date);
 
         if (null === $taskListDto) {
+            // Do NOT create an empty TaskList in the database,
+            // it would add the courier to the dispatch for that day
+            $now = new \DateTime();
 
-            $taskList = new TaskList();
-            $taskList->setCourier($user);
-            $taskList->setDate($date);
-
-            try {
-                $this->entityManager->persist($taskList);
-                $this->entityManager->flush();
-            } catch (UniqueConstraintViolationException $e) {
-                // If 2 requests are received at the very same time,
-                // we can have a race condition
-                // @see https://github.com/coopcycle/coopcycle-app/issues/1265
-            }
-
-            $taskListDto = $this->taskListRepository->findMyTaskListAsDto($user, $date);
+            return new MyTaskListDto(
+                0,
+                $now,
+                $now,
+                $date,
+                $user->getUsername(),
+                [],
+                0,
+                0,
+                ''
+            );
         }
 
         return $taskListDto;

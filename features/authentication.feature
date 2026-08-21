@@ -111,7 +111,8 @@ Feature: Authenticate
       "username": "bob",
       "email": "bob@coopcycle.org",
       "roles":["ROLE_USER"],
-      "telephone":"+33612345678"
+      "telephone":"+33612345678",
+      "skills":@array@
     }
     """
 

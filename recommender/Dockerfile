@@ -9,6 +9,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY recommender/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# The prophet linux/aarch64 wheel ships the compiled model and cmdstan binaries
+# but omits cmdstan's makefile, which cmdstanpy's path validation requires.
+# The makefile itself is never used (the model is prebuilt), a stub suffices.
+RUN find /usr/local/lib -type d -path '*/prophet/stan_model/cmdstan-*' -exec touch '{}/makefile' \;
+
 COPY recommender/ .
 
 RUN mkdir -p /models
