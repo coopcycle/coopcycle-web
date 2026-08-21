@@ -321,8 +321,6 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected ?string $zeltyApiKey = null;
 
-    protected ?string $zeltyWebhookSecretKey = null;
-
     protected ?int $zeltyDeliveryFeeDishId = null;
 
     /**
@@ -1290,16 +1288,6 @@ class LocalBusiness extends BaseLocalBusiness implements
     public function hasZeltyApiKey(): bool
     {
         return null !== $this->zeltyApiKey && '' !== $this->zeltyApiKey;
-    }
-
-    public function getZeltyWebhookSecretKey(): ?string
-    {
-        return $this->zeltyWebhookSecretKey;
-    }
-
-    public function setZeltyWebhookSecretKey(?string $zeltyWebhookSecretKey): void
-    {
-        $this->zeltyWebhookSecretKey = $zeltyWebhookSecretKey;
     }
 
     public function getZeltyDeliveryFeeDishId(): ?int

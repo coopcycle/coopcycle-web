@@ -38,7 +38,7 @@ class ZeltyController extends AbstractController
         }
 
         try {
-            $secretSaved = $this->zeltyConnectService->connect($restaurant, $apiKey);
+            $this->zeltyConnectService->connect($restaurant, $apiKey);
         } catch (ClientExceptionInterface $e) {
             return new JsonResponse(['error' => 'invalid_key'], 422);
         } catch (ExceptionInterface $e) {
@@ -47,42 +47,7 @@ class ZeltyController extends AbstractController
 
         $this->entityManager->flush();
 
-        return new JsonResponse(['status' => 'connected', 'secretSaved' => $secretSaved]);
-    }
-
-    #[Route('/admin/restaurant/{id}/zelty/webhook-secret', name: 'admin_restaurant_zelty_webhook_secret', methods: ['POST'])]
-    public function webhookSecret(LocalBusiness $restaurant, Request $request): JsonResponse
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-
-        $data = json_decode($request->getContent(), true);
-        $secretKey = is_array($data) ? trim((string) ($data['secretKey'] ?? '')) : '';
-
-        if ($secretKey === '' || str_contains($secretKey, '*') || str_contains($secretKey, '•')) {
-            return new JsonResponse(['error' => 'missing_or_masked_secret'], 400);
-        }
-
-        $restaurant->setZeltyWebhookSecretKey($secretKey);
-        $this->entityManager->flush();
-
-        return new JsonResponse(['status' => 'saved']);
-    }
-
-    #[Route('/admin/restaurant/{id}/zelty/orders-enabled', name: 'admin_restaurant_zelty_orders_enabled', methods: ['POST'])]
-    public function ordersEnabled(LocalBusiness $restaurant, Request $request): JsonResponse
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-
-        $data = json_decode($request->getContent(), true);
-
-        if (!is_array($data) || !array_key_exists('enabled', $data) || !is_bool($data['enabled'])) {
-            return new JsonResponse(['error' => 'missing_enabled_flag'], 400);
-        }
-
-        $restaurant->setZeltyOrdersEnabled($data['enabled']);
-        $this->entityManager->flush();
-
-        return new JsonResponse(['enabled' => $restaurant->isZeltyOrdersEnabled()]);
+        return new JsonResponse(['status' => 'connected']);
     }
 
     #[Route('/admin/restaurant/{id}/zelty/logs', name: 'admin_restaurant_zelty_logs', methods: ['GET'])]
