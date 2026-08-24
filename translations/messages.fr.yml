@@ -21,6 +21,8 @@ adminDashboard.tooltip.stores: Gestion des magasins
 adminDashboard.tooltip.restaurants: Gestion des restaurants
 adminDashboard.tooltip.organizations: Gestion des organisations
 adminDashboard.tooltip.users: Gestion des comptes utilisateurs
+adminDashboard.tooltip.shifts: Gérer le planning des créneaux
+adminDashboard.shifts.title: Planning
 adminDashboard.dashboard.title: Tableau de bord
 adminDashboard.dashboard.import: Importer
 adminDashboard.dashboard.export: Exporter
@@ -210,6 +212,11 @@ restaurant.contract.calculation_info: Vous pouvez facturer au restaurant un mont
   distance).
 restaurant.menus.noMenus: Vous n'avez pas créé de menu pour le moment.
 restaurant.menus.activate: Activer
+restaurant.menus.preview: Aperçu
+restaurant.menu_preview.title: 'Mode aperçu'
+restaurant.menu_preview.help: 'Vous consultez le menu « %menu% », qui n''est pas le
+  menu actif. Les clients voient toujours le menu actif.'
+restaurant.menu_preview.exit: Revenir au menu actif
 restaurant.menus.activated: Le menu « %menu_name% » a bien été activé. Il sera désormais
   affiché sur la page du restaurant
 restaurant.closingForm.title: Ajouter une fermeture temporaire
@@ -247,6 +254,7 @@ profile.myRestaurants: Mes restaurants
 profile.myRestaurants.noRestaurants: Vous n'avez pas encore de restaurants
 profile.myAccount: Mon compte
 profile.myTracking: Mes itinéraires
+profile.myShifts: Mes créneaux
 profile.myOrders: Mes commandes
 profile.myAddresses: Mes adresses
 profile.myPersonalInfo: Mes données personnelles
@@ -551,6 +559,10 @@ form.menu_taxon.add_child.label: Ajouter une section
 form.menu_taxon.child_name.placeholder: "Exemple : plats, desserts…\n"
 form.menu_editor.products_panel.title: Produits
 form.menu_editor.save.label: Enregistrer les modifications
+form.menu_editor.zelty.help: 'Ce menu est importé depuis Zelty. Les sections et les
+  produits sont gérés dans Zelty et ne peuvent donc pas être modifiés ici : le prochain
+  import écraserait les changements. Vous pouvez toujours réordonner les sections :
+  cet ordre ne sert qu''à l''affichage sur CoopCycle.'
 form.menu_editor.help: "Utilisez l'éditeur ci-dessous pour composer les élements du\
   \ menu\n<br>\nGlissez-déposez les produits dans les sections sur la gauche pour\
   \ les rendre disponibles à la vente\n<br>\nSi vous souhaitez retirer un produit\
@@ -622,6 +634,7 @@ form.checkout_address.reusable_packaging.loopeat.website: Site Internet %name%
 form.checkout_address.reusable_packaging.loopeat.how_it_works: Comment ça marche ?
 form.checkout_address.reusable_packaging.loopeat.enable_zero_waste: Activez l'option zéro déchet pour bénéficier d'un service de boîtes réutilisables consignées sur votre commande
 form.checkout_address.reusable_packaging.loopeat.connect: Veuillez créer ou connecter votre compte %name% à %brand_name% pour régler votre consigne, ou désactivez l'option zéro déchet.
+form.checkout_address.reusable_packaging.loopeat.connect_mandatory: Veuillez créer ou connecter votre compte %name% à %brand_name% pour régler votre consigne.
 form.checkout_address.reusable_packaging.loopeat.connect_account: Se connecter à %name%
 form.checkout_address.reusable_packaging.loopeat.add_credits: Créditer ma cagnotte
 form.checkout_address.reusable_packaging.loopeat.manage_deposit: Gérer ma consigne
@@ -736,6 +749,8 @@ basics.continue: Continuer
 basics.powered_by: Propulsé par <a href="https://coopcycle.org">CoopCycle</a>
 basics.edit: Modifier
 basics.editing: Édition
+basics.pause: Mettre en pause
+basics.resume: Reprendre
 basics.add: Ajouter
 basics.view: Voir
 basics.delete: Supprimer
@@ -785,6 +800,18 @@ notifications.tap_to_open: Appuyez pour ouvrir
 notifications.delivery_created: Une livraison avec enlèvement %date% a été créée
 notifications.tasks_changed: Les tâches du %date% ont changé !
 notifications.tasks_changed_today: Vos tâches pour aujourd'hui ont été mises à jour
+notifications.shifts.assigned: Un créneau vous a été assigné le %date%
+notifications.shifts.week_assigned: Vos créneaux pour la semaine du %date% ont été publiés
+notifications.shifts.waitlist_promoted: Une place s'est libérée — vous êtes maintenant assigné(e) à un créneau le %date%
+shifts.calendar.break: 'Pause : %minutes% min'
+payroll.export.username: Identifiant
+payroll.export.name: Nom
+payroll.export.planned_hours: Heures planifiées
+payroll.export.worked_hours: Heures travaillées
+payroll.export.overtime_hours: Heures supplémentaires
+payroll.export.holiday_days: Jours de congés
+notifications.holiday_request.approved: Votre demande de congés du %start% au %end% a été approuvée
+notifications.holiday_request.rejected: Votre demande de congés du %start% au %end% a été refusée
 notifications.restaurant.new_order: Nouvelle commande à confirmer
 notifications.restaurant.accepted_order: "Nouvelle commande"
 notifications.messenger_approaching: Bonjour %customer% ! Votre livreur·se %messenger%
@@ -871,6 +898,7 @@ promotions.create_credit_note_coupon: Créer un avoir commercial
 delivery.table.heading.summary: Résumé
 delivery.table.heading.courier: Coursier
 delivery.table.heading.order: Commande
+delivery.barcodes.show: Voir les codes-barres
 search.users: Rechercher un utilisateur…
 allergens.CEREALS_CONTAINING_GLUTEN: Céréales contenant du gluten
 allergens.CRUSTACEANS: Crustacés
@@ -1214,6 +1242,20 @@ deliveries.section.upcoming: À venir
 deliveries.section.past: Passées
 stores.address_book: Carnet d'adresses
 store.form.section.settings: Paramètres
+store.form.section.cyke: Cyke
+form.store.cyke_user_email: Email utilisateur Cyke
+form.store.cyke_user_token: Jeton API Cyke
+form.store.cyke_webhook_url.label: URL du webhook Cyke
+form.store.cyke_webhook_url.help: L'URL à utiliser lors de la création du webhook dans votre compte Cyke (Compte > Gérer mon entreprise > Webhooks)
+form.store.cyke_webhook_secret.label: Secret du webhook Cyke
+form.store.cyke_webhook_secret.help: Généré automatiquement. Copiez-le et collez-le comme secret lors de la création du webhook ci-dessus dans votre compte Cyke
+form.store.cyke_package_type_id.label: Type de colis
+form.store.cyke_package_type_id.help: Le type de colis envoyé à Cyke pour chaque livraison créée depuis cette boutique
+form.store.cyke_package_type_id.placeholder: Sélectionner un type de colis
+form.store.cyke_time_slot.label: Horaires d'ouverture pour les livraisons
+form.store.cyke_time_slot.help: 'Les horaires d''ouverture utilisés pour planifier les livraisons envoyées à Cyke, au format schema.org (par ex. « Mo-Fr 09:00-18:00, Sa 09:00-16:00 »). Ils doivent correspondre aux horaires d''ouverture configurés dans votre compte Cyke, afin qu''aucune livraison ne soit planifiée en dehors de ceux-ci.'
+form.store.cyke_time_slot.placeholder: 'Mo-Fr 09:00-18:00, Sa 09:00-16:00'
+form.store.cyke_time_slot.invalid: 'Cette valeur doit respecter le format d''horaires d''ouverture de schema.org, par ex. « Mo-Fr 09:00-18:00, Sa 09:00-16:00 »'
 adminDashboard.hubs.title: Hubs
 adminDashboard.hubs.createNew: Créer un nouveau hub
 adminDashboard.hubs.help: Les hubs permettent de regrouper des boutiques partageant
@@ -1366,6 +1408,7 @@ delivery.failure_reason:
     closed_store: "Magasin fermé"
     address_review_needed: "Nécessité d'un réexamen de l'adresse"
     not_at_home: "Client absent"
+    price_review_needed: "Nécessité d'un réexamen du prix"
 adminDashboard.failureSet.title: "Motifs d'échec"
 adminDashboard.failureSet.help: "Définissez les motifs pour lesquelles vos livraisons peuvent échouer."
 adminDashboard.failureSet.nofailureSet: "Aucun motif d'échec"
@@ -1642,6 +1685,7 @@ promotions.human_readable.coupon: "%description% avec le code %code%"
 promotions.human_readable.text: "%name% : %description%"
 form.offer_delivery.decrease_platform_fee.label: Diminuer les frais de plateforme
 form.offer_delivery.decrease_platform_fee.help: Les frais de plateforme seront diminués pour appliquer cette promotion
+basics.not_available_atm: Indisponible pour l'instant
 basics.more_results: Plus de résultats
 sylius.form.promotion_action.delivery_percentage_discount: 'Remise en pourcentage sur les frais de livraison'
 restaurant_promotion.rules.help: Ajoutez des règles pour définir ce qui déclenche l'application de la promotion
@@ -1682,7 +1726,50 @@ form.product_option_value.depends_on.placeholder: Sélectionnez une valeur
 form.product_option_value.depends_on.tooltip: Sélectionnez une autre valeur dont cette valeur dépend
 pagination.items_per_page: Nombre d'éléments par page
 restaurant.form.en_boite_le_plat_platform_fee.label: Le montant de la consigne est collecté par la plateforme
+restaurant.form.zelty_api_key: Clé API Zelty
+restaurant.form.zelty_api_key.help: "Activez l'application CoopCycle sur le <a href=\"https://bo.zelty.fr/marketplace/coopcycle/status\" target=\"_blank\">Marketplace Zelty</a> pour obtenir votre clé API."
+restaurant.form.zelty_delivery_fee_dish: Plat frais de livraison
+restaurant.form.zelty_api_log: Journal des appels API
+restaurant.form.zelty.no_catalog: 'Zelty est connecté. Prochaine étape : importer
+  un catalogue, en le récupérant depuis Zelty ou en demandant au restaurant de le
+  pousser depuis son back-office Zelty.'
+restaurant.form.zelty.catalog_not_active: 'Le catalogue importé depuis Zelty (« %menu%
+  ») n''est pas le menu actuellement affiché aux clients. Tant qu''un autre menu est
+  actif, les commandes ne sont pas envoyées à Zelty.'
+restaurant.form.zelty.go_to_catalogs: Voir les catalogues
+restaurant.form.zelty_delivery_fee_dish.placeholder: 'Aucun (les frais de livraison ne sont pas envoyés à Zelty)'
 
+# Éditeur d'emails
+customize.emails: Personnaliser les emails
+customize.email_editor.email_type.order_created: Commande confirmée (client)
+customize.email_editor.email_type.order_accepted_foodtech_delivery: Commande acceptée – Livraison
+customize.email_editor.email_type.order_accepted_foodtech_collection: Commande acceptée – Collecte
+customize.email_editor.email_type.order_accepted_lastmile: Commande acceptée (Dernier km)
+customize.email_editor.email_type.order_cancelled: Commande annulée
+customize.email_editor.email_type.order_delayed: Commande retardée
+customize.email_editor.email_type.order_payment: Confirmation de paiement
+customize.email_editor.email_type.order_receipt: Reçu de commande
+customize.email_editor.email_type.task_dropoff_completed: Dépôt effectué
+customize.email_editor.email_type.task_pickup_completed: Enlèvement effectué
+customize.email_editor.email_type.task_dropoff_failed: Dépôt échoué
+customize.email_editor.email_type.task_pickup_failed: Enlèvement échoué
+customize.email_editor.email_type.resetting: Réinitialisation du mot de passe
+customize.email_editor.email_type.registration: "Confirmation d'inscription"
+customize.email_editor.save: Enregistrer
+customize.email_editor.reset: Réinitialiser par défaut
+customize.email_editor.status.default: Modèle par défaut — enregistrez pour personnaliser
+customize.email_editor.status.custom: Modèle personnalisé
+customize.email_editor.variables: Variables disponibles
+customize.email_editor.layout: Mise en page
+customize.email_editor.folder.foodtech: Foodtech
+customize.email_editor.folder.lastmile: Dernier kilomètre
+customize.email_editor.folder.account: Compte
+customize.email_editor.send_test: Envoyer un test
+customize.email_editor.send_test_title: Envoyer un e-mail de test
+customize.email_editor.send_test_description: "Entrez une adresse pour recevoir un aperçu de ce modèle avec des données fictives."
+customize.email_editor.send_test_send: Envoyer
+customize.email_editor.send_test_cancel: Annuler
+customize.email_editor.send_test_success: "E-mail de test envoyé !"
 two_factor.title: Authentification à deux facteurs
 two_factor.subtitle: "Un code de vérification a été envoyé à votre adresse e-mail. Veuillez le saisir ci-dessous."
 two_factor.code.label: Code de vérification
@@ -1771,3 +1858,22 @@ form.theme.secondary_group.label: Couleurs secondaires
 form.theme.secondary_group.help: "Utilisé pour les mises en évidence et les accents"
 form.theme.secondary.label: "Couleur d'arrière-plan"
 form.theme.secondary-content.label: Couleur de police
+customize.emails_alert: Nouveau ! Personnalisez les emails
+hr.tab.title: RH
+hr.contractStartDate: Date de début de contrat
+hr.dateOfBirth: Date de naissance
+hr.address.street: Rue
+hr.address.postalCode: Code postal
+hr.address.locality: Ville
+hr.address.country: Pays
+hr.salaryType: Type de salaire
+hr.salaryType.hourly: Horaire
+hr.salaryType.monthly: Mensuel
+hr.salaryAmount: Montant du salaire brut
+hr.weeklyContractedHours: Heures contractuelles par semaine
+hr.holidaysHistory.title: Historique des congés
+hr.holidaysHistory.empty: Aucune demande de congé pour le moment.
+hr.holidaysHistory.from: Du
+hr.holidaysHistory.to: Au
+hr.holidaysHistory.status: Statut
+hr.holidaysHistory.comment: Commentaire

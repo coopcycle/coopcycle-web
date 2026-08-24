@@ -1,0 +1,34 @@
+{% extends "@DaisyuiForm/form/daisyui_layout.html.twig" %}
+
+{#
+  Wraps the email and username fields with DaisyUI validator structure:
+    div.validator > label.input > input.grow + icons
+    p.validator-hint (sibling of div.validator, shown by CSS when aria-invalid="true")
+
+  JS in js/app/register/index.js drives aria-invalid and icon visibility.
+#}
+
+{% block _registration_form_email_widget %}
+  {%- set attr = attr|merge({class: 'grow'}) -%}
+  <div class="validator">
+    <label class="input w-full{% if not valid %} input-error{% endif %}">
+      <input type="{{ type|default('text') }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+      <span class="loading loading-spinner loading-xs" hidden></span>
+      <i class="fa fa-check text-success" hidden></i>
+      <i class="fa fa-times text-error" hidden></i>
+    </label>
+  </div>
+{% endblock %}
+
+{% block _registration_form_username_widget %}
+  {%- set attr = attr|merge({class: 'grow'}) -%}
+  <div class="validator">
+    <label class="input w-full{% if not valid %} input-error{% endif %}">
+      <input type="{{ type|default('text') }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+      <span class="loading loading-spinner loading-xs" hidden></span>
+      <i class="fa fa-check text-success" hidden></i>
+      <i class="fa fa-times text-error" hidden></i>
+    </label>
+  </div>
+  <p class="validator-hint" hidden></p>
+{% endblock %}

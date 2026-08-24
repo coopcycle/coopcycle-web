@@ -69,6 +69,19 @@
   }
 }
 
+// ------------------ Receipt dialog ------------------
+
+dialog#order-receipt-modal {
+  padding: 0;
+  border: none;
+  min-width: 420px;
+  max-width: 90vw;
+
+  &::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+  }
+}
+
 // ------------------ React Modal ------------------
 
 // Copy default styles to be able to use overlayClassName prop

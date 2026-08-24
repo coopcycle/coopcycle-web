@@ -1,4 +1,7 @@
 parameters:
+    # Webhook payloads are posted unsigned by the test suite. This has to be
+    # overridden here rather than in .env.test: .env is loaded first and wins.
+    zelty_webhook_secret: ''
     tile38_fleet_key: '%database_name%_test:fleet'
     tile38_doorstep_chan_namespace: '%database_name%_test'
     typesense_shops_collection_name: "shops_test"
@@ -55,3 +58,7 @@ services:
         arguments:
             $center: '@app.map_center'
         tags: [ { name: nelmio_alice.faker.provider } ]
+
+    AppBundle\Integration\Zelty\ZeltyTaxesMapper:
+        class: Tests\Integration\Zelty\TestZeltyTaxesMapper
+        public: true

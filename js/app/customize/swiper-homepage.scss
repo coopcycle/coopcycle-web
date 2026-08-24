@@ -62,10 +62,15 @@ a.coopcycle-homepage-banner {
         flex-direction: column;
         justify-content: space-between;
         align-items: flex-start;
+        /* gap-2 */
+        gap: calc(var(--spacing) * 2);
         .btn {
           display: flex;
           justify-content: center;
           align-items: center;
+        }
+        h4 {
+          font-weight: var(--font-weight-bold);
         }
       }
       &-right {

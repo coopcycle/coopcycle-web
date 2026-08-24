@@ -5,11 +5,17 @@ namespace Tests\AppBundle\Service;
 use AppBundle\LoopEat\Context as LoopeatContext;
 use AppBundle\LoopEat\ContextInitializer as LoopeatContextInitializer;
 use AppBundle\Service\EmailManager;
+use AppBundle\Service\EmailTemplateManager;
 use AppBundle\Service\SettingsManager;
+use AppBundle\Twig\LocalBusinessRuntime;
+use AppBundle\Twig\OrderRuntime;
+use Hashids\Hashids;
 use NotFloran\MjmlBundle\Renderer\RendererInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment as TwigEnvironment;
 
@@ -37,7 +43,14 @@ class EmailManagerTest extends TestCase
             $this->loopeatContextInitializer->reveal(),
             $this->loopeatContext->reveal(),
             $this->logger->reveal(),
-            'transactional@coopcycle.org'
+            'transactional@coopcycle.org',
+            $this->createMock(EmailTemplateManager::class),
+            $this->createMock(UrlGeneratorInterface::class),
+            $this->createMock(Hashids::class),
+            $this->createMock(RequestStack::class),
+            $this->createMock(Hashids::class),
+            $this->createMock(OrderRuntime::class),
+            $this->createMock(LocalBusinessRuntime::class),
         );
     }
 

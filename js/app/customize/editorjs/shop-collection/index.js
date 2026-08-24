@@ -102,7 +102,56 @@ const ComponentCascader = ({ placeholder, cuisines, customCollections, edenredEn
       defaultValue={defaultValue}
       options={options}
       onChange={onChange}
-      placeholder={placeholder} />
+      placeholder={placeholder}
+      style={{ width: '100%' }} />
+  )
+}
+
+const SORT_OPTIONS = [
+  'historical_order_volume',
+  'ordering_potential',
+  'popularity',
+]
+
+const SortOptionLabel = ({ title, help }) => (
+  <div>
+    <div>{title}</div>
+    <div style={{ fontSize: '12px', color: 'rgba(0, 0, 0, 0.45)', whiteSpace: 'normal' }}>{help}</div>
+  </div>
+)
+
+const SortSelect = ({ defaultValue, onChange }) => {
+
+  const { t } = useTranslation();
+  const tPrefix = 'HOMEPAGE_EDITOR.messages.tools.shop_collection.'
+
+  const buildOption = (value, key) => {
+    const title = t(`${tPrefix}sort_${key}`)
+    const help = t(`${tPrefix}sort_${key}_help`)
+
+    return {
+      value,
+      // plain-text title, used for the closed control via displayRender below
+      title,
+      // richer node, shown in the dropdown panel only
+      label: <SortOptionLabel title={title} help={help} />,
+    }
+  }
+
+  const options = [
+    buildOption('', 'default'),
+    ...SORT_OPTIONS.map((key) => buildOption(key, key)),
+  ]
+
+  return (
+    <Cascader
+      defaultValue={defaultValue ? [defaultValue] : undefined}
+      options={options}
+      onChange={(value) => onChange((value && value[0]) || undefined)}
+      displayRender={(labels, selectedOptions) =>
+        (selectedOptions && selectedOptions[0]) ? selectedOptions[0].title : labels.join(' / ')}
+      placeholder={t(`${tPrefix}sort_placeholder`)}
+      style={{ width: '100%' }} />
   )
 }
 
@@ -195,8 +244,11 @@ export default class ShopCollection {
         this.data.component
       ];
 
-      if (_.isObject(this.data.args) && _.size(this.data.args) > 0) {
-        value.push(qs.stringify(this.data.args))
+      // sort is handled by its own control, not part of the Cascader's value
+      const args = _.isObject(this.data.args) ? _.omit(this.data.args, 'sort') : {}
+
+      if (_.size(args) > 0) {
+        value.push(qs.stringify(args))
       }
 
       return value
@@ -210,7 +262,28 @@ export default class ShopCollection {
     const wrapper = document.createElement('div');
     wrapper.style.marginBottom = '20px'
 
+    const controls = document.createElement('div')
+    controls.style.display = 'flex'
+    controls.style.gap = '10px'
+
+    // Tracks the currently selected component/args/sort outside of React state,
+    // since the two controls (Cascader + sort Select) are mounted as separate
+    // React roots and both need to contribute to the same preview + saved data.
+    let currentComponent = this.data ? this.data.component : undefined
+    let currentArgs = (this.data && _.isObject(this.data.args)) ? _.omit(this.data.args, 'sort') : {}
+    let currentSort = (this.data && this.data.args) ? this.data.args.sort : undefined
+
+    const updatePreviewAndData = () => {
+      if (!currentComponent) {
+        return
+      }
+      const args = { ...currentArgs, ...(currentSort ? { sort: currentSort } : {}) }
+      this._data = { component: currentComponent, args }
+      this.showPreview(wrapper, currentComponent, _.size(args) > 0 ? qs.stringify(args) : '')
+    }
+
     const cascader = document.createElement('div')
+    cascader.style.flex = '1'
     createRoot(cascader).render(
       <ComponentCascader
         defaultValue={ this._getDefaultValue()  }
@@ -225,22 +298,31 @@ export default class ShopCollection {
           if (component === 'custom' && args === '') {
             window.open(window.Routing.generate('admin_customize_shop_collections'), '_blank').focus();
           } else {
-            this.showPreview(wrapper, component, args)
-            this._data = {
-              component,
-              args: args ? qs.parse(args) : {}
-            }
+            currentComponent = component
+            currentArgs = args ? qs.parse(args) : {}
+            updatePreviewAndData()
           }
 
         }} />
     )
 
-    wrapper.appendChild(cascader)
+    const sortSelect = document.createElement('div')
+    sortSelect.style.flex = '1'
+    createRoot(sortSelect).render(
+      <SortSelect
+        defaultValue={ currentSort }
+        onChange={(value) => {
+          currentSort = value
+          updatePreviewAndData()
+        }} />
+    )
+
+    controls.appendChild(cascader)
+    controls.appendChild(sortSelect)
+    wrapper.appendChild(controls)
 
     if (this.data.component) {
-      this._data = this.data
-      this.showPreview(wrapper, this.data.component,
-        _.isObject(this.data.args) && _.size(this.data.args) > 0 ? qs.stringify(this.data.args) : '')
+      updatePreviewAndData()
     }
 
     return wrapper;

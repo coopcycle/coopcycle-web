@@ -12,7 +12,7 @@ final class RelayInput
      * @var Task[]
      */
     #[Assert\NotBlank]
-    #[Assert\Count(min: 2, max: 2)]
+    #[Assert\Count(min: 1)]
     #[Groups(['warehouse_relay'])]
     public array $tasks = [];
 }

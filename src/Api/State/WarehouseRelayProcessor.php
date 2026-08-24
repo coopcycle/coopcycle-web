@@ -29,13 +29,77 @@ class WarehouseRelayProcessor implements ProcessorInterface
         /** @var Warehouse */
         $warehouse = $this->provider->provide($operation, $uriVariables, $context);
 
-        $pickupTask  = current(array_filter($data->tasks, fn(Task $t) => $t->isPickup()));
-        $dropoffTask = current(array_filter($data->tasks, fn(Task $t) => $t->isDropoff()));
-
-        if (!$pickupTask || !$dropoffTask) {
-            throw new BadRequestHttpException('tasks must contain exactly one PICKUP and one DROPOFF');
+        if (empty($data->tasks)) {
+            throw new BadRequestHttpException('tasks must not be empty');
         }
 
+        // The caller only needs to select a single task (a pickup *or* a dropoff): we
+        // resolve each selected task to its (pickup, dropoff) pair here. Selecting the
+        // pickup, its dropoff, or both must yield a single relay operation, so pairs are
+        // deduplicated by their pickup.
+        $pairs = [];
+        foreach ($data->tasks as $task) {
+            [$pickup, $dropoff] = $this->resolvePair($task);
+
+            if (!$pickup || !$dropoff) {
+                throw new BadRequestHttpException(
+                    sprintf('Could not find a linked pickup/dropoff pair for task #%d', $task->getId())
+                );
+            }
+
+            $pairs[spl_object_id($pickup)] = [$pickup, $dropoff];
+        }
+
+        $tasks = [];
+        foreach ($pairs as [$pickup, $dropoff]) {
+            [$hubDropoff, $hubPickup] = $this->relayThroughWarehouse($warehouse, $pickup, $dropoff);
+            // Return both the original tasks (their previous-chain has changed) and the
+            // tasks created by the relay operation.
+            array_push($tasks, $pickup, $dropoff, $hubDropoff, $hubPickup);
+        }
+
+        $this->entityManager->flush();
+
+        $groups = ['task', 'delivery', 'address'];
+
+        return new JsonResponse([
+            'tasks' => array_map(
+                fn(Task $t) => $this->normalizer->normalize($t, 'jsonld', ['groups' => $groups]),
+                $tasks
+            ),
+        ], 201);
+    }
+
+    /**
+     * Resolve any single task to the (pickup, dropoff) pair it belongs to.
+     *
+     * @return array{0: ?Task, 1: ?Task}
+     */
+    private function resolvePair(Task $task): array
+    {
+        $delivery = $task->getDelivery();
+        if ($delivery !== null) {
+            return [$delivery->getPickup(), $delivery->getDropoff()];
+        }
+
+        // Standalone tasks are linked through the previous/next chain.
+        if ($task->isDropoff()) {
+            return [$task->getPrevious(), $task];
+        }
+
+        $dropoff = $task->getNext()
+            ?? $this->entityManager->getRepository(Task::class)->findOneBy(['previous' => $task]);
+
+        return [$task, $dropoff];
+    }
+
+    /**
+     * Create the two hub tasks that relay a pickup → dropoff through the warehouse.
+     *
+     * @return array{0: Task, 1: Task} The created [hubDropoff, hubPickup]
+     */
+    private function relayThroughWarehouse(Warehouse $warehouse, Task $pickupTask, Task $dropoffTask): array
+    {
         $warehouseAddress = $warehouse->getAddress();
 
         // Hub tasks share a time window that places them visually between the originals.
@@ -97,13 +161,7 @@ class WarehouseRelayProcessor implements ProcessorInterface
 
         $this->entityManager->persist($hubDropoff);
         $this->entityManager->persist($hubPickup);
-        $this->entityManager->flush();
 
-        $groups = ['task', 'delivery', 'address'];
-
-        return new JsonResponse([
-            'hubDropoff' => $this->normalizer->normalize($hubDropoff, 'jsonld', ['groups' => $groups]),
-            'hubPickup'  => $this->normalizer->normalize($hubPickup,  'jsonld', ['groups' => $groups]),
-        ], 201);
+        return [$hubDropoff, $hubPickup];
     }
 }

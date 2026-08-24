@@ -2,21 +2,25 @@
 
 namespace Tests\AppBundle\Service\Routing;
 
+use AppBundle\Service\Routing\Engine\OsrmRoutingEngine;
 use AppBundle\Service\Routing\Osrm;
 use AppBundle\Entity\Base\GeoCoordinates;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 
 class OsrmTest extends TestCase
 {
-    use ProphecyTrait;
+    use \Prophecy\PhpUnit\ProphecyTrait;
+
+    private $client;
+    private $osrm;
 
     public function setUp(): void
     {
         $this->client = new MockHttpClient(null, 'http://osrm');
-        $this->osrm = new Osrm($this->client);
+        $engine = new OsrmRoutingEngine($this->client, 'bicycle');
+        $this->osrm = new Osrm($engine);
     }
 
     public function testRequestIsCached()

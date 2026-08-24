@@ -18,6 +18,7 @@ use AppBundle\Entity\LocalBusiness\AddressResolver;
 use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\Restaurant\Pledge;
 use AppBundle\Entity\Sylius\Product;
+use AppBundle\Entity\Sylius\Taxon;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
 use AppBundle\Form\Checkout\Action\AddProductToCartAction as CheckoutAddProductToCart;
@@ -135,6 +136,29 @@ class RestaurantController extends AbstractController
     private function getContextSlug(LocalBusiness $business)
     {
         return $business->getContext() === Store::class ? 'store' : 'restaurant';
+    }
+
+    /**
+     * Lets someone who can edit the shop look at a menu before making it the active one,
+     * via ?preview_menu=<taxon id>.
+     */
+    private function resolvePreviewMenu(LocalBusiness $restaurant, Request $request): ?Taxon
+    {
+        $menuId = $request->query->getInt('preview_menu');
+
+        if ($menuId <= 0) {
+            return null;
+        }
+
+        $this->denyAccessUnlessGranted('edit', $restaurant);
+
+        foreach ($restaurant->getTaxons() as $taxon) {
+            if ($taxon->getId() === $menuId) {
+                return $taxon;
+            }
+        }
+
+        throw new NotFoundHttpException(sprintf('Menu %d not found for this shop', $menuId));
     }
 
     #[Route(path: '/restaurants/cuisines/{cuisineName}', name: 'restaurants_by_cuisine')]
@@ -276,11 +300,12 @@ class RestaurantController extends AbstractController
 
         if ($redirectToCanonicalRoute) {
 
-            return $this->redirectToRoute('restaurant', [
+            // Keep the query string (?preview_menu=…) across the redirect.
+            return $this->redirectToRoute('restaurant', array_merge($request->query->all(), [
                 'id' => $id,
                 'slug' => $expectedSlug,
                 'type' => $contextSlug,
-            ], Response::HTTP_MOVED_PERMANENTLY);
+            ]), Response::HTTP_MOVED_PERMANENTLY);
         }
 
         if ($restaurant->getState() === LocalBusiness::STATE_PLEDGE) {
@@ -346,7 +371,8 @@ class RestaurantController extends AbstractController
             'cart_form' => $cartForm->createView(),
             'cart_timing' => $this->getOrderTiming($order),
             'order_access_token' => $this->getOrderAccessToken($order),
-            'available_for_business_account' => $restaurantAvailableForBusinessAccount
+            'available_for_business_account' => $restaurantAvailableForBusinessAccount,
+            'preview_menu' => $this->resolvePreviewMenu($restaurant, $request),
         ]));
     }
 

@@ -7,6 +7,10 @@
 
 import { registerReactControllerComponents } from '@symfony/ux-react';
 
+// Imported before bootstrap.js, so that the handler is registered before the lazy
+// live components start issuing requests
+import './ignore-aborted-requests.js';
+
 // start the Stimulus application
 import './bootstrap.js';
 

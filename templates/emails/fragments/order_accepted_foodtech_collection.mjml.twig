@@ -1,0 +1,14 @@
+<mj-text align="left" line-height="20px">
+{{ 'order.accepted.body.intro' | trans({}, 'emails', locale) | raw }}
+</mj-text>
+<mj-text align="left" line-height="20px">
+{{ 'order.foodtech.accepted.collection' | trans({}, 'emails', locale) | raw }}
+</mj-text>
+<mj-text align="center" line-height="20px" font-weight="700" container-background-color="#f7d794">
+{{ shipping_time_range }}
+</mj-text>
+<mj-text align="left" line-height="20px">
+{{ 'order.foodtech.accepted.collection.disclaimer' | trans({'{{name}}': vendor_name, '{{phone_number}}': phone_number}, 'emails', locale) | raw }}
+</mj-text>
+<mj-raw data-slot="loopeat_info"></mj-raw>
+<mj-button href="{{ order_url }}" background-color="{{ primary_color }}" color="{{ primary_content_color }}" font-family="Raleway, Arial, sans-serif">{{ 'order.view' | trans({}, 'emails', locale) }}</mj-button>

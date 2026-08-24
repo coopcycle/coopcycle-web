@@ -9,21 +9,6 @@ function _generateLabelURL(barcode, token) {
   return window.Routing.generate('task_label_pdf') + '?code=' + barcode + '&token=' + token
 }
 
-function _shouldOpenModal(items) {
-  if (!items || !Array.isArray(items)) {
-    return false
-  }
-
-  const totalItems = items.reduce((acc, item) => {
-    if (!item?.barcodes?.packages || !Array.isArray(item.barcodes.packages)) {
-      return acc
-    }
-    return acc + 1 + item.barcodes.packages.length
-  }, 0)
-
-  return totalItems !== 1
-}
-
 function GenericBarcode({ barcode: [barcode, token] }) {
   const { t } = useTranslation()
   return (
@@ -114,9 +99,10 @@ export default function (props) {
 
   const { t } = useTranslation()
 
-  const { showLabel, deliveryId } = {
+  const { showLabel, showText, deliveryId } = {
     showLabel: t("SHOW_BARCODES"),
-    deliveryId: null, 
+    showText: false,
+    deliveryId: null,
     ...props,
   }
 
@@ -141,35 +127,16 @@ export default function (props) {
     })
   },[])
 
-  const shouldOpenModal = _shouldOpenModal(_items)
   const [isOpen, setIsOpen] = useState(false)
-
-  const a5Width = Math.round((148 * 96) / 25.4)
-  const a5Height = Math.round((210 * 96) / 25.4)
-
-  const features = [
-    `width=${a5Width}`,
-    `height=${a5Height}`,
-    'resizable=yes',
-    'scrollbars=yes',
-    'status=yes',
-  ].join(',')
 
   return (
     <>
       <a
-        onClick={() => {
-          if (shouldOpenModal) {
-            setIsOpen(true)
-          } else {
-            window.open(
-              _generateLabelURL(_items[0].barcodes.task[0], _items[0].barcodes.task[1]),
-              '_blank',
-              features,
-            )
-          }
-        }}>
-        {showLabel}
+        onClick={() => setIsOpen(true)}
+        title={showLabel}
+        style={{ cursor: 'pointer' }}>
+        <i className="fa fa-barcode fa-lg" aria-hidden="true"></i>
+        {showText && <span className="ml-2">{showLabel}</span>}
       </a>
       <Modal
         title="Barcodes"

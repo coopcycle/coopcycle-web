@@ -20,6 +20,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 
 class StoreType extends LocalBusinessType
@@ -90,6 +91,56 @@ class StoreType extends LocalBusinessType
                     'label' => 'form.store.document'
                 ]);
 
+            if ($this->cykeEnabled) {
+                $builder
+                    ->add('cykeUserEmail', TextType::class, [
+                        'label' => 'form.store.cyke_user_email',
+                        'required' => false,
+                    ])
+                    // Rendered as password-masked in the template (see store/_partials/cyke.html.twig):
+                    // PasswordType always clears its value on a non-submitted render
+                    // (regardless of always_empty), which isn't what we want here — this
+                    // is a token to review/copy, not a login password typed once.
+                    ->add('cykeUserToken', TextType::class, [
+                        'label' => 'form.store.cyke_user_token',
+                        'required' => false,
+                    ])
+                    // Populated client-side from the Cyke API (see store-form.js):
+                    // the list of package types depends on credentials that may not
+                    // be persisted yet, so it can't be resolved as a normal ChoiceType.
+                    ->add('cykePackageTypeId', HiddenType::class, [
+                        'label' => 'form.store.cyke_package_type_id.label',
+                        'help' => 'form.store.cyke_package_type_id.help',
+                        'required' => false,
+                    ])
+                    // Cyke validates the delivery slot we send against the store's
+                    // configured opening hours in its own UI (which may close earlier
+                    // on some days). EDIFACT-imported deliveries (see
+                    // SyncTransportersCommand) carry no time info, so we compute a slot
+                    // that fits these per-day opening hours, expressed in schema.org's
+                    // openingHours format, e.g. "Mo-Fr 09:00-18:00, Sa 09:00-16:00".
+                    ->add('cykeTimeSlot', TextType::class, [
+                        'label' => 'form.store.cyke_time_slot.label',
+                        'help' => 'form.store.cyke_time_slot.help',
+                        'required' => false,
+                        'attr' => [
+                            'placeholder' => 'form.store.cyke_time_slot.placeholder',
+                        ],
+                        'constraints' => [
+                            new Assert\Regex([
+                                // One or more schema.org openingHours entries, e.g.
+                                // "Mo-Fr 09:00-18:00, Sa 09:00-16:00".
+                                'pattern' => '/^(?:(?:Mo|Tu|We|Th|Fr|Sa|Su)(?:[,-](?:Mo|Tu|We|Th|Fr|Sa|Su))*\s+([01]\d|2[0-3]):[0-5]\d-([01]\d|2[0-3]):[0-5]\d)(?:\s*,\s*(?:Mo|Tu|We|Th|Fr|Sa|Su)(?:[,-](?:Mo|Tu|We|Th|Fr|Sa|Su))*\s+([01]\d|2[0-3]):[0-5]\d-([01]\d|2[0-3]):[0-5]\d)*$/',
+                                'message' => 'form.store.cyke_time_slot.invalid',
+                            ]),
+                        ],
+                    ]);
+                // cykeWebhookSecret is intentionally *not* a form field: it's generated
+                // server-side (see the POST_SET_DATA listener below) and only ever
+                // displayed read-only, since Cyke itself has no way to hand us a secret
+                // for the webhook it calls back into us with.
+            }
+
             if ($this->cashOnDeliveryOptinEnabled) {
                 $builder
                     ->add('cashOnDeliveryEnabled', CheckboxType::class, [
@@ -111,6 +162,20 @@ class StoreType extends LocalBusinessType
                 $builder->add('transporter', ChoiceType::class, [
                     'label' => 'This store is managed by the transporter',
                     'help' => 'Select a transporter to manage this store',
+                    'choices' => $choices,
+                    'required' => false,
+                ]);
+            }
+
+            if ($this->rdcEnabled && !empty($this->rdcConnections)) {
+                $choices = array_reduce(array_keys($this->rdcConnections), function ($acc, $key) {
+                    $acc[$this->rdcConnections[$key]['name'] ?? $key] = $key;
+                    return $acc;
+                });
+
+                $builder->add('rdcConnectionId', ChoiceType::class, [
+                    'label' => 'RDC Connection',
+                    'help' => 'Select an RDC connection for this store',
                     'choices' => $choices,
                     'required' => false,
                 ]);
@@ -164,6 +229,23 @@ class StoreType extends LocalBusinessType
                     'data' => null !== $urbantzHub ? $urbantzHub->getHub() : '',
                     'required' => false,
                 ]);
+            }
+
+            // The webhook secret is generated by us, once, the first time the Cyke tab
+            // is displayed for a store — Cyke has no way to hand us one, and it's the
+            // admin who pastes it into Cyke's own webhook configuration UI.
+            if (null !== $store && null !== $store->getId() && $this->cykeEnabled
+                && empty($store->getCykeWebhookSecret())) {
+                $store->setCykeWebhookSecret(bin2hex(random_bytes(32)));
+                $this->entityManager->flush();
+            }
+
+            // Default to Cyke's own "Journée entière" fixed slot, so stores that
+            // never touch this setting still send a slot Cyke will accept.
+            if (null !== $store && null !== $store->getId() && $this->cykeEnabled
+                && empty($store->getCykeTimeSlot())) {
+                $store->setCykeTimeSlot('08:00-18:00');
+                $this->entityManager->flush();
             }
         });
 

@@ -23,6 +23,11 @@
     <div role="tabpanel" class="tab-pane" id="settings">
       {% include "store/form/_partials/settings.html.twig" %}
     </div>
+    {% if form.cykeUserEmail is defined %}
+    <div role="tabpanel" class="tab-pane" id="cyke">
+      {% include "store/_partials/cyke.html.twig" %}
+    </div>
+    {% endif %}
   </div>
 
   <hr>

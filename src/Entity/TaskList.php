@@ -272,7 +272,7 @@ class TaskList implements TaskCollectionInterface
         $item->setPosition($this->getItems()->count());
         $this->addItem($item);
 
-        $task->assignTo($this->getCourier(), $this->getDate());
+        $task->assignTo($this->getCourier());
 
         return $this;
     }

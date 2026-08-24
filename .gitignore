@@ -110,3 +110,4 @@ shopify-app/shopify.app.toml
 shopify-app/extensions/delivery-customization/dist/
 shopify-app/extensions/delivery-customization/src/run.types.d.ts
 shopify-gateway/.env
+shopify.app.toml

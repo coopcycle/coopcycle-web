@@ -34,7 +34,7 @@
       <div>
         <img src="{{ loopeat_context.logoUrl }}" class="mb-4 w-24">
       </div>
-      <div class="md: w-3/4 mx-3 mb-4">
+      <div class="md:w-3/4 mx-3 mb-4">
         <div>
           {% if isChecked %}
           <div class="mb-3">
@@ -63,7 +63,8 @@
               {% endif %}
               {% if not loopeat_context.hasCredentials %}
               <li class="text-info">
-                {{ (loopeat_trans_prefix ~ '.connect')|trans({ '%name%': loopeat_context.name, '%brand_name%': coopcycle_setting('brand_name') }) }}
+                {% set connect_key = order.restaurant.loopeatMandatory ? '.connect_mandatory' : '.connect' %}
+                {{ (loopeat_trans_prefix ~ connect_key)|trans({ '%name%': loopeat_context.name, '%brand_name%': coopcycle_setting('brand_name') }) }}
               </li>
               {% endif %}
               {% if missingAmount == 0 %}

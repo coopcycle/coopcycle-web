@@ -2,10 +2,12 @@
 
 namespace Tests\AppBundle\Transporter;
 
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Command\SyncTransportersCommand;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Edifact\EDIFACTMessage;
+use AppBundle\Entity\Package;
 use AppBundle\Entity\Task;
 use AppBundle\Service\DeliveryOrderManager;
 use AppBundle\Service\SettingsManager;
@@ -33,6 +35,12 @@ class SyncTransportersCommandTest extends KernelTestCase {
     UNA:+,? ' UNB+UNOC:1+123456789:22+987654321:22+240325:1951+2206' UNH+1+SCONTR:3:2:GT:GTF210+ACG' BGM++240325' NAD+FW+12345678900935:05++DBSCHENKER TESTING INC' DTM+DEP+240325' NAD+DP+98765432100010:05++COOPCYCLE TESTING INC' TSR+++3' CAG+P+V' TDT++++3' DOC+730+++ACG+2278663' UNS+D' RFF+CN+JOY0123456789' GID++1:23+1:21' MSE+CGW+15:KG' NAD+CN+++JOHN DOE:ZIMP COMPANY+64 RUE ALEXANDRE DUMAS+PARIS++75+FR' CTA+IC+:JOHN DOE+06 01 02 03 04:AL' NAD+CO+++HOME DEPOT+54 ROUTE DE TREGUIER:BP 8+LOUANNEC++22+FR' DTM+DES+240322' NAD+FW+12345678900935:05++DBSCHENKER TESTING INC+LE BREHAT:ALLEE DES CHATELETS+PLOUFRAGAN++22440+FR' CAG+P+V+++++++++227004' TSR++D:E+3' TXT+DEL+TEL ?: 06 01 02 03 04 POUR PRENDRE UN RENDEZ VOUS DE LIVRAISON' GDS+G+DIVERS' PCI+23' GIN+BN+*2222121907222700470100691001300' DOC+WBL::JOY0123456789+++ACG+70100691+219072' DOC+824+++PRI+FRSBK830689437' UNS+S' UNT+26+1' UNZ+1+2206'
     EDI;
 
+    // Same as EDI_SAMPLE, except the GID segment carries 2 handling units
+    // and 3 packages (GID++2:23+3:21') instead of 1 of each.
+    const EDI_PACKAGES_SAMPLE = <<<EDI
+    UNA:+,? ' UNB+UNOC:1+123456789:22+987654321:22+240325:1951+2206' UNH+1+SCONTR:3:2:GT:GTF210+ACG' BGM++240325' NAD+FW+12345678900935:05++DBSCHENKER TESTING INC' DTM+DEP+240325' NAD+DP+98765432100010:05++COOPCYCLE TESTING INC' TSR+++3' CAG+P+V' TDT++++3' DOC+730+++ACG+2278663' UNS+D' RFF+CN+JOYPACKAGES0001' GID++2:23+3:21' MSE+CGW+15:KG' NAD+CN+++JOHN DOE:ZIMP COMPANY+64 RUE ALEXANDRE DUMAS+PARIS++75+FR' CTA+IC+:JOHN DOE+06 01 02 03 04:AL' NAD+CO+++HOME DEPOT+54 ROUTE DE TREGUIER:BP 8+LOUANNEC++22+FR' DTM+DES+240322' NAD+FW+12345678900935:05++DBSCHENKER TESTING INC+LE BREHAT:ALLEE DES CHATELETS+PLOUFRAGAN++22440+FR' CAG+P+V+++++++++227004' TSR++D:E+3' TXT+DEL+TEL ?: 06 01 02 03 04 POUR PRENDRE UN RENDEZ VOUS DE LIVRAISON' GDS+G+DIVERS' PCI+23' GIN+BN+*2222121907222700470100691001300' DOC+WBL::JOYPACKAGES0001+++ACG+70100691+219072' DOC+824+++PRI+FRSBK830689437' UNS+S' UNT+26+1' UNZ+1+2206'
+    EDI;
+
     const EDI_PICKUP_SAMPLE = <<<EDI
     UNA:+.? ' UNB+UNOC:1+311799456:22+423810365:22+251127:1251+3045' UNH+1+PICKUP:3:2:GT:GTF310' BGM++251127+251127' NAD+MS+31179945601800:05++DBSCHENKER TESTING INC' DTM+BOD+251127' NAD+MR+42381036500068:05++COOPCYCLE TESTING INC' NAD+PW+++TEST+ZA DE LA PRADE:RTE DE NANTES+LOMENER++56+FR' DTM+EDD+251127' TSR+E02++3' CAG+P+V' GDS+G+PALETTE' TDT++++3' DOC+ACO+++ACG' UNS+D' RFF+CN+JOY560000410920251001' GID++1:23+1:21' MSE+CGW+100:KG' NAD+IC+31179945601800++SCHENKER FRANCE+PARC D ACTIVITES SUD LANDES+LOMENER++56270+FR' NAD+CN+++OE / TESTS5+64 RUE ALEXANDRE DUMAS+PARIS++75+FR' NAD+PP+++SCHENKER FRANCE / EXPLOITATION' CAG+P+V+++++++++560000' TSR+E02++3' DOC+WBL+++PRI+00000000+219066' DOC+824+++PRI+FRLRT503000000' UNS+S' UNT+25+1' UNZ+1+3045'
     EDI;
@@ -41,8 +49,26 @@ class SyncTransportersCommandTest extends KernelTestCase {
     UNA:+,? ' UNB+UNOC:1+123456789:22+987654321:22+240325:1951+2206' UNH+1+SCONTR:3:2:GT:GTF210+ACG' BGM++240325' NAD+FW+12345678900935:05++DBSCHENKER TESTING INC' DTM+DEP+240325' NAD+DP+98765432100010:05++COOPCYCLE TESTING INC' TSR+++3' CAG+P+V' TDT++++3' DOC+730+++ACG+2278663' UNS+D' RFF+CN+JOY0123456789' GID++1:23+1:21' MSE+CGW+15:KG' NAD+CN+++JOHN DOE:ZIMP COMPANY+INVALID ADDRESS+VOID CITY++00+FR' NAD+CO+++HOME DEPOT+54 ROUTE DE TREGUIER:BP 8+LOUANNEC++22+FR' DTM+DES+240322' NAD+FW+12345678900935:05++DBSCHENKER TESTING INC+LE BREHAT:ALLEE DES CHATELETS+PLOUFRAGAN++22440+FR' CAG+P+V+++++++++227004' TSR++D:E+3' GDS+G+DIVERS' PCI+23' GIN+BN+*2222121907222700470100691001300' DOC+WBL::JOY0123456789+++ACG+70100691+219072' DOC+824+++PRI+FRSBK830689437' UNS+S' UNT+26+1' UNZ+1+2206'
     EDI;
 
+    // Same as EDI_SAMPLE, but the UNB declares UNOC (ISO-8859-1) while the
+    // TXT+DEL comment actually carries UTF-8 "smart punctuation": en-dashes
+    // (U+2013 = bytes E2 80 93). The EDIFACT parser strips bytes 0x80-0x9F per
+    // the UNOC charset, which shreds those characters into a dangling 0xE2 lead
+    // byte — invalid UTF-8 that PostgreSQL rejects on INSERT. Reproduces the
+    // production crash in SyncTransportersCommand.
+    const EDI_BAD_ENCODING_SAMPLE = <<<EDI
+    UNA:+,? ' UNB+UNOC:1+123456789:22+987654321:22+240325:1951+2206' UNH+1+SCONTR:3:2:GT:GTF210+ACG' BGM++240325' NAD+FW+12345678900935:05++DBSCHENKER TESTING INC' DTM+DEP+240325' NAD+DP+98765432100010:05++COOPCYCLE TESTING INC' TSR+++3' CAG+P+V' TDT++++3' DOC+730+++ACG+2278663' UNS+D' RFF+CN+JOYBADENCODING01' GID++1:23+1:21' MSE+CGW+15:KG' NAD+CN+++JOHN DOE:ZIMP COMPANY+64 RUE ALEXANDRE DUMAS+PARIS++75+FR' CTA+IC+:JOHN DOE+06 01 02 03 04:AL' NAD+CO+++HOME DEPOT+54 ROUTE DE TREGUIER:BP 8+LOUANNEC++22+FR' DTM+DES+240322' NAD+FW+12345678900935:05++DBSCHENKER TESTING INC+LE BREHAT:ALLEE DES CHATELETS+PLOUFRAGAN++22440+FR' CAG+P+V+++++++++227004' TSR++D:E+3' TXT+DEL+HORAIRES 10?:00–19?:30 – RDV CONSEILLE' GDS+G+DIVERS' PCI+23' GIN+BN+*2222121907222700470100691001300' DOC+WBL::JOYBADENCODING01+++ACG+70100691+219072' DOC+824+++PRI+FRSBK830689437' UNS+S' UNT+26+1' UNZ+1+2206'
+    EDI;
+
     const EDI_DISPOR_SAMPLE = <<<EDI
     UNA:+,? ' UNB+UNOC:1+349669192:22+942803198:22+260602:1341+999901484802' UNH+1484802+DISPOR:3:2:GT:GTF110' BGM++1484802' TSR+++3' CAG+P+V' NAD+CO+40017751500048:05++ORLEANS LOG PC LA ROSEE' DTM+DEP+260602' NAD+FW+94280319800020:05++CYCLOGIK' GDS+G+.' TDT++++3' DOC+730+++ACG+78822' UNS+D' RFF+SEN+LACOURSERIETEST' GID++1:23' MSE+CGW+16,000:KG' NAD+CN+++TEST LA COURSERIE+64 RUE ALEXANDRE DUMAS+PARIS++75+FR' CTA++:TEST MTO+06 01 02 03 04:TE+mtor@tel.fr:TM' NAD+OS+++ORLEANS LOG PC LA ROSEE+7 ROUTE DE BOIGNY+SAINT JEAN DE BRAYE++45800+FR' CAG+P+V+++++LRC++++LRC' TSR+++3' TXT+DEL+TEST A SUPPRIMER' GDS+G+TEST' PCI+23' GIN+BN+*69069000000000LRC01699848001300' DOC+WBL+++PRI+1699848' DOC+150+++PRI+LACOURSERIETEST' UNS+S' UNT+27+1484802' UNZ+1+999901484802'
+    EDI;
+
+    const EDI_SAMPLE_WITH_DAD = <<<EDI
+    UNA:+,? ' UNB+UNOC:1+123456789:22+987654321:22+240325:1951+2206' UNH+1+SCONTR:3:2:GT:GTF210+ACG' BGM++240325' NAD+FW+12345678900935:05++DBSCHENKER TESTING INC' DTM+DEP+240325' NAD+DP+98765432100010:05++COOPCYCLE TESTING INC' TSR+++3' CAG+P+V' TDT++++3' DOC+730+++ACG+2278663' UNS+D' RFF+CN+JOYDAD0123456' GID++1:23+1:21' MSE+CGW+15:KG' NAD+CN+++JOHN DOE:ZIMP COMPANY+64 RUE ALEXANDRE DUMAS+PARIS++75+FR' CTA+IC+:JOHN DOE+06 01 02 03 04:AL' NAD+CO+++HOME DEPOT+54 ROUTE DE TREGUIER:BP 8+LOUANNEC++22+FR' DTM+DES+240322' DTM+DAD+270926' NAD+FW+12345678900935:05++DBSCHENKER TESTING INC+LE BREHAT:ALLEE DES CHATELETS+PLOUFRAGAN++22440+FR' CAG+P+V+++++++++227004' TSR++D:E+3' TXT+DEL+TEL ?: 06 01 02 03 04 POUR PRENDRE UN RENDEZ VOUS DE LIVRAISON' GDS+G+DIVERS' PCI+23' GIN+BN+*2222121907222700470100691001300' DOC+WBL::JOYDAD0123456+++ACG+70100691+219072' DOC+824+++PRI+FRSBK830689437' UNS+S' UNT+27+1' UNZ+1+2206'
+    EDI;
+
+    const EDI_DISPOR_SAMPLE_WITH_DAD = <<<EDI
+    UNA:+,? ' UNB+UNOC:1+349669192:22+942803198:22+260602:1341+999901484802' UNH+1484802+DISPOR:3:2:GT:GTF110' BGM++1484802' TSR+++3' CAG+P+V' NAD+CO+40017751500048:05++ORLEANS LOG PC LA ROSEE' DTM+DEP+260602' NAD+FW+94280319800020:05++CYCLOGIK' GDS+G+.' TDT++++3' DOC+730+++ACG+78822' UNS+D' RFF+SEN+LACOURSERIEDAD' GID++1:23' MSE+CGW+16,000:KG' NAD+CN+++TEST LA COURSERIE+64 RUE ALEXANDRE DUMAS+PARIS++75+FR' CTA++:TEST MTO+06 01 02 03 04:TE+mtor@tel.fr:TM' DTM+DAD+270926' NAD+OS+++ORLEANS LOG PC LA ROSEE+7 ROUTE DE BOIGNY+SAINT JEAN DE BRAYE++45800+FR' CAG+P+V+++++LRC++++LRC' TSR+++3' TXT+DEL+TEST A SUPPRIMER' GDS+G+TEST' PCI+23' GIN+BN+*69069000000000LRC01699848001300' DOC+WBL+++PRI+1699848' DOC+150+++PRI+LACOURSERIEDAD' UNS+S' UNT+27+1484802' UNZ+1+999901484802'
     EDI;
 
     const PARTIAL_REPORT_EDI_SAMPLE = <<<EDI
@@ -196,7 +222,8 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::getContainer()->get(ImportFromPoint::class),
             self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs,
-            $this->deliveryOrderManager
+            $this->deliveryOrderManager,
+            self::getContainer()->get(IriConverterInterface::class)
         );
     }
 
@@ -238,6 +265,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs,
             $this->deliveryOrderManager,
+            self::getContainer()->get(IriConverterInterface::class)
         );
 
         $this->expectException(\Exception::class);
@@ -282,6 +310,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs,
             $this->deliveryOrderManager,
+            self::getContainer()->get(IriConverterInterface::class)
         );
 
         $this->expectException(\Exception::class);
@@ -326,6 +355,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs,
             $this->deliveryOrderManager,
+            self::getContainer()->get(IriConverterInterface::class)
         );
 
         $this->expectException(\Exception::class);
@@ -370,6 +400,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs,
             $this->deliveryOrderManager,
+            self::getContainer()->get(IriConverterInterface::class)
         );
 
         $this->expectException(\Exception::class);
@@ -410,6 +441,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs,
             $this->deliveryOrderManager,
+            self::getContainer()->get(IriConverterInterface::class)
         );
 
         $this->expectException(\Exception::class);
@@ -513,6 +545,121 @@ class SyncTransportersCommandTest extends KernelTestCase {
 
     }
 
+
+    public function testUnocDeclaredButUtf8PayloadImportsWithoutCrashing(): void
+    {
+        // Regression for the production crash: a file that declares UNOC
+        // (ISO-8859-1) but carries UTF-8 en-dashes in its TXT comment. Before
+        // the fix, the mangled comment was invalid UTF-8 and PostgreSQL aborted
+        // the INSERT (and with it the whole sync).
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/badencoding.edi', self::FS_MASK_DBS),
+            self::EDI_BAD_ENCODING_SAMPLE
+        );
+
+        $command = $this->initCommand();
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'transporter' => 'DBSCHENKER'
+        ]);
+
+        $commandTester->assertCommandIsSuccessful();
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('imported 1 tasks', $output);
+
+        // A clean run acknowledges (deletes) the file.
+        $this->assertCount(
+            0,
+            $this->syncDBSchenkerFs->listContents(sprintf('to_%s', self::FS_MASK_DBS))->toArray()
+        );
+
+        $delivery = $this->entityManager->getRepository(Delivery::class)->findAll();
+        $this->assertCount(1, $delivery);
+
+        /** @var Delivery $delivery */
+        $delivery = array_shift($delivery);
+        /** @var Task $dropoff */
+        $dropoff = $delivery->getDropoff();
+
+        $comments = $dropoff->getComments();
+        // The stored comment is valid UTF-8 ...
+        $this->assertTrue(mb_check_encoding($comments, 'UTF-8'));
+        // ... the en-dash survived as a readable ASCII hyphen ...
+        $this->assertStringContainsString('10:00-19:30', $comments);
+        // ... and no dangling multi-byte artefact remains.
+        $this->assertStringNotContainsString("\xE2", $comments);
+    }
+
+    public function testOneUnparseableFileDoesNotAbortTheBatch(): void
+    {
+        // A valid file and an unparseable one are pulled together. The bad file
+        // must not prevent the good one from being imported.
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/valid.edi', self::FS_MASK_DBS),
+            self::EDI_SAMPLE
+        );
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/garbage.edi', self::FS_MASK_DBS),
+            'THIS IS NOT AN EDIFACT MESSAGE'
+        );
+
+        $command = $this->initCommand();
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'transporter' => 'DBSCHENKER'
+        ]);
+
+        // The batch completes despite the bad file ...
+        $commandTester->assertCommandIsSuccessful();
+        $output = $commandTester->getDisplay();
+        // ... the valid file was imported ...
+        $this->assertStringContainsString('imported 1 tasks', $output);
+        // ... and the failure is reported.
+        $this->assertStringContainsString('1 file(s) failed', $output);
+
+        // The valid delivery exists.
+        $this->assertCount(1, $this->entityManager->getRepository(Delivery::class)->findAll());
+
+        // Acknowledge is all-or-nothing: because a file failed, nothing is
+        // deleted so the good and bad files are both kept for a safe retry.
+        $this->assertCount(
+            2,
+            $this->syncDBSchenkerFs->listContents(sprintf('to_%s', self::FS_MASK_DBS))->toArray()
+        );
+    }
+
+    public function testReprocessingKeptFilesDoesNotDuplicate(): void
+    {
+        // First run: a valid file alongside a failing one keeps both files
+        // (all-or-nothing acknowledge).
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/valid.edi', self::FS_MASK_DBS),
+            self::EDI_SAMPLE
+        );
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/garbage.edi', self::FS_MASK_DBS),
+            'THIS IS NOT AN EDIFACT MESSAGE'
+        );
+
+        $command = $this->initCommand();
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'transporter' => 'DBSCHENKER'
+        ]);
+        $this->assertStringContainsString('imported 1 tasks', $commandTester->getDisplay());
+        $this->assertCount(1, $this->entityManager->getRepository(Delivery::class)->findAll());
+
+        // Second run over the same kept files: the valid task is recognised as
+        // already imported (dedup on reference) and skipped, so no duplicate
+        // delivery is created.
+        $commandTester->execute([
+            'transporter' => 'DBSCHENKER'
+        ]);
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('imported 0 tasks', $output);
+        $this->assertStringContainsString('1 already-imported', $output);
+        $this->assertCount(1, $this->entityManager->getRepository(Delivery::class)->findAll());
+    }
 
     public function testValidSyncOneTask(): void
     {
@@ -650,6 +797,21 @@ class SyncTransportersCommandTest extends KernelTestCase {
         );
         $this->assertNull($dropoffReportEDIMessage->getSyncedAt());
 
+        // LIV|CFM message starts with no PODs: nothing has attached PODs yet.
+        $this->assertEmpty($dropoffReportEDIMessage->getPods());
+
+        // Simulate the IncidentAction::createTransporterReport path: operator
+        // files a transporter report incident with POD URLs, which calls
+        // EDIFACTMessage::setPods() on the LIV|CFM message.
+        $dropoffReportEDIMessage->setPods(['https://urldetracking.com/monexpedition']);
+        $this->entityManager->flush();
+
+        // PODs are stored on the message and round-tripped through the DB.
+        $this->assertEquals(
+            ['https://urldetracking.com/monexpedition'],
+            $dropoffReportEDIMessage->getPods()
+        );
+
 
         $this->assertCount(0, $this->syncDBSchenkerFs->listContents(sprintf('from_%s', self::FS_MASK_DBS))->toArray());
         $this->assertCount(0, $this->syncOutBMVFs->listContents('/')->toArray());
@@ -682,6 +844,95 @@ class SyncTransportersCommandTest extends KernelTestCase {
             );
         }
 
+        // POD URL attached to the LIV|CFM report must be emitted as a COM segment
+        // in the EDIFACT file, following the COM+<url>:FT' format produced by
+        // EDI\Generator\Report::setPOD(). Note the `?:` escape: the URL
+        // contains a `:` (from `https://`) which the EDIFACT encoder prefixes
+        // with the release character `?` (default in UNA), yielding `https?://`.
+        $this->assertStringContainsString(
+            "COM+https?://urldetracking.com/monexpedition:FT'",
+            $reportContent
+        );
+
+        // After sync: reload the LIV|CFM message from DB and verify the
+        // post-sync state — syncedAt/edifactFile are populated, PODs persist
+        // (ReportFromCC::generateReport re-persists them).
+        $this->entityManager->refresh($dropoffReportEDIMessage);
+        $this->assertNotNull($dropoffReportEDIMessage->getSyncedAt());
+        $this->assertNotNull($dropoffReportEDIMessage->getEdiMessage());
+        $this->assertEquals(
+            ['https://urldetracking.com/monexpedition'],
+            $dropoffReportEDIMessage->getPods()
+        );
+
+    }
+
+    public function testValidSyncOneTaskWithPackages(): void
+    {
+        // Insert edi to sync
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/test.edi', self::FS_MASK_DBS),
+            self::EDI_PACKAGES_SAMPLE
+        );
+
+        // package_mapping maps the generic Transporter\Enum\ProductType
+        // (parsed from the GID segment's unit codes: 23 = HANDLING_UNIT,
+        // 21 = PACKAGE) to our own Package entities by IRI. IRIs are used
+        // rather than short codes because short codes are not unique.
+        $iriConverter = self::getContainer()->get(IriConverterInterface::class);
+        $packageRepository = $this->entityManager->getRepository(Package::class);
+        $xlIri = $iriConverter->getIriFromResource(
+            $packageRepository->findOneBy(['shortCode' => 'XL'])
+        );
+        $smIri = $iriConverter->getIriFromResource(
+            $packageRepository->findOneBy(['shortCode' => 'SM'])
+        );
+
+        $command = $this->buildCommandWithConfig([
+            'DBSCHENKER' => [
+                'enabled' => true,
+                'name' => 'DBSchenker test',
+                'legal_name' => 'DBSchenker Testing Inc.',
+                'legal_id' => '0000011',
+                'sync' => [
+                    'filemask' => self::FS_MASK_DBS,
+                    'uri' => $this->syncDBSchenkerFs,
+                ],
+                'package_mapping' => [
+                    'HANDLING_UNIT' => $xlIri,
+                    'PACKAGE' => $smIri,
+                ],
+            ],
+        ]);
+
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'transporter' => 'DBSCHENKER'
+        ]);
+
+        $commandTester->assertCommandIsSuccessful();
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('imported 1 tasks', $output);
+
+        $delivery = $this->entityManager->getRepository(Delivery::class)->findAll();
+        $this->assertCount(1, $delivery);
+
+        /** @var Delivery $delivery */
+        $delivery = array_shift($delivery);
+
+        /** @var Task $dropoff */
+        $dropoff = $delivery->getDropoff();
+
+        // GID++2:23+3:21' -> 2 handling units + 3 packages = 5 packages total,
+        // same number of packages as declared in the EDIFACT file.
+        $this->assertEquals(5, $dropoff->totalPackages());
+        $this->assertCount(2, $dropoff->getPackages());
+
+        $packageQuantities = [];
+        foreach ($dropoff->getPackages() as $taskPackage) {
+            $packageQuantities[$taskPackage->getPackage()->getShortCode()] = $taskPackage->getQuantity();
+        }
+        $this->assertEquals(['XL' => 2, 'SM' => 3], $packageQuantities);
     }
 
     public function testValidSyncOnePickupTask(): void
@@ -809,6 +1060,21 @@ class SyncTransportersCommandTest extends KernelTestCase {
         );
         $this->assertNull($dropoffReportEDIMessage->getSyncedAt());
 
+        // LIV|CFM message starts with no PODs: nothing has attached PODs yet.
+        $this->assertEmpty($dropoffReportEDIMessage->getPods());
+
+        // Simulate the IncidentAction::createTransporterReport path: operator
+        // files a transporter report incident with POD URLs, which calls
+        // EDIFACTMessage::setPods() on the LIV|CFM message.
+        $dropoffReportEDIMessage->setPods(['https://urldetracking.com/monexpedition']);
+        $this->entityManager->flush();
+
+        // PODs are stored on the message and round-tripped through the DB.
+        $this->assertEquals(
+            ['https://urldetracking.com/monexpedition'],
+            $dropoffReportEDIMessage->getPods()
+        );
+
 
         $this->assertCount(0, $this->syncDBSchenkerFs->listContents(sprintf('from_%s', self::FS_MASK_DBS))->toArray());
         $this->assertCount(0, $this->syncOutBMVFs->listContents('/')->toArray());
@@ -840,6 +1106,27 @@ class SyncTransportersCommandTest extends KernelTestCase {
                 $reportContent
             );
         }
+
+        // POD URL attached to the LIV|CFM report must be emitted as a COM segment
+        // in the EDIFACT file, following the COM+<url>:FT' format produced by
+        // EDI\Generator\Report::setPOD(). Note the `?:` escape: the URL
+        // contains a `:` (from `https://`) which the EDIFACT encoder prefixes
+        // with the release character `?` (default in UNA), yielding `https?://`.
+        $this->assertStringContainsString(
+            "COM+https?://urldetracking.com/monexpedition:FT'",
+            $reportContent
+        );
+
+        // After sync: reload the LIV|CFM message from DB and verify the
+        // post-sync state — syncedAt/edifactFile are populated, PODs persist
+        // (ReportFromCC::generateReport re-persists them).
+        $this->entityManager->refresh($dropoffReportEDIMessage);
+        $this->assertNotNull($dropoffReportEDIMessage->getSyncedAt());
+        $this->assertNotNull($dropoffReportEDIMessage->getEdiMessage());
+        $this->assertEquals(
+            ['https://urldetracking.com/monexpedition'],
+            $dropoffReportEDIMessage->getPods()
+        );
 
     }
 
@@ -1080,6 +1367,104 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->assertCount(0, $unsynced);
     }
 
+    public function testScontrTaskWithoutDadFallsBackToToday(): void
+    {
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/test.edi', self::FS_MASK_DBS),
+            self::EDI_SAMPLE
+        );
+
+        $command = $this->initCommand();
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(['transporter' => 'DBSCHENKER']);
+        $commandTester->assertCommandIsSuccessful();
+
+        /** @var Delivery $delivery */
+        $deliveries = $this->entityManager->getRepository(Delivery::class)->findAll();
+        $delivery = array_shift($deliveries);
+        $this->assertNotNull($delivery, 'A delivery should have been imported');
+
+        $pickup = $delivery->getPickup();
+        $dropoff = $delivery->getDropoff();
+
+        $today = new \DateTime('today');
+        $expectedAfter = (clone $today)->setTime(0, 0, 0, 0);
+        $expectedBefore = (clone $today)->setTime(23, 59, 59, 999999);
+
+        // The whole day is one window covering both pickup and dropoff.
+        $this->assertWindowEqualsDay($expectedAfter, $pickup->getAfter());
+        $this->assertWindowEqualsDay($expectedBefore, $pickup->getBefore());
+        $this->assertWindowEqualsDay($expectedAfter, $dropoff->getAfter());
+        $this->assertWindowEqualsDay($expectedBefore, $dropoff->getBefore());
+    }
+
+    public function testScontrTaskHonoursRequestedDeliveryDate(): void
+    {
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/test.edi', self::FS_MASK_DBS),
+            self::EDI_SAMPLE_WITH_DAD
+        );
+
+        $command = $this->initCommand();
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(['transporter' => 'DBSCHENKER']);
+        $commandTester->assertCommandIsSuccessful();
+
+        /** @var Delivery $delivery */
+        $deliveries = $this->entityManager->getRepository(Delivery::class)->findAll();
+        $delivery = array_shift($deliveries);
+        $this->assertNotNull($delivery, 'A delivery should have been imported');
+
+        $pickup = $delivery->getPickup();
+        $dropoff = $delivery->getDropoff();
+
+        $expectedAfter = new \DateTime('2027-09-26 00:00:00.000000');
+        $expectedBefore = new \DateTime('2027-09-26 23:59:59.999999');
+
+        $this->assertWindowEqualsDay($expectedAfter, $pickup->getAfter());
+        $this->assertWindowEqualsDay($expectedBefore, $pickup->getBefore());
+        $this->assertWindowEqualsDay($expectedAfter, $dropoff->getAfter());
+        $this->assertWindowEqualsDay($expectedBefore, $dropoff->getBefore());
+    }
+
+    public function testDisporTaskHonoursRequestedDeliveryDate(): void
+    {
+        $this->syncTaliaeFs->write(
+            sprintf('to_%s/test.edi', self::FS_MASK_TALIAE),
+            self::EDI_DISPOR_SAMPLE_WITH_DAD
+        );
+
+        $command = $this->initCommand();
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(['transporter' => 'TELIAE']);
+        $commandTester->assertCommandIsSuccessful();
+
+        /** @var Delivery $deliveries */
+        $deliveries = $this->entityManager->getRepository(Delivery::class)->findAll();
+        $delivery = array_shift($deliveries);
+        $this->assertNotNull($delivery, 'A delivery should have been imported');
+
+        $pickup = $delivery->getPickup();
+        $dropoff = $delivery->getDropoff();
+
+        $expectedAfter = new \DateTime('2027-09-26 00:00:00.000000');
+        $expectedBefore = new \DateTime('2027-09-26 23:59:59.999999');
+
+        $this->assertWindowEqualsDay($expectedAfter, $pickup->getAfter());
+        $this->assertWindowEqualsDay($expectedBefore, $pickup->getBefore());
+        $this->assertWindowEqualsDay($expectedAfter, $dropoff->getAfter());
+        $this->assertWindowEqualsDay($expectedBefore, $dropoff->getBefore());
+    }
+
+    private function assertWindowEqualsDay(\DateTime $expected, ?\DateTime $actual): void
+    {
+        $this->assertNotNull($actual, 'Window timestamp must not be null');
+        $this->assertSame(
+            $expected->format('Y-m-d H:i:s.u'),
+            $actual->format('Y-m-d H:i:s.u'),
+            sprintf('Expected %s, got %s', $expected->format('c'), $actual->format('c'))
+        );
+    }
 
     public function testParseSyncOptionsFtpDecodesUrlEncodedCredentials(): void
     {
@@ -1218,6 +1603,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs,
             $this->deliveryOrderManager,
+            self::getContainer()->get(IriConverterInterface::class)
         );
     }
 

@@ -71,6 +71,7 @@ const Order = ({
     isLoading: orderManualSupplementsIsLoading,
   } = useOrderManualSupplements({
     storeUri: storeNodeId,
+    enabled: isDispatcher,
   });
 
   const {

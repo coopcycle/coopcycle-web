@@ -3,6 +3,7 @@
 namespace AppBundle\Entity\Delivery;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class FailureReasonSet
 {
@@ -14,6 +15,7 @@ class FailureReasonSet
 
     private $name;
 
+    #[Assert\Valid]
     private $reasons;
 
     public function __construct()

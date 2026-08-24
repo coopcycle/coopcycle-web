@@ -6,6 +6,8 @@ import axios from 'axios'
 
 import NotificationList from './NotificationList'
 
+import './index.scss'
+
 const zeroStyle = {
   backgroundColor: 'transparent',
   color: 'inherit',
@@ -61,8 +63,8 @@ const Notifications = ({ initialNotifications, initialCount, centrifuge, namespa
     })
   }
 
-  const badgeProps = count === 0 ?
-    { style: theme === 'dark' ? zeroStyleDark : zeroStyle } : { style: { backgroundColor: '#52c41a' } }
+  const badgeStyle = count === 0 ?
+    (theme === 'dark' ? zeroStyleDark : zeroStyle) : { backgroundColor: '#52c41a' }
 
   return (
     <Popover
@@ -70,8 +72,10 @@ const Notifications = ({ initialNotifications, initialCount, centrifuge, namespa
       content={ <NotificationList onSeeAll={ onSeeAll } onRemove={ onRemove } onDeleteAll={ onDeleteAll } count={ count } notifications={ notifications } /> }
       title="Notifications"
       trigger="click">
-      <a href="#">
-        <Badge count={ count } showZero { ...badgeProps } title={ `${count} new notification(s)` } />
+      <a href="#" title={ `${count} new notification(s)` }>
+        <Badge count={ count } showZero size="small" offset={ [ -2, 2 ] } style={ badgeStyle }>
+          <i className="fa fa-bell" style={{ fontSize: '18px', color: 'inherit', verticalAlign: 'middle' }} aria-hidden="true" />
+        </Badge>
       </a>
     </Popover>
   )
@@ -87,7 +91,7 @@ function bootstrap(el, options) {
   const centrifuge = new Centrifuge(`${protocol}://${window.location.host}/centrifugo/connection/websocket`)
   centrifuge.setToken(options.token)
 
-  const theme = el.dataset.theme || 'light'
+  const theme = el.dataset.notificationTheme || 'light'
 
   axios.get(options.notificationsURL, { params: { format: 'json' } })
   .then(({ data: result }) => {

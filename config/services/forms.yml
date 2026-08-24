@@ -87,6 +87,8 @@ services:
       $debug: '%kernel.debug%'
       $cashOnDeliveryOptinEnabled: '%env(bool:CASH_ON_DELIVERY_OPTIN_ENABLED)%'
       $billingEnabled: '%billing_enabled%'
+      $zeltyEnabled: '%zelty_enabled%'
+      $rdcEnabled: '%env(bool:RDC_ENABLED)%'
     tags: [ form.type ]
 
   AppBundle\Form\StoreType:
@@ -96,6 +98,9 @@ services:
       $transportersConfig: '%transporters_config%'
       $billingEnabled: '%billing_enabled%'
       $standtrackEnabled: '%env(STANDTRACK_API_KEY)%'
+      $rdcConnections: '%rdc_connections%'
+      $rdcEnabled: '%env(bool:RDC_ENABLED)%'
+      $cykeEnabled: '%cyke_enabled%'
     tags: [ form.type ]
 
   AppBundle\Form\MenuEditor\TaxonProductType:

@@ -4,7 +4,6 @@ namespace AppBundle\Twig\Components\ShopCollection;
 
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Twig\Components\ShopCollection;
-use AppBundle\Utils\SortableRestaurantIterator;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
 #[AsTwigComponent(template: 'components/ShopCollection.html.twig')]
@@ -34,9 +33,7 @@ class Type extends ShopCollection
 
         $items = $typeRepository->findAllForType();
 
-        $iterator = new SortableRestaurantIterator($items, $this->timingRegistry);
-
-        return iterator_to_array($iterator);
+        return $this->sortShops($items);
     }
 
     protected function getCacheKeyParts(): array

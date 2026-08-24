@@ -13,6 +13,9 @@ class InvoiceLineItemGroupedByOrganization
     public readonly string $organizationLegalName;
 
     #[Groups(["default_invoice_line_item"])]
+    public readonly string $storeName;
+
+    #[Groups(["default_invoice_line_item"])]
     public readonly int $ordersCount;
 
     #[Groups(["default_invoice_line_item"])]
@@ -27,6 +30,7 @@ class InvoiceLineItemGroupedByOrganization
     public function __construct(
         int $storeId,
         string $organizationLegalName,
+        string $storeName,
         int $ordersCount,
         int $subTotal,
         int $tax,
@@ -35,6 +39,7 @@ class InvoiceLineItemGroupedByOrganization
     {
         $this->storeId = $storeId;
         $this->organizationLegalName = $organizationLegalName;
+        $this->storeName = $storeName;
         $this->ordersCount = $ordersCount;
         $this->subTotal = $subTotal;
         $this->tax = $tax;

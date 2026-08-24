@@ -1,5 +1,5 @@
 import React from 'react'
-import { getValuesRange, useProductOptions } from './useProductOptions'
+import { getValuesRange, isOptionQuantityMaxReached, useProductOptions } from './useProductOptions'
 import {
   DecrementQuantityButton,
   IncrementQuantityButton,
@@ -16,7 +16,7 @@ const OptionValueLabel = ({ option, optionValue }) => (
 
 export const OptionValue = ({ index, option, optionValue }) => {
 
-  const { setValueQuantity, containsOptionValues } = useProductOptions()
+  const { setValueQuantity, isDisabledByDependency } = useProductOptions()
 
   return (
     <div
@@ -26,7 +26,7 @@ export const OptionValue = ({ index, option, optionValue }) => {
           type="radio"
           name={`options[${index}][code]`}
           value={optionValue.identifier}
-          disabled={optionValue.dependsOn.length > 0 && !containsOptionValues(optionValue.dependsOn)}
+          disabled={isDisabledByDependency(optionValue)}
           onClick={() => {
             window._paq.push(['trackEvent', 'Checkout', 'selectOption'])
             setValueQuantity(option, optionValue, 1)
@@ -47,6 +47,7 @@ export const AdditionalOptionValue = ({
   const { getValueQuantity, setValueQuantity, incrementValueQuantity, decrementValueQuantity } = useProductOptions()
   const valuesRange = getValuesRange(option)
   const quantity = getValueQuantity(option, optionValue)
+  const maxReached = isOptionQuantityMaxReached(option)
 
   const inputProps = !valuesRange.isUpperInfinite ? { max: valuesRange.upper } : {}
 
@@ -79,8 +80,10 @@ export const AdditionalOptionValue = ({
         onChange={e => {
           setValueQuantity(option, optionValue, e.currentTarget.value)
         }}
+        disabled={ maxReached && quantity === 0 }
         {...inputProps} />
       <IncrementQuantityButton
+        disabled={ maxReached }
         onClick={ () => {
           incrementValueQuantity(option, optionValue)
         } } />

@@ -26,6 +26,7 @@ use AppBundle\Entity\Shopify\ShopifyShop;
 use AppBundle\Entity\Urbantz\Hub as UrbantzHub;
 use AppBundle\Fixtures\DatabasePurger;
 use AppBundle\Service\SettingsManager;
+use AppBundle\Service\Shift\CalendarFeed;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderNumberAssigner;
 use AppBundle\Entity\Sylius\Product;
@@ -80,6 +81,7 @@ use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Gesdinet\JWTRefreshTokenBundle\Entity\RefreshToken;
+use Tests\Integration\Zelty\TestZeltyTaxesMapper;
 use Typesense\Exceptions\ObjectNotFound;
 
 /**
@@ -187,7 +189,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
     {
         $this->fixturesLoader->load([
             __DIR__.'/../../fixtures/ORM/settings_mandatory.yml',
-            __DIR__.'/../../fixtures/ORM/sylius_channels.yml'
+            __DIR__.'/../../fixtures/ORM/sylius_channels.yml',
+            __DIR__.'/../../fixtures/ORM/shift_activities_mandatory.yml'
         ], $_SERVER, [], PurgeMode::createNoPurgeMode());
     }
 
@@ -231,6 +234,34 @@ class FeatureContext implements Context, SnippetAcceptingContext
                 print mb_substr($testResult->getException()->getTraceAsString(), 0, 250);
             }
         }
+    }
+
+    #[Given('the :filterName filter is disabled')]
+    public function theFilterIsDisabled(string $filterName): void
+    {
+        $this->entityManager->getFilters()->disable($filterName);
+    }
+
+    #[Given('the :filterName filter is enabled')]
+    public function theFilterIsEnabled(string $filterName): void
+    {
+        $this->entityManager->getFilters()->enable($filterName);
+    }
+
+    #[Given('there is a Zelty order with zelty id :zeltyId in state :state')]
+    public function thereIsAZeltyOrderInState(int $zeltyId, string $state): void
+    {
+        $restaurant = $this->doctrine->getRepository(LocalBusiness::class)
+            ->findOneBy(['zeltyApiKey' => 'test-zelty-api-key']);
+
+        $order = $this->getContainer()->get('sylius.factory.order')
+            ->createForRestaurant($restaurant);
+
+        $order->setState($state);
+        $order->setZeltyOrderId($zeltyId);
+
+        $this->entityManager->persist($order);
+        $this->entityManager->flush();
     }
 
     #[Given('the fixtures file :filename is loaded')]
@@ -552,6 +583,28 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
         $this->restContext->iAddHeaderEqualTo('Authorization', 'Bearer ' . $this->tokens[$username]);
         $this->restContext->iSendARequestToWithParameters($method, $url, $data);
+    }
+
+    #[When('the user :username requests their shift calendar feed')]
+    public function theUserRequestsTheirShiftCalendarFeed($username)
+    {
+        $user = $this->userManager->findUserByUsername($username);
+
+        $feedUrl = $this->getContainer()->get('test.service_container')
+            ->get(CalendarFeed::class)
+            ->getFeedUrl($user);
+
+        // The feed is fetched anonymously (calendar apps have no session)
+        $this->restContext->iSendARequestTo('GET', $feedUrl);
+    }
+
+    #[When('the user :username requests their shift calendar feed with an invalid token')]
+    public function theUserRequestsTheirShiftCalendarFeedWithAnInvalidToken($username)
+    {
+        $user = $this->userManager->findUserByUsername($username);
+
+        $this->restContext->iSendARequestTo('GET',
+            sprintf('/calendar/shifts/%d/%s/shifts.ics', $user->getId(), str_repeat('0', 64)));
     }
 
     #[When('the OAuth client :clientName sends a :method request to :url')]
@@ -1606,5 +1659,19 @@ class FeatureContext implements Context, SnippetAcceptingContext
                 "Task {$task->getId()} for Shopify order {$shopifyOrderId} is not cancelled."
             );
         }
+    }
+
+    #[BeforeScenario]
+    public function resetZeltyIntegration(): void
+    {
+        TestZeltyTaxesMapper::setStaticTaxCategoryMap([]);
+    }
+
+    #[Given('the Zelty taxes API will return:')]
+    public function theZeltyTaxesApiWillReturn(PyStringNode $string): void
+    {
+        // Use a non-empty sentinel so importTaxes() skips the real HTTP call.
+        // Products fall back to defaultTaxCategory; tests verify the HTTP response only.
+        TestZeltyTaxesMapper::setStaticTaxCategoryMap(['_loaded' => null]);
     }
 }

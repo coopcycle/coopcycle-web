@@ -1,12 +1,10 @@
 {% extends 'emails/layout.mjml.twig' %}
 
 {% block content %}
-<mj-column>
   <mj-text align="left" line-height="20px">
     {{ 'admin.send_invitation.body' | trans({}, 'emails') | raw }}
   </mj-text>
-  <mj-button font-family="Raleway, Arial, sans-serif" background-color="#10ac84" color="white" href="{{ url('invitation_define_password', {'code': invitation.code}) }}">
+  <mj-button href="{{ url('invitation_define_password', {'code': invitation.code}) }}" background-color="{{ coopcycle_theme_color('primary', '#10ac84') }}" color="{{ coopcycle_theme_color('primary-content', 'white') }}" font-family="Raleway, Arial, sans-serif">
   	{{ 'admin.send_invitation.create_password' | trans({}, 'emails') }}
   </mj-button>
-</mj-column>
 {% endblock %}

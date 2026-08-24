@@ -1,5 +1,7 @@
 import _ from 'lodash'
 import moment from 'moment'
+import { toast } from 'react-toastify'
+import i18next from 'i18next'
 
 import { taskComparator, isInDateRange, withoutItemsIRIs } from './utils'
 import {
@@ -9,14 +11,17 @@ import {
   createTaskListFailure
 } from '../../coopcycle-frontend-js/logistics/redux'
 import {
+  isTaskListRequestSuperseded,
   selectExpandedTaskListPanelsIds,
   selectNav,
   selectNextWorkingDay,
+  selectPendingTaskListRequests,
   selectSelectedTasks,
   selectTaskLists,
+  selectTimezone,
 } from './selectors';
 import { createAction } from '@reduxjs/toolkit'
-import { selectTaskById, selectTaskListByUsername, selectItemAssignedTo } from '../../../shared/src/logistics/redux/selectors'
+import { selectTaskById, selectTaskListByUsername, selectItemAssignedTo, selectTourById } from '../../../shared/src/logistics/redux/selectors'
 import { createClient } from '../utils/client'
 
 export const UPDATE_TASK = 'UPDATE_TASK'
@@ -24,6 +29,8 @@ export const OPEN_ADD_USER = 'OPEN_ADD_USER'
 export const CLOSE_ADD_USER = 'CLOSE_ADD_USER'
 export const MODIFY_TASK_LIST_REQUEST = 'MODIFY_TASK_LIST_REQUEST'
 export const MODIFY_TASK_LIST_REQUEST_SUCCESS = 'MODIFY_TASK_LIST_REQUEST_SUCCESS'
+export const MODIFY_TASK_LIST_REQUEST_FAILURE = 'MODIFY_TASK_LIST_REQUEST_FAILURE'
+export const MODIFY_TASK_LIST_REQUEST_DISCARDED = 'MODIFY_TASK_LIST_REQUEST_DISCARDED'
 export const TASK_LISTS_UPDATED = 'TASK_LISTS_UPDATED'
 export const TOGGLE_POLYLINE = 'TOGGLE_POLYLINE'
 export const TOGGLE_TASK = 'TOGGLE_TASK'
@@ -110,6 +117,9 @@ export const CLOSE_SEND_TO_WAREHOUSE_MODAL = 'CLOSE_SEND_TO_WAREHOUSE_MODAL'
 
 export const OPEN_TASK_RESCHEDULE_MODAL = 'OPEN_TASK_RESCHEDULE_MODAL'
 export const CLOSE_TASK_RESCHEDULE_MODAL = 'CLOSE_TASK_RESCHEDULE_MODAL'
+
+export const OPEN_MOVE_TO_DAY_MODAL = 'OPEN_MOVE_TO_DAY_MODAL'
+export const CLOSE_MOVE_TO_DAY_MODAL = 'CLOSE_MOVE_TO_DAY_MODAL'
 
 export const CREATE_TOUR_REQUEST = 'CREATE_TOUR_REQUEST'
 export const CREATE_TOUR_REQUEST_SUCCESS = 'CREATE_TOUR_REQUEST_SUCCESS'
@@ -221,16 +231,101 @@ export function closeAddUserModal() {
 }
 
 /**
- * @param {string} Username - Username of the rider to which we assign
- * @param {Array.string} items - Items to be assigned, list of tasks and tours URIs to be assigned
- * @param {Array.string} previousItems - Items to be assigned, list of tasks and tours URIs to be assigned
+ * Expand a list of task list items (tasks *and* tours IRIs) into the list of
+ * task IRIs it actually contains.
+ * @param {Object} state - Redux state
+ * @param {Array.string} items - Items IRIs (tasks and tours)
+ * @returns {Array.string} Task IRIs
  */
-export function modifyTaskListRequest(username, items, previousItems) {
-  return { type: MODIFY_TASK_LIST_REQUEST, username, items, previousItems }
+function taskListItemsToTaskIds(state, items) {
+  return (items || []).reduce((acc, item) => {
+    if (item.startsWith('/api/tours')) {
+      const tour = selectTourById(state, item)
+      if (tour) {
+        acc.push(...tour.items)
+      }
+    } else {
+      acc.push(item)
+    }
+    return acc
+  }, [])
 }
 
-export function modifyTaskListRequestSuccess(taskList) {
-  return { type: MODIFY_TASK_LIST_REQUEST_SUCCESS, taskList }
+/**
+ * The task list is updated optimistically, i.e. before the API confirms the change.
+ * We need to reflect the assignment on the tasks themselves as well, otherwise
+ * `task.isAssigned` & `task.assignedTo` stay stale until the WebSocket event arrives,
+ * and the tasks may be filtered out of the dashboard in the meantime.
+ * @param {Object} state - Redux state
+ * @param {Array.string} items - New items IRIs (tasks and tours)
+ * @param {Array.string} previousItems - Previous items IRIs (tasks and tours)
+ */
+function assignmentChangeSet(state, items, previousItems) {
+  const assignedTaskIds = taskListItemsToTaskIds(state, items)
+  const unassignedTaskIds = taskListItemsToTaskIds(state, previousItems)
+    .filter(taskId => !assignedTaskIds.includes(taskId))
+
+  return { assignedTaskIds, unassignedTaskIds }
+}
+
+/**
+ * Monotonic id, incremented for every task list modification we initiate. It lets us
+ * tell whether an API response (or a WebSocket event) still describes the most recent
+ * state we asked for, or whether it has been superseded in the meantime.
+ */
+let lastTaskListRequestId = 0
+
+export const nextTaskListRequestId = () => ++lastTaskListRequestId
+
+/**
+ * @param {string} username - Username of the rider to which we assign
+ * @param {Array.string} items - Items to be assigned, list of tasks and tours URIs to be assigned
+ * @param {Array.string} previousItems - Items to be assigned, list of tasks and tours URIs to be assigned
+ * @param {Object} options
+ * @param {Array.string} options.assignedTaskIds - Task IRIs now assigned to username
+ * @param {Array.string} options.unassignedTaskIds - Task IRIs no longer assigned to username
+ * @param {number} options.requestId - Id of this modification, @see nextTaskListRequestId
+ * @param {boolean} options.isApiRequest - Whether an API call is going to follow
+ */
+export function modifyTaskListRequest(username, items, previousItems, options = {}) {
+  const { assignedTaskIds = [], unassignedTaskIds = [], requestId = null, isApiRequest = false } = options
+
+  return {
+    type: MODIFY_TASK_LIST_REQUEST,
+    username, items, previousItems,
+    assignedTaskIds, unassignedTaskIds, requestId, isApiRequest,
+  }
+}
+
+export function modifyTaskListRequestSuccess(taskList, requestId = null) {
+  return { type: MODIFY_TASK_LIST_REQUEST_SUCCESS, taskList, username: taskList?.username, requestId }
+}
+
+/**
+ * The PUT failed: roll back the optimistic update, so that the dispatcher does not
+ * keep working on (and later persist) a task list the API never accepted.
+ * @param {string} username - Username of the rider
+ * @param {Array.string} items - Items IRIs to restore
+ * @param {Object} options
+ * @param {Array.string} options.assignedTaskIds - Task IRIs to mark as assigned to username again
+ * @param {Array.string} options.unassignedTaskIds - Task IRIs to mark as unassigned again
+ * @param {number} options.requestId - Id of the modification that failed
+ */
+export function modifyTaskListRequestFailure(username, items, options = {}) {
+  const { assignedTaskIds = [], unassignedTaskIds = [], requestId = null } = options
+
+  return { type: MODIFY_TASK_LIST_REQUEST_FAILURE, username, items, assignedTaskIds, unassignedTaskIds, requestId }
+}
+
+/**
+ * A newer modification of the same task list was initiated while this one was in
+ * flight: its outcome is obsolete, we only stop tracking it. Applying it would
+ * overwrite the more recent state the dispatcher is looking at.
+ * @param {string} username - Username of the rider
+ * @param {number} requestId - Id of the discarded modification
+ */
+export function modifyTaskListRequestDiscarded(username, requestId) {
+  return { type: MODIFY_TASK_LIST_REQUEST_DISCARDED, username, requestId }
 }
 
 export const setTaskListsLoading = createAction('SET_TASKLISTS_LOADING')
@@ -262,8 +357,11 @@ export function importError(token, message) {
  * PUT tasklist's items
  * @param {string} username - Username of the rider to which we assign
  * @param {Array.Objects} items - Items to be assigned, list of tasks and tours to be assigned
+ * @param {Array.Object} relatedChanges - Optimistic changes made to *other* task lists
+ *   as part of the same operation (typically tasks taken away from another rider).
+ *   They are undone as well if this request fails. @see removePreviouslyAssignedTasks
  */
-export function putTaskListItems(username, items) {
+export function putTaskListItems(username, items, relatedChanges = []) {
 
   return async function(dispatch, getState) {
 
@@ -275,7 +373,15 @@ export function putTaskListItems(username, items) {
     // support passing URIs directly - TODO uniformize behaviour
     const newItems = items.map((item) => item['@id'] || item)
 
-    dispatch(modifyTaskListRequest(username, newItems, previousItems))
+    const { assignedTaskIds, unassignedTaskIds } = assignmentChangeSet(state, newItems, previousItems)
+    const requestId = nextTaskListRequestId()
+
+    dispatch(modifyTaskListRequest(username, newItems, previousItems, {
+      assignedTaskIds,
+      unassignedTaskIds,
+      requestId,
+      isApiRequest: true,
+    }))
 
     const date = selectSelectedDate(state)
 
@@ -303,9 +409,44 @@ export function putTaskListItems(username, items) {
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error(error)
+
+      if (isTaskListRequestSuperseded(getState(), username, requestId)) {
+        // Rolling back to `previousItems` would also undo the modification that
+        // superseded this one, and that one may very well succeed.
+        dispatch(modifyTaskListRequestDiscarded(username, requestId))
+        toast.error(i18next.t('ADMIN_DASHBOARD_MODIFY_TASK_LIST_ERROR'))
+
+        return
+      }
+
+      // Roll back the optimistic update, otherwise the dispatcher keeps seeing an
+      // assignment the API refused, and the next drag'n'drop would PUT (and thus
+      // persist) that bogus task list.
+      dispatch(modifyTaskListRequestFailure(username, previousItems, {
+        assignedTaskIds: unassignedTaskIds,
+        unassignedTaskIds: assignedTaskIds,
+        requestId,
+      }))
+      // Then give back to the other riders the tasks we took away from them, otherwise
+      // those tasks would be left unassigned although nothing was ever persisted.
+      dispatch(restoreTaskLists(relatedChanges))
+      toast.error(i18next.t('ADMIN_DASHBOARD_MODIFY_TASK_LIST_ERROR'))
+
+      return
     }
 
-    dispatch(modifyTaskListRequestSuccess(response.data))
+    if (isTaskListRequestSuperseded(getState(), username, requestId)) {
+      // Responses may come back out of order; this one describes a state older than
+      // what the dispatcher is currently looking at, applying it would revert their
+      // latest drag'n'drop.
+      // eslint-disable-next-line no-console
+      console.debug(`Discarding outdated task list response for ${username}`)
+      dispatch(modifyTaskListRequestDiscarded(username, requestId))
+
+      return response.data
+    }
+
+    dispatch(modifyTaskListRequestSuccess(response.data, requestId))
     return response.data
   }
 }
@@ -401,8 +542,37 @@ export function togglePolyline(username) {
 }
 export const toggleTourPolyline = createAction('TOGGLE_TOUR_POLYLINE')
 
+/**
+ * A `v2:task_list:updated` event was received. These events are emitted for every
+ * change, ours included, and are delivered asynchronously: applying them blindly makes
+ * the task list revert to an older state under the dispatcher's eyes.
+ * @param {Object} taskList - TaskList as sent by the API
+ */
 export function taskListsUpdated(taskList) {
-  return { type: TASK_LISTS_UPDATED, taskList }
+
+  return function(dispatch, getState) {
+
+    const username = taskList.username
+
+    if (selectPendingTaskListRequests(getState(), username) > 0) {
+      // We are modifying this task list ourselves; the response of our own request is
+      // more recent than this event, and will be applied when it comes back.
+      // eslint-disable-next-line no-console
+      console.debug(`Discarding task list event for ${username}, a modification is in flight`)
+      return
+    }
+
+    const currentTaskList = selectTaskListByUsername(getState(), {username})
+
+    if (currentTaskList && currentTaskList.updatedAt && taskList.updatedAt
+      && moment(taskList.updatedAt).isBefore(currentTaskList.updatedAt)) {
+      // eslint-disable-next-line no-console
+      console.debug(`Discarding outdated task list event for ${username}`)
+      return
+    }
+
+    dispatch({ type: TASK_LISTS_UPDATED, taskList })
+  }
 }
 
 export function toggleTask(task, multiple = false) {
@@ -636,8 +806,9 @@ export function removeTask(task) {
 export function updateTask(task) {
   return function(dispatch, getState) {
     let date = selectSelectedDate(getState())
+    const timezone = selectTimezone(getState())
 
-    if (isInDateRange(task, date)) {
+    if (isInDateRange(task, date, timezone)) {
       dispatch(_updateTask(task))
     } else {
       dispatch(removeTask(task))
@@ -1151,6 +1322,89 @@ export function moveTasksToNextWorkingDay(tasks) {
   }
 }
 
+export function moveTasksToDay(tasks, day) {
+
+  return function(dispatch, getState) {
+
+    if (tasks.length === 0) {
+      return
+    }
+
+    const { jwt } = getState()
+
+    dispatch(createTaskRequest())
+
+    const httpClient = createClient(dispatch)
+
+    const dayProps = {
+      date:  moment(day).get('date'),
+      month: moment(day).get('month'),
+      year:  moment(day).get('year'),
+    }
+
+    const requests = tasks.map(task => {
+
+      return httpClient.request({
+        method: 'put',
+        url: task['@id'],
+        data: {
+          after: moment(task.after).set(dayProps).format(),
+          before: moment(task.before).set(dayProps).format(),
+        },
+        headers: {
+          'Authorization': `Bearer ${jwt}`,
+          'Accept': 'application/ld+json',
+          'Content-Type': 'application/ld+json'
+        }
+      })
+    })
+
+    Promise.all(requests)
+      .then(values => {
+        dispatch(createTaskSuccess())
+        values.forEach(response => dispatch(updateTask(response.data)))
+        dispatch(closeMoveToDayModal())
+      })
+      .catch(error => dispatch(cancelTaskFailure(error)))
+  }
+}
+
+export function moveTourToDay(tour, day) {
+
+  return function(dispatch, getState) {
+
+    const { jwt } = getState()
+
+    dispatch(toggleTourLoading(tour['@id']))
+
+    createClient(dispatch).request({
+      method: 'put',
+      url: tour['@id'],
+      data: {
+        name: tour.name,
+        date: moment(day).format('YYYY-MM-DD'),
+        tasks: tour.items,
+      },
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    })
+      .then(() => {
+        // The tour now belongs to another day, so it leaves the current view.
+        dispatch(deleteTourSuccess(tour['@id']))
+        dispatch(toggleTourLoading(tour['@id']))
+        dispatch(closeMoveToDayModal())
+      })
+      .catch(error => {
+        // eslint-disable-next-line no-console
+        console.error(error)
+        dispatch(toggleTourLoading(tour['@id']))
+      })
+  }
+}
+
 export function updateRightPanelSize(size) {
   return { type: size > 40 ? RIGHT_PANEL_MORE_THAN_HALF : RIGHT_PANEL_LESS_THAN_HALF }
 }
@@ -1565,6 +1819,14 @@ export function closeTaskRescheduleModal() {
   return { type: CLOSE_TASK_RESCHEDULE_MODAL }
 }
 
+export function openMoveToDayModal(tour = null) {
+  return { type: OPEN_MOVE_TO_DAY_MODAL, tour }
+}
+
+export function closeMoveToDayModal() {
+  return { type: CLOSE_MOVE_TO_DAY_MODAL }
+}
+
 export function openSendToWarehouseModal() {
   return { type: OPEN_SEND_TO_WAREHOUSE_MODAL }
 }
@@ -1577,14 +1839,13 @@ export function sendToWarehouse(tasks, warehouse) {
   return function(dispatch, getState) {
     const { jwt } = getState()
 
-    const pickup  = tasks.find(t => t.type === 'PICKUP')
-    const dropoff = tasks.find(t => t.type === 'DROPOFF')
-
+    // The backend resolves the linked pickup/dropoff pair from whatever tasks we send,
+    // so a single selected task (a pickup or a dropoff) is enough.
     createClient(dispatch).request({
       method: 'post',
       url: `${warehouse['@id']}/relay`,
       data: {
-        tasks: [pickup['@id'], dropoff['@id']],
+        tasks: tasks.map(t => t['@id']),
       },
       headers: {
         'Authorization': `Bearer ${jwt}`,
@@ -1593,11 +1854,9 @@ export function sendToWarehouse(tasks, warehouse) {
       }
     })
       .then((response) => {
-        dispatch(updateTask(response.data.hubDropoff))
-        dispatch(updateTask(response.data.hubPickup))
-        // The backend updated dropoff.previous → hubPickup. Mirror that in the store
-        // so groupLinkedTasks can colour all four tasks consistently right away.
-        dispatch(updateTask({ ...dropoff, previous: response.data.hubPickup['@id'] }))
+        // The response contains both the original tasks (whose previous-chain changed)
+        // and the tasks created by the relay operation.
+        response.data.tasks.forEach(task => dispatch(updateTask(task)))
         dispatch(closeSendToWarehouseModal())
       })
       .catch(() => {
@@ -1875,6 +2134,7 @@ export function loadWarehouses() {
  * Removes tasks from task list belonging to username
  * @param {Array.Object} items - Items (tasks) to be removed
  * @param {string} username - Username of the rider
+ * @returns {?Object} What is needed to undo this change, @see restoreTaskLists
  */
 export function removeTasksFromTaskList(items, username) {
 
@@ -1885,13 +2145,63 @@ export function removeTasksFromTaskList(items, username) {
   return function(dispatch, getState) {
 
     if (items.length === 0) {
-      return
+      return null
     }
 
-    const taskList = selectTaskListByUsername(getState(), {username: username}),
+    const state = getState()
+    const taskList = selectTaskListByUsername(state, {username: username}),
       toRemove = items.map(i => i['@id'])
 
-    dispatch(modifyTaskListRequest(username, withoutItemsIRIs(taskList.items, toRemove)))
+    const newItems = withoutItemsIRIs(taskList.items, toRemove)
+    const { assignedTaskIds, unassignedTaskIds } = assignmentChangeSet(state, newItems, taskList.items)
+    const requestId = nextTaskListRequestId()
+
+    // No API call here (the PUT on the *other* task list takes care of it), but this
+    // still supersedes any modification of this task list that is currently in flight
+    dispatch(modifyTaskListRequest(username, newItems, taskList.items, {
+      assignedTaskIds,
+      unassignedTaskIds,
+      requestId,
+    }))
+
+    return {
+      username,
+      requestId,
+      items: taskList.items,
+      // the tasks we just removed were assigned to `username`
+      taskIds: unassignedTaskIds,
+    }
+  }
+}
+
+/**
+ * Undo the optimistic changes described by `snapshots`, typically because the API call
+ * they were paving the way for has failed. A rider whose task list has been modified
+ * again since is skipped: their current state is more recent than the snapshot.
+ * @param {Array.Object} snapshots - As returned by removeTasksFromTaskList()
+ */
+export function restoreTaskLists(snapshots) {
+
+  return function(dispatch, getState) {
+
+    snapshots.filter(Boolean).forEach(snapshot => {
+
+      const { username, requestId, items, taskIds } = snapshot
+
+      if (isTaskListRequestSuperseded(getState(), username, requestId)) {
+        // eslint-disable-next-line no-console
+        console.debug(`Not restoring the task list of ${username}, it has been modified since`)
+        return
+      }
+
+      const currentItems = selectTaskListByUsername(getState(), {username})?.items ?? []
+
+      // restoring is just another local modification, hence a new request id
+      dispatch(modifyTaskListRequest(username, items, currentItems, {
+        assignedTaskIds: taskIds,
+        requestId: nextTaskListRequestId(),
+      }))
+    })
   }
 }
 
@@ -1899,6 +2209,7 @@ export function removeTasksFromTaskList(items, username) {
  * Removes previously assigned tasks to others than username from the state
  * @param {string} username - Username of the rider
  * @param {Array.Object} items - Items (tasks) to be removed
+ * @returns {Array.Object} What is needed to undo these changes, @see restoreTaskLists
  */
 export function removePreviouslyAssignedTasks(username, items) {
 
@@ -1909,7 +2220,7 @@ export function removePreviouslyAssignedTasks(username, items) {
   return function(dispatch, getState) {
 
     if (items.length === 0) {
-      return
+      return []
     }
 
     const previouslyAssignedTo = items.reduce(
@@ -1928,9 +2239,9 @@ export function removePreviouslyAssignedTasks(username, items) {
       (v) => v.map(u => u.task)
     );
 
-    _.forEach(grouped, (tasks, username) => {
-      dispatch(removeTasksFromTaskList(tasks, username));
-    })
+    return _.map(grouped, (tasks, username) =>
+      dispatch(removeTasksFromTaskList(tasks, username))
+    ).filter(Boolean)
   }
 }
 

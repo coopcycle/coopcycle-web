@@ -1,11 +1,10 @@
 {% extends 'emails/layout.mjml.twig' %}
 
 {% block content %}
-<mj-column>
   <mj-text align="left" line-height="20px">
   {{ 'owner.order.created.body' | trans({
-    '%order.url%': url('dashboard_restaurant_dashboard', { restaurantId: restaurant.id, order: order|get_iri_from_item }),
-    '%restaurant.name%': restaurant.name
+    '{{order_url}}': url('dashboard_restaurant_dashboard', { restaurantId: restaurant.id, order: order|get_iri_from_item }),
+    '{{restaurant_name}}': restaurant.name
   }, 'emails') | raw }}
   </mj-text>
   <mj-spacer container-background-color="#ecedee" height="1px" />
@@ -24,10 +23,12 @@
     {{ 'order.preparation_expected_for'|trans({ '%date%': order.pickupExpectedAt|format_datetime('short', 'short') }) }}
   </mj-text>
   <mj-spacer container-background-color="#ecedee" height="1px" />
-  {% include 'emails/order/_partials/items.mjml.twig' %}
-  <mj-button font-family="Raleway, Arial, sans-serif" background-color="#10ac84" color="white"
-    href="{{ url('dashboard_restaurant_dashboard', { restaurantId: restaurant.id, order: order|get_iri_from_item }) }}">
+  <mj-raw data-slot="order_items"></mj-raw>
+  <mj-button
+    href="{{ url('dashboard_restaurant_dashboard', { restaurantId: restaurant.id, order: order|get_iri_from_item }) }}"
+    background-color="{{ coopcycle_theme_color('primary', '#10ac84') }}"
+    color="{{ coopcycle_theme_color('primary-content', 'white') }}"
+    font-family="Raleway, Arial, sans-serif">
   {{ 'order.view' | trans({}, 'emails') }}
   </mj-button>
-</mj-column>
 {% endblock %}

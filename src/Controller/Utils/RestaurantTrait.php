@@ -39,6 +39,7 @@ use AppBundle\Form\RestaurantType;
 use AppBundle\Form\ReusablePackagingChoiceLoader;
 use AppBundle\Form\Sylius\Promotion\RestaurantPromotionType;
 use AppBundle\Form\Type\ProductTaxCategoryChoiceType;
+use AppBundle\Integration\Zelty\ZeltyCatalogPullService;
 use AppBundle\LoopEat\Client as LoopeatClient;
 use AppBundle\Message\CopyProducts;
 use AppBundle\Pixabay\Client as PixabayClient;
@@ -79,6 +80,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Contracts\HttpClient\Exception\ExceptionInterface as HttpClientExceptionInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -280,7 +282,7 @@ trait RestaurantTrait
 
         });
 
-        return $this->render($request->attributes->get('template'), $this->withRoutes([
+        return $this->render($request->attributes->get('template'), $this->auth($this->withRoutes([
             'restaurant' => $restaurant,
             'activationErrors' => $activationErrors,
             'formErrors' => $formErrors,
@@ -288,7 +290,7 @@ trait RestaurantTrait
             'layout' => $request->attributes->get('layout'),
             'loopeat_authorize_url' => $loopeatAuthorizeUrl,
             'cuisines' => $this->normalizer->normalize($cuisines, 'json', ['groups' => ['restaurant']]),
-        ], $routes));
+        ], $routes)));
     }
 
     public function restaurantAction($id, Request $request,
@@ -432,6 +434,60 @@ trait RestaurantTrait
             'restaurant' => $restaurant,
             'form' => $form->createView(),
         ], $routes)));
+    }
+
+    public function restaurantZeltyCatalogsAction($id, ZeltyCatalogPullService $catalogPullService)
+    {
+        $restaurant = $this->entityManager
+            ->getRepository(LocalBusiness::class)
+            ->find($id);
+
+        if ($restaurant === null) {
+            return new JsonResponse(['error' => 'Restaurant not found'], 404);
+        }
+
+        $this->accessControl($restaurant);
+
+        if (!$restaurant->hasZeltyApiKey()) {
+            return new JsonResponse(['error' => 'No Zelty API key configured'], 400);
+        }
+
+        try {
+            $catalogs = $catalogPullService->listCatalogs($restaurant);
+        } catch (HttpClientExceptionInterface $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 502);
+        }
+
+        return new JsonResponse(array_values(array_map(fn(array $c) => [
+            'id'          => $c['id'],
+            'name'        => $c['name'] ?? $c['id'],
+            'description' => $c['description'] ?? null,
+        ], $catalogs)));
+    }
+
+    public function pullRestaurantZeltyCatalogAction($id, $catalogId, ZeltyCatalogPullService $catalogPullService)
+    {
+        $restaurant = $this->entityManager
+            ->getRepository(LocalBusiness::class)
+            ->find($id);
+
+        if ($restaurant === null) {
+            return new JsonResponse(['error' => 'Restaurant not found'], 404);
+        }
+
+        $this->accessControl($restaurant);
+
+        if (!$restaurant->hasZeltyApiKey()) {
+            return new JsonResponse(['error' => 'No Zelty API key configured'], 400);
+        }
+
+        try {
+            $catalogPullService->pull($restaurant, $catalogId);
+        } catch (HttpClientExceptionInterface $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 502);
+        }
+
+        return new JsonResponse(['status' => 'queued'], 202);
     }
 
     public function activateRestaurantMenuTaxonAction($restaurantId, $menuId, Request $request,

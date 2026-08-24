@@ -9,6 +9,7 @@ default:
         - Behatch\Context\RestContext
         - Tests\Behat\JsonContext:
             httpCallResultPool: '@behatch.http_call.result_pool'
+        - BehatOrmContext\Context\ORMContext
   extensions:
     FriendsOfBehat\SymfonyExtension:
       kernel:

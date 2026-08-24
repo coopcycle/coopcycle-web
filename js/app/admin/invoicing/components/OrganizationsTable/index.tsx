@@ -14,6 +14,9 @@ type OrganizationRow = {
   rowKey: string;
   storeId: string;
   name: string;
+  // Raw store name, shown as muted subtext when it differs from the
+  // displayed name (i.e. when a distinct legalName is set)
+  storeName: string | null;
   subTotal: string;
   tax: string;
   total: string;
@@ -73,6 +76,10 @@ export default function OrganizationsTable({
           rowKey: item.storeId.toString(),
           storeId: item.storeId.toString(),
           name: `${item.organizationLegalName} (${item.ordersCount})`,
+          storeName:
+            item.storeName !== item.organizationLegalName
+              ? item.storeName
+              : null,
           subTotal: money(item.subTotal),
           tax: money(item.tax),
           total: money(item.total),
@@ -87,6 +94,14 @@ export default function OrganizationsTable({
       title: t('ADMIN_ORDERS_TO_INVOICE_ORGANIZATION_LABEL'),
       dataIndex: 'name',
       key: 'name',
+      render: (name: string, record: OrganizationRow) => (
+        <div>
+          <div>{name}</div>
+          {record.storeName && (
+            <small className="text-muted">{record.storeName}</small>
+          )}
+        </div>
+      ),
     },
     {
       title: t('ADMIN_ORDERS_TO_INVOICE_SUB_TOTAL_LABEL'),

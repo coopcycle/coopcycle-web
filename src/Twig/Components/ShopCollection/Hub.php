@@ -4,7 +4,6 @@ namespace AppBundle\Twig\Components\ShopCollection;
 
 use AppBundle\Entity\Hub as HubEntity;
 use AppBundle\Twig\Components\ShopCollection;
-use AppBundle\Utils\SortableRestaurantIterator;
 use Cocur\Slugify\SlugifyInterface;
 use Symfony\Contracts\Service\Attribute\Required;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
@@ -37,8 +36,8 @@ class Hub extends ShopCollection
 
     protected function doGetShops(): array
     {
-        $iterator = new SortableRestaurantIterator($this->hub->getRestaurants(), $this->timingRegistry);
+        $shops = $this->sortShops(iterator_to_array($this->hub->getRestaurants()));
 
-        return array_slice(iterator_to_array($iterator), 0, 15);
+        return array_slice($shops, 0, 15);
     }
 }

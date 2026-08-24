@@ -18,6 +18,8 @@ adminDashboard.tooltip.deliveries: Manage deliveries
 adminDashboard.tooltip.stores: Manage stores
 adminDashboard.tooltip.restaurants: Manage restaurants
 adminDashboard.tooltip.users: Manage user accounts
+adminDashboard.tooltip.shifts: Manage shift planning
+adminDashboard.shifts.title: Shifts
 adminDashboard.tooltip.organizations: Organization management
 adminDashboard.dashboard.title: Dashboard
 adminDashboard.dashboard.import: Import
@@ -255,6 +257,11 @@ restaurant.contract.takeAwayFeeRate.help: This percentage will be retained by th
   platform on the total of the products
 restaurant.menus.noMenus: You have not created any menu for the moment.
 restaurant.menus.activate: Activate
+restaurant.menus.preview: Preview
+restaurant.menu_preview.title: 'Preview mode'
+restaurant.menu_preview.help: 'You are viewing the menu « %menu% », which is not the
+  active one. Customers still see the active menu.'
+restaurant.menu_preview.exit: Back to the active menu
 restaurant.menus.activated: The menu « %menu_name% » has been activated. It will now
   be displayed on the restaurant page
 restaurant.closingForm.title: Add a temporary closure
@@ -294,6 +301,7 @@ profile.myRestaurants: My restaurants
 profile.myRestaurants.noRestaurants: You don't have any restaurants yet
 profile.myAccount: My account
 profile.myTracking: My tracking
+profile.myShifts: My shifts
 profile.myOrders: My orders
 profile.myAddresses: My addresses
 profile.myPersonalInfo: My personal information
@@ -690,6 +698,10 @@ form.menu_taxon.add_child.label: Add category
 form.menu_taxon.child_name.placeholder: "Example: main courses, desserts…\n"
 form.menu_editor.products_panel.title: Products
 form.menu_editor.save.label: Save Changes
+form.menu_editor.zelty.help: 'This menu is imported from Zelty. Sections and products
+  are managed in Zelty, so they cannot be edited here — the next import would overwrite
+  the changes. You can still reorder the sections: that order is only used for the
+  display on CoopCycle.'
 form.menu_editor.help: "Use the editor below to compose the menu items\n<br>\nDrag\
   \ and drop the products into the sections on the left\n<br>\nIf you want to remove\
   \ a product from the menu, drop it in the « Products » section on the right\n<br>\n\
@@ -764,6 +776,7 @@ form.checkout_address.reusable_packaging.loopeat.website: website %name%
 form.checkout_address.reusable_packaging.loopeat.how_it_works: How it works?
 form.checkout_address.reusable_packaging.loopeat.enable_zero_waste: Activate the zero waste option to benefit from a reusable box service for your order
 form.checkout_address.reusable_packaging.loopeat.connect: Please create or connect your %name% account to %brand_name% to settle your deposit, or disable the zero waste option.
+form.checkout_address.reusable_packaging.loopeat.connect_mandatory: Please create or connect your %name% account to %brand_name% to settle your deposit.
 form.checkout_address.reusable_packaging.loopeat.connect_account: Connect to %name%
 form.checkout_address.reusable_packaging.loopeat.add_credits: Add credits to my wallet
 form.checkout_address.reusable_packaging.loopeat.manage_deposit: Manage my deposit
@@ -937,6 +950,8 @@ basics.powered_by: Powered by <a href="https://coopcycle.org">CoopCycle</a>
 basics.add: Add
 basics.edit: Edit
 basics.editing: Editing
+basics.pause: Pause
+basics.resume: Resume
 basics.delete: Delete
 basics.cancel: Cancel
 basics.clone: Clone
@@ -992,6 +1007,7 @@ delivery.table.heading.summary: Summary
 delivery.table.heading.courier: Courier
 delivery.table.heading.order: Order
 delivery.table.heading.owner: Owner
+delivery.barcodes.show: View barcodes
 search.users: Search a user…
 search.orders: Search an order (number, customer email…)
 allergens.CEREALS_CONTAINING_GLUTEN: Cereals containing gluten
@@ -1279,6 +1295,18 @@ notifications.tap_to_open: Tap to open
 notifications.delivery_created: A delivery to be picked up %date% has been created
 notifications.tasks_changed: Tasks for %date% changed!
 notifications.tasks_changed_today: Your tasks for today have been updated
+notifications.shifts.assigned: You have been assigned a shift on %date%
+notifications.shifts.week_assigned: Your shifts for the week of %date% have been published
+notifications.shifts.waitlist_promoted: A spot opened up — you are now assigned to a shift on %date%
+shifts.calendar.break: 'Break: %minutes% min'
+payroll.export.username: Username
+payroll.export.name: Name
+payroll.export.planned_hours: Planned hours
+payroll.export.worked_hours: Worked hours
+payroll.export.overtime_hours: Overtime hours
+payroll.export.holiday_days: Holiday days
+notifications.holiday_request.approved: Your holiday request from %start% to %end% has been approved
+notifications.holiday_request.rejected: Your holiday request from %start% to %end% has been rejected
 notifications.restaurant.new_order: New order to accept
 notifications.restaurant.accepted_order: New order
 notifications.messenger_approaching: Hey %customer%! Our messenger %messenger% is
@@ -1394,6 +1422,18 @@ localBusiness.form.business_address.help: This address will be used in receipts
 form.local_business.mercadopago.connected: Connected
 restaurant.form.section.en_boite_le_plat: En Boîte Le Plat
 restaurant.form.en_boite_le_plat_enabled.label: Enable En Boîte Le Plat deposit-refund system
+restaurant.form.zelty_api_key: Zelty API key
+restaurant.form.zelty_api_key.help: 'Activate the CoopCycle app on the <a href="https://bo.zelty.fr/marketplace/coopcycle/status" target="_blank">Zelty Marketplace</a> to obtain your API key.'
+restaurant.form.zelty_delivery_fee_dish: Delivery fee dish
+restaurant.form.zelty_api_log: API log
+restaurant.form.zelty.no_catalog: 'Zelty is connected. Next step: import a catalog,
+  either by pulling one from Zelty or by asking the restaurant to push it from their
+  Zelty back-office.'
+restaurant.form.zelty.catalog_not_active: 'The catalog imported from Zelty (« %menu%
+  ») is not the menu currently shown to customers. As long as another menu is active,
+  orders are not sent to Zelty.'
+restaurant.form.zelty.go_to_catalogs: Go to catalogs
+restaurant.form.zelty_delivery_fee_dish.placeholder: 'None (delivery fee not sent to Zelty)'
 form.checkout_address.reusable_packaging_en_boite_le_plat_enabled.label: 'I want <a href="%url%" target="_blank">En Boîte Le Plat</a> reusable containers.'
 order.cart.donation: Donation
 order.cart.donation.disclaimer: We offer you to donate %percentage% of the revenue from your order to one of our partner associations. You will not pay more.
@@ -1474,6 +1514,7 @@ delivery.failure_reason:
     closed_store: "Closed Store"
     address_review_needed: "Address Review Needed"
     not_at_home: "Customer not at home"
+    price_review_needed: "Price Review Needed"
   transporter:
     state:
       aar: "À quai"
@@ -1655,6 +1696,20 @@ organizations.new: New organization
 loopeat.incident.unexpected_returns: Unexpected number of zero waste returns
 form.local_business.iso_code.fr.siret.help: Find the SIRET number on <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">l'Annuaire des Entreprises</a>
 form.store.urbantz_hub_id: Urbantz Hub Id
+form.store.cyke_user_email: Cyke user email
+form.store.cyke_user_token: Cyke API token
+form.store.cyke_webhook_url.label: Cyke webhook URL
+form.store.cyke_webhook_url.help: The URL to use when creating the webhook in your Cyke account (Account > Manage my company > Webhooks)
+form.store.cyke_webhook_secret.label: Cyke webhook secret
+form.store.cyke_webhook_secret.help: Automatically generated. Copy it and paste it as the secret when creating the webhook above in your Cyke account
+form.store.cyke_package_type_id.label: Package type
+form.store.cyke_package_type_id.help: The package type sent to Cyke for every delivery created from this store
+form.store.cyke_package_type_id.placeholder: Select a package type
+form.store.cyke_time_slot.label: Delivery opening hours
+form.store.cyke_time_slot.help: 'The opening hours used to schedule deliveries sent to Cyke, in schema.org format (e.g. "Mo-Fr 09:00-18:00, Sa 09:00-16:00"). They must match the opening hours configured in your Cyke account, so deliveries are never scheduled outside them.'
+form.store.cyke_time_slot.placeholder: 'Mo-Fr 09:00-18:00, Sa 09:00-16:00'
+form.store.cyke_time_slot.invalid: 'This value should match the schema.org opening hours format, e.g. "Mo-Fr 09:00-18:00, Sa 09:00-16:00"'
+store.form.section.cyke: Cyke
 form.payment.edenred.refund_amount.help: Edenred does not support partial refunds.
 restaurant.form.use_paygreen.label: Use Paygreen for this shop
 restaurant.meal_vouchers_transactions.emitter: Emitter
@@ -1757,6 +1812,37 @@ form.theme.secondary-content.label: Font color
 pagination.items_per_page: Items per page
 restaurant.form.en_boite_le_plat_platform_fee.label: The deposit should be collected by the platform
 
+# Email editor
+customize.emails: Customize emails
+customize.email_editor.email_type.order_created: Order Confirmed (Customer)
+customize.email_editor.email_type.order_accepted_foodtech_delivery: Order Accepted – Delivery
+customize.email_editor.email_type.order_accepted_foodtech_collection: Order Accepted – Collection
+customize.email_editor.email_type.order_accepted_lastmile: Order Accepted (Last Mile)
+customize.email_editor.email_type.order_cancelled: Order Cancelled
+customize.email_editor.email_type.order_delayed: Order Delayed
+customize.email_editor.email_type.order_payment: Payment Confirmation
+customize.email_editor.email_type.order_receipt: Order Receipt
+customize.email_editor.email_type.task_dropoff_completed: Dropoff Completed
+customize.email_editor.email_type.task_pickup_completed: Pickup Completed
+customize.email_editor.email_type.task_dropoff_failed: Dropoff Failed
+customize.email_editor.email_type.task_pickup_failed: Pickup Failed
+customize.email_editor.email_type.resetting: Password Reset
+customize.email_editor.email_type.registration: Registration Confirmation
+customize.email_editor.save: Save
+customize.email_editor.reset: Reset to default
+customize.email_editor.status.default: Showing default template — save to customise
+customize.email_editor.status.custom: Showing custom template
+customize.email_editor.variables: Available variables
+customize.email_editor.layout: Layout
+customize.email_editor.folder.foodtech: Foodtech
+customize.email_editor.folder.lastmile: Last Mile
+customize.email_editor.folder.account: Account
+customize.email_editor.send_test: Send test
+customize.email_editor.send_test_title: Send test email
+customize.email_editor.send_test_description: "Enter an address to receive a preview of this template with sample data."
+customize.email_editor.send_test_send: Send
+customize.email_editor.send_test_cancel: Cancel
+customize.email_editor.send_test_success: Test email sent!
 two_factor.title: Two-factor authentication
 two_factor.subtitle: "A verification code has been sent to your email address. Please enter it below."
 two_factor.code.label: Verification code
@@ -1837,3 +1923,22 @@ checkout.recommendations.dialog.explanation: We analyse which products are frequ
 checkout.recommendations.dialog.github: See the source code on GitHub →
 checkout.recommendations.dialog.close: Close
 rfm.order_history: Order history
+customize.email_alert: New! Customize emails
+hr.tab.title: HR
+hr.contractStartDate: Contract start date
+hr.dateOfBirth: Date of birth
+hr.address.street: Street
+hr.address.postalCode: Postal code
+hr.address.locality: City
+hr.address.country: Country
+hr.salaryType: Salary type
+hr.salaryType.hourly: Hourly
+hr.salaryType.monthly: Monthly
+hr.salaryAmount: Gross salary amount
+hr.weeklyContractedHours: Weekly contracted hours
+hr.holidaysHistory.title: Holiday history
+hr.holidaysHistory.empty: No holiday requests yet.
+hr.holidaysHistory.from: From
+hr.holidaysHistory.to: To
+hr.holidaysHistory.status: Status
+hr.holidaysHistory.comment: Comment

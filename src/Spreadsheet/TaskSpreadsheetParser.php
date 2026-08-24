@@ -6,6 +6,7 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Package;
+use AppBundle\Doctrine\EventSubscriber\TaskSubscriber\TaskListProvider;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Service\Geocoder;
@@ -33,7 +34,8 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
         PhoneNumberUtil $phoneNumberUtil,
         UserManager $userManager,
         string $countryCode,
-        EntityManagerInterface $entityManager)
+        EntityManagerInterface $entityManager,
+        private TaskListProvider $taskListProvider)
     {
         $this->geocoder = $geocoder;
         $this->slugify = $slugify;
@@ -172,7 +174,12 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
 
             if (isset($record['assign']) && !empty(trim($record['assign']))) {
                 [ $user, $assignAt ] = $this->extractAssign($record['assign']);
-                $task->assignTo($user, $assignAt);
+                // Place the task in the courier's task list for the requested day.
+                // The task list (its date + courier) is the source of truth for
+                // the assignment; appendTask() also sets task.assignedTo.
+                $this->taskListProvider
+                    ->getTaskListForUserAndDate($assignAt, $user)
+                    ->appendTask($task);
             }
 
             if (isset($record['ref']) && !empty($record['ref'])) {

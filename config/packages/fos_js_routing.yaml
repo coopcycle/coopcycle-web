@@ -18,6 +18,7 @@ fos_js_routing:
         - admin_delivery
         - admin_deliveries_pricing_ruleset
         - admin_store_delivery_new
+        - admin_store_cyke_package_types
         - admin_dashboard_fullscreen
         - admin_foodtech_dashboard
         - admin_foodtech_settings
@@ -109,6 +110,7 @@ fos_js_routing:
         - task_label_pdf
         - _api_/stores/{id}/deliveries_get_collection
         - _api_/stores/{id}/pod_export_post
+        - _api_/stores/{id}/pod_export/count_get
         - _api_/addresses/{id}{._format}_delete
         - _api_/restaurants/{id}/products_get_collection
         - _api_/restaurants/menus/{id}_delete

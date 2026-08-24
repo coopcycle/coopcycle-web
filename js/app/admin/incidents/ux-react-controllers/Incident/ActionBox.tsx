@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { Button, Divider, Drawer, Form, Modal, Popconfirm } from 'antd';
+import {
+  Button,
+  Divider,
+  Drawer,
+  Form,
+  Modal,
+  Popconfirm,
+  Tooltip,
+} from 'antd';
 import RescheduleTask from './ActionBox/RescheduleTask';
 import ApplyPriceDiffTask from './ActionBox/ApplyPriceDiffTask';
 import TransporterReport from './ActionBox/TransporterReport';
@@ -8,7 +16,8 @@ import RefundForm from './ActionBox/Refund';
 
 import { useTranslation } from 'react-i18next';
 
-import store from '../../[id]/redux/incidentStore';
+import { useSelector } from 'react-redux';
+
 import {
   selectImages,
   selectIncident,
@@ -32,13 +41,11 @@ const styles = {
 };
 
 export default function ({ isLastmile }) {
-  //FIXME: replace with useAppSelector after migrating away from ux-react-controllers
-  const state = store.getState();
-  const loaded = selectLoaded(state);
-  const incident = selectIncident(state);
-  const order = selectOrder(state);
-  const images = selectImages(state);
-  const transporterEnabled = selectTransporterEnabled(state);
+  const loaded = useSelector(selectLoaded);
+  const incident = useSelector(selectIncident);
+  const images = useSelector(selectImages);
+  const order = useSelector(selectOrder);
+  const transporterEnabled = useSelector(selectTransporterEnabled);
 
   const { t } = useTranslation();
 
@@ -54,7 +61,8 @@ export default function ({ isLastmile }) {
   const [rescheduleDrawer, setRescheduleDrawer] = useState(false);
   const [priceDiffDrawer, setPriceDiffDrawer] = useState(false);
   const [transporterReportModal, setTransporterReportModal] = useState(false);
-  const [isCreditNoteModalVisible, setIsCreditNoteModalVisible] = useState(false);
+  const [isCreditNoteModalVisible, setIsCreditNoteModalVisible] =
+    useState(false);
   const [isRefundModalVisible, setIsRefundModalVisible] = useState(false);
 
   const [transporterForm] = Form.useForm();
@@ -149,13 +157,20 @@ export default function ({ isLastmile }) {
 
   return (
     <>
-      <Button
-        data-testid="take-actions-button"
-        type="primary"
-        onClick={() => setOpen(true)}
-        disabled={buttons.length === 0}>
-        {t('TAKE_ACTIONS')}
-      </Button>
+      <Tooltip
+        title={
+          incident.status === 'CLOSED'
+            ? t('INCIDENTS_ACTIONS_DISABLED_ON_CLOSED')
+            : ''
+        }>
+        <Button
+          data-testid="take-actions-button"
+          type="primary"
+          onClick={() => setOpen(true)}
+          disabled={buttons.length === 0 || incident.status === 'CLOSED'}>
+          {t('TAKE_ACTIONS')}
+        </Button>
+      </Tooltip>
       <Drawer
         placement={placement}
         title={t('INCIDENTS_TAKE_ACTIONS')}
@@ -199,7 +214,11 @@ export default function ({ isLastmile }) {
           open={isCreditNoteModalVisible}
           onOk={() => creditNoteForm.submit()}
           onCancel={() => setIsCreditNoteModalVisible(false)}>
-          <CreditNoteForm incident={incident} order={order} form={creditNoteForm} />
+          <CreditNoteForm
+            incident={incident}
+            order={order}
+            form={creditNoteForm}
+          />
         </Modal>
         <Modal
           width="840px"

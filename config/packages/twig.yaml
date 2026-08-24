@@ -30,6 +30,8 @@ twig:
         payment_gateway_resolver: '@AppBundle\Payment\GatewayResolver'
         business_context: '@AppBundle\Business\Context'
         loopeat_enabled: '%env(bool:LOOPEAT_ENABLED)%'
+        cyke_enabled: '%cyke_enabled%'
+        zelty_enabled: '%zelty_enabled%'
         embed_context: '@AppBundle\Embed\Context'
         locationiq_access_token: '%env(LOCATIONIQ_ACCESS_TOKEN)%'
         autocomplete_adapter: '%env(COOPCYCLE_AUTOCOMPLETE_ADAPTER)%'
@@ -44,6 +46,7 @@ twig:
         business_account_enabled: '%env(bool:BUSINESS_ACCOUNT_ENABLED)%'
         odoo_url: '%env(ODOO_URL)%'
         rfm_enabled: '%env(bool:RFM_ENABLED)%'
+        shift_planning_enabled: '%env(bool:SHIFT_PLANNING_ENABLED)%'
         invitation_link_provider: '@AppBundle\Service\InvitationLinkProviderService'
         paygreen_environment: '%env(PAYGREEN_ENVIRONMENT)%'
 

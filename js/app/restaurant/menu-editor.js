@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useRef, useCallback, createContext, useContext } from 'react';
 import { createRoot } from 'react-dom/client';
 import { useTranslation } from 'react-i18next';
 
@@ -53,6 +53,13 @@ import './menu-editor.scss'
 
 const httpClient = new window._auth.httpClient()
 
+// A menu imported from an integration (Zelty) is owned by that integration: its
+// sections and products are recreated on every import. Only the order of the
+// sections, which is local to CoopCycle, stays editable.
+const ReadOnlyContext = createContext(false)
+
+const useIsReadOnly = () => useContext(ReadOnlyContext)
+
 const Section = ({ section }) => {
 
   const dispatch = useDispatch();
@@ -70,6 +77,7 @@ const Section = ({ section }) => {
 
   const isLoading = useSelector(selectIsLoading);
   const isLoadingSection = useSelector(selectIsLoadingSection)
+  const isReadOnly = useIsReadOnly();
 
   useEffect(() => {
 
@@ -94,7 +102,8 @@ const Section = ({ section }) => {
           });
         },
         getIsSticky: () => true,
-        canDrop: () => !isLoading,
+        // Sections still accept sections (reordering), never products
+        canDrop: ({ source }) => !isLoading && (!isReadOnly || source.data.type === 'section'),
         onDragStart: () => setIsDraggedOver(true),
         onDragEnter: (args) => {
           // Update the closest edge when a draggable item enters the drop zone
@@ -129,7 +138,7 @@ const Section = ({ section }) => {
         onDrop: () => setIsDragging(false),
       })
     );
-  }, [ section['@id'], isLoading ]);
+  }, [ section['@id'], isLoading, isReadOnly ]);
 
   return (
     <div className={clsx('menuEditor__panel', 'mb-4', {
@@ -140,8 +149,11 @@ const Section = ({ section }) => {
         <span className="d-flex align-items-center">
           <i className="fa fa-arrows mr-2" ref={dragHandleRef}></i>
           <span>{section.name}</span>
+          { !isReadOnly && (
           <Button type="link" icon={<EditOutlined />} onClick={() => dispatch(editSectionFlow(section))}></Button>
+          )}
         </span>
+        { !isReadOnly && (
         <Popconfirm
           title={t('ARE_YOU_SURE')}
           onConfirm={() => dispatch(deleteSection(section))}
@@ -150,6 +162,7 @@ const Section = ({ section }) => {
         >
           <DeleteOutlined />
         </Popconfirm>
+        )}
       </h4>
       <div className="menuEditor__panel__body" ref={dropTargetRef}>
         { section.hasMenuItem.map((product) => (
@@ -167,17 +180,20 @@ const LeftPanel = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const sections = useSelector(selectMenuSections)
+  const isReadOnly = useIsReadOnly();
 
   return (
     <div className="menuEditor__left">
       { sections.map((section, index) => (
         <Section key={`section-${index}`} section={section} index={ index } />
       ))}
+      { !isReadOnly && (
       <div className="d-flex flex-row align-items-center justify-content-end border-top pt-4">
         <button type="button" className="btn btn-success" onClick={ () => dispatch(createSectionFlow()) }>
           <i className="fa fa-plus mr-2"></i><span>{t('MENU_EDITOR.ADD_SECTION')}</span>
         </button>
       </div>
+      )}
     </div>
   )
 }
@@ -188,6 +204,7 @@ const RightPanel = () => {
   const { t } = useTranslation();
   const products = useSelector(selectProducts)
   const isLoading = useSelector(selectIsLoadingProducts)
+  const isReadOnly = useIsReadOnly();
 
   const [ isDraggedOver, setIsDraggedOver ] = useState(false);
 
@@ -202,8 +219,9 @@ const RightPanel = () => {
       onDrop: () => setIsDraggedOver(false),
       getData: () => ({ sectionId: 'products' }),
       getIsSticky: () => true,
+      canDrop: () => !isReadOnly,
     });
-  }, [ products ]);
+  }, [ products, isReadOnly ]);
 
   return (
     <div className="menuEditor__right">
@@ -234,6 +252,7 @@ const Product = ({ product }) => {
   const ref = useRef(null);
 
   const isLoading = useSelector(selectIsLoading);
+  const isReadOnly = useIsReadOnly();
 
   useEffect(() => {
     const el = ref.current;
@@ -244,7 +263,7 @@ const Product = ({ product }) => {
         getInitialData: () => ({ type: 'product', productId: product['@id'] }),
         onDragStart: () => setIsDragging(true),
         onDrop: () => setIsDragging(false),
-        canDrag: () => !isLoading,
+        canDrag: () => !isLoading && !isReadOnly,
       }),
       // Add dropTargetForElements to make the product a drop target
       dropTargetForElements({
@@ -263,7 +282,10 @@ const Product = ({ product }) => {
           });
         },
         getIsSticky: () => true, // To make a drop target "sticky"
-        canDrop: () => !isLoading,
+        // Products still have to accept a section being dragged over them: reordering
+        // sections relies on both the product and its section being drop targets.
+        // Only products are refused, so nothing can be dropped into a section.
+        canDrop: ({ source }) => !isLoading && (!isReadOnly || source.data.type === 'section'),
         onDragEnter: (args) => {
           // Update the closest edge when a draggable item enters the drop zone
           if (args.source.data.type === 'product' && args.source.data.productId !== product['@id']) {
@@ -286,7 +308,7 @@ const Product = ({ product }) => {
         },
       })
     );
-  }, [ product['@id'], isLoading ]);
+  }, [ product['@id'], isLoading, isReadOnly ]);
 
   return (
     <div className="menuEditor__product" ref={ref}>
@@ -318,6 +340,7 @@ const MenuNameForm = () => {
 
   const dispatch = useDispatch();
   const menuName = useSelector(selectMenuName);
+  const isReadOnly = useIsReadOnly();
 
   return (
     <Form
@@ -327,11 +350,13 @@ const MenuNameForm = () => {
       onFinish={ (values) => dispatch(setMenuName(values.name)) }
     >
       <Form.Item label="Name" name="name">
-        <Input />
+        <Input disabled={ isReadOnly } />
       </Form.Item>
+      { !isReadOnly && (
       <Form.Item>
         <Button type="primary" htmlType="submit">Submit</Button>
       </Form.Item>
+      )}
     </Form>
   )
 }
@@ -384,7 +409,7 @@ const SectionModal = () => {
   )
 }
 
-const MenuEditor = ({ restaurant }) => {
+const MenuEditor = ({ restaurant, readOnly = false }) => {
 
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -636,15 +661,15 @@ const MenuEditor = ({ restaurant }) => {
   }, [handleDrop]);
 
   return (
-    <>
+    <ReadOnlyContext.Provider value={ readOnly }>
       <MenuNameForm />
       <hr />
       <div className="menuEditor mb-4">
         <LeftPanel />
-        <RightPanel />
-        <SectionModal />
+        { !readOnly && <RightPanel /> }
+        { !readOnly && <SectionModal /> }
       </div>
-    </>
+    </ReadOnlyContext.Provider>
   )
 }
 
@@ -661,7 +686,8 @@ const store = createStoreFromPreloadedState(preloadedState);
 createRoot(container).render(
   <Provider store={ store }>
     <MenuEditor
-      restaurant={JSON.parse(container.dataset.restaurant)} />
+      restaurant={JSON.parse(container.dataset.restaurant)}
+      readOnly={ container.dataset.readOnly === '1' } />
     <ToastContainer
       position="top-right"
       autoClose={500}

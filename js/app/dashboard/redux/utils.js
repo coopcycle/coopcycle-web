@@ -117,7 +117,7 @@ export const nowToPercentage = (now) => {
   return nowAsSeconds / 86400
 }
 
-export const isTaskVisible = (task, filters, date) => {
+export const isTaskVisible = (task, filters, date, timezone) => {
 
   const {
     showFinishedTasks,
@@ -227,14 +227,20 @@ export const isTaskVisible = (task, filters, date) => {
     const endHour = end === 24 ? 23 : end
     const endMinute = end === 24 ? 59 : 0
 
+    // Anchor the day boundaries to the tenant's own timezone, not the
+    // dashboard operator's browser timezone, otherwise a task scheduled
+    // late in the tenant's day can appear to fall on "tomorrow" for an
+    // operator further east and get wrongly filtered out.
+    const dateStr = date.format('YYYY-MM-DD')
+
     const dateAsRange = moment.range(
-      moment(date).set({ hour: startHour, minute: 0 }),
-      moment(date).set({ hour: endHour, minute: endMinute })
+      moment.tz(dateStr, timezone).set({ hour: startHour, minute: 0 }),
+      moment.tz(dateStr, timezone).set({ hour: endHour, minute: endMinute })
     )
 
     const range = moment.range(
-      moment(task.doneAfter),
-      moment(task.doneBefore)
+      moment.tz(task.after ?? task.doneAfter, timezone),
+      moment.tz(task.before ?? task.doneBefore, timezone)
     )
 
     if (!range.overlaps(dateAsRange)) {
@@ -267,16 +273,23 @@ export const isOffline = (lastSeen) => {
 export const recurrenceTemplateToArray =
   template => template['@type'] === 'hydra:Collection' ? template['hydra:member'] : [ template ]
 
-export const isInDateRange = (task, date) => {
+export const isInDateRange = (task, date, timezone) => {
+
+  // Anchor the day boundaries to the tenant's own timezone, not the
+  // dashboard operator's browser timezone. Otherwise a task scheduled
+  // late in the tenant's day can appear to fall on "tomorrow" for an
+  // operator further east, and get wrongly treated as no longer part
+  // of the selected day (and removed from the store).
+  const dateStr = date.format('YYYY-MM-DD')
 
   const dateAsRange = moment.range(
-    moment(date).set({ hour:  0, minute:  0, second:  0 }),
-    moment(date).set({ hour: 23, minute: 59, second: 59 })
+    moment.tz(dateStr, timezone).startOf('day'),
+    moment.tz(dateStr, timezone).endOf('day')
   )
 
   const range = moment.range(
-    moment(task.doneAfter),
-    moment(task.doneBefore)
+    moment.tz(task.after ?? task.doneAfter, timezone),
+    moment.tz(task.before ?? task.doneBefore, timezone)
   )
 
   return range.overlaps(dateAsRange)

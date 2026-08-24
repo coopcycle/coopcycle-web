@@ -87,6 +87,19 @@ class PushCooccurrenceRequest(BaseModel):
     items: list[OrderItem]
 
 
+class DemandPoint(BaseModel):
+    ds: str  # "YYYY-MM-DD HH:MM:SS", instance-local time
+    y: float
+
+
+class DemandForecastRequest(BaseModel):
+    instance: str | None = None  # informational, the endpoint is stateless
+    series: list[DemandPoint]
+    horizon: list[str]  # timestamps to predict, same format as ds
+    quantile: float = 0.8
+    country_holidays: str | None = None
+
+
 class CommitRequest(BaseModel):
     instance: str
     product_popular: list[int] = []
@@ -190,6 +203,29 @@ def train_commit(body: CommitRequest):
         "cooccurrence_items": len(cooccurrence_items),
         "trained_at": metadata["trained_at"],
     }
+
+
+@app.post("/forecast/demand")
+def forecast_demand(body: DemandForecastRequest):
+    from forecaster import forecast_demand as prophet_forecast
+
+    if not (0.0 < body.quantile < 1.0):
+        raise HTTPException(status_code=400, detail="quantile must be in (0, 1)")
+    if not body.horizon:
+        raise HTTPException(status_code=400, detail="horizon must not be empty")
+
+    try:
+        predictions = prophet_forecast(
+            [p.model_dump() for p in body.series],
+            body.horizon,
+            quantile=body.quantile,
+            country_holidays=body.country_holidays,
+        )
+    except ValueError as e:
+        # Not enough usable history — the caller falls back to its heuristic
+        raise HTTPException(status_code=422, detail=str(e))
+
+    return {"predictions": predictions}
 
 
 @app.get("/recommendations")

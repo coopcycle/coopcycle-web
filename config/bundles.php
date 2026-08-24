@@ -76,4 +76,5 @@ return [
     Symfony\UX\Autocomplete\AutocompleteBundle::class => ['all' => true],
     Islesurlasorguetourisme\DaisyuiFormBundle\DaisyuiFormBundle::class => ['all' => true],
     Scheb\TwoFactorBundle\SchebTwoFactorBundle::class => ['all' => true],
+    BehatOrmContext\BehatOrmContextBundle::class => ['dev' => true, 'test' => true],
 ];

@@ -39,7 +39,8 @@ class DashboardController extends AbstractController
         private readonly TranslatorInterface $translator,
         private readonly JWTTokenManagerInterface $JWTTokenManager,
         protected NormalizerInterface $normalizer,
-        protected SerializerInterface $serializer
+        protected SerializerInterface $serializer,
+        protected bool $rdcEnabled = false,
     )
     {
     }

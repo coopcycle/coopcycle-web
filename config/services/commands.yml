@@ -15,6 +15,18 @@ services:
     tags:
       - { name: 'console.command', command: 'coopcycle:orders:process-taxes' }
 
+  # Replace Sylius' generate-coupons command with our subclass that adds
+  # --prefix / --suffix. Registered under the vendor service id so the existing
+  # aliases resolve to it and there is no clash on the command name.
+  Sylius\Bundle\PromotionBundle\Console\Command\GenerateCouponsCommand:
+    class: AppBundle\Command\GenerateCouponsCommand
+    autoconfigure: false
+    arguments:
+      $promotionRepository: '@sylius.repository.promotion'
+      $couponGenerator: '@sylius.generator.promotion_coupon'
+    tags:
+      - { name: 'console.command', command: 'sylius:promotion:generate-coupons' }
+
   AppBundle\Command\BotCommand:
     parent: M6Web\Bundle\DaemonBundle\Command\DaemonCommand
     autowire: false
@@ -218,3 +230,9 @@ services:
       - { name: 'console.command', command: 'coopcycle:paygreen:check-status' }
 
   AppBundle\Command\RecommenderTrainCommand: ~
+  
+  AppBundle\Command\DebugRdcGetCommand:
+    arguments:
+      $rdcEnabled: '%env(bool:RDC_ENABLED)%'
+    tags:
+      - { name: 'console.command', command: 'debug:rdc-get' }

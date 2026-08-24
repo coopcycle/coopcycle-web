@@ -49,6 +49,8 @@ order.state.notModifiable: Order can't be modified anymore
 loopeat.insufficient_balance: Your %name% balance is insufficient to use zero waste, %amount% is missing to complete your order. Please return boxes or add funds to your wallet.
 loopeat.request_failed: Connexion error with %name%
 loopeat.insufficient_stock: Insufficient reusable packaging quantity for « %name% »
+loopeat.account_not_connected: Please create or connect your %name% account to settle your deposit and complete your order.
+loopeat.mandatory: This restaurant only accepts zero waste orders, you need to connect your %name% account to complete your order.
 
 restaurant.contract.variableCustomerAmount.pickOne: Please pick at least one pricing
 restaurant.contract.variableDeliveryPrice.pickOne: Please pick at least one pricing
@@ -85,3 +87,5 @@ delivery.price.error.noPricingRuleSet: No pricing configured
 incident.metadata.suggestion.invalid: The suggestion field in metadata is not valid
 
 store.packages_required.package_set_required: A package set must be selected when packages are required
+
+failure_reason.code.unique: This code is already in use

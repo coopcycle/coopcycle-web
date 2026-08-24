@@ -13,7 +13,9 @@
 {% endblock %}
 
 {% block subnav %}
-  {% include "store/_partials/subnav.html.twig" %}
+  <div class="mb-2">
+    {% include "store/_partials/subnav.html.twig" %}
+  </div>
 {% endblock %}
 {% block dashboard_actions %}
  {% if filters is defined %}

@@ -3,7 +3,7 @@
 namespace AppBundle\Service\Routing;
 
 use AppBundle\Entity\Base\GeoCoordinates;
-use GuzzleHttp\Exception\GuzzleException;
+use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
 
 class OsrmWithFallback extends Base
 {
@@ -23,7 +23,7 @@ class OsrmWithFallback extends Base
     {
         try {
             return $this->osrm->getPolyline(...$coordinates);
-        } catch (GuzzleException $e) {
+        } catch (ExceptionInterface $e) {
             return $this->fallback->getPolyline(...$coordinates);
         }
     }
@@ -35,7 +35,7 @@ class OsrmWithFallback extends Base
     {
         try {
             return $this->osrm->getDistance(...$coordinates);
-        } catch (GuzzleException $e) {
+        } catch (ExceptionInterface $e) {
             return $this->fallback->getDistance(...$coordinates);
         }
     }
@@ -47,7 +47,7 @@ class OsrmWithFallback extends Base
     {
         try {
             return $this->osrm->getDuration(...$coordinates);
-        } catch (GuzzleException $e) {
+        } catch (ExceptionInterface $e) {
             return $this->fallback->getDuration(...$coordinates);
         }
     }
@@ -59,7 +59,7 @@ class OsrmWithFallback extends Base
     {
         try {
             return $this->osrm->getDistances($source, ...$destinations);
-        } catch (GuzzleException $e) {
+        } catch (ExceptionInterface $e) {
             return $this->fallback->getDistances($source, ...$destinations);
         }
     }
@@ -68,8 +68,17 @@ class OsrmWithFallback extends Base
     {
         try {
             return $this->osrm->route(...$coordinates);
-        } catch (GuzzleException $e) {
+        } catch (ExceptionInterface $e) {
             return $this->fallback->route(...$coordinates);
+        }
+    }
+
+    public function getTrip(GeoCoordinates ...$coordinates)
+    {
+        try {
+            return $this->osrm->getTrip(...$coordinates);
+        } catch (ExceptionInterface $e) {
+            return $this->fallback->getTrip(...$coordinates);
         }
     }
 }

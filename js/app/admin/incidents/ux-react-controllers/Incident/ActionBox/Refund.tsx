@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import {
   Button,
   Flex,
@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import moment from 'moment'
 
 import PaymentMethodIcon from '../../../../../components/Payment/PaymentMethodIcon';
+import { centsInputNumberProps } from '../../../../../utils/format';
 
 interface DataType {
   key: string;
@@ -27,6 +28,7 @@ const PaymentForm = ({ payment, liablePartyForm }) => {
 
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
+  const submittingRef = useRef(false);
 
   return (
     <Form
@@ -36,6 +38,11 @@ const PaymentForm = ({ payment, liablePartyForm }) => {
         amount: payment.amount - payment.refundedAmount,
       }}
       onFinish={async (values: object) => {
+
+        if (submittingRef.current) {
+          return;
+        }
+        submittingRef.current = true;
 
         const httpClient = new window._auth.httpClient();
 
@@ -47,11 +54,14 @@ const PaymentForm = ({ payment, liablePartyForm }) => {
             ...values
           },
         );
-        setIsLoading(false)
 
         if (!error) {
           window.location.reload();
+          return;
         }
+
+        submittingRef.current = false;
+        setIsLoading(false)
 
       }}
       autoComplete="off">
@@ -61,13 +71,12 @@ const PaymentForm = ({ payment, liablePartyForm }) => {
         <InputNumber
           min={0}
           max={payment.amount - payment.refundedAmount}
-          parser={(value) => parseInt(value * 100, 10)}
-          formatter={(value) => value / 100}
+          {...centsInputNumberProps}
           step={50}
           disabled={!payment.supportsPartialRefunds} />
       </Form.Item>
       <Form.Item label={null}>
-        <Button loading={isLoading} type="primary" htmlType="submit" disabled={!payment.supportsPartialRefunds}>
+        <Button loading={isLoading} type="primary" htmlType="submit" disabled={!payment.supportsPartialRefunds || isLoading}>
           {t('REFUND')}
         </Button>
       </Form.Item>
@@ -80,6 +89,7 @@ export default function ({ order, liablePartyForm }) {
   const { t } = useTranslation();
   const [payments, setPayments] = useState([])
   const [isFullRefundButtonLoading, setIsFullRefundButtonLoading] = useState(false);
+  const isFullRefundSubmittingRef = useRef(false);
 
   const columns: TableProps<DataType>['columns'] = useMemo(() => ([
     {
@@ -174,16 +184,23 @@ export default function ({ order, liablePartyForm }) {
           variant="outlined"
           loading={isFullRefundButtonLoading}
           onClick={async () => {
+            if (isFullRefundSubmittingRef.current) {
+              return;
+            }
+            isFullRefundSubmittingRef.current = true;
+
             const httpClient = new window._auth.httpClient();
             setIsFullRefundButtonLoading(true)
             const { response, error } = await httpClient.put(
               order['@id'] + '/refund',
               liablePartyForm.getFieldsValue(),
             );
-            setIsFullRefundButtonLoading(false)
             if (!error) {
               window.location.reload();
+              return;
             }
+            isFullRefundSubmittingRef.current = false;
+            setIsFullRefundButtonLoading(false)
           }}
         >
           {t('REFUND_FULL', { amount: (order.total / 100).formatMoney() })}

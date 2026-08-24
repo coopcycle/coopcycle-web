@@ -2,150 +2,155 @@ import _ from 'lodash'
 import axios from 'axios'
 import './split-terms-and-privacy'
 
-const emailInput =
-  document.querySelector('[id$=_email]')
+const emailInput = document.querySelector('[id$=_email]')
+const usernameInput = document.querySelector('[id$=_username]')
 
-const usernameInput =
-  document.querySelector('[id$=_username]')
-
-/* */
-
-const checkUsername = _.debounce(function() {
-
-  const email =
-    document.querySelector('[id$=_email]').value
-
-  const username =
-    document.querySelector('[id$=_username]').value
-
-  if (!username || username.length < 3) {
-    return
+// This entrypoint is loaded by form/registration.html.twig, which renders the DaisyUI
+// validator structure (div.validator > label.input > input.grow + icons, followed by
+// p.validator-hint), but also by _partials/profile/personal_information_form.html.twig,
+// which renders plain form rows. There, the icons and the hint are simply absent, and
+// only the aria-invalid attribute and #existing_user_error give feedback. So everything
+// but the inputs themselves has to be treated as optional.
+function getIcons(inputEl) {
+  const wrapper = inputEl.parentElement  // label.input rendered by form/registration.html.twig
+  return {
+    spinner:   wrapper.querySelector('.loading-spinner'),
+    checkIcon: wrapper.querySelector('.fa-check'),
+    errorIcon: wrapper.querySelector('.fa-times'),
   }
+}
 
-  const formGroup = usernameInput.closest('.form-group')
-
-  formGroup.classList.remove('has-success', 'has-error')
-  formGroup.classList.add('has-feedback')
-
-  let feedbackEl =
-    formGroup.querySelector('.form-control-feedback')
-
-  let suggestionsEl =
-    formGroup.querySelector('.username-suggestions')
-
-  if (!feedbackEl) {
-    feedbackEl = document.createElement('span')
-    feedbackEl.classList.add('fa', 'form-control-feedback')
-    feedbackEl.setAttribute('aria-hidden', 'true')
-    usernameInput.parentNode.insertBefore(feedbackEl, usernameInput.nextSibling)
+function setHidden(el, hidden) {
+  if (el) {
+    el.hidden = hidden
   }
+}
 
-  if (!suggestionsEl) {
-    suggestionsEl = document.createElement('div')
-    suggestionsEl.classList.add('help-block', 'username-suggestions')
-    formGroup.insertBefore(suggestionsEl, formGroup.querySelector('.help-block'))
-  }
+if (usernameInput && emailInput) {
 
-  feedbackEl.classList.remove('fa-check', 'fa-warning')
-  feedbackEl.classList.add('fa-spinner', 'fa-spin')
+  const { spinner: usernameSpinner, checkIcon: usernameCheckIcon, errorIcon: usernameErrorIcon } =
+    getIcons(usernameInput)
 
-  axios.get('/register/suggest', { params: { username, email } }).then(({ data: result }) => {
+  const { spinner: emailSpinner, checkIcon: emailCheckIcon, errorIcon: emailErrorIcon } =
+    getIcons(emailInput)
 
-    feedbackEl.classList.remove('fa-spinner', 'fa-spin')
+  // p.validator-hint is the next sibling of div.validator (required by DaisyUI CSS ~)
+  const usernameHint = usernameInput.closest('.validator')?.nextElementSibling ?? null
 
-    usernameInput.focus()
+  const renderSuggestions = suggestions => {
 
-    if (usernameInput.value) {
-      formGroup.classList
-        .add(result.exists ? 'has-error' : 'has-success')
-      feedbackEl.classList.add(result.exists ? 'fa-warning' : 'fa-check')
+    usernameHint.textContent = ''
+
+    if (suggestions.length === 0) {
+      return
     }
-
-    suggestionsEl.textContent = '';
 
     const titleEl = document.createElement('strong')
-    titleEl.innerHTML = 'Suggestions'
+    titleEl.textContent = 'Suggestions'
     titleEl.classList.add('mr-2')
-    suggestionsEl.appendChild(titleEl)
+    usernameHint.appendChild(titleEl)
 
-    result.suggestions.forEach(suggestion => {
-
-      const suggestionEl = document.createElement('a')
-
-      suggestionEl.setAttribute('href', '#')
-      suggestionEl.classList.add('text-monospace')
-      suggestionEl.innerHTML = suggestion
-      suggestionEl.addEventListener('click', (e) => {
+    suggestions.forEach(suggestion => {
+      const a = document.createElement('a')
+      a.href = '#'
+      a.classList.add('font-mono', 'mr-1')
+      a.textContent = suggestion
+      a.addEventListener('click', e => {
         e.preventDefault()
-        usernameInput.value = e.currentTarget.textContent
-        feedbackEl.classList.remove('fa-warning')
-        feedbackEl.classList.add('fa-check')
-        formGroup.classList.remove('has-error')
-        formGroup.classList.add('has-success')
-        suggestionsEl.textContent = '';
-      }, false)
-
-      suggestionsEl.appendChild(suggestionEl)
+        usernameInput.value = a.textContent
+        usernameInput.setAttribute('aria-invalid', 'false')
+        setHidden(usernameErrorIcon, true)
+        setHidden(usernameCheckIcon, false)
+        setHidden(usernameHint, true)
+      })
+      usernameHint.appendChild(a)
     })
 
-  })
-
-}, 500)
-
-const checkEmail = _.debounce(function() {
-
-  const formGroup = emailInput.closest('.form-group')
-
-  formGroup.classList.remove('has-success', 'has-error')
-  formGroup.classList.add('has-feedback')
-
-  const errorEl = document.getElementById('existing_user_error')
-
-  if (errorEl) {
-    errorEl.classList.add('hidden')
+    setHidden(usernameHint, false)
   }
 
-  let feedbackEl =
-    formGroup.querySelector('.form-control-feedback')
+  const checkUsername = _.debounce(function() {
 
-  if (!feedbackEl) {
-    feedbackEl = document.createElement('span')
-    feedbackEl.classList.add('fa', 'form-control-feedback')
-    feedbackEl.setAttribute('aria-hidden', 'true')
-    emailInput.parentNode.insertBefore(feedbackEl, emailInput.nextSibling)
-  }
+    const email = emailInput.value
+    const username = usernameInput.value
 
-  feedbackEl.classList.remove('fa-check', 'fa-warning')
-  feedbackEl.classList.add('fa-spinner', 'fa-spin')
-
-  axios.get('/register/check-email-exists', { params: { email: emailInput.value } }).then(({ data: result }) => {
-
-    feedbackEl.classList.remove('fa-spinner', 'fa-spin')
-
-    if (result.exists) {
-      if (errorEl) {
-        errorEl.classList.remove('hidden')
-      }
-
-      const usernameEl = document.querySelector('[name="_username"]')
-
-      if (usernameEl) {
-        usernameEl.value = emailInput.value
-      }
+    if (!username || username.length < 3) {
+      return
     }
 
-    formGroup.classList.add(result.exists ? 'has-error' : 'has-success')
-    feedbackEl.classList.add(result.exists ? 'fa-warning' : 'fa-check')
-  })
+    usernameInput.removeAttribute('aria-invalid')
+    setHidden(usernameSpinner, false)
+    setHidden(usernameCheckIcon, true)
+    setHidden(usernameErrorIcon, true)
+    setHidden(usernameHint, true)
 
-}, 500)
+    axios.get('/register/suggest', { params: { username, email } }).then(({ data: result }) => {
 
-usernameInput
-  .addEventListener('input', checkUsername, false)
+      setHidden(usernameSpinner, true)
 
-emailInput
-  .addEventListener('input', () => {
-    if (emailInput.checkValidity()) {
-      checkEmail()
+      if (result.exists) {
+        // Only steal the focus back when there is something to fix. This runs half a
+        // second after the last keystroke, by which time the user (or Cypress) has
+        // usually moved on to the next field.
+        usernameInput.focus()
+
+        usernameInput.setAttribute('aria-invalid', 'true')
+        setHidden(usernameErrorIcon, false)
+
+        if (usernameHint) {
+          renderSuggestions(result.suggestions)
+        }
+      } else {
+        usernameInput.setAttribute('aria-invalid', 'false')
+        setHidden(usernameCheckIcon, false)
+      }
+    })
+
+  }, 500)
+
+  const checkEmail = _.debounce(function() {
+
+    emailInput.removeAttribute('aria-invalid')
+    setHidden(emailSpinner, false)
+    setHidden(emailCheckIcon, true)
+    setHidden(emailErrorIcon, true)
+
+    const errorEl = document.getElementById('existing_user_error')
+    if (errorEl) {
+      errorEl.classList.add('hidden')
     }
-  }, false)
+
+    axios.get('/register/check-email-exists', { params: { email: emailInput.value } }).then(({ data: result }) => {
+
+      setHidden(emailSpinner, true)
+
+      if (result.exists) {
+        emailInput.setAttribute('aria-invalid', 'true')
+        setHidden(emailErrorIcon, false)
+
+        if (errorEl) {
+          errorEl.classList.remove('hidden')
+        }
+
+        const usernameEl = document.querySelector('[name="_username"]')
+        if (usernameEl) {
+          usernameEl.value = emailInput.value
+        }
+      } else {
+        emailInput.setAttribute('aria-invalid', 'false')
+        setHidden(emailCheckIcon, false)
+      }
+    })
+
+  }, 500)
+
+  usernameInput
+    .addEventListener('input', checkUsername, false)
+
+  emailInput
+    .addEventListener('input', () => {
+      if (emailInput.checkValidity()) {
+        checkEmail()
+      }
+    }, false)
+}

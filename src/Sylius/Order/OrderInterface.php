@@ -84,6 +84,8 @@ interface OrderInterface extends
 
     public function getShippedAt(): ?\DateTime;
 
+    public function getPickupExpectedAt();
+
     public function getShippingTimeRange(): ?TsRange;
 
 

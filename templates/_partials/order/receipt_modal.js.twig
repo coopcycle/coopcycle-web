@@ -1,6 +1,23 @@
-$('#order-receipt-modal').on('show.bs.modal', function (event) {
-  var button = $(event.relatedTarget);
-  var action = button.data('action');
-  var modal = $(this);
-  modal.find('form').attr('action', action);
-});
+(function() {
+  var dialog = document.getElementById('order-receipt-modal');
+  if (!dialog) return;
+  var form = dialog.querySelector('form');
+
+  document.querySelectorAll('[data-receipt-action]').forEach(function(trigger) {
+    trigger.addEventListener('click', function(e) {
+      e.preventDefault();
+      form.setAttribute('action', trigger.dataset.receiptAction);
+      dialog.showModal();
+    });
+  });
+
+  dialog.querySelectorAll('[data-receipt-close]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      dialog.close();
+    });
+  });
+
+  dialog.addEventListener('click', function(e) {
+    if (e.target === dialog) dialog.close();
+  });
+})();

@@ -2,8 +2,10 @@
 
 {% block body %}
   {% block nucleos_user_content %}
-  <div class="container">
-  {% include "@NucleosUser/Resetting/reset_content.html.twig" %}
+  <div class="mx-auto px-4">
+    <div class="flex justify-center my-8">
+      {% include "@NucleosUser/Resetting/reset_content.html.twig" %}
+    </div>
   </div>
   {% endblock nucleos_user_content %}
 {% endblock %}
