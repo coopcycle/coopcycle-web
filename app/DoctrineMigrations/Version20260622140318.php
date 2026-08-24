@@ -35,7 +35,5 @@ final class Version20260622140318 extends AbstractMigration
         $this->addSql('ALTER TABLE shopify_shop DROP CONSTRAINT FK_2EDB2BDCB092A811');
         $this->addSql('DROP TABLE shopify_order');
         $this->addSql('DROP TABLE shopify_shop');
-        $this->addSql('COMMENT ON COLUMN city_zone.polygon IS \'(DC2Type:geojson)(DC2Type:geojson)\'');
-        $this->addSql('COMMENT ON COLUMN zone.polygon IS \'(DC2Type:geojson)(DC2Type:geojson)\'');
     }
 }
