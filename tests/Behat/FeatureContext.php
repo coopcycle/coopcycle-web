@@ -1526,6 +1526,15 @@ class FeatureContext implements Context, SnippetAcceptingContext
         return base64_encode(hash_hmac('sha256', $body, $secret, true));
     }
 
+    private function createShopifyAddress(): Address
+    {
+        $address = new Address();
+        $address->setStreetAddress('48, Rue de Rivoli, 75004 Paris, France');
+        $address->setGeo(new GeoCoordinates(48.855, 2.352));
+
+        return $address;
+    }
+
     #[When('I send a Shopify webhook for shop :shopDomain with topic :topic and body:')]
     public function iSendShopifyWebhook(string $shopDomain, string $topic, PyStringNode $body): void
     {
@@ -1556,6 +1565,25 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $shop = $this->getShopifyShop($shopDomain);
 
         $delivery = new Delivery();
+
+        // Both tasks need a geocoded address: TaskCollectionSubscriber computes
+        // the distance on persist and dereferences the address' coordinates.
+        foreach ($delivery->getTasks() as $task) {
+            $task->setAddress($this->createShopifyAddress());
+            // done_after / done_before are NOT NULL.
+            $task->setAfter(new \DateTime('2026-07-15 10:00:00'));
+            $task->setBefore(new \DateTime('2026-07-15 12:00:00'));
+        }
+
+        // The dropoff carries the customer's personal data, which is what the
+        // compliance scenarios assert on.
+        $dropoff = $delivery->getDropoff();
+        $dropoff->getAddress()->setContactName('John Doe');
+        $dropoff->getAddress()->setTelephone(
+            $this->phoneNumberUtil->parse('+33600000000', 'FR')
+        );
+        $dropoff->setComments('Ring twice');
+
         $shop->getStore()->addDelivery($delivery);
         $this->entityManager->persist($delivery);
 
@@ -1577,6 +1605,100 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
         Assert::assertNotNull($shopifyOrder, "No ShopifyOrder found for id {$shopifyOrderId}");
         Assert::assertNotNull($shopifyOrder->getDelivery(), "ShopifyOrder has no delivery");
+    }
+
+    #[When('I send a Shopify compliance request with topic :topic and body:')]
+    public function iSendShopifyComplianceRequest(string $topic, PyStringNode $body): void
+    {
+        $payload = json_encode([
+            'topic'   => $topic,
+            'payload' => json_decode($body->getRaw(), true),
+        ]);
+
+        $this->restContext->iAddHeaderEqualTo('Content-Type', 'application/json');
+        $this->restContext->iAddHeaderEqualTo(
+            'Authorization',
+            'Bearer ' . $_SERVER['SHOPIFY_GATEWAY_SECRET']
+        );
+        $this->restContext->iSendARequestTo(
+            'POST',
+            '/connect/shopify/compliance',
+            new PyStringNode([$payload], 0)
+        );
+    }
+
+    #[When('I send a Shopify compliance request with topic :topic and a bad secret and body:')]
+    public function iSendShopifyComplianceRequestWithBadSecret(string $topic, PyStringNode $body): void
+    {
+        $payload = json_encode([
+            'topic'   => $topic,
+            'payload' => json_decode($body->getRaw(), true),
+        ]);
+
+        $this->restContext->iAddHeaderEqualTo('Content-Type', 'application/json');
+        $this->restContext->iAddHeaderEqualTo('Authorization', 'Bearer not-the-secret');
+        $this->restContext->iSendARequestTo(
+            'POST',
+            '/connect/shopify/compliance',
+            new PyStringNode([$payload], 0)
+        );
+    }
+
+    #[Then('the dropoff address for Shopify order :shopifyOrderId should be redacted')]
+    public function theDropoffAddressForShopifyOrderShouldBeRedacted(string $shopifyOrderId): void
+    {
+        $this->doctrine->getManager()->clear();
+
+        $shopifyOrder = $this->doctrine->getRepository(ShopifyOrder::class)
+            ->findOneBy(['shopifyOrderId' => $shopifyOrderId]);
+
+        Assert::assertNotNull($shopifyOrder, "No ShopifyOrder found for id {$shopifyOrderId}");
+
+        $address = $shopifyOrder->getDelivery()->getDropoff()->getAddress();
+
+        Assert::assertSame('[redacted]', $address->getContactName());
+        Assert::assertSame('', $address->getStreetAddress());
+        Assert::assertNull($address->getTelephone());
+    }
+
+    #[Then('the dropoff address for Shopify order :shopifyOrderId should not be redacted')]
+    public function theDropoffAddressForShopifyOrderShouldNotBeRedacted(string $shopifyOrderId): void
+    {
+        $this->doctrine->getManager()->clear();
+
+        $shopifyOrder = $this->doctrine->getRepository(ShopifyOrder::class)
+            ->findOneBy(['shopifyOrderId' => $shopifyOrderId]);
+
+        Assert::assertNotNull($shopifyOrder, "No ShopifyOrder found for id {$shopifyOrderId}");
+
+        $address = $shopifyOrder->getDelivery()->getDropoff()->getAddress();
+
+        Assert::assertNotSame('[redacted]', $address->getContactName());
+    }
+
+    #[Then('no Shopify shop should exist for domain :shopDomain')]
+    public function noShopifyShopShouldExistForDomain(string $shopDomain): void
+    {
+        $this->doctrine->getManager()->clear();
+
+        $shop = $this->doctrine->getRepository(ShopifyShop::class)
+            ->findOneBy(['shopDomain' => $shopDomain]);
+
+        Assert::assertNull($shop, "ShopifyShop still exists for {$shopDomain}");
+    }
+
+    #[Then('the deliveries should not have been deleted')]
+    public function theDeliveriesShouldNotHaveBeenDeleted(): void
+    {
+        $this->doctrine->getManager()->clear();
+
+        // shop/redact removes the ShopifyOrder link and the shop record, but a
+        // cooperative keeps its operational history — the Delivery survives.
+        $count = (int) $this->doctrine->getManager()
+            ->createQuery('SELECT COUNT(d.id) FROM AppBundle\Entity\Delivery d')
+            ->getSingleScalarResult();
+
+        Assert::assertGreaterThan(0, $count, 'All deliveries were deleted');
     }
 
     #[Then('no delivery should have been created for Shopify order :shopifyOrderId')]
@@ -1620,6 +1742,10 @@ class FeatureContext implements Context, SnippetAcceptingContext
     #[Then('the delivery for Shopify order :shopifyOrderId should be cancelled')]
     public function theDeliveryForShopifyOrderShouldBeCancelled(string $shopifyOrderId): void
     {
+        // The webhook was handled in a separate request; without clearing, the
+        // identity map here still holds the pre-cancellation task states.
+        $this->doctrine->getManager()->clear();
+
         $shopifyOrder = $this->doctrine->getRepository(ShopifyOrder::class)
             ->findOneBy(['shopifyOrderId' => $shopifyOrderId]);
 

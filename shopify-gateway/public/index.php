@@ -5,6 +5,7 @@ declare(strict_types=1);
 require __DIR__ . '/../vendor/autoload.php';
 
 use CoopCycle\ShopifyGateway\OAuthHandler;
+use CoopCycle\ShopifyGateway\ShopStore;
 
 function env(string $key, string $default = ''): string
 {
@@ -13,6 +14,9 @@ function env(string $key, string $default = ''): string
 }
 
 $handler = new OAuthHandler(
+    // Records which cooperative each shop installed on, so app-level compliance
+    // webhooks can be routed to exactly one tenant.
+    shopStore:     new ShopStore(env('SHOPS_DB_PATH', '/data/shops/shops.sqlite')),
     apiKey:        env('SHOPIFY_API_KEY'),
     apiSecret:     env('SHOPIFY_API_SECRET'),
     gatewaySecret: env('GATEWAY_SECRET'),
@@ -37,6 +41,7 @@ try {
         $method === 'POST' && $path === '/shopify/start'    => $handler->start(),
         $method === 'GET'  && $path === '/shopify/oauth'    => $handler->oauth(),
         $method === 'GET'  && $path === '/shopify/callback' => $handler->callback(),
+        $method === 'POST' && $path === '/shopify/compliance' => $handler->compliance(),
         $method === 'GET'  && $path === '/health'           => $handler->health(),
         default                                             => $handler->notFound(),
     };

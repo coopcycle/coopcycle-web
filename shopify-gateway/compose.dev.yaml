@@ -16,6 +16,12 @@ services:
       - "${GATEWAY_PORT:-8083}:${GATEWAY_PORT:-8083}"
     environment:
       APP_ENV: dev
+      SHOPS_DB_PATH: /data/shops/shops.sqlite
+    volumes:
+      - shops_data:/data/shops
     env_file:
       - path: .env
         required: false
+
+volumes:
+  shops_data:

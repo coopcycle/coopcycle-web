@@ -96,6 +96,7 @@ cooperative's instance never communicates directly with Shopify during the insta
 | `SERVER_NAME`        | What FrankenPHP binds. `:8083` serves plain HTTP behind nginx (production); a bare domain makes Caddy obtain a Let's Encrypt certificate itself. |
 | `GATEWAY_PORT`       | Port used by the container healthcheck and the dev port mapping. Keep in sync with `SERVER_NAME`. Defaults to `8083`. |
 | `APP_ENV`            | `prod` (default) hides exception messages from the browser; `dev` shows them. |
+| `SHOPS_DB_PATH`      | SQLite file recording which cooperative each shop installed on, used to route compliance webhooks. Defaults to `/data/shops/shops.sqlite`; must be on a persistent volume. |
 
 ## Runtime
 
@@ -187,6 +188,32 @@ ngrok http 80     # for the local CoopCycle tenant (served by nginx)
 ```
 
 Update `APP_URL` in `shopify-gateway/.env` and `SHOPIFY_GATEWAY_SECRET` in both services.
+
+## Compliance webhooks
+
+Shopify requires every App Store app to handle `customers/data_request`,
+`customers/redact` and `shop/redact`. These are **app-level**: Shopify posts them
+to a single URI for every shop that ever installed the app, so in a multi-tenant
+setup they can only land on the gateway.
+
+```
+Shopify ──POST /shopify/compliance──▶ gateway ──POST /connect/shopify/compliance──▶ paris.coopcycle.org
+             (HMAC: API secret)                    (Bearer GATEWAY_SECRET)
+```
+
+The gateway verifies Shopify's HMAC, looks the shop up in `SHOPS_DB_PATH` — a
+mapping written when the shop is provisioned — and forwards the payload to that
+one cooperative. It deliberately never falls back to broadcasting: the
+`customers/*` payloads contain the customer's email and phone, and sending those
+to every cooperative would leak personal data to unrelated parties.
+
+An unmapped shop answers `200 {"status":"unrouted"}` and logs a line for an
+operator: Shopify retries cannot fix a missing mapping, and returning an error
+would only bury the app in redelivery attempts.
+
+This is the one piece of gateway state, which is why production mounts a volume
+at `/data/shops`. It has to outlive the install because `shop/redact` arrives 48
+hours after an uninstall.
 
 ## Security notes
 

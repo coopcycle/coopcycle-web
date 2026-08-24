@@ -6,6 +6,7 @@ use AppBundle\Entity\Shopify\ShopifyShop;
 use AppBundle\Entity\Store;
 use AppBundle\Form\Type\TimeSlotChoiceLoader;
 use AppBundle\Service\ShopifyClient;
+use AppBundle\Service\ShopifyComplianceService;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -44,7 +45,10 @@ class ShopifyController extends AbstractController
 
         $redirectUri = $this->generateUrl('shopify_callback', [], UrlGeneratorInterface::ABSOLUTE_URL);
 
-        $scopes = 'read_orders,write_fulfillments,read_fulfillments';
+        // Keep in sync with the gateway's OAuthHandler::SCOPES and shopify.app.toml.
+        // read_merchant_managed_fulfillment_orders is what lets the order webhook
+        // read delivery_method.method_type and skip non-local-delivery orders.
+        $scopes = 'read_orders,write_fulfillments,read_fulfillments,read_merchant_managed_fulfillment_orders';
 
         $authUrl = sprintf(
             'https://%s/admin/oauth/authorize?client_id=%s&scope=%s&redirect_uri=%s&state=%s',
@@ -192,6 +196,41 @@ class ShopifyController extends AbstractController
         $this->setupShop($shopDomain, $accessToken, $storeId, tenantUrl: $request->getSchemeAndHttpHost());
 
         return new JsonResponse(['success' => true]);
+    }
+
+    /**
+     * Receives one of Shopify's mandatory compliance topics, relayed by the
+     * gateway (Shopify itself posts them app-level, to a single URI, so they
+     * cannot reach a tenant directly).
+     *
+     * Authenticated via Authorization: Bearer {SHOPIFY_GATEWAY_SECRET}, the same
+     * way as /connect/shopify/provision.
+     */
+    #[Route(path: '/connect/shopify/compliance', name: 'shopify_compliance', methods: ['POST'])]
+    public function compliance(Request $request, ShopifyComplianceService $compliance): JsonResponse
+    {
+        $token = $request->headers->get('Authorization', '');
+        $token = str_starts_with($token, 'Bearer ') ? substr($token, 7) : '';
+
+        if (!$this->shopifyGatewaySecret || !hash_equals($this->shopifyGatewaySecret, $token)) {
+            return new JsonResponse(['error' => 'Unauthorized'], 401);
+        }
+
+        $data    = json_decode($request->getContent(), true) ?? [];
+        $topic   = $data['topic'] ?? null;
+        $payload = $data['payload'] ?? null;
+
+        if (!$topic || !is_array($payload)) {
+            return new JsonResponse(['error' => 'Missing topic or payload'], 400);
+        }
+
+        try {
+            $result = $compliance->handle($topic, $payload);
+        } catch (\InvalidArgumentException $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 400);
+        }
+
+        return new JsonResponse($result);
     }
 
     /** @return Store[] */

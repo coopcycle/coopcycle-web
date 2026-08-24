@@ -18,5 +18,13 @@ dev_store_url = ""
 [webhooks]
 api_version = "2025-10"
 
+# Mandatory for every app distributed on the Shopify App Store, whether or not
+# the app collects personal data. Shopify delivers these app-level, to a single
+# URI for all shops, so they land on the gateway which routes each one to the
+# cooperative that shop installed on.
+[[webhooks.subscriptions]]
+compliance_topics = [ "customers/data_request", "customers/redact", "shop/redact" ]
+uri = "https://YOUR_GATEWAY_URL/shopify/compliance"
+
 [pos]
 embedded = false

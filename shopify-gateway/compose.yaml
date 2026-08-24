@@ -21,3 +21,5 @@ services:
       SERVER_NAME: ":${GATEWAY_PORT:-8083}"
       GATEWAY_PORT: "${GATEWAY_PORT:-8083}"
       TRUSTED_PROXIES: "127.0.0.1,::1"
+      # Shop -> cooperative mapping used to route compliance webhooks.
+      SHOPS_DB_PATH: /data/shops/shops.sqlite

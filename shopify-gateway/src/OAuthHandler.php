@@ -12,7 +12,14 @@ class OAuthHandler
                          // fulfillment orders; read_fulfillments does not cover it.
                          . 'read_merchant_managed_fulfillment_orders';
 
+    public const COMPLIANCE_TOPICS = [
+        'customers/data_request',
+        'customers/redact',
+        'shop/redact',
+    ];
+
     public function __construct(
+        private readonly ShopStore $shopStore,
         private readonly string $apiKey,
         private readonly string $apiSecret,
         private readonly string $gatewaySecret,
@@ -304,6 +311,109 @@ class OAuthHandler
                 $response['code'],
             ));
         }
+
+        // Only now that the tenant owns the shop is the mapping true. A failure
+        // here must not fail the install: the merchant is set up either way, and
+        // an unmapped shop degrades to a logged, unroutable compliance webhook.
+        try {
+            $this->shopStore->remember($shopDomain, $tenantUrl);
+        } catch (\Throwable $e) {
+            error_log(sprintf('shopify-gateway: could not record %s -> %s: %s',
+                $shopDomain, $tenantUrl, $e->getMessage()));
+        }
+    }
+
+    /**
+     * Shopify's three mandatory compliance topics. They are app-level: Shopify
+     * posts them to one URI for every shop that ever installed the app, so the
+     * gateway is the only place that can receive them, and it must resolve the
+     * shop to its cooperative before forwarding.
+     *
+     * Always answers 2xx once the HMAC checks out. Shopify retries on failure,
+     * and an unroutable shop is not something a retry can fix — it is logged for
+     * an operator instead.
+     */
+    public function compliance(): void
+    {
+        $rawBody = file_get_contents('php://input') ?: '';
+        $hmac    = $_SERVER['HTTP_X_SHOPIFY_HMAC_SHA256'] ?? '';
+        $topic   = $_SERVER['HTTP_X_SHOPIFY_TOPIC'] ?? '';
+
+        // Compliance webhooks are signed with the app's client secret.
+        $computed = base64_encode(hash_hmac('sha256', $rawBody, $this->apiSecret, true));
+        if (!$hmac || !hash_equals($computed, $hmac)) {
+            http_response_code(401);
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'Invalid HMAC']);
+            return;
+        }
+
+        if (!in_array($topic, self::COMPLIANCE_TOPICS, true)) {
+            http_response_code(400);
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'Unsupported topic']);
+            return;
+        }
+
+        $payload    = json_decode($rawBody, true) ?: [];
+        $shopDomain = $payload['shop_domain'] ?? '';
+
+        header('Content-Type: application/json');
+
+        if ('' === $shopDomain) {
+            error_log('shopify-gateway: compliance webhook without shop_domain');
+            echo json_encode(['status' => 'ignored']);
+            return;
+        }
+
+        $tenantUrl = null;
+        try {
+            $tenantUrl = $this->shopStore->tenantFor($shopDomain);
+        } catch (\Throwable $e) {
+            error_log('shopify-gateway: shop lookup failed: ' . $e->getMessage());
+        }
+
+        if (null === $tenantUrl) {
+            // Never fan out to every tenant as a fallback: customers/* payloads
+            // carry the customer's email and phone.
+            error_log(sprintf(
+                'shopify-gateway: no cooperative recorded for %s, cannot route "%s" — handle manually.',
+                $shopDomain,
+                $topic
+            ));
+            echo json_encode(['status' => 'unrouted']);
+            return;
+        }
+
+        $response = $this->httpPost(
+            $tenantUrl . '/connect/shopify/compliance',
+            (string) json_encode(['topic' => $topic, 'payload' => $payload]),
+            [
+                'Content-Type: application/json',
+                'Accept: application/json',
+                'Authorization: Bearer ' . $this->gatewaySecret,
+            ]
+        );
+
+        if ($response['code'] !== 200) {
+            error_log(sprintf(
+                'shopify-gateway: %s returned HTTP %d for "%s" (shop %s).',
+                $tenantUrl, $response['code'], $topic, $shopDomain
+            ));
+            echo json_encode(['status' => 'forward_failed']);
+            return;
+        }
+
+        // The shop is gone for good; drop the mapping so it does not linger.
+        if ('shop/redact' === $topic) {
+            try {
+                $this->shopStore->forget($shopDomain);
+            } catch (\Throwable $e) {
+                error_log('shopify-gateway: could not forget ' . $shopDomain . ': ' . $e->getMessage());
+            }
+        }
+
+        echo json_encode(['status' => 'ok']);
     }
 
     private function verifyCallbackHmac(array $params, string $hmac): bool

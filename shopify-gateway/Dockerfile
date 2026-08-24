@@ -6,16 +6,21 @@ WORKDIR /app
 ENV APP_ENV=prod
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
+# The shop -> cooperative mapping must outlive the container: shop/redact
+# arrives 48h after an uninstall.
+VOLUME /data/shops
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
         ca-certificates \
         curl \
     && rm -rf /var/lib/apt/lists/*
 
 # The gateway has no Composer dependencies — it only needs the autoloader — so
-# composer is the sole build-time extension. opcache is the runtime one.
-# Shopify API calls go through file_get_contents() over HTTPS (openssl is in the
-# base image), so no ext-curl is required.
-RUN install-php-extensions @composer opcache
+# composer is the sole build-time extension. opcache is the runtime one, and
+# pdo_sqlite backs the shop -> cooperative mapping that routes app-level
+# compliance webhooks. Shopify API calls go through file_get_contents() over
+# HTTPS (openssl is in the base image), so no ext-curl is required.
+RUN install-php-extensions @composer opcache pdo_sqlite
 
 COPY frankenphp/conf.d/app.ini $PHP_INI_DIR/conf.d/
 COPY frankenphp/Caddyfile /etc/caddy/Caddyfile

@@ -105,3 +105,64 @@ Feature: Shopify webhook
       """
     Then the response status code should be 200
     And the delivery for Shopify order "1234567890" should be cancelled
+
+  Scenario: Reject a compliance request that is not signed with the gateway secret
+    When I send a Shopify compliance request with topic "shop/redact" and a bad secret and body:
+      """
+      { "shop_id": 954889, "shop_domain": "test-shop.myshopify.com" }
+      """
+    Then the response status code should be 401
+
+  Scenario: customers/redact strips personal data from the matching delivery
+    Given a Shopify order "1234567890" exists for shop "test-shop.myshopify.com" with a delivery
+    When I send a Shopify compliance request with topic "customers/redact" and body:
+      """
+      {
+        "shop_id": 954889,
+        "shop_domain": "test-shop.myshopify.com",
+        "customer": { "id": 191167, "email": "john@example.com", "phone": "555-625-1199" },
+        "orders_to_redact": [1234567890]
+      }
+      """
+    Then the response status code should be 200
+    And the dropoff address for Shopify order "1234567890" should be redacted
+    And the deliveries should not have been deleted
+
+  Scenario: customers/redact leaves orders of another shop alone
+    Given a Shopify order "1234567890" exists for shop "test-shop.myshopify.com" with a delivery
+    When I send a Shopify compliance request with topic "customers/redact" and body:
+      """
+      {
+        "shop_id": 954889,
+        "shop_domain": "other-shop.myshopify.com",
+        "customer": { "id": 191167 },
+        "orders_to_redact": [1234567890]
+      }
+      """
+    Then the response status code should be 200
+    And the dropoff address for Shopify order "1234567890" should not be redacted
+
+  Scenario: customers/data_request reports without deleting anything
+    Given a Shopify order "1234567890" exists for shop "test-shop.myshopify.com" with a delivery
+    When I send a Shopify compliance request with topic "customers/data_request" and body:
+      """
+      {
+        "shop_id": 954889,
+        "shop_domain": "test-shop.myshopify.com",
+        "customer": { "id": 191167, "email": "john@example.com" },
+        "orders_requested": [1234567890],
+        "data_request": { "id": 9999 }
+      }
+      """
+    Then the response status code should be 200
+    And the dropoff address for Shopify order "1234567890" should not be redacted
+
+  Scenario: shop/redact removes the shop and its access token, keeping deliveries
+    Given a Shopify order "1234567890" exists for shop "test-shop.myshopify.com" with a delivery
+    When I send a Shopify compliance request with topic "shop/redact" and body:
+      """
+      { "shop_id": 954889, "shop_domain": "test-shop.myshopify.com" }
+      """
+    Then the response status code should be 200
+    And no Shopify shop should exist for domain "test-shop.myshopify.com"
+    And the deliveries should not have been deleted
