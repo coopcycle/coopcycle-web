@@ -60,13 +60,26 @@ class OAuthHandler
     /**
      * Entry point from the Shopify App Store.
      * Shopify calls: GET {APP_URL}/shopify/install?shop=merchant.myshopify.com&hmac=...
+     *
+     * This sends the merchant straight to Shopify's consent screen and renders
+     * nothing. Shopify requires that an app "immediately authenticate using
+     * OAuth before any other steps occur", with no UI beforehand, and enforces
+     * it at review — which is why the cooperative picker now lives *after* the
+     * callback rather than here. It re-authenticates unconditionally, including
+     * for a shop that installed before: Shopify demands that too, and for an
+     * already-approved shop the consent screen passes through without a prompt.
      */
     public function install(): void
     {
         $shop = trim($_GET['shop'] ?? '');
 
+        if (!$shop || !$this->isValidShopDomain($shop)) {
+            $this->render('error', ['message' => 'Invalid Shopify shop domain. It must end with .myshopify.com.']);
+            return;
+        }
+
         // Verify Shopify's install HMAC when present.
-        if ($shop && isset($_GET['hmac'])) {
+        if (isset($_GET['hmac'])) {
             if (!$this->verifyCallbackHmac($_GET, $_GET['hmac'])) {
                 http_response_code(403);
                 $this->render('error', ['message' => 'HMAC verification failed. This request did not come from Shopify.']);
@@ -74,29 +87,43 @@ class OAuthHandler
             }
         }
 
-        // 'session' is the App Bridge session token — only present when the merchant opens
-        // the app from within the Shopify admin, not during a fresh install.
-        if (!empty($_GET['session'])) {
-            $host    = base64_decode($_GET['host'] ?? '', strict: false);
-            $backUrl = $host ? 'https://' . $host . '/settings/shipping' : null;
-            $this->render('home', ['shop' => $shop, 'backUrl' => $backUrl]);
-            return;
-        }
+        // `host` only identifies the admin page to link back to afterwards. It
+        // rides through OAuth so the success page can still offer that link.
+        $host = (string) ($_GET['host'] ?? '');
 
-        $this->render('install', ['shop' => $shop, 'tenants' => $this->parseTenants()]);
+        $state = $this->signedState([
+            'shop'  => $shop,
+            'host'  => $host,
+            'nonce' => bin2hex(random_bytes(8)),
+            'ts'    => time(),
+        ]);
+
+        $authUrl = sprintf(
+            'https://%s/admin/oauth/authorize?client_id=%s&scope=%s&redirect_uri=%s&state=%s',
+            $shop,
+            rawurlencode($this->apiKey),
+            self::SCOPES,
+            rawurlencode($this->appUrl . '/shopify/callback'),
+            rawurlencode($state),
+        );
+
+        header('Location: ' . $authUrl, true, 302);
+        exit;
     }
 
     /**
-     * Receives the cooperative picker form and redirects the merchant to
-     * CoopCycle to authenticate and choose which store to connect.
+     * Receives the cooperative picker form — which is now shown *after* OAuth —
+     * and redirects the merchant to CoopCycle to authenticate and choose a store.
      */
     public function start(): void
     {
-        $shop      = trim($_POST['shop'] ?? '');
+        $pendingId = trim($_POST['pending'] ?? '');
         $tenantUrl = rtrim(trim($_POST['tenant_url'] ?? ''), '/');
 
-        if (!$shop || !$this->isValidShopDomain($shop)) {
-            $this->render('error', ['message' => 'Invalid Shopify shop domain. It must end with .myshopify.com.']);
+        $pending = $pendingId === '' ? null : $this->shopStore->pendingInstall($pendingId);
+
+        if (null === $pending) {
+            $this->render('error', ['message' => 'This installation has expired. Please start again from the Shopify App Store.']);
             return;
         }
 
@@ -114,11 +141,12 @@ class OAuthHandler
             }
         }
 
-        // Build a signed state token embedding shop, tenant, and the gateway's
-        // OAuth entry-point URL. The token travels through CoopCycle unchanged.
+        // The state travels through CoopCycle unchanged. It carries the pending
+        // install id, never the access token itself.
         $state = base64_encode(json_encode([
-            'shop'      => $shop,
+            'shop'      => $pending['shop_domain'],
             'tenant'    => $tenantUrl,
+            'pending'   => $pendingId,
             'nonce'     => bin2hex(random_bytes(8)),
             'return_to' => $this->appUrl . '/shopify/oauth',
         ]));
@@ -134,8 +162,9 @@ class OAuthHandler
     }
 
     /**
-     * Called after CoopCycle redirects back with the merchant's chosen store.
-     * Verifies CoopCycle's signature then launches the Shopify OAuth flow.
+     * Return leg from CoopCycle, carrying the merchant's chosen store. This is
+     * where the install is finally completed — OAuth already happened, so all
+     * that is left is to hand the parked access token to the cooperative.
      *
      * CoopCycle calls: GET {APP_URL}/shopify/oauth?state=...&store_id=42&return_sig=...
      */
@@ -159,38 +188,57 @@ class OAuthHandler
         }
 
         $stateData = json_decode(base64_decode($state), true);
-        $shop      = $stateData['shop']   ?? null;
-        $tenant    = $stateData['tenant'] ?? null;
+        $shop      = $stateData['shop']    ?? null;
+        $tenant    = $stateData['tenant']  ?? null;
+        $pendingId = $stateData['pending'] ?? null;
 
-        if (!$shop || !$tenant) {
+        if (!$shop || !$tenant || !$pendingId) {
             $this->render('error', ['message' => 'Malformed state token.']);
             return;
         }
 
-        // Encode {tenant, store_id} into the Shopify OAuth state.
-        // Shopify's HMAC on the callback guarantees this cannot be tampered with.
-        $shopifyState = base64_encode(json_encode([
-            'tenant'   => $tenant,
-            'store_id' => $storeId,
-        ]));
+        $pending = $this->shopStore->pendingInstall((string) $pendingId);
 
-        $callbackUrl = $this->appUrl . '/shopify/callback';
+        if (null === $pending) {
+            $this->render('error', ['message' => 'This installation has expired. Please start again from the Shopify App Store.']);
+            return;
+        }
 
-        $authUrl = sprintf(
-            'https://%s/admin/oauth/authorize?client_id=%s&scope=%s&redirect_uri=%s&state=%s',
-            $shop,
-            rawurlencode($this->apiKey),
-            self::SCOPES,
-            rawurlencode($callbackUrl),
-            rawurlencode($shopifyState),
-        );
+        // The signature covers the state, but check anyway: the token must only
+        // ever be handed out for the shop it was actually issued to.
+        if (!hash_equals($pending['shop_domain'], (string) $shop)) {
+            http_response_code(403);
+            $this->render('error', ['message' => 'This installation does not match the shop it was started for.']);
+            return;
+        }
 
-        header('Location: ' . $authUrl, true, 302);
-        exit;
+        try {
+            $this->provisionTenant($tenant, $pending['shop_domain'], $pending['access_token'], $storeId);
+        } catch (\RuntimeException $e) {
+            $this->render('error', ['message' => $e->getMessage()]);
+            return;
+        }
+
+        // The token now lives in the cooperative; the gateway has no use for it.
+        $this->shopStore->finishInstall((string) $pendingId);
+
+        // `home` is the post-install page: it confirms the link and carries the
+        // delivery-zone setup steps, which the merchant still has to complete in
+        // Shopify before any order can be dispatched.
+        $host    = $pending['host'] ? base64_decode($pending['host'], strict: false) : '';
+        $backUrl = $host ? 'https://' . $host . '/settings/shipping' : null;
+
+        $this->render('home', [
+            'shop'      => $pending['shop_domain'],
+            'tenantUrl' => $tenant,
+            'backUrl'   => $backUrl,
+        ]);
     }
 
     /**
-     * OAuth callback from Shopify. Exchanges the code for a token and provisions the tenant.
+     * OAuth callback from Shopify. Exchanges the code for a token, parks it, and
+     * only then shows the merchant the cooperative picker.
+     *
      * Shopify calls: GET {APP_URL}/shopify/callback?shop=...&code=...&state=...&hmac=...
      */
     public function callback(): void
@@ -211,12 +259,19 @@ class OAuthHandler
             return;
         }
 
-        $stateData = json_decode(base64_decode($state), true);
-        $tenantUrl = $stateData['tenant']   ?? null;
-        $storeId   = isset($stateData['store_id']) ? (int) $stateData['store_id'] : null;
+        $stateData = $this->verifySignedState((string) $state);
 
-        if (!$tenantUrl || !filter_var($tenantUrl, FILTER_VALIDATE_URL)) {
-            $this->render('error', ['message' => 'Invalid or missing CoopCycle tenant URL in OAuth state.']);
+        if (null === $stateData) {
+            http_response_code(403);
+            $this->render('error', ['message' => 'The OAuth state is invalid or has expired. Please start the installation again.']);
+            return;
+        }
+
+        // Shopify signs the whole callback, so a mismatch here means the state
+        // was minted for a different shop.
+        if (!hash_equals((string) ($stateData['shop'] ?? ''), $shop)) {
+            http_response_code(403);
+            $this->render('error', ['message' => 'The OAuth state does not match the shop being installed.']);
             return;
         }
 
@@ -226,14 +281,22 @@ class OAuthHandler
             return;
         }
 
+        $host = (string) ($stateData['host'] ?? '');
+
         try {
-            $this->provisionTenant($tenantUrl, $shop, $accessToken, $storeId);
-        } catch (\RuntimeException $e) {
-            $this->render('error', ['message' => $e->getMessage()]);
+            $pendingId = $this->shopStore->beginInstall($shop, $accessToken, $host !== '' ? $host : null);
+        } catch (\Throwable $e) {
+            error_log('shopify-gateway: could not park the install: ' . $e->getMessage());
+            $this->render('error', ['message' => 'Could not start the installation. Please try again.']);
             return;
         }
 
-        $this->render('success', ['shop' => $shop, 'tenantUrl' => $tenantUrl]);
+        // OAuth is done; showing UI is allowed from here on.
+        $this->render('install', [
+            'shop'    => $shop,
+            'pending' => $pendingId,
+            'tenants' => $this->parseTenants(),
+        ]);
     }
 
     /**
@@ -414,6 +477,47 @@ class OAuthHandler
         }
 
         echo json_encode(['status' => 'ok']);
+    }
+
+    /**
+     * State for the Shopify OAuth round-trip. Shopify's callback HMAC already
+     * covers the state parameter, but that only proves Shopify echoed it back —
+     * signing it ourselves is what proves *we* minted it.
+     */
+    private function signedState(array $data): string
+    {
+        $payload = base64_encode(json_encode($data));
+
+        return $payload . '.' . hash_hmac('sha256', $payload, $this->gatewaySecret);
+    }
+
+    private function verifySignedState(string $state): ?array
+    {
+        $parts = explode('.', $state, 2);
+
+        if (count($parts) !== 2) {
+            return null;
+        }
+
+        [$payload, $signature] = $parts;
+
+        if (!hash_equals(hash_hmac('sha256', $payload, $this->gatewaySecret), $signature)) {
+            return null;
+        }
+
+        $data = json_decode(base64_decode($payload), true);
+
+        if (!is_array($data)) {
+            return null;
+        }
+
+        // Same window as a parked install: a stale authorisation is not one we
+        // want to complete.
+        if (!isset($data['ts']) || (time() - (int) $data['ts']) > 3600) {
+            return null;
+        }
+
+        return $data;
     }
 
     private function verifyCallbackHmac(array $params, string $hmac): bool

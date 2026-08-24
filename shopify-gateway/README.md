@@ -13,6 +13,10 @@ This gateway solves the problem by sitting in front of all cooperative instances
 
 ## Install flow
 
+Shopify requires that an app **immediately authenticates using OAuth before any
+other steps occur**, with no UI shown beforehand — it is enforced at App Store
+review. So OAuth comes first, and the cooperative picker comes after it.
+
 ```
 Shopify App Store
         │
@@ -21,14 +25,29 @@ Shopify App Store
 │  shopify-gateway                │
 │                                 │
 │  1. Verify Shopify install HMAC │
-│  2. Show cooperative picker     │
-│     (tenant URL input form)     │
+│  2. Redirect straight to OAuth  │  ← renders nothing
+│     (state signed by us)        │
+└──────────────┬──────────────────┘
+               │  Shopify OAuth consent screen
+               ▼
+┌─────────────────────────────────┐
+│  shopify-gateway                │
+│  GET /shopify/callback          │
+│                                 │
+│  3. Verify Shopify HMAC + our   │
+│     own signed state            │
+│  4. Exchange code for token     │
+│  5. Park the token as a         │
+│     "pending install" (1h TTL)  │
+│  6. NOW show cooperative picker │
 └──────────────┬──────────────────┘
                │  POST /shopify/start
-               │  {shop, tenant_url}
+               │  {pending, tenant_url}
                │
-               │  Builds signed state token:
-               │  base64({shop, tenant, nonce, return_to})
+               │  Signed state carries the pending
+               │  id — never the access token:
+               │  base64({shop, tenant, pending,
+               │          nonce, return_to})
                │  sig = HMAC(state, GATEWAY_SECRET)
                ▼
 ┌─────────────────────────────────┐
@@ -36,12 +55,10 @@ Shopify App Store
 │  GET /connect/shopify/choose-   │
 │      store?state=...&sig=...    │
 │                                 │
-│  3. If not logged in →          │
+│  7. If not logged in →          │
 │     redirect to CoopCycle login │
-│  4. Show dropdown of stores     │
-│     the merchant manages        │
-│  5. Merchant picks a store      │
-│  6. Sign response:              │
+│  8. Merchant picks a store      │
+│  9. Sign response:              │
 │     return_sig = HMAC(          │
 │       state + ':' + store_id,   │
 │       GATEWAY_SECRET)           │
@@ -52,24 +69,14 @@ Shopify App Store
 ┌─────────────────────────────────┐
 │  shopify-gateway                │
 │                                 │
-│  7. Verify return_sig           │
-│  8. Start Shopify OAuth:        │
-│     state = base64(             │
-│       {tenant, store_id})       │
-└──────────────┬──────────────────┘
-               │  Shopify OAuth consent screen
-               ▼
-┌─────────────────────────────────┐
-│  shopify-gateway                │
-│  GET /shopify/callback          │
-│                                 │
-│  9.  Verify Shopify HMAC        │
-│  10. Exchange code for token    │
-│  11. POST /connect/shopify/     │
-│        provision                │
-│      {shop_domain,              │
-│       access_token, store_id}   │
-│      Authorization: Bearer ...  │
+│  10. Verify return_sig          │
+│  11. Reclaim the parked token,  │
+│      checking it belongs to     │
+│      this shop                  │
+│  12. POST /connect/shopify/     │
+│         provision               │
+│  13. Delete the pending install │
+│      and record shop → tenant   │
 └──────────────┬──────────────────┘
                ▼
 ┌─────────────────────────────────┐
@@ -80,6 +87,11 @@ Shopify App Store
 │  registers webhooks             │
 └─────────────────────────────────┘
 ```
+
+Because the merchant chooses their cooperative *after* OAuth, the gateway holds
+the access token for the two redirects in between. It is stored server-side as a
+pending install with a one-hour TTL, deleted the moment the cooperative accepts
+it, and never placed in a cookie or in any URL.
 
 Only the gateway's domain needs to be registered in the Shopify Partner dashboard. Each
 cooperative's instance never communicates directly with Shopify during the install flow.
@@ -222,4 +234,5 @@ hours after an uninstall.
 - **CoopCycle → Gateway return signature**: `HMAC(state + ':' + store_id, GATEWAY_SECRET)`. The gateway verifies this at `GET /shopify/oauth` to confirm CoopCycle authorised the chosen store — preventing a forged `store_id` in the redirect URL.
 - **Shopify OAuth callback HMAC**: verified before the code is exchanged, preventing request forgery. The `{tenant, store_id}` Shopify state param is covered by this HMAC, making it tamper-proof.
 - **Provision endpoint**: authenticated with `Authorization: Bearer {GATEWAY_SECRET}`. Never accessible publicly (token required).
-- The gateway never stores the Shopify access token — it is forwarded to the tenant over HTTPS and immediately discarded.
+- **Shopify OAuth state**: signed by the gateway with `GATEWAY_SECRET` and checked on the callback, so a state we did not mint is refused even though Shopify's own HMAC would pass. It expires after an hour, and the shop it names must match the shop Shopify reports.
+- **Parked access token**: because OAuth now precedes the cooperative picker, the gateway holds the token between the callback and provisioning. It is kept server-side in SQLite for at most an hour, is reclaimed only via an id carried inside the CoopCycle-signed state, is checked against the shop it was issued for, and is deleted as soon as the cooperative accepts it. It is never put in a cookie, a URL, or the page. Replaying a completed install finds nothing to reclaim and is refused.

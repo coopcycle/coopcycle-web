@@ -122,7 +122,9 @@
     <h1>CoopCycle is connected</h1>
 
     <?php if ($shop): ?>
-        <p>Your Shopify store <strong><?= htmlspecialchars($shop, ENT_QUOTES) ?></strong> is connected to CoopCycle. Orders placed with local delivery will automatically appear in your CoopCycle dispatch.</p>
+        <p>Your Shopify store <strong><?= htmlspecialchars($shop, ENT_QUOTES) ?></strong> is connected to
+        <?php if (!empty($tenantUrl)): ?>your cooperative at <strong><?= htmlspecialchars($tenantUrl, ENT_QUOTES) ?></strong><?php else: ?>CoopCycle<?php endif; ?>.
+        Orders placed with local delivery will automatically appear in your CoopCycle dispatch.</p>
     <?php else: ?>
         <p>Your Shopify store is connected to CoopCycle. Orders placed with local delivery will automatically appear in your CoopCycle dispatch.</p>
     <?php endif; ?>

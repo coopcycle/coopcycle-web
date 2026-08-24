@@ -108,7 +108,9 @@
     </p>
 
     <form method="POST" action="/shopify/start">
-        <input type="hidden" name="shop" value="<?= htmlspecialchars($shop ?? '', ENT_QUOTES) ?>">
+        <!-- Identifies the access token parked at the end of OAuth. The shop is
+             read from that record server-side, never from this form. -->
+        <input type="hidden" name="pending" value="<?= htmlspecialchars($pending ?? '', ENT_QUOTES) ?>">
 
         <?php if (!empty($tenants)): ?>
             <label for="tenant_url">Your CoopCycle cooperative</label>
