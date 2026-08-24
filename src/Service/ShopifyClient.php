@@ -130,6 +130,33 @@ class ShopifyClient
         return $this->request($shop, 'POST', 'fulfillments.json', $payload) !== null;
     }
 
+    /**
+     * Returns the delivery method types of an order's fulfillment orders,
+     * e.g. ["local"] for local delivery, ["shipping"] for regular shipping.
+     *
+     * The orders/create webhook payload carries no delivery method, so this
+     * has to be looked up. Returns null when the lookup fails, which callers
+     * must distinguish from an empty list (order has no fulfillment orders).
+     */
+    public function getDeliveryMethodTypes(ShopifyShop $shop, string $orderId): ?array
+    {
+        $response = $this->request($shop, 'GET', sprintf('orders/%s/fulfillment_orders.json', $orderId));
+
+        if (null === $response) {
+            return null;
+        }
+
+        $types = [];
+        foreach ($response['fulfillment_orders'] ?? [] as $fulfillmentOrder) {
+            $type = $fulfillmentOrder['delivery_method']['method_type'] ?? null;
+            if ($type) {
+                $types[] = strtolower($type);
+            }
+        }
+
+        return array_values(array_unique($types));
+    }
+
     private function request(ShopifyShop $shop, string $method, string $path, array $body = []): ?array
     {
         $url = sprintf('https://%s/admin/api/2025-10/%s', $shop->getShopDomain(), $path);

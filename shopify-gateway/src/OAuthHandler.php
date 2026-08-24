@@ -7,7 +7,10 @@ namespace CoopCycle\ShopifyGateway;
 class OAuthHandler
 {
     private const SCOPES = 'read_orders,write_fulfillments,read_fulfillments,write_shipping,'
-                         . 'write_delivery_customizations,read_delivery_customizations';
+                         . 'write_delivery_customizations,read_delivery_customizations,'
+                         // Needed to read delivery_method.method_type off an order's
+                         // fulfillment orders; read_fulfillments does not cover it.
+                         . 'read_merchant_managed_fulfillment_orders';
 
     public function __construct(
         private readonly string $apiKey,

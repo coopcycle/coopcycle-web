@@ -13,6 +13,7 @@ use AppBundle\Entity\Shopify\ShopifyShop;
 use AppBundle\Entity\Task;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\Geocoder;
+use AppBundle\Service\ShopifyClient;
 use AppBundle\Service\TaskManager;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
@@ -28,9 +29,12 @@ class ShopifyWebhookProcessor implements ProcessorInterface
         private TaskManager $taskManager,
         private Geocoder $geocoder,
         private PhoneNumberUtil $phoneNumberUtil,
+        private ShopifyClient $shopifyClient,
         private LoggerInterface $logger,
         private string $country,
     ) {}
+
+    private const DELIVERY_METHOD_LOCAL = 'local';
 
     /**
      * @param ShopifyWebhook $data
@@ -72,6 +76,14 @@ class ShopifyWebhookProcessor implements ProcessorInterface
         if ($existing) {
             $this->logger->info(sprintf(
                 'Shopify order %s already processed, skipping.',
+                $shopifyOrderId
+            ));
+            return;
+        }
+
+        if (!$this->isLocalDelivery($order, $shop)) {
+            $this->logger->info(sprintf(
+                'Shopify order %s was not placed with local delivery, skipping.',
                 $shopifyOrderId
             ));
             return;
@@ -130,6 +142,55 @@ class ShopifyWebhookProcessor implements ProcessorInterface
         $this->entityManager->flush();
 
         $this->logger->info(sprintf('Cancelled delivery for Shopify order %s', $shopifyOrderId));
+    }
+
+    /**
+     * A merchant can offer local delivery alongside regular shipping, and both
+     * fire orders/create. Only local delivery orders belong in CoopCycle.
+     *
+     * The delivery method lives on the fulfillment orders, not on the order
+     * itself, so it is read from the payload when present and looked up
+     * otherwise. When it cannot be determined at all we process the order:
+     * a duplicate delivery is a nuisance, a missing one loses a real order.
+     */
+    private function isLocalDelivery(array $order, ShopifyShop $shop): bool
+    {
+        $methodTypes = $this->deliveryMethodTypesFromPayload($order);
+
+        if (null === $methodTypes) {
+            $methodTypes = $this->shopifyClient->getDeliveryMethodTypes($shop, (string) $order['id']);
+        }
+
+        if (null === $methodTypes || [] === $methodTypes) {
+            $this->logger->warning(sprintf(
+                'Could not determine the delivery method of Shopify order %s, processing it anyway.',
+                $order['id']
+            ));
+            return true;
+        }
+
+        return in_array(self::DELIVERY_METHOD_LOCAL, $methodTypes, true);
+    }
+
+    /**
+     * Returns null when the payload carries no fulfillment orders, so the
+     * caller knows to fall back to an API lookup.
+     */
+    private function deliveryMethodTypesFromPayload(array $order): ?array
+    {
+        if (empty($order['fulfillment_orders'])) {
+            return null;
+        }
+
+        $types = [];
+        foreach ($order['fulfillment_orders'] as $fulfillmentOrder) {
+            $type = $fulfillmentOrder['delivery_method']['method_type'] ?? null;
+            if ($type) {
+                $types[] = strtolower($type);
+            }
+        }
+
+        return array_values(array_unique($types));
     }
 
     private function buildDelivery(array $order, ShopifyShop $shop): ?Delivery

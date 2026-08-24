@@ -1579,6 +1579,15 @@ class FeatureContext implements Context, SnippetAcceptingContext
         Assert::assertNotNull($shopifyOrder->getDelivery(), "ShopifyOrder has no delivery");
     }
 
+    #[Then('no delivery should have been created for Shopify order :shopifyOrderId')]
+    public function noDeliveryShouldHaveBeenCreatedForShopifyOrder(string $shopifyOrderId): void
+    {
+        $shopifyOrder = $this->doctrine->getRepository(ShopifyOrder::class)
+            ->findOneBy(['shopifyOrderId' => $shopifyOrderId]);
+
+        Assert::assertNull($shopifyOrder, "A ShopifyOrder was created for id {$shopifyOrderId}");
+    }
+
     #[Then('the delivery dropoff should be after :datetime')]
     public function theDeliveryDropoffShouldBeAfter(string $datetime): void
     {
