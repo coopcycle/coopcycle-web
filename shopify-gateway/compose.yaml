@@ -1,0 +1,23 @@
+# Base compose for the Shopify OAuth gateway.
+#
+# A single container from a prebuilt image (built & pushed to GHCR by CI):
+#   - php     the FrankenPHP web server (nginx on the host reverse-proxies to it)
+#
+# Prod-only concerns (host networking, always-pull) live in compose.prod.yaml.
+# Run both files together in production. The image is pulled, never built here.
+#
+# File format 2.4 to match the routing console, whose host runs Compose v1.
+# Modern `docker compose` ignores the version with a deprecation notice.
+version: "2.4"
+
+services:
+  php:
+    image: ghcr.io/coopcycle/coopcycle-web/shopify-gateway:${SHOPIFY_GATEWAY_TAG:-latest}
+    restart: always
+    environment:
+      APP_ENV: prod
+      # FrankenPHP serves plain HTTP on this local port; nginx terminates TLS.
+      # Keep GATEWAY_PORT in sync — the healthcheck probes it.
+      SERVER_NAME: ":${GATEWAY_PORT:-8083}"
+      GATEWAY_PORT: "${GATEWAY_PORT:-8083}"
+      TRUSTED_PROXIES: "127.0.0.1,::1"

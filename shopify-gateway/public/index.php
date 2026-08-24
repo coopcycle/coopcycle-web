@@ -20,8 +20,15 @@ $handler = new OAuthHandler(
     tenantsEnv:    env('TENANTS'),
 );
 
+// HEAD must route exactly like GET (RFC 9110): nginx health probes and uptime
+// monitors use it, and an unrouted HEAD would report the gateway as down. The
+// server strips the response body from a HEAD reply on its own.
 $method = $_SERVER['REQUEST_METHOD'];
-$path   = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+if ($method === 'HEAD') {
+    $method = 'GET';
+}
+
+$path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 
 try {
     match (true) {

@@ -1,0 +1,21 @@
+# Local development override: build the image from source instead of pulling it
+# from GHCR, and read the plain .env. Replaces the old docker-compose.yml.
+#
+#   docker compose -f compose.yaml -f compose.dev.yaml up --build
+#
+# FrankenPHP binds :8083 inside the container and the port is published, so the
+# gateway is reachable at http://localhost:8083 without host networking.
+# No `version` key: modern Compose ignores it, and the long-form env_file
+# syntax below is v2-only anyway.
+
+services:
+  php:
+    build: .
+    image: coopcycle/shopify-gateway:dev
+    ports:
+      - "${GATEWAY_PORT:-8083}:${GATEWAY_PORT:-8083}"
+    environment:
+      APP_ENV: dev
+    env_file:
+      - path: .env
+        required: false

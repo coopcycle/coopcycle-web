@@ -92,16 +92,53 @@ cooperative's instance never communicates directly with Shopify during the insta
 | `SHOPIFY_API_SECRET` | Client secret from the Shopify Partner dashboard |
 | `GATEWAY_SECRET`     | A strong random secret (≥ 32 chars). Every CoopCycle tenant must set `SHOPIFY_GATEWAY_SECRET` to this same value. Generate with `openssl rand -hex 32`. |
 | `APP_URL`            | The public HTTPS URL of this gateway, **without** a trailing slash. Example: `https://shopify-gateway.coopcycle.org` |
+| `TENANTS`            | Optional. Comma-separated `Name:https://url` pairs shown in the install dropdown (`+` encodes a space). When empty, the install page falls back to a free-text URL field. |
+| `SERVER_NAME`        | What FrankenPHP binds. `:8083` serves plain HTTP behind nginx (production); a bare domain makes Caddy obtain a Let's Encrypt certificate itself. |
+| `GATEWAY_PORT`       | Port used by the container healthcheck and the dev port mapping. Keep in sync with `SERVER_NAME`. Defaults to `8083`. |
+| `APP_ENV`            | `prod` (default) hides exception messages from the browser; `dev` shows them. |
 
-## Running with Docker
+## Runtime
+
+The gateway runs on [FrankenPHP](https://frankenphp.dev) (Caddy + PHP 8.3 in a single
+process), matching the deployment used by `coopcycle-ops/routing`. Configuration lives in
+`frankenphp/Caddyfile` and `frankenphp/conf.d/app.ini`; both are baked into the image.
+
+### Locally
 
 ```bash
 cp .env.example .env
 # Fill in the values in .env
-docker compose up --build
+docker compose -f compose.yaml -f compose.dev.yaml up --build
 ```
 
-The service listens on port **8082** by default.
+The service listens on port **8083** by default (override with `GATEWAY_PORT`).
+
+### In production
+
+CI builds and pushes `ghcr.io/coopcycle/coopcycle-web/shopify-gateway` on every change to
+`shopify-gateway/` (see `.github/workflows/build_shopify_gateway_image.yml`). Deployment is
+a separate manual step on the host:
+
+```bash
+# Secrets consumed by compose's env_file — never commit this.
+cat > .env.prod.local <<'EOF'
+SHOPIFY_API_KEY=...
+SHOPIFY_API_SECRET=...
+GATEWAY_SECRET=...
+APP_URL=https://shopify-gateway.coopcycle.org
+TENANTS="Paris:https://paris.coopcycle.org"
+EOF
+chmod 600 .env.prod.local
+
+docker compose -f compose.yaml -f compose.prod.yaml pull
+docker compose -f compose.yaml -f compose.prod.yaml up -d --remove-orphans
+```
+
+`compose.prod.yaml` puts the container on the host network, so FrankenPHP binds
+`127.0.0.1:8083` and the box's existing nginx reverse-proxies
+`shopify-gateway.coopcycle.org` to it — TLS is terminated by nginx, not Caddy. The gateway
+is stateless: no volumes, no database. All install-flow state lives in the signed OAuth
+`state` parameter.
 
 ## Shopify Partner dashboard setup
 
@@ -135,17 +172,17 @@ The tenant exposes two endpoints (part of `coopcycle-web`):
 ## Development
 
 ```bash
-# Start the gateway locally
-APP_ENV=dev php -S localhost:8082 -t public
+# Start the gateway locally, without Docker
+APP_ENV=dev php -S localhost:8083 -t public
 
-# Or with Docker
-docker compose up --build
+# Or with Docker (FrankenPHP, same image as production)
+docker compose -f compose.yaml -f compose.dev.yaml up --build
 ```
 
 To test the full flow locally, use [ngrok](https://ngrok.com) to expose both services:
 
 ```bash
-ngrok http 8082   # for the gateway  → set APP_URL to this
+ngrok http 8083   # for the gateway  → set APP_URL to this
 ngrok http 80     # for the local CoopCycle tenant (served by nginx)
 ```
 
