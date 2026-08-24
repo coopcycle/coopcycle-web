@@ -202,30 +202,80 @@ make jest ARGS="js/app/api/__tests__/util.test.js"
 
 ### Launch the Cypress tests
 
-Cypress is a JS program for end-to-end testing and integration testing of components. You will launch a server in the test environment and run cypress on your own machine.
+Cypress is a JS program for end-to-end testing and integration testing of components. Cypress itself runs on your own machine, and drives the app served by the `nginx_test` container, in the `test` environment, on http://localhost:9080 (this is the `baseUrl` in `cypress.config.js`).
 
-Installation:
+#### 1. Configure the API keys
+
+In the `.env` file you need to set `GEOCODE_EARTH_API_KEY` to a valid API key. You need also Stripe configured on the platform or in the `.env` file (`STRIPE_PUBLISHABLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_CONNECT_CLIENT_ID`).
+
+`cypress.config.js` loads `.env` and exposes it to the tests, so a missing key here shows up as a failing test, not as a configuration error.
+
+#### 2. Install Cypress
 
 ```sh
 make cypress-install
 ```
 
-# install typesense for test env (automatically done with `make install` or `make setup`)
+This runs `npm install` *and* `npx cypress install`. The second one downloads the Cypress binary itself, which `npm install` skips when the binary is already cached or when `CYPRESS_INSTALL_BINARY=0` is set. You can check what you have with `npx cypress version`: both "package version" and "binary version" must be filled in.
+
+#### 3. Prepare the test environment
+
 ```sh
+# Create the schema of the test database
+docker compose exec -T php bin/console doctrine:schema:create --env=test
+
+# Install typesense for the test env (automatically done with `make install` or `make setup`)
 docker compose exec -T php bin/console typesense:create --env=test
+
+# Load the base data (countries, tax rates, …)
+docker compose exec -T php bin/console coopcycle:setup --env=test
 ```
 
-In the `.env` file you need to set `GEOCODE_EARTH_API_KEY` to a valid API key. You need also Stripe configured on the platform or in the `.env` file (`STRIPE_PUBLISHABLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_CONNECT_CLIENT_ID`).
+These are the same steps the CI runs before starting Cypress, see `.github/workflows/test_e2e.yml`.
 
-and then this command will lead you to Cypress GUI
+Each spec loads its own fixtures (`cy.loadFixtures()` / `cy.loadFixturesWithSetup()`), which purge the database first, so you don't need to reset anything between runs.
+
+#### 4. Run the tests
+
 ```sh
+# Open the Cypress GUI
 make cypress-open
+
+# Run the whole suite headlessly, like the CI does
+make cypress
+
+# Run a single spec
+make cypress-only TESTFILE=pricing/setup_simple_km_based_pricing_rule.cy.js
+
+# Run a single spec in a loop, until it fails (useful to hunt flaky tests)
+make cypress-only-until-fail TESTFILE=pricing/setup_simple_km_based_pricing_rule.cy.js
 ```
 
 The Cypress tests will run automatically in Github CI on the `master` branch. You can get screenshots of the failed tests from the `Upload images for failed test` step (there is a link there to download the failed steps).
 
+#### Troubleshooting
 
-### Run linters (phpStan)
+If every test fails on `cy.visit('/login')` with a `500: Internal Server Error`, check the permissions of the session directory. In the `test` environment sessions are written to `var/cache/test/sessions`, and PHP-FPM (running as `www-data`) cannot write there if the directory was created by a console command running as `root`:
+
+```sh
+docker compose exec php ls -ld var/cache/test/sessions
+docker compose exec php sh -c 'chgrp -R www-data var/cache/test/sessions && chmod -R g+w var/cache/test/sessions'
+```
+
+If a test that calls `cy.consumeMessages()` fails because an asynchronous side effect never happened (an order price that is not recalculated, an import that stays pending…), the `php_worker` container is running in the wrong environment. `MESSENGER_TRANSPORT_DSN` is the same for `dev` and `test`, so both environments consume from the same Redis stream, in the same consumer group. By default `php_worker` runs `messenger:consume async --env=dev`, so it picks up messages dispatched by the tests and handles them against the **dev** database — the test then waits for a side effect that happened somewhere else.
+
+The CI does not have this problem, because it exports `APP_ENV=test` for the whole job. Do the same locally before running these tests:
+
+```sh
+APP_ENV=test docker compose up -d php_worker
+```
+
+and put it back afterwards with `docker compose up -d php_worker`.
+
+Note that stopping `php_worker` altogether is *not* enough: `cy.consumeMessages()` only runs `messenger:consume` for a few seconds, and messages are dispatched at the end of the HTTP request, so the test's own consumer regularly misses them. The specs rely on a worker being there.
+
+
+### Run linters (PHPStan)
 
 ```sh
 docker compose exec php php vendor/bin/phpstan analyse -v
@@ -293,4 +343,3 @@ The code is licensed under the [Coopyleft License](https://wiki.coopcycle.org/en
 
 - You are matching with the social and common company’s criteria as define by their national law, or by the European Commission in its [October 25th, 2011 communication](http://www.europarl.europa.eu/meetdocs/2009_2014/documents/com/com_com(2011)0681_/com_com(2011)0681_en.pdf), or by default by the Article 1 of the French law [n°2014-856 of July 31st, 2014](https://www.legifrance.gouv.fr/affichTexte.do?cidTexte=JORFTEXT000029313296&categorieLien=id) “relative à l’économie sociale et solidaire”
 - You are using a cooperative model in which workers are employees
-

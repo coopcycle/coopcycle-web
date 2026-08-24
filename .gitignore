@@ -108,3 +108,4 @@ yarn-error.log
 
 shopify-app/shopify.app.toml
 shopify-gateway/.env
+shopify.app.toml

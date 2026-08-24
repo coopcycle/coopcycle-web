@@ -120,6 +120,7 @@ final class InvoiceLineItemsGroupedByOrganizationProvider implements ProviderInt
             $activityByStore[] = new InvoiceLineItemGroupedByOrganization(
                 $store->getId(),
                 $store->getLegalName() ?? $store->getName(),
+                $store->getName(),
                 count($orders),
                 $subTotal,
                 $tax,

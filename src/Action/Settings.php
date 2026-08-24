@@ -33,6 +33,7 @@ class Settings
         'guest_checkout_enabled',
         'motto',
         'paygreen_public_key',
+        'timezone',
     ];
 
     public function __construct(

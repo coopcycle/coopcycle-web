@@ -35,11 +35,29 @@ export function isMandatory(option) {
   }
 }
 
-export function isValid(option) {
-  const totalQuantity = option.hasMenuItem.reduce(
+export function getOptionTotalQuantity(option) {
+  return option.hasMenuItem.reduce(
     (quantity, val) => quantity + val.quantity,
     0
   )
+}
+
+export function isOptionQuantityMaxReached(option) {
+  if (!option.additional) {
+    return false
+  }
+
+  const valuesRange = getValuesRange(option)
+  if (valuesRange.isUpperInfinite) {
+    return false
+  }
+
+  const max = parseInt(valuesRange.upper, 10)
+  return getOptionTotalQuantity(option) >= max
+}
+
+export function isValid(option) {
+  const totalQuantity = getOptionTotalQuantity(option)
 
   if (!option.additional) {
     return totalQuantity > 0
@@ -67,11 +85,24 @@ export const useProductOptions = () => {
   const [state, setState] = useContext(ProductOptionsModalContext)
 
   function setValueQuantity(option, optionValue, input) {
-    const quantity = parseInt(input, 10)
+    let quantity = parseInt(input, 10)
+
+    if (!Number.isNaN(quantity) && option.additional) {
+      const valuesRange = getValuesRange(option)
+      if (!valuesRange.isUpperInfinite) {
+        const max = parseInt(valuesRange.upper, 10)
+        const otherValuesQuantity = getOptionTotalQuantity(option) - getValueQuantity(option, optionValue)
+        quantity = Math.max(0, Math.min(quantity, max - otherValuesQuantity))
+      }
+    }
+
     _setValueQuantity(option, optionValue, quantity)
   }
 
   function incrementValueQuantity(option, optionValue) {
+    if (isOptionQuantityMaxReached(option)) {
+      return
+    }
     const quantity = getValueQuantity(option, optionValue)
     _setValueQuantity(option, optionValue, quantity + 1)
   }
@@ -160,11 +191,30 @@ export const useProductOptions = () => {
     })
   }
 
+  // Keeps only the option values that actually belong to this product,
+  // as an option value may depend on a value that is not part of the product (misconfiguration)
+  function filterExistingOptionValues(optionValueIds) {
+
+    const existingOptVals = _.flatMap(state.options, opt => opt.hasMenuItem.map(optVal => optVal['@id']))
+
+    return _.intersection(optionValueIds, existingOptVals)
+  }
+
+  // An option value is locked only if the values it depends on are present on the product,
+  // otherwise it would be impossible to unlock it
+  function isDisabledByDependency(optionValue) {
+
+    const dependsOn = filterExistingOptionValues(optionValue.dependsOn ?? [])
+
+    return dependsOn.length > 0 && !containsOptionValues(dependsOn)
+  }
+
   return {
     getValueQuantity: getValueQuantityInput,
     setValueQuantity,
     incrementValueQuantity,
     decrementValueQuantity,
     containsOptionValues,
+    isDisabledByDependency,
   }
 }

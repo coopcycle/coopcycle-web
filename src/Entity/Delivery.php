@@ -15,6 +15,7 @@ use AppBundle\Action\Delivery\Cancel as CancelDelivery;
 use AppBundle\Action\Delivery\Drop as DropDelivery;
 use AppBundle\Action\Delivery\Pick as PickDelivery;
 use AppBundle\Action\Delivery\BulkAsync as BulkAsyncDelivery;
+use AppBundle\Action\Delivery\GetEdifactData as GetEdifactDataController;
 use AppBundle\Action\Delivery\SuggestOptimizations as SuggestOptimizationsController;
 use AppBundle\Api\Dto\DeliveryFromTasksInput;
 use AppBundle\Api\Dto\DeliveryInputDto;
@@ -35,6 +36,7 @@ use AppBundle\Validator\Constraints\Delivery as AssertDelivery;
 use AppBundle\Vroom\Shipment as VroomShipment;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
@@ -44,6 +46,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
     types: ['http://schema.org/ParcelDelivery'],
     operations: [
         new Get(security: 'is_granted(\'view\', object)'),
+        new Get(
+            uriTemplate: '/deliveries/{id}/edifact',
+            controller: GetEdifactDataController::class,
+            openapiContext: ['summary' => 'Get the parsed EDIFACT data a Delivery was imported from'],
+            security: 'is_granted(\'view\', object)'
+        ),
         new Put(
             denormalizationContext: ['groups' => ['delivery_create']],
             security: 'is_granted(\'edit\', object)',
@@ -621,13 +629,57 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         return count($this->getImages()) > 0;
     }
 
-    public function getEdifactMessagesTimeline(): array
+    /**
+     * Messages live on tasks, so this aggregates them here so the inherited
+     * trait methods (getImportMessage, getReports, hasEdifactMessages, ...)
+     * operate on the right data.
+     */
+    public function getEdifactMessages(): Collection
     {
-        $messages = array_merge(...array_map(function (Task $task) {
-            return $task->getEdifactMessages()->toArray();
-        }, $this->getTasks()));
-        usort($messages, fn($a, $b) => $a->getCreatedAt() >= $b->getCreatedAt());
-        return $messages;
+        $messages = [];
+        foreach ($this->getTasks() as $task) {
+            foreach ($task->getEdifactMessages() as $message) {
+                $messages[] = $message;
+            }
+        }
+
+        return new ArrayCollection($messages);
+    }
+
+    /**
+     * Whether any of this delivery's tasks was imported from a transporter
+     * EDIFACT message. Used by the delivery form to conditionally show the
+     * "View EDIFACT data" link.
+     */
+    #[Groups(['delivery_edifact'])]
+    public function getHasEdifactImport(): bool
+    {
+        return !is_null($this->getImportMessage());
+    }
+
+    /**
+     * Returns EDIFACT messages shaped as plain arrays, ready to be JSON-encoded
+     * and consumed by the React TransporterTimeline component.
+     */
+    public function getEdifactMessagesForTimeline(): array
+    {
+        return array_map(function (EDIFACTMessage $message) {
+            return [
+                'id' => $message->getId(),
+                'direction' => $message->getDirection(),
+                'syncedAt' => $message->getSyncedAt()?->format(\DateTimeInterface::ATOM),
+                'messageType' => $message->getMessageType(),
+                'subMessageType' => $message->getSubMessageType(),
+                'ediMessage' => $message->getEdiMessage(),
+                'createdAt' => $message->getCreatedAt()?->format(\DateTimeInterface::ATOM),
+                'pods' => $message->getPods(),
+            ];
+        }, $this->getEdifactMessages()->toArray());
+    }
+
+    public function isTransporterEnabled(): bool
+    {
+        return $this->getStore()?->isTransporterEnabled() ?? false;
     }
 
     public static function getType(array $tasks): string

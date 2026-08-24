@@ -3,8 +3,10 @@
 namespace AppBundle\Entity\Delivery;
 
 
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 
+#[UniqueEntity(fields: ['code'], message: 'failure_reason.code.unique', errorPath: 'code')]
 class FailureReason
 {
     #[Groups(['task'])]

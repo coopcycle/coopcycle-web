@@ -7,7 +7,9 @@ use AppBundle\Api\Dto\TaskMapper;
 use AppBundle\Api\Dto\TaskPackageDto;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Task;
+use AppBundle\Utils\Barcode\BarcodeUtils;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -108,5 +110,97 @@ class TaskMapperTest extends TestCase
         $this->assertCount(1, $packages);
         $this->assertInstanceOf(TaskPackageDto::class, $packages[0]);
         $this->assertEquals(20, $packages[0]->quantity);
+    }
+
+    private function setId(object $entity, int $id): void
+    {
+        $reflection = new \ReflectionProperty($entity, 'id');
+        $reflection->setAccessible(true);
+        $reflection->setValue($entity, $id);
+    }
+
+    public function testGetPackagesLabels()
+    {
+        BarcodeUtils::init('coopcycle', 'salt');
+
+        $this->urlGenerator
+            ->generate('task_label_pdf', Argument::type('array'), Argument::any())
+            ->will(fn($args) => sprintf('/tasks/label?code=%s', $args[1]['code']));
+
+        $medium = new Package();
+        $medium->setName('M');
+        $medium->setShortCode('M');
+        $medium->setAverageVolumeUnits(4);
+        $small = new Package();
+        $small->setName('S');
+        $small->setShortCode('S');
+        $small->setAverageVolumeUnits(2);
+
+        // The package (i.e package type) id must NOT appear in the barcode,
+        // it is the task package id that does
+        $this->setId($medium, 34);
+        $this->setId($small, 33);
+
+        $dropoff = $this->createTask(Task::TYPE_DROPOFF);
+        $this->setId($dropoff, 311270);
+        $dropoff->addPackageWithQuantity($medium, 1);
+        $dropoff->addPackageWithQuantity($small, 1);
+
+        $taskPackages = $dropoff->getPackages();
+        $this->setId($taskPackages->get(0), 37730);
+        $this->setId($taskPackages->get(1), 37731);
+
+        $packages = $this->taskMapper->getPackages($dropoff, [$dropoff]);
+
+        $this->assertCount(2, $packages);
+        $this->assertEquals(
+            ['/tasks/label?code=67670011311270P37730U18076'],
+            $packages[0]->labels
+        );
+        // The unit index is continuous across the packages of the task
+        $this->assertEquals(
+            ['/tasks/label?code=67670011311270P37731U28076'],
+            $packages[1]->labels
+        );
+    }
+
+    public function testGetPackagesLabelsWithQuantities()
+    {
+        BarcodeUtils::init('coopcycle', 'salt');
+
+        $this->urlGenerator
+            ->generate('task_label_pdf', Argument::type('array'), Argument::any())
+            ->will(fn($args) => sprintf('/tasks/label?code=%s', $args[1]['code']));
+
+        $medium = new Package();
+        $medium->setName('M');
+        $medium->setShortCode('M');
+        $medium->setAverageVolumeUnits(4);
+        $small = new Package();
+        $small->setName('S');
+        $small->setShortCode('S');
+        $small->setAverageVolumeUnits(2);
+
+        $dropoff = $this->createTask(Task::TYPE_DROPOFF);
+        $this->setId($dropoff, 1);
+        $dropoff->addPackageWithQuantity($medium, 2);
+        $dropoff->addPackageWithQuantity($small, 3);
+
+        $taskPackages = $dropoff->getPackages();
+        $this->setId($taskPackages->get(0), 10);
+        $this->setId($taskPackages->get(1), 11);
+
+        $packages = $this->taskMapper->getPackages($dropoff, [$dropoff]);
+
+        $this->assertEquals([
+            '/tasks/label?code=676700111P10U18076',
+            '/tasks/label?code=676700111P10U28076',
+        ], $packages[0]->labels);
+
+        $this->assertEquals([
+            '/tasks/label?code=676700111P11U38076',
+            '/tasks/label?code=676700111P11U48076',
+            '/tasks/label?code=676700111P11U58076',
+        ], $packages[1]->labels);
     }
 }

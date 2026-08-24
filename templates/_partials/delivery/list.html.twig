@@ -16,7 +16,7 @@
   </thead>
   <tbody>
   {% for delivery in deliveries %}
-    <tr data-testid="delivery__list_item">
+    <tr data-testid="delivery__list_item" data-href="{{ path(routes.view, { id: delivery.id }) }}" style="cursor: pointer;">
       <td>
         {% if is_granted('ROLE_DISPATCHER') %}
           {% if delivery.order is defined and delivery.order is not empty %}
@@ -70,9 +70,9 @@
       <td width="10%">
         {% if delivery.pickup.isAssigned() and delivery.dropoff.isAssigned() %}
           {% if delivery.pickup.assignedCourier == delivery.dropoff.assignedCourier %}
-            <a href="{{ path('admin_user_details', { username: delivery.pickup.assignedCourier.username }) }}">
-              <img src="{{ path('user_avatar', { username: delivery.pickup.assignedCourier.username }) }}" width="20" height="20"> @{{ delivery.pickup.assignedCourier.username }}
-            </a>
+            <img src="{{ path('user_avatar', { username: delivery.pickup.assignedCourier.username }) }}" width="20" height="20"
+              data-toggle="tooltip" data-placement="top"
+              title="@{{ delivery.pickup.assignedCourier.username }}">
           {% endif %}
         {% endif %}
       </td>
@@ -90,6 +90,9 @@
           <p>-</p>
         {% endif %}
       </td>
+      <td class="text-center" width="10%">
+        <small class="text-muted">{{ delivery.createdAt|time_diff }}</small>
+      </td>
       <td class="text-center">
         {% if delivery.hasImages() and store is defined %}
           <a href="{{ path(routes.download_images, { storeId: store.id, deliveryId: delivery.id }) }}">
@@ -97,19 +100,14 @@
           </a>
         {% endif %}
       </td>
-      <td class="text-center" width="10%">
-        <small class="text-muted">{{ delivery.createdAt|time_diff }}</small>
-      </td>
-      <td class="text-right">
-        {% if is_granted('ROLE_DISPATCHER') %}
-          <a href="{{ path(routes.view, { id: delivery.id }) }}" data-testid="delivery_id">{{ 'basics.edit'|trans }}</a>
-        {% else %}
-          <a href="{{ path(routes.view, { id: delivery.id }) }}" data-testid="delivery_id">{{ 'basics.view'|trans }}</a>
-        {% endif %}
-
+      <td class="text-center">
         <div {{ react_component('BarcodesModal', {
           deliveryId: delivery.id
-          }) }}></div>
+          }) }}>
+          <a title="{{ 'delivery.barcodes.show'|trans }}">
+            <i class="fa fa-barcode fa-lg" aria-hidden="true"></i>
+          </a>
+        </div>
       </td>
     </tr>
   {% endfor %}

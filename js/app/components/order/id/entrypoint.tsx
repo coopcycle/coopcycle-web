@@ -34,13 +34,22 @@ if (el) {
   // delivery can be empty for foodtech takeaway orders
   const delivery = el.dataset.delivery ? JSON.parse(el.dataset.delivery) : null;
   const isDispatcher = el.dataset.isDispatcher === 'true';
+  const ediMessages = el.dataset.ediMessages
+    ? JSON.parse(el.dataset.ediMessages)
+    : [];
+  const importReference = el.dataset.importReference || null;
 
   const root = createRoot(el);
   root.render(
     <RootWithDefaults>
       <Provider store={store}>
         <UserContext.Provider value={{ isDispatcher }}>
-          <Content order={order} delivery={delivery} />
+          <Content
+            order={order}
+            delivery={delivery}
+            ediMessages={ediMessages}
+            importReference={importReference}
+          />
         </UserContext.Provider>
       </Provider>
     </RootWithDefaults>,

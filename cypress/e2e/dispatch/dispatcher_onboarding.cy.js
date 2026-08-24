@@ -23,8 +23,8 @@ describe('Dispatch; dispatcher; onboarding', () => {
     // Confirmation page
     cy.urlmatch('/register/confirmed', 'include')
 
-    // 'Dispatch' button
-    cy.get('.hidden-sm').click()
+    // 'Dispatch' link in the top menu
+    cy.get('[data-testid="nav-dispatch"]').click()
 
     // Dispatch dashboard
     cy.urlmatch('/admin/dashboard', 'include')

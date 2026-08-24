@@ -45,7 +45,8 @@ Feature: Task recurrence rules
           "before":"12:00"
         },
         "arbitraryPriceTemplate": null,
-        "isCancelled":false
+        "isCancelled":false,
+        "paused":false
       }
       """
 
@@ -121,7 +122,8 @@ Feature: Task recurrence rules
           ]
         },
         "arbitraryPriceTemplate": null,
-        "isCancelled":false
+        "isCancelled":false,
+        "paused":false
       }
       """
 
@@ -204,7 +206,8 @@ Feature: Task recurrence rules
           "variantName":"Test product",
           "variantPrice":7200
         },
-        "isCancelled":false
+        "isCancelled":false,
+        "paused":false
       }
       """
 
@@ -251,7 +254,8 @@ Feature: Task recurrence rules
           "before":"12:30"
         },
         "arbitraryPriceTemplate": null,
-        "isCancelled":false
+        "isCancelled":false,
+        "paused":false
       }
       """
 
@@ -326,7 +330,8 @@ Feature: Task recurrence rules
         "orgName":"Acme",
         "name":null,
         "arbitraryPriceTemplate": null,
-        "isCancelled":false
+        "isCancelled":false,
+        "paused":false
       }
       """
 

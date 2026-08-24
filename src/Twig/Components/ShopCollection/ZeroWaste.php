@@ -3,7 +3,6 @@
 namespace AppBundle\Twig\Components\ShopCollection;
 
 use AppBundle\Twig\Components\ShopCollection;
-use AppBundle\Utils\SortableRestaurantIterator;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
 #[AsTwigComponent(template: 'components/ShopCollection.html.twig')]
@@ -24,8 +23,7 @@ class ZeroWaste extends ShopCollection
     protected function doGetShops(): array
     {
         $shops = $this->repository->findZeroWaste();
-        $iterator = new SortableRestaurantIterator($shops, $this->timingRegistry);
 
-        return iterator_to_array($iterator);
+        return $this->sortShops($shops);
     }
 }

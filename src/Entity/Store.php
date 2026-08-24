@@ -11,6 +11,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use AppBundle\Api\State\StoreAddressProcessor;
 use AppBundle\Action\MyStores;
+use AppBundle\Action\Delivery\PODCount as PODCountDelivery;
 use AppBundle\Action\Delivery\PODExport as PODExportDelivery;
 use AppBundle\Action\Store\AddAddress;
 use AppBundle\Action\Store\PaymentMethods as StorePaymentMethods;
@@ -34,12 +35,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use AppBundle\Action\TimeSlot\StoreTimeSlots;
 use AppBundle\Action\Store\Packages;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * A retail good store.
  *
  * @see http://schema.org/Store Documentation on Schema.org
  */
+#[ORM\Entity(repositoryClass: StoreRepository::class)]
 #[Vich\Uploadable]
 #[ApiResource(
     types: ['http://schema.org/Store'],
@@ -83,6 +86,12 @@ use AppBundle\Action\Store\Packages;
             /* input: DeliveryPODExportInput::class, */
             write: false,
             deserialize: false,
+            security: "is_granted('edit', object)",
+        ),
+        new Get(
+            uriTemplate: '/stores/{id}/pod_export/count',
+            controller: PODCountDelivery::class,
+            openapiContext: ['summary' => 'Count the deliveries included in a proofs of delivery export.'],
             security: "is_granted('edit', object)",
         ),
     ],
@@ -187,6 +196,8 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     private ?string $transporter = null;
 
+    private ?string $rdcConnectionId = null;
+
     /**
      * The deliveries of this store will be linked by default to this rider
      * @var User
@@ -204,6 +215,16 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     protected $cashOnDeliveryEnabled = false;
 
     private ?string $document;
+
+    private ?string $cykeUserEmail = null;
+
+    private ?string $cykeUserToken = null;
+
+    private ?string $cykeWebhookSecret = null;
+
+    private ?string $cykePackageTypeId = null;
+
+    private ?string $cykeTimeSlot = null;
 
     public function __construct()
     {
@@ -620,6 +641,17 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
         return $this;
     }
 
+    public function getRdcConnectionId(): ?string
+    {
+        return $this->rdcConnectionId;
+    }
+
+    public function setRdcConnectionId(?string $rdcConnectionId): Store
+    {
+        $this->rdcConnectionId = $rdcConnectionId;
+        return $this;
+    }
+
     public function getDefaultCourier(): ?User
     {
         return $this->defaultCourier;
@@ -703,5 +735,70 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     public function hasDocument(): bool
     {
         return !empty($this->document);
+    }
+
+    public function getCykeUserEmail(): ?string
+    {
+        return $this->cykeUserEmail;
+    }
+
+    public function setCykeUserEmail(?string $cykeUserEmail): Store
+    {
+        $this->cykeUserEmail = $cykeUserEmail;
+
+        return $this;
+    }
+
+    public function getCykeUserToken(): ?string
+    {
+        return $this->cykeUserToken;
+    }
+
+    public function setCykeUserToken(?string $cykeUserToken): Store
+    {
+        $this->cykeUserToken = $cykeUserToken;
+
+        return $this;
+    }
+
+    public function isCykeEnabled(): bool
+    {
+        return !empty($this->cykeUserEmail) && !empty($this->cykeUserToken) && !empty($this->cykePackageTypeId);
+    }
+
+    public function getCykeWebhookSecret(): ?string
+    {
+        return $this->cykeWebhookSecret;
+    }
+
+    public function setCykeWebhookSecret(?string $cykeWebhookSecret): Store
+    {
+        $this->cykeWebhookSecret = $cykeWebhookSecret;
+
+        return $this;
+    }
+
+    public function getCykePackageTypeId(): ?string
+    {
+        return $this->cykePackageTypeId;
+    }
+
+    public function setCykePackageTypeId(?string $cykePackageTypeId): Store
+    {
+        $this->cykePackageTypeId = $cykePackageTypeId;
+
+        return $this;
+    }
+
+    public function getCykeTimeSlot(): ?string
+    {
+        return $this->cykeTimeSlot;
+    }
+
+    public function setCykeTimeSlot(?string $cykeTimeSlot): Store
+    {
+        $this->cykeTimeSlot = $cykeTimeSlot;
+
+        return $this;
     }
 }

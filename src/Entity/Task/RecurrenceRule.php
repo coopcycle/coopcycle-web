@@ -90,6 +90,9 @@ class RecurrenceRule implements SoftDeleteableInterface
 
     private bool $generateOrders = false;
 
+    #[Groups(['task_recurrence_rule'])]
+    private bool $paused = false;
+
     /**
      * @return int
      */
@@ -201,6 +204,16 @@ class RecurrenceRule implements SoftDeleteableInterface
     public function setGenerateOrders(bool $generateOrders): void
     {
         $this->generateOrders = $generateOrders;
+    }
+
+    public function isPaused(): bool
+    {
+        return $this->paused;
+    }
+
+    public function setPaused(bool $paused): void
+    {
+        $this->paused = $paused;
     }
 
 }

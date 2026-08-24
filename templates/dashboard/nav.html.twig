@@ -68,9 +68,6 @@
       <ul class="nav navbar-nav navbar-right">
         {% if choices|length > 0 %}
           {% if selected_choice is instanceof('AppBundle\\Entity\\Store') %}
-          <li {{ react_component('Delivery/DeliveriesProofs', {
-            store_id: selected_choice.id
-          }) }} ></li>
           <li>
             <a href="{{ path('dashboard_store_addresses', { id: selected_choice.id }) }}">
               <i class="fa fa-address-book-o mr-2"></i>
@@ -79,9 +76,9 @@
           </li>
           {% endif %}
         {% endif %}
-        <li id="notifications" data-theme="dark">
+        <li id="notifications" data-notification-theme="dark">
           <a href="#">
-            <span class="badge">0</span>
+            <i class="fa fa-bell" aria-hidden="true"></i>
           </a>
         </li>
         <li>

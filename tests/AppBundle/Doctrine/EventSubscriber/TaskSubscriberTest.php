@@ -13,6 +13,7 @@ use AppBundle\Domain\Task\Event\TaskUnassigned;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
 use AppBundle\Entity\TaskList\Item;
+use AppBundle\Entity\TaskListRepository;
 use AppBundle\Entity\Tour;
 use AppBundle\Entity\TourRepository;
 use AppBundle\Entity\User;
@@ -21,11 +22,11 @@ use AppBundle\Service\RequestContext;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
-use Doctrine\Persistence\ObjectRepository;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
+use Symfony\Component\Clock\MockClock;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -62,7 +63,18 @@ class TaskSubscriberTest extends TestCase
                 return new Envelope($args[0]);
         });
 
-        $this->taskListRepository = $this->prophesize(ObjectRepository::class);
+        $this->taskListRepository = $this->prophesize(TaskListRepository::class);
+
+        // By default a task is not found in any list yet (the resolution then
+        // falls back to a date-based lookup / creation).
+        $this->taskListRepository
+            ->findTaskListContainingTask(Argument::cetera())
+            ->willReturn(null);
+        // Default: no existing task list for a (date, courier); individual tests
+        // override this with a specific match when they need one.
+        $this->taskListRepository
+            ->findOneBy(Argument::cetera())
+            ->willReturn(null);
 
         $this->entityManager = $this->prophesize(EntityManagerInterface::class);
 
@@ -87,7 +99,10 @@ class TaskSubscriberTest extends TestCase
 
         $eventStore = new EventStore($requestContext->reveal());
 
-        $taskListProvider = new TaskListProvider($this->entityManager->reveal());
+        // Fixed clock, well after every task date used in these tests, so the
+        // date-based fallback clamps to the task's `before` day (matching the
+        // stubbed task lists below).
+        $taskListProvider = new TaskListProvider($this->entityManager->reveal(), new MockClock('2026-01-01'));
         $changeSetProcessor = new EntityChangeSetProcessor($taskListProvider, null, $this->entityManager->reveal());
 
         $this->geocoder = $this->prophesize(Geocoder::class);
@@ -279,7 +294,8 @@ class TaskSubscriberTest extends TestCase
 
         $this->taskListRepository
             ->findOneBy([
-                'date' => $date,
+                // task list dates are day-granular; the provider normalizes to midnight
+                'date' => (clone $date)->setTime(0, 0, 0),
                 'courier' => $user,
             ])
             ->willReturn($taskList);
@@ -558,7 +574,8 @@ class TaskSubscriberTest extends TestCase
 
         $this->taskListRepository
             ->findOneBy([
-                'date' => $date,
+                // task list dates are day-granular; the provider normalizes to midnight
+                'date' => (clone $date)->setTime(0, 0, 0),
                 'courier' => $user,
             ])
             ->willReturn($taskList);
@@ -660,7 +677,8 @@ class TaskSubscriberTest extends TestCase
 
         $this->taskListRepository
             ->findOneBy([
-                'date' => $date,
+                // task list dates are day-granular; the provider normalizes to midnight
+                'date' => (clone $date)->setTime(0, 0, 0),
                 'courier' => $user,
             ])
             ->willReturn($taskList);
@@ -758,7 +776,8 @@ class TaskSubscriberTest extends TestCase
 
         $this->taskListRepository
             ->findOneBy([
-                'date' => $date,
+                // task list dates are day-granular; the provider normalizes to midnight
+                'date' => (clone $date)->setTime(0, 0, 0),
                 'courier' => $user,
             ])
             ->willReturn($taskList);

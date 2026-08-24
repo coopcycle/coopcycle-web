@@ -2,10 +2,12 @@
 
 namespace Tests\AppBundle\Spreadsheet;
 
+use AppBundle\Doctrine\EventSubscriber\TaskSubscriber\TaskListProvider;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Tag;
+use AppBundle\Entity\TaskList;
 use AppBundle\Service\Geocoder;
 use AppBundle\Spreadsheet\AbstractSpreadsheetParser;
 use AppBundle\Spreadsheet\TaskSpreadsheetParser;
@@ -45,6 +47,17 @@ class TaskSpreadsheetParserTest extends TestCase
             ->getRepository(Package::class)
             ->willReturn($this->packageRepository->reveal());
 
+        $this->taskListProvider = $this->prophesize(TaskListProvider::class);
+        $this->taskListProvider
+            ->getTaskListForUserAndDate(Argument::cetera())
+            ->will(function ($args) {
+                $taskList = new TaskList();
+                $taskList->setDate($args[0]);
+                $taskList->setCourier($args[1]);
+
+                return $taskList;
+            });
+
         return new TaskSpreadsheetParser(
             $this->geocoder->reveal(),
             new Slugify(),
@@ -52,6 +65,7 @@ class TaskSpreadsheetParserTest extends TestCase
             $this->userManager->reveal(),
             'fr',
             $this->entityManager->reveal(),
+            $this->taskListProvider->reveal(),
         );
     }
 

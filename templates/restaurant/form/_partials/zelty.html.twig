@@ -1,0 +1,55 @@
+{% if form.zeltyDeliveryFeeDishId is defined %}
+    {% set zeltyRestaurant = form.parent.vars.value %}
+    {% set zeltyRestaurantId = form.zeltyDeliveryFeeDishId.vars.attr['data-restaurant-id'] %}
+    {# The import creates (and re-uses) a single taxon per restaurant #}
+    {% set zeltyMenu = zeltyRestaurant.taxons|filter(t => t.code == 'zelty_import_' ~ zeltyRestaurantId)|first %}
+    {% if zeltyRestaurant.hasZeltyApiKey %}
+        {% if not zeltyMenu %}
+            <div class="alert alert-info">
+                <i class="fa fa-info-circle"></i>
+                {{ 'restaurant.form.zelty.no_catalog'|trans }}
+                <a href="{{ path(menu_taxons_route, { id: zeltyRestaurantId }) }}">{{ 'restaurant.form.zelty.go_to_catalogs'|trans }}</a>
+            </div>
+        {% elseif zeltyRestaurant.menuTaxon is null or zeltyRestaurant.menuTaxon.id != zeltyMenu.id %}
+            <div class="alert alert-warning">
+                <i class="fa fa-exclamation-triangle"></i>
+                {{ 'restaurant.form.zelty.catalog_not_active'|trans({ '%menu%': zeltyMenu.name }) }}
+                <a href="{{ path(menu_taxons_route, { id: zeltyRestaurantId }) }}">{{ 'restaurant.form.zelty.go_to_catalogs'|trans }}</a>
+            </div>
+        {% endif %}
+    {% endif %}
+    <div class="form-group">
+        <div {{ react_component('Restaurant/ZeltyOrdersToggle', {
+            restaurantId: zeltyRestaurantId,
+            enabled: zeltyRestaurant.zeltyOrdersEnabled,
+            visible: zeltyRestaurant.hasZeltyApiKey
+        }) }}></div>
+    </div>
+{% endif %}
+{{ form_row(form.zeltyApiKey) }}
+{% if form.zeltyDeliveryFeeDishId is defined %}
+    <div class="form-group">
+        <div {{ react_component('Restaurant/ZeltyConnect', {
+            restaurantId: zeltyRestaurantId,
+            inputId: form.zeltyApiKey.vars.id,
+            revealSelector: '#zelty-delivery-fee-dish'
+        }) }}></div>
+    </div>
+    <div class="form-group" id="zelty-delivery-fee-dish"
+        {%- if not zeltyRestaurant.hasZeltyApiKey %} style="display: none;"{% endif %}>
+        <label class="control-label">{{ 'restaurant.form.zelty_delivery_fee_dish'|trans }}</label>
+        {{ form_widget(form.zeltyDeliveryFeeDishId) }}
+        <div {{ react_component('Restaurant/ZeltyDishSelect', {
+            restaurantId: zeltyRestaurantId,
+            inputId: form.zeltyDeliveryFeeDishId.vars.id
+        }) }}></div>
+    </div>
+    {% if is_granted('ROLE_ADMIN') %}
+    <div class="form-group">
+        <label class="control-label">{{ 'restaurant.form.zelty_api_log'|trans }}</label>
+        <div {{ react_component('Restaurant/ZeltyApiLogs', {
+            restaurantId: zeltyRestaurantId
+        }) }}></div>
+    </div>
+    {% endif %}
+{% endif %}

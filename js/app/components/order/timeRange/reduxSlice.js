@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 const initialState = {
   persistedTimeRange: null,
   isModalOpen: false,
+  isChangeModalOpen: false,
 }
 
 const slice = createSlice({
@@ -18,6 +19,12 @@ const slice = createSlice({
     closeTimeRangeChangedModal: (state) => {
       state.isModalOpen = false
     },
+    openChangeTimeRangeModal: (state) => {
+      state.isChangeModalOpen = true
+    },
+    closeChangeTimeRangeModal: (state) => {
+      state.isChangeModalOpen = false
+    },
   },
 })
 
@@ -26,6 +33,8 @@ export const {
   setPersistedTimeRange,
   openTimeRangeChangedModal,
   closeTimeRangeChangedModal,
+  openChangeTimeRangeModal,
+  closeChangeTimeRangeModal,
 } = slice.actions
 
 export const timeRangeSlice = slice
@@ -33,3 +42,5 @@ export const timeRangeSlice = slice
 export const selectPersistedTimeRange = state => state.timeRange.persistedTimeRange
 
 export const selectIsTimeRangeChangedModalOpen = state => state.timeRange.isModalOpen
+
+export const selectIsChangeTimeRangeModalOpen = state => state.timeRange.isChangeModalOpen

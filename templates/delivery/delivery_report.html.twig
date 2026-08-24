@@ -89,6 +89,31 @@
             font-size: 0.85em;
         }
 
+        .status-doing {
+            color: #1a73e8;
+            background: #e8f0fe;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.85em;
+        }
+
+        .status-failed {
+            color: #d93025;
+            background: #fce8e6;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.85em;
+        }
+
+        .status-cancelled {
+            color: #5f6368;
+            background: #f1f3f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.85em;
+            text-decoration: line-through;
+        }
+
         .delivery-link {
             color: #1a73e8;
             text-decoration: none;
@@ -118,6 +143,23 @@
         .pod-image:hover {
             border-color: #1a73e8;
             transform: scale(1.05);
+        }
+
+        .pods a {
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
         }
 
         .incidents-count {
@@ -181,7 +223,10 @@
                 <select id="statusFilter">
                     <option value="">All</option>
                     <option value="TODO">TODO</option>
+                    <option value="DOING">DOING</option>
                     <option value="DONE">DONE</option>
+                    <option value="FAILED">FAILED</option>
+                    <option value="CANCELLED">CANCELLED</option>
                 </select>
             </label>
             <label>
@@ -192,22 +237,23 @@
                     <option value=">0">With incidents</option>
                 </select>
             </label>
-            <label>
+            <label for="searchFilter">
                 Search:
                 <input type="text" id="searchFilter" placeholder="Search recipient...">
             </label>
         </div>
 
         <table id="deliveryTable">
+            <caption class="visually-hidden">List of deliveries with proofs of delivery</caption>
             <thead>
                 <tr>
-                    <th>Delivery</th>
-                    <th>Order #</th>
-                    <th>Recipient</th>
-                    <th>Status</th>
-                    <th>Comment</th>
-                    <th>Pods</th>
-                    <th>Incidents</th>
+                    <th scope="col">Delivery</th>
+                    <th scope="col">Order #</th>
+                    <th scope="col">Recipient</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Comment</th>
+                    <th scope="col">Pods</th>
+                    <th scope="col">Incidents</th>
                 </tr>
             </thead>
             <tbody>
@@ -228,7 +274,9 @@
                     <td>{{ delivery.comment }}</td>
                     <td class="pods">
                         {% for pod in delivery.pod_paths %}
-                            <img src=".{{ pod }}" alt="POD Image" class="pod-image" onclick="window.open(this.src, '_blank')" title="{{ pod|split('/')|last }}">
+                            <a href=".{{ pod }}" target="_blank" rel="noopener noreferrer">
+                                <img src=".{{ pod }}" alt="POD Image" class="pod-image" title="{{ pod|split('/')|last }}">
+                            </a>
                         {% endfor %}
                     </td>
                     <td>
@@ -245,15 +293,13 @@
     </div>
 
     <script>
-        // Simple filtering functionality
         document.addEventListener('DOMContentLoaded', function() {
             const statusFilter = document.getElementById('statusFilter');
             const incidentFilter = document.getElementById('incidentFilter');
             const searchFilter = document.getElementById('searchFilter');
-            const table = document.getElementById('deliveryTable');
-            const rows = table.querySelectorAll('tbody tr');
+            const rows = document.querySelectorAll('#deliveryTable tbody tr');
 
-            function filterTable() {
+            const filterTable = () => {
                 const statusValue = statusFilter.value;
                 const incidentValue = incidentFilter.value;
                 const searchValue = searchFilter.value.toLowerCase();
@@ -261,26 +307,23 @@
                 rows.forEach(row => {
                     let show = true;
 
-                    // Status filter
                     if (statusValue && row.dataset.status !== statusValue) {
                         show = false;
                     }
 
-                    // Incident filter
                     if (incidentValue) {
-                        const incidents = parseInt(row.dataset.incidents);
+                        const incidents = parseInt(row.dataset.incidents, 10);
                         if (incidentValue === '0' && incidents !== 0) show = false;
                         if (incidentValue === '>0' && incidents === 0) show = false;
                     }
 
-                    // Search filter
                     if (searchValue && !row.dataset.recipient.includes(searchValue)) {
                         show = false;
                     }
 
                     row.style.display = show ? '' : 'none';
                 });
-            }
+            };
 
             statusFilter.addEventListener('change', filterTable);
             incidentFilter.addEventListener('change', filterTable);

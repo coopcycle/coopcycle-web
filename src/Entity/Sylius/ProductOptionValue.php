@@ -13,6 +13,7 @@ use Doctrine\Common\Collections\Collection;
 use Sylius\Component\Resource\Model\ToggleableTrait;
 use Sylius\Component\Product\Model\ProductOptionValue as BaseProductOptionValue;
 use Symfony\Component\Validator\Constraints as Assert;
+use AppBundle\Integration\Zelty\HasZeltyMetadata;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\SerializedName;
 
@@ -30,6 +31,7 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 class ProductOptionValue extends BaseProductOptionValue implements ProductOptionValueInterface
 {
     use ToggleableTrait;
+    use HasZeltyMetadata;
 
     /**
      * @var int

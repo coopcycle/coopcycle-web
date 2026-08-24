@@ -6,7 +6,7 @@ import _ from 'lodash'
 import Popconfirm from 'antd/lib/popconfirm'
 
 import Task from './Task'
-import { removeTasksFromTour, modifyTour, deleteTour, unassignTasks, toggleTourPanelExpanded, toggleTourPolyline } from '../redux/actions'
+import { removeTasksFromTour, modifyTour, deleteTour, unassignTasks, toggleTourPanelExpanded, toggleTourPolyline, openMoveToDayModal } from '../redux/actions'
 import { selectTourById, selectItemAssignedTo, selectTourWeight, selectTourVolumeUnits } from '../../../shared/src/logistics/redux/selectors'
 import clsx from 'clsx'
 import { getDroppableListStyle } from '../utils'
@@ -69,6 +69,15 @@ const RenderEditNameForm = ({children, tour, isLoading}) => {
             setToggleInputForName(true)
           }}>
               <i className="fa fa-pencil"></i>
+          </a>
+          <a role="button" href="#" className="text-reset mr-2"
+            title={ t('ADMIN_DASHBOARD_MOVE_TOUR_TO_ANOTHER_DAY') }
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              dispatch(openMoveToDayModal(tour))
+            }}>
+              <i className="fa fa-calendar"></i>
           </a>
           { tourAssignedTo ?
             <a

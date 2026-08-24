@@ -28,6 +28,9 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\DeliveryRepository;
 use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
+use AppBundle\Entity\EmployeeProfile;
+use AppBundle\Entity\EmployeeProfileRepository;
+use AppBundle\Entity\HolidayRequestRepository;
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\BusinessAccount;
 use AppBundle\Entity\BusinessAccountInvitation;
@@ -57,6 +60,7 @@ use AppBundle\Form\CustomizeType;
 use AppBundle\Form\DataExportType;
 use AppBundle\Form\DeliveryImportType;
 use AppBundle\Form\EmbedSettingsType;
+use AppBundle\Form\EmployeeProfileType;
 use AppBundle\Form\GeoJSONUploadType;
 use AppBundle\Form\HubType;
 use AppBundle\Form\FailureReasonSetType;
@@ -89,6 +93,7 @@ use AppBundle\Service\EmailManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\PackageSetManager;
 use AppBundle\Service\PricingRuleSetManager;
+use AppBundle\Service\RfmSegmentCalculator;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TagManager;
 use AppBundle\Service\TimeSlotManager;
@@ -116,7 +121,6 @@ use Redis;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponType;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
-use Sylius\Component\Promotion\Checker\Eligibility\PromotionCouponEligibilityCheckerInterface;
 use Sylius\Component\Promotion\Factory\PromotionCouponFactoryInterface;
 use Sylius\Component\Promotion\Model\PromotionCouponInterface;
 use Sylius\Component\Promotion\Model\PromotionInterface;
@@ -223,6 +227,7 @@ class AdminController extends AbstractController
         protected SerializerInterface $serializer,
         protected string $environment,
         protected LoggerInterface $logger,
+        protected bool $rdcEnabled = false,
     )
     {}
 
@@ -590,7 +595,8 @@ class AdminController extends AbstractController
     public function usersAction(Request $request,
         PaginatorInterface $paginator,
         EntityManagerInterface $entityManager,
-        SerializerInterface $serializer)
+        SerializerInterface $serializer,
+        RfmSegmentCalculator $rfmSegmentCalculator)
     {
         if (!$this->isGranted('ROLE_ADMIN')) {
             return new RedirectResponse($this->generateUrl('admin_users_invite'));
@@ -669,6 +675,12 @@ class AdminController extends AbstractController
                     ->setParameter('optin', $optinSelected);
 
                 $optinsResult = $optinsQB->getQuery()->getResult();
+
+                $segmentsByUsername = $rfmSegmentCalculator->getSegmentsByUsername();
+
+                foreach ($optinsResult as $i => $row) {
+                    $optinsResult[$i]['rfm_segment'] = $segmentsByUsername[$row['username']] ?? '';
+                }
 
                 $csv = $serializer->serialize($optinsResult, 'csv');
 
@@ -781,7 +793,8 @@ class AdminController extends AbstractController
     }
 
     #[Route(path: '/admin/user/{username}/edit', name: 'admin_user_edit')]
-    public function userEditAction($username, Request $request, UserManagerInterface $userManager)
+    public function userEditAction($username, Request $request, UserManagerInterface $userManager,
+        EntityManagerInterface $entityManager)
     {
         $user = $userManager->findUserByUsername($username);
         $this->accessControl($user);
@@ -832,9 +845,45 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('admin_user_edit', ['username' => $user->getUsername()]);
         }
 
+        $isHrAdmin = $this->isGranted('ROLE_ADMIN');
+        $employeeProfileForm = null;
+        $holidayRequests = [];
+
+        if ($isHrAdmin) {
+            /** @var EmployeeProfileRepository $employeeProfileRepository */
+            $employeeProfileRepository = $entityManager->getRepository(EmployeeProfile::class);
+            $employeeProfile = $employeeProfileRepository->findOneByUser($user);
+            if (null === $employeeProfile) {
+                $employeeProfile = new EmployeeProfile();
+                $employeeProfile->setUser($user);
+            }
+
+            $employeeProfileForm = $this->createForm(EmployeeProfileType::class, $employeeProfile);
+            $employeeProfileForm->handleRequest($request);
+
+            if ($employeeProfileForm->isSubmitted() && $employeeProfileForm->isValid()) {
+                $entityManager->persist($employeeProfile);
+                $entityManager->flush();
+
+                $this->addFlash(
+                    'notice',
+                    $this->translator->trans('global.changesSaved')
+                );
+
+                return $this->redirectToRoute('admin_user_edit', ['username' => $user->getUsername()]);
+            }
+
+            /** @var HolidayRequestRepository $holidayRequestRepository */
+            $holidayRequestRepository = $entityManager->getRepository(\AppBundle\Entity\HolidayRequest::class);
+            $holidayRequests = $holidayRequestRepository->findByUser($user);
+        }
+
         return $this->render('admin/user_edit.html.twig', [
             'form' => $editForm->createView(),
             'user' => $user,
+            'is_hr_admin' => $isHrAdmin,
+            'employee_profile_form' => $employeeProfileForm?->createView(),
+            'holiday_requests' => $holidayRequests,
         ]);
     }
 
@@ -960,14 +1009,10 @@ class AdminController extends AbstractController
             }
         }
 
-        if ($request->query->has('start_at') && $request->query->has('end_at')) {
-            $start = Carbon::parse($request->query->get('start_at'))->setTime(0, 0, 0)->toDateTime();
-            $end = Carbon::parse($request->query->get('end_at'))->setTime(23, 59, 59)->toDateTime();
-            $filters['range'] = [$start, $end];
+        if ($range = $this->getDeliveryDateRange($request)) {
+            $filters['range'] = $range;
 
-            $qb->andWhere('d.createdAt BETWEEN :start AND :end')
-            ->setParameter('start', $start)
-            ->setParameter('end', $end);
+            $deliveryRepository->createdAtRange($qb, $range[0], $range[1]);
         }
 
         // Allow filtering by store & restaurant with KnpPaginator
@@ -1708,7 +1753,7 @@ class AdminController extends AbstractController
         }
 
         return $this->render('admin/settings.html.twig', [
-            'timezone' => ini_get('date.timezone'),
+            'timezone' => $settingsManager->get('timezone'),
             'form' => $form->createView(),
             'maintenance_form' => $maintenanceForm->createView(),
             'maintenance' => $redis->get('maintenance'),
@@ -1990,24 +2035,43 @@ class AdminController extends AbstractController
     }
 
     #[Route(path: '/admin/promotions', name: 'admin_promotions')]
-    public function promotionsAction(EntityManagerInterface $entityManager,
-        PromotionCouponEligibilityCheckerInterface $promotionCouponExpirationChecker)
+    public function promotionsAction(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        PaginatorInterface $paginator)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $qb = $this->entityManager->getRepository(PromotionCouponInterface::class)->createQueryBuilder('c');
+        $repository = $this->entityManager->getRepository(PromotionCouponInterface::class);
 
-        $promotionCoupons = $qb->getQuery()->getResult();
+        // A coupon is "ongoing" while it has no expiry or has not expired yet,
+        // "past" once it has expired. This mirrors PromotionCouponDurationEligibilityChecker
+        // (expiresAt === null || now < expiresAt) so the split can be paginated in SQL.
+        $now = new \DateTime();
 
-        $ongoing = $past = [];
+        $ongoingQb = $repository->createQueryBuilder('c')
+            ->andWhere('c.expiresAt IS NULL OR c.expiresAt > :now')
+            ->setParameter('now', $now)
+            ->orderBy('c.id', 'DESC');
 
-        foreach ($promotionCoupons as $promotionCoupon) {
-            if (!$promotionCouponExpirationChecker->isEligible(new Order(), $promotionCoupon)) {
-                $past[] = $promotionCoupon;
-            } else {
-                $ongoing[] = $promotionCoupon;
-            }
-        }
+        $pastQb = $repository->createQueryBuilder('c')
+            ->andWhere('c.expiresAt IS NOT NULL AND c.expiresAt <= :now')
+            ->setParameter('now', $now)
+            ->orderBy('c.id', 'DESC');
+
+        $ongoing = $paginator->paginate(
+            $ongoingQb,
+            $request->query->getInt('ongoing_page', 1),
+            self::ITEMS_PER_PAGE,
+            [PaginatorInterface::PAGE_PARAMETER_NAME => 'ongoing_page']
+        );
+
+        $past = $paginator->paginate(
+            $pastQb,
+            $request->query->getInt('past_page', 1),
+            self::ITEMS_PER_PAGE,
+            [PaginatorInterface::PAGE_PARAMETER_NAME => 'past_page']
+        );
 
         return $this->render('admin/promotions.html.twig', [
             'ongoing' => $ongoing,
@@ -3158,6 +3222,18 @@ class AdminController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         return $this->render('admin/invoicing.html.twig', $this->auth([]));
+    }
+
+    #[Route(path: '/admin/shifts', name: 'admin_shift_planning')]
+    public function shiftPlanningAction()
+    {
+        if (!$this->getParameter('shift_planning_enabled')) {
+            throw $this->createNotFoundException();
+        }
+
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        return $this->render('admin/shift_planning.html.twig', $this->auth([]));
     }
 
     #[Route(path: '/admin/shop-collections/preview/{component}', name: 'admin_shop_collection_preview')]

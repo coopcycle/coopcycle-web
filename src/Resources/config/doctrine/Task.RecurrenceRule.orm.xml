@@ -22,5 +22,6 @@
     </field>
     <gedmo:soft-deleteable field-name="deletedAt" time-aware="false" hard-delete="false" />
     <field name="generateOrders" type="boolean" column="generate_orders"/>
+    <field name="paused" type="boolean" column="paused"/>
   </entity>
 </doctrine-mapping>

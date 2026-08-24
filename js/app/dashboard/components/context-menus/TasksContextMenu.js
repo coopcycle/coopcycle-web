@@ -6,15 +6,12 @@ import { Item, Menu, Submenu, Separator, useContextMenu } from 'react-contexify'
 import { Checkbox } from 'antd';
 import { useDebounce } from "@uidotdev/usehooks";
 
-import moment from 'moment'
-
 import {
   cancelTasks,
   completeTasks,
   createTaskList,
   putTaskListItems,
-  moveTasksToNextDay,
-  moveTasksToNextWorkingDay,
+  openMoveToDayModal,
   moveToBottom,
   moveToTop,
   openAddTaskToGroupModal,
@@ -36,7 +33,7 @@ import {
   addTagToTasks,
   removeTagFromTasks,
 } from '../../redux/actions'
-import {selectCouriersWithExclude, selectExpandedTasksGroupsPanelsIds, selectExpandedTourPanelsIds, selectLinkedTasksIds, selectNextWorkingDay, selectSelectedTasks, selectTaskListsLoading, selectTaskToShow, selectAllTags} from '../../redux/selectors'
+import {selectCouriersWithExclude, selectExpandedTasksGroupsPanelsIds, selectExpandedTourPanelsIds, selectLinkedTasksIds, selectSelectedTasks, selectTaskListsLoading, selectTaskToShow, selectAllTags} from '../../redux/selectors'
 import {selectUnassignedTasks} from '../../../coopcycle-frontend-js/logistics/redux'
 
 import 'react-contexify/dist/ReactContexify.css'
@@ -51,8 +48,7 @@ export const UNASSIGN_MULTI = 'UNASSIGN_MULTI'
 export const CANCEL_MULTI = 'CANCEL_MULTI'
 export const MOVE_TO_TOP = 'MOVE_TO_TOP'
 export const MOVE_TO_BOTTOM = 'MOVE_TO_BOTTOM'
-export const MOVE_TO_NEXT_DAY_MULTI = 'MOVE_TO_NEXT_DAY_MULTI'
-export const MOVE_TO_NEXT_WORKING_DAY_MULTI = 'MOVE_TO_NEXT_WORKING_DAY_MULTI'
+export const MOVE_TO_ANOTHER_DAY_MULTI = 'MOVE_TO_ANOTHER_DAY_MULTI'
 export const START_TASKS_MULTI = 'START_TASKS_MULTI'
 export const CREATE_GROUP = 'CREATE_GROUP'
 export const ADD_TO_GROUP = 'ADD_TO_GROUP'
@@ -261,11 +257,18 @@ export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, link
       actions.push(RESCHEDULE)
       actions.push(REPORT_INCIDENT)
 
+      // A single pickup or dropoff is enough to relay through a warehouse: the backend
+      // resolves the linked task. We only offer it when the task actually has a linked
+      // partner (i.e. belongs to a delivery/linked pair).
+      if ((selectedTask.type === 'PICKUP' || selectedTask.type === 'DROPOFF')
+        && linkedTasksIds.includes(selectedTask['@id'])) {
+        actions.push(SEND_TO_WAREHOUSE)
+      }
+
     }
 
     if (containsOnlyUnassignedTasks) {
-      actions.push(MOVE_TO_NEXT_DAY_MULTI)
-      actions.push(MOVE_TO_NEXT_WORKING_DAY_MULTI)
+      actions.push(MOVE_TO_ANOTHER_DAY_MULTI)
       if (!containsOnlyGroupedTasks) {
         actions.push(ADD_TO_GROUP)
       }
@@ -290,7 +293,6 @@ const DynamicMenu = () => {
   const selectedTasks = useSelector(selectSelectedTasks)
   const unassignedTasks = useSelector(selectUnassignedTasks)
 
-  const nextWorkingDay = useSelector(selectNextWorkingDay)
   const linkedTasksIds = useSelector(selectLinkedTasksIds)
   const taskIdToTourIdMap = useSelector(selectTaskIdToTourIdMap)
   const selectedTasksBelongsToTour = selectedTasks.some(t => taskIdToTourIdMap.has(t['@id']))
@@ -488,16 +490,10 @@ const DynamicMenu = () => {
         { t('ADMIN_DASHBOARD_CREATE_TOUR') }
       </Item>
       <Item
-        hidden={ !actions.includes(MOVE_TO_NEXT_DAY_MULTI) }
-        onClick={ () => dispatch(moveTasksToNextDay(selectedTasks)) }
+        hidden={ !actions.includes(MOVE_TO_ANOTHER_DAY_MULTI) }
+        onClick={ () => dispatch(openMoveToDayModal()) }
       >
-        { t('ADMIN_DASHBOARD_MOVE_TO_NEXT_DAY_MULTI', { count: selectedTasks.length }) }
-      </Item>
-      <Item
-        hidden={ !actions.includes(MOVE_TO_NEXT_WORKING_DAY_MULTI) }
-        onClick={ () => dispatch(moveTasksToNextWorkingDay(selectedTasks)) }
-      >
-        { t('ADMIN_DASHBOARD_MOVE_TO_NEXT_WORKING_DAY_MULTI', { count: selectedTasks.length, nextWorkingDay: moment(nextWorkingDay).format('LL') }) }
+        { t('ADMIN_DASHBOARD_MOVE_TO_ANOTHER_DAY_MULTI', { count: selectedTasks.length }) }
       </Item>
       <Item
         hidden={ !actions.includes(RESCHEDULE) }

@@ -145,6 +145,7 @@ export type LocalBusiness = JsonLdEntity & {
 export type InvoiceLineItemGroupedByOrganization = {
   storeId: number;
   organizationLegalName: string;
+  storeName: string;
   ordersCount: number;
   subTotal: number;
   tax: number;
@@ -350,7 +351,25 @@ export type Delivery = JsonLdEntity & {
   tasks: Task[];
   order?: PackageDeliveryOrderMinimal;
   trackingUrl?: string;
+  hasEdifactImport?: boolean;
 };
+
+export type EDIFACTMessage = {
+  id: number;
+  direction: 'INBOUND' | 'OUTBOUND';
+  syncedAt: string | null;
+  messageType: 'SCONTR' | 'PICKUP' | 'REPORT' | 'DISPOR';
+  subMessageType: string | null;
+  ediMessage: string | null;
+  createdAt: string;
+  pods: string[];
+};
+
+// Mirrors Transporter\Enum\ReportSituation (vendor/coopcycle/transporter)
+export type ReportSituation =
+  | 'AAR' | 'CHG' | 'COM' | 'DCH' | 'DIF' | 'ECH' | 'EDI' | 'EML'
+  | 'ENE' | 'EPC' | 'EXP' | 'LIV' | 'MAJ' | 'MLV' | 'PAQ' | 'PCH'
+  | 'POD' | 'POP' | 'QIN' | 'RAQ' | 'REN' | 'RST' | 'SEQ' | 'SOL';
 
 // Delivery Template for RecurrenceRule
 export type DeliveryTemplate = {
@@ -607,4 +626,357 @@ export type PaymentMethod = {
 
 export type PaymentMethodsOutput = {
   methods: PaymentMethod[];
+};
+
+// Shift planning
+
+export type Skill = JsonLdEntity & {
+  id: number;
+  name: string;
+};
+
+export type SkillWithUsers = Skill & {
+  users: Uri[];
+};
+
+export type SkillPayload = {
+  name: string;
+  users?: Uri[];
+};
+
+export type PutSkillRequest = SkillPayload & { '@id': Uri };
+
+export type ShiftActivity = JsonLdEntity & {
+  id: number;
+  slug: string;
+  label: string;
+  color: string | null;
+};
+
+export type ShiftActivityPayload = {
+  label: string;
+  color?: string | null;
+};
+
+export type PutShiftActivityRequest = ShiftActivityPayload & { '@id': Uri };
+
+export type EmployeeProfile = JsonLdEntity & {
+  id: number;
+  // User IRI (the relation serializes as a reference)
+  user: Uri;
+  contractStartDate: string | null;
+  dateOfBirth: string | null;
+  addressStreet: string | null;
+  addressPostalCode: string | null;
+  addressLocality: string | null;
+  addressCountry: string | null;
+  salaryType: 'hourly' | 'monthly' | null;
+  salaryAmount: string | null;
+  weeklyContractedHours: string | null;
+};
+
+export type EmployeeProfilePayload = Omit<
+  EmployeeProfile,
+  keyof JsonLdEntity | 'id'
+>;
+
+export type PlanningUser = JsonLdEntity & {
+  username: string;
+  roles?: string[];
+  givenName?: string | null;
+  familyName?: string | null;
+  skills?: Skill[];
+};
+
+// Actual worked time reported for an assignment (null = worked as planned)
+export type ShiftTimeAdjustment = {
+  startsAt: string;
+  endsAt: string;
+  breakMinutes: number;
+  comment: string | null;
+  reportedBy: PlanningUser | null;
+  updatedAt: string;
+};
+
+export type ShiftAssignment = {
+  user: PlanningUser;
+  createdAt: string;
+  adjustment: ShiftTimeAdjustment | null;
+};
+
+export type ShiftWaitlistEntry = {
+  user: PlanningUser;
+  createdAt: string;
+};
+
+export type Shift = JsonLdEntity & {
+  id: number;
+  activity: string;
+  startsAt: string;
+  endsAt: string;
+  slots: number;
+  breakMinutes: number;
+  comment: string | null;
+  requiredSkills: Skill[];
+  assignments: ShiftAssignment[];
+  waitlist: ShiftWaitlistEntry[];
+};
+
+export type Me = JsonLdEntity & {
+  username: string;
+  skills?: Skill[];
+};
+
+export type SchedulePublication = JsonLdEntity & {
+  weekStart: string;
+  createdAt: string;
+};
+
+export type ShiftPayload = {
+  activity: string;
+  startsAt: string;
+  endsAt: string;
+  slots: number;
+  breakMinutes?: number;
+  comment?: string | null;
+  requiredSkills?: Uri[];
+  users: Uri[];
+};
+
+export type PutShiftRequest = ShiftPayload & { '@id': Uri };
+
+export type DateRangeArgs = {
+  after: string;
+  before: string;
+};
+
+export type GetHolidayRequestsArgs = DateRangeArgs & {
+  status?: string[];
+};
+
+export type HolidayRequestStatus = 'pending' | 'approved' | 'rejected';
+
+export type HolidayRequest = JsonLdEntity & {
+  id: number;
+  user: PlanningUser;
+  startDate: string;
+  endDate: string;
+  status: HolidayRequestStatus;
+  comment: string | null;
+  actionedBy: PlanningUser | null;
+  actionedAt: string | null;
+  createdAt: string;
+};
+
+export type PostHolidayRequestRequest = {
+  startDate: string;
+  endDate: string;
+  comment?: string;
+};
+
+export type CopyWeekRequest = {
+  sourceWeek: string;
+  targetWeek: string;
+};
+
+export type AvailabilityRuleType = 'available' | 'unavailable';
+
+export type AvailabilityRule = JsonLdEntity & {
+  id: number;
+  user: Uri;
+  type: AvailabilityRuleType;
+  // ISO day of week, 1 (Monday) to 7 (Sunday)
+  dayOfWeek: number;
+  startTime: string; // "HH:MM"
+  endTime: string; // "HH:MM"
+  comment: string | null;
+};
+
+export type AvailabilityRulePayload = {
+  type: AvailabilityRuleType;
+  dayOfWeek: number;
+  startTime: string;
+  endTime: string;
+  comment?: string | null;
+};
+
+// Only honored when the requester is a dispatcher creating a rule on behalf
+// of an employee; couriers are always forced to themselves server-side.
+export type PostAvailabilityRuleRequest = AvailabilityRulePayload & {
+  user?: Uri;
+};
+
+export type PutAvailabilityRuleRequest = AvailabilityRulePayload & {
+  '@id': Uri;
+};
+
+export type ClearWeekRequest = {
+  week: string;
+};
+
+export type ShiftTemplateShift = {
+  '@id': Uri;
+  activity: string;
+  dayOfWeek: number;
+  startTime: string; // "HH:MM"
+  endTime: string; // "HH:MM"
+  slots: number;
+  breakMinutes: number;
+  comment: string | null;
+  requiredSkills: Skill[];
+};
+
+export type ShiftTemplate = JsonLdEntity & {
+  id: number;
+  name: string;
+  shifts: ShiftTemplateShift[];
+  shiftCount: number;
+  hasAssignees: boolean;
+};
+
+export type CreateShiftTemplateRequest = {
+  name: string;
+  week: string;
+};
+
+export type ApplyShiftTemplateRequest = {
+  uri: Uri;
+  targetWeek: string;
+  includeAssignees: boolean;
+};
+
+export type ApplyShiftTemplateResult = JsonLdEntity & {
+  created: number;
+};
+
+// null = that rule is disabled
+export type LegalRules = Record<string, number | null>;
+
+export type LegalConfig = {
+  template: string | null;
+  rules: LegalRules;
+};
+
+export type LegalTemplate = {
+  country: string;
+  sector: string;
+  rules: Record<string, number>;
+};
+
+export type ShiftSettings = JsonLdEntity & {
+  throughput: number;
+  serviceLevel: number;
+  legal: LegalConfig;
+  legalTemplates: Record<string, LegalTemplate>;
+};
+
+export type PutShiftSettingsRequest = {
+  throughput?: number;
+  serviceLevel?: number;
+  legal?: LegalConfig;
+};
+
+export type ComplianceViolation = {
+  username: string;
+  rule: string;
+  limit: number;
+  actual: number;
+  date?: string;
+  weeks?: number;
+  from?: string;
+  to?: string;
+  workedHours?: number;
+  thresholdHours?: number;
+};
+
+export type ShiftCompliance = JsonLdEntity & {
+  week: string;
+  template: string | null;
+  violations: ComplianceViolation[];
+};
+
+export type ShiftDashboardWeek = {
+  weekStart: string;
+  weekEnd: string;
+  totalSlots: number;
+  totalAssignments: number;
+  fillRate: number;
+  published: boolean;
+};
+
+export type ShiftDashboard = JsonLdEntity & {
+  weeks: ShiftDashboardWeek[];
+};
+
+export type GetShiftDashboardArgs = {
+  weeks?: number;
+  from?: string;
+};
+
+export type ProposedShift = {
+  activity: string;
+  startsAt: string;
+  endsAt: string;
+  slots: number;
+};
+
+export type DemandBucket = {
+  hour: number;
+  demand: number;
+  coverage: number;
+};
+
+export type ScheduleDay = {
+  date: string;
+  dow: number;
+  buckets: DemandBucket[];
+};
+
+export type ShiftScheduleSuggestion = JsonLdEntity & {
+  shifts: ProposedShift[];
+  days: ScheduleDay[];
+  meta: {
+    lookbackWeeks: number;
+    serviceLevel: number;
+    throughput: number;
+    observations: number;
+    forecaster: 'prophet' | 'heuristic';
+  };
+};
+
+export type ShiftCalendar = JsonLdEntity & {
+  feedUrl: string;
+};
+
+export type ReportShiftTimeRequest = {
+  uri: Uri;
+  // Dispatchers can report for any assignee; employees omit this (self)
+  user?: Uri;
+  startsAt?: string;
+  endsAt?: string;
+  breakMinutes?: number;
+  comment?: string | null;
+  // true = delete the report, back to "worked as planned"
+  clear?: boolean;
+};
+
+export type ShiftBatchResult = JsonLdEntity & {
+  created: number;
+};
+
+export type ShiftDispatchSyncResult = JsonLdEntity & {
+  added: number;
+};
+
+export type ShiftWeekClearResult = JsonLdEntity & {
+  cleared: number;
+};
+
+export type BankHoliday = {
+  date: string;
+  name: string;
+};
+
+export type BankHolidays = JsonLdEntity & {
+  holidays: BankHoliday[];
 };

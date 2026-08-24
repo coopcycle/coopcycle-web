@@ -50,6 +50,7 @@ Feature: Settings
         "edenred_client_id": "@string@",
         "edenred_authorization_endpoint": "@string@",
         "paygreen_public_key": "@null@",
-        "theme": @array@
+        "theme": @array@,
+        "timezone": "@string@"
       }
       """

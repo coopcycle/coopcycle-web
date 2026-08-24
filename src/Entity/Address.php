@@ -39,7 +39,9 @@ use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 #[ApiResource(
     uriTemplate: '/stores/{id}/addresses',
     types: ['http://schema.org/Place'],
-    operations: [new GetCollection()],
+    operations: [
+        new GetCollection(security: "is_granted('view', request)")
+    ],
     uriVariables: [
         'id' => new Link(fromClass: Store::class, fromProperty: 'addresses')
     ],

@@ -732,6 +732,7 @@ delivery.failure_reason:
     packaging_problems: "Probleme der Verpackung"
     holiday_closure: "Ferienverlängerung"
     closed_store: "Geschäft geschlossen"
+    price_review_needed: "Preisüberprüfung erforderlich"
 adminDashboard.failureSet.title: "Fehlergründe"
 adminDashboard.failureSet.help: "Legen Sie die Gründe fest, warum Ihre Lieferungen\
   \ fehlschlagen können."

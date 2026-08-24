@@ -22,6 +22,7 @@
     data-centrifugo-tracking-channel="{{ centrifugo_tracking_channel }}"
     data-centrifugo-events-channel="{{ centrifugo_events_channel }}"
     data-date="{{ date|date('Y-m-d') }}"
+    data-timezone="{{ timezone }}"
     data-tags="{{ tags|json_encode|e('html_attr') }}"
     data-couriers-list="{{ couriers|json_encode|e('html_attr') }}"
     data-uploader-endpoint="{{ oneup_uploader_endpoint('tasks') }}"
@@ -33,6 +34,7 @@
     data-pickup-cluster-addresses="{{ pickup_cluster_addresses|json_encode|e('html_attr') }}"
     data-export-enabled="{{ export_enabled }}"
     data-initial-task="{{ initial_task|json_encode|e('html_attr') }}"
+    data-shift-planning-enabled="{{ shift_planning_enabled ? 'true' : 'false' }}"
 >
   </div>
   <div class="dashboard__loader">

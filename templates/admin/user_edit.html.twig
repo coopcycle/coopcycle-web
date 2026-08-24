@@ -1,6 +1,9 @@
 {% extends "admin.html.twig" %}
 
 {% form_theme form 'form/user.html.twig' %}
+{% if employee_profile_form is not null %}
+  {% form_theme employee_profile_form 'bootstrap_3_layout.html.twig' %}
+{% endif %}
 
 {% block breadcrumb %}
 <li><a href="{{ path('admin_users') }}">{% trans %}adminDashboard.users.title{% endtrans %}</a></li>
@@ -12,6 +15,14 @@
     <h2 class="page-header">
       {% trans %}adminDashboard.users.editUser{%  endtrans %}
     </h2>
+    {% if is_hr_admin %}
+    <ul class="nav nav-tabs" role="tablist">
+      <li role="presentation" class="active"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">{% trans %}adminDashboard.users.editUser{% endtrans %}</a></li>
+      <li role="presentation"><a href="#hr" aria-controls="hr" role="tab" data-toggle="tab">{% trans %}hr.tab.title{% endtrans %}</a></li>
+    </ul>
+    <div class="tab-content pt-4">
+      <div role="tabpanel" class="tab-pane active" id="profile">
+    {% endif %}
     {{ form_start(form) }}
       {{ form_row(form.username) }}
       {% if form.email is defined %}
@@ -22,7 +33,7 @@
       {% if form.quotesAllowed is defined %}
         {{ form_row(form.quotesAllowed) }}
       {% endif %}
-      
+
       {% if form.tags is defined %}
         {{ form_row(form.tags) }}
       {% endif %}
@@ -40,6 +51,51 @@
       {{ form_row(form.roles) }}
       <button type="submit" class="btn btn-block btn-primary">{% trans %}basics.save{% endtrans %}</button>
     {{ form_end(form) }}
+    {% if is_hr_admin %}
+      </div>
+      <div role="tabpanel" class="tab-pane" id="hr">
+        {{ form_start(employee_profile_form) }}
+          {{ form_row(employee_profile_form.contractStartDate) }}
+          {{ form_row(employee_profile_form.dateOfBirth) }}
+          {{ form_row(employee_profile_form.addressStreet) }}
+          {{ form_row(employee_profile_form.addressPostalCode) }}
+          {{ form_row(employee_profile_form.addressLocality) }}
+          {{ form_row(employee_profile_form.addressCountry) }}
+          {{ form_row(employee_profile_form.salaryType) }}
+          {{ form_row(employee_profile_form.salaryAmount) }}
+          {{ form_row(employee_profile_form.weeklyContractedHours) }}
+
+          <h3>{% trans %}hr.holidaysHistory.title{% endtrans %}</h3>
+          {% if holiday_requests|length > 0 %}
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>{% trans %}hr.holidaysHistory.from{% endtrans %}</th>
+                  <th>{% trans %}hr.holidaysHistory.to{% endtrans %}</th>
+                  <th>{% trans %}hr.holidaysHistory.status{% endtrans %}</th>
+                  <th>{% trans %}hr.holidaysHistory.comment{% endtrans %}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for holidayRequest in holiday_requests %}
+                  <tr>
+                    <td>{{ holidayRequest.startDate|date('d/m/Y') }}</td>
+                    <td>{{ holidayRequest.endDate|date('d/m/Y') }}</td>
+                    <td><span class="label label-default">{{ holidayRequest.status }}</span></td>
+                    <td>{{ holidayRequest.comment }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% else %}
+            <p class="text-muted">{% trans %}hr.holidaysHistory.empty{% endtrans %}</p>
+          {% endif %}
+
+          <button type="submit" class="btn btn-block btn-primary">{% trans %}basics.save{% endtrans %}</button>
+        {{ form_end(employee_profile_form) }}
+      </div>
+    </div>
+    {% endif %}
 {% endblock %}
 
 {% block styles %}

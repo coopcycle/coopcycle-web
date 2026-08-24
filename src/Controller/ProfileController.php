@@ -287,6 +287,18 @@ class ProfileController extends AbstractController
         return $this->userTracking($this->getUser(), $date);
     }
 
+    #[Route(path: '/profile/shifts', name: 'profile_shifts')]
+    public function shiftsAction()
+    {
+        if (!$this->getParameter('shift_planning_enabled')) {
+            throw $this->createNotFoundException();
+        }
+
+        $this->denyAccessUnlessGranted('ROLE_COURIER');
+
+        return $this->render('profile/shifts.html.twig', $this->auth([]));
+    }
+
     #[Route(path: '/profile/tasks', name: 'profile_tasks')]
     public function tasksAction(Request $request, EntityManagerInterface $entityManager)
     {

@@ -6,6 +6,7 @@ use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\Metadata\Exception\ItemNotFoundException;
 use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Api\Dto\DeliveryMapper;
+use AppBundle\Cyke\Client as CykeClient;
 use AppBundle\Entity\Address;
 use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Entity\Delivery;
@@ -53,6 +54,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Vich\UploaderBundle\Storage\StorageInterface;
 
@@ -233,6 +235,21 @@ trait StoreTrait
                     return $this->redirectToRoute($routes['store'], [ 'id' => $store->getId() ]);
                 }
 
+            }
+
+            $rdcConnectionId = $store->getRdcConnectionId();
+            if ($this->rdcEnabled && !empty($rdcConnectionId)) {
+                $fstore = $this->entityManager->getRepository(Store::class)
+                    ->findOneByRdcConnectionId($rdcConnectionId);
+
+                if ($fstore !== null && $fstore !== $store) {
+                    $this->addFlash(
+                        'error',
+                        sprintf('This RDC connection is already assigned to another store (%s)', $fstore->getName())
+                    );
+
+                    return $this->redirectToRoute($routes['store'], [ 'id' => $store->getId() ]);
+                }
             }
 
             $this->entityManager->persist($store);
@@ -425,6 +442,54 @@ trait StoreTrait
         ]));
     }
 
+    public function togglePauseRecurrenceRuleAction(
+        $storeId,
+        $recurrenceRuleId,
+        Request $request,
+        EntityManagerInterface $entityManager
+    ) {
+        $recurrenceRule = $entityManager
+            ->getRepository(RecurrenceRule::class)
+            ->find($recurrenceRuleId);
+
+        $store = $recurrenceRule->getStore();
+
+        $this->denyAccessUnlessGranted('view', $store);
+
+        $recurrenceRule->setPaused(!$recurrenceRule->isPaused());
+        $entityManager->flush();
+
+        $routes = $request->attributes->get('routes');
+
+        return $this->redirectToRoute($routes['store_recurrence_rules'], ['id' => $storeId]);
+    }
+
+    #[Route(path: '/admin/stores/cyke/package_types', name: 'admin_store_cyke_package_types', methods: ['POST'])]
+    public function storeCykePackageTypesAction(Request $request, CykeClient $cykeClient)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $data = json_decode($request->getContent(), true) ?? [];
+
+        $email = $data['email'] ?? null;
+        $token = $data['token'] ?? null;
+
+        if (empty($email) || empty($token)) {
+            return new JsonResponse(['error' => 'Missing email or token'], 400);
+        }
+
+        try {
+            $packageTypes = $cykeClient->getPackageTypes($email, $token);
+        } catch (\Throwable $e) {
+            return new JsonResponse(['error' => 'Unable to load package types from Cyke'], 400);
+        }
+
+        return new JsonResponse(array_map(fn($packageType) => [
+            'id' => $packageType['id'],
+            'label' => $packageType['type'],
+        ], $packageTypes));
+    }
+
     public function storeAction($id, Request $request, TranslatorInterface $translator)
     {
         $store = $this->entityManager->getRepository(Store::class)->find($id);
@@ -501,19 +566,12 @@ trait StoreTrait
                 ->setParameter('store', $store);
         }
 
-        //TODO: Remove duplicated code (AdminController.php~L820)
-        if ($request->query->get('start_at') && $request->query->get('end_at')) {
-
-            $start = Carbon::parse($request->query->get('start_at'))->setTime(0, 0, 0)->toDateTime();
-            $end = Carbon::parse($request->query->get('end_at'))->setTime(23, 59, 59)->toDateTime();
+        if ($range = $this->getDeliveryDateRange($request)) {
 
             $filters['enabled'] = true;
-            $filters['range'] = [$start, $end];
+            $filters['range'] = $range;
 
-            $qb
-                ->andWhere('d.createdAt BETWEEN :start AND :end')
-                ->setParameter('start', $start)
-                ->setParameter('end', $end);
+            $deliveryRepository->createdAtRange($qb, $range[0], $range[1]);
         }
 
         $deliveries = $paginator->paginate(
@@ -640,6 +698,7 @@ trait StoreTrait
             'pagination' => $recurrenceRules,
             'routes' => [
                 'view' => $routes['store_recurrence_rule'],
+                'toggle_pause' => $routes['store_recurrence_rule_toggle_pause'],
             ],
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],

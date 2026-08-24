@@ -18,6 +18,7 @@ use AppBundle\Entity\Tour;
 use AppBundle\Form\TaskExportType;
 use AppBundle\Form\TaskGroupType;
 use AppBundle\Form\TaskUploadType;
+use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TagManager;
 use AppBundle\Service\TaskListManager;
 use AppBundle\Service\TaskManager;
@@ -70,10 +71,11 @@ trait AdminDashboardTrait
         Redis $tile38,
         IriConverterInterface $iriConverter,
         TagManager $tagManager,
-        NormalizerInterface $normalizer)
+        NormalizerInterface $normalizer,
+        SettingsManager $settingsManager)
     {
         return $this->dashboardFullscreenAction((new \DateTime())->format('Y-m-d'),
-            $request, $taskManager, $jwtManager, $centrifugoClient, $tile38, $iriConverter, $tagManager, $normalizer);
+            $request, $taskManager, $jwtManager, $centrifugoClient, $tile38, $iriConverter, $tagManager, $normalizer, $settingsManager);
     }
 
     #[Route("/admin/dashboard/fullscreen/{date}", name: "admin_dashboard_fullscreen", requirements: ["date" => "[0-9]{4}-[0-9]{2}-[0-9]{2}"])]
@@ -84,7 +86,8 @@ trait AdminDashboardTrait
         Redis $tile38,
         IriConverterInterface $iriConverter,
         TagManager $tagManager,
-        NormalizerInterface $normalizer)
+        NormalizerInterface $normalizer,
+        SettingsManager $settingsManager)
     {
         new Hashids($this->getParameter('secret'), 8);
 
@@ -169,6 +172,7 @@ trait AdminDashboardTrait
         return $this->render('admin/dashboard_iframe.html.twig', $this->auth([
             'nav' => $request->query->getBoolean('nav', true),
             'date' => $date,
+            'timezone' => $settingsManager->get('timezone'),
             'couriers' => $couriers,
             'task_export_form' => $taskExportForm->createView(),
             'tags' => $tagManager->getAllTags(),

@@ -3,7 +3,6 @@
 namespace AppBundle\Action\Delivery;
 
 use AppBundle\Entity\Delivery;
-use AppBundle\Action\Base;
 use AppBundle\Entity\DeliveryRepository;
 use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\Incident\IncidentImage;
@@ -16,16 +15,14 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment;
 use Vich\UploaderBundle\Storage\StorageInterface;
 use ZipArchive;
 
-class PODExport extends Base
+class PODExport extends PODAction
 {
-    private const MAX_DATE_RANGE_DAYS = 7;
     private const CSV_HEADERS = ['delivery', 'order_number', 'recipient', 'status', 'comment', 'pods', 'incidents'];
 
     public function __construct(
@@ -39,82 +36,32 @@ class PODExport extends Base
 
     public function __invoke(Request $request): Response
     {
-        try {
-            $params = $this->parseRequest($request);
-            $this->validateRequiredParameters($params);
+        $params = $this->parseRequest($request);
+        $this->validateRequiredParameters($params);
 
-            [$from, $to] = $this->parseDateRange($params);
+        [$from, $to] = $this->parseDateRange($params);
 
-            $deliveries = $this->deliveryRepository->findDeliveriesByStore(
-                $params->get('store'),
-                $from,
-                $to
-            );
-
-            if (empty($deliveries)) {
-                throw new NotFoundHttpException('No deliveries found for the specified criteria');
-            }
-
-            $zipPath = $this->buildZip($deliveries);
-
-            return $this->createZipResponse($zipPath);
-
-        } catch (\InvalidArgumentException $e) {
-            throw new BadRequestHttpException('Invalid date format. Expected format: Y-m-d or Y-m-d H:i:s');
-        } catch (\Exception $e) {
-
-            $this->logger?->error('Failed to generate delivery ZIP', [
-                'error' => $e->getMessage(),
-                'store' => $params->get('store'),
-                'from' => $params->get('from'),
-                'to' => $params->get('to')
-            ]);
-
-            throw $e;
-        }
-    }
-    /**
-     * @param mixed $params
-     */
-    private function validateRequiredParameters($params): void
-    {
-        $requiredParams = ['store', 'from', 'to'];
-        $missingParams = array_filter(
-            $requiredParams,
-            fn($param) => empty($params->get($param))
+        $deliveries = $this->deliveryRepository->findDeliveriesWithProofsOfDelivery(
+            $this->getStoreId($request),
+            $from,
+            $to
         );
 
-        if (!empty($missingParams)) {
-            throw new BadRequestHttpException(
-                sprintf('Missing required parameters: %s', implode(', ', $missingParams))
-            );
+        if (empty($deliveries)) {
+            throw new NotFoundHttpException('No deliveries found for the specified criteria');
         }
+
+        $zipPath = $this->buildZip($deliveries);
+
+        return $this->createZipResponse($zipPath, $from, $to);
     }
-    /**
-     * @param mixed $params
-     */
-    private function parseDateRange($params): array
+    private function createZipResponse(string $zipPath, \DateTimeInterface $from, \DateTimeInterface $to): Response
     {
-        $from = new \DateTimeImmutable($params->get('from'));
-        $to = new \DateTimeImmutable($params->get('to'));
-
-        if ($from > $to) {
-            throw new BadRequestHttpException('Start date must be before or equal to end date');
-        }
-
-        $daysDiff = $to->diff($from)->days;
-        if ($daysDiff > self::MAX_DATE_RANGE_DAYS) {
-            throw new BadRequestHttpException(
-                sprintf('Date range cannot exceed %d days', self::MAX_DATE_RANGE_DAYS)
-            );
-        }
-
-        return [$from, $to];
-    }
-
-    private function createZipResponse(string $zipPath): Response
-    {
-        $filename = sprintf('deliveries_%s.zip', date('Y-m-d_H-i-s'));
+        $filename = sprintf(
+            'deliveries_%s_%s.zip',
+            $from->format('Y-m-d'),
+            $to->format('Y-m-d'),
+        );
 
         $response = new BinaryFileResponse($zipPath);
         $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $filename);
@@ -130,16 +77,21 @@ class PODExport extends Base
         $zip = new ZipArchive();
         $zipName = tempnam(sys_get_temp_dir(), 'coopcycle_store_pods');
 
-        if ($zip->open($zipName, ZipArchive::CREATE) !== true) {
-            throw new \RuntimeException('Failed to create ZIP archive');
-        }
-
         try {
+            if ($zip->open($zipName, ZipArchive::CREATE) !== true) {
+                throw new \RuntimeException('Failed to create ZIP archive');
+            }
+
             $reportData = $this->processDeliveries($deliveries, $zip);
             $this->addReportsToZip($zip, $reportData);
-        } finally {
+        } catch (\Throwable $e) {
             $zip->close();
+            @unlink($zipName);
+
+            throw $e;
         }
+
+        $zip->close();
 
         return $zipName;
     }
@@ -303,7 +255,12 @@ class PODExport extends Base
 
     private function resolvePath(TaskImage|IncidentImage $image): ?string
     {
-        $path = ltrim($this->storage->resolveUri($image, 'file'), '/');
+        $uri = $this->storage->resolveUri($image, 'file');
+        if (is_null($uri)) {
+            return null;
+        }
+
+        $path = ltrim($uri, '/');
 
         $filesystem = match (true) {
             $image instanceof TaskImage => $this->taskImagesFilesystem,

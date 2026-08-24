@@ -13,6 +13,7 @@ use AppBundle\Entity\LocalBusiness;
 use AppBundle\Sylius\Product\ProductOptionInterface;
 use AppBundle\Validator\Constraints\ProductOption as AssertProductOption;
 use Doctrine\Common\Collections\Criteria;
+use AppBundle\Integration\Zelty\HasZeltyMetadata;
 use Sylius\Component\Product\Model\ProductOption as BaseProductOption;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\SerializedName;
@@ -29,6 +30,7 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 )]
 class ProductOption extends BaseProductOption implements ProductOptionInterface
 {
+    use HasZeltyMetadata;
     /**
      * @var string
      */

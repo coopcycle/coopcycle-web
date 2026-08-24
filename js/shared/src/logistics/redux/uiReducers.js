@@ -13,7 +13,11 @@ const initialState = {
   currentTask: null,
   expandedTourPanelIds: [],
   loadingTourPanelsIds: [],
-  unassignedTasksIdsOrder: []
+  unassignedTasksIdsOrder: [],
+  // Bookkeeping of the task list modifications we sent to the API, by username.
+  // Used to discard superseded responses & stale WebSocket events.
+  // @see js/app/dashboard/redux/uiReducers.js
+  taskListsRequests: {},
 }
 
 export default (state = initialState, action) => {

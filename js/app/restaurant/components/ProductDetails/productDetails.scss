@@ -61,11 +61,14 @@
   }
 
   @mixin no-ui-controls() {
+    -moz-appearance: textfield;
     appearance: textfield;
 
     &::-webkit-inner-spin-button,
     &::-webkit-outer-spin-button {
+      -webkit-appearance: none;
       appearance: none;
+      margin: 0;
     }
   }
 
@@ -75,6 +78,7 @@
     input[type="number"] {
       width: 3em;
       text-align: center;
+      @include no-ui-controls();
     }
     label {
       flex: 1;
@@ -93,6 +97,7 @@
       width: 3em;
       text-align: center;
       font-weight: 600;
+      @include no-ui-controls();
     }
     &__price {
       padding-right: 1rem;

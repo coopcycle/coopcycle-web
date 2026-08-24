@@ -319,6 +319,15 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected bool $pawapayEnabled = true;
 
+    protected ?string $zeltyApiKey = null;
+
+    protected ?int $zeltyDeliveryFeeDishId = null;
+
+    /**
+     * Kill switch to stop sending orders to Zelty, without losing the API key setup.
+     */
+    protected bool $zeltyOrdersEnabled = true;
+
     protected $dayOfWeekAddresses;
 
     protected $dayOfWeekDeliveryPerimeterExpressions;
@@ -1250,6 +1259,55 @@ class LocalBusiness extends BaseLocalBusiness implements
     public function setPawapayEnabled($enabled = true)
     {
         $this->pawapayEnabled = $enabled;
+    }
+
+    public function getZeltyApiKey(): ?string
+    {
+        return $this->zeltyApiKey;
+    }
+
+    public function setZeltyApiKey(?string $zeltyApiKey): void
+    {
+        $this->zeltyApiKey = $zeltyApiKey;
+    }
+
+    public function getMaskedZeltyApiKey(): ?string
+    {
+        if (!$this->hasZeltyApiKey()) {
+            return null;
+        }
+
+        $length = strlen($this->zeltyApiKey);
+        if ($length <= 8) {
+            return str_repeat('•', $length);
+        }
+
+        return '••••••••••••' . substr($this->zeltyApiKey, -4);
+    }
+
+    public function hasZeltyApiKey(): bool
+    {
+        return null !== $this->zeltyApiKey && '' !== $this->zeltyApiKey;
+    }
+
+    public function getZeltyDeliveryFeeDishId(): ?int
+    {
+        return $this->zeltyDeliveryFeeDishId;
+    }
+
+    public function setZeltyDeliveryFeeDishId(?int $zeltyDeliveryFeeDishId): void
+    {
+        $this->zeltyDeliveryFeeDishId = $zeltyDeliveryFeeDishId;
+    }
+
+    public function isZeltyOrdersEnabled(): bool
+    {
+        return $this->zeltyOrdersEnabled;
+    }
+
+    public function setZeltyOrdersEnabled(bool $enabled): void
+    {
+        $this->zeltyOrdersEnabled = $enabled;
     }
 
     public function getDayOfWeekAddresses()

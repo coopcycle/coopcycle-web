@@ -10,4 +10,12 @@ monolog:
       'push_notification',
       'real_time_message',
       'transporter',
+      'zelty',
     ]
+
+  handlers:
+    # Zelty API traffic is persisted so it can be reviewed from the admin UI
+    zelty_api_log:
+      type: service
+      id: AppBundle\Monolog\ZeltyApiLogHandler
+      channels: [ zelty ]

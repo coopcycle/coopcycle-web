@@ -81,6 +81,10 @@
          data-order="{{ order|serialize('jsonld', {groups: ['order', 'pricing_deliveries']}) }}"
          data-delivery="{{ delivery is not empty ? delivery|serialize('jsonld', {groups: ['delivery', 'address', 'set-temporary-id-when-missing']}) : '' }}"
          data-is-dispatcher="{{ is_granted('ROLE_DISPATCHER') ? 'true' : 'false' }}"
+         {% if delivery is not empty and delivery.isTransporterEnabled %}
+           data-edi-messages="{{ delivery.getEdifactMessagesForTimeline()|json_encode }}"
+           data-import-reference="{{ delivery.getImportReference() }}"
+         {% endif %}
     >
       {# rendered by React #}
     </div>

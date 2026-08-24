@@ -5,11 +5,13 @@ imports:
   - { resource: services/validators.yml }
   - { resource: services/commands.yml }
   - { resource: services/doctrine_extensions.yml }
+  - { resource: services/zelty.yml }
 
 # Learn more about services, parameters and containers at
 # http://symfony.com/doc/current/book/service_container.html
 parameters:
   sylius_cart_restaurant_session_key_name: _coopcycle.sylius.cart.restaurant
+  shift_planning_enabled: '%env(bool:SHIFT_PLANNING_ENABLED)%'
   apns_default_is_production_env: true
   env(COOPCYCLE_PUBLIC_KEY_FILE): "%kernel.project_dir%/var/jwt/public.pem"
   env(COOPCYCLE_PRIVATE_KEY_FILE): "%kernel.project_dir%/var/jwt/private.pem"
@@ -17,6 +19,9 @@ parameters:
   env(APP_LOG_DIR): "%kernel.logs_dir%"
   env(APP_VERSION): dev-master
   env(COOPCYCLE_RECOMMENDER_URL): 'http://recommender:8000/'
+  # Defaults so the app boots on OSRM even when these are unset in the environment.
+  env(COOPCYCLE_ROUTING_ENGINE): 'osrm'
+  env(COOPCYCLE_VALHALLA_HOST): 'valhalla:8002'
   secret: "%env(APP_SECRET)%"
   country_iso: "%env(COOPCYCLE_COUNTRY)%"
   region_iso: "%env(COOPCYCLE_REGION)%"
@@ -29,6 +34,7 @@ parameters:
   database_user:     "%env(COOPCYCLE_DB_USER)%"
   database_password: "%env(COOPCYCLE_DB_PASSWORD)%"
   locale_regex: an|ca|fr|en|es|eu|de|hu|it|pl|pt_BR|pt_PT|da
+  rdc_webhook_secret: '%env(default::RDC_WEBHOOK_SECRET)%'
   router.request_context.scheme: 'http'
   router.request_context.host: "%env(APP_HOST)%"
   loopeat_enabled: '%env(bool:LOOPEAT_ENABLED)%'
@@ -44,6 +50,9 @@ parameters:
   transactional_address: "%env(COOPCYCLE_MAIL_SENDER_ADDRESS)%"
   transactional_sender_name: "%env(COOPCYCLE_MAIL_SENDER_NAME)%"
   osrm_host: "%env(COOPCYCLE_OSRM_HOST)%"
+  valhalla_host: "%env(COOPCYCLE_VALHALLA_HOST)%"
+  routing_engine: "%env(COOPCYCLE_ROUTING_ENGINE)%"
+  routing_profile: 'bicycle'
   is_demo: "%env(bool:COOPCYCLE_DEMO)%"
   sentry_public_dsn: "%env(COOPCYCLE_SENTRY_DSN)%"
   foodtech_enabled: "%env(bool:COOPCYCLE_FOODTECH_ENABLED)%"
@@ -66,7 +75,10 @@ parameters:
   group_orders_enabled: '%env(bool:GROUP_ORDERS_ENABLED)%'
   business_account_enabled: '%env(bool:BUSINESS_ACCOUNT_ENABLED)%'
   transporters_config: '%env(json:TRANSPORTERS_CONFIG)%'
+  rdc_connections_default: []
+  rdc_connections: '%env(default:rdc_connections_default:json:RDC_CONNECTIONS)%'
   billing_enabled: '%env(bool:BILLING_ENABLED)%'
+  cyke_enabled: '%env(bool:CYKE_ENABLED)%'
   package_delivery_ui_price_breakdown_enabled_default: true
   package_delivery_ui_price_breakdown_enabled: '%env(default:package_delivery_ui_price_breakdown_enabled_default:bool:PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED)%'
   shopify_api_key: '%env(SHOPIFY_API_KEY)%'
@@ -98,9 +110,9 @@ services:
   #
   # https://symfony.com/doc/current/cache.html#creating-custom-namespaced-pools
   restart_workers_signal.cache:
-      parent: cache.adapter.redis
-      tags:
-          - { name: cache.pool, provider: snc_redis.default, namespace: messenger }
+    parent: cache.adapter.redis
+    tags:
+      - { name: cache.pool, provider: snc_redis.default, namespace: messenger }
 
   cache.messenger.restart_workers_signal: '@restart_workers_signal.cache'
 
@@ -240,6 +252,7 @@ services:
   Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface: '@league.oauth2_server.factory.psr_http'
   League\Flysystem\Filesystem $restaurantImagesFilesystem: '@restaurant_images_filesystem'
   League\Flysystem\Filesystem $deliveryImportsFilesystem: '@delivery_imports_filesystem'
+  League\Flysystem\Filesystem $zeltyCatalogImportsFilesystem: '@zelty_catalog_imports_filesystem'
   Kreait\Firebase\Contract\Messaging $firebaseMessaging: '@kreait_firebase.coopcycle.messaging'
   Sylius\Component\Order\Processor\OrderProcessorInterface $orderPaymentProcessor: '@sylius.order_processing.order_payment_processor'
   ApiPlatform\State\ProcessorInterface $persistProcessor: '@api_platform.doctrine.orm.state.persist_processor'
@@ -268,10 +281,10 @@ services:
     calls:
       - method: setLoopEatClientId
         arguments:
-            - '%loopeat_client_id%'
+          - '%loopeat_client_id%'
       - method: setLoopEatClientSecret
         arguments:
-            - '%loopeat_client_secret%'
+          - '%loopeat_client_secret%'
     tags:
       - { name: monolog.logger, channel: loopeat }
 
@@ -327,6 +340,7 @@ services:
       $incidentImagesFilesystem: '@incident_images_filesystem'
       $edifactFilesystem: '@edi_messages_filesystem'
       $platformLocale: '%env(COOPCYCLE_LOCALE)%'
+      $rdcEnabled: '%env(bool:RDC_ENABLED)%'
 
   AppBundle\Controller\Admin\CustomerSegmentationController:
     arguments:
@@ -440,6 +454,24 @@ services:
       - "@sylius.promotion_processor"
     tags:
       - { name: sylius.order_processor, priority: 64 }
+
+  # Coupon code generation: replace Sylius' hex generator (16 symbols) with an
+  # unambiguous 31-symbol alphabet so codes are shorter and human-readable.
+  # The generator and its policy MUST share the same alphabet.
+  sylius.promotion_coupon_generator:
+    class: AppBundle\Sylius\Promotion\Generator\UnambiguousPromotionCouponGenerator
+    autoconfigure: false
+    arguments:
+      $couponFactory: "@sylius.factory.promotion_coupon"
+      $couponRepository: "@sylius.repository.promotion_coupon"
+      $objectManager: "@sylius.manager.promotion_coupon"
+      $generationPolicy: "@sylius.generator.percentage_generation_policy"
+
+  sylius.promotion_coupon_generator.percentage_policy:
+    class: AppBundle\Sylius\Promotion\Generator\AlphabetGenerationPolicy
+    autoconfigure: false
+    arguments:
+      $couponRepository: "@sylius.repository.promotion_coupon"
 
   # IMPORTANT
   # OrderDepositRefundProcessor must be executed *BEFORE* OrderFeeProcessor
@@ -593,7 +625,7 @@ services:
   coopcycle.expression_language.zone.provider:
     public: false
     class: AppBundle\ExpressionLanguage\ZoneExpressionLanguageProvider
-    arguments: [ '@coopcycle.repository.zone' ]
+    arguments: ['@coopcycle.repository.zone']
 
   AppBundle\ExpressionLanguage\PickupExpressionLanguageProvider: ~
 
@@ -630,7 +662,7 @@ services:
   AppBundle\EventListener\LogoutSubscriber: ~
 
   AppBundle\EventListener\TaggableSubscriber:
-    arguments: [ '@coopcycle.tag_manager' ]
+    arguments: ['@coopcycle.tag_manager']
     tags:
       - { name: monolog.logger, channel: coopcycle.tagging }
 
@@ -643,7 +675,7 @@ services:
   AppBundle\Utils\PreparationTimeCalculator:
     arguments:
       - {
-          'restaurant.state == "rush" and order.itemsTotal < 2000':        '20 minutes',
+          'restaurant.state == "rush" and order.itemsTotal < 2000': '20 minutes',
           'restaurant.state == "rush" and order.itemsTotal in 2000..5000': '30 minutes',
           'restaurant.state == "rush" and order.itemsTotal > 5000':        '45 minutes',
           'order.itemsTotal < 2000':                                       '10 minutes',
@@ -666,6 +698,8 @@ services:
       - { name: monolog.logger, channel: timing }
 
   AppBundle\Utils\OrderTimelineCalculator: ~
+
+  AppBundle\Utils\RestaurantOrderStatsSorter: ~
 
   AppBundle\Utils\OrderTimeHelper:
     arguments:
@@ -700,6 +734,12 @@ services:
     tags:
       - { name: doctrine.orm.entity_listener }
 
+  AppBundle\Entity\Listener\TaskRdcStatusListener:
+    arguments:
+      $rdcEnabled: '%env(bool:RDC_ENABLED)%'
+    tags:
+      - { name: doctrine.orm.entity_listener, event: postUpdate, entity: AppBundle\Entity\Task }
+
   AppBundle\EventListener\Edifact\TaskChangedNotifier:
     tags:
       -
@@ -724,10 +764,10 @@ services:
     calls:
       - method: setRestaurantFilter
         arguments:
-            - '@coopcycle.utils.restaurant_filter'
+          - '@coopcycle.utils.restaurant_filter'
       - method: setBusinessContext
         arguments:
-            - '@AppBundle\Business\Context'
+          - '@AppBundle\Business\Context'
       - method: setSettingsManager
         arguments:
             - '@AppBundle\Service\SettingsManager'
@@ -744,16 +784,16 @@ services:
     calls:
       - method: setSecret
         arguments:
-            - '%secret%'
+          - '%secret%'
       - method: setSonicClient
         arguments:
-            - '@Psonic\Client'
+          - '@Psonic\Client'
       - method: setSonicSecretPassword
         arguments:
-            - '%sonic_secret_password%'
+          - '%sonic_secret_password%'
       - method: setSonicNamespace
         arguments:
-            - '%sonic_namespace%'
+          - '%sonic_namespace%'
 
   AppBundle\Entity\Sylius\OrderRepository:
     factory: ['@doctrine.orm.default_entity_manager', getRepository]
@@ -765,33 +805,61 @@ services:
     alias: AppBundle\Entity\Sylius\OrderRepository
 
   AppBundle\Entity\Sylius\ProductOptionRepository:
-    factory: [ '@doctrine.orm.default_entity_manager', getRepository ]
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
     arguments:
       - AppBundle\Entity\Sylius\ProductOption
     calls:
       - method: setEntityManager
-        arguments: [ '@doctrine.orm.default_entity_manager' ]
+        arguments: ['@doctrine.orm.default_entity_manager']
       - method: setProductRepository
-        arguments: [ '@sylius.repository.product' ]
+        arguments: ['@sylius.repository.product']
       - method: setProductOptionFactory
-        arguments: [ '@sylius.factory.product_option' ]
+        arguments: ['@sylius.factory.product_option']
       - method: setLocaleProvider
-        arguments: [ '@sylius.locale_provider' ]
+        arguments: ['@sylius.locale_provider']
 
   sylius.repository.product_option:
     alias: AppBundle\Entity\Sylius\ProductOptionRepository
 
   AppBundle\Entity\TaskListRepository: ~
 
+  AppBundle\Entity\TaskRepository:
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\Task
+
   AppBundle\Entity\TourRepository: ~
 
   AppBundle\Entity\Task\RecurrenceRuleRepository: ~
 
+  # Prophet-backed (Python recommender service), falls back to the heuristic
+  AppBundle\Service\Shift\DemandForecaster: '@AppBundle\Service\Shift\ProphetDemandForecaster'
+
   AppBundle\Service\Routing\Osrm: ~
 
+  AppBundle\Service\Routing\Engine\OsrmRoutingEngine:
+    arguments:
+      $osrmClient: '@osrm.client'
+      $profile: '%routing_profile%'
+
+  AppBundle\Service\Routing\Engine\ValhallaRoutingEngine:
+    # Lazy so the valhalla.client scoped HTTP client (and its base_uri
+    # validation) is only built when Valhalla is actually called, not at
+    # container boot. Lets the app boot on OSRM even with an unset/invalid
+    # COOPCYCLE_VALHALLA_HOST.
+    lazy: true
+    arguments:
+      $valhallaClient: '@valhalla.client'
+      $costing: '%routing_profile%'
+
+  AppBundle\Service\Routing\Valhalla: ~
+
   routing_service:
+    class: AppBundle\Service\RoutingInterface
     public: true
-    class: AppBundle\Service\Routing\OsrmWithFallback
+    factory: ['@AppBundle\Service\Routing\RoutingAdapterFactory', 'create']
+    arguments:
+      - '%routing_engine%'
 
   AppBundle\Api\Filter\DeliveryOrderFilter:
     autowire: false
@@ -899,32 +967,32 @@ services:
   AppBundle\Doctrine\EventSubscriber\LoggerSubscriber: ~
 
   AppBundle\Api\EventSubscriber\DeliverySubscriber:
-    tags: [ 'kernel.event_subscriber' ]
+    tags: ['kernel.event_subscriber']
 
   AppBundle\Api\EventSubscriber\TaskImportQueueSubscriber:
     arguments:
-        $secret: '%secret%'
-    tags: [ 'kernel.event_subscriber' ]
+      $secret: '%secret%'
+    tags: ['kernel.event_subscriber']
 
   AppBundle\Api\EventSubscriber\SoftDeletedSubscriber:
     arguments:
-        - '@doctrine'
-    tags: [ 'kernel.event_subscriber' ]
+      - '@doctrine'
+    tags: ['kernel.event_subscriber']
 
   AppBundle\Api\EventSubscriber\MaintenanceSubscriber:
     arguments:
-        - '@snc_redis.default'
-        - '@translator'
-    tags: [ 'kernel.event_subscriber' ]
+      - '@snc_redis.default'
+      - '@translator'
+    tags: ['kernel.event_subscriber']
 
   AppBundle\Api\EventSubscriber\TaskOrganizationSubscriber:
-    tags: [ 'kernel.event_subscriber' ]
+    tags: ['kernel.event_subscriber']
 
   AppBundle\Api\EventSubscriber\ProductOptionSubscriber:
-    tags: [ 'kernel.event_subscriber' ]
+    tags: ['kernel.event_subscriber']
 
   AppBundle\Api\EventSubscriber\ProductOptionValueSubscriber:
-    tags: [ 'kernel.event_subscriber' ]
+    tags: ['kernel.event_subscriber']
 
   AppBundle\Api\EventSubscriber\UrbantzSubscriber:
     arguments:
@@ -949,6 +1017,9 @@ services:
 
   AppBundle\Transporter\ImportFromPoint: ~
   AppBundle\Transporter\ReportFromCC: ~
+  AppBundle\Transporter\EdifactMessageParser:
+    arguments:
+      $edifactFs: '@edi_messages_filesystem'
 
   AppBundle\Action\Register:
     public: true
@@ -1130,18 +1201,23 @@ services:
     tags: [ 'api_platform.state_processor' ]
 
   AppBundle\Api\State\EvaluatePricingRuleProcessor:
-    tags: [ 'api_platform.state_processor' ]
+    tags: ['api_platform.state_processor']
 
   AppBundle\Api\State\PricingRuleSetProcessor:
     arguments:
       $decorated: '@api_platform.doctrine.orm.state.persist_processor'
-    tags: [ 'api_platform.state_processor' ]
+    tags: ['api_platform.state_processor']
 
   AppBundle\Api\State\UrbantzWebhookProcessor:
     arguments:
       $country: "%country_iso%"
     tags:
       - { name: monolog.logger, channel: urbantz }
+      - { name: api_platform.state_processor }
+
+  AppBundle\Api\State\CykeWebhookProcessor:
+    tags:
+      - { name: monolog.logger, channel: cyke }
       - { name: api_platform.state_processor }
 
   AppBundle\Twig\CoopCycleExtension:
@@ -1175,16 +1251,16 @@ services:
   s3_client:
     class: Aws\S3\S3Client
     arguments:
-        - endpoint: '%env(S3_ENDPOINT)%'
-          version: latest
-          region: '%env(S3_REGION)%'
-          credentials:
-            key: '%env(S3_CREDENTIALS_KEY)%'
-            secret: '%env(S3_CREDENTIALS_SECRET)%'
-          use_path_style_endpoint: true
-          http:
-            connect_timeout: 5
-            timeout: 15
+      - endpoint: '%env(S3_ENDPOINT)%'
+        version: latest
+        region: '%env(S3_REGION)%'
+        credentials:
+          key: '%env(S3_CREDENTIALS_KEY)%'
+          secret: '%env(S3_CREDENTIALS_SECRET)%'
+        use_path_style_endpoint: true
+        http:
+          connect_timeout: 5
+          timeout: 15
 
   AppBundle\Service\StripeManager:
     tags:
@@ -1291,6 +1367,11 @@ services:
         private_key_secret: "%env(APNS_CERTIFICATE_PASS_PHRASE)%"
 
   Pushok\Client:
+    # Lazy, because building the auth provider reads APNS_PRIVATE_KEY_FILE, which throws
+    # "Unable to load the key" when APNS is not configured (it defaults to /dev/null).
+    # RemotePushNotificationManager only touches the client when there is an iOS token to
+    # push to, so without this every PushNotification message fails and gets retried.
+    lazy: true
     arguments:
       $isProductionEnv: "%env(default:apns_default_is_production_env:bool:APNS_IS_PRODUCTION_ENV)%"
 
@@ -1332,7 +1413,7 @@ services:
         pawapay: '@AppBundle\Payment\Gateway\Pawapay'
 
   AppBundle\Security\BusinessVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   AppBundle\EventSubscriber\RegistrationInitializeListener:
     arguments:
@@ -1343,55 +1424,55 @@ services:
   AppBundle\Embed\Context: ~
 
   AppBundle\Security\DeleteClosingRuleVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   AppBundle\Security\OrderActionsVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   AppBundle\Security\LocalBusinessVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   AppBundle\Security\DashboardViewVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   AppBundle\Security\ProductVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   AppBundle\Security\DeliveriesVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   AppBundle\Security\StoreVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   AppBundle\Security\AddressVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   AppBundle\Security\UserVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   AppBundle\Security\TaskGroupVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   AppBundle\Security\WebhookVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   AppBundle\Security\ProductOptionValueVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   AppBundle\Security\DeliveryQuoteVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   AppBundle\Security\DeliveryImportQueueVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   AppBundle\Security\TimeSlotVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   AppBundle\Security\IncidentVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   AppBundle\Security\RestaurantMenuVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   # While adding a priority is optional, it’s recommended to add one to make sure the expected value is injected.
   # The built-in RequestAttributeValueResolver, which fetches attributes from the Request, has a priority of 100.
@@ -1402,7 +1483,7 @@ services:
       - { name: controller.argument_value_resolver, priority: 125 }
 
   AppBundle\Security\TaskOperationsVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   AppBundle\Sylius\Cart\SessionSubscriber:
     arguments:
@@ -1624,6 +1705,8 @@ services:
     arguments:
       $lang: "%env(COOPCYCLE_LOCALE)%"
 
+  AppBundle\Cyke\Client: ~
+
   AppBundle\Assets\PlaceholderImageResolver:
     arguments:
       $pixabayApiKey: '%env(PIXABAY_API_KEY)%'
@@ -1685,13 +1768,82 @@ services:
     arguments:
       $standtrackApiKey: '%env(STANDTRACK_API_KEY)%'
 
+  AppBundle\Integration\Rdc\Api\RdcClientFactory:
+    arguments:
+      $rdcConnections: '%rdc_connections%'
+
+  AppBundle\Integration\Rdc\RdcEventDispatcher:
+    arguments:
+      $logger: '@logger'
+
+  AppBundle\Integration\Rdc\RdcStoreResolver:
+    arguments:
+      $entityManager: '@doctrine.orm.entity_manager'
+      $logger: '@logger'
+
+  AppBundle\Integration\Rdc\RdcTaskContextResolver: ~
+
+  AppBundle\Integration\Rdc\Api\RdcServiceFacade:
+    arguments:
+      $rdcClientFactory: '@AppBundle\Integration\Rdc\Api\RdcClientFactory'
+      $logger: '@logger'
+      $connectionId: ''
+
+  AppBundle\Integration\Rdc\Coopcycle\RdcServiceRequestMapper:
+    arguments:
+      $deliveryManager: '@AppBundle\Service\DeliveryManager'
+      $geocoder: '@AppBundle\Service\Geocoder'
+      $phoneUtil: '@libphonenumber\PhoneNumberUtil'
+      $logger: '@logger'
+
+  AppBundle\Integration\Rdc\Coopcycle\RdcServiceRequestProcessor:
+    arguments:
+      $entityManager: '@doctrine.orm.entity_manager'
+      $deliveryOrderManager: '@AppBundle\Service\DeliveryOrderManager'
+      $serviceFacade: '@AppBundle\Integration\Rdc\Api\RdcServiceFacade'
+      $mapper: '@AppBundle\Integration\Rdc\Coopcycle\RdcServiceRequestMapper'
+      $logger: '@logger'
+
+  AppBundle\Controller\Api\RdcWebhookController:
+    arguments:
+      $logger: '@logger'
+      $messageBus: '@messenger.default_bus'
+      $rdcEnabled: '%env(bool:RDC_ENABLED)%'
+    tags:
+      - { name: monolog.logger, channel: rdc }
+
+  AppBundle\Controller\DashboardController:
+    arguments:
+      $rdcEnabled: '%env(bool:RDC_ENABLED)%'
+
+  # RDC feature flag bindings
+  AppBundle\Entity\Listener\IncidentRdcListener:
+    arguments:
+      $rdcEnabled: '%env(bool:RDC_ENABLED)%'
+
+  AppBundle\MessageHandler\IncidentRdcMessageHandler:
+    arguments:
+      $rdcEnabled: '%env(bool:RDC_ENABLED)%'
+
+  AppBundle\MessageHandler\RdcMessageHandler:
+    arguments:
+      $rdcEnabled: '%env(bool:RDC_ENABLED)%'
+
+  AppBundle\MessageHandler\RdcPickupStatusUpdateMessageHandler:
+    arguments:
+      $rdcEnabled: '%env(bool:RDC_ENABLED)%'
+
+  AppBundle\MessageHandler\RdcDropoffStatusUpdateMessageHandler:
+    arguments:
+      $rdcEnabled: '%env(bool:RDC_ENABLED)%'
+
   AppBundle\Utils\Defaults: ~
 
   AppBundle\Api\Filter\AssignedFilter:
     arguments:
       $properties: { assigned: ~ }
       $security: '@security.helper'
-    tags: [ 'api_platform.filter' ]
+    tags: ['api_platform.filter']
 
   AppBundle\Fixtures\DatabasePurger: ~
 
@@ -1708,6 +1860,16 @@ services:
       - '%secret%'
 
   AppBundle\MessageHandler\Task\NotifyUrbantz: ~
+
+  AppBundle\MessageHandler\CreateCykeDelivery:
+    arguments:
+      $cykeEnabled: '%cyke_enabled%'
+    tags:
+      - { name: monolog.logger, channel: cyke }
+
+  AppBundle\Command\CykeResendDeliveriesCommand:
+    arguments:
+      $cykeEnabled: '%cyke_enabled%'
 
   AppBundle\MessageHandler\Task\NotifyLoopeat:
     arguments:

@@ -26,21 +26,24 @@
   </div>
 </div>
 
-{% if past|length > 0 %}
+{% if past.getTotalItemCount > 0 %}
 <ul class="nav nav-tabs" role="tablist">
-  <li role="presentation" class="active"><a href="#ongoing" aria-controls="ongoing" role="tab" data-toggle="tab">{{ 'adminDashboard.promotions.ongoing'|trans({ '%count%': ongoing|length }) }}</a></li>
-  <li role="presentation"><a href="#past" aria-controls="past" role="tab" data-toggle="tab">{{ 'adminDashboard.promotions.past'|trans({ '%count%': past|length }) }}</a></li>
+  <li role="presentation" class="active"><a href="#ongoing" aria-controls="ongoing" role="tab" data-toggle="tab">{{ 'adminDashboard.promotions.ongoing'|trans({ '%count%': ongoing.getTotalItemCount }) }}</a></li>
+  <li role="presentation"><a href="#past" aria-controls="past" role="tab" data-toggle="tab">{{ 'adminDashboard.promotions.past'|trans({ '%count%': past.getTotalItemCount }) }}</a></li>
 </ul>
 <div class="tab-content">
   <div role="tabpanel" class="tab-pane active" id="ongoing">
     {% include 'admin/_partials/promotion_coupon_list.html.twig' with { promotion_coupons: ongoing } %}
+    {{ knp_pagination_render(ongoing, '@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig') }}
   </div>
   <div role="tabpanel" class="tab-pane" id="past">
     {% include 'admin/_partials/promotion_coupon_list.html.twig' with { promotion_coupons: past } %}
+    {{ knp_pagination_render(past, '@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig') }}
   </div>
 </div>
 {% else %}
   {% include 'admin/_partials/promotion_coupon_list.html.twig' with { promotion_coupons: ongoing } %}
+  {{ knp_pagination_render(ongoing, '@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig') }}
 {% endif %}
 
 {% endblock %}
