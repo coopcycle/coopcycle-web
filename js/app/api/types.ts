@@ -354,6 +354,23 @@ export type Delivery = JsonLdEntity & {
   hasEdifactImport?: boolean;
 };
 
+export type EDIFACTMessage = {
+  id: number;
+  direction: 'INBOUND' | 'OUTBOUND';
+  syncedAt: string | null;
+  messageType: 'SCONTR' | 'PICKUP' | 'REPORT' | 'DISPOR';
+  subMessageType: string | null;
+  ediMessage: string | null;
+  createdAt: string;
+  pods: string[];
+};
+
+// Mirrors Transporter\Enum\ReportSituation (vendor/coopcycle/transporter)
+export type ReportSituation =
+  | 'AAR' | 'CHG' | 'COM' | 'DCH' | 'DIF' | 'ECH' | 'EDI' | 'EML'
+  | 'ENE' | 'EPC' | 'EXP' | 'LIV' | 'MAJ' | 'MLV' | 'PAQ' | 'PCH'
+  | 'POD' | 'POP' | 'QIN' | 'RAQ' | 'REN' | 'RST' | 'SEQ' | 'SOL';
+
 // Delivery Template for RecurrenceRule
 export type DeliveryTemplate = {
   '@type': string;

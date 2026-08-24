@@ -36,6 +36,7 @@ use AppBundle\Validator\Constraints\Delivery as AssertDelivery;
 use AppBundle\Vroom\Shipment as VroomShipment;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
@@ -629,29 +630,56 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     }
 
     /**
-     * Whether any of this delivery's tasks was imported from an EDIFACT
-     * message. Used by the delivery form to conditionally show the
+     * Messages live on tasks, so this aggregates them here so the inherited
+     * trait methods (getImportMessage, getReports, hasEdifactMessages, ...)
+     * operate on the right data.
+     */
+    public function getEdifactMessages(): Collection
+    {
+        $messages = [];
+        foreach ($this->getTasks() as $task) {
+            foreach ($task->getEdifactMessages() as $message) {
+                $messages[] = $message;
+            }
+        }
+
+        return new ArrayCollection($messages);
+    }
+
+    /**
+     * Whether any of this delivery's tasks was imported from a transporter
+     * EDIFACT message. Used by the delivery form to conditionally show the
      * "View EDIFACT data" link.
      */
     #[Groups(['delivery_edifact'])]
     public function getHasEdifactImport(): bool
     {
-        foreach ($this->getTasks() as $task) {
-            if (!is_null($task->getImportMessage())) {
-                return true;
-            }
-        }
-
-        return false;
+        return !is_null($this->getImportMessage());
     }
 
-    public function getEdifactMessagesTimeline(): array
+    /**
+     * Returns EDIFACT messages shaped as plain arrays, ready to be JSON-encoded
+     * and consumed by the React TransporterTimeline component.
+     */
+    public function getEdifactMessagesForTimeline(): array
     {
-        $messages = array_merge(...array_map(function (Task $task) {
-            return $task->getEdifactMessages()->toArray();
-        }, $this->getTasks()));
-        usort($messages, fn($a, $b) => $a->getCreatedAt() >= $b->getCreatedAt());
-        return $messages;
+        return array_map(function (EDIFACTMessage $message) {
+            return [
+                'id' => $message->getId(),
+                'direction' => $message->getDirection(),
+                'syncedAt' => $message->getSyncedAt()?->format(\DateTimeInterface::ATOM),
+                'messageType' => $message->getMessageType(),
+                'subMessageType' => $message->getSubMessageType(),
+                'ediMessage' => $message->getEdiMessage(),
+                'createdAt' => $message->getCreatedAt()?->format(\DateTimeInterface::ATOM),
+                'pods' => $message->getPods(),
+            ];
+        }, $this->getEdifactMessages()->toArray());
+    }
+
+    public function isTransporterEnabled(): bool
+    {
+        return $this->getStore()?->isTransporterEnabled() ?? false;
     }
 
     public static function getType(array $tasks): string
