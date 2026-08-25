@@ -1,0 +1,22 @@
+{
+	frankenphp
+	# https://caddyserver.com/docs/caddyfile/directives#sorting-algorithm
+	order php_server before file_server
+	# ACME account email for the automatic Let's Encrypt certificate. Only used
+	# when SERVER_NAME is a public domain (standalone run); behind nginx,
+	# SERVER_NAME is a bare ":port" and no certificate is issued.
+	email {$ACME_EMAIL:ops@coopcycle.org}
+}
+
+# In production SERVER_NAME is ":8083" so FrankenPHP serves plain HTTP on that
+# port and nginx terminates TLS for gateway.shopify.coopcycle.org. Set it to the
+# public domain instead to have Caddy get the certificate itself.
+{$SERVER_NAME:localhost} {
+	root * /app/public
+
+	# The gateway renders small HTML pages and one JSON health response.
+	encode zstd br gzip
+
+	# Every route is handled by public/index.php; there are no static assets.
+	php_server
+}

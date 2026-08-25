@@ -1,0 +1,33 @@
+{% assign tenant_url = shop.metafields.coopcycle.tenant_url.value | default: block.settings.tenant_url %}
+<div
+  id="coopcycle-date-picker"
+  data-tenant-url="{{ tenant_url | escape }}"
+  data-shop-domain="{{ shop.permanent_domain | escape }}"
+  data-date-label="{{ block.settings.slot_label | escape }}"
+  style="display:none"
+>
+  <p class="coopcycle-loading">Loading delivery slots…</p>
+</div>
+
+<script src="{{ 'coopcycle-date-picker.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "CoopCycle Date Picker",
+  "target": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "tenant_url",
+      "label": "CoopCycle tenant URL",
+      "info": "Base URL of your CoopCycle instance, e.g. https://demo.coopcycle.org"
+    },
+    {
+      "type": "text",
+      "id": "slot_label",
+      "label": "Delivery slot field label",
+      "default": "Delivery slot"
+    }
+  ]
+}
+{% endschema %}

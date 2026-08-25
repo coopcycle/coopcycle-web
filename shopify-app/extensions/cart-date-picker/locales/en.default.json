@@ -1,0 +1,7 @@
+{
+  "date_picker": {
+    "loading": "Loading delivery slots…",
+    "date_label": "Delivery date",
+    "time_label": "Time slot"
+  }
+}

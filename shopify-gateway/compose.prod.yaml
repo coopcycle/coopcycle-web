@@ -1,0 +1,20 @@
+# Production overrides.
+#
+# Host networking so FrankenPHP binds 127.0.0.1:<GATEWAY_PORT> on the host and
+# the existing nginx can proxy gateway.shopify.coopcycle.org to it. Mirrors the
+# routing console's arrangement, including its host-side data dir: the install
+# flow itself is stateless (everything rides in the signed OAuth `state`), but
+# the shop -> cooperative mapping has to persist so that app-level compliance
+# webhooks can be routed to a single tenant.
+version: "2.4"
+
+services:
+  php:
+    network_mode: host
+    volumes:
+      - /opt/shopify-gateway/data:/data/shops
+    # SHOPIFY_API_KEY, SHOPIFY_API_SECRET, GATEWAY_SECRET, APP_URL and TENANTS.
+    # Lives on the host, never committed (see README). Kept out of compose.yaml
+    # so the dev overlay does not require it.
+    env_file:
+      - .env.prod.local

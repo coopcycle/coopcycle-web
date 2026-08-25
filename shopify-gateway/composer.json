@@ -1,0 +1,17 @@
+{
+    "name": "coopcycle/shopify-gateway",
+    "description": "Shopify App Store OAuth gateway for multi-tenant CoopCycle installations",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "CoopCycle\\ShopifyGateway\\": "src/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true
+    }
+}

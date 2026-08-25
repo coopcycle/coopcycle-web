@@ -1,0 +1,13 @@
+.git
+.gitignore
+/vendor
+/.env
+/.env.local
+/.env.*.local
+composer.phar
+Dockerfile
+.dockerignore
+README.md
+/compose.yaml
+/compose.prod.yaml
+/compose.override.yaml

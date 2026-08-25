@@ -1,0 +1,30 @@
+name = "CoopCycle"
+client_id = "YOUR_SHOPIFY_APP_CLIENT_ID"
+application_url = "https://YOUR_GATEWAY_URL/shopify/install"
+embedded = false
+
+[access_scopes]
+scopes = "read_orders,write_fulfillments,read_fulfillments,read_merchant_managed_fulfillment_orders"
+
+[auth]
+redirect_urls = [
+  "https://YOUR_GATEWAY_URL/shopify/callback"
+]
+
+[build]
+automatically_update_urls_on_dev = false
+dev_store_url = ""
+
+[webhooks]
+api_version = "2025-10"
+
+# Mandatory for every app distributed on the Shopify App Store, whether or not
+# the app collects personal data. Shopify delivers these app-level, to a single
+# URI for all shops, so they land on the gateway which routes each one to the
+# cooperative that shop installed on.
+[[webhooks.subscriptions]]
+compliance_topics = [ "customers/data_request", "customers/redact", "shop/redact" ]
+uri = "https://YOUR_GATEWAY_URL/shopify/compliance"
+
+[pos]
+embedded = false

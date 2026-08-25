@@ -1,0 +1,74 @@
+name: Build shopify-gateway image
+
+# Builds and pushes the Shopify OAuth gateway image to GHCR. Deployment is a
+# separate, manual step: pull the image on the host and run
+# `docker compose -f compose.yaml -f compose.prod.yaml up -d`.
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'shopify-gateway/**'
+      - '.github/workflows/build_shopify_gateway_image.yml'
+  pull_request:
+    paths:
+      - 'shopify-gateway/**'
+      - '.github/workflows/build_shopify_gateway_image.yml'
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        type: string
+        description: 'Extra tag for ghcr.io/coopcycle/coopcycle-web/shopify-gateway (in addition to latest + sha)'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    name: Build and push ghcr.io/coopcycle/coopcycle-web/shopify-gateway
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Pull requests build to validate the Dockerfile but must not publish.
+      - name: Log in to GitHub Container Registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/coopcycle/coopcycle-web/shopify-gateway
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=sha
+            type=raw,value=${{ inputs.image_tag }},enable=${{ inputs.image_tag != '' }}
+          labels: |
+            org.opencontainers.image.title=coopcycle-shopify-gateway
+            org.opencontainers.image.description=Shopify App Store OAuth gateway for multi-tenant CoopCycle installations
+            org.opencontainers.image.source=https://github.com/coopcycle/coopcycle-web
+            org.opencontainers.image.licenses=MIT
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: shopify-gateway
+          file: shopify-gateway/Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          provenance: false
