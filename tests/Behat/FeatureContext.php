@@ -1526,6 +1526,21 @@ class FeatureContext implements Context, SnippetAcceptingContext
         return base64_encode(hash_hmac('sha256', $body, $secret, true));
     }
 
+    /**
+     * The secret the app itself was configured with, rather than the raw
+     * environment: the two have to agree or every compliance request is a 401,
+     * and reading the container parameter makes that agreement structural.
+     */
+    private function shopifyGatewaySecret(): string
+    {
+        $secret = (string) $this->kernel->getContainer()->getParameter('shopify_gateway_secret');
+
+        Assert::assertNotSame('', $secret,
+            'SHOPIFY_GATEWAY_SECRET is empty, so the compliance endpoint rejects everything. Set it in .env.test.');
+
+        return $secret;
+    }
+
     private function createShopifyAddress(): Address
     {
         $address = new Address();
@@ -1618,7 +1633,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->restContext->iAddHeaderEqualTo('Content-Type', 'application/json');
         $this->restContext->iAddHeaderEqualTo(
             'Authorization',
-            'Bearer ' . $_SERVER['SHOPIFY_GATEWAY_SECRET']
+            'Bearer ' . $this->shopifyGatewaySecret()
         );
         $this->restContext->iSendARequestTo(
             'POST',
