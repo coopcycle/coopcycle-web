@@ -1694,11 +1694,9 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
         // shop/redact removes the ShopifyOrder link and the shop record, but a
         // cooperative keeps its operational history — the Delivery survives.
-        $count = (int) $this->doctrine->getManager()
-            ->createQuery('SELECT COUNT(d.id) FROM AppBundle\Entity\Delivery d')
-            ->getSingleScalarResult();
+        $deliveries = $this->doctrine->getRepository(Delivery::class)->findAll();
 
-        Assert::assertGreaterThan(0, $count, 'All deliveries were deleted');
+        Assert::assertNotEmpty($deliveries, 'All deliveries were deleted');
     }
 
     #[Then('no delivery should have been created for Shopify order :shopifyOrderId')]
