@@ -103,7 +103,7 @@ cooperative's instance never communicates directly with Shopify during the insta
 | `SHOPIFY_API_KEY`    | Client ID from the Shopify Partner dashboard |
 | `SHOPIFY_API_SECRET` | Client secret from the Shopify Partner dashboard |
 | `GATEWAY_SECRET`     | A strong random secret (≥ 32 chars). Every CoopCycle tenant must set `SHOPIFY_GATEWAY_SECRET` to this same value. Generate with `openssl rand -hex 32`. |
-| `APP_URL`            | The public HTTPS URL of this gateway, **without** a trailing slash. Example: `https://shopify-gateway.coopcycle.org` |
+| `APP_URL`            | The public HTTPS URL of this gateway, **without** a trailing slash. Example: `https://gateway.shopify.coopcycle.org` |
 | `TENANTS`            | Optional. Comma-separated `Name:https://url` pairs shown in the install dropdown (`+` encodes a space). When empty, the install page falls back to a free-text URL field. |
 | `SERVER_NAME`        | What FrankenPHP binds. `:8083` serves plain HTTP behind nginx (production); a bare domain makes Caddy obtain a Let's Encrypt certificate itself. |
 | `GATEWAY_PORT`       | Port used by the container healthcheck and the dev port mapping. Keep in sync with `SERVER_NAME`. Defaults to `8083`. |
@@ -138,7 +138,7 @@ cat > .env.prod.local <<'EOF'
 SHOPIFY_API_KEY=...
 SHOPIFY_API_SECRET=...
 GATEWAY_SECRET=...
-APP_URL=https://shopify-gateway.coopcycle.org
+APP_URL=https://gateway.shopify.coopcycle.org
 TENANTS="Paris:https://paris.coopcycle.org"
 EOF
 chmod 600 .env.prod.local
@@ -149,7 +149,7 @@ docker compose -f compose.yaml -f compose.prod.yaml up -d --remove-orphans
 
 `compose.prod.yaml` puts the container on the host network, so FrankenPHP binds
 `127.0.0.1:8083` and the box's existing nginx reverse-proxies
-`shopify-gateway.coopcycle.org` to it — TLS is terminated by nginx, not Caddy. The gateway
+`gateway.shopify.coopcycle.org` to it — TLS is terminated by nginx, not Caddy. The gateway
 is stateless: no volumes, no database. All install-flow state lives in the signed OAuth
 `state` parameter.
 

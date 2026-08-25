@@ -1,7 +1,7 @@
 # Production overrides.
 #
 # Host networking so FrankenPHP binds 127.0.0.1:<GATEWAY_PORT> on the host and
-# the existing nginx can proxy shopify-gateway.coopcycle.org to it. Mirrors the
+# the existing nginx can proxy gateway.shopify.coopcycle.org to it. Mirrors the
 # routing console's arrangement, including its host-side data dir: the install
 # flow itself is stateless (everything rides in the signed OAuth `state`), but
 # the shop -> cooperative mapping has to persist so that app-level compliance

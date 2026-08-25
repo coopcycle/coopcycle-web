@@ -9,7 +9,7 @@
 }
 
 # In production SERVER_NAME is ":8083" so FrankenPHP serves plain HTTP on that
-# port and nginx terminates TLS for shopify-gateway.coopcycle.org. Set it to the
+# port and nginx terminates TLS for gateway.shopify.coopcycle.org. Set it to the
 # public domain instead to have Caddy get the certificate itself.
 {$SERVER_NAME:localhost} {
 	root * /app/public
