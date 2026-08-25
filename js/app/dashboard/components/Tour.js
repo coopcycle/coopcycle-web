@@ -107,9 +107,9 @@ const RenderEditNameForm = ({children, tour, isLoading}) => {
 }
 
 
-const Tour = ({ tourId, draggableIndex, vehicleMaxWeight, vehicleMaxVolumeUnits }) => {
+const TourPanel = ({ tour, draggableIndex, vehicleMaxWeight, vehicleMaxVolumeUnits }) => {
 
-  const tour = useSelector(state => selectTourById(state, tourId))
+  const tourId = tour['@id']
 
   const isTourDragging = useSelector(selectIsTourDragging)
   const expandedTourPanelsIds = useSelector(selectExpandedTourPanelsIds)
@@ -185,6 +185,28 @@ const Tour = ({ tourId, draggableIndex, vehicleMaxWeight, vehicleMaxVolumeUnits 
         </div>
       )}
     </Draggable>
+  )
+}
+
+// The task list may reference a tour that is not (or no longer) in the store,
+// e.g. when the tour was deleted or moved to another day in the backend, and the
+// task list was not properly updated. Rendering it would crash the whole dashboard,
+// so we skip it instead.
+const Tour = ({ tourId, draggableIndex, vehicleMaxWeight, vehicleMaxVolumeUnits }) => {
+
+  const tour = useSelector(state => selectTourById(state, tourId))
+
+  if (!tour) {
+    console.warn(`Could not find tour at id ${tourId}`)
+    return null
+  }
+
+  return (
+    <TourPanel
+      tour={ tour }
+      draggableIndex={ draggableIndex }
+      vehicleMaxWeight={ vehicleMaxWeight }
+      vehicleMaxVolumeUnits={ vehicleMaxVolumeUnits } />
   )
 }
 
