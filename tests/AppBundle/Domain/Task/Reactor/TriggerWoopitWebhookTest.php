@@ -7,6 +7,7 @@ use AppBundle\Domain\Task\Event;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\User;
+use AppBundle\Entity\Shopify\ShopifyOrder;
 use AppBundle\Entity\Woopit\Delivery as WoopitDelivery;
 use AppBundle\Message\WoopitWebhook;
 use AppBundle\MessageHandler\Task\TriggerWebhook;
@@ -44,6 +45,15 @@ class TriggerWoopitWebhookTest extends TestCase
         $this->entityManager
             ->getRepository(WoopitDelivery::class)
             ->willReturn($this->woopitDeliveryRepository->reveal());
+
+        // TriggerWebhook also looks for a ShopifyOrder behind the delivery. These
+        // tests are about the Woopit path, so the lookup finds nothing.
+        $this->shopifyOrderRepository = $this->prophesize(ObjectRepository::class);
+        $this->shopifyOrderRepository->findOneBy(Argument::any())->willReturn(null);
+
+        $this->entityManager
+            ->getRepository(ShopifyOrder::class)
+            ->willReturn($this->shopifyOrderRepository->reveal());
 
         $this->triggerWebhook = new TriggerWebhook(
             $this->messageBus->reveal(),
