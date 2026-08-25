@@ -49,6 +49,10 @@
       </cascade>
       <order-by>
         <order-by-field name="createdAt" direction="ASC" />
+        <!-- created_at is TIMESTAMP(0), so rows written in the same request tie
+             and the database is free to return them in any order. Break the tie
+             on the identity to keep the collection stable. -->
+        <order-by-field name="id" direction="ASC" />
       </order-by>
     </one-to-many>
     <one-to-many field="waitlist" target-entity="AppBundle\Entity\ShiftWaitlistEntry" mapped-by="shift" orphan-removal="true">
@@ -58,6 +62,10 @@
       </cascade>
       <order-by>
         <order-by-field name="createdAt" direction="ASC" />
+        <!-- created_at is TIMESTAMP(0), so rows written in the same request tie
+             and the database is free to return them in any order. Break the tie
+             on the identity to keep the collection stable. -->
+        <order-by-field name="id" direction="ASC" />
       </order-by>
     </one-to-many>
   </entity>
