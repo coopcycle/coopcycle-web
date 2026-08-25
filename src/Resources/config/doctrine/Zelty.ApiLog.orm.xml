@@ -18,6 +18,7 @@
     <field name="level" type="string" column="level" length="16" nullable="true"/>
     <field name="message" type="text" column="message" nullable="true"/>
     <field name="error" type="text" column="error" nullable="true"/>
+    <field name="events" type="json" column="events" nullable="true"/>
     <field name="createdAt" type="datetime" column="created_at"/>
     <many-to-one field="restaurant" target-entity="AppBundle\Entity\LocalBusiness">
       <join-columns>

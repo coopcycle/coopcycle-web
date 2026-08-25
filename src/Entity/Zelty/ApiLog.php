@@ -39,6 +39,13 @@ class ApiLog
 
     protected ?string $error = null;
 
+    /**
+     * What this call actually changed on our side, as
+     * [['type' => 'product.disabled', 'params' => [...]], …]. Rendered in plain
+     * language by the "Activity" view.
+     */
+    protected ?array $events = null;
+
     protected $createdAt;
 
     public function getId()
@@ -99,6 +106,14 @@ class ApiLog
     public function getError(): ?string
     {
         return $this->error;
+    }
+
+    /**
+     * @return array<int, array{type: string, params?: array}>
+     */
+    public function getEvents(): array
+    {
+        return $this->events ?? [];
     }
 
     public function getCreatedAt()

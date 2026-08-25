@@ -21,6 +21,7 @@ class ZeltyCatalogProcessor implements ProcessorInterface
         private readonly RequestStack $requestStack,
         private readonly MessageBusInterface $messageBus,
         private readonly Filesystem $zeltyCatalogImportsFilesystem,
+        private readonly ZeltyActivityRecorder $activityRecorder,
         private readonly string $webhookSecret = '',
     ) {}
 
@@ -40,6 +41,9 @@ class ZeltyCatalogProcessor implements ProcessorInterface
         $this->zeltyCatalogImportsFilesystem->write($s3Key, $request->getContent());
 
         $this->messageBus->dispatch(new ProcessZeltyCatalog($restaurantId, $s3Key));
+
+        $this->activityRecorder->setRestaurantId($restaurantId);
+        $this->activityRecorder->record(ZeltyActivityRecorder::CATALOG_RECEIVED);
 
         return new JsonResponse(['status' => 'queued'], Response::HTTP_ACCEPTED);
     }

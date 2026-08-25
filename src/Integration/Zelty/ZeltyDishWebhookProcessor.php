@@ -4,6 +4,7 @@ namespace AppBundle\Integration\Zelty;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
+use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\ProductRepository;
 use AppBundle\Integration\Zelty\Dto\ZeltyDishWebhookPayload;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,6 +16,7 @@ class ZeltyDishWebhookProcessor implements ProcessorInterface
     public function __construct(
         private readonly ProductRepository $productRepository,
         private readonly EntityManagerInterface $em,
+        private readonly ZeltyActivityRecorder $activityRecorder,
     ) {}
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): Response
@@ -42,7 +44,12 @@ class ZeltyDishWebhookProcessor implements ProcessorInterface
             if ($product === null) {
                 continue;
             }
-            $product->setEnabled(!($dish['disable'] ?? false));
+            $enabled = !($dish['disable'] ?? false);
+            $product->setEnabled($enabled);
+            $this->recordProductEvent(
+                $enabled ? ZeltyActivityRecorder::PRODUCT_ENABLED : ZeltyActivityRecorder::PRODUCT_DISABLED,
+                $product
+            );
         }
     }
 
@@ -54,6 +61,7 @@ class ZeltyDishWebhookProcessor implements ProcessorInterface
                 continue;
             }
             $product->setEnabled(false);
+            $this->recordProductEvent(ZeltyActivityRecorder::PRODUCT_DELETED, $product);
         }
     }
 
@@ -68,6 +76,20 @@ class ZeltyDishWebhookProcessor implements ProcessorInterface
             return;
         }
 
-        $product->setEnabled(!($data['outofstock'] ?? false));
+        $inStock = !($data['outofstock'] ?? false);
+        $product->setEnabled($inStock);
+        $this->recordProductEvent(
+            $inStock ? ZeltyActivityRecorder::PRODUCT_IN_STOCK : ZeltyActivityRecorder::PRODUCT_OUT_OF_STOCK,
+            $product
+        );
+    }
+
+    private function recordProductEvent(string $type, Product $product): void
+    {
+        $this->activityRecorder->setRestaurantId($product->getRestaurant()?->getId());
+        $this->activityRecorder->record($type, [
+            'id'   => $product->getId(),
+            'name' => $product->getName(),
+        ]);
     }
 }

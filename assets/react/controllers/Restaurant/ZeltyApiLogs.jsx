@@ -1,5 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Alert, Button, Empty, Space, Table, Tag, Typography } from 'antd'
+import {
+  Alert,
+  Button,
+  Empty,
+  Segmented,
+  Space,
+  Table,
+  Tag,
+  Typography,
+} from 'antd'
 import { useTranslation } from 'react-i18next'
 import { AntdConfigProvider } from '../../../../js/app/utils/antd'
 
@@ -8,6 +17,52 @@ const { Text, Paragraph } = Typography
 const PAGE_SIZE = 25
 const MAX_PAGE_SIZE = 100
 const POLL_INTERVAL = 30000
+
+const VIEW_ACTIVITY = 'activity'
+const VIEW_API = 'api'
+
+// Event types recorded server-side by ZeltyActivityRecorder
+const ACTIVITY_LABELS = {
+  'product.enabled': 'ZELTY_ACTIVITY_PRODUCT_ENABLED',
+  'product.disabled': 'ZELTY_ACTIVITY_PRODUCT_DISABLED',
+  'product.deleted': 'ZELTY_ACTIVITY_PRODUCT_DELETED',
+  'product.in_stock': 'ZELTY_ACTIVITY_PRODUCT_IN_STOCK',
+  'product.out_of_stock': 'ZELTY_ACTIVITY_PRODUCT_OUT_OF_STOCK',
+  'option_value.in_stock': 'ZELTY_ACTIVITY_OPTION_IN_STOCK',
+  'option_value.out_of_stock': 'ZELTY_ACTIVITY_OPTION_OUT_OF_STOCK',
+  'order.preparing': 'ZELTY_ACTIVITY_ORDER_PREPARING',
+  'order.ready': 'ZELTY_ACTIVITY_ORDER_READY',
+  'catalog.received': 'ZELTY_ACTIVITY_CATALOG_RECEIVED',
+  'catalog.imported': 'ZELTY_ACTIVITY_CATALOG_IMPORTED',
+  'catalog.import_failed': 'ZELTY_ACTIVITY_CATALOG_IMPORT_FAILED',
+  'order.pushed': 'ZELTY_ACTIVITY_ORDER_PUSHED',
+  'order.payment_sent': 'ZELTY_ACTIVITY_ORDER_PAYMENT_SENT',
+  'order.closed': 'ZELTY_ACTIVITY_ORDER_CLOSED',
+  'catalog.pulled': 'ZELTY_ACTIVITY_CATALOG_PULLED',
+  'webhooks.registered': 'ZELTY_ACTIVITY_WEBHOOKS_REGISTERED',
+  'dish.created': 'ZELTY_ACTIVITY_DISH_CREATED',
+}
+
+function describeEvent(event, t) {
+  // React escapes what it renders; letting i18next escape too turns a slash in
+  // an endpoint, or an apostrophe in a product name, into a visible entity.
+  const params = { ...(event.params || {}), interpolation: { escapeValue: false } }
+
+  // One event type, two sentences: Zelty sends enabled/disabled as a flag
+  if (event.type === 'option_value.updated') {
+    return t(
+      params.enabled
+        ? 'ZELTY_ACTIVITY_OPTION_ENABLED'
+        : 'ZELTY_ACTIVITY_OPTION_DISABLED',
+      params,
+    )
+  }
+
+  const key = ACTIVITY_LABELS[event.type]
+
+  // An event type this build does not know about: better the raw type than nothing
+  return key ? t(key, params) : event.type
+}
 
 function formatAgo(seconds) {
   if (seconds < 60) {
@@ -53,6 +108,7 @@ function BodyBlock({ title, body }) {
 
 export default function ZeltyApiLogs({ restaurantId }) {
   const { t } = useTranslation()
+  const [view, setView] = useState(VIEW_ACTIVITY)
   const [logs, setLogs] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -167,25 +223,29 @@ export default function ZeltyApiLogs({ restaurantId }) {
     return () => clearInterval(interval)
   }, [updatedAt])
 
-  const columns = [
-    {
-      title: t('ZELTY_LOGS_COLUMN_DATE'),
-      dataIndex: 'createdAt',
-      width: 170,
-      render: value => new Date(value).toLocaleString(),
-    },
-    {
-      title: t('ZELTY_LOGS_COLUMN_DIRECTION'),
-      dataIndex: 'direction',
-      width: 110,
-      render: value => (
-        <Tag color={value === 'incoming' ? 'purple' : 'blue'}>
-          {value === 'incoming'
-            ? t('ZELTY_LOGS_DIRECTION_INCOMING')
-            : t('ZELTY_LOGS_DIRECTION_OUTGOING')}
-        </Tag>
-      ),
-    },
+  const directionColumn = {
+    title: t('ZELTY_LOGS_COLUMN_DIRECTION'),
+    dataIndex: 'direction',
+    width: 110,
+    render: value => (
+      <Tag color={value === 'incoming' ? 'purple' : 'blue'}>
+        {value === 'incoming'
+          ? t('ZELTY_LOGS_DIRECTION_INCOMING')
+          : t('ZELTY_LOGS_DIRECTION_OUTGOING')}
+      </Tag>
+    ),
+  }
+
+  const dateColumn = {
+    title: t('ZELTY_LOGS_COLUMN_DATE'),
+    dataIndex: 'createdAt',
+    width: 170,
+    render: value => new Date(value).toLocaleString(),
+  }
+
+  const apiColumns = [
+    dateColumn,
+    directionColumn,
     {
       title: t('ZELTY_LOGS_COLUMN_ENDPOINT'),
       dataIndex: 'endpoint',
@@ -213,10 +273,63 @@ export default function ZeltyApiLogs({ restaurantId }) {
     },
   ]
 
+  const activityColumns = [
+    dateColumn,
+    directionColumn,
+    {
+      title: t('ZELTY_ACTIVITY_COLUMN_WHAT'),
+      dataIndex: 'events',
+      render: (events, record) => {
+        // Failed calls did nothing by definition, and rows logged before the
+        // activity view existed carry no events either: fall back to the endpoint.
+        if (!events || events.length === 0) {
+          return (
+            <Text type={record.successful ? 'secondary' : 'danger'}>
+              {record.successful ? '' : `${t('ZELTY_ACTIVITY_FAILED')} — `}
+              {record.method} {record.endpoint}
+            </Text>
+          )
+        }
+
+        return (
+          <Space direction="vertical" size={0}>
+            {events.map((event, index) => (
+              <Text key={index} type={record.successful ? undefined : 'danger'}>
+                {describeEvent(event, t)}
+              </Text>
+            ))}
+          </Space>
+        )
+      },
+    },
+    {
+      title: t('ZELTY_LOGS_COLUMN_STATUS'),
+      dataIndex: 'statusCode',
+      width: 110,
+      render: (value, record) => (
+        <Tag color={record.successful ? 'green' : 'red'}>
+          {record.successful
+            ? t('ZELTY_ACTIVITY_STATUS_OK')
+            : t('ZELTY_LOGS_STATUS_FAILED')}
+        </Tag>
+      ),
+    },
+  ]
+
+  const isActivity = view === VIEW_ACTIVITY
+
   return (
     <AntdConfigProvider>
       <Space direction="vertical" style={{ width: '100%' }}>
         <Space wrap>
+          <Segmented
+            value={view}
+            onChange={setView}
+            options={[
+              { label: t('ZELTY_ACTIVITY_VIEW'), value: VIEW_ACTIVITY },
+              { label: t('ZELTY_LOGS_VIEW'), value: VIEW_API },
+            ]}
+          />
           <Button onClick={() => fetchLogs(0)} loading={loading}>
             {t('ZELTY_LOGS_REFRESH')}
           </Button>
@@ -225,13 +338,15 @@ export default function ZeltyApiLogs({ restaurantId }) {
               {t('ZELTY_LOGS_LAST_UPDATE', { ago: formatAgo(secondsAgo) })}
             </Text>
           )}
-          <Text type="secondary">{t('ZELTY_LOGS_HELP')}</Text>
         </Space>
+        <Text type="secondary">
+          {isActivity ? t('ZELTY_ACTIVITY_HELP') : t('ZELTY_LOGS_HELP')}
+        </Text>
         {error && <Alert type="error" showIcon message={error} />}
         <Table
           size="small"
           rowKey="id"
-          columns={columns}
+          columns={isActivity ? activityColumns : apiColumns}
           dataSource={logs}
           loading={loading && logs.length === 0}
           pagination={false}
@@ -239,31 +354,37 @@ export default function ZeltyApiLogs({ restaurantId }) {
           locale={{
             emptyText: <Empty description={t('ZELTY_LOGS_EMPTY')} />,
           }}
-          expandable={{
-            expandedRowRender: record => (
-              <div>
-                {record.error && (
-                  <Alert
-                    type="error"
-                    showIcon
-                    message={record.error}
-                    style={{ marginBottom: '0.75rem' }}
-                  />
-                )}
-                <BodyBlock
-                  title={t('ZELTY_LOGS_REQUEST_BODY')}
-                  body={record.requestBody}
-                />
-                <BodyBlock
-                  title={t('ZELTY_LOGS_RESPONSE_BODY')}
-                  body={record.responseBody}
-                />
-                {!record.error && !record.requestBody && !record.responseBody && (
-                  <Text type="secondary">{t('ZELTY_LOGS_NO_BODY')}</Text>
-                )}
-              </div>
-            ),
-          }}
+          expandable={
+            isActivity
+              ? undefined
+              : {
+                  expandedRowRender: record => (
+                    <div>
+                      {record.error && (
+                        <Alert
+                          type="error"
+                          showIcon
+                          message={record.error}
+                          style={{ marginBottom: '0.75rem' }}
+                        />
+                      )}
+                      <BodyBlock
+                        title={t('ZELTY_LOGS_REQUEST_BODY')}
+                        body={record.requestBody}
+                      />
+                      <BodyBlock
+                        title={t('ZELTY_LOGS_RESPONSE_BODY')}
+                        body={record.responseBody}
+                      />
+                      {!record.error &&
+                        !record.requestBody &&
+                        !record.responseBody && (
+                          <Text type="secondary">{t('ZELTY_LOGS_NO_BODY')}</Text>
+                        )}
+                    </div>
+                  ),
+                }
+          }
         />
         {hasMore && (
           <Button onClick={() => fetchLogs(loadedCountRef.current)} loading={loading}>

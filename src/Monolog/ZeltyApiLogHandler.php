@@ -46,6 +46,7 @@ class ZeltyApiLogHandler extends AbstractProcessingHandler
                 'level'         => $record->level->getName(),
                 'message'       => $record->message,
                 'error'         => $context['error'] ?? null,
+                'events'        => $this->prepareEvents($context['events'] ?? null),
                 'created_at'    => $record->datetime->format('Y-m-d H:i:s'),
             ]);
         } catch (\Throwable $e) {
@@ -66,6 +67,19 @@ class ZeltyApiLogHandler extends AbstractProcessingHandler
         }
 
         return $this->logConnection;
+    }
+
+    /**
+     * The human-readable view is rendered from these, so they are stored as JSON
+     * rather than folded into the message.
+     */
+    private function prepareEvents(mixed $events): ?string
+    {
+        if (!is_array($events) || count($events) === 0) {
+            return null;
+        }
+
+        return json_encode(array_values($events));
     }
 
     protected function prepareBody(mixed $body): ?string

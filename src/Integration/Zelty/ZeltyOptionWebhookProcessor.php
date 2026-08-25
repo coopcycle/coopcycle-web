@@ -14,6 +14,7 @@ class ZeltyOptionWebhookProcessor implements ProcessorInterface
 {
     public function __construct(
         private readonly EntityManagerInterface $em,
+        private readonly ZeltyActivityRecorder $activityRecorder,
     ) {}
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): Response
@@ -45,6 +46,10 @@ class ZeltyOptionWebhookProcessor implements ProcessorInterface
                 }
                 $value->setEnabled($enabled);
                 $value->setPrice((int) $valueData['price']);
+                $this->recordEvent(ZeltyActivityRecorder::OPTION_VALUE_UPDATED, $value, [
+                    'enabled' => $enabled,
+                    'price'   => (int) $valueData['price'],
+                ]);
             }
         }
     }
@@ -57,7 +62,21 @@ class ZeltyOptionWebhookProcessor implements ProcessorInterface
             if ($value === null) {
                 continue;
             }
-            $value->setEnabled(!$item['outofstock']);
+            $inStock = !$item['outofstock'];
+            $value->setEnabled($inStock);
+            $this->recordEvent(
+                $inStock ? ZeltyActivityRecorder::OPTION_VALUE_IN_STOCK : ZeltyActivityRecorder::OPTION_VALUE_OUT_OF_STOCK,
+                $value
+            );
         }
+    }
+
+    private function recordEvent(string $type, ProductOptionValue $value, array $params = []): void
+    {
+        $this->activityRecorder->setRestaurantId($value->getOption()?->getRestaurant()?->getId());
+        $this->activityRecorder->record($type, array_merge([
+            'name'   => $value->getValue(),
+            'option' => $value->getOption()?->getName(),
+        ], $params));
     }
 }

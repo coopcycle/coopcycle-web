@@ -88,6 +88,7 @@ class ZeltyController extends AbstractController
                 'responseBody' => $log->getResponseBody(),
                 'error'        => $log->getError(),
                 'successful'   => $log->isSuccessful(),
+                'events'       => $log->getEvents(),
             ], $logs),
         ]);
     }
