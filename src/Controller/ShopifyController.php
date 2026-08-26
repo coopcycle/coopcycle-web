@@ -262,8 +262,25 @@ class ShopifyController extends AbstractController
             ? $this->entityManager->getRepository(ShopifyShop::class)->findOneBy(['shopDomain' => $domain])
             : null;
 
-        if (!$shop || !$shop->getStore() || !$shop->getStore()->getTimeSlot()) {
-            return new JsonResponse(['slots' => []], 200, $corsHeaders);
+        // Every one of these used to return an identical empty array, which made
+        // a half-finished install indistinguishable from a broken one — the cart
+        // picker just hid itself and nobody could tell why. Name the cause.
+        $reason = match (true) {
+            !$domain                            => 'missing_domain',
+            !$shop                              => 'shop_not_found',
+            !$shop->getStore()                  => 'store_not_linked',
+            !$shop->getStore()->getTimeSlot()   => 'no_time_slot',
+            default                             => null,
+        };
+
+        if (null !== $reason) {
+            $this->logger->warning(sprintf(
+                'Shopify slots request for "%s" returned no slots: %s',
+                $domain ?: '(no domain)',
+                $reason
+            ));
+
+            return new JsonResponse(['slots' => [], 'reason' => $reason], 200, $corsHeaders);
         }
 
         $loader  = new TimeSlotChoiceLoader($shop->getStore()->getTimeSlot(), $this->country);
@@ -281,6 +298,18 @@ class ShopifyController extends AbstractController
             array_keys($byDate),
             array_values($byDate)
         );
+
+        // A time slot is configured but produced no upcoming range — distinct
+        // from never having been configured at all.
+        if ([] === $slots) {
+            $this->logger->warning(sprintf(
+                'Shopify slots request for "%s" returned no slots: time slot "%s" produced no upcoming choices.',
+                $domain,
+                (string) $shop->getStore()->getTimeSlot()
+            ));
+
+            return new JsonResponse(['slots' => [], 'reason' => 'no_upcoming_slots'], 200, $corsHeaders);
+        }
 
         return new JsonResponse(['slots' => $slots], 200, $corsHeaders);
     }

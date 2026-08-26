@@ -4,10 +4,14 @@
 
   const tenantUrl = el.dataset.tenantUrl;
   const shopDomain = el.dataset.shopDomain;
-
-  if (!tenantUrl || !shopDomain) return;
-
   const slotLabel = el.dataset.dateLabel || 'Delivery slot';
+  const unavailableMessage =
+    el.dataset.unavailableMessage || 'Delivery scheduling is temporarily unavailable.';
+
+  if (!tenantUrl || !shopDomain) {
+    showUnavailable('missing_tenant_url');
+    return;
+  }
 
   Promise.all([
     fetch(`${tenantUrl}/api/shopify/slots?domain=${encodeURIComponent(shopDomain)}`).then(r => {
@@ -16,11 +20,31 @@
     }),
     fetch('/cart.js').then(r => r.json()),
   ])
-    .then(([{ slots }, cart]) => {
-      if (!slots || slots.length === 0) return;
+    .then(([payload, cart]) => {
+      const slots = payload && payload.slots;
+      if (!slots || slots.length === 0) {
+        showUnavailable((payload && payload.reason) || 'no_slots');
+        return;
+      }
       render(slots, cart.attributes);
     })
-    .catch(() => { /* silently hide on error */ });
+    .catch(err => showUnavailable(`request_failed: ${err.message}`));
+
+  /**
+   * Shoppers get a neutral message — the real cause is a shop-configuration
+   * problem they can do nothing about, and naming it to them would be noise.
+   * Whoever is setting the shop up gets the cause in the console, which is the
+   * difference between a five-minute fix and an afternoon of guessing.
+   */
+  function showUnavailable(reason) {
+    console.warn(
+      `[CoopCycle] Delivery slots unavailable (${reason}). ` +
+        'Check that the Shopify shop is linked to a CoopCycle store and that the store has a time slot configured.'
+    );
+
+    el.innerHTML = `<p class="coopcycle-error">${esc(unavailableMessage)}</p>`;
+    el.style.display = '';
+  }
 
   function render(slots, savedAttributes) {
     const savedDate = savedAttributes['Delivery Date'] ?? '';

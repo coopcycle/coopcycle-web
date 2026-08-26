@@ -166,3 +166,19 @@ Feature: Shopify webhook
     Then the response status code should be 200
     And no Shopify shop should exist for domain "test-shop.myshopify.com"
     And the deliveries should not have been deleted
+
+  Scenario: Slots endpoint says why it has no slots when no domain is given
+    When I send a "GET" request to "/api/shopify/slots"
+    Then the response status code should be 200
+    And the JSON node "reason" should be equal to "missing_domain"
+
+  Scenario: Slots endpoint says why it has no slots for an unknown shop
+    When I send a "GET" request to "/api/shopify/slots?domain=nope.myshopify.com"
+    Then the response status code should be 200
+    And the JSON node "reason" should be equal to "shop_not_found"
+
+  Scenario: Slots endpoint returns slots without a reason once configured
+    When I send a "GET" request to "/api/shopify/slots?domain=test-shop.myshopify.com"
+    Then the response status code should be 200
+    And the JSON node "slots" should have 3 elements
+    And the JSON node "reason" should not exist
