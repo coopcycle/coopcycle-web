@@ -1,6 +1,6 @@
 name = "CoopCycle"
 client_id = "YOUR_SHOPIFY_APP_CLIENT_ID"
-application_url = "https://YOUR_GATEWAY_URL/shopify/install"
+application_url = "https://gateway.shopify.coopcycle.org/shopify/install"
 embedded = false
 
 [access_scopes]
@@ -8,7 +8,7 @@ scopes = "read_orders,write_fulfillments,read_fulfillments,read_merchant_managed
 
 [auth]
 redirect_urls = [
-  "https://YOUR_GATEWAY_URL/shopify/callback"
+  "https://gateway.shopify.coopcycle.org/shopify/callback"
 ]
 
 [build]
@@ -24,7 +24,7 @@ api_version = "2025-10"
 # cooperative that shop installed on.
 [[webhooks.subscriptions]]
 compliance_topics = [ "customers/data_request", "customers/redact", "shop/redact" ]
-uri = "https://YOUR_GATEWAY_URL/shopify/compliance"
+uri = "https://gateway.shopify.coopcycle.org/shopify/compliance"
 
 [pos]
 embedded = false
