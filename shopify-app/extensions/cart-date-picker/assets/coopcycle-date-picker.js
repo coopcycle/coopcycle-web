@@ -7,6 +7,7 @@
   const slotLabel = el.dataset.dateLabel || 'Delivery slot';
   const unavailableMessage =
     el.dataset.unavailableMessage || 'Delivery scheduling is temporarily unavailable.';
+  const placeholderLabel = el.dataset.placeholderLabel || 'Choose a delivery slot';
 
   if (!tenantUrl || !shopDomain) {
     showUnavailable('missing_tenant_url');
@@ -64,13 +65,15 @@
       <div class="coopcycle-picker">
         <div class="coopcycle-field">
           <label for="coopcycle-slot">${esc(slotLabel)}</label>
-          <select id="coopcycle-slot">
-            <option value="">—</option>
-            ${options.map(o => {
-              const val = esc(`${o.date}|${o.time}`);
-              return `<option value="${val}" ${`${o.date}|${o.time}` === savedValue ? 'selected' : ''}>${esc(o.label)}</option>`;
-            }).join('')}
-          </select>
+          <span class="coopcycle-select">
+            <select id="coopcycle-slot">
+              <option value="">${esc(placeholderLabel)}</option>
+              ${options.map(o => {
+                const val = esc(`${o.date}|${o.time}`);
+                return `<option value="${val}" ${`${o.date}|${o.time}` === savedValue ? 'selected' : ''}>${esc(o.label)}</option>`;
+              }).join('')}
+            </select>
+          </span>
         </div>
       </div>
     `;

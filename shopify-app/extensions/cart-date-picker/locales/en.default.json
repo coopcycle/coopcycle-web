@@ -3,6 +3,7 @@
     "loading": "Loading delivery slots…",
     "date_label": "Delivery date",
     "time_label": "Time slot",
-    "unavailable": "Delivery scheduling is temporarily unavailable. You can still place your order, and we will confirm a delivery time with you."
+    "unavailable": "Delivery scheduling is temporarily unavailable. You can still place your order, and we will confirm a delivery time with you.",
+    "placeholder": "Choose a delivery slot"
   }
 }

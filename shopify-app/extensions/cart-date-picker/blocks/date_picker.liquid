@@ -5,11 +5,13 @@
   data-shop-domain="{{ shop.permanent_domain | escape }}"
   data-date-label="{{ block.settings.slot_label | escape }}"
   data-unavailable-message="{{ 'date_picker.unavailable' | t | escape }}"
+  data-placeholder-label="{{ 'date_picker.placeholder' | t | escape }}"
   style="display:none"
 >
   <p class="coopcycle-loading">Loading delivery slots…</p>
 </div>
 
+{{ 'coopcycle-date-picker.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'coopcycle-date-picker.js' | asset_url }}" defer></script>
 
 {% schema %}

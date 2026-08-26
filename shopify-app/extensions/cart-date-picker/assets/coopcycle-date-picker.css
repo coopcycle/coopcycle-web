@@ -1,0 +1,103 @@
+/*
+ * Styling for the CoopCycle delivery slot picker.
+ *
+ * A theme app extension cannot reuse a theme's own classes — every theme names
+ * them differently, and depending on `.field` or `.select` existing breaks the
+ * moment a merchant switches theme. So this file imposes as little as possible
+ * and inherits the rest: typography, colour and border radius all come from the
+ * surrounding theme, and nothing here hard-codes a brand colour. The result
+ * looks native in a light theme, a dark theme, and anything in between.
+ *
+ * Everything is scoped under #coopcycle-date-picker so the block can never
+ * affect the rest of the cart page.
+ */
+
+#coopcycle-date-picker {
+  font: inherit;
+  color: inherit;
+  margin-block: 1.25rem;
+  text-align: left;
+}
+
+#coopcycle-date-picker .coopcycle-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  /* Keeps the control readable when a theme drops the block into a wide
+     container, without stretching it across the full cart width. */
+  max-width: 24rem;
+  margin-inline-start: auto;
+}
+
+#coopcycle-date-picker label {
+  font-size: 0.875em;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+/* Wrapper exists solely to position the chevron over the select. */
+#coopcycle-date-picker .coopcycle-select {
+  position: relative;
+  display: block;
+}
+
+#coopcycle-date-picker select {
+  font: inherit;
+  color: inherit;
+  width: 100%;
+  margin: 0;
+  padding: 0.7em 2.75em 0.7em 0.9em;
+  background-color: transparent;
+  border: 1px solid currentColor;
+  /* Softened where supported, so the border reads as a hairline rather than
+     full-strength text colour. Falls back to the rule above. */
+  border-color: color-mix(in srgb, currentColor 35%, transparent);
+  border-radius: 0.4em;
+  appearance: none;
+  cursor: pointer;
+  text-overflow: ellipsis;
+}
+
+#coopcycle-date-picker select:hover {
+  border-color: color-mix(in srgb, currentColor 55%, transparent);
+}
+
+#coopcycle-date-picker select:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* Drawn with a mask so it takes the inherited text colour — a data-URI
+   background image cannot use currentColor. */
+#coopcycle-date-picker .coopcycle-select::after {
+  content: '';
+  position: absolute;
+  inset-inline-end: 1em;
+  top: 50%;
+  width: 0.6em;
+  height: 0.6em;
+  transform: translateY(-60%) rotate(45deg);
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+#coopcycle-date-picker .coopcycle-loading,
+#coopcycle-date-picker .coopcycle-error {
+  margin: 0;
+  font-size: 0.9em;
+  line-height: 1.4;
+  opacity: 0.75;
+  max-width: 24rem;
+  margin-inline-start: auto;
+}
+
+@media (max-width: 749px) {
+  #coopcycle-date-picker .coopcycle-field,
+  #coopcycle-date-picker .coopcycle-loading,
+  #coopcycle-date-picker .coopcycle-error {
+    max-width: none;
+    margin-inline-start: 0;
+  }
+}
