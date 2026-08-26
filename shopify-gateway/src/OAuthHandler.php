@@ -73,7 +73,21 @@ class OAuthHandler
     {
         $shop = trim($_GET['shop'] ?? '');
 
-        if (!$shop || !$this->isValidShopDomain($shop)) {
+        // No shop at all means someone opened the gateway directly. Since OAuth
+        // must precede any UI, there is no landing page to offer — every route
+        // here belongs to an install flow — so explain how to arrive properly
+        // rather than claiming a domain they never supplied is malformed.
+        if ('' === $shop) {
+            http_response_code(400);
+            $this->render('error', [
+                'message' => 'This is the installation entry point for the CoopCycle app. '
+                    . 'Open it from your Shopify admin, or install CoopCycle from the Shopify App Store.',
+            ]);
+            return;
+        }
+
+        if (!$this->isValidShopDomain($shop)) {
+            http_response_code(400);
             $this->render('error', ['message' => 'Invalid Shopify shop domain. It must end with .myshopify.com.']);
             return;
         }
