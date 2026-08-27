@@ -38,6 +38,7 @@ type Props = {
   isPriceBreakdownEnabled: boolean;
   isReverseDeliveryEnabled: boolean;
   documentUploadEndpoint: string;
+  shopifyOrder?: string;
 };
 
 const Form = ({
@@ -52,6 +53,7 @@ const Form = ({
   isPriceBreakdownEnabled,
   isReverseDeliveryEnabled,
   documentUploadEndpoint,
+  shopifyOrder,
 }: Props) => {
   const dispatch = useDispatch();
 
@@ -75,6 +77,7 @@ const Form = ({
             delivery={delivery ? JSON.parse(delivery) : null}
             order={order ? JSON.parse(order) : null}
             preLoadedFormData={formData ? JSON.parse(formData) : null}
+            shopifyOrder={shopifyOrder ? JSON.parse(shopifyOrder) : null}
             />
         </UploadContext.Provider>
       </FlagsContext.Provider>
@@ -106,6 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const isReverseDeliveryEnabled =
     container.dataset.isReverseDeliveryEnabled === 'true';
   const documentUploadEndpoint = container.dataset.documentUploadEndpoint;
+  const shopifyOrder = container.dataset.shopifyOrder || undefined;
 
   const root = createRoot(container);
   root.render(
@@ -123,6 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
           isPriceBreakdownEnabled={isPriceBreakdownEnabled}
           isReverseDeliveryEnabled={isReverseDeliveryEnabled}
           documentUploadEndpoint={documentUploadEndpoint}
+          shopifyOrder={shopifyOrder}
         />
       </Provider>
     </AppRootWithDefaults>,

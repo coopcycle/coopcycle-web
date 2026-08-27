@@ -27,6 +27,9 @@ import useSubmit from './hooks/useSubmit';
 import Order from './components/order/Order';
 import SuggestionModal from './SuggestionModal';
 import DeliveryResume from './DeliveryResume';
+import ShopifyOrderAlert, {
+  ShopifyOrder,
+} from './components/ShopifyOrderAlert';
 import Map from '../DeliveryMap';
 import { Mode, modeIn } from './mode';
 import { useSelector } from 'react-redux';
@@ -158,6 +161,7 @@ type Props = {
   delivery?: Delivery;
   order?: OrderType;
   preLoadedFormData?: PutDeliveryRequest;
+  shopifyOrder?: ShopifyOrder | null;
 };
 
 const DeliveryForm = ({
@@ -169,6 +173,7 @@ const DeliveryForm = ({
   delivery,
   order,
   preLoadedFormData,
+  shopifyOrder,
 }: Props) => {
   const { isDispatcher } = useContext(UserContext);
   const { isReverseDeliveryEnabled } = useContext(FlagsContext);
@@ -486,6 +491,7 @@ const DeliveryForm = ({
 
         return (
           <Form>
+            <ShopifyOrderAlert shopifyOrder={shopifyOrder} />
             <div className="delivery-form">
               <FieldArray name="tasks">
                 {arrayHelpers => (

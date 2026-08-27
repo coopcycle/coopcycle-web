@@ -741,6 +741,8 @@
         "DELIVERY_FORM_COMMENTARY": "Specify all useful details for the task execution",
         "DELIVERY_FORM_MULTIDROPOFF": "Multiple dropoffs are available",
         "DELIVERY_FORM_ADD_DROPOFF": "Add a dropoff",
+        "DELIVERY_FORM_SHOPIFY_ORIGIN": "This delivery comes from Shopify",
+        "DELIVERY_FORM_SHOPIFY_VIEW_ORDER": "View order {{name}} in Shopify",
         "DELIVERY_FORM_SUBMIT": "Submit",
         "DELIVERY_FORM_CONTACT_PLACEHOLDER": "Contact",
         "DELIVERY_FORM_ERROR_PACKAGES": "Please select at least one package",

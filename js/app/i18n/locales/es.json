@@ -666,6 +666,8 @@
         "DELIVERY_FORM_COMMENTARY": "Especifique todos los detalles útiles para la ejecución de la tarea",
         "DELIVERY_FORM_MULTIDROPOFF": "Las entregas múltiples están disponibles",
         "DELIVERY_FORM_ADD_DROPOFF": "Añadir una entrega",
+        "DELIVERY_FORM_SHOPIFY_ORIGIN": "This delivery comes from Shopify",
+        "DELIVERY_FORM_SHOPIFY_VIEW_ORDER": "View order {{name}} in Shopify",
         "DELIVERY_FORM_SUBMIT": "Guardar",
         "DELIVERY_FORM_CONTACT_PLACEHOLDER": "Contacto",
         "DELIVERY_FORM_ERROR_PACKAGES": "Por favor seleccione al menos una mercancía",

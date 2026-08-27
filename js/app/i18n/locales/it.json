@@ -378,6 +378,8 @@
         "DELIVERY_FORM_COMMENTARY": "Specifica tutti i dettagli utili per l'esecuzione del compito",
         "DELIVERY_FORM_MULTIDROPOFF": "Consegne multiple disponibili",
         "DELIVERY_FORM_ADD_DROPOFF": "Aggiungi una consegna",
+        "DELIVERY_FORM_SHOPIFY_ORIGIN": "This delivery comes from Shopify",
+        "DELIVERY_FORM_SHOPIFY_VIEW_ORDER": "View order {{name}} in Shopify",
         "DELIVERY_FORM_SUBMIT": "Salva",
         "DELIVERY_FORM_CONTACT_PLACEHOLDER": "Contatto",
         "DELIVERY_FORM_ERROR_PACKAGES": "Seleziona almeno una merce",
