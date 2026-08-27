@@ -48,9 +48,32 @@ export function createBaseMapLayer(options = {}) {
   })
 }
 
+/**
+ * Removes the 3D building extrusions the OpenFreeMap styles enable from zoom 14
+ * on. They get in the way when dispatching, and hide the streets underneath.
+ * The flat "building" fill layer stays, so footprints are still drawn.
+ */
+function removeBuildingExtrusions(glMap) {
+  const strip = () => {
+    glMap
+      .getStyle()
+      .layers.filter(layer => layer.type === 'fill-extrusion')
+      .forEach(layer => glMap.removeLayer(layer.id))
+  }
+
+  if (glMap.isStyleLoaded()) {
+    strip()
+  }
+
+  // Also on every (re)load of the style, which is when the layers come back.
+  glMap.on('style.load', strip)
+}
+
 export function addBaseMapLayer(map, options = {}) {
   const layer = createBaseMapLayer(options)
   layer.addTo(map)
+
+  removeBuildingExtrusions(layer.getMaplibreMap())
 
   // The GL layer only positions its canvas in its private _update(), which it
   // hooks to the map's "move" and "resize" events. Neither fires when the view
