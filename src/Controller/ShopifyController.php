@@ -46,9 +46,11 @@ class ShopifyController extends AbstractController
 
         $redirectUri = $this->generateUrl('shopify_callback', [], UrlGeneratorInterface::ABSOLUTE_URL);
 
-        // Keep in sync with the gateway's OAuthHandler::SCOPES and shopify.app.toml.
-        // read_merchant_managed_fulfillment_orders is what lets the order webhook
-        // read delivery_method.method_type and skip non-local-delivery orders.
+        // Must stay character-for-character identical to `[access_scopes] scopes`
+        // in shopify-app/shopify.app.toml and to OAuthHandler::SCOPES in the
+        // gateway. read_merchant_managed_fulfillment_orders is what lets the order
+        // webhook read delivery_method.method_type and skip non-local-delivery
+        // orders; read_fulfillments does not cover it.
         $scopes = 'read_orders,write_fulfillments,read_fulfillments,read_merchant_managed_fulfillment_orders';
 
         $authUrl = sprintf(

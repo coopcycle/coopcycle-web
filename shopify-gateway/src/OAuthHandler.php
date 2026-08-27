@@ -6,10 +6,24 @@ namespace CoopCycle\ShopifyGateway;
 
 class OAuthHandler
 {
-    private const SCOPES = 'read_orders,write_fulfillments,read_fulfillments,write_shipping,'
-                         . 'write_delivery_customizations,read_delivery_customizations,'
-                         // Needed to read delivery_method.method_type off an order's
-                         // fulfillment orders; read_fulfillments does not cover it.
+    /**
+     * Must stay character-for-character identical to `[access_scopes] scopes` in
+     * shopify-app/shopify.app.toml and to $scopes in the tenant's
+     * ShopifyController::install(). Shopify shows merchants exactly this list on
+     * the consent screen, and App Store review rejects scopes the app cannot
+     * demonstrate a use for.
+     *
+     * read_merchant_managed_fulfillment_orders is what lets the order webhook
+     * read delivery_method.method_type and skip non-local-delivery orders;
+     * read_fulfillments does not cover it.
+     *
+     * Deliberately absent: write_shipping and read/write_delivery_customizations,
+     * which this constant used to request. Delivery zones are configured by the
+     * merchant in Shopify's native local delivery settings and filtered by
+     * Shopify itself — the app registers no carrier service and ships no
+     * delivery customization function, so nothing ever used them.
+     */
+    private const SCOPES = 'read_orders,write_fulfillments,read_fulfillments,'
                          . 'read_merchant_managed_fulfillment_orders';
 
     public const COMPLIANCE_TOPICS = [
