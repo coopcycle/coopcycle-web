@@ -255,6 +255,7 @@ const SettingsButton = ({ withLabel = false, onClick }) => {
     <Tooltip title={t('ADMIN_DASHBOARD_NAV_SETTINGS')}>
       <Button
         type="text"
+        data-testid="settings-button"
         icon={<SettingOutlined />}
         onClick={() => {
           dispatch(openSettings())

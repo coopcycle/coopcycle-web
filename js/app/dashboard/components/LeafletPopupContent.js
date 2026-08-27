@@ -27,7 +27,7 @@ export default class extends Component {
     const name = i18n.t('ADMIN_DASHBOARD_ORDERS_ORDER')
 
     return (
-      <div className="pt-2">
+      <div className="pt-2" data-testid="task-popup">
         <header className="d-flex justify-content-between align-items-center mb-2">
           <strong>
             { i18n.t('ADMIN_DASHBOARD_TASK_CAPTION_SHORT', { id: task.id }) }{ !_.isEmpty(task.metadata.order_number) && (' | ' + name + ' ' + task.metadata.order_number) }

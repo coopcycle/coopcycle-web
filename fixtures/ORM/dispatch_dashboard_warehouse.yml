@@ -1,0 +1,14 @@
+include:
+  # Needs `setup_default.yml` to be loaded first with -s option
+  - dispatch_dashboard.yml
+  - address_warehouse.yml
+
+AppBundle\Entity\Warehouse:
+  # address_3 is used by task_3 and task_10, so this warehouse holds tasks
+  warehouse_with_tasks:
+    name: 'Entrepot Nord'
+    address: "@address_3"
+  # No task uses this address, so this warehouse stays empty
+  warehouse_empty:
+    name: 'Entrepot Sud'
+    address: "@address_warehouse"

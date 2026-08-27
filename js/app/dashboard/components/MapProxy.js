@@ -52,6 +52,14 @@ export default class MapProxy {
     this.taskPopups = new Map()
     this.taskConnectCircles = new Map()
 
+    // Kept in sync by addTask()/hideTask(). Only used by the test hook, but tracked
+    // here because "which tasks are on the map" is not recoverable from Leaflet:
+    // taskMarkers keeps the marker around after the task has been hidden.
+    this.visibleTaskIris = new Set()
+
+    this.ready = false
+    this.map.whenReady(() => { this.ready = true })
+
     this.pickupGroupMarkers = new Map()
     this.pickupGroupPopups = new Map()
     this.pickupGroupIcons = new Map()
@@ -241,6 +249,8 @@ export default class MapProxy {
       this.onTaskMouseDown(task)
     })
 
+    this.visibleTaskIris.add(task['@id'])
+
     const warehouseState = this.warehouseStates.get(task.address['@id'])
     if (warehouseState) {
       if (!warehouseState.clusterGroup.hasLayer(marker)) {
@@ -290,6 +300,7 @@ export default class MapProxy {
   }
 
   hideTask(task) {
+    this.visibleTaskIris.delete(task['@id'])
     const marker = this.taskMarkers.get(task['@id'])
     if (marker) {
       this.tasksLayerGroup.removeLayer(marker)
@@ -485,9 +496,13 @@ export default class MapProxy {
     this.swoopyLayerGroup.clearLayers()
   }
 
+  _warehouseColorFor(taskCount) {
+    return taskCount === 0 ? '#95A5A6' : '#27AE60'
+  }
+
   _warehouseIconFor(taskCount) {
     const isEmpty = taskCount === 0
-    const color = isEmpty ? '#95A5A6' : '#27AE60'
+    const color = this._warehouseColorFor(taskCount)
     return L.BeautifyIcon.icon({
       icon: 'home',
       iconShape: 'circle',
@@ -544,7 +559,14 @@ export default class MapProxy {
       clusterGroup.addTo(this.map)
 
       this.warehouseMarkers.set(warehouse['@id'], marker)
-      this.warehouseStates.set(addressId, { clusterGroup, marker, iconRef, taskCount: 0 })
+      this.warehouseStates.set(addressId, {
+        clusterGroup,
+        marker,
+        iconRef,
+        taskCount: 0,
+        iri: warehouse['@id'],
+        name: warehouse.name,
+      })
     })
 
     // Rebalance task markers already placed before warehouses loaded
@@ -563,5 +585,110 @@ export default class MapProxy {
 
     // Update icons after rebalancing to reflect actual task counts
     this.warehouseStates.forEach((_, addressId) => this._updateWarehouseIcon(addressId))
+  }
+
+  //
+  // Test hook — @see mapTestHook.js for the contract.
+  // Reaches into markercluster internals on purpose: this code only ever runs in
+  // dev/test builds, and the alternative is asserting on DOM that is about to go away.
+  //
+
+  testIsIdle() {
+    return this.ready
+  }
+
+  testTaskIris() {
+    return Array.from(this.visibleTaskIris)
+  }
+
+  testPaintedTaskIris() {
+    return Array.from(this.visibleTaskIris).filter(iri => {
+      const marker = this.taskMarkers.get(iri)
+
+      // A marker swallowed by a cluster has no icon in the document. This is what the
+      // specs used to count as `.beautify-marker` elements.
+      return !!marker && !!marker._icon && !!marker._icon.parentNode
+    })
+  }
+
+  /**
+   * Where the drawn pin sits, not where its coordinates are: a pin is drawn above its
+   * anchor, so clicking the anchor misses it entirely.
+   */
+  _testIconCenter(layer) {
+    let icon = layer._icon
+
+    if (icon) {
+      // A "marker" shaped BeautifyIcon is a zero-sized wrapper around the div that is
+      // actually drawn — and actually clicked — so measure the first descendant that
+      // has a size.
+      while (icon.getBoundingClientRect().width === 0 && icon.firstElementChild) {
+        icon = icon.firstElementChild
+      }
+
+      const iconRect = icon.getBoundingClientRect()
+      const mapRect = this.map.getContainer().getBoundingClientRect()
+
+      return {
+        x: iconRect.left - mapRect.left + (iconRect.width / 2),
+        y: iconRect.top - mapRect.top + (iconRect.height / 2),
+      }
+    }
+
+    const point = this.map.latLngToContainerPoint(layer.getLatLng())
+
+    return { x: point.x, y: point.y }
+  }
+
+  testProject(iri) {
+    const marker = this.taskMarkers.get(iri)
+
+    if (!marker || !marker._icon) {
+      return null
+    }
+
+    return this._testIconCenter(marker)
+  }
+
+  testClusters(type = null) {
+    const groups = [
+      [ 'task', this.clusterGroup ],
+      [ 'pickup', this.pickupClusterGroup ],
+      ...Array.from(this.warehouseStates.values()).map(s => [ 'warehouse', s.clusterGroup ]),
+    ]
+
+    const clusters = []
+
+    groups.filter(([ groupType ]) => !type || groupType === type).forEach(([ groupType, group ]) => {
+      if (!this.map.hasLayer(group)) {
+        return
+      }
+      group._featureGroup.eachLayer(layer => {
+        if (typeof layer.getChildCount !== 'function') {
+          return
+        }
+        const point = this._testIconCenter(layer)
+        clusters.push({ type: groupType, x: point.x, y: point.y, count: layer.getChildCount() })
+      })
+    })
+
+    return clusters
+  }
+
+  testWarehouses() {
+    return Array.from(this.warehouseStates.values()).map(state => ({
+      iri: state.iri,
+      name: state.name,
+      taskCount: state.taskCount,
+      color: this._warehouseColorFor(state.taskCount),
+    }))
+  }
+
+  testSwoopyCount() {
+    return this.swoopyLayerGroup.getLayers().length
+  }
+
+  testContainer() {
+    return this.map.getContainer()
   }
 }

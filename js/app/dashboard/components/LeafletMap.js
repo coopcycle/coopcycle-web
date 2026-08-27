@@ -3,6 +3,7 @@ import { render } from 'react-dom'
 import { connect } from 'react-redux'
 import MapHelper from '../../MapHelper'
 import MapProxy from './MapProxy'
+import { installMapTestHook } from './mapTestHook'
 import _ from 'lodash'
 import moment from 'moment'
 import clsx from 'clsx'
@@ -112,7 +113,7 @@ class GroupPopupContent extends React.Component {
     )
 
     return (
-      <div className="mt-5 mb-3">
+      <div className="mt-5 mb-3" data-testid="pickup-group-popup">
         <div className="leaflet-popup-pickup-group-content">
         { _.map(tasksByAddress, (tasks, key) =>
           <div key={ key } className="mb-3">
@@ -222,6 +223,8 @@ const MapProvider = (props) => {
         return el
       }
     })
+
+    installMapTestHook(proxy)
 
     setMap(proxy)
 
