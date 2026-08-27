@@ -41,6 +41,13 @@ export function createBaseMapLayer(options = {}) {
 
   return L.maplibreGL({
     style: styleUrl(style),
+    // Leaflet animates a zoom by CSS-scaling the already rendered GL canvas.
+    // Zooming out scales it below 1, so anything the canvas no longer covers
+    // shows the empty map container. The layer renders `padding` extra around
+    // the viewport on each side; 0.5 makes the canvas twice the viewport, which
+    // is exactly what a one-level zoom out needs to stay covered.
+    // Raising this costs GPU: the rendered area grows with the square of it.
+    padding: 0.5,
     // The GL map has its own attribution control, which we disable in favor of
     // Leaflet's one.
     attributionControl: { customAttribution: ATTRIBUTION },
@@ -54,26 +61,48 @@ export function createBaseMapLayer(options = {}) {
  * The flat "building" fill layer stays, so footprints are still drawn.
  */
 function removeBuildingExtrusions(glMap) {
-  const strip = () => {
-    glMap
-      .getStyle()
-      .layers.filter(layer => layer.type === 'fill-extrusion')
-      .forEach(layer => glMap.removeLayer(layer.id))
-  }
+  glMap
+    .getStyle()
+    .layers.filter(layer => layer.type === 'fill-extrusion')
+    .forEach(layer => glMap.removeLayer(layer.id))
+}
 
-  if (glMap.isStyleLoaded()) {
-    strip()
-  }
+/**
+ * Paints the Leaflet container in the basemap's own background color, instead
+ * of Leaflet's default grey. Whatever the GL canvas does not cover during a
+ * zoom animation then blends into the map rather than flashing grey.
+ */
+function syncBackgroundColor(map, glMap) {
+  const background = glMap
+    .getStyle()
+    .layers.find(layer => layer.type === 'background')
 
-  // Also on every (re)load of the style, which is when the layers come back.
-  glMap.on('style.load', strip)
+  const color = background?.paint?.['background-color']
+
+  // Styles are free to make this a zoom-dependent expression; only a plain
+  // color can be handed to CSS.
+  if (typeof color === 'string') {
+    map.getContainer().style.backgroundColor = color
+  }
 }
 
 export function addBaseMapLayer(map, options = {}) {
   const layer = createBaseMapLayer(options)
   layer.addTo(map)
 
-  removeBuildingExtrusions(layer.getMaplibreMap())
+  const glMap = layer.getMaplibreMap()
+
+  const onStyleLoaded = () => {
+    removeBuildingExtrusions(glMap)
+    syncBackgroundColor(map, glMap)
+  }
+
+  if (glMap.isStyleLoaded()) {
+    onStyleLoaded()
+  }
+
+  // Also on every (re)load of the style, which is when the layers come back.
+  glMap.on('style.load', onStyleLoaded)
 
   // The GL layer only positions its canvas in its private _update(), which it
   // hooks to the map's "move" and "resize" events. Neither fires when the view
