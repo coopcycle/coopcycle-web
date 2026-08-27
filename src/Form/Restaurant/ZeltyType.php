@@ -42,6 +42,13 @@ class ZeltyType extends AbstractType
                 ]);
                 $event->getForm()->get('zeltyDeliveryFeeDishId')
                     ->setData($restaurant->getZeltyDeliveryFeeDishId());
+
+                $event->getForm()->add('zeltyTransactionMethod', HiddenType::class, [
+                    'mapped' => false,
+                    'attr'   => ['data-restaurant-id' => (string) $restaurant->getId()],
+                ]);
+                $event->getForm()->get('zeltyTransactionMethod')
+                    ->setData($restaurant->getZeltyTransactionMethod());
             }
         });
 
@@ -55,6 +62,7 @@ class ZeltyType extends AbstractType
 
             $this->handleApiKey($form, $restaurant);
             $this->handleDeliveryFeeDishId($form, $restaurant);
+            $this->handleTransactionMethod($form, $restaurant);
         });
     }
 
@@ -76,6 +84,15 @@ class ZeltyType extends AbstractType
         }
 
         $this->connectService->connect($restaurant, $newApiKey);
+    }
+
+    private function handleTransactionMethod(\Symfony\Component\Form\FormInterface $form, mixed $restaurant): void
+    {
+        if (!$form->has('zeltyTransactionMethod')) {
+            return;
+        }
+
+        $restaurant->setZeltyTransactionMethod($form->get('zeltyTransactionMethod')->getData());
     }
 
     private function handleDeliveryFeeDishId(\Symfony\Component\Form\FormInterface $form, mixed $restaurant): void

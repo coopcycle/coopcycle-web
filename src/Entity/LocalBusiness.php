@@ -175,6 +175,11 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected $type = FoodEstablishment::RESTAURANT;
 
+    /**
+     * What Zelty transactions were recorded under before the method became configurable.
+     */
+    const DEFAULT_ZELTY_TRANSACTION_METHOD = 'CB';
+
     const STATE_NORMAL = 'normal';
     const STATE_RUSH = 'rush';
     const STATE_PLEDGE = 'pledge';
@@ -322,6 +327,12 @@ class LocalBusiness extends BaseLocalBusiness implements
     protected ?string $zeltyApiKey = null;
 
     protected ?int $zeltyDeliveryFeeDishId = null;
+
+    /**
+     * Name of the Zelty transaction method the payment is recorded under.
+     * Null means the default, DEFAULT_ZELTY_TRANSACTION_METHOD.
+     */
+    protected ?string $zeltyTransactionMethod = null;
 
     /**
      * Kill switch to stop sending orders to Zelty, without losing the API key setup.
@@ -1298,6 +1309,19 @@ class LocalBusiness extends BaseLocalBusiness implements
     public function setZeltyDeliveryFeeDishId(?int $zeltyDeliveryFeeDishId): void
     {
         $this->zeltyDeliveryFeeDishId = $zeltyDeliveryFeeDishId;
+    }
+
+    /**
+     * Always a usable value: shops that never picked one get the default.
+     */
+    public function getZeltyTransactionMethod(): string
+    {
+        return $this->zeltyTransactionMethod ?: self::DEFAULT_ZELTY_TRANSACTION_METHOD;
+    }
+
+    public function setZeltyTransactionMethod(?string $zeltyTransactionMethod): void
+    {
+        $this->zeltyTransactionMethod = $zeltyTransactionMethod ?: null;
     }
 
     public function isZeltyOrdersEnabled(): bool

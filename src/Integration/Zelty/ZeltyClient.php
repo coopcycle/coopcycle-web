@@ -128,19 +128,29 @@ class ZeltyClient
         }
     }
 
-    public function addTransaction(int $zeltyOrderId, int $amount): void
-    {
-        $this->logger->info('Zelty add transaction', ['zelty_order_id' => $zeltyOrderId, 'amount' => $amount]);
+    /**
+     * @param string $method name of the Zelty transaction method to record the payment under
+     */
+    public function addTransaction(
+        int $zeltyOrderId,
+        int $amount,
+        string $method = LocalBusiness::DEFAULT_ZELTY_TRANSACTION_METHOD
+    ): void {
+        $this->logger->info('Zelty add transaction', [
+            'zelty_order_id' => $zeltyOrderId,
+            'amount'         => $amount,
+            'method'         => $method,
+        ]);
 
         try {
             $this->send('POST', sprintf('orders/%d/transactions', $zeltyOrderId), [
                 'json' => [
-                    'transactions'  => [['name' => 'CB', 'price' => $amount]],
+                    'transactions'  => [['name' => $method, 'price' => $amount]],
                     'close_if_paid' => false,
                 ],
             ], [[
                 'type'   => ZeltyActivityRecorder::ORDER_PAYMENT_SENT,
-                'params' => ['zeltyOrderId' => $zeltyOrderId, 'amount' => $amount],
+                'params' => ['zeltyOrderId' => $zeltyOrderId, 'amount' => $amount, 'method' => $method],
             ]]);
         } catch (ClientExceptionInterface $e) {
             $body = $e->getResponse()->getContent(false);
@@ -236,6 +246,17 @@ class ZeltyClient
         ]]);
         $data = json_decode($response->getContent(), true);
         return $data['catalog'] ?? [];
+    }
+
+    /**
+     * The payment methods configured on the till, used to record an order's payment.
+     */
+    public function getTransactionMethods(): array
+    {
+        $response = $this->send('GET', 'transaction-methods');
+        $data = json_decode($response->getContent(), true);
+
+        return $data['transaction_methods'] ?? [];
     }
 
     public function getTaxes(): array

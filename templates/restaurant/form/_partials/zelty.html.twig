@@ -32,10 +32,10 @@
         <div {{ react_component('Restaurant/ZeltyConnect', {
             restaurantId: zeltyRestaurantId,
             inputId: form.zeltyApiKey.vars.id,
-            revealSelector: '#zelty-delivery-fee-dish'
+            revealSelector: '.js-zelty-requires-key'
         }) }}></div>
     </div>
-    <div class="form-group" id="zelty-delivery-fee-dish"
+    <div class="form-group js-zelty-requires-key" id="zelty-delivery-fee-dish"
         {%- if not zeltyRestaurant.hasZeltyApiKey %} style="display: none;"{% endif %}>
         <label class="control-label">{{ 'restaurant.form.zelty_delivery_fee_dish'|trans }}</label>
         {{ form_widget(form.zeltyDeliveryFeeDishId) }}
@@ -43,6 +43,16 @@
             restaurantId: zeltyRestaurantId,
             inputId: form.zeltyDeliveryFeeDishId.vars.id
         }) }}></div>
+    </div>
+    <div class="form-group js-zelty-requires-key" id="zelty-transaction-method"
+        {%- if not zeltyRestaurant.hasZeltyApiKey %} style="display: none;"{% endif %}>
+        <label class="control-label">{{ 'restaurant.form.zelty_transaction_method'|trans }}</label>
+        {{ form_widget(form.zeltyTransactionMethod) }}
+        <div {{ react_component('Restaurant/ZeltyTransactionMethodSelect', {
+            restaurantId: zeltyRestaurantId,
+            inputId: form.zeltyTransactionMethod.vars.id
+        }) }}></div>
+        <small class="help-block">{{ 'restaurant.form.zelty_transaction_method.help'|trans }}</small>
     </div>
     {% if is_granted('ROLE_ADMIN') %}
     <div class="form-group">

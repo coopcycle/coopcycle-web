@@ -58,6 +58,11 @@ function describeEvent(event, t) {
     )
   }
 
+  // Payments logged before the method became configurable were all "CB"
+  if (event.type === 'order.payment_sent' && !params.method) {
+    params.method = 'CB'
+  }
+
   const key = ACTIVITY_LABELS[event.type]
 
   // An event type this build does not know about: better the raw type than nothing

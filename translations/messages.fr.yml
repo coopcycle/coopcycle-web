@@ -1729,6 +1729,8 @@ restaurant.form.en_boite_le_plat_platform_fee.label: Le montant de la consigne e
 restaurant.form.zelty_api_key: Clé API Zelty
 restaurant.form.zelty_api_key.help: "Activez l'application CoopCycle sur le <a href=\"https://bo.zelty.fr/marketplace/coopcycle/status\" target=\"_blank\">Marketplace Zelty</a> pour obtenir votre clé API."
 restaurant.form.zelty_delivery_fee_dish: Plat frais de livraison
+restaurant.form.zelty_transaction_method: Moyen de paiement
+restaurant.form.zelty_transaction_method.help: 'Le moyen de paiement Zelty sous lequel le règlement de la commande est enregistré. Par défaut « CB ».'
 restaurant.form.zelty_api_log: Journal des appels API
 restaurant.form.zelty.no_catalog: 'Zelty est connecté. Prochaine étape : importer
   un catalogue, en le récupérant depuis Zelty ou en demandant au restaurant de le

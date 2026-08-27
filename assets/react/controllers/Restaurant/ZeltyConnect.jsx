@@ -55,8 +55,9 @@ export default function ZeltyConnect({ restaurantId, inputId, revealSelector }) 
     setStatus({ type: 'success', message: t('ZELTY_CONNECT_SUCCESS') })
 
     if (revealSelector) {
-      const el = document.querySelector(revealSelector)
-      if (el) el.style.display = ''
+      document
+        .querySelectorAll(revealSelector)
+        .forEach(el => (el.style.display = ''))
     }
     document.dispatchEvent(new CustomEvent('zelty:connected'))
   }

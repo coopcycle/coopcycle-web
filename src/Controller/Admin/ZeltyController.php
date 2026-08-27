@@ -113,6 +113,37 @@ class ZeltyController extends AbstractController
         )));
     }
 
+    #[Route('/admin/restaurant/{id}/zelty/transaction-methods', name: 'admin_restaurant_zelty_transaction_methods', methods: ['GET'])]
+    public function transactionMethods(LocalBusiness $restaurant): JsonResponse
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        if (!$restaurant->hasZeltyApiKey()) {
+            return new JsonResponse([]);
+        }
+
+        $this->zeltyClient->setRestaurant($restaurant);
+
+        try {
+            $methods = $this->zeltyClient->getTransactionMethods();
+        } catch (ExceptionInterface $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 502);
+        }
+
+        // A method disabled on the till cannot take a payment
+        $methods = array_filter($methods, fn($m) => !($m['disable'] ?? false));
+
+        usort($methods, fn($a, $b) => strcmp($a['name'] ?? '', $b['name'] ?? ''));
+
+        // A till can hold several methods sharing a name. We send Zelty the name,
+        // not the id, so those are indistinguishable here — list each name once.
+        $names = array_values(array_unique(array_filter(
+            array_map(fn($m) => $m['name'] ?? null, $methods)
+        )));
+
+        return new JsonResponse(array_map(fn($name) => ['name' => $name], $names));
+    }
+
     #[Route('/admin/restaurant/{id}/zelty/delivery-dish', name: 'admin_restaurant_zelty_create_delivery_dish', methods: ['POST'])]
     public function createDeliveryDish(LocalBusiness $restaurant): JsonResponse
     {

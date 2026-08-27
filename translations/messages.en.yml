@@ -1425,6 +1425,8 @@ restaurant.form.en_boite_le_plat_enabled.label: Enable En Boîte Le Plat deposit
 restaurant.form.zelty_api_key: Zelty API key
 restaurant.form.zelty_api_key.help: 'Activate the CoopCycle app on the <a href="https://bo.zelty.fr/marketplace/coopcycle/status" target="_blank">Zelty Marketplace</a> to obtain your API key.'
 restaurant.form.zelty_delivery_fee_dish: Delivery fee dish
+restaurant.form.zelty_transaction_method: Payment method
+restaurant.form.zelty_transaction_method.help: 'The Zelty transaction method the order''s payment is recorded under. Defaults to "CB".'
 restaurant.form.zelty_api_log: API log
 restaurant.form.zelty.no_catalog: 'Zelty is connected. Next step: import a catalog,
   either by pulling one from Zelty or by asking the restaurant to push it from their
