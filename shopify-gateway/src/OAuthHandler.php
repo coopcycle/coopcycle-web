@@ -17,11 +17,10 @@ class OAuthHandler
      * read delivery_method.method_type and skip non-local-delivery orders;
      * read_fulfillments does not cover it.
      *
-     * The metafield pair covers the shop-owned metafields under the `coopcycle`
-     * namespace: `tenant_url`, written at install, is how the cart date picker
-     * finds which cooperative to ask for slots, and `slots_spec` carries the
-     * opening hours. Both are read back before writing, so read as well as
-     * write — matching what the app was granted in development.
+     * No metafield scope appears here on purpose. The `coopcycle` metafields
+     * this app writes are app-data metafields owned by its own AppInstallation,
+     * which need no scope — and Shopify rejects read_metafields/write_metafields
+     * outright, they are not valid scopes any more.
      *
      * Deliberately absent: write_shipping and read/write_delivery_customizations,
      * which this constant used to request. Delivery zones are configured by the
@@ -30,8 +29,7 @@ class OAuthHandler
      * delivery customization function, so nothing ever used them.
      */
     private const SCOPES = 'read_orders,write_fulfillments,read_fulfillments,'
-                         . 'read_merchant_managed_fulfillment_orders,'
-                         . 'read_metafields,write_metafields';
+                         . 'read_merchant_managed_fulfillment_orders';
 
     public const COMPLIANCE_TOPICS = [
         'customers/data_request',

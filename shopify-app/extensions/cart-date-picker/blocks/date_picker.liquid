@@ -1,4 +1,9 @@
-{% assign tenant_url = shop.metafields.coopcycle.tenant_url.value | default: block.settings.tenant_url %}
+{%- comment -%}
+  Read from `app`, not `shop`: tenant_url is an app-data metafield owned by this
+  app's own installation. A shop-owned metafield would need a write scope that
+  no longer exists, so this is the only variant the app can actually write.
+{%- endcomment -%}
+{% assign tenant_url = app.metafields.coopcycle.tenant_url.value | default: block.settings.tenant_url %}
 <div
   id="coopcycle-date-picker"
   data-tenant-url="{{ tenant_url | escape }}"

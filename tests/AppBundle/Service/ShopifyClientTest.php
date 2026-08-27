@@ -172,10 +172,10 @@ class ShopifyClientTest extends TestCase
         }
     }
 
-    public function testSyncTenantUrlUpsertsAShopMetafield()
+    public function testSyncTenantUrlUpsertsAnAppDataMetafield()
     {
         $client = $this->client([
-            ['data' => ['shop' => ['id' => 'gid://shopify/Shop/42']]],
+            ['data' => ['currentAppInstallation' => ['id' => 'gid://shopify/AppInstallation/42']]],
             ['data' => ['metafieldsSet' => [
                 'metafields' => [['id' => 'gid://shopify/Metafield/9']],
                 'userErrors' => [],
@@ -186,17 +186,42 @@ class ShopifyClientTest extends TestCase
 
         $metafield = $this->lastRequest()['body']['variables']['metafields'][0];
 
-        $this->assertSame('gid://shopify/Shop/42', $metafield['ownerId']);
+        $this->assertSame('gid://shopify/AppInstallation/42', $metafield['ownerId']);
         $this->assertSame('coopcycle', $metafield['namespace']);
         $this->assertSame('tenant_url', $metafield['key']);
         $this->assertSame('https://demo.coopcycle.org', $metafield['value']);
         $this->assertSame('single_line_text_field', $metafield['type']);
     }
 
+    /**
+     * The owner must be the app's own installation, never the shop. A shop-owned
+     * metafield needs a write scope that no longer exists — Shopify rejects an
+     * app version requesting read_metafields/write_metafields — so this is the
+     * only owner the app can actually write to.
+     */
+    public function testMetafieldOwnerIsTheAppInstallationNotTheShop()
+    {
+        $client = $this->client([
+            ['data' => ['currentAppInstallation' => ['id' => 'gid://shopify/AppInstallation/42']]],
+            ['data' => ['metafieldsSet' => ['metafields' => [['id' => 'a']], 'userErrors' => []]]],
+        ]);
+
+        $client->syncTenantUrl($this->shop(), 'https://demo.coopcycle.org');
+
+        $ownerQuery = $this->requests[0]['body']['query'];
+
+        $this->assertStringContainsString('currentAppInstallation', $ownerQuery);
+        $this->assertStringNotContainsString('shop {', $ownerQuery);
+        $this->assertStringStartsWith(
+            'gid://shopify/AppInstallation/',
+            $this->lastRequest()['body']['variables']['metafields'][0]['ownerId']
+        );
+    }
+
     public function testSyncSlotsSpecSendsJsonTypedMetafield()
     {
         $client = $this->client([
-            ['data' => ['shop' => ['id' => 'gid://shopify/Shop/42']]],
+            ['data' => ['currentAppInstallation' => ['id' => 'gid://shopify/AppInstallation/42']]],
             ['data' => ['metafieldsSet' => [
                 'metafields' => [['id' => 'gid://shopify/Metafield/10']],
                 'userErrors' => [],
@@ -218,10 +243,10 @@ class ShopifyClientTest extends TestCase
      * An install writes tenant_url and slots_spec back to back; the owner lookup
      * should not be repeated for the second one.
      */
-    public function testShopGidIsResolvedOnceAndReused()
+    public function testAppInstallationGidIsResolvedOnceAndReused()
     {
         $client = $this->client([
-            ['data' => ['shop' => ['id' => 'gid://shopify/Shop/42']]],
+            ['data' => ['currentAppInstallation' => ['id' => 'gid://shopify/AppInstallation/42']]],
             ['data' => ['metafieldsSet' => ['metafields' => [['id' => 'a']], 'userErrors' => []]]],
             ['data' => ['metafieldsSet' => ['metafields' => [['id' => 'b']], 'userErrors' => []]]],
         ]);
@@ -230,10 +255,10 @@ class ShopifyClientTest extends TestCase
         $client->syncTenantUrl($shop, 'https://demo.coopcycle.org');
         $client->syncSlotsSpec($shop, []);
 
-        $this->assertCount(3, $this->requests, 'expected one shop lookup plus two metafield writes');
+        $this->assertCount(3, $this->requests, 'expected one owner lookup plus two metafield writes');
     }
 
-    public function testMetafieldWriteFailsWhenShopGidCannotBeResolved()
+    public function testMetafieldWriteFailsWhenAppInstallationGidCannotBeResolved()
     {
         $client = $this->client([
             ['errors' => [['message' => 'Access denied']]],
@@ -247,7 +272,7 @@ class ShopifyClientTest extends TestCase
     public function testMetafieldWriteFailsOnUserErrors()
     {
         $client = $this->client([
-            ['data' => ['shop' => ['id' => 'gid://shopify/Shop/42']]],
+            ['data' => ['currentAppInstallation' => ['id' => 'gid://shopify/AppInstallation/42']]],
             ['data' => ['metafieldsSet' => [
                 'metafields' => [['id' => 'gid://shopify/Metafield/9']],
                 'userErrors' => [['field' => 'type', 'message' => 'is invalid']],
@@ -261,7 +286,7 @@ class ShopifyClientTest extends TestCase
     public function testMetafieldWriteFailsWhenNothingWasWritten()
     {
         $client = $this->client([
-            ['data' => ['shop' => ['id' => 'gid://shopify/Shop/42']]],
+            ['data' => ['currentAppInstallation' => ['id' => 'gid://shopify/AppInstallation/42']]],
             ['data' => ['metafieldsSet' => ['metafields' => [], 'userErrors' => []]]],
         ]);
 

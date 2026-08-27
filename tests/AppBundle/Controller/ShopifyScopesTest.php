@@ -22,8 +22,7 @@ class ShopifyScopesTest extends TestCase
      * meant to be deliberate: App Store review requires a demonstrated use for
      * each, so a new entry needs the code that uses it in the same change.
      */
-    private const EXPECTED = 'read_orders,write_fulfillments,read_fulfillments,read_merchant_managed_fulfillment_orders,'
-                           . 'read_metafields,write_metafields';
+    private const EXPECTED = 'read_orders,write_fulfillments,read_fulfillments,read_merchant_managed_fulfillment_orders';
 
     private static function projectDir(): string
     {

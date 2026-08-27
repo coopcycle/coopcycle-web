@@ -50,12 +50,10 @@ class ShopifyController extends AbstractController
         // in shopify-app/shopify.app.toml and to OAuthHandler::SCOPES in the
         // gateway. read_merchant_managed_fulfillment_orders is what lets the order
         // webhook read delivery_method.method_type and skip non-local-delivery
-        // orders; read_fulfillments does not cover it. The metafield pair covers
-        // the shop-owned `coopcycle` metafields written by ShopifyClient —
-        // tenant_url, which is how the cart date picker finds this instance, and
-        // slots_spec.
-        $scopes = 'read_orders,write_fulfillments,read_fulfillments,read_merchant_managed_fulfillment_orders,'
-            . 'read_metafields,write_metafields';
+        // orders; read_fulfillments does not cover it. No metafield scope: the
+        // `coopcycle` metafields are app-data metafields on this app's own
+        // AppInstallation, which need none.
+        $scopes = 'read_orders,write_fulfillments,read_fulfillments,read_merchant_managed_fulfillment_orders';
 
         $authUrl = sprintf(
             'https://%s/admin/oauth/authorize?client_id=%s&scope=%s&redirect_uri=%s&state=%s',

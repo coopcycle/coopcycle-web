@@ -14,7 +14,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'coopcycle:shopify:sync-slots',
-    description: 'Write the OpeningHoursSpecification and tenant URL of each Shopify shop as shop metafields.',
+    description: 'Write the OpeningHoursSpecification and tenant URL of each Shopify shop as app-data metafields.',
 )]
 class ShopifySyncSlotsCommand extends Command
 {

@@ -96,7 +96,7 @@ Two block settings are available, both optional:
 
 | Setting | |
 |---|---|
-| **CoopCycle tenant URL** | Only needed as a fallback. The tenant URL is normally read from the `coopcycle.tenant_url` shop metafield, written during install. |
+| **CoopCycle tenant URL** | Only needed as a fallback. The tenant URL is normally read from the `coopcycle.tenant_url` app-data metafield, written during install. |
 | **Delivery slot field label** | Label shown above the dropdown. Defaults to *Delivery slot*. |
 
 ### If the block is not listed
@@ -117,8 +117,8 @@ hidden (`display:none`) and only reveals itself once slots load successfully;
 the fetch has a `catch` that deliberately leaves it hidden. It stays invisible
 when:
 
-- the `coopcycle.tenant_url` metafield is unset **and** the block's tenant URL
-  setting is empty,
+- the `coopcycle.tenant_url` app-data metafield is unset **and** the block's
+  tenant URL setting is empty,
 - the linked CoopCycle store has **no time slot configured**, so
   `/api/shopify/slots` returns an empty list,
 - the request to the tenant fails (wrong URL, CORS, tenant down).
@@ -130,8 +130,8 @@ Open the cart page with the browser network tab and look for the call to
 
 `extensions/cart-date-picker/` renders on the cart page. It:
 
-1. Reads the CoopCycle tenant URL from the `coopcycle.tenant_url` shop metafield,
-   falling back to the block setting.
+1. Reads the CoopCycle tenant URL from the `coopcycle.tenant_url` app-data
+   metafield via Liquid's `app` object, falling back to the block setting.
 2. Fetches available slots from `GET /api/shopify/slots?domain={shop}` on the
    tenant, which uses the linked store's configured time slot.
 3. Renders **one combined dropdown** — e.g. *Monday 30 June, 10:00 - 12:00* —
@@ -149,7 +149,14 @@ Open the cart page with the browser network tab and look for the call to
 | `write_fulfillments` | Mark orders as fulfilled once delivered |
 | `read_fulfillments` | Read fulfillment state |
 | `read_merchant_managed_fulfillment_orders` | Read `delivery_method.method_type` off an order's fulfillment orders, to skip orders that did not use local delivery. `read_fulfillments` does not cover this. |
-| `read_metafields` / `write_metafields` | Read and write the shop-owned metafields under the `coopcycle` namespace: `tenant_url`, written at install, is how the cart date picker knows which cooperative to ask for slots, and `slots_spec` carries the opening hours. Written back before each update, hence read as well as write. |
 
 Keep this list in sync with `shopify.app.toml`, the gateway's
-`OAuthHandler::SCOPES`, and `ShopifyController::install()` on the tenant.
+`OAuthHandler::SCOPES`, and `ShopifyController::install()` on the tenant —
+`ShopifyScopesTest` fails if they drift apart.
+
+**No metafield scope is required.** The `coopcycle` metafields the app writes
+(`tenant_url`, `slots_spec`) are [app-data metafields](https://shopify.dev/docs/apps/build/custom-data/ownership#app-data-metafields)
+owned by the app's own `AppInstallation`, which need no scope, stay hidden from
+the merchant's admin, and are read from the theme extension through Liquid's
+`app` object. `read_metafields` and `write_metafields` are **not valid scopes** —
+`shopify app deploy` rejects any version that requests them.

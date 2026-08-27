@@ -18,8 +18,8 @@ class ShopifyClient
      */
     private const API_VERSION = '2025-10';
 
-    /** @var array<string,string> shop domain => shop GID, see shopGid() */
-    private array $shopGids = [];
+    /** @var array<string,string> shop domain => AppInstallation GID, see appInstallationGid() */
+    private array $appInstallationGids = [];
 
     public function __construct(
         private HttpClientInterface $httpClient,
@@ -199,28 +199,45 @@ class ShopifyClient
         return null !== ($data['webhookSubscriptionDelete']['deletedWebhookSubscriptionId'] ?? null);
     }
 
-    public function setShopMetafield(ShopifyShop $shop, string $namespace, string $key, string $value): bool
+    public function setAppMetafield(ShopifyShop $shop, string $namespace, string $key, string $value): bool
     {
         return $this->setMetafield($shop, $namespace, $key, $value, 'single_line_text_field');
     }
 
     public function syncTenantUrl(ShopifyShop $shop, string $tenantUrl): bool
     {
-        return $this->setShopMetafield($shop, 'coopcycle', 'tenant_url', $tenantUrl);
+        return $this->setAppMetafield($shop, 'coopcycle', 'tenant_url', $tenantUrl);
     }
 
+    /**
+     * NOTE: nothing reads this metafield. The cart picker fetches slots live
+     * from /api/shopify/slots instead, and the checkout extension that once
+     * consumed slots_spec is no longer part of the app. Kept working rather than
+     * deleted, since its callers (ShopifySyncSlotsCommand and
+     * ShopifySlotsSyncSubscriber) are outside the scope of this migration.
+     */
     public function syncSlotsSpec(ShopifyShop $shop, array $openingHoursSpec): bool
     {
         return $this->setMetafield($shop, 'coopcycle', 'slots_spec', json_encode($openingHoursSpec), 'json');
     }
 
     /**
+     * Writes an app-data metafield: one owned by this app's own AppInstallation
+     * rather than by the shop.
+     *
+     * That ownership is the whole point. A shop-owned metafield would need write
+     * access to the shop, and there is no scope that grants it — read_metafields
+     * and write_metafields are not valid scopes any more, and Shopify rejects an
+     * app version that asks for them. An app-data metafield needs no scope at
+     * all, is invisible to the merchant in the admin, and is still readable from
+     * the theme app extension through Liquid's `app` object.
+     *
      * metafieldsSet is an upsert keyed on owner + namespace + key, which
      * replaces the read-then-create-or-update dance the REST version needed.
      */
     private function setMetafield(ShopifyShop $shop, string $namespace, string $key, string $value, string $type): bool
     {
-        $ownerId = $this->shopGid($shop);
+        $ownerId = $this->appInstallationGid($shop);
 
         if (null === $ownerId) {
             return false;
@@ -326,29 +343,31 @@ class ShopifyClient
     }
 
     /**
-     * The shop's own GID, needed as the owner of the `coopcycle` metafields.
+     * The GID of this app's own installation on the shop, which owns the
+     * `coopcycle` metafields.
+     *
      * Cached per instance: an install writes two metafields back to back, and
      * the id cannot change under us.
      */
-    private function shopGid(ShopifyShop $shop): ?string
+    private function appInstallationGid(ShopifyShop $shop): ?string
     {
         $domain = $shop->getShopDomain();
 
-        if (isset($this->shopGids[$domain])) {
-            return $this->shopGids[$domain];
+        if (isset($this->appInstallationGids[$domain])) {
+            return $this->appInstallationGids[$domain];
         }
 
-        $data = $this->graphql($shop, '{ shop { id } }');
+        $data = $this->graphql($shop, '{ currentAppInstallation { id } }');
 
-        $id = $data['shop']['id'] ?? null;
+        $id = $data['currentAppInstallation']['id'] ?? null;
 
         if (null === $id) {
-            $this->logger->error(sprintf('Could not resolve the shop GID for %s.', $domain));
+            $this->logger->error(sprintf('Could not resolve the app installation GID for %s.', $domain));
 
             return null;
         }
 
-        return $this->shopGids[$domain] = (string) $id;
+        return $this->appInstallationGids[$domain] = (string) $id;
     }
 
     /**
