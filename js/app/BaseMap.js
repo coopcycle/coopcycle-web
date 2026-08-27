@@ -88,27 +88,36 @@ function syncBackgroundColor(map, glMap) {
 
 export function addBaseMapLayer(map, options = {}) {
   const layer = createBaseMapLayer(options)
+
+  // The GL map only exists once the layer has been added, and Leaflet does not
+  // necessarily add it straight away: a map with no view yet (no center/zoom,
+  // because it gets fitted to its markers later) defers every addLayer() until
+  // it has one. Reaching for the GL map right after addTo() therefore works on
+  // some maps and returns undefined on others, so wait for the layer's own
+  // "add" event, which fires in both cases.
+  layer.on('add', () => {
+    const glMap = layer.getMaplibreMap()
+
+    const onStyleLoaded = () => {
+      removeBuildingExtrusions(glMap)
+      syncBackgroundColor(map, glMap)
+    }
+
+    if (glMap.isStyleLoaded()) {
+      onStyleLoaded()
+    }
+
+    // Also on every (re)load of the style, which is when the layers come back.
+    glMap.on('style.load', onStyleLoaded)
+
+    // The GL layer only positions its canvas in its private _update(), which it
+    // hooks to the map's "move" and "resize" events. Neither fires when the view
+    // is already set before the layer is added, leaving the canvas offset and the
+    // map blank until the user first pans or zooms. Fire "move" once to place it.
+    map.fire('move')
+  })
+
   layer.addTo(map)
-
-  const glMap = layer.getMaplibreMap()
-
-  const onStyleLoaded = () => {
-    removeBuildingExtrusions(glMap)
-    syncBackgroundColor(map, glMap)
-  }
-
-  if (glMap.isStyleLoaded()) {
-    onStyleLoaded()
-  }
-
-  // Also on every (re)load of the style, which is when the layers come back.
-  glMap.on('style.load', onStyleLoaded)
-
-  // The GL layer only positions its canvas in its private _update(), which it
-  // hooks to the map's "move" and "resize" events. Neither fires when the view
-  // is already set before the layer is added, leaving the canvas offset and the
-  // map blank until the user first pans or zooms. Fire "move" once to place it.
-  map.fire('move')
 
   return layer
 }
