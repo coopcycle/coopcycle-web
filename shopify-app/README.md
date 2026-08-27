@@ -149,6 +149,7 @@ Open the cart page with the browser network tab and look for the call to
 | `write_fulfillments` | Mark orders as fulfilled once delivered |
 | `read_fulfillments` | Read fulfillment state |
 | `read_merchant_managed_fulfillment_orders` | Read `delivery_method.method_type` off an order's fulfillment orders, to skip orders that did not use local delivery. `read_fulfillments` does not cover this. |
+| `read_metafields` / `write_metafields` | Read and write the shop-owned metafields under the `coopcycle` namespace: `tenant_url`, written at install, is how the cart date picker knows which cooperative to ask for slots, and `slots_spec` carries the opening hours. Written back before each update, hence read as well as write. |
 
 Keep this list in sync with `shopify.app.toml`, the gateway's
 `OAuthHandler::SCOPES`, and `ShopifyController::install()` on the tenant.

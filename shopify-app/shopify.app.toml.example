@@ -4,7 +4,7 @@ application_url = "https://connect.coopcycle.org/shopify/install"
 embedded = false
 
 [access_scopes]
-scopes = "read_orders,write_fulfillments,read_fulfillments,read_merchant_managed_fulfillment_orders"
+scopes = "read_orders,write_fulfillments,read_fulfillments,read_merchant_managed_fulfillment_orders,read_metafields,write_metafields"
 
 [auth]
 redirect_urls = [

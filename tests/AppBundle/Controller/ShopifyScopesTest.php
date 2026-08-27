@@ -22,7 +22,8 @@ class ShopifyScopesTest extends TestCase
      * meant to be deliberate: App Store review requires a demonstrated use for
      * each, so a new entry needs the code that uses it in the same change.
      */
-    private const EXPECTED = 'read_orders,write_fulfillments,read_fulfillments,read_merchant_managed_fulfillment_orders';
+    private const EXPECTED = 'read_orders,write_fulfillments,read_fulfillments,read_merchant_managed_fulfillment_orders,'
+                           . 'read_metafields,write_metafields';
 
     private static function projectDir(): string
     {
@@ -45,11 +46,11 @@ class ShopifyScopesTest extends TestCase
 
         $this->assertSame(
             1,
-            preg_match('/\$scopes\s*=\s*\'([^\']+)\'/', $source, $matches),
+            preg_match('/\$scopes\s*=\s*(.+?);/s', $source, $matches),
             'Could not find the $scopes assignment in ShopifyController::install().'
         );
 
-        $this->assertSame(self::EXPECTED, $matches[1]);
+        $this->assertSame(self::EXPECTED, $this->joinLiterals($matches[1]));
     }
 
     public function testGatewayRequestsTheExpectedScopes()
@@ -62,11 +63,18 @@ class ShopifyScopesTest extends TestCase
             'Could not find the SCOPES constant in OAuthHandler.'
         );
 
-        // The constant is written as concatenated string literals so it stays
-        // readable; collapse it back to the value PHP would produce.
-        preg_match_all("/'([^']*)'/", $matches[1], $parts);
+        $this->assertSame(self::EXPECTED, $this->joinLiterals($matches[1]));
+    }
 
-        $this->assertSame(self::EXPECTED, implode('', $parts[1]));
+    /**
+     * Both scope lists are written as concatenated string literals so they stay
+     * readable at this length; collapse one back to the value PHP would build.
+     */
+    private function joinLiterals(string $expression): string
+    {
+        preg_match_all("/'([^']*)'/", $expression, $parts);
+
+        return implode('', $parts[1]);
     }
 
     /**

@@ -38,7 +38,11 @@ Collected when the app is installed and while it is in use:
 
 The app requests these access scopes and no others:
 `read_orders`, `read_fulfillments`, `write_fulfillments`,
-`read_merchant_managed_fulfillment_orders`.
+`read_merchant_managed_fulfillment_orders`, `read_metafields`, `write_metafields`.
+
+The metafield scopes are used only for the shop's own settings under the
+`coopcycle` namespace — the cooperative's address and its delivery time slots.
+No personal data is written to metafields.
 
 ### From Shopify's APIs, about the merchant's customers
 
