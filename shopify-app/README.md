@@ -36,7 +36,7 @@ cp shopify.app.toml.example shopify.app.toml
 
 Then replace `YOUR_SHOPIFY_APP_CLIENT_ID` with the Client ID from your Shopify
 Partner dashboard. The gateway URLs in the template already point at the
-production gateway (`gateway.shopify.coopcycle.org`); change them only if you
+production gateway (`connect.coopcycle.org`); change them only if you
 are running your own gateway.
 
 ## Shopify Partner dashboard

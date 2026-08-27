@@ -5,7 +5,7 @@
 This policy explains what personal data the CoopCycle app for Shopify collects,
 why, how long it is kept, and who it is shared with. It covers the app listed on
 the Shopify App Store under the name **CoopCycle**, the OAuth gateway at
-`gateway.shopify.coopcycle.org`, and the CoopCycle instance operated by the
+`connect.coopcycle.org`, and the CoopCycle instance operated by the
 cooperative a merchant connects to.
 
 ## Who is responsible for your data
