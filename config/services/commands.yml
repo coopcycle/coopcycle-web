@@ -231,7 +231,7 @@ services:
 
   AppBundle\Command\RecommenderTrainCommand: ~
 
-  AppBundle\Command\ShopifySyncSlotsCommand: ~
+  AppBundle\Command\ShopifySyncTenantUrlCommand: ~
 
   AppBundle\Command\ShopifyRegisterWebhooksCommand: ~
 

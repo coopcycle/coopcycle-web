@@ -210,18 +210,6 @@ class ShopifyClient
     }
 
     /**
-     * NOTE: nothing reads this metafield. The cart picker fetches slots live
-     * from /api/shopify/slots instead, and the checkout extension that once
-     * consumed slots_spec is no longer part of the app. Kept working rather than
-     * deleted, since its callers (ShopifySyncSlotsCommand and
-     * ShopifySlotsSyncSubscriber) are outside the scope of this migration.
-     */
-    public function syncSlotsSpec(ShopifyShop $shop, array $openingHoursSpec): bool
-    {
-        return $this->setMetafield($shop, 'coopcycle', 'slots_spec', json_encode($openingHoursSpec), 'json');
-    }
-
-    /**
      * Writes an app-data metafield: one owned by this app's own AppInstallation
      * rather than by the shop.
      *

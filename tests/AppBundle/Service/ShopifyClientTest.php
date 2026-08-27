@@ -218,31 +218,7 @@ class ShopifyClientTest extends TestCase
         );
     }
 
-    public function testSyncSlotsSpecSendsJsonTypedMetafield()
-    {
-        $client = $this->client([
-            ['data' => ['currentAppInstallation' => ['id' => 'gid://shopify/AppInstallation/42']]],
-            ['data' => ['metafieldsSet' => [
-                'metafields' => [['id' => 'gid://shopify/Metafield/10']],
-                'userErrors' => [],
-            ]]],
-        ]);
-
-        $spec = [['dayOfWeek' => ['Mo'], 'opens' => '09:00', 'closes' => '18:00']];
-
-        $this->assertTrue($client->syncSlotsSpec($this->shop(), $spec));
-
-        $metafield = $this->lastRequest()['body']['variables']['metafields'][0];
-
-        $this->assertSame('slots_spec', $metafield['key']);
-        $this->assertSame('json', $metafield['type']);
-        $this->assertSame($spec, json_decode($metafield['value'], true));
-    }
-
-    /**
-     * An install writes tenant_url and slots_spec back to back; the owner lookup
-     * should not be repeated for the second one.
-     */
+    /** The owner lookup must not be repeated for every write on the same shop. */
     public function testAppInstallationGidIsResolvedOnceAndReused()
     {
         $client = $this->client([
@@ -253,7 +229,7 @@ class ShopifyClientTest extends TestCase
 
         $shop = $this->shop();
         $client->syncTenantUrl($shop, 'https://demo.coopcycle.org');
-        $client->syncSlotsSpec($shop, []);
+        $client->syncTenantUrl($shop, 'https://demo2.coopcycle.org');
 
         $this->assertCount(3, $this->requests, 'expected one owner lookup plus two metafield writes');
     }

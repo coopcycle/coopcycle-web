@@ -154,9 +154,10 @@ Keep this list in sync with `shopify.app.toml`, the gateway's
 `OAuthHandler::SCOPES`, and `ShopifyController::install()` on the tenant —
 `ShopifyScopesTest` fails if they drift apart.
 
-**No metafield scope is required.** The `coopcycle` metafields the app writes
-(`tenant_url`, `slots_spec`) are [app-data metafields](https://shopify.dev/docs/apps/build/custom-data/ownership#app-data-metafields)
-owned by the app's own `AppInstallation`, which need no scope, stay hidden from
-the merchant's admin, and are read from the theme extension through Liquid's
-`app` object. `read_metafields` and `write_metafields` are **not valid scopes** —
+**No metafield scope is required.** The one metafield the app writes,
+`coopcycle.tenant_url`, is an [app-data metafield](https://shopify.dev/docs/apps/build/custom-data/ownership#app-data-metafields)
+owned by the app's own `AppInstallation`: it needs no scope, stays hidden from
+the merchant's admin, and is read from the theme extension through Liquid's
+`app` object. Re-write it for every installed shop with
+`bin/console coopcycle:shopify:sync-tenant-url`. `read_metafields` and `write_metafields` are **not valid scopes** —
 `shopify app deploy` rejects any version that requests them.

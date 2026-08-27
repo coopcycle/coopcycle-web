@@ -1611,7 +1611,7 @@ services:
     factory: ['Lcobucci\JWT\Configuration', 'forSymmetricSigner']
     arguments: ['@cubejs.jwt.signer', '@cubejs.jwt.key']
 
-  AppBundle\Command\ShopifySyncSlotsCommand:
+  AppBundle\Command\ShopifySyncTenantUrlCommand:
     arguments:
       $tenantUrl: '%router.request_context.scheme%://%router.request_context.host%'
 

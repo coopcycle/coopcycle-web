@@ -34,15 +34,15 @@ Collected when the app is installed and while it is in use:
 | Shop domain (`example.myshopify.com`) | Identifies which shop an order belongs to, and which cooperative serves it |
 | Shopify API access token | Lets the app read orders and update fulfillments for that shop |
 | Webhook signing secret | Verifies that incoming webhooks genuinely come from Shopify |
-| Shop opening hours / delivery time slots | Offers customers a delivery time to choose from |
+| Delivery time slots of the linked cooperative | Offers customers a delivery time to choose from |
 
 The app requests these access scopes and no others:
 `read_orders`, `read_fulfillments`, `write_fulfillments`,
 `read_merchant_managed_fulfillment_orders`.
 
-The app also stores its own configuration — the cooperative's address and its
-delivery time slots — in app-data metafields on its own app installation. These
-need no access scope, hold no personal data, and are visible only to this app.
+The app also stores its own configuration — the web address of the cooperative
+serving the shop — in an app-data metafield on its own app installation. This
+needs no access scope, holds no personal data, and is visible only to this app.
 
 ### From Shopify's APIs, about the merchant's customers
 
