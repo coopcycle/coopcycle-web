@@ -5,14 +5,22 @@ namespace AppBundle\Integration\Zelty;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class ZeltyOrderNormalizer implements NormalizerInterface
 {
+    public function __construct(private readonly ?LoggerInterface $logger = null) {}
+
     public function normalize(mixed $object, ?string $format = null, array $context = []): array
     {
         /** @var OrderInterface $order */
         $order = $object;
+
+        $items = $this->normalizeItems($order);
+        $total = $order->getItemsTotal() + $this->deliveryFee($order);
+
+        $this->checkTotalMatchesItems($order, $items, $total);
 
         $payload = [
             'remote_id'        => (string) $order->getId(),
@@ -23,8 +31,8 @@ class ZeltyOrderNormalizer implements NormalizerInterface
             'due_date'         => $order->getPickupExpectedAt()?->format(\DateTime::ATOM),
             'customer'         => $this->normalizeCustomer($order),
             'address'          => $this->normalizeAddress($order),
-            'items'            => $this->normalizeItems($order),
-            'total'            => $order->getItemsTotal() + $this->deliveryFee($order),
+            'items'            => $items,
+            'total'            => $total,
         ];
 
         if ($order->getNotes() !== null) {
@@ -76,6 +84,27 @@ class ZeltyOrderNormalizer implements NormalizerInterface
         ];
     }
 
+    /**
+     * Zelty recomputes the order total from the item prices alone and rejects the
+     * push when it disagrees with ours. Catching that here names the culprit,
+     * instead of leaving only Zelty's "Does not match calculated total".
+     */
+    private function checkTotalMatchesItems(OrderInterface $order, array $items, int $total): void
+    {
+        $itemsTotal = array_sum(array_column($items, 'price'));
+
+        if ($itemsTotal === $total) {
+            return;
+        }
+
+        $this->logger?->error('Zelty order payload is inconsistent: Zelty will reject it', [
+            'order_id'           => $order->getId(),
+            'declared_total'     => $total,
+            'sum_of_item_prices' => $itemsTotal,
+            'difference'         => $total - $itemsTotal,
+        ]);
+    }
+
     private function normalizeItems(OrderInterface $order): array
     {
         $items = [];
@@ -89,7 +118,7 @@ class ZeltyOrderNormalizer implements NormalizerInterface
                 'id'        => (int) $product?->getZeltyInternalId(),
                 'remote_id' => $variant?->getCode(),
                 'type'      => $isMenu ? 'menu' : 'dish',
-                'price'     => $item->getUnitPrice(),
+                'price'     => $this->unitPrice($item),
             ];
 
             if ($variant !== null) {
@@ -123,6 +152,22 @@ class ZeltyOrderNormalizer implements NormalizerInterface
         }
 
         return $items;
+    }
+
+    /**
+     * Paid options are not part of the variant price: OrderOptionsProcessor books
+     * them as per-item "menu_item_modifier" adjustments, which is why they show up
+     * in getItemsTotal() but not in getUnitPrice(). Zelty ignores modifiers[].price
+     * when it totals an order, so the surcharge has to be folded in here.
+     */
+    private function unitPrice(mixed $item): int
+    {
+        $quantity = max(1, $item->getQuantity());
+        $modifiers = $item->getAdjustmentsTotal(AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT);
+
+        // The adjustment is booked for the whole line, and is a per-unit amount
+        // multiplied by the quantity, so this division is exact.
+        return $item->getUnitPrice() + intdiv($modifiers, $quantity);
     }
 
     private function deliveryFee(OrderInterface $order): int

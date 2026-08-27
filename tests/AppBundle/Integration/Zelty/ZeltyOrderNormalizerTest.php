@@ -10,6 +10,7 @@ use AppBundle\Entity\Sylius\ProductOption;
 use AppBundle\Entity\Sylius\ProductOptionValue;
 use AppBundle\Entity\Sylius\ProductVariant;
 use AppBundle\Integration\Zelty\ZeltyOrderNormalizer;
+use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
@@ -232,6 +233,116 @@ class ZeltyOrderNormalizerTest extends TestCase
         $order = $this->createMock(OrderInterface::class);
         $this->assertTrue($this->normalizer->supportsNormalization($order));
         $this->assertFalse($this->normalizer->supportsNormalization(new \stdClass()));
+    }
+
+    /**
+     * Paid options live in "menu_item_modifier" adjustments, not in the unit price.
+     * Zelty totals an order from the item prices alone — it ignores
+     * modifiers[].price — so leaving them out made it reject the whole push with
+     * "Does not match calculated total".
+     */
+    public function testPaidOptionIsFoldedIntoTheItemPrice(): void
+    {
+        $product = new Product();
+        $product->setMetadata(['zelty_id' => 'ZD1198738', 'zelty_internal_id' => '1198738']);
+
+        $option = new ProductOption();
+        $option->setCode('ZO267562_46');
+
+        $optionValue = new ProductOptionValue();
+        $optionValue->setMetadata(['zelty_id' => 'ZOV1356199', 'zelty_internal_id' => '1356199']);
+        $optionValue->setPrice(100);
+        $optionValue->setOption($option);
+
+        $variant = $this->createMock(ProductVariant::class);
+        $variant->method('getCode')->willReturn('ZD1198738_variant');
+        $variant->method('getProduct')->willReturn($product);
+        $variant->method('getOptionValues')->willReturn(new ArrayCollection([$optionValue]));
+
+        // "Box de poulet croustillant Panko" at 8,90 € + 1,00 € of marinade
+        $item = $this->createMock(OrderItem::class);
+        $item->method('getVariant')->willReturn($variant);
+        $item->method('getUnitPrice')->willReturn(890);
+        $item->method('getQuantity')->willReturn(1);
+        $item->method('getAdjustmentsTotal')
+            ->with(AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT)
+            ->willReturn(100);
+
+        $order = $this->buildMinimalOrder([$item], 990);
+
+        $payload = $this->normalizer->normalize($order);
+
+        $this->assertSame(990, $payload['items'][0]['price']);
+        $this->assertSame(990, $payload['total']);
+        // Still reported, even though Zelty does not total them
+        $this->assertSame(100, $payload['items'][0]['modifiers'][0]['price']);
+    }
+
+    public function testPaidOptionIsFoldedIntoEachUnitOfTheLine(): void
+    {
+        $product = new Product();
+        $product->setMetadata(['zelty_id' => 'ZD1946813', 'zelty_internal_id' => '1946813']);
+
+        $option = new ProductOption();
+        $option->setCode('ZO22956_46');
+
+        $optionValue = new ProductOptionValue();
+        $optionValue->setMetadata(['zelty_id' => 'ZOV135603', 'zelty_internal_id' => '135603']);
+        $optionValue->setPrice(50);
+        $optionValue->setOption($option);
+
+        $variant = $this->createMock(ProductVariant::class);
+        $variant->method('getCode')->willReturn('ZD1946813_variant');
+        $variant->method('getProduct')->willReturn($product);
+        $variant->method('getOptionValues')->willReturn(new ArrayCollection([$optionValue]));
+
+        // 3 × (11,90 € + 0,50 €): the adjustment is booked for the whole line
+        $item = $this->createMock(OrderItem::class);
+        $item->method('getVariant')->willReturn($variant);
+        $item->method('getUnitPrice')->willReturn(1190);
+        $item->method('getQuantity')->willReturn(3);
+        $item->method('getAdjustmentsTotal')
+            ->with(AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT)
+            ->willReturn(150);
+
+        $order = $this->buildMinimalOrder([$item], 3720);
+
+        $payload = $this->normalizer->normalize($order);
+
+        $this->assertCount(3, $payload['items']);
+        foreach ($payload['items'] as $entry) {
+            $this->assertSame(1240, $entry['price']);
+        }
+        $this->assertSame(3720, array_sum(array_column($payload['items'], 'price')));
+    }
+
+    public function testAnInconsistentPayloadIsLogged(): void
+    {
+        $product = new Product();
+        $product->setMetadata(['zelty_id' => 'ZD1983', 'zelty_internal_id' => '1983']);
+
+        $variant = $this->createMock(ProductVariant::class);
+        $variant->method('getCode')->willReturn('ZD1983_variant');
+        $variant->method('getProduct')->willReturn($product);
+        $variant->method('getOptionValues')->willReturn(new ArrayCollection());
+
+        $item = $this->createMock(OrderItem::class);
+        $item->method('getVariant')->willReturn($variant);
+        $item->method('getUnitPrice')->willReturn(1000);
+        $item->method('getQuantity')->willReturn(1);
+
+        // The order total says 1200, the single item says 1000
+        $order = $this->buildMinimalOrder([$item], 1200);
+
+        $logger = $this->createMock(\Psr\Log\LoggerInterface::class);
+        $logger->expects($this->once())
+            ->method('error')
+            ->with(
+                $this->stringContains('inconsistent'),
+                $this->callback(fn(array $context) => $context['difference'] === 200)
+            );
+
+        (new ZeltyOrderNormalizer($logger))->normalize($order);
     }
 
     private function buildMinimalOrder(array $items, int $total, ?string $notes = null): OrderInterface&\PHPUnit\Framework\MockObject\MockObject
