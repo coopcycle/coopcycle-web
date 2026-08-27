@@ -25,6 +25,7 @@ class ShopifyController extends AbstractController
         private string $shopifyApiKey,
         private string $shopifyApiSecret,
         private string $shopifyGatewaySecret,
+        private string $shopifyThemeExtensionUuid,
         private string $country,
         private EntityManagerInterface $entityManager,
         private ShopifyClient $shopifyClient,
@@ -92,8 +93,33 @@ class ShopifyController extends AbstractController
         $this->setupShop($shop, $token, tenantUrl: $request->getSchemeAndHttpHost());
 
         return $this->render('shopify/installed.html.twig', [
-            'shop' => $shop,
+            'shop'            => $shop,
+            'picker_deeplink' => $this->pickerDeepLink($shop),
         ]);
+    }
+
+    /**
+     * Deep link that opens the theme editor on the Cart template with the date
+     * picker app block already inserted, so the merchant only has to press Save.
+     *
+     * The block is an app *block* ("target": "section"), not an app embed, so it
+     * never shows up under App embeds and merchants reliably fail to find it by
+     * hand. `mainSection` drops it into the cart template's main section.
+     *
+     * Null when no extension UUID is configured; the page then falls back to the
+     * manual steps, which it shows either way.
+     */
+    private function pickerDeepLink(string $shop): ?string
+    {
+        if ('' === $this->shopifyThemeExtensionUuid) {
+            return null;
+        }
+
+        return sprintf(
+            'https://%s/admin/themes/current/editor?template=cart&addAppBlockId=%s/date_picker&target=mainSection',
+            $shop,
+            rawurlencode($this->shopifyThemeExtensionUuid)
+        );
     }
 
     /**

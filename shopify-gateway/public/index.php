@@ -22,6 +22,10 @@ $handler = new OAuthHandler(
     gatewaySecret: env('GATEWAY_SECRET'),
     appUrl:        rtrim(env('APP_URL'), '/'),
     tenantsEnv:    env('TENANTS'),
+    // Lets the post-install page deep-link the date picker straight into the
+    // merchant's cart template. Defaults to the published CoopCycle app's
+    // extension; a gateway running its own Shopify app must override it.
+    themeExtensionUuid: env('THEME_EXTENSION_UUID', '019f04e9-810f-72fb-a20f-4a1a7fafc774'),
 );
 
 // HEAD must route exactly like GET (RFC 9110): nginx health probes and uptime

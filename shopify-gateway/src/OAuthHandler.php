@@ -18,6 +18,12 @@ class OAuthHandler
         'shop/redact',
     ];
 
+    /**
+     * File name of the app block inside the theme app extension, without the
+     * `.liquid` suffix — the second half of a theme editor `addAppBlockId`.
+     */
+    private const PICKER_BLOCK_HANDLE = 'date_picker';
+
     public function __construct(
         private readonly ShopStore $shopStore,
         private readonly string $apiKey,
@@ -25,6 +31,7 @@ class OAuthHandler
         private readonly string $gatewaySecret,
         private readonly string $appUrl,
         private readonly string $tenantsEnv = '',
+        private readonly string $themeExtensionUuid = '',
     ) {}
 
     /**
@@ -244,9 +251,10 @@ class OAuthHandler
         // delivery-zone setup steps, which the merchant still has to complete in
         // Shopify before any order can be dispatched.
         $this->render('home', [
-            'shop'      => $pending['shop_domain'],
-            'tenantUrl' => $tenant,
-            'backUrl'   => $this->adminBackUrl((string) ($pending['host'] ?? '')),
+            'shop'         => $pending['shop_domain'],
+            'tenantUrl'    => $tenant,
+            'backUrl'      => $this->adminBackUrl((string) ($pending['host'] ?? '')),
+            'pickerDeepLink' => $this->pickerDeepLink($pending['shop_domain']),
         ]);
     }
 
@@ -330,9 +338,10 @@ class OAuthHandler
                 $this->shopStore->finishInstall($pendingId);
 
                 $this->render('home', [
-                    'shop'      => $shop,
-                    'tenantUrl' => $knownTenant,
-                    'backUrl'   => $this->adminBackUrl($host),
+                    'shop'         => $shop,
+                    'tenantUrl'    => $knownTenant,
+                    'backUrl'      => $this->adminBackUrl($host),
+                    'pickerDeepLink' => $this->pickerDeepLink($shop),
                 ]);
 
                 return;
@@ -369,6 +378,34 @@ class OAuthHandler
         $decoded = base64_decode($host, strict: false);
 
         return $decoded ? 'https://' . $decoded . '/settings/shipping' : null;
+    }
+
+    /**
+     * Deep link that opens the theme editor on the Cart template with the date
+     * picker app block already inserted, so the merchant only has to press Save.
+     *
+     * The block is an app *block* (`"target": "section"`), not an app embed, so
+     * it never appears under App embeds and merchants reliably fail to find it
+     * by hand — which is exactly what this link is for. `mainSection` drops it
+     * into the cart template's main section.
+     *
+     * Null when no extension UUID is configured, in which case the setup page
+     * falls back to the manual steps. The UUID is the theme app extension's
+     * registration id, stable across app versions and readable from
+     * `.shopify/deploy-bundle/manifest.json` after a deploy.
+     */
+    private function pickerDeepLink(string $shop): ?string
+    {
+        if ('' === $this->themeExtensionUuid || '' === $shop) {
+            return null;
+        }
+
+        return sprintf(
+            'https://%s/admin/themes/current/editor?template=cart&addAppBlockId=%s/%s&target=mainSection',
+            $shop,
+            rawurlencode($this->themeExtensionUuid),
+            rawurlencode(self::PICKER_BLOCK_HANDLE),
+        );
     }
 
     /**

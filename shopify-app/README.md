@@ -71,6 +71,19 @@ released** for the block to appear in a merchant's theme editor — check
 
 ## Adding the date picker to a theme
 
+Merchants do not have to do this by hand: the post-install page — served by the
+gateway, and by the tenant on the direct install path — offers a **deep link**
+that opens the theme editor on the Cart template with the block already
+inserted, so all that is left is to press *Save*. The manual steps below are the
+fallback shown alongside it.
+
+That link is built from the theme app extension's **UUID**, which is not the
+`uid` in `shopify.extension.toml`. Read it from the `theme_app_extension` module
+in `.shopify/deploy-bundle/manifest.json` after `shopify app deploy`. Both sides
+default to the published app's UUID; override it only when running your own
+Shopify app, via `THEME_EXTENSION_UUID` on the gateway and
+`SHOPIFY_THEME_EXTENSION_UUID` on the tenant.
+
 The picker is a **theme app extension app block** targeting a section, so it is
 added in the theme editor on the **Cart** template — not in the checkout editor,
 and not under *App embeds*:
