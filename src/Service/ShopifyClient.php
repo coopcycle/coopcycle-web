@@ -3,6 +3,7 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\Shopify\ShopifyShop;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
@@ -13,8 +14,111 @@ class ShopifyClient
 {
     public function __construct(
         private HttpClientInterface $httpClient,
+        private EntityManagerInterface $entityManager,
+        private string $shopifyApiKey,
+        private string $shopifyApiSecret,
         private LoggerInterface $logger = new NullLogger(),
     ) {}
+
+    /**
+     * Offline access tokens expire after an hour, so every call has to be
+     * prepared to renew one. This runs server-side with no merchant present,
+     * which is the whole point — webhooks and cron commands must keep working.
+     *
+     * Returns false when the token is expired and cannot be renewed; callers
+     * then fail as they would for any other API error.
+     */
+    private function ensureFreshToken(ShopifyShop $shop): bool
+    {
+        if (!$shop->isAccessTokenExpired()) {
+            return true;
+        }
+
+        $refreshToken = $shop->getRefreshToken();
+
+        if (!$refreshToken) {
+            $this->logger->error(sprintf(
+                'Shopify access token for %s has expired and there is no refresh token. '
+                . 'The shop must reinstall the app.',
+                $shop->getShopDomain()
+            ));
+
+            return false;
+        }
+
+        try {
+            $response = $this->httpClient->request(
+                'POST',
+                sprintf('https://%s/admin/oauth/access_token', $shop->getShopDomain()),
+                [
+                    'body' => [
+                        'client_id'     => $this->shopifyApiKey,
+                        'client_secret' => $this->shopifyApiSecret,
+                        'grant_type'    => 'refresh_token',
+                        'refresh_token' => $refreshToken,
+                    ],
+                ]
+            );
+
+            if ($response->getStatusCode() !== 200) {
+                $this->logger->error(sprintf(
+                    'Refreshing the Shopify access token for %s returned HTTP %d: %s',
+                    $shop->getShopDomain(),
+                    $response->getStatusCode(),
+                    $response->getContent(false)
+                ));
+
+                return false;
+            }
+
+            $data = $response->toArray(false);
+        } catch (HttpExceptionInterface | TransportExceptionInterface $e) {
+            $this->logger->error(sprintf(
+                'Refreshing the Shopify access token for %s failed: %s',
+                $shop->getShopDomain(),
+                $e->getMessage()
+            ));
+
+            return false;
+        }
+
+        if (empty($data['access_token'])) {
+            $this->logger->error(sprintf(
+                'Refresh response for %s contained no access token.',
+                $shop->getShopDomain()
+            ));
+
+            return false;
+        }
+
+        $this->applyTokenResponse($shop, $data);
+        $this->entityManager->flush();
+
+        $this->logger->info(sprintf('Refreshed the Shopify access token for %s.', $shop->getShopDomain()));
+
+        return true;
+    }
+
+    /**
+     * Copies an /admin/oauth/access_token response onto the shop. Shared by the
+     * refresh above and by the install flow, so both record expiry the same way.
+     * A response without `expires_in` is a non-expiring token, which the Admin
+     * API no longer accepts — recorded as such rather than silently trusted.
+     */
+    public function applyTokenResponse(ShopifyShop $shop, array $data): void
+    {
+        $shop->setAccessToken($data['access_token']);
+
+        if (isset($data['refresh_token'])) {
+            $shop->setRefreshToken($data['refresh_token']);
+        }
+
+        $shop->setAccessTokenExpiresAt(
+            isset($data['expires_in'])
+                ? new \DateTime(sprintf('@%d', time() + (int) $data['expires_in']))
+                : null
+        );
+    }
 
     public function registerWebhook(ShopifyShop $shop, string $topic, string $callbackUrl): ?string
     {
@@ -159,6 +263,10 @@ class ShopifyClient
 
     private function request(ShopifyShop $shop, string $method, string $path, array $body = []): ?array
     {
+        if (!$this->ensureFreshToken($shop)) {
+            return null;
+        }
+
         $url = sprintf('https://%s/admin/api/2025-10/%s', $shop->getShopDomain(), $path);
 
         try {

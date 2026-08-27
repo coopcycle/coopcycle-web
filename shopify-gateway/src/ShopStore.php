@@ -80,7 +80,13 @@ class ShopStore
      * Park a freshly issued access token until the merchant has picked their
      * cooperative. Returns the id used to reclaim it.
      */
-    public function beginInstall(string $shopDomain, string $accessToken, ?string $host): string
+    /**
+     * @param array $token the whole /admin/oauth/access_token response. The
+     *                     refresh token matters as much as the access token —
+     *                     without it the cooperative cannot renew and stops
+     *                     working an hour after install.
+     */
+    public function beginInstall(string $shopDomain, array $token, ?string $host): string
     {
         $id = bin2hex(random_bytes(16));
 
@@ -88,26 +94,28 @@ class ShopStore
         $this->purgeExpiredInstalls($connection);
 
         $connection->prepare(
-            'INSERT INTO pending_installs (id, shop_domain, access_token, host, created_at)
-             VALUES (:id, :shop, :token, :host, :now)'
+            'INSERT INTO pending_installs (id, shop_domain, access_token, refresh_token, expires_in, host, created_at)
+             VALUES (:id, :shop, :token, :refresh, :expires, :host, :now)'
         )->execute([
-            'id'    => $id,
-            'shop'  => $shopDomain,
-            'token' => $accessToken,
-            'host'  => $host,
-            'now'   => time(),
+            'id'      => $id,
+            'shop'    => $shopDomain,
+            'token'   => $token['access_token'],
+            'refresh' => $token['refresh_token'] ?? null,
+            'expires' => isset($token['expires_in']) ? (int) $token['expires_in'] : null,
+            'host'    => $host,
+            'now'     => time(),
         ]);
 
         return $id;
     }
 
     /**
-     * @return array{shop_domain: string, access_token: string, host: ?string}|null
+     * @return array{shop_domain: string, access_token: string, refresh_token: ?string, expires_in: ?int, host: ?string}|null
      */
     public function pendingInstall(string $id): ?array
     {
         $statement = $this->connection()->prepare(
-            'SELECT shop_domain, access_token, host FROM pending_installs
+            'SELECT shop_domain, access_token, refresh_token, expires_in, host FROM pending_installs
              WHERE id = :id AND created_at > :cutoff'
         );
         $statement->execute([
@@ -165,10 +173,25 @@ class ShopStore
                 id           TEXT PRIMARY KEY,
                 shop_domain  TEXT NOT NULL,
                 access_token TEXT NOT NULL,
+                refresh_token TEXT,
+                expires_in   INTEGER,
                 host         TEXT,
                 created_at   INTEGER NOT NULL
             )'
         );
+
+        // Deployed gateways already have this table from before expiring tokens
+        // existed; add the new columns in place rather than losing the mapping.
+        $columns = array_column(
+            $this->pdo->query('PRAGMA table_info(pending_installs)')->fetchAll(\PDO::FETCH_ASSOC),
+            'name'
+        );
+
+        foreach (['refresh_token' => 'TEXT', 'expires_in' => 'INTEGER'] as $column => $type) {
+            if (!in_array($column, $columns, true)) {
+                $this->pdo->exec(sprintf('ALTER TABLE pending_installs ADD COLUMN %s %s', $column, $type));
+            }
+        }
 
         return $this->pdo;
     }

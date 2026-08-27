@@ -6,6 +6,8 @@
     </id>
     <field name="shopDomain" type="string" column="shop_domain" unique="true"/>
     <field name="accessToken" type="string" column="access_token"/>
+    <field name="refreshToken" type="string" column="refresh_token" nullable="true"/>
+    <field name="accessTokenExpiresAt" type="datetime" column="access_token_expires_at" nullable="true"/>
     <field name="webhookSecret" type="string" column="webhook_secret"/>
     <field name="fulfillmentServiceId" type="string" column="fulfillment_service_id" nullable="true"/>
     <many-to-one field="store" target-entity="AppBundle\Entity\Store">

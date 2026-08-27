@@ -227,7 +227,11 @@ class OAuthHandler
         }
 
         try {
-            $this->provisionTenant($tenant, $pending['shop_domain'], $pending['access_token'], $storeId);
+            $this->provisionTenant($tenant, $pending['shop_domain'], [
+                'access_token'  => $pending['access_token'],
+                'refresh_token' => $pending['refresh_token'] ?? null,
+                'expires_in'    => $pending['expires_in'] ?? null,
+            ], $storeId);
         } catch (\RuntimeException $e) {
             $this->render('error', ['message' => $e->getMessage()]);
             return;
@@ -289,8 +293,8 @@ class OAuthHandler
             return;
         }
 
-        $accessToken = $this->exchangeCodeForToken($shop, $code);
-        if (!$accessToken) {
+        $token = $this->exchangeCodeForToken($shop, $code);
+        if (!$token) {
             $this->render('error', ['message' => 'Could not obtain an access token from Shopify. The authorisation code may have expired.']);
             return;
         }
@@ -298,7 +302,7 @@ class OAuthHandler
         $host = (string) ($stateData['host'] ?? '');
 
         try {
-            $pendingId = $this->shopStore->beginInstall($shop, $accessToken, $host !== '' ? $host : null);
+            $pendingId = $this->shopStore->beginInstall($shop, $token, $host !== '' ? $host : null);
         } catch (\Throwable $e) {
             error_log('shopify-gateway: could not park the install: ' . $e->getMessage());
             $this->render('error', ['message' => 'Could not start the installation. Please try again.']);
@@ -339,13 +343,19 @@ class OAuthHandler
 
     // -------------------------------------------------------------------------
 
-    private function exchangeCodeForToken(string $shop, string $code): ?string
+    /**
+     * @return array|null the raw token response. The Admin API stopped
+     *                    accepting non-expiring offline tokens, so this asks for
+     *                    an expiring one and the refresh token that renews it.
+     */
+    private function exchangeCodeForToken(string $shop, string $code): ?array
     {
         $url  = sprintf('https://%s/admin/oauth/access_token', $shop);
         $body = json_encode([
             'client_id'     => $this->apiKey,
             'client_secret' => $this->apiSecret,
             'code'          => $code,
+            'expiring'      => 1,
         ]);
 
         $response = $this->httpPost($url, $body, ['Content-Type: application/json', 'Accept: application/json']);
@@ -355,19 +365,27 @@ class OAuthHandler
         }
 
         $data = json_decode($response['body'], true);
-        return $data['access_token'] ?? null;
+        return isset($data['access_token']) ? $data : null;
     }
 
     /**
      * Calls the CoopCycle tenant's provision endpoint to register the shop
      * and link it to the chosen Store.
      */
-    private function provisionTenant(string $tenantUrl, string $shopDomain, string $accessToken, ?int $storeId): void
+    private function provisionTenant(string $tenantUrl, string $shopDomain, array $token, ?int $storeId): void
     {
         $payload = [
             'shop_domain'  => $shopDomain,
-            'access_token' => $accessToken,
+            'access_token' => $token['access_token'],
         ];
+        // Without these the cooperative holds a token it cannot renew, and every
+        // API call starts failing an hour after install.
+        if (isset($token['refresh_token'])) {
+            $payload['refresh_token'] = $token['refresh_token'];
+        }
+        if (isset($token['expires_in'])) {
+            $payload['expires_in'] = $token['expires_in'];
+        }
         if ($storeId !== null) {
             $payload['store_id'] = $storeId;
         }

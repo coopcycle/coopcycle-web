@@ -15,6 +15,15 @@ class ShopifyShop
 
     private string $accessToken;
 
+    /**
+     * Offline access tokens now expire after an hour. The refresh token (valid
+     * 90 days) renews them server-side, with no merchant interaction — which is
+     * what lets webhooks and background commands keep working.
+     */
+    private ?string $refreshToken = null;
+
+    private ?\DateTimeInterface $accessTokenExpiresAt = null;
+
     private string $webhookSecret;
 
     private ?string $fulfillmentServiceId = null;
@@ -48,6 +57,45 @@ class ShopifyShop
         $this->accessToken = $accessToken;
 
         return $this;
+    }
+
+    public function getRefreshToken(): ?string
+    {
+        return $this->refreshToken;
+    }
+
+    public function setRefreshToken(?string $refreshToken): self
+    {
+        $this->refreshToken = $refreshToken;
+
+        return $this;
+    }
+
+    public function getAccessTokenExpiresAt(): ?\DateTimeInterface
+    {
+        return $this->accessTokenExpiresAt;
+    }
+
+    public function setAccessTokenExpiresAt(?\DateTimeInterface $accessTokenExpiresAt): self
+    {
+        $this->accessTokenExpiresAt = $accessTokenExpiresAt;
+
+        return $this;
+    }
+
+    /**
+     * Refreshed a minute early so a token cannot expire between the check and
+     * the request that uses it. A shop with no expiry recorded predates expiring
+     * tokens and is treated as needing a refresh it cannot do — the caller then
+     * surfaces Shopify's own error rather than guessing.
+     */
+    public function isAccessTokenExpired(): bool
+    {
+        if (null === $this->accessTokenExpiresAt) {
+            return false;
+        }
+
+        return $this->accessTokenExpiresAt->getTimestamp() - 60 <= time();
     }
 
     public function getWebhookSecret(): string

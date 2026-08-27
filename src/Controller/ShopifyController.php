@@ -84,12 +84,12 @@ class ShopifyController extends AbstractController
             throw new BadRequestHttpException('HMAC verification failed.');
         }
 
-        $accessToken = $this->exchangeCodeForToken($shop, $code);
-        if (!$accessToken) {
+        $token = $this->exchangeCodeForToken($shop, $code);
+        if (!$token) {
             throw new BadRequestHttpException('Failed to obtain access token.');
         }
 
-        $this->setupShop($shop, $accessToken, tenantUrl: $request->getSchemeAndHttpHost());
+        $this->setupShop($shop, $token, tenantUrl: $request->getSchemeAndHttpHost());
 
         return $this->render('shopify/installed.html.twig', [
             'shop' => $shop,
@@ -193,7 +193,15 @@ class ShopifyController extends AbstractController
 
         $storeId = isset($data['store_id']) ? (int) $data['store_id'] : null;
 
-        $this->setupShop($shopDomain, $accessToken, $storeId, tenantUrl: $request->getSchemeAndHttpHost());
+        // The gateway forwards the whole token response; older gateways send
+        // only the access token, which still installs but cannot be refreshed.
+        $token = array_filter([
+            'access_token'  => $accessToken,
+            'refresh_token' => $data['refresh_token'] ?? null,
+            'expires_in'    => $data['expires_in'] ?? null,
+        ], fn ($value) => null !== $value);
+
+        $this->setupShop($shopDomain, $token, $storeId, tenantUrl: $request->getSchemeAndHttpHost());
 
         return new JsonResponse(['success' => true]);
     }
@@ -314,7 +322,11 @@ class ShopifyController extends AbstractController
         return new JsonResponse(['slots' => $slots], 200, $corsHeaders);
     }
 
-    private function setupShop(string $shopDomain, string $accessToken, ?int $storeId = null, ?string $tenantUrl = null): void
+    /**
+     * @param array $token the /admin/oauth/access_token response: access_token,
+     *                     plus refresh_token and expires_in for expiring tokens
+     */
+    private function setupShop(string $shopDomain, array $token, ?int $storeId = null, ?string $tenantUrl = null): void
     {
         $shopEntity = $this->entityManager->getRepository(ShopifyShop::class)
             ->findOneBy(['shopDomain' => $shopDomain]);
@@ -324,7 +336,18 @@ class ShopifyController extends AbstractController
             $shopEntity->setShopDomain($shopDomain);
         }
 
-        $shopEntity->setAccessToken($accessToken);
+        // Records the access token, the refresh token and the expiry together,
+        // the same way a later refresh does.
+        $this->shopifyClient->applyTokenResponse($shopEntity, $token);
+
+        if (null === $shopEntity->getAccessTokenExpiresAt()) {
+            $this->logger->warning(sprintf(
+                'Shopify returned a non-expiring token for "%s". The Admin API no longer accepts these — '
+                . 'check that the token request sends expiring=1.',
+                $shopDomain
+            ));
+        }
+
         // Shopify signs all webhooks with the app's API secret.
         $shopEntity->setWebhookSecret($this->shopifyApiSecret);
 
@@ -359,7 +382,11 @@ class ShopifyController extends AbstractController
         $this->shopifyClient->registerWebhook($shopEntity, 'orders/cancelled', $webhookUrl);
     }
 
-    private function exchangeCodeForToken(string $shop, string $code): ?string
+    /**
+     * @return array|null the raw token response — Shopify now returns a refresh
+     *                    token and an expiry alongside the access token
+     */
+    private function exchangeCodeForToken(string $shop, string $code): ?array
     {
         $url = sprintf('https://%s/admin/oauth/access_token', $shop);
 
@@ -370,6 +397,9 @@ class ShopifyController extends AbstractController
             'client_id'     => $this->shopifyApiKey,
             'client_secret' => $this->shopifyApiSecret,
             'code'          => $code,
+            // The Admin API stopped accepting non-expiring offline tokens.
+            // Without this the install succeeds and every later API call 403s.
+            'expiring'      => 1,
         ]));
         curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded']);
 
@@ -384,7 +414,7 @@ class ShopifyController extends AbstractController
 
         $data = json_decode($body, true);
 
-        return $data['access_token'] ?? null;
+        return isset($data['access_token']) ? $data : null;
     }
 
     private function verifyHmac(array $queryParams, string $hmac): bool
