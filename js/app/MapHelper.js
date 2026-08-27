@@ -6,6 +6,8 @@ import 'leaflet-arrowheads'
 
 import Polyline from '@mapbox/polyline'
 
+import { addBaseMapLayer, MAX_ZOOM } from './BaseMap'
+
 import ColorHash from 'color-hash'
 
 require('beautifymarker')
@@ -45,7 +47,7 @@ function init(id, options = {}) {
     return map
   }
 
-  map = L.map(id, { scrollWheelZoom: false, zoomControl })
+  map = L.map(id, { scrollWheelZoom: false, zoomControl, maxZoom: MAX_ZOOM })
 
   L.control.scale({position:'bottomright', metric: true, imperial: false}).addTo(map);
 
@@ -81,10 +83,7 @@ function init(id, options = {}) {
     map.setView(center, zoom)
   }
 
-  L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png', {
-    maxZoom: 18,
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy;<a href="https://carto.com/attribution">CARTO</a>'
-  }).addTo(map)
+  addBaseMapLayer(map, { style: options.style })
 
   return map
 }

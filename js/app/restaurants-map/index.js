@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import L from 'leaflet-providers'
+import L from 'leaflet'
 require('beautifymarker')
 
 import MapHelper from '../MapHelper'

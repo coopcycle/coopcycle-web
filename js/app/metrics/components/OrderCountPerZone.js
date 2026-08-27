@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { useCubeQuery } from '@cubejs-client/react';
 import { Spin } from 'antd';
 import L from 'leaflet'
-import 'leaflet-providers'
 import chroma from 'chroma-js'
 import _ from 'lodash'
 
 import { getCubeDateRange } from '../utils'
+import { addBaseMapLayer, MAX_ZOOM } from '../../BaseMap'
 
 const el = document.querySelector('#cpccl_settings')
 let center
@@ -46,8 +46,8 @@ const Chart = ({ dateRange }) => {
   });
 
   useEffect(() => {
-    const LMap = L.map('order-count-per-zone-map').setView(center, 11)
-    const LTileLayer = L.tileLayer.provider('CartoDB.PositronNoLabels').addTo(LMap)
+    const LMap = L.map('order-count-per-zone-map', { maxZoom: MAX_ZOOM }).setView(center, 11)
+    const LTileLayer = addBaseMapLayer(LMap, { style: 'positron' })
     setMap(LMap)
     setTileLayer(LTileLayer)
   }, [])

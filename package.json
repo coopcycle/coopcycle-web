@@ -24,12 +24,14 @@
   "dependencies": {
     "@geoman-io/leaflet-geoman-free": "^2.18.3",
     "@hello-pangea/dnd": "^16.6.0",
+    "@maplibre/maplibre-gl-leaflet": "^0.1.4",
     "dotenv": "^8.6.0",
     "form-data": "^2.3.3",
     "google-libphonenumber": "^3.2.40",
     "grapesjs": "^0.22.14",
     "grapesjs-mjml": "^1.0.8",
     "lodash": "^4.17.21",
+    "maplibre-gl": "^5.24.0",
     "open-location-code": "^1.0.3",
     "promise": "^8.3.0",
     "react-leaflet": "^4.2.1",
@@ -147,7 +149,6 @@
     "leaflet": "^1.7.1",
     "leaflet-area-select": "^1.1.1",
     "leaflet-arrowheads": "^1.4.0",
-    "leaflet-providers": "^1.13.0",
     "leaflet-swoopy": "^3.4.1",
     "leaflet.markercluster": "^1.5.3",
     "less": "^4.3.0",
@@ -218,7 +219,7 @@
     "x-data-spreadsheet": "^1.1.9"
   },
   "optionalDependencies": {
-    "lightningcss-linux-x64-gnu": "^1.32.0",
-    "@tailwindcss/oxide-linux-x64-gnu": "^4.3.0"
+    "@tailwindcss/oxide-linux-x64-gnu": "^4.3.0",
+    "lightningcss-linux-x64-gnu": "^1.32.0"
   }
 }

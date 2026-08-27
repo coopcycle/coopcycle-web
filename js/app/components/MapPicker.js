@@ -1,7 +1,10 @@
 import React, { useState } from 'react'
 
-import { MapContainer, TileLayer, useMap, useMapEvents } from 'react-leaflet'
+import { MapContainer, useMap, useMapEvents } from 'react-leaflet'
 import MarkerIcon from 'leaflet/dist/images/marker-icon.png'
+
+import BaseMapLayer from './BaseMapLayer'
+import { MAX_ZOOM } from '../BaseMap'
 
 import { useTranslation } from 'react-i18next'
 
@@ -93,6 +96,7 @@ export default function MapPicker({ onSelect, onClose = () => { }, isOpen }) {
         className="mb-3"
         center={coordinates}
         zoom={16}
+        maxZoom={MAX_ZOOM}
         scrollWheelZoom={true}
         style={{
           height: `${mapHeight}px`,
@@ -100,12 +104,7 @@ export default function MapPicker({ onSelect, onClose = () => { }, isOpen }) {
           border: '1px solid #ccc',
           borderRadius: '8px',
         }}>
-        <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-          subdomains="abcd"
-          maxZoom={19}
-        />
+        <BaseMapLayer />
         <CenterMarker onPositionChange={setCoordinates} />
       </MapContainer>
       <button
