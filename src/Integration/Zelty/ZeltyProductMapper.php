@@ -156,26 +156,32 @@ class ZeltyProductMapper
         $price = $dish->price?->price ?? 0;
         $taxCategory = $this->resolveTaxCategory($dish, $taxesMap, $defaultTaxCategory);
 
-        if ($this->hasVariantWithPrice($product, $price)) {
-            //TODO: Check if variant is the default one ?
-            return;
-        }
+        //TODO: Check if variant is the default one ?
+        $variant = $this->findVariantWithPrice($product, $price)
+            ?? $this->createProductVariant($product, $dish->id, $price, $taxCategory);
 
-        $this->createProductVariant($product, $dish->id, $price, $taxCategory);
+        // Order pages and the confirmation e-mail print the *variant* name, not the
+        // product's, so a variant left unnamed shows up as a blank line. Set on every
+        // import, not only on creation: variants created before this fix are still out
+        // there, and nothing else would ever name them.
+        if ($product->getName()) {
+            $variant->setName($product->getName());
+        }
     }
 
     /**
-     * Check if product already has a variant with the given price.
+     * Find a variant of this product already selling at the given price.
      */
-    private function hasVariantWithPrice(Product $product, int $price): bool
+    private function findVariantWithPrice(Product $product, int $price): ?ProductVariant
     {
         /** @var ProductVariant $existingVariant */
         foreach ($product->getVariants() as $existingVariant) {
             if ($existingVariant->getPrice() === $price) {
-                return true;
+                return $existingVariant;
             }
         }
-        return false;
+
+        return null;
     }
 
     /**

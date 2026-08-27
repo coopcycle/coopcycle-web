@@ -62,6 +62,11 @@ Feature: Zelty catalog push webhook
       """
       {"code": "1001_variant", "price": 1200}
       """
+    # Order pages and the confirmation e-mail display the variant name, not the product's
+    And I see entity "AppBundle\Entity\Sylius\ProductVariantTranslation" with properties:
+      """
+      {"name": "Margherita"}
+      """
 
   Scenario: Import catalog with multiple dishes and a menu
     Given the fixtures files are loaded:

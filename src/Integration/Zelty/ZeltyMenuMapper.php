@@ -171,6 +171,12 @@ class ZeltyMenuMapper
         } else {
             $variant->setPrice($price);
         }
+
+        // Order pages and the confirmation e-mail print the variant name, not the
+        // product's — see ZeltyProductMapper::importProductVariant().
+        if ($product->getName()) {
+            $variant->setName($product->getName());
+        }
     }
 
     /**
