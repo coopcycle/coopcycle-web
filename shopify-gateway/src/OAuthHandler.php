@@ -243,13 +243,10 @@ class OAuthHandler
         // `home` is the post-install page: it confirms the link and carries the
         // delivery-zone setup steps, which the merchant still has to complete in
         // Shopify before any order can be dispatched.
-        $host    = $pending['host'] ? base64_decode($pending['host'], strict: false) : '';
-        $backUrl = $host ? 'https://' . $host . '/settings/shipping' : null;
-
         $this->render('home', [
             'shop'      => $pending['shop_domain'],
             'tenantUrl' => $tenant,
-            'backUrl'   => $backUrl,
+            'backUrl'   => $this->adminBackUrl((string) ($pending['host'] ?? '')),
         ]);
     }
 
@@ -310,11 +307,68 @@ class OAuthHandler
         }
 
         // OAuth is done; showing UI is allowed from here on.
+
+        // A shop we already know is not a fresh install — it is a merchant
+        // reopening the app, or reinstalling to grant new scopes. Re-provision
+        // it to the cooperative it is already linked to, silently: that pushes
+        // the newly issued token (and re-registers the webhooks) without asking
+        // the merchant to choose again, and without the risk of them picking a
+        // different cooperative by accident.
+        //
+        // No store_id is sent, so the cooperative keeps whichever store the shop
+        // is already linked to.
+        $knownTenant = null;
+        try {
+            $knownTenant = $this->shopStore->tenantFor($shop);
+        } catch (\Throwable $e) {
+            error_log('shopify-gateway: shop lookup failed: ' . $e->getMessage());
+        }
+
+        if (null !== $knownTenant) {
+            try {
+                $this->provisionTenant($knownTenant, $shop, $token, null);
+                $this->shopStore->finishInstall($pendingId);
+
+                $this->render('home', [
+                    'shop'      => $shop,
+                    'tenantUrl' => $knownTenant,
+                    'backUrl'   => $this->adminBackUrl($host),
+                ]);
+
+                return;
+            } catch (\RuntimeException $e) {
+                // The cooperative is unreachable or no longer accepts us. Fall
+                // through to the picker so the merchant can re-link rather than
+                // being stuck on an error page.
+                error_log(sprintf(
+                    'shopify-gateway: re-provisioning %s to %s failed (%s), falling back to the picker.',
+                    $shop,
+                    $knownTenant,
+                    $e->getMessage()
+                ));
+            }
+        }
+
         $this->render('install', [
             'shop'    => $shop,
             'pending' => $pendingId,
             'tenants' => $this->parseTenants(),
         ]);
+    }
+
+    /**
+     * The Shopify admin page to link back to, from the base64 `host` parameter
+     * that rode through OAuth. Absent when the app was opened directly.
+     */
+    private function adminBackUrl(string $host): ?string
+    {
+        if ('' === $host) {
+            return null;
+        }
+
+        $decoded = base64_decode($host, strict: false);
+
+        return $decoded ? 'https://' . $decoded . '/settings/shipping' : null;
     }
 
     /**
