@@ -63,7 +63,7 @@ export function createBaseMapLayer(options = {}) {
 function removeBuildingExtrusions(glMap) {
   glMap
     .getStyle()
-    .layers.filter(layer => layer.type === 'fill-extrusion')
+    .layers.filter(layer => layer.type === 'fill-extrusion' || layer.id === 'building')
     .forEach(layer => glMap.removeLayer(layer.id))
 }
 
@@ -100,7 +100,7 @@ export function addBaseMapLayer(map, options = {}) {
 
     const onStyleLoaded = () => {
       removeBuildingExtrusions(glMap)
-      //syncBackgroundColor(map, glMap)
+      syncBackgroundColor(map, glMap)
     }
 
     if (glMap.isStyleLoaded()) {
