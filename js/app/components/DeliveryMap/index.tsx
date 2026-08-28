@@ -136,7 +136,7 @@ export default ({ defaultAddress, tasks }: Props) => {
       <MapContainer
         className="embed-responsive-item"
         maxZoom={MAX_ZOOM}
-        scrollWheelZoom={false}>
+        scrollWheelZoom={true}>
         <BaseMapLayer />
 
         {deliveryGeo.length > 0

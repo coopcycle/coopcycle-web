@@ -18,7 +18,7 @@ export const STYLES = {
   positron: 'https://tiles.openfreemap.org/styles/positron',
 }
 
-export const DEFAULT_STYLE = 'liberty'
+export const DEFAULT_STYLE = 'positron'
 
 // The GL layer has no maxZoom of its own (vector tiles are overzoomed), so this
 // has to be set on the Leaflet map itself, where the tile layer used to do it.
@@ -100,7 +100,7 @@ export function addBaseMapLayer(map, options = {}) {
 
     const onStyleLoaded = () => {
       removeBuildingExtrusions(glMap)
-      syncBackgroundColor(map, glMap)
+      //syncBackgroundColor(map, glMap)
     }
 
     if (glMap.isStyleLoaded()) {

@@ -26,6 +26,7 @@ function init(id, options = {}) {
   let center
   let zoom = 13
   let zoomControl = true
+  let scrollWheelZoom = options?.scrollWheelZoom !== false
   let singleton = options?.singleton || false
 
   if (settings.center) {
@@ -47,7 +48,7 @@ function init(id, options = {}) {
     return map
   }
 
-  map = L.map(id, { scrollWheelZoom: false, zoomControl, maxZoom: MAX_ZOOM })
+  map = L.map(id, { scrollWheelZoom, zoomControl, maxZoom: MAX_ZOOM })
 
   L.control.scale({position:'bottomright', metric: true, imperial: false}).addTo(map);
 
