@@ -34,3 +34,7 @@ api_platform:
         json: ['application/json']
     swagger:
         versions: [3]
+    http_cache:
+      invalidation:
+        enabled: true
+        varnish_urls: ['http://varnish']
