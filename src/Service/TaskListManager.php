@@ -8,18 +8,27 @@ use AppBundle\Entity\TaskList;
 use AppBundle\Entity\TaskList\Item;
 use AppBundle\Entity\Tour;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 class TaskListManager {
+
+    private LoggerInterface $logger;
 
     public function __construct(
         protected EntityManagerInterface $entityManager,
         protected IriConverterInterface $iriConverter,
-    ) {}
+        ?LoggerInterface $logger = null,
+    ) {
+        $this->logger = $logger ?? new NullLogger();
+    }
 
     /*
         Assign items (tours and tasks). Works like a PUT, i.e. remove items non-present in $newItemsIris.
     */
     public function assign(TaskList $taskList, $newItemsIris) {
+
+        $newItemsIris = $this->rejectItemsFromOtherDays($taskList, $newItemsIris);
 
         $currentItems =  array_merge(array(), $taskList->getItems()->toArray());
         $currentTasks = array_merge(array(), $taskList->getTasks());
@@ -83,6 +92,71 @@ class TaskListManager {
         foreach ($taskList->getTasks() as $task) {
             $task->assignTo($taskList->getCourier());
         }
+    }
+
+    /**
+     * A task list is a courier's planning for one specific day, so an item may
+     * only be filed on it if the task can actually be carried out that day:
+     * the list's date must fall inside the task's [doneAfter, doneBefore]
+     * window. This is the same rule the API applies when listing the tasks of
+     * a day, @see \AppBundle\Api\Filter\TaskDateFilter.
+     *
+     * A client that is out of sync (a dispatch screen left on another day, say)
+     * can otherwise file tomorrow's task on today's list. The task then has
+     * `assignedTo` set but no item on the list of the day it shows up on, and
+     * vanishes from the dispatch board altogether: it counts as neither
+     * unassigned nor part of any visible task list, and the only way to find it
+     * is the search box.
+     *
+     * Such items are dropped rather than rejected outright, so the rest of the
+     * assignment still goes through: the task simply stays unassigned, visible
+     * on the board for its own day, instead of disappearing. The warning is
+     * there to identify the client that sent it.
+     */
+    private function rejectItemsFromOtherDays(TaskList $taskList, array $newItemsIris): array
+    {
+        $date = $taskList->getDate()->format('Y-m-d');
+
+        return array_values(array_filter($newItemsIris, function ($newItemIri) use ($taskList, $date) {
+
+            $taskOrTour = $this->iriConverter->getResourceFromIri($newItemIri);
+
+            // Tours carry their own date; only tasks are checked here.
+            if (!$taskOrTour instanceof Task) {
+                return true;
+            }
+
+            if ($this->isOnDate($taskOrTour, $date)) {
+                return true;
+            }
+
+            $this->logger->warning(sprintf(
+                'Skipping task %s [%s -> %s] on %s\'s task list for %s: it cannot be carried out that day',
+                $newItemIri,
+                $taskOrTour->getAfter()->format('Y-m-d'),
+                $taskOrTour->getBefore()->format('Y-m-d'),
+                $taskList->getCourier()->getUsername(),
+                $date
+            ));
+
+            return false;
+        }));
+    }
+
+    /**
+     * Can $task be carried out on $date (Y-m-d)? A task with an open-ended
+     * window belongs to no day in particular, and is left alone.
+     */
+    private function isOnDate(Task $task, string $date): bool
+    {
+        $after = $task->getAfter();
+        $before = $task->getBefore();
+
+        if (null === $after || null === $before) {
+            return true;
+        }
+
+        return $date >= $after->format('Y-m-d') && $date <= $before->format('Y-m-d');
     }
 
     /**

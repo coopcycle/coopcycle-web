@@ -56,13 +56,13 @@ AppBundle\Entity\Task:
     status: "DONE"
   task_4:
     address: "@address_1"
-    doneAfter: <identity(new \DateTime('2018-03-03 12:00:00'))>
-    doneBefore: <identity(new \DateTime('2018-03-03 12:30:00'))>
+    doneAfter: <identity(new \DateTime('2018-03-02 12:00:00'))>
+    doneBefore: <identity(new \DateTime('2018-03-02 12:30:00'))>
     comments: "#bob"
   task_5:
     address: "@address_2"
-    doneAfter: <identity(new \DateTime('2018-03-03 13:00:00'))>
-    doneBefore: <identity(new \DateTime('2018-03-03 13:30:00'))>
+    doneAfter: <identity(new \DateTime('2018-03-02 13:00:00'))>
+    doneBefore: <identity(new \DateTime('2018-03-02 13:30:00'))>
     comments: "#bob"
     previous: "@task_4"
   task_6:
@@ -73,8 +73,8 @@ AppBundle\Entity\Task:
     status: "CANCELLED"
   task_7:
     address: "@address_3"
-    doneAfter: <identity(new \DateTime('2018-02-02 12:00:00'))>
-    doneBefore: <identity(new \DateTime('2018-02-02 12:30:00'))>
+    doneAfter: <identity(new \DateTime('2018-03-02 14:00:00'))>
+    doneBefore: <identity(new \DateTime('2018-03-02 14:30:00'))>
     comments: "#bob"
     status: "DONE"
   task_8:
