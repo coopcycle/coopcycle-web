@@ -29,8 +29,17 @@ class ShopifyScopesTest extends TestCase
         return dirname(__DIR__, 3);
     }
 
+    /**
+     * The real shopify.app.toml carries the app's client_id, so it is gitignored
+     * and only exists on a developer machine — on CI there is nothing to check
+     * and shopify.app.toml.example is the tracked source of truth instead.
+     */
     public function testAppTomlDeclaresTheExpectedScopes()
     {
+        if (!file_exists(self::projectDir() . '/shopify-app/shopify.app.toml')) {
+            $this->markTestSkipped('shopify-app/shopify.app.toml is gitignored and absent (expected on CI).');
+        }
+
         $this->assertSame(self::EXPECTED, $this->scopesFromToml('shopify-app/shopify.app.toml'));
     }
 
