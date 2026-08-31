@@ -845,7 +845,7 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('admin_user_edit', ['username' => $user->getUsername()]);
         }
 
-        $isHrAdmin = $this->isGranted('ROLE_ADMIN');
+        $isHrAdmin = $this->getParameter('shift_planning_enabled') && $this->isGranted('ROLE_ADMIN');
         $employeeProfileForm = null;
         $holidayRequests = [];
 
