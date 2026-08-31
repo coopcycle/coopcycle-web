@@ -40,6 +40,34 @@ describe('updateTask', () => {
         expect(actions).toContain(SEND_TO_WAREHOUSE)
     })
 
+    it('should allow sending the dropoffs of several deliveries to a warehouse', () => {
+
+        const selectedTasks = [
+            {'@id': '/api/tasks/730', type: 'DROPOFF', assignedTo: '', previous: '/api/tasks/729', next: null, packages: [], tour: null},
+            {'@id': '/api/tasks/732', type: 'DROPOFF', assignedTo: '', previous: '/api/tasks/731', next: null, packages: [], tour: null},
+        ]
+        const unassignedTasks = selectedTasks
+        const linkedTasksIds = ['/api/tasks/729', '/api/tasks/730', '/api/tasks/731', '/api/tasks/732']
+
+        const actions = getAvailableActionsForTasks(selectedTasks, unassignedTasks, linkedTasksIds)
+
+        expect(actions).toContain(SEND_TO_WAREHOUSE)
+    })
+
+    it('should not offer warehouse relay when one of several selected tasks is unlinked', () => {
+
+        const selectedTasks = [
+            {'@id': '/api/tasks/730', type: 'DROPOFF', assignedTo: '', previous: '/api/tasks/729', next: null, packages: [], tour: null},
+            {'@id': '/api/tasks/732', type: 'DROPOFF', assignedTo: '', previous: null, next: null, packages: [], tour: null},
+        ]
+        const unassignedTasks = selectedTasks
+        const linkedTasksIds = ['/api/tasks/729', '/api/tasks/730']
+
+        const actions = getAvailableActionsForTasks(selectedTasks, unassignedTasks, linkedTasksIds)
+
+        expect(actions).not.toContain(SEND_TO_WAREHOUSE)
+    })
+
     it('should not offer warehouse relay for a single unlinked task', () => {
 
         const selectedTasks = [{'@id': '/api/tasks/730', type: 'DROPOFF', assignedTo: '', previous: null, next: null, packages: [], tour: null}]
