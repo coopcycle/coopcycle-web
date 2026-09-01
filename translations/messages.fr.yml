@@ -898,6 +898,7 @@ promotions.create_credit_note_coupon: Créer un avoir commercial
 delivery.table.heading.summary: Résumé
 delivery.table.heading.courier: Coursier
 delivery.table.heading.order: Commande
+delivery.table.heading.external_reference: Référence externe
 delivery.barcodes.show: Voir les codes-barres
 search.users: Rechercher un utilisateur…
 allergens.CEREALS_CONTAINING_GLUTEN: Céréales contenant du gluten
