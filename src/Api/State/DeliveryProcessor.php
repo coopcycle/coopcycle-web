@@ -162,6 +162,10 @@ class DeliveryProcessor implements ProcessorInterface
             if ($data->weight) {
                 $delivery->setWeight($data->weight);
             }
+
+            if (!is_null($data->externalReference)) {
+                $delivery->setExternalReference($data->externalReference);
+            }
         }
 
         return $delivery;
