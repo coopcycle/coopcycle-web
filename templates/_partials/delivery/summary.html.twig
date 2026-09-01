@@ -15,6 +15,14 @@
     </li>
     {% endfor %}
 </ul>
+{% if delivery.externalReference is not empty %}
+  <span
+    class="delivery-list__external-ref"
+    title="{{ 'delivery.table.heading.external_reference'|trans }}">
+    <i class="fa fa-hashtag"></i>
+    <span>{{ delivery.externalReference }}</span>
+  </span>
+{% endif %}
 {% set details = [ delivery.distance|meters_to_kilometers ] %}
 {% if delivery.weight is not empty %}
     {% set details = details|merge([ delivery.weight|grams_to_kilos ]) %}
