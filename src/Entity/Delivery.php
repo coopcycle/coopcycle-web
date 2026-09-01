@@ -229,6 +229,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
      * the delivery as a whole and is used to correlate the delivery with the
      * remote system that produced it.
      */
+    #[Groups(['delivery', 'delivery_create'])]
     private ?string $externalReference = null;
 
     public function __construct()
