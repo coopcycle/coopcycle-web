@@ -576,6 +576,8 @@ index.view_all_restaurants: Ver todos los comercios y restaurantes
 notifications.empty: Ninguna notificación
 notifications.tap_to_open: Toque para abrir
 notifications.delivery_created: Una entrega para recoger el %date% ha sido creado
+notifications.deliveries_created: '%count% entregas para recoger el %date% han sido creadas'
+notifications.deliveries_created.no_date: '%count% entregas han sido creadas'
 notifications.tasks_changed: Tarea para %date% cambiada!
 notifications.tasks_changed_today: Sus tareas de hoy se han actualizado
 notifications.restaurant.new_order: Nuevo pedido por confirmar

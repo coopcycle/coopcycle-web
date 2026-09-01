@@ -4,6 +4,7 @@ namespace AppBundle\Action\Task;
 
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task;
+use AppBundle\Service\DeliveryCreatedNotifier;
 use AppBundle\Service\DeliveryOrderManager;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
@@ -17,6 +18,7 @@ class GenerateOrders
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly DeliveryOrderManager $deliveryOrderManager,
+        private readonly DeliveryCreatedNotifier $deliveryCreatedNotifier,
     )
     {
     }
@@ -54,11 +56,19 @@ class GenerateOrders
 
         $orders = [];
 
-        foreach ($subscriptions as $subscription) {
-            $order = $this->deliveryOrderManager->createOrderFromRecurrenceRule($subscription, $date);
-            if (null !== $order) {
-                $orders[] = $order;
+        // Send a single recap notification for all the deliveries created below,
+        // instead of one notification per delivery
+        $this->deliveryCreatedNotifier->startBatch();
+
+        try {
+            foreach ($subscriptions as $subscription) {
+                $order = $this->deliveryOrderManager->createOrderFromRecurrenceRule($subscription, $date);
+                if (null !== $order) {
+                    $orders[] = $order;
+                }
             }
+        } finally {
+            $this->deliveryCreatedNotifier->endBatch();
         }
 
         return $orders;

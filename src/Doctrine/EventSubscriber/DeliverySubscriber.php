@@ -3,25 +3,22 @@
 namespace AppBundle\Doctrine\EventSubscriber;
 
 use AppBundle\Entity\Delivery;
-use AppBundle\Message\DeliveryCreated;
+use AppBundle\Service\DeliveryCreatedNotifier;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsDoctrineListener(event: Events::onFlush, connection: 'default')]
 #[AsDoctrineListener(event: Events::postFlush, connection: 'default')]
 class DeliverySubscriber
 {
-    private $messageBus;
     private $deliveries = [];
     private $onFlushCalled = false;
 
-    public function __construct(MessageBusInterface $messageBus)
+    public function __construct(private readonly DeliveryCreatedNotifier $deliveryCreatedNotifier)
     {
-        $this->messageBus = $messageBus;
     }
 
     public function onFlush(OnFlushEventArgs $args)
@@ -58,9 +55,7 @@ class DeliverySubscriber
     public function postFlush(PostFlushEventArgs $args)
     {
         foreach ($this->deliveries as $delivery) {
-            $this->messageBus->dispatch(
-                new DeliveryCreated($delivery)
-            );
+            $this->deliveryCreatedNotifier->notify($delivery);
         }
 
         $this->deliveries = [];

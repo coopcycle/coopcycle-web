@@ -9,6 +9,7 @@ use AppBundle\Message\PushNotification;
 use AppBundle\Security\UserManager;
 use AppBundle\Service\EmailManager;
 use AppBundle\Service\SettingsManager;
+use AppBundle\Utils\LocalizedDate;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
@@ -60,20 +61,7 @@ class DeliveryCreatedHandler
         $order = $delivery->getOrder();
         $pickup = $delivery->getPickup();
         $date = $pickup->getAfter();
-        $c = Carbon::instance($pickup->getAfter())->locale($this->locale);
-        if ($c->isToday()) {
-            $dateLocal = $c->isoFormat('[Today at] LT');
-        } elseif ($c->isTomorrow()) {
-            $dateLocal = $c->isoFormat('[Tomorrow at] LT');
-        } elseif ($c->isYesterday()) {
-            $dateLocal = $c->isoFormat('[Yesterday at] LT');
-        } elseif ($c->isFuture() && $c->diffInDays() < 7) {
-            $dateLocal = $c->isoFormat('dddd [at] LT');
-        } elseif ($c->isPast() && Carbon::now()->diffInDays($c) < 7) {
-            $dateLocal = $c->isoFormat('[Last] dddd [at] LT');
-        } else {
-            $dateLocal = $c->isoFormat('L');
-        }
+        $dateLocal = LocalizedDate::format($pickup->getAfter(), $this->locale);
 
         [$title, $body] = $this->parseTitleAndBodyForPushNotification($delivery);
 

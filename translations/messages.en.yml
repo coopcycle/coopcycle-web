@@ -1293,6 +1293,8 @@ foodtech.dashboard.title: Dashboard
 notifications.empty: No notifications
 notifications.tap_to_open: Tap to open
 notifications.delivery_created: A delivery to be picked up %date% has been created
+notifications.deliveries_created: '%count% deliveries to be picked up %date% have been created'
+notifications.deliveries_created.no_date: '%count% deliveries have been created'
 notifications.tasks_changed: Tasks for %date% changed!
 notifications.tasks_changed_today: Your tasks for today have been updated
 notifications.shifts.assigned: You have been assigned a shift on %date%

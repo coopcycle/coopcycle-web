@@ -1,0 +1,34 @@
+{% extends 'emails/layout.mjml.twig' %}
+
+{% block content %}
+  {% set firstDelivery = deliveries|first %}
+  <mj-text align="left" line-height="20px">
+    {{ body }}
+  </mj-text>
+  <mj-table>
+    {% for delivery in deliveries %}
+      {% set pickup = delivery.pickup %}
+      {% set dropoff = delivery.dropoff %}
+      <tr style="text-align: left;">
+        <td style="padding: 4px 8px 4px 0; white-space: nowrap;">
+          {{ pickup.after|date('d/m/Y H:i') }}
+        </td>
+        <td style="padding: 4px 8px 4px 0;">
+          {{ delivery.owner ? delivery.owner.name : '' }}
+          &rarr;
+          {{ dropoff.address.name ?: dropoff.address.streetAddress }}
+        </td>
+        <td style="padding: 4px 0; white-space: nowrap;">
+          {{ delivery.order ? delivery.order.number : '' }}
+        </td>
+      </tr>
+    {% endfor %}
+  </mj-table>
+  <mj-button
+    href="{{ url('admin_dashboard_fullscreen', { date: firstDelivery.pickup.after|date('Y-m-d'), nav: 'on' }) }}"
+    background-color="{{ coopcycle_theme_color('primary', '#10ac84') }}"
+    color="{{ coopcycle_theme_color('primary-content', 'white') }}"
+    font-family="Raleway, Arial, sans-serif">
+    {{ 'basics.view'|trans({}, 'messages') }}
+  </mj-button>
+{% endblock %}
