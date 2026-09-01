@@ -67,10 +67,13 @@ class RdcServiceRequestMapper
         // RDC metadata
         $pickup->setMetadata([
             'rdc_lo_uri' => $loUri,
-            'rdc_external_ref' => $apiRequest->getExternalRef(),
-            'rdc_contract_ref' => $apiRequest->getContractRef(),
             'rdc_created_at' => (new DateTime())->format(DateTimeInterface::ATOM),
         ]);
+
+        $externalRef = $apiRequest->getExternalRef();
+        if (!is_null($externalRef)) {
+            $delivery->setExternalReference($externalRef);
+        }
 
         $barcode = $apiRequest->getBarcode();
         if (!is_null($barcode)) {
