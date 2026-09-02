@@ -251,7 +251,7 @@ make cypress-only TESTFILE=pricing/setup_simple_km_based_pricing_rule.cy.js
 make cypress-only-until-fail TESTFILE=pricing/setup_simple_km_based_pricing_rule.cy.js
 ```
 
-The Cypress tests will run automatically in Github CI on the `master` branch. You can get screenshots of the failed tests from the `Upload images for failed test` step (there is a link there to download the failed steps).
+The Cypress tests will run automatically in Github CI on every push. You can get screenshots of the failed tests from the `Upload images for failed tests` step (there is a link there to download the failed steps).
 
 #### Troubleshooting
 
