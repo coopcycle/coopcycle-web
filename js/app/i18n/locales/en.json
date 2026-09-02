@@ -985,7 +985,7 @@
         "SHIFT_ACTIVITY_DEFAULT_DISPATCH": "Dispatch",
         "SHIFT_ACTIVITY_DEFAULT_ADMINISTRATION": "Administration",
         "SHIFT_ACTIVITY_ADD_TO_DISPATCH": "Add to dispatch",
-        "SHIFT_ACTIVITY_ADD_TO_DISPATCH_HELP": "Couriers assigned to a shift with this activity will be added to the dispatch when syncing a week.",
+        "SHIFT_ACTIVITY_ADD_TO_DISPATCH_HELP": "Users assigned to a shift with this activity will be added to the dispatch when syncing a week.",
         "SHIFT_PLANNING_WEEK_STRIP_TOOLTIP": "Week {{week}} ({{start}} → {{end}}): {{assigned}}/{{slots}} assigned · {{status}}",
         "SHIFT_PLANNING_WEEK_STRIP_EMPTY": "No upcoming weeks to show",
         "SHIFT_PLANNING_WEEK_STRIP_PREV": "Show earlier weeks",
