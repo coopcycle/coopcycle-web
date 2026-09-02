@@ -1,85 +1,213 @@
 {% extends "profile.html.twig" %}
 
 {% block content %}
-<div data-turbo="true">
-<turbo-frame id="notifications">
-  <form action="{{ path('profile_notifications_remove') }}" method="post">
-    <div class="d-flex justify-content-start align-items-center">
-      <div class="form-group m-2">
-        <div class="checkbox">
-          <label>
-            <input type="checkbox" id="select-all" />
-            {{ 'basics.select_all'|trans }}
-          </label>
-        </div>
-      </div>
-      <div class="form-group m-2">
-        <button id="notifications-remove-btn" class="btn btn-sm btn-primary" type="submit" disabled>
-          <span>{{ 'basics.delete_selected'|trans }}</span>
-          <span id="notifications-checked-count"></span>
-        </button>
-      </div>
-    </div>
-    <turbo-frame id="notifications-list-{{currentPage}}">
-      <table id="notifications-table" class="table mb-0">
-        <tbody>
-          {% for notification in notifications %}
-            <tr>
-              <td>
-                <input type="checkbox" id="{{notification.id}}" name="{{notification.id}}" />
-              </td>
-              <td>{{ notification.message }}</td>
-              <td class="text-right">{{ notification.timestamp|ago }}</td>
-              <td class="text-center">
-                <a role="button" href="{{ path('profile_notification_remove', {id: notification.id, page: currentPage}) }}" data-turbo-method="delete">
-                  <i class="fa fa-close"></i>
-                </a>
-              </td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-      {% if hasNextPage %}
-        <turbo-frame id="notifications-list-{{nextPage}}" src="{{ path('profile_notifications', {page: nextPage}) }}" loading="lazy">
-          <div class="d-flex justify-content-center">
-            <i class="fa fa-spinner fa-spin"></i>
-          </div>
-        </turbo-frame>
-      {% endif %}
-    </turbo-frame>
+<div id="notifications-page"
+  data-next-page-url="{{ hasNextPage ? path('profile_notifications', {page: nextPage}) : '' }}">
+  <form id="notifications-form" action="{{ path('profile_notifications_remove') }}" method="post">
+    <table id="notifications-table" class="table">
+      {# The toolbar lives in the header row, so that the "select all" checkbox
+      is aligned with the checkboxes of the column it controls #}
+      <thead>
+        <tr>
+          <th class="w-px">
+            <input type="checkbox" id="select-all" class="checkbox checkbox-sm" />
+          </th>
+          <th colspan="3">
+            <div class="flex items-center gap-4">
+              <label for="select-all" class="cursor-pointer">{{ 'basics.select_all'|trans }}</label>
+              <button id="notifications-remove-btn" class="btn btn-sm btn-primary" type="submit" disabled>
+                <span>{{ 'basics.delete_selected'|trans }}</span>
+                <span id="notifications-checked-count"></span>
+              </button>
+            </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for notification in notifications %}
+          <tr>
+            <td class="w-px">
+              <input type="checkbox" class="checkbox checkbox-sm" id="{{ notification.id }}" name="{{ notification.id }}" />
+            </td>
+            <td>{{ notification.message }}</td>
+            <td class="text-right">{{ notification.timestamp|ago }}</td>
+            <td class="text-center w-px">
+              <button type="button" class="btn btn-ghost btn-xs btn-circle"
+                data-notification-remove-url="{{ path('profile_notification_remove', {id: notification.id}) }}"
+                aria-label="{{ 'basics.delete'|trans }}">
+                <i class="fa fa-close"></i>
+              </button>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </form>
-</turbo-frame>
+  <div id="notifications-sentinel" class="h-px"></div>
+  <div id="notifications-loader" class="hidden justify-center py-4">
+    <span class="loading loading-spinner"></span>
+  </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
   <script>
+    (function () {
 
-    function updateNotificationCount() {
-      const countChecked = document.querySelectorAll('#notifications-table input[type="checkbox"]:checked').length;
-      if (countChecked > 0) {
-        document.querySelector('#notifications-checked-count').innerHTML = '(' + countChecked + ')';
-        document.querySelector('#notifications-remove-btn').removeAttribute('disabled')
-      } else {
-        document.querySelector('#notifications-checked-count').innerHTML = '';
-        document.querySelector('#notifications-remove-btn').setAttribute('disabled', true)
+      var root = document.querySelector('#notifications-page');
+
+      if (!root) {
+        return;
       }
-    }
 
-    document.querySelector('#notifications-table').addEventListener('change', function (e) {
-      if (e.target.matches('input[type="checkbox"]')) {
+      var form = document.querySelector('#notifications-form');
+      var tbody = document.querySelector('#notifications-table tbody');
+      var removeBtn = document.querySelector('#notifications-remove-btn');
+      var countEl = document.querySelector('#notifications-checked-count');
+      var selectAll = document.querySelector('#select-all');
+      var sentinel = document.querySelector('#notifications-sentinel');
+      var loader = document.querySelector('#notifications-loader');
+
+      // Every background request made from this page must be flagged as AJAX,
+      // otherwise Symfony's security layer stores its URL as the target path,
+      // and the user ends up on it after logging in / entering the 2FA code.
+      var ajaxHeaders = { 'X-Requested-With': 'XMLHttpRequest' };
+
+      function checkboxes() {
+        return Array.prototype.slice.call(tbody.querySelectorAll('input[type="checkbox"]'));
+      }
+
+      function updateNotificationCount() {
+        var all = checkboxes();
+        var checked = all.filter(function (el) { return el.checked; });
+
+        countEl.textContent = checked.length > 0 ? '(' + checked.length + ')' : '';
+        removeBtn.disabled = checked.length === 0;
+        selectAll.checked = all.length > 0 && checked.length === all.length;
+      }
+
+      tbody.addEventListener('change', function (e) {
+        if (e.target.matches('input[type="checkbox"]')) {
+          updateNotificationCount();
+        }
+      });
+
+      selectAll.addEventListener('change', function () {
+        checkboxes().forEach(function (el) { el.checked = selectAll.checked; });
         updateNotificationCount();
-      }
-    });
+      });
 
-    document.addEventListener('change', function (e) {
-      if (e.target.matches('#select-all')) {
-        document.querySelectorAll('#notifications-table input[type="checkbox"]').forEach(function (el) {
-          el.checked = e.target.checked;
+      // Delete a single notification
+      tbody.addEventListener('click', function (e) {
+        var button = e.target.closest('[data-notification-remove-url]');
+
+        if (!button) {
+          return;
+        }
+
+        var row = button.closest('tr');
+        button.disabled = true;
+
+        fetch(button.dataset.notificationRemoveUrl + '?format=json', {
+          method: 'DELETE',
+          headers: ajaxHeaders,
+          credentials: 'same-origin',
+        })
+          .then(function (response) {
+            if (!response.ok) {
+              throw new Error(response.statusText);
+            }
+            row.remove();
+            updateNotificationCount();
+          })
+          .catch(function () { button.disabled = false; });
+      });
+
+      // Delete the selected notifications
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        var checked = checkboxes().filter(function (el) { return el.checked; });
+
+        if (checked.length === 0) {
+          return;
+        }
+
+        var body = new URLSearchParams();
+        checked.forEach(function (el) { body.append(el.name, 'on'); });
+
+        removeBtn.disabled = true;
+
+        fetch(form.action, {
+          method: 'POST',
+          headers: Object.assign({ 'Content-Type': 'application/x-www-form-urlencoded' }, ajaxHeaders),
+          credentials: 'same-origin',
+          body: body.toString(),
+        })
+          .then(function (response) {
+            if (!response.ok) {
+              throw new Error(response.statusText);
+            }
+            checked.forEach(function (el) { el.closest('tr').remove(); });
+            selectAll.checked = false;
+            updateNotificationCount();
+          })
+          .catch(function () { removeBtn.disabled = false; });
+      });
+
+      // Load the next page when the bottom of the list becomes visible
+      var nextPageUrl = root.dataset.nextPageUrl;
+      var loading = false;
+      var observer = null;
+
+      function loadNextPage() {
+        if (!nextPageUrl || loading) {
+          return;
+        }
+
+        loading = true;
+        loader.classList.remove('hidden');
+        loader.classList.add('flex');
+
+        fetch(nextPageUrl, { headers: ajaxHeaders, credentials: 'same-origin' })
+          .then(function (response) {
+            if (!response.ok) {
+              throw new Error(response.statusText);
+            }
+            return response.text();
+          })
+          .then(function (html) {
+            var doc = new DOMParser().parseFromString(html, 'text/html');
+            var page = doc.querySelector('#notifications-page');
+
+            doc.querySelectorAll('#notifications-table tbody tr').forEach(function (row) {
+              tbody.appendChild(document.importNode(row, true));
+            });
+
+            nextPageUrl = page ? page.dataset.nextPageUrl : '';
+            updateNotificationCount();
+          })
+          .catch(function () { nextPageUrl = ''; })
+          .then(function () {
+            loading = false;
+            loader.classList.remove('flex');
+            loader.classList.add('hidden');
+
+            if (!nextPageUrl && observer) {
+              observer.disconnect();
+            }
+          });
+      }
+
+      if (nextPageUrl && 'IntersectionObserver' in window) {
+        observer = new IntersectionObserver(function (entries) {
+          if (entries.some(function (entry) { return entry.isIntersecting; })) {
+            loadNextPage();
+          }
         });
-        updateNotificationCount();
+        observer.observe(sentinel);
       }
-    });
 
+    })();
   </script>
 {% endblock %}

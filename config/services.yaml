@@ -1391,6 +1391,10 @@ services:
     tags:
       - { name: "kernel.event_listener", event: "kernel.request", priority: -255 }
 
+  AppBundle\EventListener\TargetPathListener:
+    tags:
+      - { name: "kernel.event_listener", event: "kernel.response" }
+
   AppBundle\Payment\GatewayResolver:
     arguments:
       $country: '%country_iso%'
