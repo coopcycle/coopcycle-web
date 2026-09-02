@@ -5,6 +5,8 @@ namespace Tests\AppBundle\Service;
 use AppBundle\Entity\HolidayRequest;
 use AppBundle\Entity\HolidayRequestRepository;
 use AppBundle\Entity\Shift;
+use AppBundle\Entity\ShiftActivity;
+use AppBundle\Entity\ShiftActivityRepository;
 use AppBundle\Entity\ShiftAssignment;
 use AppBundle\Entity\ShiftRepository;
 use AppBundle\Entity\ShiftTemplate;
@@ -43,6 +45,11 @@ class ShiftManagerTest extends TestCase
         $this->shiftRepository = $this->prophesize(ShiftRepository::class);
         $this->holidayRequestRepository = $this->prophesize(HolidayRequestRepository::class);
         $this->taskListRepository = $this->prophesize(TaskListRepository::class);
+        $this->shiftActivityRepository = $this->prophesize(ShiftActivityRepository::class);
+        // Mirrors the shipped default: only "delivery" is added to dispatch
+        $this->shiftActivityRepository
+            ->findSlugsAddedToDispatch()
+            ->willReturn(['delivery']);
 
         $this->entityManager
             ->getRepository(Shift::class)
@@ -53,6 +60,9 @@ class ShiftManagerTest extends TestCase
         $this->entityManager
             ->getRepository(TaskList::class)
             ->willReturn($this->taskListRepository->reveal());
+        $this->entityManager
+            ->getRepository(ShiftActivity::class)
+            ->willReturn($this->shiftActivityRepository->reveal());
 
         $this->translator
             ->trans(Argument::type('string'), Argument::any())
@@ -374,6 +384,32 @@ class ShiftManagerTest extends TestCase
         $this->taskListRepository
             ->findOneBy(Argument::any())
             ->willReturn(new TaskList());
+
+        $this->entityManager->persist(Argument::type(TaskList::class))->shouldNotBeCalled();
+        $this->entityManager->flush()->shouldBeCalled();
+
+        $added = $this->shiftManager->addWeekToDispatch(new \DateTimeImmutable('2026-06-29'));
+
+        $this->assertSame([], $added);
+    }
+
+    public function testAddWeekToDispatchSkipsActivitiesNotConfiguredForDispatch()
+    {
+        $sarah = $this->createUser('sarah');
+        $sarah->addRole('ROLE_COURIER');
+
+        $shift = new Shift();
+        $shift->setActivity('administration');
+        $shift->setStartsAt(new \DateTime('2026-06-29 09:00:00'));
+        $shift->setEndsAt(new \DateTime('2026-06-29 17:00:00'));
+
+        $assignment = new ShiftAssignment();
+        $assignment->setUser($sarah);
+        $shift->addAssignment($assignment);
+
+        $this->shiftRepository
+            ->findOverlappingRange(Argument::cetera())
+            ->willReturn([$shift]);
 
         $this->entityManager->persist(Argument::type(TaskList::class))->shouldNotBeCalled();
         $this->entityManager->flush()->shouldBeCalled();

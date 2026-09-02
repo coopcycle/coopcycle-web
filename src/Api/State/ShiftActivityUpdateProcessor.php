@@ -27,6 +27,7 @@ final class ShiftActivityUpdateProcessor implements ProcessorInterface
 
         $activity->setLabel($data->label);
         $activity->setColor($data->color);
+        $activity->setAddToDispatch($data->addToDispatch ?? false);
 
         $this->entityManager->flush();
 

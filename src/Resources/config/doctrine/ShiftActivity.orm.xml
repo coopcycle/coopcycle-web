@@ -10,6 +10,11 @@
     <field name="slug" type="string" column="slug" length="64"/>
     <field name="label" type="string" column="label" length="255"/>
     <field name="color" type="string" column="color" length="7" nullable="true"/>
+    <field name="addToDispatch" type="boolean" column="add_to_dispatch">
+      <options>
+        <option name="default">false</option>
+      </options>
+    </field>
     <field name="createdAt" type="datetime" column="created_at">
       <gedmo:timestampable on="create"/>
     </field>

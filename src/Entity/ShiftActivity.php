@@ -74,6 +74,15 @@ class ShiftActivity
     #[Assert\Regex(pattern: '/^#[0-9a-fA-F]{6}$/', message: 'This is not a valid hex color.')]
     protected ?string $color = null;
 
+    /**
+     * Whether couriers assigned to a shift with this activity should be
+     * added to the dispatch (see ShiftManager::addWeekToDispatch()). Only
+     * the shipped "delivery" activity has this on by default — most
+     * activities (e.g. "Administration") shouldn't clutter the dispatch.
+     */
+    #[Groups(['shift_activity'])]
+    protected bool $addToDispatch = false;
+
     protected $createdAt;
 
     protected $updatedAt;
@@ -115,6 +124,18 @@ class ShiftActivity
     public function setColor(?string $color): self
     {
         $this->color = $color;
+
+        return $this;
+    }
+
+    public function isAddToDispatch(): bool
+    {
+        return $this->addToDispatch;
+    }
+
+    public function setAddToDispatch(bool $addToDispatch): self
+    {
+        $this->addToDispatch = $addToDispatch;
 
         return $this;
     }

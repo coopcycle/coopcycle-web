@@ -19,4 +19,11 @@ final class ShiftActivityInput
     #[Groups(['shift_activity_write'])]
     #[Assert\Regex(pattern: '/^#[0-9a-fA-F]{6}$/', message: 'This is not a valid hex color.')]
     public ?string $color = null;
+
+    /**
+     * Whether couriers assigned to a shift with this activity should be
+     * added to the dispatch.
+     */
+    #[Groups(['shift_activity_write'])]
+    public ?bool $addToDispatch = false;
 }

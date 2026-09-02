@@ -651,11 +651,13 @@ export type ShiftActivity = JsonLdEntity & {
   slug: string;
   label: string;
   color: string | null;
+  addToDispatch: boolean;
 };
 
 export type ShiftActivityPayload = {
   label: string;
   color?: string | null;
+  addToDispatch?: boolean;
 };
 
 export type PutShiftActivityRequest = ShiftActivityPayload & { '@id': Uri };

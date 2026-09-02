@@ -29,6 +29,7 @@ final class ShiftActivityCreateProcessor implements ProcessorInterface
         $activity->setLabel($data->label);
         $activity->setSlug($this->uniqueSlug($repository, $this->slugify->slugify($data->label)));
         $activity->setColor($data->color);
+        $activity->setAddToDispatch($data->addToDispatch ?? false);
 
         $this->entityManager->persist($activity);
         $this->entityManager->flush();

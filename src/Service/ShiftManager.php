@@ -4,6 +4,8 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\HolidayRequestRepository;
 use AppBundle\Entity\Shift;
+use AppBundle\Entity\ShiftActivity;
+use AppBundle\Entity\ShiftActivityRepository;
 use AppBundle\Entity\ShiftAssignment;
 use AppBundle\Entity\ShiftTemplate;
 use AppBundle\Entity\ShiftTemplateShift;
@@ -104,6 +106,10 @@ class ShiftManager
      * dispatch, by creating an empty TaskList for the day of each of their
      * shifts. Triggered manually by a dispatcher from the planning UI.
      *
+     * Only shifts whose activity is configured to be added to the dispatch
+     * (see ShiftActivity::$addToDispatch) are considered — by default, only
+     * the shipped "delivery" activity.
+     *
      * @return UserInterface[] couriers newly added to the dispatch
      */
     public function addWeekToDispatch(\DateTimeImmutable $weekStart): array
@@ -111,10 +117,17 @@ class ShiftManager
         $start = $weekStart->setTime(0, 0);
         $end = $start->modify('+7 days');
 
+        /** @var ShiftActivityRepository $activityRepository */
+        $activityRepository = $this->entityManager->getRepository(ShiftActivity::class);
+        $dispatchActivitySlugs = $activityRepository->findSlugsAddedToDispatch();
+
         $shifts = $this->entityManager->getRepository(Shift::class)->findOverlappingRange($start, $end);
 
         $added = [];
         foreach ($shifts as $shift) {
+            if (!in_array($shift->getActivity(), $dispatchActivitySlugs, true)) {
+                continue;
+            }
             foreach ($shift->getAssignedUsers() as $user) {
                 if ($this->addToDispatch($user, $shift->getStartsAt())) {
                     $added[$user->getUsername()] = $user;

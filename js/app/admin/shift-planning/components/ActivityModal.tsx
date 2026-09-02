@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { App, Button, ColorPicker, Form, Input, Modal, Space, Tooltip } from 'antd';
+import { App, Button, ColorPicker, Form, Input, Modal, Space, Switch, Tooltip } from 'antd';
 import { UndoOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import {
@@ -19,6 +19,7 @@ type Props = {
 type FormValues = {
   label: string;
   color: string;
+  addToDispatch: boolean;
 };
 
 export default function ActivityModal({ state, onClose }: Props) {
@@ -43,6 +44,7 @@ export default function ActivityModal({ state, onClose }: Props) {
       color:
         state.activity?.color ||
         shiftTypeColor(state.activity?.slug ?? ''),
+      addToDispatch: state.activity?.addToDispatch ?? false,
     });
   }, [state, form]);
 
@@ -53,11 +55,13 @@ export default function ActivityModal({ state, onClose }: Props) {
           '@id': activity['@id'],
           label: values.label,
           color: values.color,
+          addToDispatch: values.addToDispatch,
         }).unwrap();
       } else {
         await postShiftActivity({
           label: values.label,
           color: values.color,
+          addToDispatch: values.addToDispatch,
         }).unwrap();
       }
       message.success(t('SHIFT_PLANNING_SAVED'));
@@ -113,6 +117,13 @@ export default function ActivityModal({ state, onClose }: Props) {
               </Tooltip>
             )}
           </Space>
+        </Form.Item>
+        <Form.Item
+          name="addToDispatch"
+          label={t('SHIFT_ACTIVITY_ADD_TO_DISPATCH')}
+          valuePropName="checked"
+          extra={t('SHIFT_ACTIVITY_ADD_TO_DISPATCH_HELP')}>
+          <Switch />
         </Form.Item>
       </Form>
     </Modal>
