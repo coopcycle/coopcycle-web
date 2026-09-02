@@ -32,10 +32,6 @@
 
     <link type="text/css" rel="stylesheet" href="{{ asset('bundles/craueformflow/css/buttons.css') }}" />
 
-    {# run 'app' script in <head> as suggested by Turbo;
-    Pages with Turbo Drive enabled (search: data-turbo="true")
-    For more information, see: https://turbo.hotwired.dev/handbook/building#working-with-script-elements #}
-
     {# ideally we should define all scripts in the Head and defer running them (instead of placing them at the end of the Body)
     See:
     https://symfony.com/doc/current/frontend/encore/simple-example.html#configuring-encore-webpack
@@ -49,8 +45,7 @@
     data-country="{{ country_iso }}"
     data-currency-symbol="{{ currency_context.currencyCode|sylius_currency_symbol }}"
     data-currency-code="{{ currency_context.currencyCode }}"
-    data-timezone="{{ coopcycle_setting('timezone') }}"
-    data-turbo="false">
+    data-timezone="{{ coopcycle_setting('timezone') }}">
     {# Will appear *ABOVE* content #}
     {% block menu %}
     {% endblock %}
