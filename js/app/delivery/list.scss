@@ -13,3 +13,17 @@ tr[data-testid="delivery__list_item"][data-href] {
     background-color: $table-bg-hover;
   }
 }
+
+.delivery-list__external-ref {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  padding: 2px 6px;
+  border: 1px solid $gray-lighter;
+  border-radius: 3px;
+  background: #fafafa;
+  font-size: 11px;
+  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+  color: $gray-dark;
+}

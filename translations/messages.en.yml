@@ -1007,6 +1007,7 @@ delivery.table.heading.summary: Summary
 delivery.table.heading.courier: Courier
 delivery.table.heading.order: Order
 delivery.table.heading.owner: Owner
+delivery.table.heading.external_reference: External reference
 delivery.barcodes.show: View barcodes
 search.users: Search a user…
 search.orders: Search an order (number, customer email…)

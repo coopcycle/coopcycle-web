@@ -1147,6 +1147,78 @@ Feature: Deliveries
       }
       """
 
+  Scenario: Create delivery with externalReference then read it back
+    Given the fixtures files are loaded:
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | stores.yml          |
+    And the store with name "Acme" has an OAuth client named "Acme"
+    And the OAuth client with name "Acme" has an access token
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "externalReference": "FRMSY515302766",
+        "pickup": {
+          "address": "24, Rue de la Paix",
+          "doneBefore": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli",
+          "doneBefore": "tomorrow 13:30"
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON node "externalReference" should be equal to "FRMSY515302766"
+    When the OAuth client "Acme" sends a "GET" request to "/api/deliveries/1"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON node "externalReference" should be equal to "FRMSY515302766"
+
+  Scenario: Update externalReference via PUT
+    Given the fixtures files are loaded:
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | stores.yml          |
+    And the store with name "Acme" has an OAuth client named "Acme"
+    And the OAuth client with name "Acme" has an access token
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "pickup": {
+          "address": "24, Rue de la Paix",
+          "doneBefore": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli",
+          "doneBefore": "tomorrow 13:30"
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON node "externalReference" should be null
+    When the OAuth client "Acme" sends a "PUT" request to "/api/deliveries/1" with body:
+      """
+      {
+        "externalReference": "80139051"
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON node "externalReference" should be equal to "80139051"
+    When the OAuth client "Acme" sends a "GET" request to "/api/deliveries/1"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON node "externalReference" should be equal to "80139051"
+
   Scenario: Create delivery with empty phone number
     Given the fixtures files are loaded:
       | sylius_products.yml |

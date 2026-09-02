@@ -389,6 +389,56 @@ class RdcServiceRequestMapperTest extends TestCase
         $this->assertArrayNotHasKey('rdc_barcode', $pickupMetadata);
     }
 
+    public function testMapToDeliveryWritesExternalReferenceToDelivery(): void
+    {
+        $apiRequest = new \AppBundle\Integration\Rdc\DTO\RdcApiServiceRequest(
+            externalReferences: [
+                ['externalReferenceType' => 'REQUESTOR_LABEL_ID', 'reference' => 'TEST-BARCODE'],
+                ['externalReferenceType' => 'REQUESTOR_ID', 'reference' => 'EXT-REF-42'],
+            ],
+            startLocation: [
+                'location' => [
+                    'address' => [
+                        'addressCountry' => ['countryCode' => 'FR'],
+                        'addressLocality' => 'Paris',
+                        'postalCode' => '75001',
+                        'addressLines' => ['1 rue de Rivoli'],
+                    ],
+                ],
+            ],
+            endLocation: [
+                'location' => [
+                    'address' => [
+                        'addressCountry' => ['countryCode' => 'FR'],
+                        'addressLocality' => 'Paris',
+                        'postalCode' => '75002',
+                        'addressLines' => ['2 rue de la Paix'],
+                    ],
+                ],
+            ],
+        );
+
+        $delivery = $this->mapper->mapToDelivery($apiRequest, new \AppBundle\Entity\Store());
+
+        $this->assertSame('EXT-REF-42', $delivery->getExternalReference());
+        // Barcode still lives on the pickup task, distinct from externalReference.
+        $this->assertSame('TEST-BARCODE', $delivery->getPickup()->getBarcode());
+        // Legacy metadata keys are gone.
+        $pickupMetadata = $delivery->getPickup()->getMetadata();
+        $this->assertArrayNotHasKey('rdc_external_ref', $pickupMetadata);
+        $this->assertArrayNotHasKey('rdc_contract_ref', $pickupMetadata);
+    }
+
+    public function testMapToDeliveryLeavesExternalReferenceNullWhenAbsent(): void
+    {
+        // Only REQUESTOR_LABEL_ID (barcode) present, no REQUESTOR_ID.
+        $apiRequest = $this->buildApiRequestWithBarcode('TEST-ONLY-BARCODE');
+
+        $delivery = $this->mapper->mapToDelivery($apiRequest, new \AppBundle\Entity\Store());
+
+        $this->assertNull($delivery->getExternalReference());
+    }
+
     public function testMapToDeliverySetsWeightOnDropoffFromStartLocationBatches(): void
     {
         $apiRequest = $this->buildApiRequestWithBarcode('TEST-WEIGHT');
