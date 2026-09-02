@@ -1051,6 +1051,7 @@ deliveries.sort.oldest: Oldest first
 deliveries.filter.clear: Show all
 deliveries.section.upcoming: Upcoming
 deliveries.section.past: Past
+deliveries.section.truncated: Only the first %count% are shown, use the filters above to narrow down the list.
 orders.new: New order
 orders.duplicate: Duplicate an order
 basics.copy: Copy

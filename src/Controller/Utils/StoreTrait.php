@@ -34,6 +34,7 @@ use AppBundle\Sylius\Order\OrderInterface;
 use Carbon\Carbon;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use League\Flysystem\Filesystem;
@@ -62,6 +63,12 @@ use Vich\UploaderBundle\Storage\StorageInterface;
 trait StoreTrait
 {
     use InjectAuthTrait;
+
+    /**
+     * Maximum number of rows rendered in the non-paginated "Today" & "Upcoming"
+     * lists of the store deliveries page.
+     */
+    private const DELIVERY_SUMMARY_LIST_LIMIT = 100;
 
     #[HideSoftDeleted]
     public function storeListAction(Request $request, PaginatorInterface $paginator, JWTTokenManagerInterface $jwtManager)
@@ -575,9 +582,11 @@ trait StoreTrait
             $deliveryRepository->createdAtRange($qb, $range[0], $range[1]);
         }
 
+        $page = $request->query->getInt('page', 1);
+
         $deliveries = $paginator->paginate(
             $filters['enabled'] ? $qb : $deliveryRepository->past($qb),
-            $request->query->getInt('page', 1),
+            $page,
             10,
             [
                 PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 't.doneBefore',
@@ -587,9 +596,22 @@ trait StoreTrait
             ]
         );
 
-        // When a filter is active, only the paginated list is rendered.
-        $today = $filters['enabled'] ? [] : $deliveryRepository->today($qb)->getQuery()->getResult();
-        $upcoming = $filters['enabled'] ? [] : $deliveryRepository->upcoming($qb)->getQuery()->getResult();
+        // "Today" & "Upcoming" describe the whole store, they don't take part in
+        // the pagination of the past deliveries. Rendering them again on every
+        // page is both redundant and, on a store with a lot of history, the bulk
+        // of the work: browsing to page 33 used to render ~24 of those rows on
+        // top of the 10 paginated ones.
+        $showSummaryLists = !$filters['enabled'] && 1 === $page;
+
+        $today = $upcoming = [];
+        $todayTruncated = $upcomingTruncated = false;
+
+        if ($showSummaryLists) {
+            [$today, $todayTruncated] =
+                $this->fetchDeliverySummaryList($deliveryRepository->today($qb));
+            [$upcoming, $upcomingTruncated] =
+                $this->fetchDeliverySummaryList($deliveryRepository->upcoming($qb));
+        }
 
         // Optimization: the listing renders tasks, packages, images & orders for
         // every delivery, which would otherwise be lazy loaded one by one.
@@ -607,13 +629,44 @@ trait StoreTrait
             'store' => $store,
             'deliveries' => $deliveries,
             'filters' => $filters,
+            'show_summary_lists' => $showSummaryLists,
             'today' => $today,
+            'today_truncated' => $todayTruncated,
             'upcoming' => $upcoming,
+            'upcoming_truncated' => $upcomingTruncated,
+            'summary_list_limit' => self::DELIVERY_SUMMARY_LIST_LIMIT,
             'routes' => $this->getDeliveryRoutes(),
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],
             'delivery_import_form' => $deliveryImportForm->createView(),
         ]));
+    }
+
+    /**
+     * "Today" & "Upcoming" are not paginated, so they are capped to keep the
+     * page bounded on a store with a large backlog.
+     *
+     * @return array{0: array<Delivery>, 1: bool} the deliveries, and whether the
+     *                                            list was cut off
+     */
+    private function fetchDeliverySummaryList(QueryBuilder $qb): array
+    {
+        $limit = self::DELIVERY_SUMMARY_LIST_LIMIT;
+
+        // The query builder joins the tasks, so a single delivery can match
+        // several rows (multi-pickup). Doctrine's paginator applies the limit to
+        // *distinct* deliveries, which a plain setMaxResults() would not.
+        $deliveries = iterator_to_array(
+            new ORMPaginator($qb->setMaxResults($limit + 1)->getQuery(), true),
+            false
+        );
+
+        if (count($deliveries) > $limit) {
+
+            return [array_slice($deliveries, 0, $limit), true];
+        }
+
+        return [$deliveries, false];
     }
 
     /**

@@ -51,15 +51,23 @@
   {% include '_partials/delivery/sort.html.twig' %}
 </div>
 
-{% if not filters.enabled %}
+{% if show_summary_lists %}
 <h3>{{ 'basics.today'|trans }}</h3>
 {% include '_partials/delivery/list.html.twig' with { deliveries: today } %}
+{% if today_truncated %}
+  <p class="text-muted"><small>{{ 'deliveries.section.truncated'|trans({ '%count%': summary_list_limit }) }}</small></p>
+{% endif %}
 
 <h3>{{ 'deliveries.section.upcoming'|trans }}</h3>
 {% include '_partials/delivery/list.html.twig' with { deliveries: upcoming } %}
+{% if upcoming_truncated %}
+  <p class="text-muted"><small>{{ 'deliveries.section.truncated'|trans({ '%count%': summary_list_limit }) }}</small></p>
+{% endif %}
 
 <hr>
+{% endif %}
 
+{% if not filters.enabled %}
 <h3>{{ 'deliveries.section.past'|trans }}</h3>
 {% endif %}
 {% include '_partials/delivery/list.html.twig' %}
