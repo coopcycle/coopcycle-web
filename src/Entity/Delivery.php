@@ -221,16 +221,6 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     #[Groups(['delivery_create'])]
     private $store;
 
-    /**
-     * External reference identifier assigned by an upstream system (e.g. RDC).
-     *
-     * This is distinct from the per-task barcode (`Task::getBarcode()`): the
-     * barcode identifies the physical parcel, while this identifier refers to
-     * the delivery as a whole and is used to correlate the delivery with the
-     * remote system that produced it.
-     */
-    #[Groups(['delivery', 'delivery_create'])]
-    private ?string $externalReference = null;
 
     public function __construct()
     {
@@ -278,14 +268,23 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         return $this;
     }
 
+    /**
+     * External reference identifier assigned by an upstream system (e.g. RDC).
+     *
+     * This is distinct from the per-task barcode (`Task::getBarcode()`): the
+     * barcode identifies the physical parcel, while this identifier refers to
+     * the delivery as a whole and is used to correlate the delivery with the
+     * remote system that produced it.
+     */
+    #[Groups(['delivery', 'delivery_create'])]
     public function getExternalReference(): ?string
     {
-        return $this->externalReference;
+        return $this->getPickup()->getRef();
     }
 
     public function setExternalReference(?string $externalReference): self
     {
-        $this->externalReference = $externalReference;
+        $this->getPickup()->setRef($externalReference);
 
         return $this;
     }
