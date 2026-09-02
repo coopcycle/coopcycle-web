@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
 use AppBundle\Payment\GatewayResolver;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 
 class SettingsManagerTest extends TestCase
 {
@@ -92,7 +93,8 @@ class SettingsManagerTest extends TestCase
             $foodtechEnable = true,
             $b2bEnabled = false,
             new GatewayResolver('fr'),
-            '/path/to/project_dir'
+            '/path/to/project_dir',
+            new ArrayAdapter()
         );
 
         $this->assertEquals($expected, $settingsManager->canSendSms());

@@ -20,3 +20,8 @@ framework:
                 adapters:
                   - cache.adapter.array
                   - cache.app
+            version.cache:
+                default_lifetime: 3600
+                adapters:
+                  - cache.adapter.array
+                  - cache.app

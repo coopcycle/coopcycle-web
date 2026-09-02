@@ -13,6 +13,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Process\Exception\ProcessTimedOutException;
 use Symfony\Component\Process\Process;
+use Symfony\Contracts\Cache\CacheInterface;
 
 class SettingsManager
 {
@@ -27,6 +28,7 @@ class SettingsManager
     private $gatewayResolver;
     private $projectDir;
     private $forceStripe;
+    private $versionCache;
 
     private $secretSettings = [
         'stripe_test_publishable_key',
@@ -71,6 +73,7 @@ class SettingsManager
         bool $b2bEnabled,
         GatewayResolver $gatewayResolver,
         string $projectDir,
+        CacheInterface $versionCache,
         $forceStripe = false)
     {
         $this->craueConfig = $craueConfig;
@@ -83,6 +86,7 @@ class SettingsManager
         $this->b2bEnabled = $b2bEnabled;
         $this->gatewayResolver = $gatewayResolver;
         $this->projectDir = $projectDir;
+        $this->versionCache = $versionCache;
         $this->forceStripe = $forceStripe;
     }
 
@@ -391,8 +395,16 @@ class SettingsManager
 
     public function getVersion(): string
     {
-        // TODO Add caching
+        // Resolving the version shells out to "git ls-remote", i.e. a network
+        // round trip to github.com, which used to happen several times per
+        // request (the version is rendered in the admin navbar).
+        return $this->versionCache->get('coopcycle_version', function () {
+            return $this->doGetVersion();
+        });
+    }
 
+    private function doGetVersion(): string
+    {
         try {
 
             // If there is a REVISION file in project dir containing a SHA1, trust it

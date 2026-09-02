@@ -905,6 +905,7 @@ services:
       $b2bEnabled: "%b2b_enabled%"
       $forceStripe: "%env(bool:FORCE_STRIPE)%"
       $projectDir: "%kernel.project_dir%"
+      $versionCache: "@version.cache"
 
   AppBundle\Service\EmailManager:
     arguments:
