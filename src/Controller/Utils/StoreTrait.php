@@ -40,6 +40,7 @@ use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\UnableToWriteFile;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
+use ShipMonk\DoctrineEntityPreloader\EntityPreloader;
 use Knp\Component\Pager\PaginatorInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -586,18 +587,60 @@ trait StoreTrait
             ]
         );
 
+        // When a filter is active, only the paginated list is rendered.
+        $today = $filters['enabled'] ? [] : $deliveryRepository->today($qb)->getQuery()->getResult();
+        $upcoming = $filters['enabled'] ? [] : $deliveryRepository->upcoming($qb)->getQuery()->getResult();
+
+        // Optimization: the listing renders tasks, packages, images & orders for
+        // every delivery, which would otherwise be lazy loaded one by one.
+        $this->preloadDeliveries(
+            array_merge(
+                iterator_to_array($deliveries->getItems(), false),
+                $today,
+                $upcoming
+            ),
+            $entityManager
+        );
+
         return $this->render('store/deliveries.html.twig', $this->auth([
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
             'deliveries' => $deliveries,
             'filters' => $filters,
-            'today' => $filters['enabled'] ?: $deliveryRepository->today($qb)->getQuery()->getResult(),
-            'upcoming' => $filters['enabled'] ?: $deliveryRepository->upcoming($qb)->getQuery()->getResult(),
+            'today' => $today,
+            'upcoming' => $upcoming,
             'routes' => $this->getDeliveryRoutes(),
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],
             'delivery_import_form' => $deliveryImportForm->createView(),
         ]));
+    }
+
+    /**
+     * @param array<Delivery> $deliveries
+     */
+    private function preloadDeliveries(array $deliveries, EntityManagerInterface $entityManager): void
+    {
+        if (count($deliveries) === 0) {
+            return;
+        }
+
+        $preloader = new EntityPreloader($entityManager);
+
+        // Delivery::getTasks() walks the items, and the listing then reads the
+        // tasks' packages & images.
+        $items = $preloader->preload($deliveries, 'items');
+        $tasks = $preloader->preload($items, 'task');
+        $preloader->preload($tasks, 'images');
+        $packages = $preloader->preload($tasks, 'packages');
+        $preloader->preload($packages, 'package');
+
+        // Order number & totals; the totals are computed from the adjustments,
+        // both on the order itself and on its items.
+        $orders = $preloader->preload($deliveries, 'order');
+        $preloader->preload($orders, 'adjustments');
+        $orderItems = $preloader->preload($orders, 'items');
+        $preloader->preload($orderItems, 'adjustments');
     }
 
     public function storeSavedOrdersAction($id, Request $request,

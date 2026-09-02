@@ -626,7 +626,16 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
 
     public function hasImages()
     {
-        return count($this->getImages()) > 0;
+        // Relies on the denormalized Task::$imageCount, so that we don't load
+        // every task's image collection just to know whether there is one.
+        foreach ($this->getTasks() as $task) {
+            if (count($task->getImagesWithCache()) > 0) {
+
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
