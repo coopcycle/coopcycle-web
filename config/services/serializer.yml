@@ -59,6 +59,9 @@ services:
   AppBundle\Serializer\MyTaskDtoNormalizer:
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
+  AppBundle\Serializer\MyTourDtoNormalizer:
+    tags: [ { name: serializer.normalizer, priority: 128 } ]
+
   AppBundle\Serializer\MyTaskListDtoNormalizer:
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
