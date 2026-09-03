@@ -50,6 +50,7 @@ class ZeltyMenuMapper
      * @param array $productsMap Map of product IDs to products
      * @param LocalBusiness $restaurant The restaurant
      * @param string $locale The locale code
+     * @param array<string,TaxCategory> $taxesMap Map of tax IDs to tax categories
      * @param TaxCategory|null $defaultTaxCategory Fallback tax category
      * @return array Map of menu ID to menu Product
      */
@@ -60,6 +61,7 @@ class ZeltyMenuMapper
         array $optionsMap,
         LocalBusiness $restaurant,
         string $locale,
+        array $taxesMap = [],
         ?TaxCategory $defaultTaxCategory = null
     ): array {
         $menuProductMap = [];
@@ -67,7 +69,7 @@ class ZeltyMenuMapper
         $this->optionValuesByCode = [];
 
         foreach ($menus as $menu) {
-            $menuProduct = $this->importMenu($menu, $menuPartsMap, $productsMap, $optionsMap, $restaurant, $locale, $defaultTaxCategory);
+            $menuProduct = $this->importMenu($menu, $menuPartsMap, $productsMap, $optionsMap, $restaurant, $locale, $taxesMap, $defaultTaxCategory);
             $menuProductMap[$menu->id] = $menuProduct;
         }
 
@@ -84,6 +86,7 @@ class ZeltyMenuMapper
         array $optionsMap,
         LocalBusiness $restaurant,
         string $locale,
+        array $taxesMap,
         ?TaxCategory $defaultTaxCategory = null
     ): Product {
         $product = $this->findExistingMenuProduct($menu->id);
@@ -93,7 +96,7 @@ class ZeltyMenuMapper
         }
 
         $this->updateProductDetails($product, $menu);
-        $this->importMenuVariant($product, $menu, $defaultTaxCategory);
+        $this->importMenuVariant($product, $menu, $taxesMap, $defaultTaxCategory);
         $this->importMenuPartsAsOptions($product, $menu, $menuPartsMap, $productsMap, $optionsMap, $restaurant, $locale);
 
         $this->em->persist($product);
@@ -159,15 +162,20 @@ class ZeltyMenuMapper
     }
 
     /**
-     * Import or update the menu variant with pricing.
+     * Import or update the menu variant with pricing and tax category.
      */
-    private function importMenuVariant(Product $product, ZeltyItem $menu, ?TaxCategory $defaultTaxCategory = null): void
-    {
+    private function importMenuVariant(
+        Product $product,
+        ZeltyItem $menu,
+        array $taxesMap,
+        ?TaxCategory $defaultTaxCategory = null
+    ): void {
         $price = $menu->price?->price ?? 0;
+        $taxCategory = $this->resolveTaxCategory($menu, $taxesMap, $defaultTaxCategory);
         $variant = $product->getVariants()->first() ?: null;
 
         if ($variant === null) {
-            $variant = $this->createMenuVariant($product, $menu->id, $price, $defaultTaxCategory);
+            $variant = $this->createMenuVariant($product, $menu->id, $price, $taxCategory);
         } else {
             $variant->setPrice($price);
         }
@@ -177,6 +185,28 @@ class ZeltyMenuMapper
         if ($product->getName()) {
             $variant->setName($product->getName());
         }
+
+        // Same reasoning as ZeltyProductMapper::importProductVariant(): re-apply on
+        // every import so a variant created before the tax-mapping fix gets corrected.
+        if ($taxCategory !== null) {
+            $variant->setTaxCategory($taxCategory);
+        }
+    }
+
+    /**
+     * Resolve the appropriate tax category for a menu, same rule as
+     * ZeltyProductMapper::resolveTaxCategory() for a dish.
+     */
+    private function resolveTaxCategory(
+        ZeltyItem $menu,
+        array $taxesMap,
+        ?TaxCategory $defaultTaxCategory
+    ): ?TaxCategory {
+        if ($menu->taxRule?->taxId && isset($taxesMap[$menu->taxRule->taxId])) {
+            return $taxesMap[$menu->taxRule->taxId];
+        }
+
+        return $defaultTaxCategory;
     }
 
     /**
@@ -186,15 +216,15 @@ class ZeltyMenuMapper
         Product $product,
         string $menuId,
         int $price,
-        ?TaxCategory $defaultTaxCategory
+        ?TaxCategory $taxCategory
     ): ProductVariant {
         /** @var ProductVariant $variant */
         $variant = $this->variantFactory->createForProduct($product);
         $variant->setCode(sprintf('%s_variant', $menuId));
         $variant->setPrice($price);
 
-        if ($defaultTaxCategory !== null) {
-            $variant->setTaxCategory($defaultTaxCategory);
+        if ($taxCategory !== null) {
+            $variant->setTaxCategory($taxCategory);
         }
 
         $product->addVariant($variant);

@@ -167,6 +167,14 @@ class ZeltyProductMapper
         if ($product->getName()) {
             $variant->setName($product->getName());
         }
+
+        // Same reasoning for the tax category: a stale mapping bug (fixed in
+        // ZeltyTaxesMapper) meant every variant used to be created with the
+        // restaurant's default category regardless of the dish's own tax rule.
+        // Re-apply it on every import so already-imported variants get corrected.
+        if ($taxCategory !== null) {
+            $variant->setTaxCategory($taxCategory);
+        }
     }
 
     /**

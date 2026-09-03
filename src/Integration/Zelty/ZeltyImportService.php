@@ -148,6 +148,7 @@ class ZeltyImportService
             $optionsMap,
             $restaurant,
             $locale,
+            $taxCategoryMap,
             $this->taxesMapper->getDefaultTaxCategory()
         );
 

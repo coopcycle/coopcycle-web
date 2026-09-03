@@ -82,6 +82,9 @@ class ZeltyTaxesMapper implements ResetInterface
             return;
         }
 
+        // A dish's tax_rules.tax_id comes through already prefixed, e.g. "ZTX4093",
+        // while catalog/taxes hands back the bare numeric id — key the map to match
+        // what resolveTaxCategory() in ZeltyProductMapper/ZeltyMenuMapper looks up.
         $this->taxCategoryMap[sprintf('ZTX%d', $tax['id'])] = $coopcycleTax->getCategory();
     }
 
