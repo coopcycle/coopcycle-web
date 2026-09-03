@@ -2,6 +2,7 @@
 
 namespace AppBundle\Command;
 
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\OrderProcessing\OrderTaxesProcessor;
 use Doctrine\ORM\EntityManagerInterface;
@@ -43,7 +44,13 @@ class ApplyTaxesCommand extends Command
                 'since',
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Process orders since date'
+                'Only process orders created since this date (default: all orders)'
+            )
+            ->addOption(
+                'restaurant',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Only process orders for this restaurant id'
             );
     }
 
@@ -58,14 +65,43 @@ class ApplyTaxesCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $since = $input->getOption('since');
-        $since = new \DateTime($since);
+        $since = null !== $since ? new \DateTime($since) : null;
 
-        $this->io->title(sprintf('Applying order taxes to orders since %s', $since->format(\DateTime::ATOM)));
+        $restaurantId = $input->getOption('restaurant');
+        $restaurant = null;
+        if (null !== $restaurantId) {
+            $restaurant = $this->orderManager->getRepository(LocalBusiness::class)->find($restaurantId);
+            if (null === $restaurant) {
+                $this->io->error(sprintf('Restaurant #%d not found', $restaurantId));
 
-        $qb = $this->orderRepository->createQueryBuilder('o')
-            ->andWhere('o.createdAt >= :since')
-            ->setParameter('since', $since)
-            ;
+                return 1;
+            }
+        }
+
+        $this->io->title(sprintf(
+            'Applying order taxes to orders%s%s',
+            null !== $since ? sprintf(' since %s', $since->format(\DateTime::ATOM)) : '',
+            null !== $restaurant ? sprintf(' for restaurant "%s" (#%d)', $restaurant->getName(), $restaurant->getId()) : ''
+        ));
+
+        $qb = $this->orderRepository->createQueryBuilder('o');
+
+        if (null !== $since) {
+            $qb
+                ->andWhere('o.createdAt >= :since')
+                ->setParameter('since', $since);
+        }
+
+        if (null !== $restaurant) {
+            // Order has no direct restaurant field: it is derived from the vendors
+            // collection (see AppBundle\Entity\Sylius\Order::getRestaurant()).
+            // Bind the id rather than the entity: $restaurant is detached by the
+            // orderManager->clear() call below on every page after the first.
+            $qb
+                ->innerJoin('o.vendors', 'v')
+                ->andWhere('v.restaurant = :restaurantId')
+                ->setParameter('restaurantId', $restaurant->getId());
+        }
 
         $count = (clone $qb)->select('COUNT(o.id)')->getQuery()->getSingleScalarResult();
 
