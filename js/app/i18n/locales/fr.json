@@ -956,7 +956,7 @@
         "SHIFT_ACTIVITY_DEFAULT_DISPATCH": "Répartition",
         "SHIFT_ACTIVITY_DEFAULT_ADMINISTRATION": "Administration",
         "SHIFT_ACTIVITY_ADD_TO_DISPATCH": "Ajouter à la répartition",
-        "SHIFT_ACTIVITY_ADD_TO_DISPATCH_HELP": "Les employés affectés à un créneau ayant cette activité seront ajoutés à la répartition lors de la synchronisation d'une semaine.",
+        "SHIFT_ACTIVITY_ADD_TO_DISPATCH_HELP": "Les utilisateurs affectés à un créneau ayant cette activité seront ajoutés à la répartition lors de la synchronisation d'une semaine.",
         "SHIFT_PLANNING_WEEK_STRIP_TOOLTIP": "Semaine {{week}} ({{start}} → {{end}}) : {{assigned}}/{{slots}} assignés · {{status}}",
         "SHIFT_PLANNING_WEEK_STRIP_EMPTY": "Aucune semaine à venir à afficher",
         "SHIFT_PLANNING_WEEK_STRIP_PREV": "Afficher les semaines précédentes",

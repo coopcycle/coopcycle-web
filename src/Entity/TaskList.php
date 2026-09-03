@@ -58,6 +58,13 @@ use Symfony\Component\Validator\Constraints as Assert;
                         'required' => true,
                         'type' => 'string',
                         'format' => 'date'
+                    ],
+                    [
+                        'in' => 'query',
+                        'name' => 'tours',
+                        'required' => false,
+                        'type' => 'boolean',
+                        'description' => 'When true, tours are returned as nested "Tour" items wrapping their tasks. When absent (the default), tours are flattened into a list of tasks, for backwards compatibility with older versions of the app.'
                     ]
                 ]
             ],

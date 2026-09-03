@@ -127,3 +127,98 @@ Feature: Tours
         "@*@":"@*@"
       }
       """
+
+    Scenario: Retrieve my task list with tours flattened (default, legacy app)
+    Given the fixtures files are loaded:
+      | tasks.yml           |
+      | users.yml           |
+    And the user "bob" has role "ROLE_DISPATCHER"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/task_lists/set_items/2018-03-02/bob" with body:
+    """
+    {"items" : ["/api/tasks/4", "/api/tours/1"]}
+    """
+    Then the response status code should be 200
+    When the user "bob" sends a "GET" request to "/api/me/tasks/2018-03-02"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/TaskList",
+        "@id":"@string@.startsWith('/api/task_lists/')",
+        "@type":"TaskList",
+        "items":[
+          {
+            "@id":"/api/tasks/4",
+            "@type":"Task",
+            "@*@":"@*@"
+          },
+          {
+            "@id":"/api/tasks/1",
+            "@type":"Task",
+            "@*@":"@*@"
+          },
+          {
+            "@id":"/api/tasks/2",
+            "@type":"Task",
+            "@*@":"@*@"
+          }
+        ],
+        "@*@":"@*@"
+      }
+      """
+
+    Scenario: Retrieve my task list with nested tours
+    Given the fixtures files are loaded:
+      | tasks.yml           |
+      | users.yml           |
+    And the user "bob" has role "ROLE_DISPATCHER"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/task_lists/set_items/2018-03-02/bob" with body:
+    """
+    {"items" : ["/api/tasks/4", "/api/tours/1"]}
+    """
+    Then the response status code should be 200
+    When the user "bob" sends a "GET" request to "/api/me/tasks/2018-03-02?tours=1"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/TaskList",
+        "@id":"@string@.startsWith('/api/task_lists/')",
+        "@type":"TaskList",
+        "items":[
+          {
+            "@id":"/api/tasks/4",
+            "@type":"Task",
+            "@*@":"@*@"
+          },
+          {
+            "@context":"/api/contexts/Tour",
+            "@id":"/api/tours/1",
+            "@type":"Tour",
+            "id":1,
+            "name":"Example tour",
+            "items":[
+              {
+                "@id":"/api/tasks/1",
+                "@type":"Task",
+                "@*@":"@*@"
+              },
+              {
+                "@id":"/api/tasks/2",
+                "@type":"Task",
+                "@*@":"@*@"
+              }
+            ]
+          }
+        ],
+        "@*@":"@*@"
+      }
+      """

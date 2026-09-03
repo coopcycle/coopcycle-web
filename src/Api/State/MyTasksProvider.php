@@ -7,12 +7,14 @@ use ApiPlatform\State\ProviderInterface;
 use AppBundle\Api\Dto\MyTaskListDto;
 use AppBundle\Entity\TaskListRepository;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 final class MyTasksProvider implements ProviderInterface
 {
     public function __construct(
         private readonly Security $security,
-        private readonly TaskListRepository $taskListRepository)
+        private readonly TaskListRepository $taskListRepository,
+        private readonly RequestStack $requestStack)
     {}
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
@@ -20,7 +22,13 @@ final class MyTasksProvider implements ProviderInterface
         $user = $this->security->getUser();
         $date = $uriVariables['date'];
 
-        $taskListDto = $this->taskListRepository->findMyTaskListAsDto($user, $date);
+        // Opt-in: without "?tours=1" the tours are flattened into a list of tasks,
+        // which is what every app version released before tours support expects.
+        // Do NOT make this the default, it would break already installed apps.
+        $request = $this->requestStack->getCurrentRequest();
+        $withTours = $request?->query->getBoolean('tours') ?? false;
+
+        $taskListDto = $this->taskListRepository->findMyTaskListAsDto($user, $date, $withTours);
 
         if (null === $taskListDto) {
             // Do NOT create an empty TaskList in the database,

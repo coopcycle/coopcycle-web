@@ -6,6 +6,7 @@ use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Api\Dto\MyTaskListDto;
 use AppBundle\Api\Dto\MyTaskDto;
 use AppBundle\Api\Dto\MyTaskMetadataDto;
+use AppBundle\Api\Dto\MyTourDto;
 use AppBundle\Api\Dto\TaskMapper;
 use AppBundle\Entity\Sylius\Order;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -25,7 +26,13 @@ class TaskListRepository extends ServiceEntityRepository
         parent::__construct($registry, TaskList::class);
     }
 
-    public function findMyTaskListAsDto(UserInterface $user, \DateTime $date): ?MyTaskListDto
+    /**
+     * @param bool $withTours When true, tours are returned as MyTourDto items wrapping
+     *                        their own tasks, instead of being flattened into the list.
+     *                        Opt-in only: every app version released before tours support
+     *                        assumes MyTaskListDto::$items is a flat list of tasks.
+     */
+    public function findMyTaskListAsDto(UserInterface $user, \DateTime $date, bool $withTours = false): ?MyTaskListDto
     {
 
         /**
@@ -231,13 +238,17 @@ class TaskListRepository extends ServiceEntityRepository
         }, []);
 
 
-        //restore order of tasks
-        $orderedTasks = [];
-        foreach ($orderedTaskIds as $taskId) {
-            // skip tasks that are not returned by the query
-            // that can happen if a task is cancelled, for example
-            if (isset($taskDtosById[$taskId])) {
-                $orderedTasks[] = $taskDtosById[$taskId];
+        // Tasks missing from $taskDtosById were not returned by the query above,
+        // which happens for cancelled tasks. They are skipped either way.
+        if ($withTours) {
+            $orderedTasks = $this->buildItemsWithTours($taskList, $taskDtosById);
+        } else {
+            //restore order of tasks
+            $orderedTasks = [];
+            foreach ($orderedTaskIds as $taskId) {
+                if (isset($taskDtosById[$taskId])) {
+                    $orderedTasks[] = $taskDtosById[$taskId];
+                }
             }
         }
         return new MyTaskListDto(
@@ -251,6 +262,55 @@ class TaskListRepository extends ServiceEntityRepository
             $taskList->getDuration(),
             $taskList->getPolyline(),
         );
+    }
+
+    /**
+     * Walks the TaskList items in order, keeping tours as groups.
+     *
+     * Both TaskList::$items and Tour::$items are mapped with an ORDER BY position,
+     * so the order here matches the flattened one produced by TaskList::getTasks().
+     *
+     * @param array<int, MyTaskDto> $taskDtosById
+     * @return array<int, MyTaskDto|MyTourDto>
+     */
+    private function buildItemsWithTours(TaskList $taskList, array $taskDtosById): array
+    {
+        $items = [];
+
+        foreach ($taskList->getItems() as $item) {
+            $tour = $item->getTour();
+
+            if (null === $tour) {
+                $task = $item->getTask();
+
+                if (null !== $task && isset($taskDtosById[$task->getId()])) {
+                    $items[] = $taskDtosById[$task->getId()];
+                }
+
+                continue;
+            }
+
+            $tourTasks = [];
+            foreach ($tour->getTasks() as $task) {
+                if (isset($taskDtosById[$task->getId()])) {
+                    $tourTasks[] = $taskDtosById[$task->getId()];
+                }
+            }
+
+            // A tour whose tasks were all cancelled would show up as an empty
+            // group in the app, so skip it entirely.
+            if (count($tourTasks) === 0) {
+                continue;
+            }
+
+            $items[] = new MyTourDto(
+                $tour->getId(),
+                $tour->getName() ?? '',
+                $tourTasks
+            );
+        }
+
+        return $items;
     }
 
     /**
