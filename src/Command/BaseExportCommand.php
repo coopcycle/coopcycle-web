@@ -41,15 +41,20 @@ abstract class BaseExportCommand extends Command {
                 InputOption::VALUE_REQUIRED,
                 'Target directory'
             )
+            // Credentials default to the environment so that callers do not have
+            // to put them on the command line, where they leak into "ps" output
+            // and into the command string this app logs when a command fails.
             ->addOption(
                 's3-access-key', null,
                 InputOption::VALUE_REQUIRED,
-                'S3 access key'
+                'S3 access key (defaults to COOPCYCLE_S3_ACCESS_KEY)',
+                $_SERVER['COOPCYCLE_S3_ACCESS_KEY'] ?? $_ENV['COOPCYCLE_S3_ACCESS_KEY'] ?? null
             )
             ->addOption(
                 's3-secret-key', null,
                 InputOption::VALUE_REQUIRED,
-                'S3 secret key'
+                'S3 secret key (defaults to COOPCYCLE_S3_SECRET_KEY)',
+                $_SERVER['COOPCYCLE_S3_SECRET_KEY'] ?? $_ENV['COOPCYCLE_S3_SECRET_KEY'] ?? null
             )
             ->addOption(
                 'format', 'f',
@@ -71,6 +76,15 @@ abstract class BaseExportCommand extends Command {
             $input->getOption('target'),
             $input->getOption('unsecure')
         );
+
+        // Fail before doing any work rather than exporting every day in the
+        // period and getting a 403 on each PutObject.
+        if ('s3' === $target
+            && (empty($input->getOption('s3-access-key')) || empty($input->getOption('s3-secret-key')))) {
+            throw new \InvalidArgumentException(
+                'Missing S3 credentials: pass --s3-access-key/--s3-secret-key or set COOPCYCLE_S3_ACCESS_KEY/COOPCYCLE_S3_SECRET_KEY.'
+            );
+        }
 
         // TODO Validate target & format here
 
