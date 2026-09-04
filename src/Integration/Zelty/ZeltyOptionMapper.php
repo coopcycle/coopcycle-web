@@ -167,11 +167,21 @@ class ZeltyOptionMapper
     private function importOptionValue(ZeltyOptionValue $zeltyValue, ProductOption $option, string $locale, ?Product $product = null): ProductOptionValue
     {
         $valueCode = $this->generateOptionValueCode($zeltyValue->id, $option);
-        $value = $this->findOptionValueByCode($option, $valueCode);
+        $value = $this->findOptionValueByCode($valueCode);
 
         if ($value !== null) {
             $value->setZeltyId($zeltyValue->id);
             $value->setZeltyInternalId($zeltyValue->internalId);
+
+            // Zelty lets the same option value be reused across several option
+            // groups, but a ProductOptionValue can only belong to one ProductOption
+            // (option_id is a required FK). Re-attaching it here — instead of only
+            // looking in $option's own collection — is what stops the second option
+            // from trying to INSERT a row with an already-taken code.
+            if (!$option->getValues()->contains($value)) {
+                $option->addValue($value);
+            }
+
             return $value;
         }
 
@@ -187,19 +197,45 @@ class ZeltyOptionMapper
     }
 
     /**
-     * Find an existing option value by code within the option.
+     * Find an existing option value by code, across the whole catalog rather than
+     * just the option passed in: the code (Zelty value id + restaurant id) is
+     * globally unique in the database, regardless of which option currently owns
+     * the row, so that is the scope a lookup has to use to avoid a duplicate insert.
      *
      * @return ProductOptionValue|null
      */
-    private function findOptionValueByCode(ProductOption $option, string $valueCode): ?ProductOptionValue
+    private function findOptionValueByCode(string $valueCode): ?ProductOptionValue
     {
-        foreach ($option->getValues() as $existingValue) {
-            if ($existingValue->getCode() === $valueCode) {
-                /** @var ProductOptionValue */
-                return $existingValue;
+        // Values belonging to a disabled option/product are hidden by the global
+        // DisabledFilter, which would otherwise make an existing row invisible here
+        // and lead to the same duplicate insert.
+        return $this->withoutDisabledFilter(fn () =>
+            $this->em->getRepository(ProductOptionValue::class)->findOneBy([
+                'code' => $valueCode,
+            ])
+        );
+    }
+
+    /**
+     * Temporarily disable the global DisabledFilter for a lookup that must see
+     * every row regardless of enabled state.
+     */
+    private function withoutDisabledFilter(callable $callback)
+    {
+        $filters = $this->em->getFilters();
+        $filterActive = $filters->isEnabled('disabled_filter');
+
+        if ($filterActive) {
+            $filters->disable('disabled_filter');
+        }
+
+        try {
+            return $callback();
+        } finally {
+            if ($filterActive) {
+                $filters->enable('disabled_filter');
             }
         }
-        return null;
     }
 
     /**
