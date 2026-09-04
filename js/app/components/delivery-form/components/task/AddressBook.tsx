@@ -139,7 +139,7 @@ const AddressBook = ({
   };
 
   useEffect(() => {
-    if (shallPrefillAddress && addresses.length > 0) {
+    if (shallPrefillAddress && addresses.length > 0 && storeDeliveryInfos.address) {
       handleAddressSelected(storeDeliveryInfos.address['@id']);
     }
   }, [shallPrefillAddress, addresses, storeDeliveryInfos]);
