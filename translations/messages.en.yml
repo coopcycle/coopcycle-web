@@ -727,6 +727,10 @@ form.product.confirm.help: "You have changed the product name. If it is a <stron
   \ can distinguish the products you sell and maintain history. "
 form.product.reusable_packaging_enabled.label: Enable reusable packaging for this
   product
+form.product.reusable_packaging.loopeat_mandatory_warning: This restaurant requires
+  zero waste packaging for orders, but no reusable packaging is configured
+  for this product. If this product is not eligible for zero waste packaging (e.g.
+  a drink), you can ignore this warning.
 form.product.reusable_packaging.label: Type of reusable packaging
 form.product.reusable_packaging_unit.label: Number of units
 form.product_option.name.label: Name

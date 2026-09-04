@@ -589,6 +589,10 @@ form.product.confirm.help: "Vous avez modifié le nom du produit. S'il s'agit d'
   \ vendus et conserver un historique. "
 form.product.reusable_packaging_enabled.label: Activer les emballages réutilisables
   pour ce produit
+form.product.reusable_packaging.loopeat_mandatory_warning: Ce restaurant impose
+  l'emballage zéro déchet pour les commandes, mais aucun emballage réutilisable
+  n'est configuré pour ce produit. Si ce produit n'est pas concerné par l'emballage
+  zéro déchet (une boisson par exemple), vous pouvez ignorer cet avertissement.
 form.product.reusable_packaging.label: Type d'emballage réutilisable
 form.product.reusable_packaging_unit.label: Nombre d'unités
 form.product_option.name.label: Nom

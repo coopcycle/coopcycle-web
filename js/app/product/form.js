@@ -45,6 +45,13 @@ $(function() {
 
 const collectionHolder = document.querySelector('.reusablePackagings > ul');
 
+const updateReusablePackagingWarning = () => {
+  const warning = document.querySelector('#reusable-packaging-loopeat-warning')
+  if (warning) {
+    $(warning).toggle(collectionHolder.querySelectorAll('li').length === 0)
+  }
+}
+
 $('#product_reusablePackagingEnabled').click(function() {
   if ($(this).is(":checked")) {
     $('.reusablePackagings').show()
@@ -54,6 +61,7 @@ $('#product_reusablePackagingEnabled').click(function() {
   } else {
     $('.reusablePackagings').hide()
   }
+  updateReusablePackagingWarning()
 })
 
 if (!$('#product_reusablePackagingEnabled').is(':checked')) {
@@ -75,6 +83,8 @@ const addFormToCollection = () => {
   collectionHolder.appendChild(item);
 
   collectionHolder.dataset.index++;
+
+  updateReusablePackagingWarning()
 };
 
 const addReusablePackaging = document.querySelector('.add_item_link')
@@ -85,6 +95,7 @@ if (addReusablePackaging) {
 
 $(document).on('click', '[data-reusable-packaging-delete]', function(e) {
   $(e.currentTarget).closest('li').remove()
+  updateReusablePackagingWarning()
 })
 
 new Sortable(document.querySelector('#product_options'), {

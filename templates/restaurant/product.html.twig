@@ -53,6 +53,13 @@
   <div class="panel panel-default">
     <div class="panel-body">
       {{ form_widget(form.reusablePackagingEnabled) }}
+      {% if restaurant.loopeatMandatory %}
+      <div class="alert alert-warning" id="reusable-packaging-loopeat-warning"
+        {% if product.hasReusablePackagings %}style="display: none;"{% endif %}>
+        <i class="fa fa-exclamation-triangle mr-1"></i>
+        {{ 'form.product.reusable_packaging.loopeat_mandatory_warning'|trans }}
+      </div>
+      {% endif %}
       <div class="reusablePackagings">
         <ul class="list-unstyled"
           data-index="{{ form.reusablePackagings|length > 0 ? form.reusablePackagings|last.vars.name + 1 : 0 }}"
