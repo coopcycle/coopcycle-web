@@ -116,6 +116,23 @@ class ZeltyTaxesMapper implements ResetInterface
     }
 
     /**
+     * Base tax categories ordered ascending by rate (lowest first), e.g.
+     * [BASE_REDUCED, BASE_INTERMEDIARY, BASE_STANDARD] for France.
+     *
+     * Used by ZeltyMenuMapper to rank a menu's component dishes and pick the
+     * highest one when Zelty gives no tax_rules for the menu itself.
+     *
+     * @return TaxCategory[]
+     */
+    public function getOrderedTaxCategories(): array
+    {
+        return array_map(
+            fn (TaxRate $rate) => $rate->getCategory(),
+            $this->taxesHelper->getBaseRates()
+        );
+    }
+
+    /**
      * Find a matching tax rate based on percentage.
      */
     private function findMatchingTaxRate(array $coopcycleRates, float $targetRate): ?TaxRate

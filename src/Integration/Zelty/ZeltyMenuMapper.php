@@ -52,6 +52,8 @@ class ZeltyMenuMapper
      * @param string $locale The locale code
      * @param array<string,TaxCategory> $taxesMap Map of tax IDs to tax categories
      * @param TaxCategory|null $defaultTaxCategory Fallback tax category
+     * @param TaxCategory[] $orderedTaxCategories Base tax categories ascending by rate,
+     *   used to pick the highest-taxed component when the menu has no tax_rules of its own
      * @return array Map of menu ID to menu Product
      */
     public function importMenus(
@@ -62,14 +64,15 @@ class ZeltyMenuMapper
         LocalBusiness $restaurant,
         string $locale,
         array $taxesMap = [],
-        ?TaxCategory $defaultTaxCategory = null
+        ?TaxCategory $defaultTaxCategory = null,
+        array $orderedTaxCategories = []
     ): array {
         $menuProductMap = [];
         $this->optionsByCode = [];
         $this->optionValuesByCode = [];
 
         foreach ($menus as $menu) {
-            $menuProduct = $this->importMenu($menu, $menuPartsMap, $productsMap, $optionsMap, $restaurant, $locale, $taxesMap, $defaultTaxCategory);
+            $menuProduct = $this->importMenu($menu, $menuPartsMap, $productsMap, $optionsMap, $restaurant, $locale, $taxesMap, $defaultTaxCategory, $orderedTaxCategories);
             $menuProductMap[$menu->id] = $menuProduct;
         }
 
@@ -87,7 +90,8 @@ class ZeltyMenuMapper
         LocalBusiness $restaurant,
         string $locale,
         array $taxesMap,
-        ?TaxCategory $defaultTaxCategory = null
+        ?TaxCategory $defaultTaxCategory = null,
+        array $orderedTaxCategories = []
     ): Product {
         $product = $this->findExistingMenuProduct($menu->id);
 
@@ -96,7 +100,7 @@ class ZeltyMenuMapper
         }
 
         $this->updateProductDetails($product, $menu);
-        $this->importMenuVariant($product, $menu, $taxesMap, $defaultTaxCategory);
+        $this->importMenuVariant($product, $menu, $menuPartsMap, $productsMap, $taxesMap, $defaultTaxCategory, $orderedTaxCategories);
         $this->importMenuPartsAsOptions($product, $menu, $menuPartsMap, $productsMap, $optionsMap, $restaurant, $locale);
 
         $this->em->persist($product);
@@ -167,11 +171,14 @@ class ZeltyMenuMapper
     private function importMenuVariant(
         Product $product,
         ZeltyItem $menu,
+        array $menuPartsMap,
+        array $productsMap,
         array $taxesMap,
-        ?TaxCategory $defaultTaxCategory = null
+        ?TaxCategory $defaultTaxCategory = null,
+        array $orderedTaxCategories = []
     ): void {
         $price = $menu->price?->price ?? 0;
-        $taxCategory = $this->resolveTaxCategory($menu, $taxesMap, $defaultTaxCategory);
+        $taxCategory = $this->resolveTaxCategory($menu, $menuPartsMap, $productsMap, $taxesMap, $defaultTaxCategory, $orderedTaxCategories);
         $variant = $product->getVariants()->first() ?: null;
 
         if ($variant === null) {
@@ -194,19 +201,105 @@ class ZeltyMenuMapper
     }
 
     /**
-     * Resolve the appropriate tax category for a menu, same rule as
+     * Resolve the appropriate tax category for a menu.
+     *
+     * Zelty never actually sends tax_rules on a menu item (only its component
+     * dishes carry one), so the first branch below is dead in practice today —
+     * kept in case Zelty starts sending it, and to mirror
      * ZeltyProductMapper::resolveTaxCategory() for a dish.
+     *
+     * Absent that, a menu bundles dishes that can each carry a different rate
+     * (e.g. a 10% burger with a 5.5% drink); flattening it to the catalog's
+     * lowest default rate under-collects tax on the food portion. As a
+     * stopgap short of splitting adjustments per component, tax the whole
+     * menu at its highest-rated component instead.
      */
     private function resolveTaxCategory(
         ZeltyItem $menu,
+        array $menuPartsMap,
+        array $productsMap,
         array $taxesMap,
-        ?TaxCategory $defaultTaxCategory
+        ?TaxCategory $defaultTaxCategory,
+        array $orderedTaxCategories = []
     ): ?TaxCategory {
         if ($menu->taxRule?->taxId && isset($taxesMap[$menu->taxRule->taxId])) {
             return $taxesMap[$menu->taxRule->taxId];
         }
 
+        $componentCategory = $this->resolveHighestComponentTaxCategory(
+            $menu,
+            $menuPartsMap,
+            $productsMap,
+            $orderedTaxCategories
+        );
+
+        if ($componentCategory !== null) {
+            return $componentCategory;
+        }
+
         return $defaultTaxCategory;
+    }
+
+    /**
+     * Walk every dish reachable from the menu's parts and return the tax
+     * category of whichever one ranks highest in $orderedTaxCategories
+     * (ascending by rate). Returns null if no component resolved to a known
+     * category, so the caller can fall back to the restaurant's default.
+     */
+    private function resolveHighestComponentTaxCategory(
+        ZeltyItem $menu,
+        array $menuPartsMap,
+        array $productsMap,
+        array $orderedTaxCategories
+    ): ?TaxCategory {
+        if (empty($orderedTaxCategories)) {
+            return null;
+        }
+
+        $highestRank = -1;
+        $highestCategory = null;
+
+        foreach ($menu->parts as $partId) {
+            $part = $menuPartsMap[$partId] ?? null;
+
+            if ($part === null) {
+                continue;
+            }
+
+            foreach ($part->dishIds as $dishId) {
+                $dishProduct = $productsMap[$dishId] ?? null;
+                $variant = $dishProduct?->getVariants()->first();
+                $category = $variant?->getTaxCategory();
+
+                if ($category === null) {
+                    continue;
+                }
+
+                $rank = $this->rankOfTaxCategory($category, $orderedTaxCategories);
+
+                if ($rank > $highestRank) {
+                    $highestRank = $rank;
+                    $highestCategory = $category;
+                }
+            }
+        }
+
+        return $highestCategory;
+    }
+
+    /**
+     * Position of $category within $orderedTaxCategories (ascending by rate),
+     * or -1 if not found — e.g. a dish left with a non-base tax category.
+     */
+    private function rankOfTaxCategory(TaxCategory $category, array $orderedTaxCategories): int
+    {
+        foreach ($orderedTaxCategories as $rank => $candidate) {
+            if ($candidate === $category || $candidate->getCode() === $category->getCode()) {
+                return $rank;
+            }
+        }
+
+        return -1;
     }
 
     /**

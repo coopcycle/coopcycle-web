@@ -149,7 +149,8 @@ class ZeltyImportService
             $restaurant,
             $locale,
             $taxCategoryMap,
-            $this->taxesMapper->getDefaultTaxCategory()
+            $this->taxesMapper->getDefaultTaxCategory(),
+            $this->taxesMapper->getOrderedTaxCategories()
         );
 
         $this->logInfo(sprintf('Imported %d menus', count($menusMap)));
