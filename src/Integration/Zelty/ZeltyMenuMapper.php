@@ -179,7 +179,7 @@ class ZeltyMenuMapper
     ): void {
         $price = $menu->price?->price ?? 0;
         $taxCategory = $this->resolveTaxCategory($menu, $menuPartsMap, $productsMap, $taxesMap, $defaultTaxCategory, $orderedTaxCategories);
-        $variant = $product->getVariants()->first() ?: null;
+        $variant = $this->findMenuVariant($product, $menu->id);
 
         if ($variant === null) {
             $variant = $this->createMenuVariant($product, $menu->id, $price, $taxCategory);
@@ -198,6 +198,34 @@ class ZeltyMenuMapper
         if ($taxCategory !== null) {
             $variant->setTaxCategory($taxCategory);
         }
+    }
+
+    /**
+     * Find the variant this mapper itself created for the menu, matched by
+     * its deterministic code rather than picking Collection::first().
+     *
+     * A menu product is only ever supposed to carry the single variant
+     * createMenuVariant() makes, but nothing stops an admin from adding
+     * another one by hand through the product edit form (ProductType has its
+     * own "add variant" flow). If that ever happens, first() can silently
+     * return the wrong one — a re-import would then update a variant no
+     * order actually references, while the one orders use for tax
+     * resolution stays on its old (pre-fix) category forever. Matching by
+     * code closes that gap.
+     */
+    private function findMenuVariant(Product $product, string $menuId): ?ProductVariant
+    {
+        $code = sprintf('%s_variant', $menuId);
+
+        foreach ($product->getVariants() as $variant) {
+            // getVariants() is typed to the base ProductVariantInterface; the
+            // instanceof narrows it back to our own entity for PHPStan.
+            if ($variant instanceof ProductVariant && $variant->getCode() === $code) {
+                return $variant;
+            }
+        }
+
+        return null;
     }
 
     /**

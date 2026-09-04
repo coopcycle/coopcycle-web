@@ -134,6 +134,101 @@ class ZeltyMenuMapperTest extends TestCase
         $this->assertSame($reduced, $variant->getTaxCategory());
     }
 
+    /**
+     * Reproduces the production report: after a catalog re-import, the menu
+     * product's tax category looked correct in the admin, but orders placed
+     * against it kept the old (reduced) rate.
+     *
+     * Nothing in this codebase stops an admin from adding a second variant
+     * to a Zelty-managed product by hand through the product edit form
+     * (ProductType has its own "add variant" flow). When that happens,
+     * Collection::first() on the variants no longer reliably returns the one
+     * ZeltyMenuMapper itself manages — it can land on the unrelated
+     * hand-added variant instead, leaving the real one (the one actual
+     * orders reference) never updated.
+     */
+    public function testExistingMenuWithAnExtraHandAddedVariantUpdatesTheRightOne(): void
+    {
+        $reduced = $this->taxCategory('BASE_REDUCED');
+        $intermediary = $this->taxCategory('BASE_INTERMEDIARY');
+        $orderedTaxCategories = [$reduced, $intermediary];
+
+        $burger = $this->dishProduct($intermediary);
+        $productsMap = ['ZD_BURGER' => $burger];
+        $menuPartsMap = [
+            'ZMP_BURGER' => new ZeltyMenuPart(id: 'ZMP_BURGER', name: 'Burger', dishIds: ['ZD_BURGER']),
+        ];
+
+        $existingProduct = new Product();
+        $existingProduct->setFallbackLocale('fr');
+        $existingProduct->setCurrentLocale('fr');
+
+        // A variant an admin added by hand, unrelated to Zelty's own
+        // "{menuId}_variant" naming, added first so it sorts before the real
+        // one in the collection.
+        $handAddedVariant = new ProductVariant();
+        $handAddedVariant->setCode('admin-added-variant');
+        $handAddedVariant->setFallbackLocale('fr');
+        $handAddedVariant->setCurrentLocale('fr');
+        $handAddedVariant->setTaxCategory($reduced);
+        $existingProduct->addVariant($handAddedVariant);
+
+        // The variant ZeltyMenuMapper itself created and manages, still on
+        // the stale rate from before the catalog fix.
+        $zeltyVariant = new ProductVariant();
+        $zeltyVariant->setCode('ZM3_variant');
+        $zeltyVariant->setFallbackLocale('fr');
+        $zeltyVariant->setCurrentLocale('fr');
+        $zeltyVariant->setTaxCategory($reduced);
+        $existingProduct->addVariant($zeltyVariant);
+
+        $repository = $this->createMock(ObjectRepository::class);
+        $repository->method('findOneBy')->willReturnCallback(
+            fn (array $criteria) => ($criteria['code'] ?? null) === 'ZM3' ? $existingProduct : null
+        );
+
+        $filters = $this->createMock(FilterCollection::class);
+        $filters->method('isEnabled')->willReturn(false);
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->method('getRepository')->willReturn($repository);
+        $em->method('getFilters')->willReturn($filters);
+
+        $productFactory = $this->createMock(ProductFactoryInterface::class);
+        $variantFactory = $this->createMock(ProductVariantFactoryInterface::class);
+        $slugify = $this->createMock(SlugifyInterface::class);
+
+        $mapper = new ZeltyMenuMapper($productFactory, $variantFactory, $em, $slugify);
+
+        $menu = new ZeltyItem(
+            id: 'ZM3',
+            type: ZeltyItem::TYPE_MENU,
+            name: 'Menu Burger',
+            price: new ZeltyPrice(price: 690),
+            parts: ['ZMP_BURGER'],
+        );
+
+        $restaurant = new LocalBusiness();
+
+        $menuMap = $mapper->importMenus(
+            [$menu],
+            $menuPartsMap,
+            $productsMap,
+            [],
+            $restaurant,
+            'fr',
+            [],
+            $reduced,
+            $orderedTaxCategories
+        );
+
+        // The hand-added variant is untouched...
+        $this->assertSame($reduced, $handAddedVariant->getTaxCategory());
+        // ...while the real Zelty-managed variant — the one orders reference — is fixed.
+        $this->assertSame($intermediary, $zeltyVariant->getTaxCategory());
+        $this->assertSame($zeltyVariant, $menuMap['ZM3']->getVariants()->last());
+    }
+
     private function dishProduct(TaxCategory $taxCategory): Product
     {
         $product = new Product();
