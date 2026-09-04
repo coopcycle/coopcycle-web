@@ -1529,6 +1529,13 @@ class Order extends BaseOrder implements OrderInterface
             return false;
         }
 
+        // Don't send anything to the LoopEat API
+        // if the order doesn't contain any item eligible for reusable packaging
+        if ($this->getReusablePackagingQuantity() === 0) {
+
+            return false;
+        }
+
         return $this->getRestaurant()->isLoopeatEnabled();
     }
 

@@ -230,6 +230,12 @@ export const selectCartItemsRelatedErrorMessages = createSelector(
 export const selectReusablePackagingFeatureEnabled = createSelector(
   state => state.cart,
   (cart) => {
+    // No point in offering the zero waste option
+    // if the cart doesn't contain any item eligible for reusable packaging
+    if (cart.reusablePackagingQuantity === 0) {
+      return false
+    }
+
     if (cart.restaurant) {
       return cart.restaurant.loopeatEnabled
     }
