@@ -22,7 +22,8 @@ class SchedulePublisher
         private readonly RendererInterface $mjml,
         private readonly TranslatorInterface $translator,
         private readonly Security $security,
-        private readonly LoggerInterface $logger)
+        private readonly LoggerInterface $logger,
+        private readonly ShiftManager $shiftManager)
     {}
 
     /**
@@ -53,6 +54,7 @@ class SchedulePublisher
         $this->entityManager->flush();
 
         $this->notifyByEmail($weekStart);
+        $this->shiftManager->notifyScheduleWeekPublished($weekStart);
 
         return $publication;
     }

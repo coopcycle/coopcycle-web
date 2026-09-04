@@ -14,6 +14,7 @@ use AppBundle\Entity\ShiftTemplateShift;
 use AppBundle\Entity\TaskList;
 use AppBundle\Entity\TaskListRepository;
 use AppBundle\Entity\User;
+use AppBundle\Message\PushNotification;
 use AppBundle\Service\ShiftManager;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
@@ -417,6 +418,62 @@ class ShiftManagerTest extends TestCase
         $added = $this->shiftManager->addWeekToDispatch(new \DateTimeImmutable('2026-06-29'));
 
         $this->assertSame([], $added);
+    }
+
+    public function testNotifyScheduleWeekPublishedNotifiesAssignedCouriers()
+    {
+        $sarah = $this->createUser('sarah');
+        $sarah->addRole('ROLE_COURIER');
+        $bob = $this->createUser('bob');
+        $bob->addRole('ROLE_COURIER');
+
+        $shift1 = new Shift();
+        $shift1->setActivity('delivery');
+        $shift1->setStartsAt(new \DateTime('2026-06-29 09:00:00'));
+        $shift1->setEndsAt(new \DateTime('2026-06-29 17:00:00'));
+        $assignment1 = new ShiftAssignment();
+        $assignment1->setUser($sarah);
+        $shift1->addAssignment($assignment1);
+
+        $shift2 = new Shift();
+        $shift2->setActivity('delivery');
+        $shift2->setStartsAt(new \DateTime('2026-07-01 09:00:00'));
+        $shift2->setEndsAt(new \DateTime('2026-07-01 17:00:00'));
+        // Sarah has a second shift that week — she must only be notified once
+        $assignment2a = new ShiftAssignment();
+        $assignment2a->setUser($sarah);
+        $shift2->addAssignment($assignment2a);
+        $assignment2b = new ShiftAssignment();
+        $assignment2b->setUser($bob);
+        $shift2->addAssignment($assignment2b);
+
+        $this->shiftRepository
+            ->findOverlappingRange(Argument::cetera())
+            ->willReturn([$shift1, $shift2]);
+
+        $dispatchedUsernames = [];
+        $this->messageBus
+            ->dispatch(Argument::type(PushNotification::class))
+            ->will(function ($args) use (&$dispatchedUsernames) {
+                $dispatchedUsernames = $args[0]->getUsers();
+
+                return new Envelope($args[0]);
+            });
+
+        $this->shiftManager->notifyScheduleWeekPublished(new \DateTimeImmutable('2026-06-29'));
+
+        $this->assertEqualsCanonicalizing(['sarah', 'bob'], $dispatchedUsernames);
+    }
+
+    public function testNotifyScheduleWeekPublishedDoesNothingWhenNoOneIsAssigned()
+    {
+        $this->shiftRepository
+            ->findOverlappingRange(Argument::cetera())
+            ->willReturn([]);
+
+        $this->messageBus->dispatch(Argument::any())->shouldNotBeCalled();
+
+        $this->shiftManager->notifyScheduleWeekPublished(new \DateTimeImmutable('2026-06-29'));
     }
 
     public function testCopyWeekSkipsUsersOnApprovedHoliday()

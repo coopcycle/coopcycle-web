@@ -360,4 +360,44 @@ class ShiftManager
             $this->logger->error(sprintf('Could not send shift push notification: %s', $e->getMessage()));
         }
     }
+
+    /**
+     * Notifies every courier with at least one shift assignment in the given
+     * week that the schedule has been published (see SchedulePublisher).
+     * Distinct from `notifications.shifts.week_assigned` (fired when shifts
+     * are bulk-created/assigned via copyWeek()/applyTemplate()) — this one
+     * fires once per publish, for the full set of already-assigned couriers,
+     * not just newly-assigned ones.
+     */
+    public function notifyScheduleWeekPublished(\DateTimeImmutable $weekStart): void
+    {
+        $start = $weekStart->setTime(0, 0);
+        $end = $start->modify('+7 days');
+
+        $shifts = $this->entityManager->getRepository(Shift::class)->findOverlappingRange($start, $end);
+
+        $users = [];
+        foreach ($shifts as $shift) {
+            foreach ($shift->getAssignedUsers() as $user) {
+                $users[$user->getUsername()] = $user;
+            }
+        }
+
+        if (count($users) === 0) {
+            return;
+        }
+
+        $this->notify(
+            $this->translator->trans('notifications.shifts.schedule_published', [
+                '%date%' => $weekStart->format('Y-m-d'),
+            ]),
+            array_values($users),
+            [
+                'event' => [
+                    'name' => 'schedule:published',
+                    'data' => ['weekStart' => $weekStart->format('Y-m-d')],
+                ],
+            ]
+        );
+    }
 }

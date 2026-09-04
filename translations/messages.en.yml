@@ -1305,6 +1305,7 @@ notifications.tasks_changed_today: Your tasks for today have been updated
 notifications.shifts.assigned: You have been assigned a shift on %date%
 notifications.shifts.week_assigned: Your shifts for the week of %date% have been published
 notifications.shifts.waitlist_promoted: A spot opened up — you are now assigned to a shift on %date%
+notifications.shifts.schedule_published: Your schedule for the week of %date% has been published
 shifts.calendar.break: 'Break: %minutes% min'
 payroll.export.username: Username
 payroll.export.name: Name
