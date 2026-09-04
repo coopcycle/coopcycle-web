@@ -49,7 +49,8 @@ class Settings
         private UrlGeneratorInterface $router,
         private Hashids $hashids12,
         private string $edenredClientId,
-        private string $edenredAuthorizationEndpoint)
+        private string $edenredAuthorizationEndpoint,
+        private bool $shiftPlanningEnabled)
     {
         $this->splitTermsAndConditionsAndPrivacyPolicy = (bool) $splitTermsAndConditionsAndPrivacyPolicy;
     }
@@ -61,6 +62,7 @@ class Settings
             'country' => $this->country,
             'locale' => $this->locale,
             'split_terms_and_conditions_and_privacy_policy' => $this->splitTermsAndConditionsAndPrivacyPolicy,
+            'shift_planning_enabled' => $this->shiftPlanningEnabled,
         ];
 
         foreach ($this->keys as $key) {

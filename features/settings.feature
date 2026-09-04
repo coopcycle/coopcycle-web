@@ -43,6 +43,7 @@ Feature: Settings
         "administrator_email":"dev@coopcycle.org",
         "guest_checkout_enabled":@boolean@,
         "split_terms_and_conditions_and_privacy_policy":@boolean@,
+        "shift_planning_enabled":@boolean@,
         "average_preparation_time": @number@,
         "average_shipping_time": @number@,
         "motto": "@string@||@null@",
