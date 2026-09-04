@@ -126,10 +126,20 @@ class ZeltyTaxesMapper implements ResetInterface
      */
     public function getOrderedTaxCategories(): array
     {
-        return array_map(
-            fn (TaxRate $rate) => $rate->getCategory(),
-            $this->taxesHelper->getBaseRates()
-        );
+        $categories = [];
+
+        // getCategory() is typed ?TaxCategoryInterface at the interface level,
+        // but rates always carry our own TaxCategory in practice; the instanceof
+        // check narrows the return type for PHPStan and drops any null.
+        foreach ($this->taxesHelper->getBaseRates() as $rate) {
+            $category = $rate->getCategory();
+
+            if ($category instanceof TaxCategory) {
+                $categories[] = $category;
+            }
+        }
+
+        return $categories;
     }
 
     /**
