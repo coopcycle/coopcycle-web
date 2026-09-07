@@ -1446,3 +1446,62 @@ Feature: Shifts
     And the user "sarah" is authenticated
     When the user "sarah" sends a "GET" request to "/api/payroll_export?month=2026-07&format=csv"
     Then the response status code should be 403
+
+  Scenario: Courier filters own holiday requests by week
+    Given the courier "sarah" is loaded:
+      | email    | sarah@coopcycle.org |
+      | password | 123456              |
+    And the user "sarah" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "POST" request to "/api/holiday_requests" with body:
+      """
+      {
+        "startDate": "2026-06-30",
+        "endDate": "2026-07-02"
+      }
+      """
+    Then the response status code should be 201
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "POST" request to "/api/holiday_requests" with body:
+      """
+      {
+        "startDate": "2026-07-20",
+        "endDate": "2026-07-24"
+      }
+      """
+    Then the response status code should be 201
+    # No date filter: the whole history, as every app released before the week
+    # picker expects.
+    When I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "GET" request to "/api/me/holiday_requests"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON node "hydra:totalItems" should be equal to 2
+    # Week of 2026-06-29: only the first request
+    When I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "GET" request to "/api/me/holiday_requests?date[after]=2026-06-29&date[before]=2026-07-05"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON node "hydra:totalItems" should be equal to 1
+    And the JSON node "hydra:member[0].startDate" should match "/^2026-06-30/"
+    # Week of 2026-07-20: only the second request
+    When I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "GET" request to "/api/me/holiday_requests?date[after]=2026-07-20&date[before]=2026-07-26"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON node "hydra:totalItems" should be equal to 1
+    And the JSON node "hydra:member[0].startDate" should match "/^2026-07-20/"
+    # A week in between: neither
+    When I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "GET" request to "/api/me/holiday_requests?date[after]=2026-07-06&date[before]=2026-07-12"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON node "hydra:totalItems" should be equal to 0
+    # Overlap: a week covering only the tail of the second request still matches
+    When I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "GET" request to "/api/me/holiday_requests?date[after]=2026-07-24&date[before]=2026-07-30"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON node "hydra:totalItems" should be equal to 1
