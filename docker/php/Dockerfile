@@ -7,8 +7,8 @@ RUN apk add --no-cache \
         icu \
         zlib
 
-ENV APCU_VERSION 5.1.28
-ENV PHPREDIS_VERSION 6.3.0
+ENV APCU_VERSION=5.1.28
+ENV PHPREDIS_VERSION=6.3.0
 
 RUN set -xe \
     && apk add --no-cache \
@@ -123,9 +123,9 @@ RUN git config --global --add safe.directory /var/www/html
 
 # allow superuser to run plugins as root
 # ref https://stackoverflow.com/questions/68973158/sh-symfony-cmd-command-not-found
-ENV COMPOSER_ALLOW_SUPERUSER 1
-ENV APP_ENV dev
-ENV APP_DEBUG 1
+ENV COMPOSER_ALLOW_SUPERUSER=1
+ENV APP_ENV=dev
+ENV APP_DEBUG=1
 
 ENTRYPOINT ["docker-app-start"]
 CMD ["php-fpm"]
