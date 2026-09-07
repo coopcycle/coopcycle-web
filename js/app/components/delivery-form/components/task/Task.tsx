@@ -194,7 +194,8 @@ const Task = ({
           shallPrefillAddress={Boolean(
             taskValues.type === 'PICKUP' &&
               mode === Mode.DELIVERY_CREATE &&
-              storeDeliveryInfos.prefillPickupAddress,
+              storeDeliveryInfos.prefillPickupAddress &&
+              !taskValues.address?.streetAddress,
           )}
         />
 
