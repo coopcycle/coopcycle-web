@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller\Utils;
 
+use AppBundle\Payment\PaymentMethodsResolver;
 use AppBundle\Sylius\Payment\Context as PaymentContext;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -18,6 +19,7 @@ trait SelectPaymentMethodTrait
     protected function selectPaymentMethodForOrder(
         OrderInterface $order,
         Request $request,
+        PaymentMethodsResolver $paymentMethodsResolver,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
         EntityManagerInterface $entityManager,
         NormalizerInterface $normalizer,
@@ -32,6 +34,7 @@ trait SelectPaymentMethodTrait
             return new JsonResponse(['message' => 'No payment method found in request'], 400);
         }
 
+        $type = strtolower($data['method']);
         $code = strtoupper($data['method']);
 
         $paymentMethod = $paymentMethodRepository->findOneByCode($code);
@@ -41,13 +44,9 @@ trait SelectPaymentMethodTrait
             return new JsonResponse(['message' => 'Payment method does not exist'], 404);
         }
 
-        // The "CASH_ON_DELIVERY" payment method may not be enabled,
-        // however if it's enabled at shop level, it is allowed
-        $bypass = $code === 'CASH_ON_DELIVERY' && $order->supportsCashOnDelivery();
+        if (!$paymentMethodsResolver->isAvailableForCheckout($order, $type)) {
 
-        if (!$paymentMethod->isEnabled() && !$bypass) {
-
-            return new JsonResponse(['message' => 'Payment method is not enabled'], 400);
+            return new JsonResponse(['message' => 'Payment method is not available for this order'], 400);
         }
 
         $paymentContext->setMethod($code);
