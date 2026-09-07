@@ -12,24 +12,24 @@ ENV PHPREDIS_VERSION 6.0.2
 
 RUN set -xe \
     && apk add --no-cache \
-        icu-dev \
-        postgresql-dev \
-        zlib-dev \
-    && apk add --no-cache \
         libpng \
         libjpeg-turbo \
         freetype \
-        libpng-dev \
-        libjpeg-turbo-dev \
-        freetype-dev \
-    && apk add --no-cache \
+        libpq \
+        libzip \
         unzip \
-        libzip-dev \
     && apk add --no-cache \
         jpegoptim \
         optipng \
         pngquant \
     && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
+        icu-dev \
+        postgresql-dev \
+        zlib-dev \
+        libpng-dev \
+        libjpeg-turbo-dev \
+        freetype-dev \
+        libzip-dev \
     && docker-php-ext-configure pdo_pgsql \
     && docker-php-ext-configure gd \
         --enable-gd \
