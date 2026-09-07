@@ -109,12 +109,33 @@ class ZeltyOptionMapper
         // creation time would never follow a restaurant fixing this in Zelty, or an
         // option that was first synced with the wrong min/max.
         $option->setValuesRange($this->createChoicesRange($zeltyOption));
+        $option->setAdditional($this->resolveAdditional($zeltyOption));
 
         if ($zeltyOption->name) {
             $option->setName($zeltyOption->name);
         }
 
         return $option;
+    }
+
+    /**
+     * Whether this option should go through Sylius/CoopCycle's "additional"
+     * option code path — a checkbox/quantity-stepper UI whose validity is
+     * driven entirely by valuesRange (min/max) — versus the plain radio-style
+     * path, which is hardcoded to always require exactly one selection
+     * regardless of valuesRange (see js/.../useProductOptions.js:isMandatory/
+     * isValid: `if (!option.additional) return true / totalQuantity > 0`).
+     *
+     * The radio path's hardcoded "always mandatory" only matches Zelty's own
+     * semantics for a genuinely mandatory single pick (minimum_choices >= 1
+     * and maximum_choices <= 1). Everything else — an optional single pick
+     * like "Choix des frites" (min 0, max 1), or any multi-pick group like
+     * "Sauce supplémentaire frites" (min 0, max 5) — needs the additional
+     * path so valuesRange is actually honored instead of ignored.
+     */
+    private function resolveAdditional(ZeltyOption $zeltyOption): bool
+    {
+        return !($zeltyOption->min_choices >= 1 && $zeltyOption->max_choices <= 1);
     }
 
     /**
@@ -150,6 +171,7 @@ class ZeltyOptionMapper
         $option->setRestaurant($restaurant);
         $option->setCurrentLocale($locale);
         $option->setValuesRange($this->createChoicesRange($zeltyOption));
+        $option->setAdditional($this->resolveAdditional($zeltyOption));
 
         if ($zeltyOption->name) {
             $option->setName($zeltyOption->name);
