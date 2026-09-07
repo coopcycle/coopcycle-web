@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "99027491ccdbf97ff55475b15299c829",
+    "content-hash": "51fb859a52044d8c83bd7b49f871297d",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -3685,67 +3685,6 @@
             "time": "2016-04-05T01:18:39+00:00"
         },
         {
-            "name": "ezyang/htmlpurifier",
-            "version": "v4.19.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/ezyang/htmlpurifier.git",
-                "reference": "b287d2a16aceffbf6e0295559b39662612b77fcf"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/ezyang/htmlpurifier/zipball/b287d2a16aceffbf6e0295559b39662612b77fcf",
-                "reference": "b287d2a16aceffbf6e0295559b39662612b77fcf",
-                "shasum": ""
-            },
-            "require": {
-                "php": "~5.6.0 || ~7.0.0 || ~7.1.0 || ~7.2.0 || ~7.3.0 || ~7.4.0 || ~8.0.0 || ~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0"
-            },
-            "require-dev": {
-                "cerdic/css-tidy": "^1.7 || ^2.0",
-                "simpletest/simpletest": "dev-master"
-            },
-            "suggest": {
-                "cerdic/css-tidy": "If you want to use the filter 'Filter.ExtractStyleBlocks'.",
-                "ext-bcmath": "Used for unit conversion and imagecrash protection",
-                "ext-iconv": "Converts text to and from non-UTF-8 encodings",
-                "ext-tidy": "Used for pretty-printing HTML"
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "library/HTMLPurifier.composer.php"
-                ],
-                "psr-0": {
-                    "HTMLPurifier": "library/"
-                },
-                "exclude-from-classmap": [
-                    "/library/HTMLPurifier/Language/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "LGPL-2.1-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "Edward Z. Yang",
-                    "email": "admin@htmlpurifier.org",
-                    "homepage": "http://ezyang.com"
-                }
-            ],
-            "description": "Standards compliant HTML filter written in PHP",
-            "homepage": "http://htmlpurifier.org/",
-            "keywords": [
-                "html"
-            ],
-            "support": {
-                "issues": "https://github.com/ezyang/htmlpurifier/issues",
-                "source": "https://github.com/ezyang/htmlpurifier/tree/v4.19.0"
-            },
-            "time": "2025-10-17T16:34:55+00:00"
-        },
-        {
             "name": "fakerphp/faker",
             "version": "v1.24.1",
             "source": {
@@ -3929,20 +3868,23 @@
         },
         {
             "name": "flow-php/filesystem",
-            "version": "0.16.2",
+            "version": "0.43.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/flow-php/filesystem.git",
-                "reference": "edb3f60d002edff5b3914f676b21de32271c487b"
+                "reference": "00f75f6d98cc7e462911a269620a63e01274fd24"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/flow-php/filesystem/zipball/edb3f60d002edff5b3914f676b21de32271c487b",
-                "reference": "edb3f60d002edff5b3914f676b21de32271c487b",
+                "url": "https://api.github.com/repos/flow-php/filesystem/zipball/00f75f6d98cc7e462911a269620a63e01274fd24",
+                "reference": "00f75f6d98cc7e462911a269620a63e01274fd24",
                 "shasum": ""
             },
             "require": {
-                "php": "~8.2.0 || ~8.3.0 || ~8.4.0",
+                "flow-php/telemetry": "self.version",
+                "flow-php/types": "self.version",
+                "php": "~8.3.0 || ~8.4.0 || ~8.5.0",
+                "symfony/polyfill-mbstring": "^1.33",
                 "webmozart/glob": "^3.0 || ^4.0"
             },
             "type": "library",
@@ -3974,7 +3916,7 @@
             ],
             "support": {
                 "issues": "https://github.com/flow-php/filesystem/issues",
-                "source": "https://github.com/flow-php/filesystem/tree/0.16.2"
+                "source": "https://github.com/flow-php/filesystem/tree/0.43.0"
             },
             "funding": [
                 {
@@ -3986,34 +3928,40 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-04-28T19:24:46+00:00"
+            "time": "2026-07-29T13:55:36+00:00"
         },
         {
             "name": "flow-php/parquet",
-            "version": "0.16.2",
+            "version": "0.43.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/flow-php/parquet.git",
-                "reference": "756797398ddf8d10b701bd3f47c9681b6d0c76d0"
+                "reference": "78dd2400aee447d2e123be6f8fd9fa97f4e8a742"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/flow-php/parquet/zipball/756797398ddf8d10b701bd3f47c9681b6d0c76d0",
-                "reference": "756797398ddf8d10b701bd3f47c9681b6d0c76d0",
+                "url": "https://api.github.com/repos/flow-php/parquet/zipball/78dd2400aee447d2e123be6f8fd9fa97f4e8a742",
+                "reference": "78dd2400aee447d2e123be6f8fd9fa97f4e8a742",
                 "shasum": ""
             },
             "require": {
-                "composer-runtime-api": "^2.1",
+                "composer-runtime-api": "^2.2",
                 "ext-bcmath": "*",
                 "ext-zlib": "*",
-                "flow-php/snappy": "^0.16.0 || 1.x-dev",
+                "flow-php/filesystem": "self.version",
+                "flow-php/snappy": "self.version",
                 "packaged/thrift": "^0.15.0",
-                "php": "~8.2.0 || ~8.3.0 || ~8.4.0"
+                "php": "~8.3.0 || ~8.4.0 || ~8.5.0",
+                "symfony/polyfill-mbstring": "^1.33"
+            },
+            "suggest": {
+                "ext-arrow": "For high-performance Parquet reading/writing via Apache Arrow"
             },
             "type": "library",
             "autoload": {
                 "files": [
                     "src/Flow/Parquet/functions.php",
+                    "src/Flow/Parquet/Binary/functions.php",
                     "src/stubs.php"
                 ],
                 "psr-4": {
@@ -4037,7 +3985,7 @@
             ],
             "support": {
                 "issues": "https://github.com/flow-php/parquet/issues",
-                "source": "https://github.com/flow-php/parquet/tree/0.16.2"
+                "source": "https://github.com/flow-php/parquet/tree/0.43.0"
             },
             "funding": [
                 {
@@ -4049,24 +3997,24 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-05-14T10:58:10+00:00"
+            "time": "2026-07-29T13:27:28+00:00"
         },
         {
             "name": "flow-php/snappy",
-            "version": "0.16.2",
+            "version": "0.43.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/flow-php/snappy.git",
-                "reference": "595f26d4bcfef93b530fea0409df9f5e65914df4"
+                "reference": "d42c40b627144033f844103ec5ae0c1f325314e1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/flow-php/snappy/zipball/595f26d4bcfef93b530fea0409df9f5e65914df4",
-                "reference": "595f26d4bcfef93b530fea0409df9f5e65914df4",
+                "url": "https://api.github.com/repos/flow-php/snappy/zipball/d42c40b627144033f844103ec5ae0c1f325314e1",
+                "reference": "d42c40b627144033f844103ec5ae0c1f325314e1",
                 "shasum": ""
             },
             "require": {
-                "php": "~8.2.0 || ~8.3.0 || ~8.4.0"
+                "php": "~8.3.0 || ~8.4.0 || ~8.5.0"
             },
             "type": "library",
             "autoload": {
@@ -4096,7 +4044,7 @@
             ],
             "support": {
                 "issues": "https://github.com/flow-php/snappy/issues",
-                "source": "https://github.com/flow-php/snappy/tree/0.16.2"
+                "source": "https://github.com/flow-php/snappy/tree/0.43.0"
             },
             "funding": [
                 {
@@ -4108,7 +4056,119 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-01-30T16:34:22+00:00"
+            "time": "2026-06-04T17:28:33+00:00"
+        },
+        {
+            "name": "flow-php/telemetry",
+            "version": "0.43.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/flow-php/telemetry.git",
+                "reference": "d65719862540fc1273fa47337f087706b02aa930"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/flow-php/telemetry/zipball/d65719862540fc1273fa47337f087706b02aa930",
+                "reference": "d65719862540fc1273fa47337f087706b02aa930",
+                "shasum": ""
+            },
+            "require": {
+                "composer-runtime-api": "^2.2",
+                "php": "~8.3.0 || ~8.4.0 || ~8.5.0",
+                "psr/clock": "^1.0",
+                "symfony/polyfill-mbstring": "^1.33"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/Flow/Telemetry/DSL/functions.php"
+                ],
+                "psr-4": {
+                    "Flow\\": [
+                        "src/Flow"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Flow PHP - Telemetry library for metrics and tracing",
+            "keywords": [
+                "Metrics",
+                "php",
+                "telemetry",
+                "tracing"
+            ],
+            "support": {
+                "issues": "https://github.com/flow-php/telemetry/issues",
+                "source": "https://github.com/flow-php/telemetry/tree/0.43.0"
+            },
+            "funding": [
+                {
+                    "url": "https://flow-php.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/norberttech",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-08-10T13:25:58+00:00"
+        },
+        {
+            "name": "flow-php/types",
+            "version": "0.43.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/flow-php/types.git",
+                "reference": "8227fea6891137f2301683f39a368a741f0c9eec"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/flow-php/types/zipball/8227fea6891137f2301683f39a368a741f0c9eec",
+                "reference": "8227fea6891137f2301683f39a368a741f0c9eec",
+                "shasum": ""
+            },
+            "require": {
+                "php": "~8.3.0 || ~8.4.0 || ~8.5.0",
+                "symfony/polyfill-mbstring": "^1.33"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/Flow/Types/DSL/functions.php"
+                ],
+                "psr-4": {
+                    "Flow\\": [
+                        "src/Flow"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Extended types for PHP aligned with modern static analysis tools to provide better type safety.",
+            "keywords": [
+                "php",
+                "types"
+            ],
+            "support": {
+                "issues": "https://github.com/flow-php/types/issues",
+                "source": "https://github.com/flow-php/types/tree/0.43.0"
+            },
+            "funding": [
+                {
+                    "url": "https://flow-php.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/norberttech",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-08-10T13:25:59+00:00"
         },
         {
             "name": "friendsofphp/proxy-manager-lts",
@@ -9953,16 +10013,16 @@
         },
         {
             "name": "maennchen/zipstream-php",
-            "version": "3.2.1",
+            "version": "3.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/maennchen/ZipStream-PHP.git",
-                "reference": "682f1098a8fddbaf43edac2306a691c7ad508ec5"
+                "reference": "77bebeb4c6c340bb3c11c843b2cffd8bbfde4d5e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/maennchen/ZipStream-PHP/zipball/682f1098a8fddbaf43edac2306a691c7ad508ec5",
-                "reference": "682f1098a8fddbaf43edac2306a691c7ad508ec5",
+                "url": "https://api.github.com/repos/maennchen/ZipStream-PHP/zipball/77bebeb4c6c340bb3c11c843b2cffd8bbfde4d5e",
+                "reference": "77bebeb4c6c340bb3c11c843b2cffd8bbfde4d5e",
                 "shasum": ""
             },
             "require": {
@@ -10019,7 +10079,7 @@
             ],
             "support": {
                 "issues": "https://github.com/maennchen/ZipStream-PHP/issues",
-                "source": "https://github.com/maennchen/ZipStream-PHP/tree/3.2.1"
+                "source": "https://github.com/maennchen/ZipStream-PHP/tree/3.2.2"
             },
             "funding": [
                 {
@@ -10027,7 +10087,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-12-10T09:58:31+00:00"
+            "time": "2026-04-11T18:38:28+00:00"
         },
         {
             "name": "mailjet/mailjet-apiv3-php",
@@ -13208,20 +13268,20 @@
         },
         {
             "name": "phpoffice/phpspreadsheet",
-            "version": "1.30.2",
+            "version": "2.4.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPOffice/PhpSpreadsheet.git",
-                "reference": "09cdde5e2f078b9a3358dd217e2c8cb4dac84be2"
+                "reference": "03e65f7c3399756d77f656118f75a61e0fca23c6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPOffice/PhpSpreadsheet/zipball/09cdde5e2f078b9a3358dd217e2c8cb4dac84be2",
-                "reference": "09cdde5e2f078b9a3358dd217e2c8cb4dac84be2",
+                "url": "https://api.github.com/repos/PHPOffice/PhpSpreadsheet/zipball/03e65f7c3399756d77f656118f75a61e0fca23c6",
+                "reference": "03e65f7c3399756d77f656118f75a61e0fca23c6",
                 "shasum": ""
             },
             "require": {
-                "composer/pcre": "^1||^2||^3",
+                "composer/pcre": "^1 || ^2 || ^3",
                 "ext-ctype": "*",
                 "ext-dom": "*",
                 "ext-fileinfo": "*",
@@ -13235,30 +13295,28 @@
                 "ext-xmlwriter": "*",
                 "ext-zip": "*",
                 "ext-zlib": "*",
-                "ezyang/htmlpurifier": "^4.15",
                 "maennchen/zipstream-php": "^2.1 || ^3.0",
                 "markbaker/complex": "^3.0",
                 "markbaker/matrix": "^3.0",
-                "php": ">=7.4.0 <8.5.0",
+                "php": ">=8.1.0 <8.6.0",
                 "psr/simple-cache": "^1.0 || ^2.0 || ^3.0"
             },
             "require-dev": {
                 "dealerdirect/phpcodesniffer-composer-installer": "dev-main",
-                "doctrine/instantiator": "^1.5",
-                "dompdf/dompdf": "^1.0 || ^2.0 || ^3.0",
+                "dompdf/dompdf": "^2.0 || ^3.0",
                 "friendsofphp/php-cs-fixer": "^3.2",
-                "mitoteam/jpgraph": "^10.3",
+                "mitoteam/jpgraph": "^10.5",
                 "mpdf/mpdf": "^8.1.1",
                 "phpcompatibility/php-compatibility": "^9.3",
                 "phpstan/phpstan": "^1.1",
                 "phpstan/phpstan-phpunit": "^1.0",
-                "phpunit/phpunit": "^8.5 || ^9.0",
+                "phpunit/phpunit": "^9.6 || ^10.5",
                 "squizlabs/php_codesniffer": "^3.7",
                 "tecnickcom/tcpdf": "^6.5"
             },
             "suggest": {
                 "dompdf/dompdf": "Option for rendering PDF with PDF Writer",
-                "ext-intl": "PHP Internationalization Functions",
+                "ext-intl": "PHP Internationalization Functions, required for NumberFormatter Wizard",
                 "mitoteam/jpgraph": "Option for rendering charts, or including charts with PDF or HTML Writers",
                 "mpdf/mpdf": "Option for rendering PDF with PDF Writer",
                 "tecnickcom/tcpdf": "Option for rendering PDF with PDF Writer"
@@ -13310,9 +13368,9 @@
             ],
             "support": {
                 "issues": "https://github.com/PHPOffice/PhpSpreadsheet/issues",
-                "source": "https://github.com/PHPOffice/PhpSpreadsheet/tree/1.30.2"
+                "source": "https://github.com/PHPOffice/PhpSpreadsheet/tree/2.4.7"
             },
-            "time": "2026-01-11T05:58:24+00:00"
+            "time": "2026-07-12T19:37:16+00:00"
         },
         {
             "name": "phpseclib/phpseclib",
