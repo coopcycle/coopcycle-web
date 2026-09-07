@@ -47,7 +47,6 @@ RUN set -xe \
         apcu-${APCU_VERSION} \
         redis-${PHPREDIS_VERSION} \
     && docker-php-ext-enable --ini-name 20-apcu.ini apcu \
-    && docker-php-ext-enable opcache \
     && docker-php-ext-enable redis \
     && apk del .build-deps
 
