@@ -1,7 +1,4 @@
 <h3>Delivery {% if delivery.order is not empty %}{{ delivery.order.number }}{% else %}#{{ delivery.id }}{% endif %}</h3>
-{% if delivery.externalReference is not empty %}
-<p>{{ delivery.externalReference }}</p>
-{% endif %}
 {% if delivery.store is not empty %}
 <h4>{{ delivery.store.name }}</h4>
 {% endif %}
@@ -9,3 +6,20 @@
 <p>{{ delivery.pickup.address.name }}</p>
 <p>{{ delivery.dropoff.address.streetAddress }}</p>
 <p>{{ delivery.dropoff.address.name }}</p>
+{% if delivery.metadata is not empty %}
+<h4>Metadata</h4>
+{% import _self as macros %}
+<table>
+{{ macros.metadata_rows(delivery.metadata, '') }}
+</table>
+{% endif %}
+
+{% macro metadata_rows(metadata, prefix) %}
+    {% for key, value in metadata %}
+        {% if value is iterable %}
+            {{ _self.metadata_rows(value, prefix ~ key ~ '.') }}
+        {% elseif value is not null %}
+            <tr><td>{{ prefix ~ key }}</td><td>{{ value }}</td></tr>
+        {% endif %}
+    {% endfor %}
+{% endmacro %}

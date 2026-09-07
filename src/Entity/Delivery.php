@@ -221,6 +221,17 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     #[Groups(['delivery_create'])]
     private $store;
 
+    /**
+     * Free-form key/value metadata attached to the delivery.
+     *
+     * Used to surface delivery-level attributes assigned by upstream systems
+     * (e.g. RDC `external_reference`) without needing to add a dedicated
+     * column/property for each one. Each entry is exposed under its own key
+     * in the serialized representation.
+     */
+    #[Groups(['delivery', 'delivery_create'])]
+    private $metadata = [];
+
 
     public function __construct()
     {
@@ -275,18 +286,66 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
      * barcode identifies the physical parcel, while this identifier refers to
      * the delivery as a whole and is used to correlate the delivery with the
      * remote system that produced it.
+     *
+     * Stored under the `external_reference` key of {@see getMetadata()} so
+     * that all delivery-level metadata travels through a single bag and is
+     * surfaced uniformly in the API response.
      */
-    #[Groups(['delivery', 'delivery_create'])]
     public function getExternalReference(): ?string
     {
-        return $this->getPickup()->getRef();
+        return $this->metadata['external_reference'] ?? null;
     }
 
     public function setExternalReference(?string $externalReference): self
     {
-        $this->getPickup()->setRef($externalReference);
+        $this->metadata['external_reference'] = $externalReference;
 
         return $this;
+    }
+
+    public function getMetadata(): array
+    {
+        // The property is left untyped (like Task::$metadata) because Doctrine
+        // hydrates NULL from rows predating the metadata column; normalize here.
+        return $this->metadata ?? [];
+    }
+
+    /**
+     * Set the whole metadata bag (single array argument), or a single entry.
+     *
+     * Nested keys can be addressed using dot notation, e.g.
+     * `setMetadata('rdc.parcel.id', 'foo')` stores the value at
+     * `$metadata['rdc']['parcel']['id']`. Intermediate path segments are
+     * auto-vivified, replacing any scalar previously stored at that path.
+     */
+    public function setMetadata(...$args): self
+    {
+        if (count($args) === 1 && is_array($args[0])) {
+            $this->metadata = $args[0];
+        } elseif (count($args) === 2) {
+            if (is_string($args[0]) && str_contains($args[0], '.')) {
+                $this->setMetadataAtPath(explode('.', $args[0]), $args[1]);
+            } else {
+                $this->metadata[$args[0]] = $args[1];
+            }
+        }
+
+        return $this;
+    }
+
+    private function setMetadataAtPath(array $path, $value): void
+    {
+        $node = &$this->metadata;
+
+        foreach ($path as $key) {
+            if (!isset($node[$key]) || !is_array($node[$key])) {
+                $node[$key] = [];
+            }
+            $node = &$node[$key];
+        }
+
+        $node = $value;
+        unset($node);
     }
 
     public function getWeight()

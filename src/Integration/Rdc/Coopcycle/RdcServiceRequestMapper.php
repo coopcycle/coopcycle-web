@@ -64,11 +64,10 @@ class RdcServiceRequestMapper
 
         $this->deliveryManager->setDefaults($delivery);
 
-        // RDC metadata
-        $pickup->setMetadata([
-            'rdc_lo_uri' => $loUri,
-            'rdc_created_at' => (new DateTime())->format(DateTimeInterface::ATOM),
-        ]);
+        // RDC provenance is delivery-level: keep it on the delivery metadata bag,
+        // nested under the `rdc` namespace (see Delivery::$metadata).
+        $delivery->setMetadata('rdc.lo_uri', $loUri);
+        $delivery->setMetadata('rdc.created_at', (new DateTime())->format(DateTimeInterface::ATOM));
 
         $externalRef = $apiRequest->getExternalRef();
         if (!is_null($externalRef)) {
