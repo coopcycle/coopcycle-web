@@ -100,12 +100,21 @@ class ZeltyOptionMapper
         $optionCode = $this->generateOptionCode($zeltyOption->id, $restaurant);
         $option = $this->findOptionByCodeAndRestaurant($optionCode, $restaurant);
 
-        //TODO: Implement upsert
-        if ($option !== null) {
-            return $option;
+        if ($option === null) {
+            return $this->createOption($zeltyOption, $restaurant, $locale, $optionCode);
         }
 
-        return $this->createOption($zeltyOption, $restaurant, $locale, $optionCode);
+        // Re-apply on every import, not just creation: minimum_choices/maximum_choices
+        // control whether the option is mandatory (lower > 0) — a value frozen at
+        // creation time would never follow a restaurant fixing this in Zelty, or an
+        // option that was first synced with the wrong min/max.
+        $option->setValuesRange($this->createChoicesRange($zeltyOption));
+
+        if ($zeltyOption->name) {
+            $option->setName($zeltyOption->name);
+        }
+
+        return $option;
     }
 
     /**

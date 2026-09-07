@@ -2,7 +2,9 @@
 
 namespace Tests\AppBundle\Integration\Zelty;
 
+use AppBundle\DataType\NumRange;
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\Sylius\ProductOption;
 use AppBundle\Entity\Sylius\ProductOptionValue;
 use AppBundle\Integration\Zelty\Dto\ZeltyOption;
 use AppBundle\Integration\Zelty\Dto\ZeltyOptionValue;
@@ -68,5 +70,61 @@ class ZeltyOptionMapperTest extends TestCase
         $this->assertSame($optionMap['ZOB'], $value->getOption());
         $this->assertTrue($optionMap['ZOB']->getValues()->contains($value));
         $this->assertFalse($optionMap['ZOA']->getValues()->contains($value));
+    }
+
+    /**
+     * Reproduces a production bug: an option group Zelty says is optional
+     * (minimum_choices: 0) was showing on the site as mandatory ("Vous devez
+     * sélectionner au moins 3 option(s)"), forcing customers into paid
+     * choices. Re-importing the catalog didn't fix it because importOption()
+     * returned the existing ProductOption as-is once found — the min/max
+     * choices range was only ever applied at creation time, never refreshed
+     * on a later sync.
+     */
+    public function testReimportRefreshesMinAndMaxChoicesOnAnExistingOption(): void
+    {
+        $restaurant = new LocalBusiness();
+        (new ReflectionProperty($restaurant, 'id'))->setValue($restaurant, 178);
+
+        $existingOption = new ProductOption();
+        $existingOption->setCode('ZO232512_178');
+        $existingOption->setRestaurant($restaurant);
+        $existingOption->setFallbackLocale('fr');
+        $existingOption->setCurrentLocale('fr');
+        // Stale state: previously synced (or manually set) as mandatory,
+        // min 3 — exactly what the production screenshot showed.
+        $existingOption->setValuesRange((new NumRange())->setLower(3)->setUpper(3));
+
+        $optionRepository = $this->createMock(ObjectRepository::class);
+        $optionRepository->method('findOneBy')->willReturn($existingOption);
+
+        $valueRepository = $this->createMock(ObjectRepository::class);
+        $valueRepository->method('findOneBy')->willReturn(null);
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->method('getRepository')->willReturnCallback(
+            fn (string $class) => $class === ProductOption::class ? $optionRepository : $valueRepository
+        );
+
+        $filters = $this->createMock(FilterCollection::class);
+        $filters->method('isEnabled')->willReturn(false);
+        $em->method('getFilters')->willReturn($filters);
+
+        // Zelty's current, correct config for "Sauce supplémentaire frites":
+        // optional (min 0), up to 5 picks.
+        $zeltyOption = new ZeltyOption(
+            id: 'ZO232512',
+            name: 'Sauce supplémentaire frites',
+            valueIds: [],
+            min_choices: 0,
+            max_choices: 5,
+        );
+
+        $mapper = new ZeltyOptionMapper($em);
+        $optionMap = $mapper->importOptions([$zeltyOption], [], $restaurant, 'fr');
+
+        $range = $optionMap['ZO232512']->getValuesRange();
+        $this->assertSame(0, $range->getLower(), 'A re-import must clear a stale mandatory minimum.');
+        $this->assertSame(5, $range->getUpper());
     }
 }
