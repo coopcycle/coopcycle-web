@@ -1,0 +1,445 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Strict comparison using \!\=\= between null and mixed will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: src/Action/ResettingSendEmail.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between null and array will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: src/Action/Woopit/CreateDeliveryTrait.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between null and float will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 4
+			path: src/Action/Woopit/CreateDeliveryTrait.php
+
+		-
+			message: '#^Call to an undefined method Sylius\\Component\\Promotion\\Model\\PromotionCouponInterface\:\:setPerCustomerUsageLimit\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Api/State/CreateCreditNoteProcessor.php
+
+		-
+			message: '#^Method AppBundle\\Api\\State\\CustomerInsightsProvider\:\:provide\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Api/State/CustomerInsightsProvider.php
+
+		-
+			message: '#^Dead catch \- Symfony\\Contracts\\HttpClient\\Exception\\TransportExceptionInterface is never thrown in the try block\.$#'
+			identifier: catch.neverThrown
+			count: 1
+			path: src/Api/State/CustomerRecommendationsProvider.php
+
+		-
+			message: '#^Method AppBundle\\Api\\State\\CustomerRecommendationsProvider\:\:provide\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Api/State/CustomerRecommendationsProvider.php
+
+		-
+			message: '#^PHPDoc tag @var with type AppBundle\\Sylius\\Order\\OrderInterface is not subtype of native type null\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: src/Api/State/DeliveryCreateOrUpdateProcessor.php
+
+		-
+			message: '#^PHPDoc tag @var with type string is not subtype of native type null\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: src/Api/State/DeliveryCreateOrUpdateProcessor.php
+
+		-
+			message: '#^Method AppBundle\\Api\\State\\IncidentFiltersProvider\:\:provide\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Api/State/IncidentFiltersProvider.php
+
+		-
+			message: '#^Method AppBundle\\Api\\State\\InvoiceLineItemsProvider\:\:provide\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Api/State/InvoiceLineItemsProvider.php
+
+		-
+			message: '#^Method AppBundle\\Api\\State\\MyHolidayRequestsProvider\:\:provide\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Api/State/MyHolidayRequestsProvider.php
+
+		-
+			message: '#^Method AppBundle\\Api\\State\\MyOrdersProvider\:\:provide\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Api/State/MyOrdersProvider.php
+
+		-
+			message: '#^Method AppBundle\\Api\\State\\MyTasksProvider\:\:provide\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Api/State/MyTasksProvider.php
+
+		-
+			message: '#^Method AppBundle\\Api\\State\\OpenShiftsProvider\:\:provide\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Api/State/OpenShiftsProvider.php
+
+		-
+			message: '#^Method AppBundle\\Api\\State\\OrderPaymentsProvider\:\:provide\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Api/State/OrderPaymentsProvider.php
+
+		-
+			message: '#^Method AppBundle\\Api\\State\\OrderProductRecommendationsProvider\:\:provide\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Api/State/OrderProductRecommendationsProvider.php
+
+		-
+			message: '#^Method AppBundle\\Api\\State\\OrderRefundsProvider\:\:provide\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Api/State/OrderRefundsProvider.php
+
+		-
+			message: '#^Dead catch \- Symfony\\Contracts\\HttpClient\\Exception\\TransportExceptionInterface is never thrown in the try block\.$#'
+			identifier: catch.neverThrown
+			count: 1
+			path: src/Api/State/ProductFbtProvider.php
+
+		-
+			message: '#^Method AppBundle\\Api\\State\\ProductFbtProvider\:\:provide\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Api/State/ProductFbtProvider.php
+
+		-
+			message: '#^Method AppBundle\\Api\\State\\RestaurantProvider\:\:provide\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Api/State/RestaurantProvider.php
+
+		-
+			message: '#^Method AppBundle\\Api\\State\\RestaurantTimingProvider\:\:provide\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Api/State/RestaurantTimingProvider.php
+
+		-
+			message: '#^Method AppBundle\\Api\\State\\ShopifyWebhookProvider\:\:provide\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Api/State/ShopifyWebhookProvider.php
+
+		-
+			message: '#^Method AppBundle\\Api\\State\\StripePaymentMethodsProvider\:\:provide\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Api/State/StripePaymentMethodsProvider.php
+
+		-
+			message: '#^Method AppBundle\\Api\\State\\TaskListProvider\:\:provide\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Api/State/TaskListProvider.php
+
+		-
+			message: '#^Method AppBundle\\Api\\State\\TasksProvider\:\:provide\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Api/State/TasksProvider.php
+
+		-
+			message: '#^Method AppBundle\\Api\\State\\UrbantzWebhookProvider\:\:provide\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Api/State/UrbantzWebhookProvider.php
+
+		-
+			message: '#^Method AppBundle\\Api\\State\\Woopit\\DeliveryProvider\:\:provide\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Api/State/Woopit/DeliveryProvider.php
+
+		-
+			message: '#^Property AppBundle\\Command\\LoadFixturesCommand\:\:\$io \(Symfony\\Component\\Console\\Style\\StyleInterface\|null\) is never assigned null so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Command/LoadFixturesCommand.php
+
+		-
+			message: '#^Property AppBundle\\Entity\\BusinessAccount\:\:\$id \(int\|null\) is never assigned int so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Entity/BusinessAccount.php
+
+		-
+			message: '#^Call to function is_array\(\) with array\<string\> will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Entity/Edifact/EDIFACTMessage.php
+
+		-
+			message: '#^Property AppBundle\\Entity\\LocalBusiness\\FulfillmentMethod\:\:\$options \(array\|null\) is never assigned null so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Entity/LocalBusiness/FulfillmentMethod.php
+
+		-
+			message: '#^Trait AppBundle\\Entity\\Model\\Name\\MethodsTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/Entity/Model/Name/MethodsTrait.php
+
+		-
+			message: '#^Trait AppBundle\\Entity\\Model\\NameTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/Entity/Model/NameTrait.php
+
+		-
+			message: '#^Trait AppBundle\\Entity\\Model\\PriceTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/Entity/Model/PriceTrait.php
+
+		-
+			message: '#^Property AppBundle\\Entity\\Shopify\\ShopifyOrder\:\:\$id \(int\|null\) is never assigned int so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Entity/Shopify/ShopifyOrder.php
+
+		-
+			message: '#^Property AppBundle\\Entity\\Shopify\\ShopifyShop\:\:\$id \(int\|null\) is never assigned int so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Entity/Shopify/ShopifyShop.php
+
+		-
+			message: '#^Call to static method Webmozart\\Assert\\Assert\:\:nullOrIsInstanceOf\(\) with AppBundle\\Entity\\User\|null and ''AppBundle\\\\Entity\\\\User'' will always evaluate to true\.$#'
+			identifier: staticMethod.alreadyNarrowedType
+			count: 1
+			path: src/Entity/Sylius/Customer.php
+
+		-
+			message: '#^Instanceof between AppBundle\\Entity\\User and AppBundle\\Entity\\User will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Entity/Sylius/Customer.php
+
+		-
+			message: '#^Property AppBundle\\Entity\\Sylius\\OrderBookmark\:\:\$id \(int\|null\) is never assigned int so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Entity/Sylius/OrderBookmark.php
+
+		-
+			message: '#^Property AppBundle\\Entity\\Woopit\\WoopitIntegration\:\:\$productTypes \(array\|null\) is never assigned null so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Entity/Woopit/WoopitIntegration.php
+
+		-
+			message: '#^@readonly property AppBundle\\Enum\\RestrictedDiet\:\:\$name is assigned outside of the constructor\.$#'
+			identifier: property.readOnlyByPhpDocAssignNotInConstructor
+			count: 1
+			path: src/Enum/RestrictedDiet.php
+
+		-
+			message: '#^Instanceof between Symfony\\Component\\Security\\Core\\User\\UserInterface and Symfony\\Component\\Security\\Core\\User\\UserInterface will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/EventListener/JwtListener.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between null and mixed will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 2
+			path: src/ExpressionLanguage/PickupExpressionLanguageProvider.php
+
+		-
+			message: '#^Call to an undefined method Sylius\\Component\\Promotion\\Model\\PromotionCouponInterface\:\:setPerCustomerUsageLimit\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Form/Model/Promotion.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between null and Symfony\\Component\\Form\\FormInterface will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: src/Form/SettingsType.php
+
+		-
+			message: '#^Instanceof between AppBundle\\DataType\\NumRange and AppBundle\\DataType\\NumRange will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Form/Type/MinMaxType.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>isDangerous" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: src/Integration/Rdc/Api/RdcServiceFacade.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>serviceAgreementReference" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: src/Integration/Rdc/Api/RdcServiceFacade.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>serviceName" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: src/Integration/Rdc/Api/RdcServiceFacade.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>value" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 3
+			path: src/Integration/Rdc/Api/RdcServiceFacade.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between mixed and null will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: src/Integration/Zelty/HasZeltyMetadata.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>price" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: src/Integration/Zelty/ZeltyMenuMapper.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>price" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: src/Integration/Zelty/ZeltyProductMapper.php
+
+		-
+			message: '#^Call to static method Webmozart\\Assert\\Assert\:\:isInstanceOf\(\) with AppBundle\\Sylius\\Order\\OrderInterface and ''AppBundle\\\\LoopEat\\\\OAuthCredentialsInterface'' will always evaluate to true\.$#'
+			identifier: staticMethod.alreadyNarrowedType
+			count: 1
+			path: src/LoopEat/Client.php
+
+		-
+			message: '#^Call to function is_callable\(\) with array\{Nucleos\\UserBundle\\Model\\UserInterface, ''getUsername''\} will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Message/PushNotification.php
+
+		-
+			message: '#^Call to static method Webmozart\\Assert\\Assert\:\:isInstanceOfAny\(\) with AppBundle\\Domain\\Order\\Event\\OrderCancelled\|AppBundle\\Domain\\Order\\Event\\OrderFulfilled and array\{''AppBundle\\\\Domain\\\\Order\\\\Event\\\\OrderFulfilled'', ''AppBundle\\\\Domain\\\\Order\\\\Event\\\\OrderCancelled''\} will always evaluate to true\.$#'
+			identifier: staticMethod.alreadyNarrowedType
+			count: 1
+			path: src/MessageHandler/Order/CapturePayment.php
+
+		-
+			message: '#^Instanceof between AppBundle\\Domain\\Order\\Event\\OrderStateChanged and AppBundle\\Domain\\Order\\Event\\OrderStateChanged will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/MessageHandler/Order/SendRemotePushNotification.php
+
+		-
+			message: '#^Trait AppBundle\\OAuth\\CredentialsTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/OAuth/CredentialsTrait.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>orderSupplements" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: src/Pricing/PriceCalculationVisitor.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between null and AppBundle\\Sylius\\Order\\OrderInterface will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: src/Service/DeliveryOrderManager.php
+
+		-
+			message: '#^Offset 0 on non\-empty\-list\<string\> on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: src/Service/PaygreenManager.php
+
+		-
+			message: '#^PHPDoc tag @return has invalid value \(DeliveryForm\[\]\]\)\: Unexpected token "\]", expected TOKEN_HORIZONTAL_WS at offset 33 on line 2$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: src/Service/PricingRuleSetManager.php
+
+		-
+			message: '#^Call to method AppBundle\\Vroom\\RoutingProblem\:\:getShipments\(\) on a separate line has no effect\.$#'
+			identifier: method.resultUnused
+			count: 1
+			path: src/Service/RouteOptimizer.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between null and Stripe\\PaymentMethod will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: src/Service/StripeManager.php
+
+		-
+			message: '#^PHPDoc tag @return has invalid value \(DeliveryForm\[\]\]\)\: Unexpected token "\]", expected TOKEN_HORIZONTAL_WS at offset 33 on line 2$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: src/Service/TimeSlotManager.php
+
+		-
+			message: '#^Call to static method Webmozart\\Assert\\Assert\:\:isInstanceOf\(\) with AppBundle\\Sylius\\Order\\OrderInterface and ''AppBundle\\\\Sylius\\\\Order\\\\OrderInterface'' will always evaluate to true\.$#'
+			identifier: staticMethod.alreadyNarrowedType
+			count: 1
+			path: src/Sylius/Cart/SessionSubscriber.php
+
+		-
+			message: '#^Method AppBundle\\Sylius\\Channel\\ChannelResolver\:\:findChannel\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Sylius/Channel/ChannelResolver.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>value" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: src/Transporter/EdifactMessageParser.php
+
+		-
+			message: '#^Call to new League\\Geotools\\Geotools\(\) on a separate line has no effect\.$#'
+			identifier: new.resultUnused
+			count: 2
+			path: src/Utils/GeoUtils.php
+
+		-
+			message: '#^Instanceof between AppBundle\\Api\\Dto\\DeliveryOrderDto and AppBundle\\Api\\Dto\\DeliveryOrderDto will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Validator/Constraints/ManualSupplementsValidator.php
+
+		-
+			message: '#^Instanceof between AppBundle\\Entity\\Delivery\\PricingRule and AppBundle\\Entity\\Delivery\\PricingRule will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Validator/Constraints/PricingRuleValidator.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between null and mixed will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 2
+			path: src/Validator/Constraints/ShippingTimeRangeValidator.php
+
+		-
+			message: '#^Call to function is_string\(\) with non\-empty\-string will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Validator/Constraints/UserWithSameEmailNotExistsValidator.php

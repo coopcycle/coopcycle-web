@@ -1,4 +1,5 @@
 includes:
+    - phpstan-baseline.neon
     - vendor/phpstan/phpstan-symfony/extension.neon
     - vendor/phpstan/phpstan-webmozart-assert/extension.neon
     - vendor/phpstan/phpstan-doctrine/extension.neon
@@ -40,7 +41,7 @@ parameters:
         - '#Property AppBundle\\Entity\\(.*)::\$id is unused#'
         - '#updatedAt is never read, only written#'
         - '#Call to an undefined method Symfony\\Component\\Console\\Helper\\HelperInterface::ask\(\)#'
-        - '#Cannot use array destructuring on array<int, mixed>\|Doctrine\\ORM\\PersistentCollection#'
+        - '#Cannot use array destructuring on Doctrine\\ORM\\PersistentCollection\|list<mixed>#'
         - '#Call to an undefined method DateTimeInterface::modify\(\)#'
         - '#Call to an undefined method Sylius\\Component\\Customer\\Model\\CustomerInterface::(get|has|set)(Dabba|Loopeat|LoopEat)(AccessToken|Credentials|RefreshToken)\(\)#'
     universalObjectCratesClasses:
