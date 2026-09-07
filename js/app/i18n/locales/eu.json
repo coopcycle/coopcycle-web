@@ -253,7 +253,6 @@
             "asap": "Ahal bezain laster",
             "time_slot": "Denbora-tartea"
         },
-        "PLEASE_SELECT_ADDRESS": "Mesedez hautatu helbide bat goitibeherako menuan",
         "DOWNLOAD_EXAMPLE_SPREADSHEET": "Deskargatu adibidezko kalkulu-orria",
         "RESTAURANTS_AND_STORES": "Jatetxeak eta dendak",
         "ADMIN_DASHBOARD_MOVE_TO_NEXT_DAY_MULTI": "Mugitu {{count}} zeregin hurrengo egunera",

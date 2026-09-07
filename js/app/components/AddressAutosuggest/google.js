@@ -29,8 +29,6 @@ const placeToAddress = (place, value) => {
     postalCode: addressDict.postal_code || '',
     // We *DO NOT* use place.formatted_address, because it's different
     // from what has been entered & is visible in the search field
-    // Also, some hacky code (js/app/utils/address.js) relies on the fact that what is entered
-    // corresponds to the "streetAddress" property
     streetAddress: value, // place.formatted_address,
     // street_address indicates a precise street address
     // premise indicates a named location, usually a building or collection of buildings with a common name

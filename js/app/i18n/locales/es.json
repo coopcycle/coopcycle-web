@@ -278,7 +278,6 @@
                 "NO_SHOW": "No mostrar"
             }
         },
-        "PLEASE_SELECT_ADDRESS": "Selecciona una dirección en el menú desplegable",
         "RESTAURANTS_AND_STORES": "Restaurantes y tiendas locales",
         "ADMIN_DASHBOARD_VIEW_MODE_DROPOFF_DESC": "Mostrar por hora descendiente de entrega.",
         "ADMIN_DASHBOARD_VIEW_MODE_PICKUP_DESC": "Mostrar por hora descendiente de recogida.",

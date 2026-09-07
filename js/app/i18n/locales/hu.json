@@ -192,7 +192,6 @@
             "asap": "Amilyen hamar csak lehet",
             "time_slot": "Idősávok"
         },
-        "PLEASE_SELECT_ADDRESS": "Válassz egy címet a legördülő listából",
         "DOWNLOAD_EXAMPLE_SPREADSHEET": "Tölts le egy mintatáblázatot",
         "RESTAURANTS_AND_STORES": "Éttermek és üzletek",
         "ADMIN_DASHBOARD_MOVE_TO_NEXT_DAY_MULTI": "Feladat {{count}} áthelyezése a következő napra",
