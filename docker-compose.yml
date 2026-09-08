@@ -95,6 +95,8 @@ services:
     build:
       dockerfile: './docker/php_worker/Dockerfile'
       context: '.'
+      args:
+        PHP_VERSION: ${PHP_VERSION:-8.5}
     image: coopcycle/php_worker:${PHP_VERSION:-8.5}
     depends_on:
       - php
