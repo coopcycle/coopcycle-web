@@ -328,7 +328,7 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
       onKeyDown={onKeyDown}
       onFocus={() => setIsOpen(true)}
       onBlur={onDraftBlur}
-      style={{ flex: 1, minWidth: 80, border: 'none', outline: 'none', fontFamily: 'monospace', fontSize: '0.95em' }}
+      style={{ flex: 1, minWidth: 80, border: 'none', outline: 'none', fontFamily: 'monospace', fontSize: 15 }}
     />
   )
 
@@ -339,15 +339,15 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
           display: 'flex',
           alignItems: 'center',
           flexWrap: 'wrap',
-          rowGap: 4,
+          rowGap: 6,
           border: '1px solid #d9d9d9',
-          borderRadius: 4,
-          padding: '4px 8px',
+          borderRadius: 6,
+          padding: '7px 10px',
           background: '#fff',
         }}
         onClick={() => inputRef.current?.focus()}
       >
-        <i className="fa fa-search" style={{ color: '#aaa', marginRight: 8 }} />
+        <i className="fa fa-search" style={{ color: '#aaa', marginRight: 8, fontSize: 15 }} />
         {committedTokens.map((raw, index) => {
           const parsed = parseToken(raw)
           return (
@@ -356,7 +356,7 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
               closable
               onClick={() => editToken(index)}
               onClose={(e) => { e.preventDefault(); e.stopPropagation(); removeToken(index) }}
-              style={{ marginInlineEnd: 4, cursor: 'pointer' }}
+              style={{ marginInlineEnd: 4, cursor: 'pointer', fontSize: 14, padding: '3px 9px', lineHeight: '18px' }}
             >
               {parsed.isFilter ? (
                 <>
@@ -377,7 +377,7 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
             className="fa fa-times"
             role="button"
             aria-label={t('SEARCH_QUERY_BAR_CLEAR')}
-            style={{ color: '#aaa', cursor: 'pointer' }}
+            style={{ color: '#aaa', cursor: 'pointer', fontSize: 15 }}
             onClick={(e) => { e.stopPropagation(); clearAll() }}
           />
         )}
