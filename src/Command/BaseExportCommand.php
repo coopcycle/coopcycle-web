@@ -189,6 +189,8 @@ abstract class BaseExportCommand extends Command {
                 continue;
             }
 
+            $this->assertWellFormedCsv($csv);
+
             [$chunkRows, $chunkOverlapRows] = $this->countRows($csv, $watermarkAt);
             $rows += $chunkRows;
             $overlapRows += $chunkOverlapRows;
@@ -401,12 +403,60 @@ abstract class BaseExportCommand extends Command {
     }
 
     /**
+     * Fail on a record whose field count does not match the header.
+     *
+     * The export round-trips through CSV, and free text written by couriers and
+     * dispatchers goes through it: comments and notes routinely contain
+     * newlines and quotes. When a value breaks the quoting, the record is split
+     * and League\Csv pads the short half with nulls, which surfaces much later
+     * as a type error on whichever column happens to be read first -- naming
+     * neither the row nor the reason. Check it here, where the offending record
+     * can still be pointed at.
+     */
+    private function assertWellFormedCsv(string $csv): void
+    {
+        // PHP's default escape character is not part of RFC 4180 and does not
+        // round-trip through fputcsv/fgetcsv. An empty escape is the standard
+        // way of asking League\Csv for conforming behaviour.
+        $reader = Reader::createFromString($csv);
+        $reader->setEscape('');
+
+        $expected = null;
+
+        foreach ($reader->getRecords() as $offset => $record) {
+
+            if (null === $expected) {
+                $expected = count($record);
+                continue;
+            }
+
+            if (count($record) === $expected) {
+                continue;
+            }
+
+            throw new \RuntimeException(sprintf(
+                'Malformed CSV at record %d: %d fields instead of %d. A value has '
+                    . 'most likely broken the quoting. First fields: %s',
+                $offset,
+                count($record),
+                $expected,
+                implode(' | ', array_map(
+                    fn ($value): string => substr((string) $value, 0, 40),
+                    array_slice($record, 0, 5)
+                ))
+            ));
+        }
+    }
+
+    /**
      * @return array{0: int, 1: int} total rows, and rows that only the overlap
      *                               window selected
      */
     private function countRows(string $csv, ?\DateTimeInterface $watermarkAt): array
     {
-        $reader = Reader::createFromString($csv)->setHeaderOffset(0);
+        $reader = Reader::createFromString($csv);
+        $reader->setEscape('');
+        $reader->setHeaderOffset(0);
 
         $total = count($reader);
 

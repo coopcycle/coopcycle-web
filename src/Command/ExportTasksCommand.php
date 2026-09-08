@@ -119,9 +119,12 @@ class ExportTasksCommand extends BaseExportCommand
 
     protected function csv2parquet(string $csv, ?\DateTimeInterface $exportedAt = null): string
     {
-        $reader = Reader::createFromString($csv)
-            ->setHeaderOffset(0)
-            ->addFormatter(fn($row) => $this->formatRow($row, $exportedAt));
+        $reader = Reader::createFromString($csv);
+        // See assertWellFormedCsv(): PHP's default escape character does not
+        // round-trip, and this text comes from free-form comments and notes.
+        $reader->setEscape('');
+        $reader->setHeaderOffset(0);
+        $reader->addFormatter(fn($row) => $this->formatRow($row, $exportedAt));
 
         $rows = iterator_to_array($reader);
 
