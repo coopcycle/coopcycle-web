@@ -178,6 +178,11 @@ Feature: Shopify webhook
     And the JSON node "reason" should be equal to "shop_not_found"
 
   Scenario: Slots endpoint returns slots without a reason once configured
+    # The time slot's default 2-day interval walks today/+1/+2, but the boundary
+    # day only keeps a slot whose start time is before "now"'s time-of-day. Freeze
+    # "now" between the two opening-hours windows (10-12 and 14-17) so both windows
+    # on the boundary day survive regardless of when CI actually runs.
+    Given the current time is "2026-07-01 15:00:00"
     When I send a "GET" request to "/api/shopify/slots?domain=test-shop.myshopify.com"
     Then the response status code should be 200
     And the JSON node "slots" should have 3 elements

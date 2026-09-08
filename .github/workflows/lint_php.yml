@@ -13,7 +13,7 @@ jobs:
       matrix:
         php_version:
           - '8.3'
-          - '8.4'
+          - '8.5'
       fail-fast: false
     steps:
       - uses: actions/checkout@v4
@@ -21,7 +21,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php_version }}
-          tools: composer:v2, phpstan:1.12.x
+          tools: composer:v2, phpstan:2.2.x
           extensions: redis, intl
           ini-file: development
       - name: Install PHP dependencies

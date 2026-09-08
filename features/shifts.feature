@@ -1054,7 +1054,8 @@ Feature: Shifts
     Then the response status code should be 403
 
   Scenario: Courier subscribes to their shift calendar feed
-    Given the courier "sarah" is loaded:
+    Given the current time is "2026-07-01 08:00:00"
+    And the courier "sarah" is loaded:
       | email    | sarah@coopcycle.org |
       | password | 123456              |
     And the user "bob" is loaded:

@@ -93,59 +93,59 @@ final class DV4CULDataExporter implements DataExporterInterface
 
         }, $tasks);
 
-        $IN1_Orders->setCellValueByColumnAndRow(1, 1, 'order_id');
-        $IN1_Orders->setCellValueByColumnAndRow(2, 1, 'order_name');
-        $IN1_Orders->setCellValueByColumnAndRow(3, 1, 'order_mode');
-        $IN1_Orders->setCellValueByColumnAndRow(4, 1, 'order_idhub');
-        $IN1_Orders->setCellValueByColumnAndRow(5, 1, 'order_lat');
-        $IN1_Orders->setCellValueByColumnAndRow(6, 1, 'order_lon');
-        $IN1_Orders->setCellValueByColumnAndRow(7, 1, 'order_cp');
-        $IN1_Orders->setCellValueByColumnAndRow(8, 1, 'order_earlytime');
-        $IN1_Orders->setCellValueByColumnAndRow(9, 1, 'order_latetime');
-        $IN1_Orders->setCellValueByColumnAndRow(10, 1, 'order_servicetime');
-        $IN1_Orders->setCellValueByColumnAndRow(11, 1, 'order_items');
-        $IN1_Orders->setCellValueByColumnAndRow(12, 1, 'order_weight');
-        $IN1_Orders->setCellValueByColumnAndRow(13, 1, 'order_bolactivo');
+        $IN1_Orders->setCellValue([1, 1], 'order_id');
+        $IN1_Orders->setCellValue([2, 1], 'order_name');
+        $IN1_Orders->setCellValue([3, 1], 'order_mode');
+        $IN1_Orders->setCellValue([4, 1], 'order_idhub');
+        $IN1_Orders->setCellValue([5, 1], 'order_lat');
+        $IN1_Orders->setCellValue([6, 1], 'order_lon');
+        $IN1_Orders->setCellValue([7, 1], 'order_cp');
+        $IN1_Orders->setCellValue([8, 1], 'order_earlytime');
+        $IN1_Orders->setCellValue([9, 1], 'order_latetime');
+        $IN1_Orders->setCellValue([10, 1], 'order_servicetime');
+        $IN1_Orders->setCellValue([11, 1], 'order_items');
+        $IN1_Orders->setCellValue([12, 1], 'order_weight');
+        $IN1_Orders->setCellValue([13, 1], 'order_bolactivo');
 
         $rowIndex = 2;
         foreach ($tasks as $task) {
 
             $coords = GeoUtils::asGeoCoordinates($task['geo']);
 
-            $IN1_Orders->setCellValueByColumnAndRow(1, $rowIndex, $task['id']);
-            $IN1_Orders->setCellValueByColumnAndRow(2, $rowIndex, $task['id']);
-            $IN1_Orders->setCellValueByColumnAndRow(3, $rowIndex, $task['type'] === 'PICKUP' ? 'pickup' : 'delivery');
-            $IN1_Orders->setCellValueByColumnAndRow(4, $rowIndex, '');
-            $IN1_Orders->setCellValueByColumnAndRow(5, $rowIndex, $coords->getLatitude());
-            $IN1_Orders->setCellValueByColumnAndRow(6, $rowIndex, $coords->getLongitude());
-            $IN1_Orders->setCellValueByColumnAndRow(7, $rowIndex, $task['postalCode']);
-            $IN1_Orders->setCellValueByColumnAndRow(8, $rowIndex, $task['after']->format('H:i'));
-            $IN1_Orders->setCellValueByColumnAndRow(9, $rowIndex, $task['before']->format('H:i'));
-            $IN1_Orders->setCellValueByColumnAndRow(10, $rowIndex, '0');
-            $IN1_Orders->setCellValueByColumnAndRow(11, $rowIndex, $task['packages']);
-            $IN1_Orders->setCellValueByColumnAndRow(12, $rowIndex, $task['weight'] ? ($task['weight'] / 1000) : '');
-            $IN1_Orders->setCellValueByColumnAndRow(13, $rowIndex, '1');
+            $IN1_Orders->setCellValue([1, $rowIndex], $task['id']);
+            $IN1_Orders->setCellValue([2, $rowIndex], $task['id']);
+            $IN1_Orders->setCellValue([3, $rowIndex], $task['type'] === 'PICKUP' ? 'pickup' : 'delivery');
+            $IN1_Orders->setCellValue([4, $rowIndex], '');
+            $IN1_Orders->setCellValue([5, $rowIndex], $coords->getLatitude());
+            $IN1_Orders->setCellValue([6, $rowIndex], $coords->getLongitude());
+            $IN1_Orders->setCellValue([7, $rowIndex], $task['postalCode']);
+            $IN1_Orders->setCellValue([8, $rowIndex], $task['after']->format('H:i'));
+            $IN1_Orders->setCellValue([9, $rowIndex], $task['before']->format('H:i'));
+            $IN1_Orders->setCellValue([10, $rowIndex], '0');
+            $IN1_Orders->setCellValue([11, $rowIndex], $task['packages']);
+            $IN1_Orders->setCellValue([12, $rowIndex], $task['weight'] ? ($task['weight'] / 1000) : '');
+            $IN1_Orders->setCellValue([13, $rowIndex], '1');
 
             $rowIndex++;
         }
 
         // IN2_Hubs
 
-        $IN2_Hubs->setCellValueByColumnAndRow(1, 1, 'hub_id');
-        $IN2_Hubs->setCellValueByColumnAndRow(2, 1, 'hub_name');
-        $IN2_Hubs->setCellValueByColumnAndRow(3, 1, 'hub_lat');
-        $IN2_Hubs->setCellValueByColumnAndRow(4, 1, 'hub_lon');
-        $IN2_Hubs->setCellValueByColumnAndRow(5, 1, 'hub_cp');
-        $IN2_Hubs->setCellValueByColumnAndRow(6, 1, 'hub_earlytime');
-        $IN2_Hubs->setCellValueByColumnAndRow(7, 1, 'hub_latetime');
+        $IN2_Hubs->setCellValue([1, 1], 'hub_id');
+        $IN2_Hubs->setCellValue([2, 1], 'hub_name');
+        $IN2_Hubs->setCellValue([3, 1], 'hub_lat');
+        $IN2_Hubs->setCellValue([4, 1], 'hub_lon');
+        $IN2_Hubs->setCellValue([5, 1], 'hub_cp');
+        $IN2_Hubs->setCellValue([6, 1], 'hub_earlytime');
+        $IN2_Hubs->setCellValue([7, 1], 'hub_latetime');
 
-        $IN2_Hubs->setCellValueByColumnAndRow(1, 2, '1');
-        $IN2_Hubs->setCellValueByColumnAndRow(2, 2, 'Rayon9 - Pôle Image');
-        $IN2_Hubs->setCellValueByColumnAndRow(3, 2, '50.63317950768193');
-        $IN2_Hubs->setCellValueByColumnAndRow(4, 2, '5.587222795744197');
-        $IN2_Hubs->setCellValueByColumnAndRow(5, 2, '4020');
-        $IN2_Hubs->setCellValueByColumnAndRow(6, 2, '09:00');
-        $IN2_Hubs->setCellValueByColumnAndRow(7, 2, '17:30');
+        $IN2_Hubs->setCellValue([1, 2], '1');
+        $IN2_Hubs->setCellValue([2, 2], 'Rayon9 - Pôle Image');
+        $IN2_Hubs->setCellValue([3, 2], '50.63317950768193');
+        $IN2_Hubs->setCellValue([4, 2], '5.587222795744197');
+        $IN2_Hubs->setCellValue([5, 2], '4020');
+        $IN2_Hubs->setCellValue([6, 2], '09:00');
+        $IN2_Hubs->setCellValue([7, 2], '17:30');
 
         // IN3_TranspTypes
 
@@ -154,45 +154,45 @@ final class DV4CULDataExporter implements DataExporterInterface
 
         $vehicles = $vehiclesQb->getQuery()->getResult();
 
-        $IN3_TranspTypes->setCellValueByColumnAndRow(1, 1, 'transptype_id');
-        $IN3_TranspTypes->setCellValueByColumnAndRow(2, 1, 'transptype_name');
-        $IN3_TranspTypes->setCellValueByColumnAndRow(3, 1, 'transptype_capacityitems');
-        $IN3_TranspTypes->setCellValueByColumnAndRow(4, 1, 'transptype_capacityweight');
-        $IN3_TranspTypes->setCellValueByColumnAndRow(5, 1, 'transptype_speed');
-        $IN3_TranspTypes->setCellValueByColumnAndRow(6, 1, 'transptype_fixcost');
-        $IN3_TranspTypes->setCellValueByColumnAndRow(7, 1, 'transptype_kmcost');
-        $IN3_TranspTypes->setCellValueByColumnAndRow(8, 1, 'transptype_hourcost');
-        $IN3_TranspTypes->setCellValueByColumnAndRow(9, 1, 'transptype_co2emissions');
+        $IN3_TranspTypes->setCellValue([1, 1], 'transptype_id');
+        $IN3_TranspTypes->setCellValue([2, 1], 'transptype_name');
+        $IN3_TranspTypes->setCellValue([3, 1], 'transptype_capacityitems');
+        $IN3_TranspTypes->setCellValue([4, 1], 'transptype_capacityweight');
+        $IN3_TranspTypes->setCellValue([5, 1], 'transptype_speed');
+        $IN3_TranspTypes->setCellValue([6, 1], 'transptype_fixcost');
+        $IN3_TranspTypes->setCellValue([7, 1], 'transptype_kmcost');
+        $IN3_TranspTypes->setCellValue([8, 1], 'transptype_hourcost');
+        $IN3_TranspTypes->setCellValue([9, 1], 'transptype_co2emissions');
 
         $rowIndex = 2;
         foreach ($vehicles as $vehicle) {
-            $IN3_TranspTypes->setCellValueByColumnAndRow(1, $rowIndex, $vehicle->getId());
-            $IN3_TranspTypes->setCellValueByColumnAndRow(2, $rowIndex, $vehicle->getName());
-            $IN3_TranspTypes->setCellValueByColumnAndRow(3, $rowIndex, $vehicle->getMaxVolumeUnits());
-            $IN3_TranspTypes->setCellValueByColumnAndRow(4, $rowIndex, $vehicle->getMaxWeight());
-            $IN3_TranspTypes->setCellValueByColumnAndRow(5, $rowIndex, '0');
-            $IN3_TranspTypes->setCellValueByColumnAndRow(6, $rowIndex, '0');
-            $IN3_TranspTypes->setCellValueByColumnAndRow(7, $rowIndex, '0');
-            $IN3_TranspTypes->setCellValueByColumnAndRow(8, $rowIndex, '0');
-            $IN3_TranspTypes->setCellValueByColumnAndRow(9, $rowIndex, '0');
+            $IN3_TranspTypes->setCellValue([1, $rowIndex], $vehicle->getId());
+            $IN3_TranspTypes->setCellValue([2, $rowIndex], $vehicle->getName());
+            $IN3_TranspTypes->setCellValue([3, $rowIndex], $vehicle->getMaxVolumeUnits());
+            $IN3_TranspTypes->setCellValue([4, $rowIndex], $vehicle->getMaxWeight());
+            $IN3_TranspTypes->setCellValue([5, $rowIndex], '0');
+            $IN3_TranspTypes->setCellValue([6, $rowIndex], '0');
+            $IN3_TranspTypes->setCellValue([7, $rowIndex], '0');
+            $IN3_TranspTypes->setCellValue([8, $rowIndex], '0');
+            $IN3_TranspTypes->setCellValue([9, $rowIndex], '0');
 
             $rowIndex++;
         }
 
         // IN4_Transp
 
-        $IN4_Transp->setCellValueByColumnAndRow(1, 1, 'transp_id');
-        $IN4_Transp->setCellValueByColumnAndRow(2, 1, 'transp_idtransptype');
-        $IN4_Transp->setCellValueByColumnAndRow(3, 1, 'transp_idhub');
-        $IN4_Transp->setCellValueByColumnAndRow(4, 1, 'transp_num');
+        $IN4_Transp->setCellValue([1, 1], 'transp_id');
+        $IN4_Transp->setCellValue([2, 1], 'transp_idtransptype');
+        $IN4_Transp->setCellValue([3, 1], 'transp_idhub');
+        $IN4_Transp->setCellValue([4, 1], 'transp_num');
 
         $rowIndex = 2;
         $transpId = 1;
         foreach ($vehicles as $vehicle) {
-            $IN4_Transp->setCellValueByColumnAndRow(1, $rowIndex, $transpId);
-            $IN4_Transp->setCellValueByColumnAndRow(2, $rowIndex, $vehicle->getId());
-            $IN4_Transp->setCellValueByColumnAndRow(3, $rowIndex, '1');
-            $IN4_Transp->setCellValueByColumnAndRow(4, $rowIndex, '1');
+            $IN4_Transp->setCellValue([1, $rowIndex], $transpId);
+            $IN4_Transp->setCellValue([2, $rowIndex], $vehicle->getId());
+            $IN4_Transp->setCellValue([3, $rowIndex], '1');
+            $IN4_Transp->setCellValue([4, $rowIndex], '1');
 
             $rowIndex++;
             $transpId++;
