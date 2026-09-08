@@ -182,6 +182,8 @@
         "RULE_PICKER_LINE_DROPOFF_DOORSTEP": "Dépôt au pas de la porte",
         "RULE_PICKER_LINE_OPTGROUP_DELIVERY": "Livraison",
         "ORDER_LIST_STATE": "État",
+        "ORDER_LIST_NUMBER": "Numéro de commande",
+        "ORDER_LIST_CUSTOMER": "Client",
         "ORDER_LIST_PREPARATION_TIME": "Heure de préparation",
         "ORDER_LIST_PICKUP_TIME": "Heure de pickup",
         "ORDER_LIST_TOTAL": "Total",

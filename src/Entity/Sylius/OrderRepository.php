@@ -249,23 +249,6 @@ class OrderRepository extends BaseOrderRepository
         return $qb->getQuery()->getOneOrNullResult();
     }
 
-    public function search($q): QueryBuilder
-    {
-        $qb = $this->createOptimizedQueryBuilder('o');
-
-        $qb
-            ->leftJoin(Customer::class, 'c', Join::WITH, 'o.customer = c.id')
-            ->andWhere($qb->expr()->orX(
-                $qb->expr()->gt('SIMILARITY(o.number, :q)', 0),
-                $qb->expr()->gt('SIMILARITY(c.email, :q)', 0)
-            ))
-            ->addOrderBy('SIMILARITY(o.number, :q)', 'DESC')
-            ->addOrderBy('SIMILARITY(c.email, :q)', 'DESC')
-            ->setParameter('q', strtolower($q));
-
-        return $qb;
-    }
-
     public function findRefundedOrdersByRestaurantAndDateRange(LocalBusiness $restaurant, \DateTime $start, \DateTime $end)
     {
         $qb = $this->createQueryBuilder('o');

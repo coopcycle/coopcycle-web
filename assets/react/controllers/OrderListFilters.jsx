@@ -14,6 +14,14 @@ export default function OrderListFilters({ defaultValue = '' }) {
 
   const fields = useMemo(() => [
     {
+      key: 'number',
+      label: t('ORDER_LIST_NUMBER'),
+    },
+    {
+      key: 'customer',
+      label: t('ORDER_LIST_CUSTOMER'),
+    },
+    {
       key: 'date',
       label: t('DATE'),
       type: 'date',

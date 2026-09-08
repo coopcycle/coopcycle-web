@@ -284,11 +284,26 @@ class AdminController extends AbstractController
     {
         $searchQuery = $searchQueryParser->parse($searchQueryString);
 
-        if ($fullText = $searchQuery->getFullText()) {
-            $qb = $this->orderRepository->search($fullText);
-        } else {
-            $qb = $this->orderRepository
-                ->createOptimizedQueryBuilder('o');
+        $qb = $this->orderRepository->createOptimizedQueryBuilder('o');
+
+        if ($numberFilter = $searchQuery->getFilter('number')) {
+            $match = $qb->expr()->like('LOWER(o.number)', ':order_number');
+            $qb
+                ->andWhere($numberFilter->exclude ? $qb->expr()->not($match) : $match)
+                ->setParameter('order_number', '%' . strtolower($numberFilter->value) . '%');
+        }
+
+        if ($customerFilter = $searchQuery->getFilter('customer')) {
+            $needle = '%' . strtolower($customerFilter->value) . '%';
+            $match = $qb->expr()->orX(
+                $qb->expr()->like('LOWER(customer.emailCanonical)', ':customer_needle'),
+                $qb->expr()->like('LOWER(customer.firstName)', ':customer_needle'),
+                $qb->expr()->like('LOWER(customer.lastName)', ':customer_needle'),
+            );
+            $qb
+                ->leftJoin(Customer::class, 'customer', Expr\Join::WITH, 'o.customer = customer.id')
+                ->andWhere($customerFilter->exclude ? $qb->expr()->not($match) : $match)
+                ->setParameter('customer_needle', $needle);
         }
 
         if ($dateFilter = $searchQuery->getFilter('date')) {
