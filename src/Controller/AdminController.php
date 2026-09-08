@@ -6,7 +6,6 @@ use ACSEO\TypesenseBundle\Finder\CollectionFinderInterface;
 use ACSEO\TypesenseBundle\Finder\TypesenseQuery;
 use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\Metadata\GetCollection;
-use ApiPlatform\Metadata\Exception\ItemNotFoundException;
 use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Api\Dto\ResourceApplication;
 use AppBundle\Controller\Utils\AccessControlTrait;
@@ -45,7 +44,6 @@ use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderVendor;
-use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Entity\Sylius\TaxRate;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
@@ -101,6 +99,7 @@ use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Utils\Settings;
+use AppBundle\SearchQuery\Orders as OrdersSearchQuery;
 use Carbon\Carbon;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\Common\Collections\Collection;
@@ -239,64 +238,15 @@ class AdminController extends AbstractController
 
     protected function getOrderList(Request $request, Response $response,
         PaginatorInterface $paginator,
-        IriConverterInterface $iriConverter,
-        $showCanceled = false)
+        OrdersSearchQuery $ordersSearchQuery,
+        string $searchQueryString)
     {
-        if ($request->query->has('q')) {
-            $qb = $this->orderRepository->search($request->query->get('q'));
-        } else {
-            $qb = $this->orderRepository
-                ->createOptimizedQueryBuilder('o');
-        }
-
-        if ($request->query->has('date')) {
-            $date = new \DateTimeImmutable($request->query->get('date'));
-            $qb
-                ->andWhere('OVERLAPS(o.shippingTimeRange, CAST(:range AS tsrange)) = TRUE')
-                ->setParameter('range', sprintf('[%s, %s]', $date->format('Y-m-d 00:00:00'), $date->format('Y-m-d 23:59:59')));
-        }
-
-        // TODO Don't allow state=cart
-        if ($request->query->has('state')) {
-            $state = $request->query->all('state');
-            $qb
-                ->andWhere('o.state IN (:state)')
-                ->setParameter('state', $state);
-        } else {
-            $qb
-                ->andWhere('o.state != :state')
-                ->setParameter('state', OrderInterface::STATE_CART);
-        }
-
-        if ($request->query->has('owner')) {
-
-            $ownerInclude = $request->query->getBoolean('owner_include', true);
-
-            try {
-                $owner = $iriConverter->getResourceFromIri($request->query->get('owner'));
-                if ($owner instanceof Store) {
-                    $qb
-                        ->join(Delivery::class, 'd', Expr\Join::WITH, 'd.order = o.id')
-                        ->join(Store::class, 's', Expr\Join::WITH, 'd.store = s.id')
-                        ->andWhere($ownerInclude ? $qb->expr()->eq('s.id', ':store') : $qb->expr()->neq('s.id', ':store'))
-                        ->setParameter('store', $owner)
-                        ;
-                }
-                if ($owner instanceof LocalBusiness) {
-                    $qb = OrderRepository::addVendorClause($qb, 'o', $owner);
-                }
-            } catch (ItemNotFoundException $e) {
-                // Do nothing
-            }
-        }
+        $qb = $ordersSearchQuery->search(
+            $searchQueryString,
+            $this->orderRepository->createOptimizedQueryBuilder('o')
+        );
 
         $qb->addOrderBy('LOWER(o.shippingTimeRange)', 'DESC');
-
-        if (!$showCanceled) {
-            $qb
-                ->andWhere('o.state != :state_cancelled')
-                ->setParameter('state_cancelled', OrderInterface::STATE_CANCELLED);
-        }
 
         $perPage = self::ITEMS_PER_PAGE;
         if ($request->query->has('per_page')) {
@@ -321,50 +271,22 @@ class AdminController extends AbstractController
         PaginatorInterface $paginator,
         CubeJsTokenFactory $tokenFactory,
         MessageBusInterface $messageBus,
-        IriConverterInterface $iriConverter
+        OrdersSearchQuery $ordersSearchQuery
     )
     {
         $response = new Response();
 
-        $showCanceled = false;
-        if ($request->query->has('show_canceled')) {
-            $showCanceled = $request->query->getBoolean('show_canceled');
-            $response->headers->setCookie(new Cookie('__show_canceled', $showCanceled ? 'on' : 'off'));
-        } elseif ($request->cookies->has('__show_canceled')) {
-            $showCanceled = $request->cookies->getBoolean('__show_canceled');
-        }
-
-        $filters = [];
-
-        if ($request->query->has('date')) {
-            $filters['date'] = $request->query->get('date');
-        }
-
-        if ($request->query->has('state')) {
-            $filters['state'] = $request->query->all('state');
-        }
-
-        if ($request->query->has('owner')) {
-            try {
-                $owner = $iriConverter->getResourceFromIri($request->query->get('owner'));
-                $filters['owner'] = [
-                    'label' => $owner->getName(),
-                    'value' => $request->query->get('owner')
-                ];
-            } catch (ItemNotFoundException $e) {
-                // Do nothing
-            }
-        }
-
-        if ($request->query->has('owner_include')) {
-            $filters['owner_include'] = $request->query->getBoolean('owner_include');
-        }
+        // On the very first load (no "q" param at all, not even empty),
+        // default to hiding cancelled orders. Once the user has touched
+        // the search bar - including clearing it - their query is respected as-is.
+        $searchQueryString = $request->query->has('q')
+            ? $request->query->get('q')
+            : '-state:cancelled';
 
         $parameters = [
-            'orders' => $this->getOrderList($request, $response, $paginator, $iriConverter, $showCanceled),
+            'orders' => $this->getOrderList($request, $response, $paginator, $ordersSearchQuery, $searchQueryString),
             'routes' => $request->attributes->get('routes'),
-            'show_canceled' => $showCanceled,
-            'filters' => $filters,
+            'search_query' => $searchQueryString,
         ];
 
         if ($this->isGranted('ROLE_ADMIN')) {
@@ -412,39 +334,6 @@ class AdminController extends AbstractController
         }
 
         return $this->render($request->attributes->get('template'), $this->auth($parameters), $response);
-    }
-
-    #[Route(path: '/admin/orders/search', name: 'admin_orders_search')]
-    public function searchOrdersAction(
-        Request $request,
-        OrderRepository $orderRepository,
-        \AppBundle\Utils\TsRangeFormatter $tsRangeFormatter,
-    )
-    {
-        $qb = $orderRepository->search($request->query->get('q'));
-
-        $qb->andWhere('o.state != :state')
-            ->setParameter('state', OrderInterface::STATE_CART);
-
-        $qb->setMaxResults(10);
-
-        $results = $qb->getQuery()->getResult();
-
-        $data = [];
-        foreach ($results as $order) {
-            $range = $order->getShippingTimeRange();
-            $data[] = [
-                'id'       => $order->getId(),
-                'number'   => $order->getNumber(),
-                'email'    => $order->getCustomer()?->getEmailCanonical(),
-                'fullName' => $order->getCustomer()?->getFullName() ?: null,
-                'total'    => $order->getTotal(),
-                'date'     => $range ? $tsRangeFormatter->formatShort($range) : null,
-                'path'     => $this->generateUrl('admin_order', ['id' => $order->getId()]),
-            ];
-        }
-
-        return new JsonResponse($data);
     }
 
     #[Route(path: '/admin/orders/{id}', name: 'admin_order')]
