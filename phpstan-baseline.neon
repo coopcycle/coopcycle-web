@@ -67,12 +67,6 @@ parameters:
 			path: src/Api/State/InvoiceLineItemsProvider.php
 
 		-
-			message: '#^Method AppBundle\\Api\\State\\MyHolidayRequestsProvider\:\:provide\(\) never returns null so it can be removed from the return type\.$#'
-			identifier: return.unusedType
-			count: 1
-			path: src/Api/State/MyHolidayRequestsProvider.php
-
-		-
 			message: '#^Method AppBundle\\Api\\State\\MyOrdersProvider\:\:provide\(\) never returns null so it can be removed from the return type\.$#'
 			identifier: return.unusedType
 			count: 1
