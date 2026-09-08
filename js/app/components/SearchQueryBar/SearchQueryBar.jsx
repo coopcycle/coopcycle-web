@@ -52,6 +52,10 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
   // Finished query parts (rendered as tags) and the one still being typed.
   const [committedTokens, setCommittedTokens] = useState(() => tokenize(defaultValue).map(canonicalizeToken))
   const [draft, setDraft] = useState('')
+  // Set while editing an existing tag (clicked, or popped via Backspace):
+  // the index in committedTokens the draft should be reinserted at once
+  // finished, so editing a tag doesn't reorder it to the end of the query.
+  const [editingIndex, setEditingIndex] = useState(null)
   const [isOpen, setIsOpen] = useState(false)
   const [highlightedIndex, setHighlightedIndex] = useState(0)
   const [asyncOptions, setAsyncOptions] = useState([])
@@ -130,24 +134,63 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
 
   const removeToken = (index) => {
     setCommittedTokens(prev => prev.filter((_, i) => i !== index))
+    // Keep an in-progress edit pointed at the right slot if a tag before it
+    // just got removed (shifting every later index down by one).
+    setEditingIndex(prev => (prev !== null && index < prev ? prev - 1 : prev))
     focusInput()
   }
 
+  // Commits one or more finished tokens - appending them normally, or
+  // reinserting them at `editingIndex` when the draft came from editing an
+  // existing tag, so editing doesn't reorder it to the end of the query.
+  const commitTokens = useCallback((newTokens) => {
+    if (newTokens.length > 0) {
+      setCommittedTokens(prev => {
+        if (editingIndex === null) {
+          return [...prev, ...newTokens]
+        }
+        const next = [...prev]
+        next.splice(editingIndex, 0, ...newTokens)
+        return next
+      })
+    }
+    setEditingIndex(null)
+  }, [editingIndex])
+
   const submit = useCallback(() => {
     setIsOpen(false)
-    const finalTokens = draft ? [...committedTokens, draft] : committedTokens
+    let finalTokens = committedTokens
     if (draft) {
+      finalTokens = editingIndex === null
+        ? [...committedTokens, draft]
+        : [...committedTokens.slice(0, editingIndex), draft, ...committedTokens.slice(editingIndex)]
       setCommittedTokens(finalTokens)
       setDraft('')
+      setEditingIndex(null)
     }
     onSearch(finalTokens.join(' '))
-  }, [committedTokens, draft, onSearch])
+  }, [committedTokens, draft, editingIndex, onSearch])
 
   const clearAll = () => {
     setCommittedTokens([])
     setDraft('')
+    setEditingIndex(null)
     setIsOpen(false)
     onSearch('')
+  }
+
+  // Clicking a tag pulls it back out for editing, right where it was -
+  // matches Sentry. Ignored while another tag is already being edited, so
+  // switching targets mid-edit can't silently drop the first edit.
+  const editToken = (index) => {
+    if (editingIndex !== null) {
+      return
+    }
+    setDraft(committedTokens[index])
+    setCommittedTokens(prev => prev.filter((_, i) => i !== index))
+    setEditingIndex(index)
+    setIsOpen(true)
+    focusInput()
   }
 
   // Key suggestions insert a bare "key:" that still needs a value typed
@@ -157,7 +200,7 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
     if (suggestion.type === 'key') {
       setDraft(suggestion.insert)
     } else {
-      setCommittedTokens(prev => [...prev, suggestion.insert])
+      commitTokens([suggestion.insert])
       setDraft('')
     }
     setIsOpen(true)
@@ -174,13 +217,11 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
   }
 
   const onKeyDown = (e) => {
-    if (e.key === 'Backspace' && draft === '' && committedTokens.length > 0) {
+    if (e.key === 'Backspace' && draft === '' && committedTokens.length > 0 && editingIndex === null) {
       // Pop the last tag back into the draft for editing, same convention
       // as most tag inputs (Gmail's "To" field, GitHub labels, etc.).
       e.preventDefault()
-      setDraft(committedTokens[committedTokens.length - 1])
-      setCommittedTokens(prev => prev.slice(0, -1))
-      setIsOpen(true)
+      editToken(committedTokens.length - 1)
       return
     }
     if (e.key === 'ArrowDown') {
@@ -218,6 +259,17 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
     }
   }
 
+  // When the bar loses focus, whatever's left in the draft is committed
+  // back into a tag - this is what takes an edited tag out of its "editing"
+  // (plain text) state once you click away. Suggestion rows and the date
+  // picker guard against this firing on their own clicks (onMouseDown +
+  // preventDefault), so this only fires for a genuine loss of focus.
+  const onDraftBlur = () => {
+    commitTokens(draft ? [draft] : [])
+    setDraft('')
+    setIsOpen(false)
+  }
+
   const onDraftChange = (e) => {
     const value = e.target.value
 
@@ -233,12 +285,10 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
     const endsWithSpace = /\s$/.test(value)
 
     if (endsWithSpace) {
-      if (tokens.length > 0) {
-        setCommittedTokens(prev => [...prev, ...tokens.map(canonicalizeToken)])
-      }
+      commitTokens(tokens.map(canonicalizeToken))
       setDraft('')
     } else if (tokens.length > 1) {
-      setCommittedTokens(prev => [...prev, ...tokens.slice(0, -1).map(canonicalizeToken)])
+      commitTokens(tokens.slice(0, -1).map(canonicalizeToken))
       setDraft(tokens[tokens.length - 1])
     } else {
       setDraft(tokens[0] || '')
@@ -256,6 +306,20 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
     document.addEventListener('mousedown', onClickOutside)
     return () => document.removeEventListener('mousedown', onClickOutside)
   }, [])
+
+  const draftInput = (
+    <input
+      ref={inputRef}
+      type="text"
+      value={draft}
+      placeholder={committedTokens.length === 0 ? (placeholder || t('SEARCH_QUERY_BAR_PLACEHOLDER')) : ''}
+      onChange={onDraftChange}
+      onKeyDown={onKeyDown}
+      onFocus={() => setIsOpen(true)}
+      onBlur={onDraftBlur}
+      style={{ flex: 1, minWidth: 80, border: 'none', outline: 'none', fontFamily: 'monospace', fontSize: '0.95em' }}
+    />
+  )
 
   return (
     <div ref={containerRef} style={{ position: 'relative', width: '100%' }}>
@@ -279,8 +343,9 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
             <Tag
               key={index}
               closable
-              onClose={(e) => { e.preventDefault(); removeToken(index) }}
-              style={{ marginInlineEnd: 4 }}
+              onClick={() => editToken(index)}
+              onClose={(e) => { e.preventDefault(); e.stopPropagation(); removeToken(index) }}
+              style={{ marginInlineEnd: 4, cursor: 'pointer' }}
             >
               {parsed.isFilter ? (
                 <>
@@ -295,16 +360,7 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
             </Tag>
           )
         })}
-        <input
-          ref={inputRef}
-          type="text"
-          value={draft}
-          placeholder={committedTokens.length === 0 ? (placeholder || t('SEARCH_QUERY_BAR_PLACEHOLDER')) : ''}
-          onChange={onDraftChange}
-          onKeyDown={onKeyDown}
-          onFocus={() => setIsOpen(true)}
-          style={{ flex: 1, minWidth: 80, border: 'none', outline: 'none', fontFamily: 'monospace', fontSize: '0.95em' }}
-        />
+        {draftInput}
         {(committedTokens.length > 0 || draft) && (
           <i
             className="fa fa-times"
@@ -317,6 +373,13 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
       </div>
       {isOpen && activeField && activeField.type === 'date' && (
         <div
+          // Without this, clicking a calendar day (or the prev/next month
+          // arrows) blurs the draft input first, which would commit/close
+          // before the DatePicker's own onChange gets a chance to fire -
+          // same reason the suggestion rows below guard their own clicks.
+          // Capture phase so it runs before antd's own internal handlers,
+          // in case one of them stops the event from bubbling back up.
+          onMouseDownCapture={(e) => e.preventDefault()}
           style={{
             position: 'absolute',
             zIndex: 1000,
