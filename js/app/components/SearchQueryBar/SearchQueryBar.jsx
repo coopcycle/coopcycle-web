@@ -1,13 +1,26 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Spin } from 'antd'
+import { DatePicker, Spin } from 'antd'
+import dayjs from 'dayjs'
+import localeData from 'dayjs/plugin/localeData'
+import weekday from 'dayjs/plugin/weekday'
 import debounce from 'lodash/debounce'
 import { useTranslation } from 'react-i18next'
 
+import { datePickerProps } from '../../utils/antd'
+
+// antd's DatePicker (rc-picker) calls dayjs(...).weekday()/.localeData() for
+// calendar navigation (e.g. arrow keys) - without these plugins extended,
+// that throws "clone.weekday is not a function".
+dayjs.extend(weekday)
+dayjs.extend(localeData)
 import {
   getTokenAtCursor,
   replaceTokenAtCursor,
   serializeFilterToken,
 } from './queryString'
+
+const DATE_VALUE_FORMAT = 'YYYY-MM-DD'
+const DATE_VALUE_RE = /^\d{4}-\d{2}-\d{2}$/
 
 /**
  * A single search bar with a Sentry/Datadog-like query language:
@@ -20,10 +33,10 @@ import {
  *     key: 'state',                 // the "key" used in the query string
  *     label: 'State',               // shown in the key suggestion list
  *     negatable: true,              // whether "-key:value" is offered (default: true)
- *     type: 'enum',                 // 'enum' (static options) or 'async' (loadOptions)
+ *     type: 'enum',                 // 'enum' (static options), 'async' (loadOptions) or 'date'
  *     options: [{ label, value }],  // for type: 'enum'
  *     loadOptions: (input) => Promise<[{ label, value }]>, // for type: 'async'
- *   }, ...]
+ *   }, ...]                        // type: 'date' shows a date picker; no options/loadOptions needed
  *
  * The component is uncontrolled with respect to parsing: it only ever
  * produces/consumes the raw query string, via `defaultValue` and `onSearch`.
@@ -84,7 +97,7 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
         }))
     }
 
-    if (!activeField) {
+    if (!activeField || activeField.type === 'date') {
       return []
     }
 
@@ -110,8 +123,21 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
     onSearch(value.trim())
   }, [onSearch])
 
+  const applyDate = (date) => {
+    if (!date) {
+      return
+    }
+    applySuggestion({
+      insert: serializeFilterToken({ key: activeField.key, value: date.format(DATE_VALUE_FORMAT), exclude: token.exclude }),
+    })
+  }
+
   const applySuggestion = (suggestion) => {
-    const { text: newText, cursor: newCursor } = replaceTokenAtCursor(text, cursor, suggestion.insert)
+    // Key suggestions insert a bare "key:" that still needs a value typed
+    // right after it, so don't append a trailing space - value suggestions
+    // (and dates) insert a complete "key:value" token, so do.
+    const appendSpace = suggestion.type !== 'key'
+    const { text: newText, cursor: newCursor } = replaceTokenAtCursor(text, cursor, suggestion.insert, { appendSpace })
     setText(newText)
     setCursor(newCursor)
     setIsOpen(true)
@@ -147,7 +173,12 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
     }
     if (e.key === 'Enter') {
       e.preventDefault()
-      if (isOpen && suggestions.length > 0) {
+      // Only treat Enter as "accept the highlighted suggestion" when the
+      // user is actually mid-token (raw !== ''). Otherwise the cursor is
+      // sitting in an empty token that's just showing the full field list
+      // by default (e.g. right after finishing a value), and Enter should
+      // submit the query as-is instead of inserting an unwanted filter.
+      if (isOpen && suggestions.length > 0 && token.raw !== '') {
         applySuggestion(suggestions[highlightedIndex])
       } else {
         submit(text)
@@ -202,7 +233,31 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
           />
         )}
       </div>
-      {isOpen && (suggestions.length > 0 || isLoadingAsyncOptions) && (
+      {isOpen && activeField && activeField.type === 'date' && (
+        <div
+          style={{
+            position: 'absolute',
+            zIndex: 1000,
+            top: '100%',
+            left: 0,
+            marginTop: 4,
+            background: '#fff',
+            border: '1px solid #d9d9d9',
+            borderRadius: 4,
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+            padding: 8,
+          }}
+        >
+          <DatePicker
+            open
+            format={datePickerProps.format}
+            value={token.value && DATE_VALUE_RE.test(token.value) ? dayjs(token.value) : null}
+            onChange={applyDate}
+            getPopupContainer={(trigger) => trigger.parentElement}
+          />
+        </div>
+      )}
+      {isOpen && (!activeField || activeField.type !== 'date') && (suggestions.length > 0 || isLoadingAsyncOptions) && (
         <div
           style={{
             position: 'absolute',

@@ -12,6 +12,13 @@
  */
 
 const KEY_RE = /^([a-zA-Z_][a-zA-Z0-9_]*):(.+)$/
+// Same as KEY_RE, but also matches a key with no value yet (e.g. "date:").
+// Used only for the live cursor token (getTokenAtCursor), so autocomplete
+// can react as soon as the colon is typed. A key with no value isn't a
+// "real" filter for submission purposes - see the PHP parser's
+// testColonWithoutValueIsATerm - so parseToken()/parseQuery() keep using
+// the stricter KEY_RE above.
+const LIVE_KEY_RE = /^([a-zA-Z_][a-zA-Z0-9_]*):(.*)$/
 
 /**
  * Splits a query string on whitespace, honoring single/double-quoted
@@ -61,9 +68,10 @@ export function tokenize(query) {
 
 /**
  * @param {string} raw a single token, as returned by tokenize()
+ * @param {RegExp} keyRe internal - pass LIVE_KEY_RE to also match a bare "key:"
  * @returns {{ raw: string, isFilter: boolean, key?: string, value?: string, exclude: boolean }}
  */
-export function parseToken(raw) {
+export function parseToken(raw, keyRe = KEY_RE) {
   let exclude = false
   let token = raw
 
@@ -72,7 +80,7 @@ export function parseToken(raw) {
     token = token.slice(1)
   }
 
-  const match = token.match(KEY_RE)
+  const match = token.match(keyRe)
   if (match) {
     return { raw, isFilter: true, key: match[1], value: match[2], exclude }
   }
@@ -85,7 +93,9 @@ export function parseToken(raw) {
  * @returns {ReturnType<typeof parseToken>[]}
  */
 export function parseQuery(query) {
-  return tokenize(query || '').map(parseToken)
+  // Not map(parseToken) directly: Array#map passes (item, index, array), and
+  // parseToken's 2nd param is keyRe - the index would silently clobber it.
+  return tokenize(query || '').map(raw => parseToken(raw))
 }
 
 /**
@@ -147,21 +157,24 @@ export function getTokenAtCursor(text, cursor) {
 
   const raw = text.slice(start, end)
 
-  return { raw, start, end, ...parseToken(raw) }
+  return { raw, start, end, ...parseToken(raw, LIVE_KEY_RE) }
 }
 
 /**
- * Replaces the token at the cursor with `replacement`, appending a trailing
- * space, and returns the new text plus the cursor position after it.
+ * Replaces the token at the cursor with `replacement`, and returns the new
+ * text plus the cursor position after it.
  * @param {string} text
  * @param {number} cursor
  * @param {string} replacement
+ * @param {{ appendSpace?: boolean }} [options] set appendSpace to false when
+ *   inserting a bare "key:" that still needs a value typed right after it -
+ *   a trailing space would push the cursor into a new, separate token.
  */
-export function replaceTokenAtCursor(text, cursor, replacement) {
+export function replaceTokenAtCursor(text, cursor, replacement, { appendSpace = true } = {}) {
   const { start, end } = getTokenAtCursor(text, cursor)
   const before = text.slice(0, start)
   const after = text.slice(end)
-  const insertion = `${replacement} `
+  const insertion = appendSpace ? `${replacement} ` : replacement
 
   return {
     text: `${before}${insertion}${after}`,

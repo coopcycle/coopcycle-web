@@ -16,6 +16,7 @@ export default function OrderListFilters({ defaultValue = '' }) {
     {
       key: 'date',
       label: t('DATE'),
+      type: 'date',
     },
     {
       key: 'state',
