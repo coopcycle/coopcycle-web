@@ -141,26 +141,28 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
       .filter(option => activeField.type === 'async' || String(option.label).toLowerCase().includes(keyword))
 
     if (activeField.multi) {
-      // Checked values stay pinned at the top (even once filtered out by
-      // `keyword`), same as Sentry's multi-value dropdown.
+      // A value keeps its position in the list when checked/unchecked - only
+      // a checked value that has fallen out of the current results (e.g. the
+      // search text changed) gets pinned above them, so it isn't lost.
       const selectedValues = new Set(multiSelection.map(option => option.value))
-      const selectedRows = multiSelection.map(option => ({
-        type: 'checkbox',
-        key: `value:${option.value}`,
-        value: option.value,
-        label: option.label,
-        checked: true,
-      }))
-      const otherRows = filteredOptions
-        .filter(option => !selectedValues.has(option.value))
+      const filteredValues = new Set(filteredOptions.map(option => option.value))
+      const pinnedRows = multiSelection
+        .filter(option => !filteredValues.has(option.value))
         .map(option => ({
           type: 'checkbox',
           key: `value:${option.value}`,
           value: option.value,
           label: option.label,
-          checked: false,
+          checked: true,
         }))
-      return [...selectedRows, ...otherRows]
+      const rows = filteredOptions.map(option => ({
+        type: 'checkbox',
+        key: `value:${option.value}`,
+        value: option.value,
+        label: option.label,
+        checked: selectedValues.has(option.value),
+      }))
+      return [...pinnedRows, ...rows]
     }
 
     return filteredOptions.map(option => ({
