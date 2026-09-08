@@ -111,6 +111,17 @@ class TaxesHelper
         if (!isset(self::$baseRateCodeCache[$code])) {
 
             $rate = $this->taxRateRepository->findOneBy(['code' => $code]);
+
+            // Orders keep the rate code they were charged with, and a rate can
+            // be removed from the tax configuration long afterwards. Exporting
+            // history then asks about codes that no longer resolve, which is
+            // not an error: there is simply no base rate to match them onto.
+            if (null === $rate) {
+                self::$baseRateCodeCache[$code] = null;
+
+                return null;
+            }
+
             $baseRates = $this->getBaseRates();
 
             foreach ($baseRates as $baseRate) {
