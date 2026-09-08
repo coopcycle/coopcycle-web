@@ -151,6 +151,10 @@ services:
     resource: '../src/Controller'
     tags: ['controller.service_arguments']
 
+  AppBundle\SearchQuery\:
+    resource: '../src/SearchQuery/*'
+    tags: ['controller.service_arguments']
+
   # AppBundle\Api\DataTransformer\:
   #   resource: '../src/Api/DataTransformer/*'
 

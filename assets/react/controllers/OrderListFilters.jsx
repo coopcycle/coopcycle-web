@@ -40,7 +40,7 @@ export default function OrderListFilters({ defaultValue = '' }) {
         if (!input) {
           return []
         }
-        const { response } = await httpClient.get(`//${window.location.host}/search/order-owners?q=${encodeURIComponent(input)}`);
+        const { response } = await httpClient.get(`//${window.location.host}/search-query/orders/autocomplete:owner?q=${encodeURIComponent(input)}`);
         // De-duplicate names (a restaurant and a store may share a name).
         const seen = new Set()
         return (response.hits || [])

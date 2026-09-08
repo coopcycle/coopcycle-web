@@ -10,6 +10,10 @@ web:
     resource: '@AppBundle/Controller/'
     type:     'annotation'
 
+search_query:
+    resource: '@AppBundle/SearchQuery/'
+    type:     'annotation'
+
 nucleos_profile_profile:
     resource: "@NucleosProfileBundle/Resources/config/routing/profile.php"
     prefix: /profile
