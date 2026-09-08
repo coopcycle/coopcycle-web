@@ -20,11 +20,7 @@
 
 <div class="d-flex flex-row mb-4">
   <div class="w-50">
-    <form method="get">
-      <div id="orders-search"
-           data-url="{{ path('admin_orders_search') }}"
-           data-placeholder="{{ 'search.orders'|trans }}"></div>
-    </form>
+    <div {{ react_component('OrderListFilters', { defaultValue: search_query }) }}></div>
   </div>
   <div class="w-50 text-right">
     <span class="mr-2">
@@ -50,8 +46,6 @@
   style="min-height: 180px;"></div>
 {% endif %}
 
-<div {{ react_component('OrderListFilters', { defaultFilters: filters }) }}></div>
-<hr/>
 {% include "_partials/order/list.html.twig" %}
 
 <div class="d-flex align-items-center justify-content-center gap-4">

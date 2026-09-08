@@ -6,7 +6,6 @@ use ACSEO\TypesenseBundle\Finder\CollectionFinderInterface;
 use ACSEO\TypesenseBundle\Finder\TypesenseQuery;
 use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\Metadata\GetCollection;
-use ApiPlatform\Metadata\Exception\ItemNotFoundException;
 use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Api\Dto\ResourceApplication;
 use AppBundle\Controller\Utils\AccessControlTrait;
@@ -101,6 +100,7 @@ use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Utils\Settings;
+use AppBundle\Utils\SearchQuery\SearchQueryParser;
 use Carbon\Carbon;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\Common\Collections\Collection;
@@ -237,66 +237,137 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('admin_dashboard');
     }
 
+    /**
+     * Resolves the "owner" filter value (a restaurant or store name, as
+     * typed/selected in the search bar) to the matching entity.
+     */
+    private function resolveOrderOwner(string $name): Store|LocalBusiness|null
+    {
+        $name = trim($name);
+
+        if ('' === $name) {
+            return null;
+        }
+
+        foreach ([LocalBusiness::class, Store::class] as $class) {
+            $qb = $this->entityManager->getRepository($class)->createQueryBuilder('e');
+            $qb
+                ->andWhere('LOWER(e.name) = LOWER(:name)')
+                ->setParameter('name', $name)
+                ->setMaxResults(1);
+
+            if ($match = $qb->getQuery()->getOneOrNullResult()) {
+                return $match;
+            }
+        }
+
+        // Fallback to a partial match, consistent with the /search/order-owners endpoint
+        foreach ([LocalBusiness::class, Store::class] as $class) {
+            $qb = $this->entityManager->getRepository($class)->createQueryBuilder('e');
+            $qb
+                ->andWhere($qb->expr()->like('LOWER(e.name)', ':name'))
+                ->setParameter('name', '%' . strtolower($name) . '%')
+                ->setMaxResults(1);
+
+            if ($match = $qb->getQuery()->getOneOrNullResult()) {
+                return $match;
+            }
+        }
+
+        return null;
+    }
+
     protected function getOrderList(Request $request, Response $response,
         PaginatorInterface $paginator,
-        IriConverterInterface $iriConverter,
+        SearchQueryParser $searchQueryParser,
         $showCanceled = false)
     {
-        if ($request->query->has('q')) {
-            $qb = $this->orderRepository->search($request->query->get('q'));
+        $searchQuery = $searchQueryParser->parse($request->query->get('q'));
+
+        if ($fullText = $searchQuery->getFullText()) {
+            $qb = $this->orderRepository->search($fullText);
         } else {
             $qb = $this->orderRepository
                 ->createOptimizedQueryBuilder('o');
         }
 
-        if ($request->query->has('date')) {
-            $date = new \DateTimeImmutable($request->query->get('date'));
-            $qb
-                ->andWhere('OVERLAPS(o.shippingTimeRange, CAST(:range AS tsrange)) = TRUE')
-                ->setParameter('range', sprintf('[%s, %s]', $date->format('Y-m-d 00:00:00'), $date->format('Y-m-d 23:59:59')));
+        if ($dateFilter = $searchQuery->getFilter('date')) {
+            try {
+                $date = new \DateTimeImmutable($dateFilter->value);
+                $overlaps = 'OVERLAPS(o.shippingTimeRange, CAST(:range AS tsrange)) = TRUE';
+                $qb
+                    ->andWhere($dateFilter->exclude ? "NOT ($overlaps)" : $overlaps)
+                    ->setParameter('range', sprintf('[%s, %s]', $date->format('Y-m-d 00:00:00'), $date->format('Y-m-d 23:59:59')));
+            } catch (\Exception $e) {
+                // Ignore invalid date, e.g. while the user is still typing
+            }
         }
 
+        $stateFilters = $searchQuery->getFilters('state');
+        $includedStates = array_values(array_map(
+            fn ($filter) => $filter->value,
+            array_filter($stateFilters, fn ($filter) => !$filter->exclude)
+        ));
+        $excludedStates = array_values(array_map(
+            fn ($filter) => $filter->value,
+            array_filter($stateFilters, fn ($filter) => $filter->exclude)
+        ));
+
         // TODO Don't allow state=cart
-        if ($request->query->has('state')) {
-            $state = $request->query->all('state');
+        if (count($includedStates) > 0) {
             $qb
                 ->andWhere('o.state IN (:state)')
-                ->setParameter('state', $state);
+                ->setParameter('state', $includedStates);
         } else {
             $qb
                 ->andWhere('o.state != :state')
                 ->setParameter('state', OrderInterface::STATE_CART);
         }
 
-        if ($request->query->has('owner')) {
-
-            $ownerInclude = $request->query->getBoolean('owner_include', true);
-
-            try {
-                $owner = $iriConverter->getResourceFromIri($request->query->get('owner'));
-                if ($owner instanceof Store) {
-                    $qb
-                        ->join(Delivery::class, 'd', Expr\Join::WITH, 'd.order = o.id')
-                        ->join(Store::class, 's', Expr\Join::WITH, 'd.store = s.id')
-                        ->andWhere($ownerInclude ? $qb->expr()->eq('s.id', ':store') : $qb->expr()->neq('s.id', ':store'))
-                        ->setParameter('store', $owner)
-                        ;
-                }
-                if ($owner instanceof LocalBusiness) {
-                    $qb = OrderRepository::addVendorClause($qb, 'o', $owner);
-                }
-            } catch (ItemNotFoundException $e) {
-                // Do nothing
-            }
-        }
-
-        $qb->addOrderBy('LOWER(o.shippingTimeRange)', 'DESC');
-
-        if (!$showCanceled) {
+        if (count($excludedStates) > 0) {
+            $qb
+                ->andWhere('o.state NOT IN (:excluded_state)')
+                ->setParameter('excluded_state', $excludedStates);
+        } elseif (!$showCanceled) {
             $qb
                 ->andWhere('o.state != :state_cancelled')
                 ->setParameter('state_cancelled', OrderInterface::STATE_CANCELLED);
         }
+
+        if ($ownerFilter = $searchQuery->getFilter('owner')) {
+
+            $owner = $this->resolveOrderOwner($ownerFilter->value);
+
+            if ($owner instanceof Store) {
+                $qb
+                    ->join(Delivery::class, 'd', Expr\Join::WITH, 'd.order = o.id')
+                    ->join(Store::class, 's', Expr\Join::WITH, 'd.store = s.id')
+                    ->andWhere($ownerFilter->exclude ? $qb->expr()->neq('s.id', ':store') : $qb->expr()->eq('s.id', ':store'))
+                    ->setParameter('store', $owner)
+                    ;
+            } elseif ($owner instanceof LocalBusiness) {
+                if ($ownerFilter->exclude) {
+                    $subQb = $this->entityManager->createQueryBuilder();
+                    $subQb
+                        ->select('1')
+                        ->from(OrderVendor::class, 'v_excluded')
+                        ->andWhere('v_excluded.order = o.id')
+                        ->andWhere('v_excluded.restaurant = :restaurant');
+                    $qb
+                        ->andWhere($qb->expr()->not($qb->expr()->exists($subQb->getDQL())))
+                        ->setParameter('restaurant', $owner);
+                } else {
+                    $qb = OrderRepository::addVendorClause($qb, 'o', $owner);
+                }
+            } elseif (!$ownerFilter->exclude) {
+                // No matching owner: an inclusive filter should yield no results,
+                // rather than being silently ignored. An exclusive filter on an
+                // unknown owner excludes nothing, so it is a no-op.
+                $qb->andWhere('1 = 0');
+            }
+        }
+
+        $qb->addOrderBy('LOWER(o.shippingTimeRange)', 'DESC');
 
         $perPage = self::ITEMS_PER_PAGE;
         if ($request->query->has('per_page')) {
@@ -321,7 +392,7 @@ class AdminController extends AbstractController
         PaginatorInterface $paginator,
         CubeJsTokenFactory $tokenFactory,
         MessageBusInterface $messageBus,
-        IriConverterInterface $iriConverter
+        SearchQueryParser $searchQueryParser
     )
     {
         $response = new Response();
@@ -334,37 +405,11 @@ class AdminController extends AbstractController
             $showCanceled = $request->cookies->getBoolean('__show_canceled');
         }
 
-        $filters = [];
-
-        if ($request->query->has('date')) {
-            $filters['date'] = $request->query->get('date');
-        }
-
-        if ($request->query->has('state')) {
-            $filters['state'] = $request->query->all('state');
-        }
-
-        if ($request->query->has('owner')) {
-            try {
-                $owner = $iriConverter->getResourceFromIri($request->query->get('owner'));
-                $filters['owner'] = [
-                    'label' => $owner->getName(),
-                    'value' => $request->query->get('owner')
-                ];
-            } catch (ItemNotFoundException $e) {
-                // Do nothing
-            }
-        }
-
-        if ($request->query->has('owner_include')) {
-            $filters['owner_include'] = $request->query->getBoolean('owner_include');
-        }
-
         $parameters = [
-            'orders' => $this->getOrderList($request, $response, $paginator, $iriConverter, $showCanceled),
+            'orders' => $this->getOrderList($request, $response, $paginator, $searchQueryParser, $showCanceled),
             'routes' => $request->attributes->get('routes'),
             'show_canceled' => $showCanceled,
-            'filters' => $filters,
+            'search_query' => $request->query->get('q', ''),
         ];
 
         if ($this->isGranted('ROLE_ADMIN')) {
@@ -412,39 +457,6 @@ class AdminController extends AbstractController
         }
 
         return $this->render($request->attributes->get('template'), $this->auth($parameters), $response);
-    }
-
-    #[Route(path: '/admin/orders/search', name: 'admin_orders_search')]
-    public function searchOrdersAction(
-        Request $request,
-        OrderRepository $orderRepository,
-        \AppBundle\Utils\TsRangeFormatter $tsRangeFormatter,
-    )
-    {
-        $qb = $orderRepository->search($request->query->get('q'));
-
-        $qb->andWhere('o.state != :state')
-            ->setParameter('state', OrderInterface::STATE_CART);
-
-        $qb->setMaxResults(10);
-
-        $results = $qb->getQuery()->getResult();
-
-        $data = [];
-        foreach ($results as $order) {
-            $range = $order->getShippingTimeRange();
-            $data[] = [
-                'id'       => $order->getId(),
-                'number'   => $order->getNumber(),
-                'email'    => $order->getCustomer()?->getEmailCanonical(),
-                'fullName' => $order->getCustomer()?->getFullName() ?: null,
-                'total'    => $order->getTotal(),
-                'date'     => $range ? $tsRangeFormatter->formatShort($range) : null,
-                'path'     => $this->generateUrl('admin_order', ['id' => $order->getId()]),
-            ];
-        }
-
-        return new JsonResponse($data);
     }
 
     #[Route(path: '/admin/orders/{id}', name: 'admin_order')]
