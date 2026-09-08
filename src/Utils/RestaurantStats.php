@@ -70,7 +70,14 @@ class RestaurantStats implements \Countable
         private readonly bool $withBillingMethod = false,
         private readonly bool $includeTaxes = true,
         bool $showOnlyMealVouchers = false,
-        private readonly bool $includePaymentGateway = true
+        private readonly bool $includePaymentGateway = true,
+        /**
+         * Analytics export mode: select orders on their modification date as
+         * well as on their fulfillment date, and expose that date as a column.
+         * A refund recorded weeks after fulfillment changes the figures of an
+         * order the fulfillment window would no longer select.
+         */
+        private readonly bool $incremental = false
     )
     {
 
@@ -678,6 +685,11 @@ class RestaurantStats implements \Countable
             $headings[] = 'billing_method';
             $headings[] = 'applied_billing';
         }
+        // Appended last so that the position of every existing column, which
+        // the Parquet mapping addresses by index, stays as it was.
+        if ($this->incremental) {
+            $headings[] = 'updated_at';
+        }
 
         return $headings;
     }
@@ -728,6 +740,8 @@ class RestaurantStats implements \Countable
                 return $order->getFulfillmentMethod() === 'delivery' ? ($this->messengers[$order->getId()] ?? '') : '';
             case 'completed_at';
                 return $order->getShippedAt()->format('Y-m-d H:i');
+            case 'updated_at';
+                return $order->getUpdatedAt()?->format('Y-m-d H:i:s');
             case 'total_products_excl_tax':
                 return $this->formatNumber($order->getItemsTotal() - $order->getItemsTaxTotal(), !$formatted);
             case 'total_products_incl_tax':
@@ -871,7 +885,10 @@ class RestaurantStats implements \Countable
             . 'LEFT JOIN sylius_order_vendor v ON (o.id = v.order_id) '
             . 'LEFT JOIN sylius_order_event evt ON (o.id = evt.aggregate_id AND type = :event_type) '
             . 'WHERE '
-            . 'evt.created_at BETWEEN :start AND :end '
+            . ($this->incremental
+                ? '((evt.created_at >= :start AND evt.created_at < :end) '
+                    . 'OR (COALESCE(o.updated_at, o.created_at) >= :start AND COALESCE(o.updated_at, o.created_at) < :end)) '
+                : 'evt.created_at BETWEEN :start AND :end ')
             . 'AND o.state = :state'
         ;
 

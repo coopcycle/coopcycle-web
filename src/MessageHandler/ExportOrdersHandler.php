@@ -29,8 +29,8 @@ class ExportOrdersHandler
         $locale = $message->getLocale() ?? $this->defaultLocale;
         $stats = new RestaurantStats(
             $this->entityManager,
-            $message->getFrom()->setTime(0, 0, 0),
-            $message->getTo()->setTime(23, 59, 59),
+            $message->isByModifiedAt() ? $message->getFrom() : $message->getFrom()->setTime(0, 0, 0),
+            $message->isByModifiedAt() ? $message->getTo() : $message->getTo()->setTime(23, 59, 59),
             null,
             $this->paginator,
             $locale,
@@ -40,7 +40,8 @@ class ExportOrdersHandler
             $message->isWithMessenger(),
             $message->isWithBillingMethod(),
             $message->isIncludeTaxes(),
-            includePaymentGateway: false
+            includePaymentGateway: false,
+            incremental: $message->isByModifiedAt()
         );
 
         if ($stats->count() === 0) {

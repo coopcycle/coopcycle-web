@@ -17,6 +17,7 @@ class OrderView
     public $shippingTimeRange;
     public $total;
     public $itemsTotal;
+    public $updatedAt;
 
     public $adjustments = [];
     public $vendors = [];
@@ -52,6 +53,11 @@ class OrderView
     public function getFulfillmentMethod()
     {
         return $this->takeaway ? 'collection' : 'delivery';
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updatedAt;
     }
 
     public function getShippedAt(): ?\DateTime
@@ -194,6 +200,9 @@ class OrderView
         $order->itemsTotal        = $data['itemsTotal'];
         $order->total             = $data['total'];
         $order->incidents         = explode('\n', $data['incident_titles'] ?? '');
+        // Never updated since it was created is still a modification date as
+        // far as the incremental export is concerned.
+        $order->updatedAt         = $data['updatedAt'] ?? $data['createdAt'] ?? null;
 
         return $order;
     }

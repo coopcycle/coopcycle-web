@@ -24,6 +24,33 @@ class ExportTasksCommand extends BaseExportCommand
             ->setDescription('Export tasks');
     }
 
+    protected function getDatasetName(): string
+    {
+        return 'tasks';
+    }
+
+    protected function getEarliestModifiedAt(): ?\DateTimeInterface
+    {
+        $value = $this->entityManager->getConnection()
+            ->executeQuery('SELECT MIN(COALESCE(updated_at, created_at)) FROM task')
+            ->fetchOne();
+
+        return $value ? new \DateTime($value) : null;
+    }
+
+    protected function exportModifiedBetween(?\DateTimeInterface $since, \DateTimeInterface $until): ?string
+    {
+        $envelope = $this->messageBus->dispatch(new ExportTasks(
+            $since ? \DateTime::createFromInterface($since) : new \DateTime('@0'),
+            \DateTime::createFromInterface($until),
+            byModifiedAt: true
+        ));
+
+        /** @var HandledStamp $handledStamp */
+        $handledStamp = $envelope->last(HandledStamp::class);
+        return $handledStamp->getResult();
+    }
+
     protected function exportData(\DateTimeInterface $start, \DateTimeInterface $end): ?string
     {
         $envelope = $this->messageBus->dispatch(new ExportTasks(
@@ -40,7 +67,7 @@ class ExportTasksCommand extends BaseExportCommand
      * @param array<mixed> $row
      * @return array<mixed>
      */
-    private function formatRow(array $row): array
+    private function formatRow(array $row, ?\DateTimeInterface $exportedAt = null): array
     {
         $__s = fn (?string $s): ?string => trim($s) ?: null;
         $__dt = fn (string $d, string $t): ?\DateTimeInterface => \DateTimeImmutable::createFromFormat('j/n/Y H:i:s', sprintf('%s %s', $d, $t)) ?: null;
@@ -48,7 +75,7 @@ class ExportTasksCommand extends BaseExportCommand
 
         [$lat, $long] = explode(',', $row['address.latlng']);
 
-        return [
+        $formatted = [
             'id' => intval($row['#']),
             'order_id' => intval($row['# order']) ?: null,
             'order_code' => $__s($row['orderCode']),
@@ -70,13 +97,31 @@ class ExportTasksCommand extends BaseExportCommand
             'courier' => $__s($row['courier']),
             'organization' => $__s($row['organization']),
         ];
+
+        if (null === $exportedAt) {
+            return $formatted;
+        }
+
+        return [
+            ...$formatted,
+            // Carried in the file rather than parsed back out of the S3 path,
+            // which used to truncate any instance name containing a hyphen.
+            'instance' => $this->appName,
+            'updated_at' => isset($row['updatedAt'])
+                ? (\DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $row['updatedAt']) ?: null)
+                : null,
+            // Version column for ClickHouse's ReplacingMergeTree: the most
+            // recently exported copy of a row always wins, whatever order the
+            // files are replayed in.
+            'exported_at' => $exportedAt,
+        ];
     }
 
-    protected function csv2parquet(string $csv): string
+    protected function csv2parquet(string $csv, ?\DateTimeInterface $exportedAt = null): string
     {
         $reader = Reader::createFromString($csv)
             ->setHeaderOffset(0)
-            ->addFormatter(fn($row) => $this->formatRow($row));
+            ->addFormatter(fn($row) => $this->formatRow($row, $exportedAt));
 
         $rows = iterator_to_array($reader);
 
@@ -100,7 +145,12 @@ class ExportTasksCommand extends BaseExportCommand
             FlatColumn::enum('status'),
             FlatColumn::dateTime('finished'),
             FlatColumn::enum('courier'),
-            FlatColumn::enum('organization')
+            FlatColumn::enum('organization'),
+            ...(null === $exportedAt ? [] : [
+                FlatColumn::string('instance'),
+                FlatColumn::dateTime('updated_at'),
+                FlatColumn::dateTime('exported_at'),
+            ])
         );
 
         $writer = new Writer(Compressions::GZIP);

@@ -57,8 +57,23 @@ class ExportTasksHandler
     public function __invoke(ExportTasks $message): ?string
     {
 
-        $afterDate = $message->getFrom()->setTime(0, 0, 0)->format('Y-m-d H:i:s');
-        $beforeDate = $message->getTo()->setTime(23, 59, 59)->format('Y-m-d H:i:s');
+        if ($message->isByModifiedAt()) {
+            // Incremental export: the dates bound the modification time and are
+            // used as given, so that a run picks up exactly what changed since
+            // the previous one.
+            $afterDate = $message->getFrom()->format('Y-m-d H:i:s');
+            $beforeDate = $message->getTo()->format('Y-m-d H:i:s');
+        } else {
+            $afterDate = $message->getFrom()->setTime(0, 0, 0)->format('Y-m-d H:i:s');
+            $beforeDate = $message->getTo()->setTime(23, 59, 59)->format('Y-m-d H:i:s');
+        }
+
+        // COALESCE because updated_at is only written by Gedmo on update, and
+        // a row that has never been updated since it was created would
+        // otherwise be invisible to the watermark.
+        $selection = $message->isByModifiedAt()
+            ? 'COALESCE(t.updated_at, t.created_at) >= :after AND COALESCE(t.updated_at, t.created_at) < :before'
+            : 't.done_after >= :after AND t.done_before <= :before';
 
         $statement = $this->en->getConnection()->prepare(<<<SQL
             WITH task_events AS (
@@ -145,7 +160,8 @@ class ExportTasksHandler
                 u.username AS task_courier,
                 tt.tags,
                 a.contact_name AS address_contact_name,
-                org.name AS task_organization_name
+                org.name AS task_organization_name,
+                COALESCE(t.updated_at, t.created_at) AS updated_at
             FROM task t
             JOIN address a ON a.id = t.address_id
             LEFT JOIN delivery d ON d.id = t.delivery_id
@@ -158,8 +174,7 @@ class ExportTasksHandler
             LEFT JOIN api_user u ON u.id = t.assigned_to
             LEFT JOIN organization org ON org.id = t.organization_id
             LEFT JOIN order_row_numbers orn ON orn.task_id = t.id
-            WHERE t.done_after >= :after
-                AND t.done_before <= :before
+            WHERE {$selection}
             ORDER BY o.id ASC, t.type DESC, t.id ASC;
             SQL);
 
@@ -175,9 +190,15 @@ class ExportTasksHandler
         }
 
         $csv = Writer::createFromString('');
-        $csv->insertOne(self::$columns);
+        // Appended only for the incremental export, so that the legacy output
+        // stays byte for byte what it was.
+        $csv->insertOne($message->isByModifiedAt()
+            ? [...self::$columns, 'updatedAt']
+            : self::$columns);
 
-       $records = array_map(function ($row) {
+       $byModifiedAt = $message->isByModifiedAt();
+
+       $records = array_map(function ($row) use ($byModifiedAt) {
             $after = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $row['after']) ?: null;
             $before = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $row['before']) ?: null;
             $finishedAt = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $row['task_finished_at']) ?: null;
@@ -207,7 +228,8 @@ class ExportTasksHandler
                 $row['task_courier'],
                 $row['tags'],
                 $row['address_contact_name'],
-                $row['task_organization_name']
+                $row['task_organization_name'],
+                ...($byModifiedAt ? [$row['updated_at']] : [])
             ];
        }, $content);
 

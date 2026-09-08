@@ -1,9 +1,13 @@
 const { securityContext: { instance: tenant_instance } } = COMPILE_CONTEXT
 cube(`TaskExport`, {
   data_source: `clickhouse`,
+  // FINAL because the table is a ReplacingMergeTree: a row that has been
+  // exported more than once (a late completion, a refund, a replayed file)
+  // exists several times until the parts are merged, and only the copy with
+  // the highest exported_at is current.
   sql: tenant_instance
-    ? `SELECT * FROM default.tasks WHERE instance = '${tenant_instance}'`
-    : `SELECT * FROM default.tasks`,
+    ? `SELECT * FROM default.tasks_v2 FINAL WHERE instance = '${tenant_instance}'`
+    : `SELECT * FROM default.tasks_v2 FINAL`,
 
   joins: {
     OrderExport: {

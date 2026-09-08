@@ -23,6 +23,37 @@ class ExportOrdersCommand extends BaseExportCommand
             ->setDescription('Export orders');
     }
 
+    protected function getDatasetName(): string
+    {
+        return 'orders';
+    }
+
+    protected function getEarliestModifiedAt(): ?\DateTimeInterface
+    {
+        $value = $this->entityManager->getConnection()
+            ->executeQuery('SELECT MIN(COALESCE(updated_at, created_at)) FROM sylius_order')
+            ->fetchOne();
+
+        return $value ? new \DateTime($value) : null;
+    }
+
+    protected function exportModifiedBetween(?\DateTimeInterface $since, \DateTimeInterface $until): ?string
+    {
+        $envelope = $this->messageBus->dispatch(new ExportOrders(
+            $since ? \DateTime::createFromInterface($since) : new \DateTime('@0'),
+            \DateTime::createFromInterface($until),
+            true,
+            'en',
+            withBillingMethod: true,
+            includeTaxes: false,
+            byModifiedAt: true
+        ));
+
+        /** @var HandledStamp $handledStamp */
+        $handledStamp = $envelope->last(HandledStamp::class);
+        return $handledStamp->getResult();
+    }
+
     protected function exportData(\DateTimeInterface $start, \DateTimeInterface $end): ?string
     {
         $envelope = $this->messageBus->dispatch(new ExportOrders(
@@ -43,11 +74,12 @@ class ExportOrdersCommand extends BaseExportCommand
      * @param array<mixed> $row
      * @return array<mixed>
      */
-    private function formatRow(array $row): array {
+    private function formatRow(array $row, ?\DateTimeInterface $exportedAt = null): array {
 
-        if (count($row) !== 22) {
+        // 23 in incremental mode, where updated_at is appended to the row.
+        if (!in_array(count($row), [22, 23], true)) {
             throw new \Exception(sprintf(
-                'Invalid row. Expected 22 columns, got %d: %s',
+                'Invalid row. Expected 22 or 23 columns, got %d: %s',
                 count($row),
                 implode(',', $row)
             ));
@@ -55,9 +87,10 @@ class ExportOrdersCommand extends BaseExportCommand
 
         $__s = fn (?string $s): ?string => trim($s) ?: null;
         $__d = fn (string $d): ?\DateTimeInterface => \DateTimeImmutable::createFromFormat('Y-m-d H:i', $d) ?: null;
+        $__dt = fn (?string $d): ?\DateTimeInterface => $d ? (\DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $d) ?: null) : null;
         $__m = fn (string $m): int => intval(floatval(str_replace(',', '.', $m)) * 100);
 
-        return [
+        $formatted = [
             'restaurant' => $__s($row[0]),
             'order_code' => $__s($row[2]),
             'completed_at' => $__d($row[4]),
@@ -79,12 +112,27 @@ class ExportOrdersCommand extends BaseExportCommand
             'billing_method' => $__s($row[20]),
             'applied_billing' => $__s($row[21]),
         ];
+
+        if (null === $exportedAt) {
+            return $formatted;
+        }
+
+        return [
+            ...$formatted,
+            // Carried in the file rather than parsed back out of the S3 path.
+            'instance' => $this->appName,
+            'updated_at' => $__dt($row[22] ?? null),
+            // Version column for ClickHouse's ReplacingMergeTree: the most
+            // recently exported copy of a row always wins, whatever order the
+            // files are replayed in.
+            'exported_at' => $exportedAt,
+        ];
     }
 
-    protected function csv2parquet(string $csv): string {
+    protected function csv2parquet(string $csv, ?\DateTimeInterface $exportedAt = null): string {
 
         $reader = Reader::createFromString($csv)
-            ->addFormatter(fn($row) => $this->formatRow($row));
+            ->addFormatter(fn($row) => $this->formatRow($row, $exportedAt));
 
         $rows = iterator_to_array($reader);
         array_shift($rows);
@@ -108,6 +156,11 @@ class ExportOrdersCommand extends BaseExportCommand
             FlatColumn::int32('net_revenue'),
             FlatColumn::string('billing_method'),
             FlatColumn::string('applied_billing'),
+            ...(null === $exportedAt ? [] : [
+                FlatColumn::string('instance'),
+                FlatColumn::dateTime('updated_at'),
+                FlatColumn::dateTime('exported_at'),
+            ]),
         );
 
         $writer = new Writer(Compressions::GZIP);

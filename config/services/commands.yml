@@ -206,6 +206,12 @@ services:
     tags:
       - { name: 'console.command', command: 'coopcycle:export:orders' }
 
+  AppBundle\Command\ExportAuditCommand:
+    arguments:
+      $appName: '%env(COOPCYCLE_APP_NAME)%'
+    tags:
+      - { name: 'console.command', command: 'coopcycle:export:audit' }
+
   AppBundle\Command\StandtrackIUBRangeSetupCommand:
     arguments:
       $standtrackApiKey: '%env(STANDTRACK_API_KEY)%'
