@@ -29,6 +29,20 @@ dayjs.extend(localeData)
 const DATE_VALUE_FORMAT = 'YYYY-MM-DD'
 const DATE_VALUE_RE = /^\d{4}-\d{2}-\d{2}$/
 
+// How many values a `multi: true` field's tag shows before collapsing the
+// rest into "+N more" - keeps the tag (and the underlying query string)
+// from growing unbounded, Sentry-style.
+const MAX_VISIBLE_GROUP_VALUES = 2
+
+function formatGroupValues(values) {
+  if (values.length <= MAX_VISIBLE_GROUP_VALUES) {
+    return values.join(' OR ')
+  }
+  const shown = values.slice(0, MAX_VISIBLE_GROUP_VALUES).join(' OR ')
+  const remaining = values.length - MAX_VISIBLE_GROUP_VALUES
+  return `${shown} +${remaining} more`
+}
+
 /**
  * A single search bar with a Sentry/Datadog-like query language:
  * - "key:value" filters a field, "-key:value" excludes it
@@ -528,8 +542,11 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
                   {parsed.exclude && <span style={{ color: '#cf1322' }}>-</span>}
                   <span>{parsed.key}</span>
                   <span style={{ color: '#aaa' }}>:</span>
-                  <span style={{ color: '#1677ff', fontWeight: 500 }}>
-                    {isGroupValue(parsed.value) ? parseGroupValues(parsed.value).join(' OR ') : unquote(parsed.value)}
+                  <span
+                    style={{ color: '#1677ff', fontWeight: 500 }}
+                    title={isGroupValue(parsed.value) ? parseGroupValues(parsed.value).join(' OR ') : undefined}
+                  >
+                    {isGroupValue(parsed.value) ? formatGroupValues(parseGroupValues(parsed.value)) : unquote(parsed.value)}
                   </span>
                 </>
               ) : (
