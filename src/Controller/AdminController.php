@@ -246,6 +246,8 @@ class AdminController extends AbstractController
             $this->orderRepository->createOptimizedQueryBuilder('o')
         );
 
+        $qb->addOrderBy('LOWER(o.shippingTimeRange)', 'DESC');
+
         $perPage = self::ITEMS_PER_PAGE;
         if ($request->query->has('per_page')) {
             $perPage = $request->query->getInt('per_page');

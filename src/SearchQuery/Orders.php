@@ -128,8 +128,6 @@ class Orders implements SearchQueryInterface
             }
         }
 
-        $qb->addOrderBy('LOWER(o.shippingTimeRange)', 'DESC');
-
         return $qb;
     }
 
