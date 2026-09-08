@@ -10,6 +10,7 @@ import { datePickerProps } from '../../utils/antd'
 import {
   canonicalizeToken,
   hasUnterminatedQuote,
+  isBareKeyToken,
   parseLiveToken,
   parseToken,
   serializeFilterToken,
@@ -160,7 +161,9 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
   const submit = useCallback(() => {
     setIsOpen(false)
     let finalTokens = committedTokens
-    if (draft) {
+    // A bare "key:" with no value isn't a real filter (see isBareKeyToken) -
+    // drop it rather than submitting it as a nonsense token.
+    if (draft && !isBareKeyToken(draft)) {
       finalTokens = editingIndex === null
         ? [...committedTokens, draft]
         : [...committedTokens.slice(0, editingIndex), draft, ...committedTokens.slice(editingIndex)]
@@ -265,7 +268,9 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
   // picker guard against this firing on their own clicks (onMouseDown +
   // preventDefault), so this only fires for a genuine loss of focus.
   const onDraftBlur = () => {
-    commitTokens(draft ? [draft] : [])
+    // A bare "key:" with no value isn't a real filter (see isBareKeyToken) -
+    // discard it rather than committing it as a nonsense tag.
+    commitTokens(draft && !isBareKeyToken(draft) ? [draft] : [])
     setDraft('')
     setIsOpen(false)
   }
@@ -285,8 +290,14 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
     const endsWithSpace = /\s$/.test(value)
 
     if (endsWithSpace) {
-      commitTokens(tokens.map(canonicalizeToken))
-      setDraft('')
+      // A trailing bare "key:" (no value yet, e.g. hitting space right after
+      // picking a field) isn't finished - keep it in the draft instead of
+      // committing it as a nonsense tag, absorbing the accidental space.
+      const lastToken = tokens[tokens.length - 1]
+      const stillTyping = tokens.length > 0 && isBareKeyToken(lastToken)
+
+      commitTokens((stillTyping ? tokens.slice(0, -1) : tokens).map(canonicalizeToken))
+      setDraft(stillTyping ? lastToken : '')
     } else if (tokens.length > 1) {
       commitTokens(tokens.slice(0, -1).map(canonicalizeToken))
       setDraft(tokens[tokens.length - 1])

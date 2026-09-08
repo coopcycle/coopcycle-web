@@ -98,6 +98,20 @@ export function parseLiveToken(raw) {
 }
 
 /**
+ * Whether `token` is a "key:" with nothing typed after the colon yet - e.g.
+ * right after picking a field from the suggestion list, before any value is
+ * typed. Not a real filter (see testColonWithoutValueIsATerm), so it isn't
+ * safe to commit as-is: doing so would silently turn it into a free-text
+ * tag literally reading "key:" (canonicalizeToken()/parseToken() only see a
+ * string that fails to match a real filter).
+ * @param {string} token
+ */
+export function isBareKeyToken(token) {
+  const live = parseLiveToken(token)
+  return live.isFilter && live.value === ''
+}
+
+/**
  * @param {string} query
  * @returns {ReturnType<typeof parseToken>[]}
  */

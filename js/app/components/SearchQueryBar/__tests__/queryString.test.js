@@ -1,6 +1,7 @@
 import {
   canonicalizeToken,
   hasUnterminatedQuote,
+  isBareKeyToken,
   parseLiveToken,
   parseQuery,
   serializeFilterToken,
@@ -60,6 +61,27 @@ describe('parseLiveToken', () => {
 
   it('treats plain text as a free-text term', () => {
     expect(parseLiveToken('foo')).toEqual({ raw: 'foo', isFilter: false, exclude: false })
+  })
+})
+
+describe('isBareKeyToken', () => {
+  it('is true for a key with no value yet', () => {
+    expect(isBareKeyToken('date:')).toBe(true)
+    expect(isBareKeyToken('owner:')).toBe(true)
+  })
+
+  it('is true for an excluded key with no value yet', () => {
+    expect(isBareKeyToken('-owner:')).toBe(true)
+  })
+
+  it('is false once a value is typed', () => {
+    expect(isBareKeyToken('date:2026-09-08')).toBe(false)
+  })
+
+  it('is false for plain free text (including a lone "-")', () => {
+    expect(isBareKeyToken('foo')).toBe(false)
+    expect(isBareKeyToken('-')).toBe(false)
+    expect(isBareKeyToken('')).toBe(false)
   })
 })
 
