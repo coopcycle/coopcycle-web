@@ -6,6 +6,7 @@ use AppBundle\Entity\Shift;
 use AppBundle\Entity\ShiftActivity;
 use AppBundle\Entity\User;
 use AppBundle\Service\SettingsManager;
+use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -61,8 +62,8 @@ final class CalendarFeed
 
         $shifts = $this->entityManager->getRepository(Shift::class)->findForUserBetween(
             $user,
-            new \DateTime(self::PAST),
-            new \DateTime(self::FUTURE)
+            Carbon::now()->modify(self::PAST),
+            Carbon::now()->modify(self::FUTURE)
         );
 
         $brandName = $this->settingsManager->get('brand_name') ?: 'CoopCycle';
