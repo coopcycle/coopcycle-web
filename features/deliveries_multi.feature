@@ -41,6 +41,7 @@ Feature: Multi-step deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -173,6 +174,7 @@ Feature: Multi-step deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":@array@,
         "pickup":{
           "@id":@string@,
@@ -321,6 +323,7 @@ Feature: Multi-step deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":[
           {
             "@type":"Task",
@@ -489,6 +492,7 @@ Feature: Multi-step deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":@array@,
         "pickup":{
           "@id":"/api/tasks/1",
