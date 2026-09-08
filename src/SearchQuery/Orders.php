@@ -6,7 +6,6 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\Customer;
-use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Entity\Sylius\OrderVendor;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\SearchQuery\SearchQueryParser;
@@ -19,7 +18,9 @@ use Doctrine\ORM\QueryBuilder;
  * js/app/components/SearchQueryBar) to a QueryBuilder for Sylius orders.
  *
  * Supported keys: number, customer, date, state, owner - each optionally
- * prefixed with "-" to exclude instead of include.
+ * prefixed with "-" to exclude instead of include. "owner" additionally
+ * accepts several values ("owner:(A OR B)", built by the search bar's
+ * checkbox dropdown - see SearchQueryParser), matching any of them.
  *
  * Expects $qb to be a QueryBuilder over AppBundle\Entity\Sylius\Order with
  * root alias "o" (e.g. built via OrderRepository::createOptimizedQueryBuilder('o')).
@@ -95,40 +96,99 @@ class Orders implements SearchQueryInterface
                 ->setParameter('excluded_state', $excludedStates);
         }
 
-        if ($ownerFilter = $searchQuery->getFilter('owner')) {
+        $ownerFilters = $searchQuery->getFilters('owner');
+        $includedOwnerNames = array_values(array_map(
+            fn ($filter) => $filter->value,
+            array_filter($ownerFilters, fn ($filter) => !$filter->exclude)
+        ));
+        $excludedOwnerNames = array_values(array_map(
+            fn ($filter) => $filter->value,
+            array_filter($ownerFilters, fn ($filter) => $filter->exclude)
+        ));
 
-            $owner = $this->resolveOwner($ownerFilter->value);
-
-            if ($owner instanceof Store) {
-                $qb
-                    ->join(Delivery::class, 'd', Expr\Join::WITH, 'd.order = o.id')
-                    ->join(Store::class, 's', Expr\Join::WITH, 'd.store = s.id')
-                    ->andWhere($ownerFilter->exclude ? $qb->expr()->neq('s.id', ':store') : $qb->expr()->eq('s.id', ':store'))
-                    ->setParameter('store', $owner)
-                    ;
-            } elseif ($owner instanceof LocalBusiness) {
-                if ($ownerFilter->exclude) {
-                    $subQb = $this->entityManager->createQueryBuilder();
-                    $subQb
-                        ->select('1')
-                        ->from(OrderVendor::class, 'v_excluded')
-                        ->andWhere('v_excluded.order = o.id')
-                        ->andWhere('v_excluded.restaurant = :restaurant');
-                    $qb
-                        ->andWhere($qb->expr()->not($qb->expr()->exists($subQb->getDQL())))
-                        ->setParameter('restaurant', $owner);
-                } else {
-                    $qb = OrderRepository::addVendorClause($qb, 'o', $owner);
-                }
-            } elseif (!$ownerFilter->exclude) {
-                // No matching owner: an inclusive filter should yield no results,
-                // rather than being silently ignored. An exclusive filter on an
-                // unknown owner excludes nothing, so it is a no-op.
-                $qb->andWhere('1 = 0');
-            }
+        if (count($includedOwnerNames) > 0) {
+            $qb = $this->applyOwnerFilter($qb, $includedOwnerNames, exclude: false);
+        }
+        if (count($excludedOwnerNames) > 0) {
+            $qb = $this->applyOwnerFilter($qb, $excludedOwnerNames, exclude: true);
         }
 
         return $qb;
+    }
+
+    /**
+     * Applies an "owner:(A OR B)" / "-owner:(A OR B)" filter - matches (or
+     * excludes) orders owned by any of the given store/restaurant names. A
+     * single name ("owner:A") goes through the same path with $names = [A].
+     *
+     * @param string[] $names
+     */
+    private function applyOwnerFilter(QueryBuilder $qb, array $names, bool $exclude): QueryBuilder
+    {
+        $stores = [];
+        $restaurants = [];
+
+        foreach ($names as $name) {
+            $owner = $this->resolveOwner($name);
+            if ($owner instanceof Store) {
+                $stores[] = $owner;
+            } elseif ($owner instanceof LocalBusiness) {
+                $restaurants[] = $owner;
+            }
+        }
+
+        if (0 === count($stores) && 0 === count($restaurants)) {
+            if ($exclude) {
+                // Nothing resolved to exclude - a no-op, same as the
+                // single-unknown-owner case below.
+                return $qb;
+            }
+            // No matching owner at all: an inclusive filter should yield no
+            // results, rather than being silently ignored.
+            return $qb->andWhere('1 = 0');
+        }
+
+        $alias = $exclude ? 'owner_excl' : 'owner_incl';
+        $conditions = [];
+
+        if (count($stores) > 0) {
+            $deliveryAlias = "d_{$alias}";
+            $storeAlias = "s_{$alias}";
+            $qb
+                ->leftJoin(Delivery::class, $deliveryAlias, Expr\Join::WITH, "{$deliveryAlias}.order = o.id")
+                ->leftJoin(Store::class, $storeAlias, Expr\Join::WITH, "{$deliveryAlias}.store = {$storeAlias}.id");
+
+            $conditions[] = $exclude
+                ? $qb->expr()->orX(
+                    $qb->expr()->isNull("{$storeAlias}.id"),
+                    $qb->expr()->notIn("{$storeAlias}.id", ":{$alias}_stores"),
+                )
+                : $qb->expr()->in("{$storeAlias}.id", ":{$alias}_stores");
+            $qb->setParameter("{$alias}_stores", $stores);
+        }
+
+        if (count($restaurants) > 0) {
+            $vendorAlias = "v_{$alias}";
+            $subQb = $this->entityManager->createQueryBuilder();
+            $subQb
+                ->select('1')
+                ->from(OrderVendor::class, $vendorAlias)
+                ->andWhere("{$vendorAlias}.order = o.id")
+                ->andWhere("{$vendorAlias}.restaurant IN (:{$alias}_restaurants)");
+
+            $exists = $qb->expr()->exists($subQb->getDQL());
+            $conditions[] = $exclude ? $qb->expr()->not($exists) : $exists;
+            $qb->setParameter("{$alias}_restaurants", $restaurants);
+        }
+
+        // Include: matches if it's any of the given stores OR restaurants.
+        // Exclude: must be none of the given stores AND none of the given
+        // restaurants (each already negated above).
+        $combined = count($conditions) > 1
+            ? ($exclude ? $qb->expr()->andX(...$conditions) : $qb->expr()->orX(...$conditions))
+            : $conditions[0];
+
+        return $qb->andWhere($combined);
     }
 
     /**

@@ -256,6 +256,57 @@ class OrdersTest extends KernelTestCase
         $this->assertCount(1, $this->search('-owner:DoesNotExist'));
     }
 
+    public function testOwnerGroupFilterMatchesAnyOfSeveralStores(): void
+    {
+        $order = $this->loadOrderFixture(); // owned by store "Acme"
+
+        $this->assertCount(1, $this->search('owner:(Acme OR DoesNotExist)'));
+        $this->assertCount(0, $this->search('owner:(DoesNotExist OR StillDoesNotExist)'));
+    }
+
+    public function testOwnerGroupFilterMatchesAcrossStoreAndRestaurant(): void
+    {
+        $order = $this->loadOrderFixture(); // owned by store "Acme"
+
+        $restaurant = new LocalBusiness();
+        $restaurant->setName('Bistro');
+        $this->entityManager->persist($restaurant);
+        $this->entityManager->flush();
+
+        $results = $this->search('owner:(Acme OR Bistro)');
+
+        $this->assertCount(1, $results);
+        $this->assertSame($order->getId(), $results[0]->getId());
+    }
+
+    public function testOwnerGroupFilterMatchesSeveralRestaurants(): void
+    {
+        $order = $this->loadOrderFixture();
+
+        $restaurant = new LocalBusiness();
+        $restaurant->setName('Bistro');
+        $this->entityManager->persist($restaurant);
+        $this->entityManager->persist(new OrderVendor($order, $restaurant));
+        $this->entityManager->flush();
+
+        $this->assertCount(1, $this->search('owner:(Bistro OR DoesNotExist)'));
+    }
+
+    public function testExcludedOwnerGroupFilterExcludesAnyOfSeveralStores(): void
+    {
+        $this->loadOrderFixture(); // owned by store "Acme"
+
+        $this->assertCount(0, $this->search('-owner:(Acme OR DoesNotExist)'));
+        $this->assertCount(1, $this->search('-owner:(DoesNotExist OR StillDoesNotExist)'));
+    }
+
+    public function testExcludedOwnerGroupFilterOnUnknownOwnersIsANoOp(): void
+    {
+        $this->loadOrderFixture();
+
+        $this->assertCount(1, $this->search('-owner:(DoesNotExist OR StillDoesNotExist)'));
+    }
+
     public function testCombinedFilters(): void
     {
         $order = $this->loadOrderFixture();

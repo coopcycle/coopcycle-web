@@ -103,4 +103,44 @@ class SearchQueryParserTest extends TestCase
         $this->assertSame(['date:'], $query->getTerms());
         $this->assertNull($query->getFilter('date'));
     }
+
+    public function testGroupValueExpandsToMultipleFilters()
+    {
+        $query = $this->parser->parse('owner:("Colis prompto" OR "Couture express")');
+
+        $filters = $query->getFilters('owner');
+        $this->assertCount(2, $filters);
+        $this->assertSame('Colis prompto', $filters[0]->value);
+        $this->assertFalse($filters[0]->exclude);
+        $this->assertSame('Couture express', $filters[1]->value);
+        $this->assertFalse($filters[1]->exclude);
+    }
+
+    public function testExcludedGroupValueExpandsToMultipleExcludedFilters()
+    {
+        $query = $this->parser->parse('-owner:(Acme OR Bistro)');
+
+        $filters = $query->getFilters('owner');
+        $this->assertCount(2, $filters);
+        $this->assertTrue($filters[0]->exclude);
+        $this->assertTrue($filters[1]->exclude);
+    }
+
+    public function testGroupValueWithSingleValue()
+    {
+        $query = $this->parser->parse('owner:("Colis prompto")');
+
+        $filters = $query->getFilters('owner');
+        $this->assertCount(1, $filters);
+        $this->assertSame('Colis prompto', $filters[0]->value);
+    }
+
+    public function testGroupValueDoesNotAffectOtherTokens()
+    {
+        $query = $this->parser->parse('owner:(Acme OR Bistro) state:new -state:cancelled foo');
+
+        $this->assertCount(2, $query->getFilters('owner'));
+        $this->assertCount(2, $query->getFilters('state'));
+        $this->assertSame(['foo'], $query->getTerms());
+    }
 }

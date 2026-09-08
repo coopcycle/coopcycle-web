@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Button, DatePicker, Input, Spin, Tag } from 'antd'
+import { Button, Checkbox, DatePicker, Input, Spin, Tag } from 'antd'
 import dayjs from 'dayjs'
 import localeData from 'dayjs/plugin/localeData'
 import weekday from 'dayjs/plugin/weekday'
@@ -11,6 +11,8 @@ import {
   canonicalizeToken,
   hasUnterminatedQuote,
   isBareKeyToken,
+  isGroupValue,
+  parseGroupValues,
   parseLiveToken,
   parseToken,
   serializeFilterToken,
@@ -42,6 +44,8 @@ const DATE_VALUE_RE = /^\d{4}-\d{2}-\d{2}$/
  *     type: 'enum',                 // 'enum' (static options), 'async' (loadOptions) or 'date'
  *     options: [{ label, value }],  // for type: 'enum'
  *     loadOptions: (input) => Promise<[{ label, value }]>, // for type: 'async'
+ *     multi: true,                  // Sentry-style checkbox dropdown, builds
+ *                                    // "key:(v1 OR v2)" - 'enum'/'async' only
  *   }, ...]                        // type: 'date' shows a date picker; no options/loadOptions needed
  *
  * The component is uncontrolled with respect to parsing: it only ever
@@ -67,6 +71,10 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
   const [highlightedIndex, setHighlightedIndex] = useState(0)
   const [asyncOptions, setAsyncOptions] = useState([])
   const [isLoadingAsyncOptions, setIsLoadingAsyncOptions] = useState(false)
+  // Checked { value, label } options while editing a `multi: true` field's
+  // value - see applySuggestion()/toggleMultiValue() and the checkbox
+  // suggestion rows below. Reset once the edit is committed or abandoned.
+  const [multiSelection, setMultiSelection] = useState([])
 
   // Saved searches (only used when `scope` is set) - see the class doc.
   const [savedSearches, setSavedSearches] = useState([])
@@ -129,16 +137,39 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
 
     const keyword = (liveToken.value || '').toLowerCase()
     const options = activeField.type === 'async' ? asyncOptions : (activeField.options || [])
-
-    return options
+    const filteredOptions = options
       .filter(option => activeField.type === 'async' || String(option.label).toLowerCase().includes(keyword))
-      .map(option => ({
-        type: 'value',
+
+    if (activeField.multi) {
+      // Checked values stay pinned at the top (even once filtered out by
+      // `keyword`), same as Sentry's multi-value dropdown.
+      const selectedValues = new Set(multiSelection.map(option => option.value))
+      const selectedRows = multiSelection.map(option => ({
+        type: 'checkbox',
         key: `value:${option.value}`,
+        value: option.value,
         label: option.label,
-        insert: serializeFilterToken({ key: activeField.key, value: option.value, exclude: liveToken.exclude }),
+        checked: true,
       }))
-  }, [liveToken, activeField, fields, asyncOptions])
+      const otherRows = filteredOptions
+        .filter(option => !selectedValues.has(option.value))
+        .map(option => ({
+          type: 'checkbox',
+          key: `value:${option.value}`,
+          value: option.value,
+          label: option.label,
+          checked: false,
+        }))
+      return [...selectedRows, ...otherRows]
+    }
+
+    return filteredOptions.map(option => ({
+      type: 'value',
+      key: `value:${option.value}`,
+      label: option.label,
+      insert: serializeFilterToken({ key: activeField.key, value: option.value, exclude: liveToken.exclude }),
+    }))
+  }, [liveToken, activeField, fields, asyncOptions, multiSelection])
 
   useEffect(() => {
     setHighlightedIndex(0)
@@ -173,21 +204,35 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
     setEditingIndex(null)
   }, [editingIndex])
 
+  // Builds the token for whatever's currently being edited - the checked
+  // options of a `multi: true` field, or the plain typed `draft` otherwise -
+  // or null if there's nothing worth committing (see isBareKeyToken/empty
+  // selection). Shared by submit() and onDraftBlur() so both finalize an
+  // in-progress multi-value edit the same way.
+  const buildPendingToken = () => {
+    if (activeField?.multi && liveToken.isFilter) {
+      return multiSelection.length > 0
+        ? serializeFilterToken({ key: activeField.key, values: multiSelection.map(o => o.value), exclude: liveToken.exclude })
+        : null
+    }
+    return draft && !isBareKeyToken(draft) ? draft : null
+  }
+
   const submit = useCallback(() => {
     setIsOpen(false)
     let finalTokens = committedTokens
-    // A bare "key:" with no value isn't a real filter (see isBareKeyToken) -
-    // drop it rather than submitting it as a nonsense token.
-    if (draft && !isBareKeyToken(draft)) {
+    const pending = buildPendingToken()
+    if (pending) {
       finalTokens = editingIndex === null
-        ? [...committedTokens, draft]
-        : [...committedTokens.slice(0, editingIndex), draft, ...committedTokens.slice(editingIndex)]
+        ? [...committedTokens, pending]
+        : [...committedTokens.slice(0, editingIndex), pending, ...committedTokens.slice(editingIndex)]
       setCommittedTokens(finalTokens)
       setDraft('')
+      setMultiSelection([])
       setEditingIndex(null)
     }
     onSearch(finalTokens.join(' '))
-  }, [committedTokens, draft, editingIndex, onSearch])
+  }, [committedTokens, draft, editingIndex, onSearch, activeField, liveToken, multiSelection])
 
   const clearAll = () => {
     setCommittedTokens([])
@@ -198,10 +243,10 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
   }
 
   // The full query as it would be submitted right now, including whatever's
-  // still being typed (mirrors submit()'s composition, minus the dropping
-  // of an unfinished bare "key:").
+  // still being typed (mirrors submit()'s composition).
   const currentQueryString = () => {
-    const tokens = draft && !isBareKeyToken(draft) ? [...committedTokens, draft] : committedTokens
+    const pending = buildPendingToken()
+    const tokens = pending ? [...committedTokens, pending] : committedTokens
     return tokens.join(' ')
   }
 
@@ -271,16 +316,39 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
 
   // Clicking a tag pulls it back out for editing, right where it was -
   // matches Sentry. Ignored while another tag is already being edited, so
-  // switching targets mid-edit can't silently drop the first edit.
+  // switching targets mid-edit can't silently drop the first edit. A
+  // `multi: true` field's tag reopens the checkbox dropdown with its
+  // current values pre-checked, rather than the raw "key:(...)" text.
   const editToken = (index) => {
     if (editingIndex !== null) {
       return
     }
-    setDraft(committedTokens[index])
+    const raw = committedTokens[index]
+    const parsed = parseToken(raw)
+    const field = parsed.isFilter ? fieldsByKey[parsed.key] : null
+
+    if (field?.multi) {
+      setMultiSelection(parseGroupValues(parsed.value).map(value => ({ value, label: value })))
+      setDraft(`${parsed.exclude ? '-' : ''}${parsed.key}:`)
+    } else {
+      setDraft(raw)
+    }
     setCommittedTokens(prev => prev.filter((_, i) => i !== index))
     setEditingIndex(index)
     setIsOpen(true)
     focusInput()
+  }
+
+  // Toggles one option of a `multi: true` field's checkbox dropdown - keeps
+  // the dropdown open (unlike applySuggestion()) so several values can be
+  // checked in a row; the resulting "key:(v1 OR v2)" token is only built
+  // once the edit is finished (see buildPendingToken()).
+  const toggleMultiValue = (suggestion) => {
+    setMultiSelection(prev => (
+      prev.some(o => o.value === suggestion.value)
+        ? prev.filter(o => o.value !== suggestion.value)
+        : [...prev, { value: suggestion.value, label: suggestion.label }]
+    ))
   }
 
   // Key suggestions insert a bare "key:" that still needs a value typed
@@ -342,7 +410,13 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
       // after finishing a value), and Enter should submit as-is instead of
       // inserting an unwanted filter.
       if (isOpen && suggestions.length > 0 && draft !== '') {
-        applySuggestion(suggestions[highlightedIndex])
+        // A multi-value field's row toggles its checkbox and keeps the
+        // dropdown open, instead of committing+closing like a normal value.
+        if (suggestions[highlightedIndex].type === 'checkbox') {
+          toggleMultiValue(suggestions[highlightedIndex])
+        } else {
+          applySuggestion(suggestions[highlightedIndex])
+        }
       } else {
         submit()
       }
@@ -355,10 +429,10 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
   // picker guard against this firing on their own clicks (onMouseDown +
   // preventDefault), so this only fires for a genuine loss of focus.
   const onDraftBlur = () => {
-    // A bare "key:" with no value isn't a real filter (see isBareKeyToken) -
-    // discard it rather than committing it as a nonsense tag.
-    commitTokens(draft && !isBareKeyToken(draft) ? [draft] : [])
+    const pending = buildPendingToken()
+    commitTokens(pending ? [pending] : [])
     setDraft('')
+    setMultiSelection([])
     setIsOpen(false)
   }
 
@@ -452,7 +526,9 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
                   {parsed.exclude && <span style={{ color: '#cf1322' }}>-</span>}
                   <span>{parsed.key}</span>
                   <span style={{ color: '#aaa' }}>:</span>
-                  <span style={{ color: '#1677ff', fontWeight: 500 }}>{unquote(parsed.value)}</span>
+                  <span style={{ color: '#1677ff', fontWeight: 500 }}>
+                    {isGroupValue(parsed.value) ? parseGroupValues(parsed.value).join(' OR ') : unquote(parsed.value)}
+                  </span>
                 </>
               ) : (
                 <span>{unquote(raw)}</span>
@@ -545,7 +621,17 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
           {suggestions.map((suggestion, index) => (
             <div
               key={suggestion.key}
-              onMouseDown={(e) => { e.preventDefault(); applySuggestion(suggestion) }}
+              onMouseDown={(e) => {
+                e.preventDefault()
+                if (suggestion.type === 'checkbox') {
+                  // Keeps the dropdown open, unlike applySuggestion() -
+                  // several values can be checked in a row.
+                  toggleMultiValue(suggestion)
+                  setHighlightedIndex(index)
+                } else {
+                  applySuggestion(suggestion)
+                }
+              }}
               onMouseEnter={() => setHighlightedIndex(index)}
               style={{
                 padding: '6px 12px',
@@ -555,6 +641,11 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
             >
               {suggestion.type === 'key' ? (
                 <><strong>{suggestion.key.slice(4)}</strong><span style={{ color: '#aaa' }}> — {suggestion.label}</span></>
+              ) : suggestion.type === 'checkbox' ? (
+                <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+                  <Checkbox checked={suggestion.checked} onChange={() => {}} />
+                  <span>{suggestion.label}</span>
+                </label>
               ) : (
                 <>{suggestion.label}</>
               )}

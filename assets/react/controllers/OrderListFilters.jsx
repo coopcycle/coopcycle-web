@@ -59,6 +59,7 @@ export default function OrderListFilters({ defaultValue = '' }) {
       key: 'owner',
       label: t('OWNER'),
       type: 'async',
+      multi: true,
       loadOptions: async (input) => {
         if (!input) {
           return []

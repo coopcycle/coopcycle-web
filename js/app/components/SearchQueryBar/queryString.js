@@ -3,10 +3,16 @@
  * string used by <SearchQueryBar>, e.g. `date:2026-09-08 -state:cancelled foo`.
  *
  * Grammar (whitespace-separated tokens, values may be quoted to include spaces):
- *   key:value    -> included filter
- *   -key:value   -> excluded filter
- *   "some text"  -> free-text term
- *   foo          -> free-text term
+ *   key:value                  -> included filter
+ *   -key:value                 -> excluded filter
+ *   key:(value1 OR value2)     -> included filter, matching any of the values
+ *   -key:(value1 OR value2)    -> excluded filter, matching any of the values
+ *   "some text"                -> free-text term
+ *   foo                        -> free-text term
+ *
+ * The "(v1 OR v2)" group form is what a `multi: true` field (see
+ * SearchQueryBar's fields doc) builds from its checkbox dropdown - a single
+ * token, kept together by tokenize() below.
  *
  * This mirrors src/Utils/SearchQuery/SearchQueryParser.php, so keep both in sync.
  */
@@ -20,9 +26,15 @@ const KEY_RE = /^([a-zA-Z_][a-zA-Z0-9_]*):(.+)$/
 // parseToken()/parseQuery() default to the stricter KEY_RE above.
 const LIVE_KEY_RE = /^([a-zA-Z_][a-zA-Z0-9_]*):(.*)$/
 
+// Matches the token built up so far when it's exactly "key:" or "-key:",
+// right before a "(" - i.e. the start of a "key:(v1 OR v2)" value group.
+const GROUP_OPEN_RE = /^-?[a-zA-Z_][a-zA-Z0-9_]*:$/
+
 /**
  * Splits a query string on whitespace, honoring single/double-quoted
- * substrings (which may appear anywhere within a token, e.g. `key:"a b"`).
+ * substrings (which may appear anywhere within a token, e.g. `key:"a b"`),
+ * and treating a "key:(...)" value group as one token regardless of the
+ * whitespace inside it (e.g. `owner:("a" OR "b")` stays a single token).
  * @param {string} query
  * @returns {string[]}
  */
@@ -30,9 +42,35 @@ export function tokenize(query) {
   const tokens = []
   let current = ''
   let quoteChar = null
+  let groupDepth = 0
 
   for (let i = 0; i < query.length; i++) {
     const char = query[i]
+
+    if (groupDepth > 0) {
+      // Inside a "key:(...)" value group: copy everything verbatim
+      // (quotes included) so the " OR "-separated values can be split out
+      // later - only whitespace *outside* the group acts as a boundary.
+      if (quoteChar) {
+        current += char
+        if (char === quoteChar) {
+          quoteChar = null
+        }
+        continue
+      }
+      if (char === '"' || char === "'") {
+        quoteChar = char
+        current += char
+        continue
+      }
+      if (char === '(') {
+        groupDepth += 1
+      } else if (char === ')') {
+        groupDepth -= 1
+      }
+      current += char
+      continue
+    }
 
     if (quoteChar) {
       if (char === quoteChar) {
@@ -45,6 +83,12 @@ export function tokenize(query) {
 
     if (char === '"' || char === "'") {
       quoteChar = char
+      continue
+    }
+
+    if (char === '(' && GROUP_OPEN_RE.test(current)) {
+      groupDepth = 1
+      current += char
       continue
     }
 
@@ -133,11 +177,85 @@ export function quoteIfNeeded(value) {
 }
 
 /**
- * @param {{ key: string, value: string, exclude?: boolean }} filter
+ * Whether a (already-extracted) filter value is a "(v1 OR v2)" group, as
+ * opposed to a plain single value.
+ * @param {string} value
+ */
+export function isGroupValue(value) {
+  return /^\(.*\)$/.test(value)
+}
+
+/**
+ * Splits a filter value into its individual values: a single-item array for
+ * a plain value, or one item per value for a "(v1 OR v2)" group - honoring
+ * quotes around each value, same as tokenize(). Values are returned
+ * unquoted, for display/editing purposes (mirrors unquote()).
+ * @param {string} value
+ * @returns {string[]}
+ */
+export function parseGroupValues(value) {
+  if (!isGroupValue(value)) {
+    return [unquote(value)]
+  }
+
+  const inner = value.slice(1, -1)
+  const parts = []
+  let current = ''
+  let quoteChar = null
+  let i = 0
+
+  while (i < inner.length) {
+    const char = inner[i]
+
+    if (quoteChar) {
+      if (char === quoteChar) {
+        quoteChar = null
+      } else {
+        current += char
+      }
+      i += 1
+      continue
+    }
+
+    if (char === '"' || char === "'") {
+      quoteChar = char
+      i += 1
+      continue
+    }
+
+    if (inner.slice(i, i + 4) === ' OR ') {
+      parts.push(current)
+      current = ''
+      i += 4
+      continue
+    }
+
+    current += char
+    i += 1
+  }
+  parts.push(current)
+
+  return parts.map(part => part.trim()).filter(part => part !== '')
+}
+
+/**
+ * @param {{ key: string, value?: string, values?: string[], exclude?: boolean }} filter
+ *   Pass `values` (a multi-value field's checked options) to build a
+ *   "(v1 OR v2)" group - collapsed to a plain single value automatically
+ *   when there's only one. Pass `value` for a plain single-value filter.
  * @returns {string}
  */
-export function serializeFilterToken({ key, value, exclude = false }) {
-  return `${exclude ? '-' : ''}${key}:${quoteIfNeeded(String(value))}`
+export function serializeFilterToken({ key, value, values, exclude = false }) {
+  const prefix = `${exclude ? '-' : ''}${key}:`
+
+  if (values && values.length > 0) {
+    if (values.length === 1) {
+      return `${prefix}${quoteIfNeeded(String(values[0]))}`
+    }
+    return `${prefix}(${values.map(v => quoteIfNeeded(String(v))).join(' OR ')})`
+  }
+
+  return `${prefix}${quoteIfNeeded(String(value))}`
 }
 
 /**
@@ -182,6 +300,12 @@ export function hasUnterminatedQuote(str) {
 export function canonicalizeToken(raw) {
   const parsed = parseToken(raw)
   if (parsed.isFilter) {
+    if (isGroupValue(parsed.value)) {
+      // Already round-trip-safe as-is - tokenize() preserves a group's
+      // inner quoting verbatim, so re-quoting the whole thing (which would
+      // treat it as one big value with spaces) would be wrong.
+      return `${parsed.exclude ? '-' : ''}${parsed.key}:${parsed.value}`
+    }
     return serializeFilterToken({ key: parsed.key, value: parsed.value, exclude: parsed.exclude })
   }
   return quoteIfNeeded(raw)

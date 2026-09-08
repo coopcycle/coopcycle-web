@@ -2,6 +2,8 @@ import {
   canonicalizeToken,
   hasUnterminatedQuote,
   isBareKeyToken,
+  isGroupValue,
+  parseGroupValues,
   parseLiveToken,
   parseQuery,
   serializeFilterToken,
@@ -20,6 +22,20 @@ describe('tokenize', () => {
 
   it('returns an empty array for an empty string', () => {
     expect(tokenize('')).toEqual([])
+  })
+
+  it('keeps a "key:(v1 OR v2)" value group as a single token', () => {
+    expect(tokenize('owner:("Colis prompto" OR "Couture express") foo')).toEqual([
+      'owner:("Colis prompto" OR "Couture express")', 'foo',
+    ])
+  })
+
+  it('keeps an unquoted value group as a single token', () => {
+    expect(tokenize('owner:(Acme OR Bistro)')).toEqual(['owner:(Acme OR Bistro)'])
+  })
+
+  it('keeps an excluded value group as a single token', () => {
+    expect(tokenize('-owner:(Acme OR Bistro)')).toEqual(['-owner:(Acme OR Bistro)'])
   })
 })
 
@@ -97,6 +113,46 @@ describe('serializeFilterToken', () => {
   it('quotes values containing spaces', () => {
     expect(serializeFilterToken({ key: 'owner', value: 'Colis prompto' })).toBe('owner:"Colis prompto"')
   })
+
+  it('serializes several values as a "(v1 OR v2)" group', () => {
+    expect(serializeFilterToken({ key: 'owner', values: ['Colis prompto', 'Couture express'] }))
+      .toBe('owner:("Colis prompto" OR "Couture express")')
+  })
+
+  it('serializes an excluded group', () => {
+    expect(serializeFilterToken({ key: 'owner', values: ['Acme', 'Bistro'], exclude: true }))
+      .toBe('-owner:(Acme OR Bistro)')
+  })
+
+  it('collapses a single-item values array to a plain value', () => {
+    expect(serializeFilterToken({ key: 'owner', values: ['Acme'] })).toBe('owner:Acme')
+  })
+})
+
+describe('isGroupValue', () => {
+  it('is true for a "(v1 OR v2)" group', () => {
+    expect(isGroupValue('(Acme OR Bistro)')).toBe(true)
+  })
+
+  it('is false for a plain value', () => {
+    expect(isGroupValue('Acme')).toBe(false)
+    expect(isGroupValue('"Colis prompto"')).toBe(false)
+  })
+})
+
+describe('parseGroupValues', () => {
+  it('splits an unquoted group into its values', () => {
+    expect(parseGroupValues('(Acme OR Bistro)')).toEqual(['Acme', 'Bistro'])
+  })
+
+  it('splits a quoted group, honoring spaces within each value', () => {
+    expect(parseGroupValues('("Colis prompto" OR "Couture express")')).toEqual(['Colis prompto', 'Couture express'])
+  })
+
+  it('returns a single-item array for a plain (non-group) value', () => {
+    expect(parseGroupValues('Acme')).toEqual(['Acme'])
+    expect(parseGroupValues('"Colis prompto"')).toEqual(['Colis prompto'])
+  })
 })
 
 describe('unquote', () => {
@@ -150,5 +206,14 @@ describe('canonicalizeToken', () => {
 
   it('leaves a plain free-text term unchanged', () => {
     expect(canonicalizeToken('foo')).toBe('foo')
+  })
+
+  it('round-trips a "(v1 OR v2)" value group unchanged', () => {
+    expect(canonicalizeToken('owner:("Colis prompto" OR "Couture express")'))
+      .toBe('owner:("Colis prompto" OR "Couture express")')
+  })
+
+  it('round-trips an excluded value group, preserving the prefix', () => {
+    expect(canonicalizeToken('-owner:(Acme OR Bistro)')).toBe('-owner:(Acme OR Bistro)')
   })
 })
