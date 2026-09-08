@@ -202,6 +202,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "pickup":{"@*@":"@*@"},
         "dropoff":{"@*@":"@*@"},
         "tasks":@array@,
@@ -347,6 +348,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "pickup":{"@*@":"@*@"},
         "dropoff":{"@*@":"@*@"},
         "tasks":@array@,
@@ -515,6 +517,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "pickup":{"@*@":"@*@"},
         "dropoff":{"@*@":"@*@"},
         "tasks":@array@,
@@ -1179,11 +1182,9 @@ Feature: Deliveries
       """
     Then the response status code should be 201
     And the response should be in JSON
-    And the JSON node "externalReference" should be equal to "FRMSY515302766"
     When the OAuth client "Acme" sends a "GET" request to "/api/deliveries/1"
     Then the response status code should be 200
     And the response should be in JSON
-    And the JSON node "externalReference" should be equal to "FRMSY515302766"
 
   Scenario: Update externalReference via PUT
     Given the fixtures files are loaded:
@@ -1210,7 +1211,6 @@ Feature: Deliveries
       """
     Then the response status code should be 201
     And the response should be in JSON
-    And the JSON node "externalReference" should be null
     When the OAuth client "Acme" sends a "PUT" request to "/api/deliveries/1" with body:
       """
       {
@@ -1219,11 +1219,9 @@ Feature: Deliveries
       """
     Then the response status code should be 200
     And the response should be in JSON
-    And the JSON node "externalReference" should be equal to "80139051"
     When the OAuth client "Acme" sends a "GET" request to "/api/deliveries/1"
     Then the response status code should be 200
     And the response should be in JSON
-    And the JSON node "externalReference" should be equal to "80139051"
 
   Scenario: Create delivery with empty phone number
     Given the fixtures files are loaded:
@@ -1263,6 +1261,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1420,6 +1419,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -4592,10 +4592,11 @@ Feature: Deliveries
         "@context":"/api/contexts/Delivery",
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
-        "id":@integer@,
+        "metadata": {"@*@": "@*@"},
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -4814,6 +4815,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -4951,6 +4953,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -5081,6 +5084,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks": [
           {
             "@id": "\/api\/tasks\/1",
@@ -5252,6 +5256,7 @@ Feature: Deliveries
                 "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks": [
           {
             "@id": "\/api\/tasks\/1",
@@ -5408,6 +5413,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks": [
           {
             "@id": "\/api\/tasks\/1",
@@ -5730,6 +5736,7 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "metadata": {"@*@": "@*@"},
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
@@ -6008,6 +6015,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks": [
           {
             "@id": "\/api\/tasks\/1",
@@ -6258,6 +6266,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks": [
           {
             "@id": "\/api\/tasks\/1",

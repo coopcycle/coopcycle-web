@@ -457,6 +457,7 @@ Feature: Stores
             "duration":@integer@,
             "polyline":@string@,
             "pickup":{
+            "metadata": {"@*@": "@*@"},
               "@id":"@string@.startsWith('/api/tasks')",
               "@type":"Task",
               "id":@integer@,
@@ -584,6 +585,7 @@ Feature: Stores
             "distance":@integer@,
             "duration":@integer@,
             "polyline":@string@,
+            "metadata": {"@*@": "@*@"},
             "pickup":{
               "@id":"@string@.startsWith('/api/tasks')",
               "@type":"Task",
@@ -707,6 +709,7 @@ Feature: Stores
             "distance":@integer@,
             "duration":@integer@,
             "polyline":@string@,
+            "metadata": {"@*@": "@*@"},
             "pickup":{
               "@id":"@string@.startsWith('/api/tasks')",
               "@type":"Task",

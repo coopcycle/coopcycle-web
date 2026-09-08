@@ -695,6 +695,7 @@ Feature: Multi-step deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "pickup":{"@*@":"@*@"},
         "dropoff":{"@*@":"@*@"},
         "tasks":[

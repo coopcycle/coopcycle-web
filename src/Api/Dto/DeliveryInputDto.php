@@ -61,6 +61,5 @@ final class DeliveryInputDto
     #[Assert\Valid]
     public DeliveryOrderDto|null $order = null;
 
-    #[Groups(['delivery', 'delivery_create'])]
     public string|null $externalReference = null;
 }

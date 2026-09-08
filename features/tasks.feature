@@ -2419,6 +2419,7 @@ Feature: Tasks
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "pickup":{
           "@id":@string@,
           "@type":"Task",
