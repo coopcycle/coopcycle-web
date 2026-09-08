@@ -280,9 +280,9 @@ class AdminController extends AbstractController
     protected function getOrderList(Request $request, Response $response,
         PaginatorInterface $paginator,
         SearchQueryParser $searchQueryParser,
-        $showCanceled = false)
+        string $searchQueryString)
     {
-        $searchQuery = $searchQueryParser->parse($request->query->get('q'));
+        $searchQuery = $searchQueryParser->parse($searchQueryString);
 
         if ($fullText = $searchQuery->getFullText()) {
             $qb = $this->orderRepository->search($fullText);
@@ -328,10 +328,6 @@ class AdminController extends AbstractController
             $qb
                 ->andWhere('o.state NOT IN (:excluded_state)')
                 ->setParameter('excluded_state', $excludedStates);
-        } elseif (!$showCanceled) {
-            $qb
-                ->andWhere('o.state != :state_cancelled')
-                ->setParameter('state_cancelled', OrderInterface::STATE_CANCELLED);
         }
 
         if ($ownerFilter = $searchQuery->getFilter('owner')) {
@@ -397,19 +393,17 @@ class AdminController extends AbstractController
     {
         $response = new Response();
 
-        $showCanceled = false;
-        if ($request->query->has('show_canceled')) {
-            $showCanceled = $request->query->getBoolean('show_canceled');
-            $response->headers->setCookie(new Cookie('__show_canceled', $showCanceled ? 'on' : 'off'));
-        } elseif ($request->cookies->has('__show_canceled')) {
-            $showCanceled = $request->cookies->getBoolean('__show_canceled');
-        }
+        // On the very first load (no "q" param at all, not even empty),
+        // default to hiding cancelled orders. Once the user has touched
+        // the search bar - including clearing it - their query is respected as-is.
+        $searchQueryString = $request->query->has('q')
+            ? $request->query->get('q')
+            : '-state:cancelled';
 
         $parameters = [
-            'orders' => $this->getOrderList($request, $response, $paginator, $searchQueryParser, $showCanceled),
+            'orders' => $this->getOrderList($request, $response, $paginator, $searchQueryParser, $searchQueryString),
             'routes' => $request->attributes->get('routes'),
-            'show_canceled' => $showCanceled,
-            'search_query' => $request->query->get('q', ''),
+            'search_query' => $searchQueryString,
         ];
 
         if ($this->isGranted('ROLE_ADMIN')) {
