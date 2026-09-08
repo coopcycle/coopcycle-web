@@ -502,6 +502,16 @@ class RestaurantStats implements \Countable
                     }
                 }
 
+                // A rate that is neither a column nor mapped onto one still has
+                // to be accumulated somewhere: historical orders can carry rate
+                // codes that no longer exist in the tax configuration, and
+                // assuming the bucket exists made the whole export fail on
+                // them. Such a code has no column, so it is summed here and
+                // simply not rendered.
+                if (!isset($this->taxTotals[$order->getId()][$taxRateCode])) {
+                    $this->taxTotals[$order->getId()][$taxRateCode] = 0;
+                }
+
                 $this->taxTotals[$order->getId()][$taxRateCode] += $adjustment['amount'];
             }
 
