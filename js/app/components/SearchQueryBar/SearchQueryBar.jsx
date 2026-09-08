@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { DatePicker, Spin, Tag } from 'antd'
+import { Button, DatePicker, Input, Spin, Tag } from 'antd'
 import dayjs from 'dayjs'
 import localeData from 'dayjs/plugin/localeData'
 import weekday from 'dayjs/plugin/weekday'
@@ -46,8 +46,14 @@ const DATE_VALUE_RE = /^\d{4}-\d{2}-\d{2}$/
  *
  * The component is uncontrolled with respect to parsing: it only ever
  * produces/consumes the raw query string, via `defaultValue` and `onSearch`.
+ *
+ * Pass `scope` (e.g. "orders") to turn on saving/reusing queries for this
+ * bar - a name picker to save the current query, and a list to reapply a
+ * saved one - backed by the generic AppBundle\Entity\SearchQuery API
+ * (POST /api/search_queries, GET /api/me/search_queries?scope=..., DELETE
+ * /api/search_queries/{id}). Omit it to leave the bar without this feature.
  */
-export default function SearchQueryBar({ fields, defaultValue = '', onSearch, placeholder }) {
+export default function SearchQueryBar({ fields, defaultValue = '', onSearch, placeholder, scope }) {
   const { t } = useTranslation()
 
   // Finished query parts (rendered as tags) and the one still being typed.
@@ -62,8 +68,17 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
   const [asyncOptions, setAsyncOptions] = useState([])
   const [isLoadingAsyncOptions, setIsLoadingAsyncOptions] = useState(false)
 
+  // Saved searches (only used when `scope` is set) - see the class doc.
+  const [savedSearches, setSavedSearches] = useState([])
+  const [isLoadingSavedSearches, setIsLoadingSavedSearches] = useState(false)
+  const [isSavedSearchesOpen, setIsSavedSearchesOpen] = useState(false)
+  const [isSaveOpen, setIsSaveOpen] = useState(false)
+  const [saveName, setSaveName] = useState('')
+  const [isSaving, setIsSaving] = useState(false)
+
   const inputRef = useRef(null)
   const containerRef = useRef(null)
+  const httpClientRef = useRef(null)
 
   const fieldsByKey = useMemo(() => {
     const map = {}
@@ -180,6 +195,78 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
     setEditingIndex(null)
     setIsOpen(false)
     onSearch('')
+  }
+
+  // The full query as it would be submitted right now, including whatever's
+  // still being typed (mirrors submit()'s composition, minus the dropping
+  // of an unfinished bare "key:").
+  const currentQueryString = () => {
+    const tokens = draft && !isBareKeyToken(draft) ? [...committedTokens, draft] : committedTokens
+    return tokens.join(' ')
+  }
+
+  const getHttpClient = () => {
+    if (!httpClientRef.current) {
+      httpClientRef.current = new window._auth.httpClient()
+    }
+    return httpClientRef.current
+  }
+
+  const loadSavedSearches = useCallback(async () => {
+    setIsLoadingSavedSearches(true)
+    try {
+      const { response } = await getHttpClient().get(`/api/me/search_queries?scope=${encodeURIComponent(scope)}`)
+      setSavedSearches(response?.['hydra:member'] || [])
+    } finally {
+      setIsLoadingSavedSearches(false)
+    }
+  }, [scope])
+
+  const toggleSavedSearches = () => {
+    const next = !isSavedSearchesOpen
+    setIsOpen(false)
+    setIsSaveOpen(false)
+    setIsSavedSearchesOpen(next)
+    if (next) {
+      loadSavedSearches()
+    }
+  }
+
+  const applySavedSearch = (item) => {
+    setCommittedTokens(tokenize(item.query).map(canonicalizeToken))
+    setDraft('')
+    setEditingIndex(null)
+    setIsSavedSearchesOpen(false)
+    onSearch(item.query)
+  }
+
+  const deleteSavedSearch = async (item, e) => {
+    e.stopPropagation()
+    setSavedSearches(prev => prev.filter(s => s['@id'] !== item['@id']))
+    await getHttpClient().delete(item['@id'])
+  }
+
+  const openSaveForm = () => {
+    setIsOpen(false)
+    setIsSavedSearchesOpen(false)
+    setSaveName('')
+    setIsSaveOpen(true)
+  }
+
+  const submitSave = async () => {
+    const query = currentQueryString()
+    const name = saveName.trim()
+    if (!name || !query || isSaving) {
+      return
+    }
+    setIsSaving(true)
+    try {
+      const { response } = await getHttpClient().post('/api/search_queries', { scope, query, name })
+      setSavedSearches(prev => [response, ...prev])
+      setIsSaveOpen(false)
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   // Clicking a tag pulls it back out for editing, right where it was -
@@ -307,11 +394,13 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
     setIsOpen(true)
   }
 
-  // Close the dropdown when clicking outside the component.
+  // Close every dropdown/panel when clicking outside the component.
   useEffect(() => {
     const onClickOutside = (e) => {
       if (containerRef.current && !containerRef.current.contains(e.target)) {
         setIsOpen(false)
+        setIsSavedSearchesOpen(false)
+        setIsSaveOpen(false)
       }
     }
     document.addEventListener('mousedown', onClickOutside)
@@ -326,7 +415,7 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
       placeholder={committedTokens.length === 0 ? (placeholder || t('SEARCH_QUERY_BAR_PLACEHOLDER')) : ''}
       onChange={onDraftChange}
       onKeyDown={onKeyDown}
-      onFocus={() => setIsOpen(true)}
+      onFocus={() => { setIsOpen(true); setIsSavedSearchesOpen(false); setIsSaveOpen(false) }}
       onBlur={onDraftBlur}
       style={{ flex: 1, minWidth: 80, border: 'none', outline: 'none', fontFamily: 'monospace', fontSize: 15 }}
     />
@@ -380,6 +469,26 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
             style={{ color: '#aaa', cursor: 'pointer', fontSize: 15 }}
             onClick={(e) => { e.stopPropagation(); clearAll() }}
           />
+        )}
+        {scope && (
+          <>
+            <i
+              className="fa fa-star-o"
+              role="button"
+              aria-label={t('SEARCH_QUERY_BAR_SAVE')}
+              title={t('SEARCH_QUERY_BAR_SAVE')}
+              style={{ color: '#aaa', cursor: 'pointer', fontSize: 15, marginLeft: 10 }}
+              onClick={(e) => { e.stopPropagation(); openSaveForm() }}
+            />
+            <i
+              className="fa fa-bookmark-o"
+              role="button"
+              aria-label={t('SEARCH_QUERY_BAR_SAVED_SEARCHES')}
+              title={t('SEARCH_QUERY_BAR_SAVED_SEARCHES')}
+              style={{ color: '#aaa', cursor: 'pointer', fontSize: 15, marginLeft: 10 }}
+              onClick={(e) => { e.stopPropagation(); toggleSavedSearches() }}
+            />
+          </>
         )}
       </div>
       {isOpen && activeField && activeField.type === 'date' && (
@@ -449,6 +558,97 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
               ) : (
                 <>{suggestion.label}</>
               )}
+            </div>
+          ))}
+        </div>
+      )}
+      {isSaveOpen && (
+        <div
+          style={{
+            position: 'absolute',
+            zIndex: 1000,
+            top: '100%',
+            left: 0,
+            right: 0,
+            marginTop: 4,
+            background: '#fff',
+            border: '1px solid #d9d9d9',
+            borderRadius: 4,
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+            padding: 12,
+          }}
+        >
+          <Input
+            autoFocus
+            placeholder={t('SEARCH_QUERY_BAR_SAVE_NAME_PLACEHOLDER')}
+            value={saveName}
+            onChange={(e) => setSaveName(e.target.value)}
+            onPressEnter={submitSave}
+            style={{ marginBottom: 8 }}
+          />
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+            <Button size="small" onClick={() => setIsSaveOpen(false)}>{t('CANCEL')}</Button>
+            <Button
+              size="small"
+              type="primary"
+              loading={isSaving}
+              disabled={!saveName.trim()}
+              onClick={submitSave}
+            >
+              {t('SEARCH_QUERY_BAR_SAVE')}
+            </Button>
+          </div>
+        </div>
+      )}
+      {isSavedSearchesOpen && (
+        <div
+          style={{
+            position: 'absolute',
+            zIndex: 1000,
+            top: '100%',
+            left: 0,
+            right: 0,
+            marginTop: 4,
+            background: '#fff',
+            border: '1px solid #d9d9d9',
+            borderRadius: 4,
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+            maxHeight: 320,
+            overflowY: 'auto',
+          }}
+        >
+          {isLoadingSavedSearches && (
+            <div style={{ padding: '12px' }}><Spin size="small" /></div>
+          )}
+          {!isLoadingSavedSearches && savedSearches.length === 0 && (
+            <div style={{ padding: '10px 12px', color: '#aaa' }}>{t('SEARCH_QUERY_BAR_NO_SAVED_SEARCHES')}</div>
+          )}
+          {savedSearches.map((item) => (
+            <div
+              key={item['@id']}
+              onClick={() => applySavedSearch(item)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: 8,
+                padding: '8px 12px',
+                cursor: 'pointer',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = '#f5f5f5' }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
+            >
+              <div style={{ overflow: 'hidden' }}>
+                <div style={{ fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name}</div>
+                <div style={{ fontFamily: 'monospace', fontSize: 12, color: '#aaa', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.query}</div>
+              </div>
+              <i
+                className="fa fa-trash-o"
+                role="button"
+                aria-label={t('SEARCH_QUERY_BAR_DELETE_SAVED_SEARCH')}
+                style={{ color: '#aaa', cursor: 'pointer', flexShrink: 0 }}
+                onClick={(e) => deleteSavedSearch(item, e)}
+              />
             </div>
           ))}
         </div>

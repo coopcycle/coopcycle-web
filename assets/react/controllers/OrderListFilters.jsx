@@ -80,6 +80,7 @@ export default function OrderListFilters({ defaultValue = '' }) {
       <SearchQueryBar
         fields={fields}
         defaultValue={defaultValue}
+        scope="orders"
         placeholder={t('SEARCH_QUERY_BAR_ORDERS_PLACEHOLDER')}
         onSearch={(query) => {
           const url = new URL(window.location.href);
