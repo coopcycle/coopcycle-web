@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { DatePicker, Spin } from 'antd'
+import { DatePicker, Spin, Tag } from 'antd'
 import dayjs from 'dayjs'
 import localeData from 'dayjs/plugin/localeData'
 import weekday from 'dayjs/plugin/weekday'
@@ -7,17 +7,21 @@ import debounce from 'lodash/debounce'
 import { useTranslation } from 'react-i18next'
 
 import { datePickerProps } from '../../utils/antd'
+import {
+  canonicalizeToken,
+  hasUnterminatedQuote,
+  parseLiveToken,
+  parseToken,
+  serializeFilterToken,
+  tokenize,
+  unquote,
+} from './queryString'
 
 // antd's DatePicker (rc-picker) calls dayjs(...).weekday()/.localeData() for
 // calendar navigation (e.g. arrow keys) - without these plugins extended,
 // that throws "clone.weekday is not a function".
 dayjs.extend(weekday)
 dayjs.extend(localeData)
-import {
-  getTokenAtCursor,
-  replaceTokenAtCursor,
-  serializeFilterToken,
-} from './queryString'
 
 const DATE_VALUE_FORMAT = 'YYYY-MM-DD'
 const DATE_VALUE_RE = /^\d{4}-\d{2}-\d{2}$/
@@ -27,6 +31,7 @@ const DATE_VALUE_RE = /^\d{4}-\d{2}-\d{2}$/
  * - "key:value" filters a field, "-key:value" excludes it
  * - anything else is a free-text term, used for fuzzy search
  * - autocomplete suggests known field keys, then values for that field
+ * - finished query parts are shown as removable tags, Sentry-style
  *
  * `fields` describes what can be filtered on:
  *   [{
@@ -44,8 +49,9 @@ const DATE_VALUE_RE = /^\d{4}-\d{2}-\d{2}$/
 export default function SearchQueryBar({ fields, defaultValue = '', onSearch, placeholder }) {
   const { t } = useTranslation()
 
-  const [text, setText] = useState(defaultValue)
-  const [cursor, setCursor] = useState(defaultValue.length)
+  // Finished query parts (rendered as tags) and the one still being typed.
+  const [committedTokens, setCommittedTokens] = useState(() => tokenize(defaultValue).map(canonicalizeToken))
+  const [draft, setDraft] = useState('')
   const [isOpen, setIsOpen] = useState(false)
   const [highlightedIndex, setHighlightedIndex] = useState(0)
   const [asyncOptions, setAsyncOptions] = useState([])
@@ -60,9 +66,9 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
     return map
   }, [fields])
 
-  const token = useMemo(() => getTokenAtCursor(text, cursor), [text, cursor])
+  const liveToken = useMemo(() => parseLiveToken(draft), [draft])
 
-  const activeField = token.isFilter ? fieldsByKey[token.key] : null
+  const activeField = liveToken.isFilter ? fieldsByKey[liveToken.key] : null
 
   const loadAsyncOptions = useCallback(
     debounce(async (field, input) => {
@@ -79,21 +85,21 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
 
   useEffect(() => {
     if (activeField && activeField.type === 'async') {
-      loadAsyncOptions(activeField, token.value || '')
+      loadAsyncOptions(activeField, liveToken.value || '')
     }
-  }, [activeField, token.value, loadAsyncOptions])
+  }, [activeField, liveToken.value, loadAsyncOptions])
 
   // What to show in the dropdown: field keys, or values for the active field.
   const suggestions = useMemo(() => {
-    if (!token.isFilter) {
-      const keyword = token.raw.replace(/^-/, '').toLowerCase()
+    if (!liveToken.isFilter) {
+      const keyword = liveToken.raw.replace(/^-/, '').toLowerCase()
       return fields
         .filter(field => field.key.toLowerCase().includes(keyword))
         .map(field => ({
           type: 'key',
           key: `key:${field.key}`,
           label: field.label,
-          insert: `${token.exclude ? '-' : ''}${field.key}:`,
+          insert: `${liveToken.exclude ? '-' : ''}${field.key}:`,
         }))
     }
 
@@ -101,7 +107,7 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
       return []
     }
 
-    const keyword = (token.value || '').toLowerCase()
+    const keyword = (liveToken.value || '').toLowerCase()
     const options = activeField.type === 'async' ? asyncOptions : (activeField.options || [])
 
     return options
@@ -110,47 +116,73 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
         type: 'value',
         key: `value:${option.value}`,
         label: option.label,
-        insert: serializeFilterToken({ key: activeField.key, value: option.value, exclude: token.exclude }),
+        insert: serializeFilterToken({ key: activeField.key, value: option.value, exclude: liveToken.exclude }),
       }))
-  }, [token, activeField, fields, asyncOptions])
+  }, [liveToken, activeField, fields, asyncOptions])
 
   useEffect(() => {
     setHighlightedIndex(0)
   }, [suggestions])
 
-  const submit = useCallback((value) => {
+  const focusInput = () => {
+    requestAnimationFrame(() => inputRef.current?.focus())
+  }
+
+  const removeToken = (index) => {
+    setCommittedTokens(prev => prev.filter((_, i) => i !== index))
+    focusInput()
+  }
+
+  const submit = useCallback(() => {
     setIsOpen(false)
-    onSearch(value.trim())
-  }, [onSearch])
+    const finalTokens = draft ? [...committedTokens, draft] : committedTokens
+    if (draft) {
+      setCommittedTokens(finalTokens)
+      setDraft('')
+    }
+    onSearch(finalTokens.join(' '))
+  }, [committedTokens, draft, onSearch])
+
+  const clearAll = () => {
+    setCommittedTokens([])
+    setDraft('')
+    setIsOpen(false)
+    onSearch('')
+  }
+
+  // Key suggestions insert a bare "key:" that still needs a value typed
+  // right after it, so it stays in the draft. Value suggestions (and dates)
+  // insert a complete "key:value" token, so they're committed as a tag.
+  const applySuggestion = (suggestion) => {
+    if (suggestion.type === 'key') {
+      setDraft(suggestion.insert)
+    } else {
+      setCommittedTokens(prev => [...prev, suggestion.insert])
+      setDraft('')
+    }
+    setIsOpen(true)
+    focusInput()
+  }
 
   const applyDate = (date) => {
     if (!date) {
       return
     }
     applySuggestion({
-      insert: serializeFilterToken({ key: activeField.key, value: date.format(DATE_VALUE_FORMAT), exclude: token.exclude }),
-    })
-  }
-
-  const applySuggestion = (suggestion) => {
-    // Key suggestions insert a bare "key:" that still needs a value typed
-    // right after it, so don't append a trailing space - value suggestions
-    // (and dates) insert a complete "key:value" token, so do.
-    const appendSpace = suggestion.type !== 'key'
-    const { text: newText, cursor: newCursor } = replaceTokenAtCursor(text, cursor, suggestion.insert, { appendSpace })
-    setText(newText)
-    setCursor(newCursor)
-    setIsOpen(true)
-    // Re-focus & move the caret, since selecting a suggestion via click blurs the input.
-    requestAnimationFrame(() => {
-      if (inputRef.current) {
-        inputRef.current.focus()
-        inputRef.current.setSelectionRange(newCursor, newCursor)
-      }
+      insert: serializeFilterToken({ key: activeField.key, value: date.format(DATE_VALUE_FORMAT), exclude: liveToken.exclude }),
     })
   }
 
   const onKeyDown = (e) => {
+    if (e.key === 'Backspace' && draft === '' && committedTokens.length > 0) {
+      // Pop the last tag back into the draft for editing, same convention
+      // as most tag inputs (Gmail's "To" field, GitHub labels, etc.).
+      e.preventDefault()
+      setDraft(committedTokens[committedTokens.length - 1])
+      setCommittedTokens(prev => prev.slice(0, -1))
+      setIsOpen(true)
+      return
+    }
     if (e.key === 'ArrowDown') {
       if (suggestions.length > 0) {
         e.preventDefault()
@@ -174,26 +206,44 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
     if (e.key === 'Enter') {
       e.preventDefault()
       // Only treat Enter as "accept the highlighted suggestion" when the
-      // user is actually mid-token (raw !== ''). Otherwise the cursor is
-      // sitting in an empty token that's just showing the full field list
-      // by default (e.g. right after finishing a value), and Enter should
-      // submit the query as-is instead of inserting an unwanted filter.
-      if (isOpen && suggestions.length > 0 && token.raw !== '') {
+      // user is actually mid-token (draft !== ''). Otherwise the draft is
+      // empty and just showing the full field list by default (e.g. right
+      // after finishing a value), and Enter should submit as-is instead of
+      // inserting an unwanted filter.
+      if (isOpen && suggestions.length > 0 && draft !== '') {
         applySuggestion(suggestions[highlightedIndex])
       } else {
-        submit(text)
+        submit()
       }
     }
   }
 
-  const onInputChange = (e) => {
-    setText(e.target.value)
-    setCursor(e.target.selectionStart)
-    setIsOpen(true)
-  }
+  const onDraftChange = (e) => {
+    const value = e.target.value
 
-  const onClickOrKeyUp = (e) => {
-    setCursor(e.target.selectionStart)
+    if (hasUnterminatedQuote(value)) {
+      // Mid-way through typing a quoted (possibly multi-word) value - keep
+      // it whole in the draft rather than splitting on the space(s) inside.
+      setDraft(value)
+      setIsOpen(true)
+      return
+    }
+
+    const tokens = tokenize(value)
+    const endsWithSpace = /\s$/.test(value)
+
+    if (endsWithSpace) {
+      if (tokens.length > 0) {
+        setCommittedTokens(prev => [...prev, ...tokens.map(canonicalizeToken)])
+      }
+      setDraft('')
+    } else if (tokens.length > 1) {
+      setCommittedTokens(prev => [...prev, ...tokens.slice(0, -1).map(canonicalizeToken)])
+      setDraft(tokens[tokens.length - 1])
+    } else {
+      setDraft(tokens[0] || '')
+    }
+    setIsOpen(true)
   }
 
   // Close the dropdown when clicking outside the component.
@@ -209,27 +259,59 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
 
   return (
     <div ref={containerRef} style={{ position: 'relative', width: '100%' }}>
-      <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #d9d9d9', borderRadius: 4, padding: '4px 8px', background: '#fff' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          rowGap: 4,
+          border: '1px solid #d9d9d9',
+          borderRadius: 4,
+          padding: '4px 8px',
+          background: '#fff',
+        }}
+        onClick={() => inputRef.current?.focus()}
+      >
         <i className="fa fa-search" style={{ color: '#aaa', marginRight: 8 }} />
+        {committedTokens.map((raw, index) => {
+          const parsed = parseToken(raw)
+          return (
+            <Tag
+              key={index}
+              closable
+              onClose={(e) => { e.preventDefault(); removeToken(index) }}
+              style={{ marginInlineEnd: 4 }}
+            >
+              {parsed.isFilter ? (
+                <>
+                  {parsed.exclude && <span style={{ color: '#cf1322' }}>-</span>}
+                  <span>{parsed.key}</span>
+                  <span style={{ color: '#aaa' }}>:</span>
+                  <span style={{ color: '#1677ff', fontWeight: 500 }}>{unquote(parsed.value)}</span>
+                </>
+              ) : (
+                <span>{unquote(raw)}</span>
+              )}
+            </Tag>
+          )
+        })}
         <input
           ref={inputRef}
           type="text"
-          value={text}
-          placeholder={placeholder || t('SEARCH_QUERY_BAR_PLACEHOLDER')}
-          onChange={onInputChange}
+          value={draft}
+          placeholder={committedTokens.length === 0 ? (placeholder || t('SEARCH_QUERY_BAR_PLACEHOLDER')) : ''}
+          onChange={onDraftChange}
           onKeyDown={onKeyDown}
-          onKeyUp={onClickOrKeyUp}
-          onClick={onClickOrKeyUp}
           onFocus={() => setIsOpen(true)}
-          style={{ flex: 1, border: 'none', outline: 'none', fontFamily: 'monospace', fontSize: '0.95em' }}
+          style={{ flex: 1, minWidth: 80, border: 'none', outline: 'none', fontFamily: 'monospace', fontSize: '0.95em' }}
         />
-        {text && (
+        {(committedTokens.length > 0 || draft) && (
           <i
             className="fa fa-times"
             role="button"
             aria-label={t('SEARCH_QUERY_BAR_CLEAR')}
             style={{ color: '#aaa', cursor: 'pointer' }}
-            onClick={() => { setText(''); setCursor(0); submit('') }}
+            onClick={(e) => { e.stopPropagation(); clearAll() }}
           />
         )}
       </div>
@@ -251,7 +333,7 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
           <DatePicker
             open
             format={datePickerProps.format}
-            value={token.value && DATE_VALUE_RE.test(token.value) ? dayjs(token.value) : null}
+            value={liveToken.value && DATE_VALUE_RE.test(liveToken.value) ? dayjs(liveToken.value) : null}
             onChange={applyDate}
             getPopupContainer={(trigger) => trigger.parentElement}
           />

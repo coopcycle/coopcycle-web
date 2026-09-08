@@ -13,11 +13,11 @@
 
 const KEY_RE = /^([a-zA-Z_][a-zA-Z0-9_]*):(.+)$/
 // Same as KEY_RE, but also matches a key with no value yet (e.g. "date:").
-// Used only for the live cursor token (getTokenAtCursor), so autocomplete
-// can react as soon as the colon is typed. A key with no value isn't a
-// "real" filter for submission purposes - see the PHP parser's
-// testColonWithoutValueIsATerm - so parseToken()/parseQuery() keep using
-// the stricter KEY_RE above.
+// Used only while the user is still typing the current token (see
+// SearchQueryBar's "draft"), so autocomplete can react as soon as the colon
+// is typed. A key with no value isn't a "real" filter for submission
+// purposes - see the PHP parser's testColonWithoutValueIsATerm - so
+// parseToken()/parseQuery() default to the stricter KEY_RE above.
 const LIVE_KEY_RE = /^([a-zA-Z_][a-zA-Z0-9_]*):(.*)$/
 
 /**
@@ -89,6 +89,15 @@ export function parseToken(raw, keyRe = KEY_RE) {
 }
 
 /**
+ * Parses the token currently being typed (SearchQueryBar's "draft"), which
+ * may still have a bare "key:" with no value - see LIVE_KEY_RE above.
+ * @param {string} raw
+ */
+export function parseLiveToken(raw) {
+  return parseToken(raw, LIVE_KEY_RE)
+}
+
+/**
  * @param {string} query
  * @returns {ReturnType<typeof parseToken>[]}
  */
@@ -118,66 +127,48 @@ export function serializeFilterToken({ key, value, exclude = false }) {
 }
 
 /**
- * Finds the token (and its start/end offsets within `text`) that the cursor
- * is currently positioned in/at, so autocomplete can work out what the user
- * is typing.
- * @param {string} text
- * @param {number} cursor
+ * Strips one layer of matching surrounding quotes, for display purposes only
+ * (e.g. rendering a committed token as a tag/pill). The canonical/submitted
+ * form is untouched by this - only quoteIfNeeded() decides whether to quote.
+ * @param {string} value
  */
-export function getTokenAtCursor(text, cursor) {
-  // Find token boundaries: whitespace not inside quotes.
-  let start = cursor
-  let end = cursor
-  let quoteChar = null
-
-  // Walk backwards to find the start of the current token.
-  for (let i = cursor - 1; i >= 0; i--) {
-    const char = text[i]
-    if (char === '"' || char === "'") {
-      quoteChar = quoteChar === char ? null : char
-    }
-    if (!quoteChar && /\s/.test(char)) {
-      break
-    }
-    start = i
-  }
-
-  // Walk forward to find the end of the current token.
-  quoteChar = null
-  for (let i = cursor; i < text.length; i++) {
-    const char = text[i]
-    if (!quoteChar && /\s/.test(char)) {
-      break
-    }
-    if (char === '"' || char === "'") {
-      quoteChar = quoteChar === char ? null : char
-    }
-    end = i + 1
-  }
-
-  const raw = text.slice(start, end)
-
-  return { raw, start, end, ...parseToken(raw, LIVE_KEY_RE) }
+export function unquote(value) {
+  const match = value.match(/^(["'])([\s\S]*)\1$/)
+  return match ? match[2] : value
 }
 
 /**
- * Replaces the token at the cursor with `replacement`, and returns the new
- * text plus the cursor position after it.
- * @param {string} text
- * @param {number} cursor
- * @param {string} replacement
- * @param {{ appendSpace?: boolean }} [options] set appendSpace to false when
- *   inserting a bare "key:" that still needs a value typed right after it -
- *   a trailing space would push the cursor into a new, separate token.
+ * Whether `str` ends mid-way through an open quote (an odd number of quote
+ * chars) - i.e. the user is still typing a quoted, possibly multi-word,
+ * value and a space shouldn't be treated as a token boundary yet.
+ * @param {string} str
  */
-export function replaceTokenAtCursor(text, cursor, replacement, { appendSpace = true } = {}) {
-  const { start, end } = getTokenAtCursor(text, cursor)
-  const before = text.slice(0, start)
-  const after = text.slice(end)
-  const insertion = appendSpace ? `${replacement} ` : replacement
-
-  return {
-    text: `${before}${insertion}${after}`,
-    cursor: before.length + insertion.length,
+export function hasUnterminatedQuote(str) {
+  let quoteChar = null
+  for (const char of str) {
+    if (quoteChar) {
+      if (char === quoteChar) {
+        quoteChar = null
+      }
+    } else if (char === '"' || char === "'") {
+      quoteChar = char
+    }
   }
+  return quoteChar !== null
+}
+
+/**
+ * Re-serializes a token that came out of tokenize() (which strips quotes)
+ * back into a round-trip-safe canonical form - e.g. `owner:"a value"` for a
+ * filter whose value contains whitespace, or a quoted free-text term.
+ * Tokens that don't need quoting are returned unchanged. This is what makes
+ * it safe to store tokenize() output directly and later re-join with " ".
+ * @param {string} raw as produced by tokenize() - already dequoted
+ */
+export function canonicalizeToken(raw) {
+  const parsed = parseToken(raw)
+  if (parsed.isFilter) {
+    return serializeFilterToken({ key: parsed.key, value: parsed.value, exclude: parsed.exclude })
+  }
+  return quoteIfNeeded(raw)
 }

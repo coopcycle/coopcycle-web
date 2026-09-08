@@ -1,9 +1,11 @@
 import {
-  getTokenAtCursor,
+  canonicalizeToken,
+  hasUnterminatedQuote,
+  parseLiveToken,
   parseQuery,
-  replaceTokenAtCursor,
   serializeFilterToken,
   tokenize,
+  unquote,
 } from '../queryString'
 
 describe('tokenize', () => {
@@ -38,6 +40,29 @@ describe('parseQuery', () => {
   })
 })
 
+describe('parseLiveToken', () => {
+  it('recognizes a bare "key:" with no value yet as a filter-in-progress', () => {
+    // Unlike parseQuery(), this must recognize the token immediately (before
+    // any value is typed) so autocomplete can react - e.g. showing a date
+    // picker as soon as the user types "date:".
+    const token = parseLiveToken('date:')
+
+    expect(token.isFilter).toBe(true)
+    expect(token.key).toBe('date')
+    expect(token.value).toBe('')
+  })
+
+  it('still parses a complete filter normally', () => {
+    expect(parseLiveToken('-state:cancelled')).toEqual({
+      raw: '-state:cancelled', isFilter: true, key: 'state', value: 'cancelled', exclude: true,
+    })
+  })
+
+  it('treats plain text as a free-text term', () => {
+    expect(parseLiveToken('foo')).toEqual({ raw: 'foo', isFilter: false, exclude: false })
+  })
+})
+
 describe('serializeFilterToken', () => {
   it('serializes an included filter', () => {
     expect(serializeFilterToken({ key: 'state', value: 'fulfilled' })).toBe('state:fulfilled')
@@ -52,60 +77,56 @@ describe('serializeFilterToken', () => {
   })
 })
 
-describe('getTokenAtCursor', () => {
-  it('finds the token under the cursor', () => {
-    const text = 'date:2026-09-08 state:fulfilled'
-    // cursor right after "state:ful"
-    const cursor = text.indexOf('state:fulfilled') + 'state:ful'.length
-    const token = getTokenAtCursor(text, cursor)
-
-    expect(token.raw).toBe('state:fulfilled')
-    expect(token.key).toBe('state')
-    expect(token.value).toBe('fulfilled')
+describe('unquote', () => {
+  it('strips matching surrounding double quotes', () => {
+    expect(unquote('"Colis prompto"')).toBe('Colis prompto')
   })
 
-  it('finds an empty token when the cursor sits between two spaces', () => {
-    const text = 'foo  bar'
-    const token = getTokenAtCursor(text, 4)
-
-    expect(token.raw).toBe('')
+  it('strips matching surrounding single quotes', () => {
+    expect(unquote("'Colis prompto'")).toBe('Colis prompto')
   })
 
-  it('recognizes a bare "key:" with no value yet as a filter-in-progress', () => {
-    // Unlike parseQuery(), the live cursor token must recognize this
-    // immediately (before any value is typed) so autocomplete can react -
-    // e.g. showing a date picker as soon as the user types "date:".
-    const text = 'date:'
-    const token = getTokenAtCursor(text, text.length)
+  it('leaves an unquoted value untouched', () => {
+    expect(unquote('cancelled')).toBe('cancelled')
+  })
 
-    expect(token.isFilter).toBe(true)
-    expect(token.key).toBe('date')
-    expect(token.value).toBe('')
+  it('leaves mismatched quotes untouched', () => {
+    expect(unquote('"Colis prompto\'')).toBe('"Colis prompto\'')
   })
 })
 
-describe('replaceTokenAtCursor', () => {
-  it('replaces the current token and appends a trailing space by default', () => {
-    const text = 'date:2026-09-08 stat'
-    const cursor = text.length
-    const { text: newText, cursor: newCursor } = replaceTokenAtCursor(text, cursor, 'state:')
-
-    expect(newText).toBe('date:2026-09-08 state: ')
-    expect(newCursor).toBe(newText.length)
+describe('hasUnterminatedQuote', () => {
+  it('is false for a plain string', () => {
+    expect(hasUnterminatedQuote('owner:Colis')).toBe(false)
   })
 
-  it('does not append a trailing space when appendSpace is false, keeping the cursor inside the token', () => {
-    const text = 'stat'
-    const cursor = text.length
-    const { text: newText, cursor: newCursor } = replaceTokenAtCursor(text, cursor, 'state:', { appendSpace: false })
+  it('is true right after an opening quote', () => {
+    expect(hasUnterminatedQuote('owner:"Colis')).toBe(true)
+  })
 
-    expect(newText).toBe('state:')
-    expect(newCursor).toBe(newText.length)
+  it('is false once the quote is closed', () => {
+    expect(hasUnterminatedQuote('owner:"Colis prompto"')).toBe(false)
+  })
+})
 
-    // The cursor must still be recognized as inside the "state:" filter token.
-    const token = getTokenAtCursor(newText, newCursor)
-    expect(token.isFilter).toBe(true)
-    expect(token.key).toBe('state')
-    expect(token.value).toBe('')
+describe('canonicalizeToken', () => {
+  it('leaves a simple filter token unchanged', () => {
+    expect(canonicalizeToken('state:cancelled')).toBe('state:cancelled')
+  })
+
+  it('re-quotes a filter value containing spaces (as tokenize() would strip it)', () => {
+    expect(canonicalizeToken('owner:Colis prompto')).toBe('owner:"Colis prompto"')
+  })
+
+  it('preserves the exclude prefix', () => {
+    expect(canonicalizeToken('-owner:Colis prompto')).toBe('-owner:"Colis prompto"')
+  })
+
+  it('quotes a free-text term containing spaces', () => {
+    expect(canonicalizeToken('some text')).toBe('"some text"')
+  })
+
+  it('leaves a plain free-text term unchanged', () => {
+    expect(canonicalizeToken('foo')).toBe('foo')
   })
 })
