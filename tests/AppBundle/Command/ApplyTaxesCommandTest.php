@@ -5,6 +5,8 @@ namespace Tests\AppBundle\Command;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderItem;
 use AppBundle\Entity\Sylius\Product;
+use AppBundle\Entity\Sylius\ProductOption;
+use AppBundle\Entity\Sylius\ProductOptionValue;
 use AppBundle\Entity\Sylius\ProductVariant;
 use AppBundle\Entity\Sylius\TaxCategory;
 use AppBundle\Entity\Sylius\TaxRate;
@@ -141,6 +143,173 @@ class ApplyTaxesCommandTest extends KernelTestCase
         $conn->executeStatement("DELETE FROM sylius_tax_rate WHERE code LIKE ?", ["{$marker}%"]);
         $conn->executeStatement("DELETE FROM sylius_tax_category WHERE code LIKE ?", ["{$marker}%"]);
         $this->cleanupIds = [];
+    }
+
+    /**
+     * Answers: does re-running the command retroactively apply VAT
+     * ventilation to a menu order placed *before* ZeltyMenuVatVentilator
+     * existed? Yes — ventilation reads live from the order item's persisted
+     * variant/option-value selections and the dishes' *current* catalog
+     * state, so replaying it against an old order works the same as
+     * against a fresh one. The one caveat: it uses today's dish prices/
+     * categories for the ratio, not whatever they were when the order was
+     * placed — same limitation the whole "recompute" command already had
+     * before ventilation existed.
+     */
+    public function testReprocessingAnOldOrderAppliesVatVentilationRetroactively(): void
+    {
+        $marker = uniqid('apply_taxes_ventilation_test_');
+
+        $food = $this->persistTaxCategory("{$marker}_FOOD", "{$marker}_FOOD_RATE", 0.10);
+        $alcohol = $this->persistTaxCategory("{$marker}_ALCOHOL", "{$marker}_ALCOHOL_RATE", 0.20);
+
+        $burger = $this->persistDish("{$marker}_ZD_BURGER", $food, 700);
+        $beer = $this->persistDish("{$marker}_ZD_BEER", $alcohol, 500);
+
+        $burgerOption = new ProductOption();
+        $burgerOption->setCode("{$marker}_OPT_BURGER");
+        $burgerOption->setPosition(0);
+        $burgerOption->setAdditional(false);
+        $this->em->persist($burgerOption);
+
+        $burgerValue = new ProductOptionValue();
+        $burgerValue->setCode("{$marker}_OPT_BURGER_V");
+        $burgerValue->setOption($burgerOption);
+        $burgerValue->setZeltyId($burger->getCode());
+        $this->em->persist($burgerValue);
+
+        $beerOption = new ProductOption();
+        $beerOption->setCode("{$marker}_OPT_BEER");
+        $beerOption->setPosition(0);
+        $beerOption->setAdditional(false);
+        $this->em->persist($beerOption);
+
+        $beerValue = new ProductOptionValue();
+        $beerValue->setCode("{$marker}_OPT_BEER_V");
+        $beerValue->setOption($beerOption);
+        $beerValue->setZeltyId($beer->getCode());
+        $this->em->persist($beerValue);
+
+        $menuProduct = new Product();
+        $menuProduct->setCode("ZM{$marker}");
+        $menuProduct->setZeltyId("ZM{$marker}");
+        $menuProduct->setCurrentLocale('fr');
+        $menuProduct->setFallbackLocale('fr');
+        $menuProduct->setName('Test menu');
+        $menuProduct->setSlug("zm-{$marker}");
+        $this->em->persist($menuProduct);
+
+        $menuVariant = new ProductVariant();
+        $menuVariant->setCode("ZM{$marker}_variant");
+        $menuVariant->setCurrentLocale('fr');
+        $menuVariant->setFallbackLocale('fr');
+        $menuVariant->setPrice(1200);
+        $menuVariant->setTaxCategory($alcohol); // as ZeltyMenuMapper's highest-rate heuristic would have set it
+        $menuVariant->addOptionValue($burgerValue);
+        $menuVariant->addOptionValue($beerValue);
+        $menuProduct->addVariant($menuVariant);
+        $this->em->persist($menuVariant);
+
+        // An order placed well before this feature existed.
+        $order = new Order();
+        $order->setState('fulfilled');
+        $order->setCreatedAt(new \DateTime('-30 days'));
+        $this->em->persist($order);
+
+        $item = new OrderItem();
+        $item->setVariant($menuVariant);
+        $item->setUnitPrice(1200);
+        $order->addItem($item);
+        $this->em->persist($item);
+
+        $this->em->flush();
+
+        $orderId = $order->getId();
+        $itemId = $item->getId();
+        $menuVariantId = $menuVariant->getId();
+        $menuProductId = $menuProduct->getId();
+
+        // Simulate what an *actual* historical order looks like: a single
+        // adjustment at the menu's old highest-rate category, exactly what
+        // ApplyTaxesCommand would have produced before ventilation existed.
+        // (A fresh in-memory OrderItem has no adjustments yet regardless of
+        // its createdAt, so this has to be inserted explicitly to represent
+        // "already processed, long ago".)
+        $conn = $this->em->getConnection();
+        $conn->executeStatement(
+            "INSERT INTO sylius_adjustment (order_id, order_item_id, type, label, amount, is_neutral, is_locked, origin_code, details, created_at, updated_at)
+             VALUES (?, ?, 'tax', 'stale', 200, true, false, ?, '[]', now(), now())",
+            [$orderId, $itemId, "{$marker}_ALCOHOL_RATE"]
+        );
+
+        $this->em->clear();
+
+        // This is exactly "relaunch ApplyTaxesCommand" against that
+        // pre-existing, already-processed order.
+        $this->runApplyTaxesCommand();
+
+        $afterRows = $this->fetchTaxAdjustmentRows($itemId);
+        $this->assertCount(2, $afterRows, 'Re-running should replace the old single-category row with two rate-specific ones.');
+
+        $amountsByOrigin = [];
+        foreach ($afterRows as $row) {
+            $amountsByOrigin[$row['origin_code']] = (int) $row['amount'];
+        }
+
+        $this->assertArrayHasKey("{$marker}_FOOD_RATE", $amountsByOrigin);
+        $this->assertArrayHasKey("{$marker}_ALCOHOL_RATE", $amountsByOrigin);
+        $this->assertSame(1200, array_sum($amountsByOrigin));
+
+        // Strictly less tax than "the whole 1200 at 20%" (= 200) would give —
+        // proving the beer's rate no longer applies to the whole bundle.
+        $this->assertLessThan(200, array_sum($amountsByOrigin));
+
+        $conn = $this->em->getConnection();
+        $conn->executeStatement('DELETE FROM sylius_adjustment WHERE order_item_id = ?', [$itemId]);
+        $conn->executeStatement('DELETE FROM sylius_product_variant_option_value WHERE variant_id = ?', [$menuVariantId]);
+        $conn->executeStatement('DELETE FROM sylius_order_item WHERE id = ?', [$itemId]);
+        $conn->executeStatement('DELETE FROM sylius_order WHERE id = ?', [$orderId]);
+        $conn->executeStatement('DELETE FROM sylius_product_variant WHERE id = ?', [$menuVariantId]);
+        $conn->executeStatement('DELETE FROM sylius_product WHERE id = ?', [$menuProductId]);
+        $conn->executeStatement('DELETE FROM sylius_product_option_value WHERE code LIKE ?', ["{$marker}%"]);
+        $conn->executeStatement('DELETE FROM sylius_product_option WHERE code LIKE ?', ["{$marker}%"]);
+        $conn->executeStatement('DELETE FROM sylius_product_variant WHERE code LIKE ?', ["{$marker}%"]);
+        $conn->executeStatement('DELETE FROM sylius_product WHERE code LIKE ?', ["{$marker}%"]);
+        $conn->executeStatement('DELETE FROM sylius_tax_rate WHERE code LIKE ?', ["{$marker}%"]);
+        $conn->executeStatement('DELETE FROM sylius_tax_category WHERE code LIKE ?', ["{$marker}%"]);
+    }
+
+    private function persistDish(string $code, TaxCategory $category, int $price): Product
+    {
+        $product = new Product();
+        $product->setCode($code);
+        $product->setZeltyId($code);
+        $product->setCurrentLocale('fr');
+        $product->setFallbackLocale('fr');
+        $product->setName($code);
+        $product->setSlug(strtolower($code));
+        $this->em->persist($product);
+
+        $variant = new ProductVariant();
+        $variant->setCode("{$code}_variant");
+        $variant->setCurrentLocale('fr');
+        $variant->setFallbackLocale('fr');
+        $variant->setPrice($price);
+        $variant->setTaxCategory($category);
+        $product->addVariant($variant);
+        $this->em->persist($variant);
+
+        return $product;
+    }
+
+    private function fetchTaxAdjustmentRows(int $orderItemId): array
+    {
+        $this->em->clear();
+
+        return $this->em->getConnection()->fetchAllAssociative(
+            'SELECT origin_code, amount FROM sylius_adjustment WHERE order_item_id = ? AND type = ?',
+            [$orderItemId, 'tax']
+        );
     }
 
     private function persistTaxCategory(string $categoryCode, string $rateCode, float $amount): TaxCategory
