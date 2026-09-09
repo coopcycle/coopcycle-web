@@ -158,9 +158,14 @@ class ZeltyProductMapper
         $price = $dish->price?->price ?? 0;
         $taxCategory = $this->resolveTaxCategory($dish, $taxesMap, $defaultTaxCategory);
 
-        //TODO: Check if variant is the default one ?
-        $variant = $this->findVariantWithPrice($product, $price)
+        $variant = $this->findVariantByCode($product, $dish->id)
             ?? $this->createProductVariant($product, $dish->id, $price, $taxCategory);
+
+        // Re-apply on every import, not just creation: a dish whose price changed in
+        // Zelty since the last sync must update this same row. Matching by code
+        // (instead of the old price-based lookup) is what makes that possible — see
+        // findVariantByCode() for why the old lookup crashed instead.
+        $variant->setPrice($price);
 
         // Order pages and the confirmation e-mail print the *variant* name, not the
         // product's, so a variant left unnamed shows up as a blank line. Set on every
@@ -180,13 +185,26 @@ class ZeltyProductMapper
     }
 
     /**
-     * Find a variant of this product already selling at the given price.
+     * Find the variant this mapper itself created for the dish, matched by
+     * its deterministic code rather than by price.
+     *
+     * Matching by price (the original approach) breaks the moment a dish's
+     * price actually changes in Zelty: the lookup misses the existing row
+     * (still on the old price) and falls through to createProductVariant(),
+     * which then tries to INSERT a second row under the same
+     * "{dishId}_variant" code — a duplicate-key crash in production
+     * ("Key (code)=(ZD429815_variant) already exists") once a restaurant
+     * repriced a dish and re-synced. Matching by code finds the same row
+     * regardless of what its price currently is, so the caller can just
+     * update it instead.
      */
-    private function findVariantWithPrice(Product $product, int $price): ?ProductVariant
+    private function findVariantByCode(Product $product, string $dishId): ?ProductVariant
     {
+        $code = sprintf('%s_variant', $dishId);
+
         /** @var ProductVariant $existingVariant */
         foreach ($product->getVariants() as $existingVariant) {
-            if ($existingVariant->getPrice() === $price) {
+            if ($existingVariant->getCode() === $code) {
                 return $existingVariant;
             }
         }
