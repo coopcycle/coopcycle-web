@@ -43,6 +43,28 @@ class ProductImage
      */
     private $ratio = '1:1';
 
+    /**
+     * sha256 of the source image bytes, set only for images synced from
+     * Zelty. Doubles as both "this is the image Zelty manages on this
+     * product" (a product can otherwise carry manually-added images too)
+     * and the change-detection signal for re-imports.
+     *
+     * @var string|null
+     */
+    private $zeltyChecksum;
+
+    public function getZeltyChecksum(): ?string
+    {
+        return $this->zeltyChecksum;
+    }
+
+    public function setZeltyChecksum(?string $zeltyChecksum): self
+    {
+        $this->zeltyChecksum = $zeltyChecksum;
+
+        return $this;
+    }
+
     public function setImageName($imageName)
     {
         $this->imageName = $imageName;

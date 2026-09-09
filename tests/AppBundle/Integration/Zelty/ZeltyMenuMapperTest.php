@@ -10,6 +10,7 @@ use AppBundle\Entity\Sylius\TaxRate;
 use AppBundle\Integration\Zelty\Dto\ZeltyItem;
 use AppBundle\Integration\Zelty\Dto\ZeltyMenuPart;
 use AppBundle\Integration\Zelty\Dto\ZeltyPrice;
+use AppBundle\Integration\Zelty\ZeltyImageMapper;
 use AppBundle\Integration\Zelty\ZeltyMenuMapper;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -197,8 +198,9 @@ class ZeltyMenuMapperTest extends TestCase
         $productFactory = $this->createMock(ProductFactoryInterface::class);
         $variantFactory = $this->createMock(ProductVariantFactoryInterface::class);
         $slugify = $this->createMock(SlugifyInterface::class);
+        $imageMapper = $this->createMock(ZeltyImageMapper::class);
 
-        $mapper = new ZeltyMenuMapper($productFactory, $variantFactory, $em, $slugify);
+        $mapper = new ZeltyMenuMapper($productFactory, $variantFactory, $em, $slugify, $imageMapper);
 
         $menu = new ZeltyItem(
             id: 'ZM3',
@@ -285,6 +287,8 @@ class ZeltyMenuMapperTest extends TestCase
         $slugify = $this->createMock(SlugifyInterface::class);
         $slugify->method('slugify')->willReturn('menu-slug');
 
-        return new ZeltyMenuMapper($productFactory, $variantFactory, $em, $slugify);
+        $imageMapper = $this->createMock(ZeltyImageMapper::class);
+
+        return new ZeltyMenuMapper($productFactory, $variantFactory, $em, $slugify, $imageMapper);
     }
 }

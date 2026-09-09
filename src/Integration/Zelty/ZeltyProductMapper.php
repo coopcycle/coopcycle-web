@@ -24,6 +24,7 @@ class ZeltyProductMapper
         private ProductVariantFactoryInterface $variantFactory,
         private EntityManagerInterface $em,
         private SlugifyInterface $slugify,
+        private ZeltyImageMapper $imageMapper,
     ) {}
 
     /**
@@ -83,6 +84,7 @@ class ZeltyProductMapper
 
         $this->updateProductDetails($product, $dish);
         $this->importProductVariant($product, $dish, $taxesMap, $defaultTaxCategory);
+        $this->imageMapper->importImage($product, $dish->img);
 
         $this->em->persist($product);
         $this->linkOptions($product, $dish, $optionsMap);

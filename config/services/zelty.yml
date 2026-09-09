@@ -13,6 +13,7 @@ services:
   AppBundle\Integration\Zelty\ZeltyOptionMapper: ~
   AppBundle\Integration\Zelty\ZeltyProductMapper: ~
   AppBundle\Integration\Zelty\ZeltyMenuMapper: ~
+  AppBundle\Integration\Zelty\ZeltyImageMapper: ~
   AppBundle\Integration\Zelty\ZeltyTaxonMapper: ~
   AppBundle\Integration\Zelty\ZeltyTaxesMapper: ~
   AppBundle\Integration\Zelty\ZeltyClient: ~

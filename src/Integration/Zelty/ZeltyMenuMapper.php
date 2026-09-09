@@ -40,6 +40,7 @@ class ZeltyMenuMapper
         private ProductVariantFactoryInterface $variantFactory,
         private EntityManagerInterface $em,
         private SlugifyInterface $slugify,
+        private ZeltyImageMapper $imageMapper,
     ) {}
 
     /**
@@ -101,6 +102,7 @@ class ZeltyMenuMapper
 
         $this->updateProductDetails($product, $menu);
         $this->importMenuVariant($product, $menu, $menuPartsMap, $productsMap, $taxesMap, $defaultTaxCategory, $orderedTaxCategories);
+        $this->imageMapper->importImage($product, $menu->img);
         $this->importMenuPartsAsOptions($product, $menu, $menuPartsMap, $productsMap, $optionsMap, $restaurant, $locale);
 
         $this->em->persist($product);
