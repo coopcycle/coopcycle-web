@@ -263,7 +263,12 @@ class ApplyTaxesCommandTest extends KernelTestCase
 
         $this->assertArrayHasKey("{$marker}_FOOD_RATE", $amountsByOrigin);
         $this->assertArrayHasKey("{$marker}_ALCOHOL_RATE", $amountsByOrigin);
-        $this->assertSame(1200, array_sum($amountsByOrigin));
+
+        // These are the *tax* amounts (not the ventilated price slices):
+        // burger (700 @ 10%, ~636 ex-tax) and beer (500 @ 20%, ~417 ex-tax)
+        // out of the 1200 sold, split 725/475, taxed independently.
+        $this->assertEqualsWithDelta(66, $amountsByOrigin["{$marker}_FOOD_RATE"], 1);
+        $this->assertEqualsWithDelta(79, $amountsByOrigin["{$marker}_ALCOHOL_RATE"], 1);
 
         // Strictly less tax than "the whole 1200 at 20%" (= 200) would give —
         // proving the beer's rate no longer applies to the whole bundle.
