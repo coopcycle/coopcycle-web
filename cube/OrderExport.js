@@ -134,6 +134,14 @@ cube(`OrderExport`, {
       sql: `ROUND((platform_fee / 100), 2)`,
       type: `avg`,
       format: `currency`
+    },
+
+    // When this instance last exported, which is the only heartbeat the
+    // warehouse can see: it is stamped on every row by the export itself, so a
+    // stale value means the instance stopped exporting rather than went quiet.
+    last_export: {
+      sql: `exported_at`,
+      type: `max`
     }
   },
 
