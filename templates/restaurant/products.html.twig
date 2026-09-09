@@ -47,7 +47,12 @@
           <i class="fa fa-toggle-off"></i>
         {% endif %}
       </td>
-      <td>{{ product.name }}</td>
+      <td>
+        {{ product.name }}
+        {% if product.zeltyId is not empty %}
+          <span class="badge" style="background-color: #5fc97e;">Zelty</span>
+        {% endif %}
+      </td>
       <td class="text-right" width="10%">{{ default_variant.price|price_format }}</td>
       <td class="text-right">{{ default_variant.taxCategory.name|trans({}, 'taxation') }}</td>
       <td class="text-right">{{ product.options|length }}</td>
