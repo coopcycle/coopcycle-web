@@ -415,11 +415,13 @@ abstract class BaseExportCommand extends Command {
      */
     private function assertWellFormedCsv(string $csv): void
     {
-        // PHP's default escape character is not part of RFC 4180 and does not
-        // round-trip through fputcsv/fgetcsv. An empty escape is the standard
-        // way of asking League\Csv for conforming behaviour.
+        // Read exactly as the writer wrote: the escape character has to match
+        // on both sides. Setting it to '' here while the writer keeps PHP's
+        // default silently splits any field containing a backslash before a
+        // quote -- which is how a Hamburg address named
+        // 111; BILD hilft e.V. \"Ein Herz fur Kinder\" , turned one record
+        // into two.
         $reader = Reader::createFromString($csv);
-        $reader->setEscape('');
 
         $expected = null;
 
@@ -455,7 +457,6 @@ abstract class BaseExportCommand extends Command {
     private function countRows(string $csv, ?\DateTimeInterface $watermarkAt): array
     {
         $reader = Reader::createFromString($csv);
-        $reader->setEscape('');
         $reader->setHeaderOffset(0);
 
         $total = count($reader);

@@ -39,11 +39,16 @@ class TaxesHelper
             }
         }
 
-        $taxRateCodes = array_unique($taxRateCodes);
-        $taxRates = array_map(
+        // An adjustment keeps the rate code it was created with, and that code
+        // does not always resolve years later: the rate may have been removed
+        // from the tax configuration, and orders from before mid-2019 can carry
+        // an empty code. Such an amount has no rate to name or size it with, so
+        // it is left out of the breakdown rather than failing the caller.
+        $taxRateCodes = array_filter(array_unique($taxRateCodes));
+        $taxRates = array_filter(array_map(
             fn(string $code) => $this->taxRateRepository->findOneBy(['code' => $code]),
             $taxRateCodes
-        );
+        ));
 
         $values = [];
         foreach ($taxRates as $taxRate) {
@@ -71,6 +76,12 @@ class TaxesHelper
     public function translate($code): string
     {
         $taxRate = $this->taxRateRepository->findOneBy(['code' => $code]);
+
+        if (null === $taxRate) {
+            // Same as above: show the code itself rather than failing on a rate
+            // that is no longer configured.
+            return (string) $code;
+        }
 
         $formatter = new \NumberFormatter($this->locale, \NumberFormatter::PERCENT);
         $formatter->setAttribute(\NumberFormatter::MIN_FRACTION_DIGITS, 2);

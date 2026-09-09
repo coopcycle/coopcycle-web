@@ -183,10 +183,16 @@ class OrderView
 
         if ($this->isMultiVendor()) {
 
-            return $this->vendors[0]['hub_name'];
+            // A multi-vendor order is normally placed through a hub, but the
+            // restaurants can be moved out of one afterwards, or the hub
+            // deleted, which leaves the name null years later. Fall back to the
+            // first restaurant rather than failing the whole export.
+            return $this->vendors[0]['hub_name']
+                ?? $this->vendors[0]['restaurant_name']
+                ?? '';
         }
 
-        return $this->vendors[0]['restaurant_name'];
+        return $this->vendors[0]['restaurant_name'] ?? '';
     }
 
     public static function create(array $data, ?LocalBusiness $restaurant = null): self
