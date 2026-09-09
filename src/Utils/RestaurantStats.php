@@ -843,6 +843,11 @@ class RestaurantStats implements \Countable
     public function toCsv()
     {
         $csv = CsvWriter::createFromString('');
+        // See ExportTasksHandler: RFC 4180 has no escape character, and PHP's
+        // backslash default does not survive a round-trip through
+        // fputcsv/fgetcsv. It also makes this file parse correctly in a
+        // spreadsheet, which the default does not.
+        $csv->setEscape('');
 
         $headings = [];
         foreach ($this->getColumns() as $column) {

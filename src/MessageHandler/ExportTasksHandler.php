@@ -190,6 +190,12 @@ class ExportTasksHandler
         }
 
         $csv = Writer::createFromString('');
+        // RFC 4180: no escape character. PHP's default is a backslash, which
+        // does not round-trip through fputcsv/fgetcsv -- a value ending in one
+        // (an address literally named "/!\") swallows the delimiter that
+        // follows and shifts every field after it. The reader disables it too;
+        // the two must always agree.
+        $csv->setEscape('');
         // Appended only for the incremental export, so that the legacy output
         // stays byte for byte what it was.
         $csv->insertOne($message->isByModifiedAt()

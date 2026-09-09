@@ -119,9 +119,11 @@ class ExportTasksCommand extends BaseExportCommand
 
     protected function csv2parquet(string $csv, ?\DateTimeInterface $exportedAt = null): string
     {
-        $reader = Reader::createFromString($csv)
-            ->setHeaderOffset(0)
-            ->addFormatter(fn($row) => $this->formatRow($row, $exportedAt));
+        // Matches the writer in ExportTasksHandler: no escape character.
+        $reader = Reader::createFromString($csv);
+        $reader->setEscape('');
+        $reader->setHeaderOffset(0);
+        $reader->addFormatter(fn($row) => $this->formatRow($row, $exportedAt));
 
         $rows = iterator_to_array($reader);
 

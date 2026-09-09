@@ -131,8 +131,10 @@ class ExportOrdersCommand extends BaseExportCommand
 
     protected function csv2parquet(string $csv, ?\DateTimeInterface $exportedAt = null): string {
 
-        $reader = Reader::createFromString($csv)
-            ->addFormatter(fn($row) => $this->formatRow($row, $exportedAt));
+        // Matches the writer in RestaurantStats::toCsv(): no escape character.
+        $reader = Reader::createFromString($csv);
+        $reader->setEscape('');
+        $reader->addFormatter(fn($row) => $this->formatRow($row, $exportedAt));
 
         $rows = iterator_to_array($reader);
         array_shift($rows);

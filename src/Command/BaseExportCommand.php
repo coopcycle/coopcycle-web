@@ -416,12 +416,12 @@ abstract class BaseExportCommand extends Command {
     private function assertWellFormedCsv(string $csv): void
     {
         // Read exactly as the writer wrote: the escape character has to match
-        // on both sides. Setting it to '' here while the writer keeps PHP's
-        // default silently splits any field containing a backslash before a
-        // quote -- which is how a Hamburg address named
-        // 111; BILD hilft e.V. \"Ein Herz fur Kinder\" , turned one record
-        // into two.
+        // on both sides, and both disable it. Mismatching them splits records
+        // apart -- a Hamburg address named
+        // 111; BILD hilft e.V. \"Ein Herz fur Kinder\" , when only the reader
+        // was changed, and a Liege address named "/!\" when neither was.
         $reader = Reader::createFromString($csv);
+        $reader->setEscape('');
 
         $expected = null;
 
@@ -457,6 +457,7 @@ abstract class BaseExportCommand extends Command {
     private function countRows(string $csv, ?\DateTimeInterface $watermarkAt): array
     {
         $reader = Reader::createFromString($csv);
+        $reader->setEscape('');
         $reader->setHeaderOffset(0);
 
         $total = count($reader);
