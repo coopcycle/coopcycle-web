@@ -2,6 +2,7 @@
 
 namespace AppBundle\Sylius\OrderProcessing;
 
+use AppBundle\Integration\Zelty\ZeltyMenuVatVentilator;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -27,7 +28,8 @@ final class OrderTaxesProcessor implements OrderProcessorInterface, TaxableInter
         private SettingsManager $settingsManager,
         private TaxCategoryRepositoryInterface $taxCategoryRepository,
         private TranslatorInterface $translator,
-        private string $state
+        private string $state,
+        private ?ZeltyMenuVatVentilator $menuVatVentilator = null,
     )
     {
     }
@@ -55,15 +57,24 @@ final class OrderTaxesProcessor implements OrderProcessorInterface, TaxableInter
         }
 
         foreach ($order->getItems() as $orderItem) {
-            $taxCategory = $orderItem->getVariant()->getTaxCategory();
+            // For a Zelty-imported menu bundling components taxed at
+            // different rates (e.g. food + an alcoholic drink), split the
+            // price across rates per BOFiP's VAT ventilation rules instead
+            // of taxing the whole line at one category. Returns null (falls
+            // through to the single-category path below) for anything else,
+            // or when ventilation can't be computed faithfully.
+            $slices = $this->menuVatVentilator?->ventilate($orderItem)
+                ?? [['variant' => $orderItem->getVariant(), 'amount' => $orderItem->getTotal()]];
 
-            $adjustments = array_map(
-                fn($rate) => $this->createAdjustmentWithRate($orderItem->getTotal(), $rate),
-                $this->taxRateResolver->resolveAll($orderItem->getVariant())->toArray()
-            );
+            foreach ($slices as $slice) {
+                $adjustments = array_map(
+                    fn($rate) => $this->createAdjustmentWithRate($slice['amount'], $rate),
+                    $this->taxRateResolver->resolveAll($slice['variant'])->toArray()
+                );
 
-            foreach ($adjustments as $adjustment) {
-                $orderItem->addAdjustment($adjustment);
+                foreach ($adjustments as $adjustment) {
+                    $orderItem->addAdjustment($adjustment);
+                }
             }
         }
 

@@ -4,13 +4,23 @@ namespace Tests\AppBundle\Sylius\OrderProcessing;
 
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderItem;
+use AppBundle\Entity\Sylius\Product as AppProduct;
+use AppBundle\Entity\Sylius\ProductOption as AppProductOption;
+use AppBundle\Entity\Sylius\ProductOptionValue as AppProductOptionValue;
+use AppBundle\Entity\Sylius\ProductVariant as AppProductVariant;
+use AppBundle\Entity\Sylius\TaxCategory as AppTaxCategory;
 use AppBundle\Entity\Sylius\TaxRate;
+use AppBundle\Integration\Zelty\ZeltyMenuVatVentilator;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
 use AppBundle\Sylius\OrderProcessing\OrderTaxesProcessor;
 use AppBundle\Sylius\Product\ProductVariantInterface;
 use AppBundle\Sylius\Taxation\Resolver\TaxRateResolver;
+use AppBundle\Sylius\Taxation\Resolver\TaxRateResolverInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ObjectRepository;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
@@ -293,5 +303,135 @@ class OrderTaxesProcessorTest extends KernelTestCase
         $this->assertCount(1, $adjustments);
 
         $this->assertEquals(0, $adjustments->first()->getAmount());
+    }
+
+    /**
+     * End-to-end proof that process() actually delegates to
+     * ZeltyMenuVatVentilator when it's wired in, instead of only unit-testing
+     * the ventilator in isolation. The math itself (proportional split by
+     * ex-tax à la carte price) is covered exhaustively by
+     * ZeltyMenuVatVentilatorTest; this just proves the two are connected
+     * correctly and produce two separate TAX_ADJUSTMENT rows on one order
+     * item instead of one row at the highest rate.
+     */
+    public function testZeltyMenuWithFoodAndBeerProducesTwoTaxAdjustments()
+    {
+        $this->subjectToVat(true);
+
+        $foodCategory = new AppTaxCategory();
+        $foodCategory->setCode('BASE_INTERMEDIARY');
+        $alcoholCategory = new AppTaxCategory();
+        $alcoholCategory->setCode('BASE_STANDARD');
+
+        $foodRate = new TaxRate();
+        $foodRate->setAmount(0.10);
+        $foodRate->setIncludedInPrice(true);
+        $foodRate->setCalculator('default');
+        $foodRate->setCategory($foodCategory);
+
+        $alcoholRate = new TaxRate();
+        $alcoholRate->setAmount(0.20);
+        $alcoholRate->setIncludedInPrice(true);
+        $alcoholRate->setCalculator('default');
+        $alcoholRate->setCategory($alcoholCategory);
+
+        $taxRateResolver = $this->createMock(TaxRateResolverInterface::class);
+        $resolve = function ($taxable) use ($foodRate, $alcoholRate) {
+            return match ($taxable->getTaxCategory()?->getCode()) {
+                'BASE_INTERMEDIARY' => $foodRate,
+                'BASE_STANDARD' => $alcoholRate,
+                default => null,
+            };
+        };
+        $taxRateResolver->method('resolve')->willReturnCallback($resolve);
+        $taxRateResolver->method('resolveAll')->willReturnCallback(
+            fn ($taxable) => new ArrayCollection(array_filter([$resolve($taxable)]))
+        );
+
+        $burger = new AppProduct();
+        $burger->setCode('ZD_BURGER');
+        $burger->setZeltyId('ZD_BURGER');
+        $burgerVariant = new AppProductVariant();
+        $burgerVariant->setPrice(700);
+        $burgerVariant->setTaxCategory($foodCategory);
+        $burger->addVariant($burgerVariant);
+
+        $beer = new AppProduct();
+        $beer->setCode('ZD_BEER');
+        $beer->setZeltyId('ZD_BEER');
+        $beerVariant = new AppProductVariant();
+        $beerVariant->setPrice(500);
+        $beerVariant->setTaxCategory($alcoholCategory);
+        $beer->addVariant($beerVariant);
+
+        $repository = $this->createMock(ObjectRepository::class);
+        $repository->method('findOneBy')->willReturnCallback(
+            fn (array $criteria) => match ($criteria['code']) {
+                'ZD_BURGER' => $burger,
+                'ZD_BEER' => $beer,
+                default => null,
+            }
+        );
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->method('getRepository')->willReturn($repository);
+
+        $calculator = static::$kernel->getContainer()->get('sylius.tax_calculator');
+
+        $ventilator = new ZeltyMenuVatVentilator($em, $taxRateResolver, $calculator, 'fr');
+
+        $orderTaxesProcessor = new OrderTaxesProcessor(
+            static::$kernel->getContainer()->get('sylius.factory.adjustment'),
+            $taxRateResolver,
+            $calculator,
+            $this->settingsManager->reveal(),
+            $this->taxCategoryRepository->reveal(),
+            static::$kernel->getContainer()->get('translator'),
+            'fr',
+            $ventilator,
+        );
+
+        $burgerOption = new AppProductOption();
+        $burgerOption->setAdditional(false);
+        $burgerValue = new AppProductOptionValue();
+        $burgerValue->setOption($burgerOption);
+        $burgerValue->setZeltyId('ZD_BURGER');
+
+        $beerOption = new AppProductOption();
+        $beerOption->setAdditional(false);
+        $beerValue = new AppProductOptionValue();
+        $beerValue->setOption($beerOption);
+        $beerValue->setZeltyId('ZD_BEER');
+
+        $menuProduct = new AppProduct();
+        $menuProduct->setCode('ZM1');
+        $menuProduct->setZeltyId('ZM1');
+
+        $menuVariant = new AppProductVariant();
+        $menuVariant->setProduct($menuProduct);
+        $menuVariant->addOptionValue($burgerValue);
+        $menuVariant->addOptionValue($beerValue);
+
+        $orderItem = new OrderItem();
+        $orderItem->setVariant($menuVariant);
+        $orderItem->setUnitPrice(1200);
+        $this->orderItemUnitFactory->createForItem($orderItem);
+
+        $order = new Order();
+        $order->addItem($orderItem);
+
+        $orderTaxesProcessor->process($order);
+
+        $adjustments = $orderItem->getAdjustments(AdjustmentInterface::TAX_ADJUSTMENT);
+
+        // Two rows — one per rate — not one row taxing the whole 1200 at 20%.
+        $this->assertCount(2, $adjustments);
+
+        $total = array_sum(array_map(fn ($adj) => $adj->getAmount(), $adjustments->toArray()));
+
+        // If the old "highest rate wins" behavior were still in effect, the
+        // whole 1200 would be taxed at 20%: tax = 1200 - round(1200/1.2) = 200.
+        // Ventilating between 10% and 20% must collect strictly less than that.
+        $this->assertLessThan(200, $total);
+        $this->assertGreaterThan(0, $total);
     }
 }

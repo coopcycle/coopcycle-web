@@ -14,6 +14,9 @@ services:
   AppBundle\Integration\Zelty\ZeltyProductMapper: ~
   AppBundle\Integration\Zelty\ZeltyMenuMapper: ~
   AppBundle\Integration\Zelty\ZeltyImageMapper: ~
+  AppBundle\Integration\Zelty\ZeltyMenuVatVentilator:
+    arguments:
+      $region: '%region_iso%'
   AppBundle\Integration\Zelty\ZeltyTaxonMapper: ~
   AppBundle\Integration\Zelty\ZeltyTaxesMapper: ~
   AppBundle\Integration\Zelty\ZeltyClient: ~
