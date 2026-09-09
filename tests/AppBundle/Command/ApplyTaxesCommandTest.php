@@ -222,6 +222,11 @@ class ApplyTaxesCommandTest extends KernelTestCase
         $order->addItem($item);
         $this->em->persist($item);
 
+        // getTotal() (what ventilate() splits) is derived from OrderItemUnit
+        // rows, not directly from unitPrice — without this, the item's total
+        // stays 0 and every slice below would too.
+        self::getContainer()->get('sylius.factory.order_item_unit')->createForItem($item);
+
         $this->em->flush();
 
         $orderId = $order->getId();
@@ -267,6 +272,7 @@ class ApplyTaxesCommandTest extends KernelTestCase
         $conn = $this->em->getConnection();
         $conn->executeStatement('DELETE FROM sylius_adjustment WHERE order_item_id = ?', [$itemId]);
         $conn->executeStatement('DELETE FROM sylius_product_variant_option_value WHERE variant_id = ?', [$menuVariantId]);
+        $conn->executeStatement('DELETE FROM sylius_order_item_unit WHERE order_item_id = ?', [$itemId]);
         $conn->executeStatement('DELETE FROM sylius_order_item WHERE id = ?', [$itemId]);
         $conn->executeStatement('DELETE FROM sylius_order WHERE id = ?', [$orderId]);
         $conn->executeStatement('DELETE FROM sylius_product_variant WHERE id = ?', [$menuVariantId]);
