@@ -1400,6 +1400,15 @@ restaurants.meal_vouchers_transactions.disclaimer: This page lists all the order
   You must therefore send an invoice to each restaurant, to claim the commissions due.
 restaurants.meal_vouchers_transactions.amount: Amount paid with Edenred
 restaurants.meal_vouchers_transactions.title: Meal vouchers transactions
+restaurants.meal_vouchers_transactions.charge_sepa: Charge via SEPA
+restaurants.meal_vouchers_transactions.charge_sepa.no_orders: There are no not-yet-invoiced meal voucher orders for this restaurant this month.
+restaurants.meal_vouchers_transactions.charge_sepa.no_mandate: '%name% does not have an active SEPA mandate yet.'
+restaurants.meal_vouchers_transactions.charge_sepa.success: '%name% was successfully charged %amount% via SEPA Direct Debit.'
+restaurants.meal_vouchers_transactions.charge_sepa.failed: 'Charging %name% via SEPA Direct Debit failed: %error%'
+restaurants.meal_vouchers_transactions.sepa_mandate_status.none: 'SEPA: not set up'
+restaurants.meal_vouchers_transactions.sepa_mandate_status.pending: 'SEPA: pending'
+restaurants.meal_vouchers_transactions.sepa_mandate_status.active: 'SEPA: active'
+restaurants.meal_vouchers_transactions.sepa_mandate_status.failed: 'SEPA: failed'
 form.product.alcohol.label: This product is an alcoholic beverage
 form.product.alcohol.help: Check this box only if this product is an alcoholic beverage, like a bottle of wine.
 form.checkout_address.reusable_packaging_vytal_enabled.label: I want to use Vytal containers

@@ -1308,6 +1308,15 @@ restaurants.meal_vouchers_transactions.disclaimer: Cette page liste l'ensemble d
   restaurant, pour réclamer les commissions dûes.
 restaurants.meal_vouchers_transactions.amount: Montant payé en titres-restaurant
 restaurants.meal_vouchers_transactions.title: Transactions titres-restaurant
+restaurants.meal_vouchers_transactions.charge_sepa: Prélever via SEPA
+restaurants.meal_vouchers_transactions.charge_sepa.no_orders: Il n'y a aucune commande titres-restaurant non facturée pour ce restaurant ce mois-ci.
+restaurants.meal_vouchers_transactions.charge_sepa.no_mandate: "%name% n'a pas encore de mandat SEPA actif."
+restaurants.meal_vouchers_transactions.charge_sepa.success: '%name% a été prélevé avec succès de %amount% par SEPA.'
+restaurants.meal_vouchers_transactions.charge_sepa.failed: 'Le prélèvement SEPA de %name% a échoué : %error%'
+restaurants.meal_vouchers_transactions.sepa_mandate_status.none: 'SEPA : non configuré'
+restaurants.meal_vouchers_transactions.sepa_mandate_status.pending: 'SEPA : en attente'
+restaurants.meal_vouchers_transactions.sepa_mandate_status.active: 'SEPA : actif'
+restaurants.meal_vouchers_transactions.sepa_mandate_status.failed: 'SEPA : échoué'
 form.product.alcohol.label: Ce produit est une boisson alcoolisée
 form.product.alcohol.help: Cochez cette case seulement si ce produit est une boisson
   alcoolisée, comme une bouteille de vin.

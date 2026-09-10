@@ -43,8 +43,10 @@ use AppBundle\Integration\Zelty\ZeltyCatalogPullService;
 use AppBundle\LoopEat\Client as LoopeatClient;
 use AppBundle\Message\CopyProducts;
 use AppBundle\Pixabay\Client as PixabayClient;
+use AppBundle\Entity\Sylius\ExportCommand;
 use AppBundle\Service\MercadopagoManager;
 use AppBundle\Service\SettingsManager;
+use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Product\ProductInterface;
 use AppBundle\Sylius\Taxation\TaxesHelper;
 use AppBundle\Utils\PreparationTimeCalculator;
@@ -67,6 +69,8 @@ use Sylius\Component\Locale\Provider\LocaleProviderInterface;
 use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\Model\PaymentMethodInterface;
+use Sylius\Component\Currency\Context\CurrencyContextInterface;
+use Stripe\Exception\ApiErrorException;
 use Sylius\Component\Product\Model\ProductTranslation;
 use Sylius\Component\Product\Model\ProductOptionTranslation;
 use Sylius\Component\Product\Repository\ProductOptionRepositoryInterface;
@@ -1958,6 +1962,114 @@ trait RestaurantTrait
             'orders' => $hash,
             'payment_methods' => $paymentMethods,
         ]));
+    }
+
+    /**
+     * Charges a restaurant, via Stripe SEPA Direct Debit, for the platform
+     * fee owed on its meal-voucher-paid orders for a given month (the same
+     * orders & "platform fee" shown in the meal_vouchers_transactions page).
+     *
+     * When orders are paid with meal vouchers, the restaurant collects that
+     * money directly (unlike card payments, which flow to us via Stripe
+     * Connect), so we have to invoice/claim back our fee separately - this
+     * automates that instead of it being done by hand every month.
+     */
+    public function mealVouchersChargeSepaAction(
+        Request $request,
+        StripeManager $stripeManager,
+        CurrencyContextInterface $currencyContext)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $restaurantId = $request->request->getInt('restaurant');
+        $monthParam = $request->request->get('month');
+
+        $restaurant = $this->entityManager->getRepository(LocalBusiness::class)->find($restaurantId);
+
+        if (null === $restaurant) {
+            throw $this->createNotFoundException();
+        }
+
+        $month = $monthParam ? new \DateTime($monthParam) : new \DateTime('now');
+
+        $start = new \DateTime(
+            sprintf('first day of %s', $month->format('F Y'))
+        );
+        $end = new \DateTime(
+            sprintf('last day of %s', $month->format('F Y'))
+        );
+
+        $start->setTime(0, 0, 0);
+        $end->setTime(23, 59, 59);
+
+        $qb = $this->entityManager->getRepository(OrderInterface::class)
+            ->createQueryBuilder('o');
+
+        $qb->join(PaymentInterface::class, 'p', Expr\Join::WITH, 'p.order = o.id');
+        $qb->join(PaymentMethodInterface::class, 'pm', Expr\Join::WITH, 'p.method = pm.id');
+        $qb->leftJoin('o.exports', 'ex');
+
+        $qb->andWhere('pm.code IN (:code)');
+        $qb->andWhere('o.state = :order_state');
+        $qb->andWhere('p.state = :payment_state');
+        $qb->andWhere('o.restaurant = :restaurant');
+        // Skip orders already charged/invoiced in a previous run, so a
+        // second click (or a second run for the same month) doesn't
+        // double-charge.
+        $qb->andWhere('ex.id IS NULL');
+
+        $qb->setParameter('code', ['EDENRED', 'CONECS', 'SWILE', 'RESTOFLASH']);
+        $qb->setParameter('order_state', OrderInterface::STATE_FULFILLED);
+        $qb->setParameter('payment_state', PaymentInterface::STATE_COMPLETED);
+        $qb->setParameter('restaurant', $restaurant);
+
+        $qb = OrderRepository::addShippingTimeRangeClause($qb, 'o', $start, $end);
+
+        $orders = $qb->getQuery()->getResult();
+
+        if (count($orders) === 0) {
+            $this->addFlash('error', $this->translator->trans('restaurants.meal_vouchers_transactions.charge_sepa.no_orders'));
+
+            return $this->redirectToRoute('admin_restaurants_meal_voucher_transactions', $request->query->all());
+        }
+
+        if (!$restaurant->isSepaMandateActive()) {
+            $this->addFlash('error', $this->translator->trans('restaurants.meal_vouchers_transactions.charge_sepa.no_mandate', [
+                '%name%' => $restaurant->getName(),
+            ]));
+
+            return $this->redirectToRoute('admin_restaurants_meal_voucher_transactions', $request->query->all());
+        }
+
+        $amount = array_reduce($orders, fn ($carry, $order) => $carry + $order->getFeeTotal(), 0);
+
+        $exportCommand = new ExportCommand($this->getUser(), sprintf('sepa-restaurant-%s', uniqid()));
+        $exportCommand->addOrders($orders);
+
+        $this->entityManager->persist($exportCommand);
+        $this->entityManager->flush();
+
+        try {
+            $stripeManager->setupStripeApi();
+            $stripeManager->chargeSepaPayer($restaurant, $amount, $currencyContext->getCurrencyCode(), $exportCommand);
+
+            $this->entityManager->flush();
+
+            $this->addFlash('notice', $this->translator->trans('restaurants.meal_vouchers_transactions.charge_sepa.success', [
+                '%name%' => $restaurant->getName(),
+                '%amount%' => number_format($amount / 100, 2),
+            ]));
+        } catch (ApiErrorException $e) {
+            $exportCommand->setPaymentStatus('failed');
+            $this->entityManager->flush();
+
+            $this->addFlash('error', $this->translator->trans('restaurants.meal_vouchers_transactions.charge_sepa.failed', [
+                '%name%' => $restaurant->getName(),
+                '%error%' => $e->getMessage(),
+            ]));
+        }
+
+        return $this->redirectToRoute('admin_restaurants_meal_voucher_transactions', $request->query->all());
     }
 
     public function archiveRestaurantPromotionAction($restaurantId, Request $request)

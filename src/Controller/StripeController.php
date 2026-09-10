@@ -3,6 +3,8 @@
 namespace AppBundle\Controller;
 
 
+use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\Model\SepaDebitablePayerInterface;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\ExportCommand;
 use AppBundle\Entity\StripeAccount;
@@ -30,6 +32,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * @see https://stripe.com/docs/connect/standard-accounts
@@ -162,24 +165,45 @@ class StripeController extends AbstractController
         Request $request,
         StripeManager $stripeManager
     ) {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-
         $store = $this->entityManager->getRepository(Store::class)->find($id);
 
         if (null === $store) {
             throw $this->createNotFoundException();
         }
 
-        $stripeManager->setupStripeApi();
-
         // Built as a raw path rather than generateUrl(), since the admin
         // store edit page is a client-side (React) route, not a Symfony one.
         $storeAdminUrl = sprintf('%s/admin/stores/%d', $request->getSchemeAndHttpHost(), $store->getId());
 
+        return $this->sepaSetupAction($store, $storeAdminUrl, $stripeManager);
+    }
+
+    #[Route(path: '/admin/restaurants/{id}/sepa/setup', name: 'admin_restaurant_sepa_setup', methods: ['POST'])]
+    public function restaurantSepaSetupAction(
+        int $id,
+        StripeManager $stripeManager
+    ) {
+        $restaurant = $this->entityManager->getRepository(LocalBusiness::class)->find($id);
+
+        if (null === $restaurant) {
+            throw $this->createNotFoundException();
+        }
+
+        $restaurantAdminUrl = $this->generateUrl('admin_restaurant', ['id' => $restaurant->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        return $this->sepaSetupAction($restaurant, $restaurantAdminUrl, $stripeManager);
+    }
+
+    private function sepaSetupAction(SepaDebitablePayerInterface $payer, string $redirectUrl, StripeManager $stripeManager): JsonResponse
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $stripeManager->setupStripeApi();
+
         $session = $stripeManager->createSepaSetupCheckoutSession(
-            $store,
-            $storeAdminUrl,
-            $storeAdminUrl
+            $payer,
+            $redirectUrl,
+            $redirectUrl
         );
 
         $this->entityManager->flush();
@@ -349,6 +373,23 @@ class StripeController extends AbstractController
         return new Response('', 200);
     }
 
+    /**
+     * A Stripe customer id is globally unique, but we don't know upfront
+     * whether it belongs to a Store or a restaurant (LocalBusiness) -
+     * both can set up a SEPA mandate.
+     */
+    private function findSepaPayerByStripeCustomerId(string $stripeCustomerId): ?SepaDebitablePayerInterface
+    {
+        return $this->entityManager->getRepository(Store::class)->findOneBy(['stripeCustomerId' => $stripeCustomerId])
+            ?? $this->entityManager->getRepository(LocalBusiness::class)->findOneBy(['stripeCustomerId' => $stripeCustomerId]);
+    }
+
+    private function findSepaPayerByMandateId(string $mandateId): ?SepaDebitablePayerInterface
+    {
+        return $this->entityManager->getRepository(Store::class)->findOneBy(['sepaMandateId' => $mandateId])
+            ?? $this->entityManager->getRepository(LocalBusiness::class)->findOneBy(['sepaMandateId' => $mandateId]);
+    }
+
     private function handleCheckoutSessionCompleted(Stripe\Event $event): Response
     {
         $session = $event->data->object;
@@ -357,20 +398,19 @@ class StripeController extends AbstractController
             return new Response('', 200);
         }
 
-        $store = $this->entityManager->getRepository(Store::class)
-            ->findOneBy(['stripeCustomerId' => $session->customer]);
+        $payer = $this->findSepaPayerByStripeCustomerId($session->customer);
 
-        if (null === $store) {
-            $this->logger->error(sprintf('Store with Stripe customer "%s" not found', $session->customer));
+        if (null === $payer) {
+            $this->logger->error(sprintf('No Store or restaurant with Stripe customer "%s" found', $session->customer));
 
             return new Response('', 200);
         }
 
         $setupIntent = Stripe\SetupIntent::retrieve($session->setup_intent);
 
-        $store->setSepaPaymentMethodId($setupIntent->payment_method);
-        $store->setSepaMandateId($setupIntent->mandate);
-        $store->setSepaMandateStatus('active');
+        $payer->setSepaPaymentMethodId($setupIntent->payment_method);
+        $payer->setSepaMandateId($setupIntent->mandate);
+        $payer->setSepaMandateStatus('active');
 
         $this->entityManager->flush();
 
@@ -381,14 +421,13 @@ class StripeController extends AbstractController
     {
         $mandate = $event->data->object;
 
-        $store = $this->entityManager->getRepository(Store::class)
-            ->findOneBy(['sepaMandateId' => $mandate->id]);
+        $payer = $this->findSepaPayerByMandateId($mandate->id);
 
-        if (null === $store) {
+        if (null === $payer) {
             return new Response('', 200);
         }
 
-        $store->setSepaMandateStatus('active' === $mandate->status ? 'active' : 'failed');
+        $payer->setSepaMandateStatus('active' === $mandate->status ? 'active' : 'failed');
 
         $this->entityManager->flush();
 

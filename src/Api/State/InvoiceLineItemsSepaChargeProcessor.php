@@ -92,7 +92,7 @@ final class InvoiceLineItemsSepaChargeProcessor implements ProcessorInterface
         try {
             $this->stripeManager->setupStripeApi();
 
-            $paymentIntent = $this->stripeManager->chargeStoreViaSepa($store, $amount, $currencyCode, $exportCommand);
+            $paymentIntent = $this->stripeManager->chargeSepaPayer($store, $amount, $currencyCode, $exportCommand);
 
             $this->entityManager->flush();
 

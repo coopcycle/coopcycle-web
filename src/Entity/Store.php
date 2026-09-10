@@ -226,13 +226,6 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     private ?string $cykeTimeSlot = null;
 
-    private ?string $stripeCustomerId = null;
-
-    private ?string $sepaPaymentMethodId = null;
-
-    private ?string $sepaMandateId = null;
-
-    private ?string $sepaMandateStatus = null;
 
     public function __construct()
     {
@@ -810,56 +803,4 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
         return $this;
     }
 
-    public function getStripeCustomerId(): ?string
-    {
-        return $this->stripeCustomerId;
-    }
-
-    public function setStripeCustomerId(?string $stripeCustomerId): Store
-    {
-        $this->stripeCustomerId = $stripeCustomerId;
-
-        return $this;
-    }
-
-    public function getSepaPaymentMethodId(): ?string
-    {
-        return $this->sepaPaymentMethodId;
-    }
-
-    public function setSepaPaymentMethodId(?string $sepaPaymentMethodId): Store
-    {
-        $this->sepaPaymentMethodId = $sepaPaymentMethodId;
-
-        return $this;
-    }
-
-    public function getSepaMandateId(): ?string
-    {
-        return $this->sepaMandateId;
-    }
-
-    public function setSepaMandateId(?string $sepaMandateId): Store
-    {
-        $this->sepaMandateId = $sepaMandateId;
-
-        return $this;
-    }
-
-    public function getSepaMandateStatus(): ?string
-    {
-        return $this->sepaMandateStatus;
-    }
-
-    public function setSepaMandateStatus(?string $sepaMandateStatus): Store
-    {
-        $this->sepaMandateStatus = $sepaMandateStatus;
-
-        return $this;
-    }
-
-    public function isSepaMandateActive(): bool
-    {
-        return 'active' === $this->sepaMandateStatus;
-    }
 }

@@ -416,3 +416,22 @@ if (addDeliveryPerimeterBtn) {
     container.appendChild(item)
   })
 }
+
+document.querySelectorAll('[data-role="sepa-setup-trigger"]').forEach(trigger => {
+  trigger.addEventListener('click', () => {
+    trigger.setAttribute('disabled', 'disabled')
+
+    fetch(trigger.dataset.endpoint, {
+      method: 'POST',
+      credentials: 'same-origin',
+    })
+      .then(res => res.ok ? res.json() : Promise.reject(res))
+      .then(({ url }) => {
+        window.location.href = url
+      })
+      .catch(() => {
+        trigger.removeAttribute('disabled')
+        window.alert(i18n.t('SOMETHING_WENT_WRONG'))
+      })
+  })
+})

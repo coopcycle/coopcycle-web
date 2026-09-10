@@ -48,6 +48,10 @@
       </options>
     </field>
     <field name="vatID" type="string" column="vat_id" nullable="true"/>
+    <field name="stripeCustomerId" type="string" column="stripe_customer_id" nullable="true"/>
+    <field name="sepaPaymentMethodId" type="string" column="sepa_payment_method_id" nullable="true"/>
+    <field name="sepaMandateId" type="string" column="sepa_mandate_id" nullable="true"/>
+    <field name="sepaMandateStatus" type="string" column="sepa_mandate_status" nullable="true"/>
     <field name="additionalProperties" type="json" column="additional_properties" nullable="true"/>
     <field name="rateLimitRangeDuration" type="integer" column="rate_limit_range_duration" nullable="true" />
     <field name="rateLimitAmount" type="integer" column="rate_limit_amount" nullable="true" />
