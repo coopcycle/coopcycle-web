@@ -106,6 +106,8 @@ class PostSoftDeleteSubscriber implements EventSubscriber
             // free these items so the user can delete them afterwards
             $entity->setPricingRuleSet(null);
             $entity->setPackageSet(null);
+            $entity->setTimeSlot(null);
+            $entity->setTimeSlots([]);
 
             $unitOfWork->computeChangeSets();
         }
