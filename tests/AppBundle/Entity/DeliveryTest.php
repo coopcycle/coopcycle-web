@@ -33,6 +33,33 @@ class DeliveryTest extends TestCase
         $this->assertCount(2, $delivery->getTasks());
     }
 
+    public function testSetMetadataWithDotNotation()
+    {
+        $delivery = new Delivery();
+
+        $delivery->setMetadata('rdc.parcel.id', 'PARCEL-1');
+        $delivery->setMetadata('rdc.parcel.weight', 1500);
+
+        $metadata = $delivery->getMetadata();
+
+        $this->assertSame('PARCEL-1', $metadata['rdc']['parcel']['id']);
+        $this->assertSame(1500, $metadata['rdc']['parcel']['weight']);
+        // Flat keys & existing entries are preserved
+        $delivery->setMetadata('external_reference', 'EXT-42');
+        $metadata = $delivery->getMetadata();
+        $this->assertSame('EXT-42', $metadata['external_reference']);
+        $this->assertSame('PARCEL-1', $metadata['rdc']['parcel']['id']);
+    }
+
+    public function testSetMetadataWithNestedArrayValue()
+    {
+        $delivery = new Delivery();
+
+        $delivery->setMetadata('rdc', ['parcel' => ['id' => 'PARCEL-1']]);
+
+        $this->assertSame(['id' => 'PARCEL-1'], $delivery->getMetadata()['rdc']['parcel']);
+    }
+
     public function testToExpressionLanguageValues()
     {
         $pickupAddress = new Address();

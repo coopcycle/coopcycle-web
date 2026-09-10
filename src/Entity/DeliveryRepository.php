@@ -197,10 +197,14 @@ class DeliveryRepository extends EntityRepository
     {
         $conn = $this->getEntityManager()->getConnection();
 
+        // New deliveries store provenance on the delivery metadata bag
+        // (delivery.metadata->'rdc'->>'lo_uri'); deliveries imported before that
+        // refactor kept it on the pickup task metadata (task.metadata->>'rdc_lo_uri').
         $sql = "SELECT DISTINCT d.id FROM delivery d
             JOIN task_collection_item tci ON tci.parent = d.id
             JOIN task t ON tci.task_id = t.id
-            WHERE t.metadata->>'rdc_lo_uri' = :loUri";
+            WHERE d.metadata->'rdc'->>'lo_uri' = :loUri
+               OR t.metadata->>'rdc_lo_uri' = :loUri";
 
         $result = $conn->executeQuery($sql, ['lo_uri' => $loUri])->fetchOne();
 

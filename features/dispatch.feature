@@ -652,6 +652,7 @@ Feature: Dispatch
          "distance":@integer@,
          "duration":@integer@,
          "polyline":@string@,
+         "metadata": {"@*@": "@*@"},
          "pickup":{
             "@id":"/api/tasks/4",
             "@type":"Task",
@@ -701,6 +702,7 @@ Feature: Dispatch
          "distance":@integer@,
          "duration":@integer@,
          "polyline":@string@,
+         "metadata": {"@*@": "@*@"},
          "tasks":@array@,
          "pickup":{
             "@id":"/api/tasks/4",
