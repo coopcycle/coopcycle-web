@@ -1252,6 +1252,15 @@ deliveries.section.past: Passées
 stores.address_book: Carnet d'adresses
 store.form.section.settings: Paramètres
 store.form.section.cyke: Cyke
+store.form.section.sepa: Prélèvement SEPA
+store.sepa.mandate_status.label: Statut du mandat
+store.sepa.mandate_status.help: 'Une fois que le magasin a complété le lien de configuration, il peut être prélevé automatiquement par SEPA depuis la page de facturation.'
+store.sepa.mandate_status.none: 'Non configuré'
+store.sepa.mandate_status.pending: 'En attente (le magasin doit terminer la configuration)'
+store.sepa.mandate_status.active: Actif
+store.sepa.mandate_status.failed: 'Échoué / annulé'
+store.sepa.send_setup_link: Envoyer le lien de configuration SEPA
+store.sepa.send_setup_link.help: 'Ouvre une page hébergée par Stripe où le magasin peut saisir son IBAN et accepter le mandat SEPA lui-même.'
 form.store.cyke_user_email: Email utilisateur Cyke
 form.store.cyke_user_token: Jeton API Cyke
 form.store.cyke_webhook_url.label: URL du webhook Cyke

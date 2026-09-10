@@ -296,6 +296,30 @@ if (document.querySelector('[data-clipboard-target]')) {
   })
 }
 
+const sepaSetupWidget = document.querySelector('[data-widget="sepa-setup"]')
+
+if (sepaSetupWidget) {
+  const endpoint = sepaSetupWidget.dataset.endpoint
+  const trigger = sepaSetupWidget.querySelector('[data-role="sepa-setup-trigger"]')
+
+  trigger.addEventListener('click', () => {
+    trigger.setAttribute('disabled', 'disabled')
+
+    fetch(endpoint, {
+      method: 'POST',
+      credentials: 'same-origin',
+    })
+      .then(res => res.ok ? res.json() : Promise.reject(res))
+      .then(({ url }) => {
+        window.location.href = url
+      })
+      .catch(() => {
+        trigger.removeAttribute('disabled')
+        window.alert(i18n.t('SOMETHING_WENT_WRONG'))
+      })
+  })
+}
+
 // Delete confirmation
 $('#store_delete').on('click', e => {
   if (!window.confirm(i18n.t('CONFIRM_DELETE'))) {

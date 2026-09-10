@@ -7,6 +7,8 @@ import {
   HydraCollection,
   InvoiceLineItemGroupedByOrganization,
   InvoiceLineItem,
+  InvoiceLineItemSepaChargeResult,
+  ChargeSepaArgs,
   TaxRate,
   Tag,
   Zone,
@@ -320,6 +322,19 @@ export const apiSlice = createApi({
           },
         };
       },
+    }),
+
+    chargeSepa: builder.mutation<
+      InvoiceLineItemSepaChargeResult[],
+      ChargeSepaArgs
+    >({
+      query: args => ({
+        url: `api/invoice_line_items/charge_sepa?${args.params.join('&')}`,
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+        },
+      }),
     }),
 
     getPricingRuleSets: builder.query<HydraCollection<PricingRuleSet>, void>({
@@ -901,6 +916,7 @@ export const {
   useRecurrenceRulesGenerateOrdersMutation,
   useLazyGetInvoiceLineItemsGroupedByOrganizationQuery,
   useGetInvoiceLineItemsQuery,
+  useChargeSepaMutation,
   useGetPricingRuleSetsQuery,
   useGetPricingRuleSetQuery,
   useCreatePricingRuleSetMutation,

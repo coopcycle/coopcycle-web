@@ -1722,6 +1722,15 @@ form.store.cyke_time_slot.help: 'The opening hours used to schedule deliveries s
 form.store.cyke_time_slot.placeholder: 'Mo-Fr 09:00-18:00, Sa 09:00-16:00'
 form.store.cyke_time_slot.invalid: 'This value should match the schema.org opening hours format, e.g. "Mo-Fr 09:00-18:00, Sa 09:00-16:00"'
 store.form.section.cyke: Cyke
+store.form.section.sepa: SEPA Direct Debit
+store.sepa.mandate_status.label: Mandate status
+store.sepa.mandate_status.help: 'Once the store has completed the setup link, they can be charged automatically via SEPA Direct Debit from the invoicing page.'
+store.sepa.mandate_status.none: 'Not set up'
+store.sepa.mandate_status.pending: 'Pending (waiting for the store to complete setup)'
+store.sepa.mandate_status.active: Active
+store.sepa.mandate_status.failed: 'Failed / cancelled'
+store.sepa.send_setup_link: Send SEPA setup link
+store.sepa.send_setup_link.help: 'Opens a Stripe-hosted page where the store can enter their IBAN and accept the SEPA mandate themselves.'
 form.payment.edenred.refund_amount.help: Edenred does not support partial refunds.
 restaurant.form.use_paygreen.label: Use Paygreen for this shop
 restaurant.meal_vouchers_transactions.emitter: Emitter

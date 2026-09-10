@@ -28,6 +28,11 @@
       {% include "store/_partials/cyke.html.twig" %}
     </div>
     {% endif %}
+    {% if store.id is not empty and is_granted('ROLE_ADMIN') %}
+    <div role="tabpanel" class="tab-pane" id="sepa">
+      {% include "store/_partials/sepa.html.twig" %}
+    </div>
+    {% endif %}
   </div>
 
   <hr>

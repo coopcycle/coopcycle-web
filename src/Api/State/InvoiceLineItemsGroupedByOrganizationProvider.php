@@ -124,7 +124,8 @@ final class InvoiceLineItemsGroupedByOrganizationProvider implements ProviderInt
                 count($orders),
                 $subTotal,
                 $tax,
-                $total
+                $total,
+                $store->getSepaMandateStatus()
             );
         }
 

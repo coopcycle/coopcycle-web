@@ -27,6 +27,9 @@ class InvoiceLineItemGroupedByOrganization
     #[Groups(["default_invoice_line_item"])]
     public readonly int $total;
 
+    #[Groups(["default_invoice_line_item"])]
+    public readonly ?string $sepaMandateStatus;
+
     public function __construct(
         int $storeId,
         string $organizationLegalName,
@@ -34,7 +37,8 @@ class InvoiceLineItemGroupedByOrganization
         int $ordersCount,
         int $subTotal,
         int $tax,
-        int $total
+        int $total,
+        ?string $sepaMandateStatus = null
     )
     {
         $this->storeId = $storeId;
@@ -44,5 +48,6 @@ class InvoiceLineItemGroupedByOrganization
         $this->subTotal = $subTotal;
         $this->tax = $tax;
         $this->total = $total;
+        $this->sepaMandateStatus = $sepaMandateStatus;
     }
 }

@@ -2,6 +2,8 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Entity\Store;
+use AppBundle\Entity\Sylius\ExportCommand;
 use AppBundle\Entity\User;
 use Carbon\Carbon;
 use Psr\Log\LoggerInterface;
@@ -445,6 +447,101 @@ class StripeManager
         }
 
         return $payload;
+    }
+
+    /**
+     * Creates (or reuses) a platform-account Stripe Customer for a Store,
+     * used to charge the store via SEPA Direct Debit (as opposed to
+     * RestaurantStripeAccount/StripeAccount, which represent a Connect
+     * account the store/restaurant is paid through).
+     *
+     * @return Stripe\Customer
+     */
+    public function createCustomerForStore(Store $store)
+    {
+        if (null !== $store->getStripeCustomerId()) {
+            return Stripe\Customer::retrieve($store->getStripeCustomerId());
+        }
+
+        $owner = $store->getOwners()->first() ?: null;
+
+        $customer = Stripe\Customer::create([
+            'email' => $owner ? $owner->getEmail() : null,
+            'name' => $store->getLegalName() ?? $store->getName(),
+        ]);
+
+        $store->setStripeCustomerId($customer->id);
+
+        return $customer;
+    }
+
+    /**
+     * Creates a Stripe-hosted Checkout Session (mode=setup) where the store
+     * owner enters their IBAN and accepts the SEPA mandate themselves.
+     * The resulting payment method + mandate are attached to the Store
+     * asynchronously, via the checkout.session.completed webhook.
+     *
+     * @see https://stripe.com/docs/payments/save-and-reuse?platform=checkout
+     *
+     * @return Stripe\Checkout\Session
+     */
+    public function createSepaSetupCheckoutSession(Store $store, string $successUrl, string $cancelUrl): Stripe\Checkout\Session
+    {
+        $this->setupStripeApi();
+
+        $customerId = $store->getStripeCustomerId();
+
+        if (null === $customerId) {
+            $customer = $this->createCustomerForStore($store);
+            $customerId = $customer->id;
+        }
+
+        $store->setSepaMandateStatus('pending');
+
+        return Stripe\Checkout\Session::create([
+            'mode' => 'setup',
+            'customer' => $customerId,
+            'payment_method_types' => ['sepa_debit'],
+            'success_url' => $successUrl,
+            'cancel_url' => $cancelUrl,
+        ]);
+    }
+
+    /**
+     * Charges a Store off-session via its previously collected SEPA Direct
+     * Debit mandate, for a batch of invoiced orders represented by an
+     * ExportCommand. The resulting PaymentIntent id is stored back on the
+     * ExportCommand so that the webhook can later update its payment status
+     * (SEPA debits can fail several days after appearing to succeed).
+     *
+     * @return Stripe\PaymentIntent
+     */
+    public function chargeStoreViaSepa(Store $store, int $amount, string $currency, ExportCommand $exportCommand): Stripe\PaymentIntent
+    {
+        $this->setupStripeApi();
+
+        if (!$store->isSepaMandateActive()) {
+            throw new \RuntimeException(sprintf('Store #%d does not have an active SEPA mandate', $store->getId()));
+        }
+
+        $paymentIntent = Stripe\PaymentIntent::create([
+            'amount' => $amount,
+            'currency' => $currency,
+            'customer' => $store->getStripeCustomerId(),
+            'payment_method' => $store->getSepaPaymentMethodId(),
+            'payment_method_types' => ['sepa_debit'],
+            'confirm' => true,
+            'off_session' => true,
+            'metadata' => [
+                'export_command_id' => $exportCommand->getId(),
+                'store_id' => $store->getId(),
+            ],
+        ]);
+
+        $exportCommand->setStripePaymentIntentId($paymentIntent->id);
+        $exportCommand->setPaymentStatus('pending');
+
+        return $paymentIntent;
     }
 
 }

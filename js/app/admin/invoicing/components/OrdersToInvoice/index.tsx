@@ -1,11 +1,12 @@
 import { useMemo, useState } from 'react';
 import Modal from 'react-modal';
 import { useTranslation } from 'react-i18next';
-import { Checkbox } from 'antd';
+import { Checkbox, notification } from 'antd';
 import { Moment } from 'moment';
 
 import Button from '../../../../components/core/Button';
 import { prepareParams } from '../../redux/actions';
+import { useChargeSepaMutation } from '../../../../api/slice';
 import ExportModalContent from '../ExportModalContent';
 import OrganizationsTable from '../OrganizationsTable';
 import RangePicker from './RangePicker';
@@ -20,6 +21,8 @@ export default () => {
   const [reloadKey, setReloadKey] = useState(0);
 
   const [isModalOpen, setModalOpen] = useState(false);
+
+  const [chargeSepa, { isLoading: isCharging }] = useChargeSepaMutation();
 
   const { t } = useTranslation();
 
@@ -78,7 +81,56 @@ export default () => {
         reloadKey={reloadKey}
         setSelectedStoreIds={setSelectedStoreIds}
       />
-      <div className="d-flex justify-content-end" style={{ marginTop: '24px' }}>
+      <div
+        className="d-flex justify-content-end"
+        style={{ marginTop: '24px', gap: '12px' }}>
+        <Button
+          testID="invoicing.charge_sepa"
+          loading={isCharging}
+          onClick={() => {
+            if (!params) {
+              return;
+            }
+
+            chargeSepa({ params })
+              .unwrap()
+              .then(results => {
+                const charged = results.filter(r => r.status === 'charged');
+                const skipped = results.filter(
+                  r => r.status === 'skipped_no_mandate',
+                );
+                const failed = results.filter(r => r.status === 'failed');
+
+                if (charged.length > 0) {
+                  notification.success({
+                    message: t('ADMIN_ORDERS_TO_INVOICE_CHARGE_SEPA_SUCCESS', {
+                      count: charged.length,
+                    }),
+                  });
+                }
+                if (skipped.length > 0) {
+                  notification.warning({
+                    message: t('ADMIN_ORDERS_TO_INVOICE_CHARGE_SEPA_SKIPPED', {
+                      count: skipped.length,
+                    }),
+                  });
+                }
+                if (failed.length > 0) {
+                  notification.error({
+                    message: t('ADMIN_ORDERS_TO_INVOICE_CHARGE_SEPA_FAILED', {
+                      count: failed.length,
+                    }),
+                  });
+                }
+
+                setReloadKey(reloadKey + 1);
+              })
+              .catch(() => {
+                notification.error({ message: t('SOMETHING_WENT_WRONG') });
+              });
+          }}>
+          {t('ADMIN_ORDERS_TO_INVOICE_CHARGE_SEPA')}
+        </Button>
         <Button
           testID="invoicing.download"
           primary

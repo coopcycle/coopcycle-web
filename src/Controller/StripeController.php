@@ -3,6 +3,8 @@
 namespace AppBundle\Controller;
 
 
+use AppBundle\Entity\Store;
+use AppBundle\Entity\Sylius\ExportCommand;
 use AppBundle\Entity\StripeAccount;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Service\EmailManager;
@@ -154,6 +156,37 @@ class StripeController extends AbstractController
         return $this->redirect($redirect);
     }
 
+    #[Route(path: '/admin/stores/{id}/sepa/setup', name: 'admin_store_sepa_setup', methods: ['POST'])]
+    public function storeSepaSetupAction(
+        int $id,
+        Request $request,
+        StripeManager $stripeManager
+    ) {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $store = $this->entityManager->getRepository(Store::class)->find($id);
+
+        if (null === $store) {
+            throw $this->createNotFoundException();
+        }
+
+        $stripeManager->setupStripeApi();
+
+        // Built as a raw path rather than generateUrl(), since the admin
+        // store edit page is a client-side (React) route, not a Symfony one.
+        $storeAdminUrl = sprintf('%s/admin/stores/%d', $request->getSchemeAndHttpHost(), $store->getId());
+
+        $session = $stripeManager->createSepaSetupCheckoutSession(
+            $store,
+            $storeAdminUrl,
+            $storeAdminUrl
+        );
+
+        $this->entityManager->flush();
+
+        return new JsonResponse(['url' => $session->url]);
+    }
+
     /**
      * @see https://stripe.com/docs/connect/webhooks
      */
@@ -226,6 +259,10 @@ class StripeController extends AbstractController
                 return $this->handleChargeCaptured($event, $stripeManager);
             case Stripe\Event::CHARGE_SUCCEEDED:
                 return $this->handleChargeSucceeded();
+            case Stripe\Event::CHECKOUT_SESSION_COMPLETED:
+                return $this->handleCheckoutSessionCompleted($event);
+            case Stripe\Event::MANDATE_UPDATED:
+                return $this->handleMandateUpdated($event);
         }
 
         return new Response('', 200);
@@ -246,6 +283,17 @@ class StripeController extends AbstractController
         return $qb->getQuery()->getOneOrNullResult();
     }
 
+    /**
+     * @param Stripe\PaymentIntent|string $paymentIntent
+     */
+    private function findExportCommandByPaymentIntent($paymentIntent): ?ExportCommand
+    {
+        $value = $paymentIntent instanceof Stripe\PaymentIntent ? $paymentIntent->id : $paymentIntent;
+
+        return $this->entityManager->getRepository(ExportCommand::class)
+            ->findOneBy(['stripePaymentIntentId' => $value]);
+    }
+
     private function handlePaymentIntentSucceeded(Stripe\Event $event): Response
     {
         $paymentIntent = $event->data->object;
@@ -254,11 +302,20 @@ class StripeController extends AbstractController
 
         $payment = $this->findOneByPaymentIntent($paymentIntent);
 
-        if (null === $payment) {
-            $this->logger->error(sprintf('Payment Intent "%s" not found', $paymentIntent->id));
+        if (null !== $payment) {
+            return new Response('', 200);
+        }
+
+        $exportCommand = $this->findExportCommandByPaymentIntent($paymentIntent);
+
+        if (null !== $exportCommand) {
+            $exportCommand->setPaymentStatus('succeeded');
+            $this->entityManager->flush();
 
             return new Response('', 200);
         }
+
+        $this->logger->error(sprintf('Payment Intent "%s" not found', $paymentIntent->id));
 
         return new Response('', 200);
     }
@@ -271,11 +328,69 @@ class StripeController extends AbstractController
 
         $payment = $this->findOneByPaymentIntent($paymentIntent);
 
-        if (null === $payment) {
-            $this->logger->error(sprintf('Payment Intent "%s" not found', $paymentIntent->id));
+        if (null !== $payment) {
+            return new Response('', 200);
+        }
+
+        $exportCommand = $this->findExportCommandByPaymentIntent($paymentIntent);
+
+        if (null !== $exportCommand) {
+            $exportCommand->setPaymentStatus('failed');
+            $this->entityManager->flush();
+
+            // TODO: notify the admin/store by email that the SEPA debit failed,
+            // so it can be chased up manually (no automatic retry in v1).
 
             return new Response('', 200);
         }
+
+        $this->logger->error(sprintf('Payment Intent "%s" not found', $paymentIntent->id));
+
+        return new Response('', 200);
+    }
+
+    private function handleCheckoutSessionCompleted(Stripe\Event $event): Response
+    {
+        $session = $event->data->object;
+
+        if ('setup' !== $session->mode) {
+            return new Response('', 200);
+        }
+
+        $store = $this->entityManager->getRepository(Store::class)
+            ->findOneBy(['stripeCustomerId' => $session->customer]);
+
+        if (null === $store) {
+            $this->logger->error(sprintf('Store with Stripe customer "%s" not found', $session->customer));
+
+            return new Response('', 200);
+        }
+
+        $setupIntent = Stripe\SetupIntent::retrieve($session->setup_intent);
+
+        $store->setSepaPaymentMethodId($setupIntent->payment_method);
+        $store->setSepaMandateId($setupIntent->mandate);
+        $store->setSepaMandateStatus('active');
+
+        $this->entityManager->flush();
+
+        return new Response('', 200);
+    }
+
+    private function handleMandateUpdated(Stripe\Event $event): Response
+    {
+        $mandate = $event->data->object;
+
+        $store = $this->entityManager->getRepository(Store::class)
+            ->findOneBy(['sepaMandateId' => $mandate->id]);
+
+        if (null === $store) {
+            return new Response('', 200);
+        }
+
+        $store->setSepaMandateStatus('active' === $mandate->status ? 'active' : 'failed');
+
+        $this->entityManager->flush();
 
         return new Response('', 200);
     }
