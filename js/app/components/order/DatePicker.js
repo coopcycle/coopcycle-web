@@ -3,6 +3,7 @@ import _ from 'lodash'
 import moment from 'moment'
 import Select from 'react-select'
 import { withTranslation } from 'react-i18next'
+import { selectStyles } from './selectStyles'
 
 moment.locale($('html').attr('lang'))
 
@@ -42,6 +43,7 @@ const DatePicker = ({ choices, onChange, t, value }) => {
     <div className="cart__date-picker">
       <div>
         <Select
+          styles={ selectStyles }
           defaultValue={ _.find(dateOptions, o => o.value === date) }
           options={ dateOptions }
           onChange={ ({ value }) => {
@@ -53,6 +55,7 @@ const DatePicker = ({ choices, onChange, t, value }) => {
       </div>
       <div>
         <Select
+          styles={ selectStyles }
           defaultValue={ _.find(timeOptions, o => o.value === range) }
           value={ timeValue }
           options={ timeOptions }
