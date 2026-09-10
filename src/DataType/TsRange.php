@@ -69,8 +69,12 @@ class TsRange
         return $dt;
     }
 
-    public static function parse(string $text): ?TsRange
+    public static function parse(?string $text): ?TsRange
     {
+        if (null === $text) {
+            return null;
+        }
+
         if (1 === preg_match(self::TIME_RANGE_PATTERN, $text, $matches)) {
             $range = new self();
             $range->setLower(new \DateTime($matches['lower']));

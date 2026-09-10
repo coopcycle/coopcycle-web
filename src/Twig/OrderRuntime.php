@@ -20,7 +20,7 @@ class OrderRuntime implements RuntimeExtensionInterface
 
 
     /**
-     * @param TsRange|string $range
+     * @param TsRange|string|null $range
      * @return string
      */
     public function timeRangeForHumans($range)
@@ -56,13 +56,18 @@ class OrderRuntime implements RuntimeExtensionInterface
     }
 
     /**
-     * @param TsRange|string $range
+     * @param TsRange|string|null $range
      * @return string
      */
     public function timeRangeForHumansShort($range): string
     {
         if (!$range instanceof TsRange) {
             $range = TsRange::parse($range);
+        }
+
+        if (!$range) {
+
+            return $this->translator->trans('order.shippingTimeRange.notAvailable', [], 'validators');
         }
 
         return $this->tsRangeFormatter->formatShort($range);
