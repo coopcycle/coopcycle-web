@@ -1055,6 +1055,8 @@ form.order_export.messenger.label: Inclure une colonne avec le coursier ayant li
   la commande
 basics.show: Afficher
 basics.hide: Masquer
+basics.show_more: '+%count% de plus'
+basics.show_less: Afficher moins
 restaurant_promotion.disclaimer: Votre marge sera réduite du montant des
   frais de livraison. Cela ne <strong>diminuera pas</strong> les frais perçus par
   la plate-forme.

@@ -11,6 +11,13 @@
 
 {% block content %}
 
+<style>
+  .opening-hours-toggle.collapsed .expanded-label,
+  .opening-hours-toggle:not(.collapsed) .collapsed-label {
+    display: none;
+  }
+</style>
+
 <p class="text-right">
   <a href="{{ path('admin_new_time_slot') }}" class="btn btn-success">
     <i class="fa fa-plus"></i> {{ 'basics.add'|trans }}
@@ -41,11 +48,25 @@
         {{ time_slot.sameDayCutoff }}
       </td>
       <td>
+        {% set opening_hours = time_slot.openingHours %}
+        {% set visible_count = 3 %}
         <ul class="list-unstyled">
-          {% for oh in time_slot.openingHours %}
+          {% for oh in opening_hours|slice(0, visible_count) %}
             <li><span data-opening-hours="{{ oh|json_encode|e('html_attr') }}">{{ oh }}</span></li>
           {% endfor %}
         </ul>
+        {% if opening_hours|length > visible_count %}
+          {% set collapse_id = 'opening_hours_' ~ time_slot.id %}
+          <ul class="list-unstyled collapse" id="{{ collapse_id }}">
+            {% for oh in opening_hours|slice(visible_count) %}
+              <li><span data-opening-hours="{{ oh|json_encode|e('html_attr') }}">{{ oh }}</span></li>
+            {% endfor %}
+          </ul>
+          <a href="#{{ collapse_id }}" class="opening-hours-toggle collapsed" data-toggle="collapse" aria-expanded="false" aria-controls="{{ collapse_id }}">
+            <span class="collapsed-label">{{ 'basics.show_more'|trans({ '%count%': opening_hours|length - visible_count }) }}</span>
+            <span class="expanded-label">{{ 'basics.show_less'|trans }}</span>
+          </a>
+        {% endif %}
       </td>
       <td>
         <div {{ react_component('ShowApplications', { objectId: time_slot.id, data: relatedEntitiesByTimeSlotId[time_slot.id] }) }}></div>

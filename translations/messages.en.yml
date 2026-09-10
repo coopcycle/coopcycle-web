@@ -1125,6 +1125,8 @@ order.export.empty: There are no orders to export
 form.order_export.messenger.label: Add column with messenger who completed the order
 basics.show: Show
 basics.hide: Hide
+basics.show_more: '+%count% more'
+basics.show_less: Show less
 food_establishment.BAKERY: Bakery
 food_establishment.BAR_OR_PUB: Bar or pub
 food_establishment.BREWERY: Brewery
