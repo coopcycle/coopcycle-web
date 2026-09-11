@@ -89,7 +89,7 @@ AppBundle\Entity\Store:
       - addAddress: [ "@warehouse" ]
       - addAddress: [ "@client_1" ]
 
-  store_{3..50}:
+  store_{3..8}:
     name: '<company()>'
     address: "@address_1"
     enabled: true
@@ -102,7 +102,7 @@ AppBundle\Entity\Store:
       - addAddress: [ "@client_1" ]
 
 AppBundle\Entity\Delivery:
-  delivery_{1..250}:
+  delivery_{1..40}:
     __factory:
       createWithAddress:
         - "@warehouse"
@@ -116,7 +116,7 @@ AppBundle\Entity\Delivery:
           - <identity(new \DateTime('today 19:30:00'))>
     store: "@store_1"
 
-  delivery_{251..1000}:
+  delivery_{41..100}:
     __factory:
       createWithAddress:
         - "@warehouse"
@@ -128,10 +128,10 @@ AppBundle\Entity\Delivery:
       - setDropoffRange:
           - <identity(new \DateTime('today 19:00:00'))>
           - <identity(new \DateTime('today 19:30:00'))>
-    store: '@store_<numberBetween(2, 50)>'
+    store: '@store_<numberBetween(2, 8)>'
 
 AppBundle\Entity\Sylius\Order:
-  order_{1..1000}:
+  order_{1..100}:
     __factory:
       '@sylius.factory.order::createForDelivery':
         - "@delivery_<current()>"
