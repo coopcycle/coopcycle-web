@@ -30,8 +30,8 @@ class InvoiceLineItem
 
     public readonly \DateTime $invoiceDate;
 
-    // Identifier of the organization to invoice: either a Store ("store-{id}")
-    // or a restaurant/LocalBusiness ("restaurant-{id}")
+    // IRI of the organization to invoice: either a Store ("/api/stores/{id}")
+    // or a restaurant/LocalBusiness ("/api/restaurants/{id}")
     #[Groups(["default_invoice_line_item"])]
     public readonly ?string $storeId;
 
