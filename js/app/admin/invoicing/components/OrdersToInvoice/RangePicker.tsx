@@ -41,7 +41,9 @@ export default function RangePicker({
           defaultValue={
             (initialDateRange
               ? [initialDateRange[0], initialDateRange[1]]
-              : undefined) as any
+              : undefined) as unknown as React.ComponentProps<
+              typeof DatePicker.RangePicker
+            >['defaultValue']
           }
           onChange={dates => {
             setDateRange(dates);
