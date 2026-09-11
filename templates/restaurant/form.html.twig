@@ -116,6 +116,13 @@
             {{ 'restaurant.form.section.settlement'|trans }}
           </a>
         </li>
+        {% if restaurant.id is not null and (is_granted('ROLE_ADMIN') or is_granted('ROLE_RESTAURANT')) %}
+        <li role="presentation">
+          <a role="tab" data-toggle="tab" href="#sepa" aria-controls="sepa">
+            {{ 'store.form.section.sepa'|trans }}
+          </a>
+        </li>
+        {% endif %}
         {% if restaurant.id is not null %}
         <li role="presentation">
           <a role="tab" data-toggle="tab" href="#taxonomy" aria-controls="taxonomy">
@@ -179,6 +186,11 @@
         <div role="tabpanel" class="tab-pane" id="settlement">
           {% include "restaurant/form/_partials/settlement.html.twig" %}
         </div>
+        {% if restaurant.id is not null and (is_granted('ROLE_ADMIN') or is_granted('ROLE_RESTAURANT')) %}
+        <div role="tabpanel" class="tab-pane" id="sepa">
+          {% include "restaurant/form/_partials/sepa.html.twig" %}
+        </div>
+        {% endif %}
         {% if restaurant.id is not null %}
         <div role="tabpanel" class="tab-pane" id="taxonomy">
           {% include "restaurant/form/_partials/taxonomy.html.twig" %}

@@ -387,6 +387,20 @@ class EmailManager
         return $this->createHtmlMessageWithReplyTo($subject, $body);
     }
 
+    /**
+     * @param SepaDebitablePayerInterface $payer
+     */
+    public function createSepaSetupLinkMessage($payer, string $setupUrl)
+    {
+        $subject = $this->translator->trans('admin.send_sepa_setup_link.subject', [], 'emails');
+        $body = $this->mjml->render($this->templating->render('emails/sepa_setup_link.mjml.twig', [
+            'payer_name' => $payer->getLegalName() ?? $payer->getName(),
+            'setup_url' => $setupUrl,
+        ]));
+
+        return $this->createHtmlMessageWithReplyTo($subject, $body);
+    }
+
     public function createBusinessAccountInvitationMessage(Invitation $invitation, BusinessAccount $account)
     {
         $subject = $this->translator->trans('admin.send_invitation.subject', [], 'emails');

@@ -1,0 +1,68 @@
+{# Expects: payer (Store or LocalBusiness), setup_endpoint, setup_email_endpoint, modal_id #}
+
+<div class="form-group">
+  <label>{{ 'store.sepa.mandate_status.label'|trans }}</label>
+  <p>
+    {% set mandate_status = payer.sepaMandateStatus ?? 'none' %}
+    <span class="label label-{{ mandate_status == 'active' ? 'success' : (mandate_status == 'failed' ? 'danger' : 'default') }}">
+      {{ ('store.sepa.mandate_status.' ~ mandate_status)|trans }}
+    </span>
+  </p>
+  <span class="help-block">{{ 'store.sepa.mandate_status.help'|trans }}</span>
+</div>
+
+{% if is_granted('ROLE_ADMIN') %}
+
+  <div class="form-group" data-widget="sepa-setup-admin"
+    data-endpoint="{{ setup_endpoint }}"
+    data-email-endpoint="{{ setup_email_endpoint }}"
+    data-modal="{{ modal_id }}">
+    <button type="button" class="btn btn-default mr-2" data-role="sepa-copy-link">
+      <i class="fa fa-copy"></i> {{ 'store.sepa.copy_link'|trans }}
+    </button>
+    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#{{ modal_id }}">
+      <i class="fa fa-envelope"></i> {{ 'store.sepa.send_by_email'|trans }}
+    </button>
+    <span class="help-block">{{ 'store.sepa.send_setup_link.help'|trans }}</span>
+  </div>
+
+  <div class="modal fade" id="{{ modal_id }}" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">{{ 'store.sepa.send_by_email'|trans }}</h4>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>{{ 'store.sepa.recipient_email.label'|trans }}</label>
+            <select class="form-control" data-role="sepa-email-select">
+              {% for owner in payer.owners %}
+                <option value="{{ owner.email }}">{{ owner.email }}</option>
+              {% endfor %}
+              <option value="__manual__">{{ 'store.sepa.recipient_email.manual'|trans }}</option>
+            </select>
+          </div>
+          <div class="form-group d-none" data-role="sepa-email-manual-group">
+            <label>{{ 'store.sepa.recipient_email.manual_label'|trans }}</label>
+            <input type="email" class="form-control" data-role="sepa-email-manual-input" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'basics.cancel'|trans }}</button>
+          <button type="button" class="btn btn-primary" data-role="sepa-email-send">{{ 'store.sepa.send_by_email'|trans }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% else %}
+
+  <div class="form-group" data-widget="sepa-setup-owner" data-endpoint="{{ setup_endpoint }}">
+    <button type="button" class="btn btn-default" data-role="sepa-setup-trigger">
+      {{ 'store.sepa.setup_now'|trans }}
+    </button>
+    <span class="help-block">{{ 'store.sepa.setup_now.help'|trans }}</span>
+  </div>
+
+{% endif %}

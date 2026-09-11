@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity\Base;
 
+use AppBundle\Entity\Model\SepaDebitablePayerInterface;
+use AppBundle\Entity\Model\SepaDebitablePayerTrait;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumber;
@@ -11,8 +13,10 @@ use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumbe
  *
  * @see http://schema.org/LocalBusiness Documentation on Schema.org
  */
-abstract class LocalBusiness
+abstract class LocalBusiness implements SepaDebitablePayerInterface
 {
+    use SepaDebitablePayerTrait;
+
     /**
      * @var string The official name of the organization, e.g. the registered company name.
      */

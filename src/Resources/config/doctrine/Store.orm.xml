@@ -49,6 +49,10 @@
     <field name="cykeWebhookSecret" type="string" column="cyke_webhook_secret" nullable="true"/>
     <field name="cykePackageTypeId" type="string" column="cyke_package_type_id" nullable="true"/>
     <field name="cykeTimeSlot" type="string" column="cyke_time_slot" nullable="true"/>
+    <field name="stripeCustomerId" type="string" column="stripe_customer_id" nullable="true"/>
+    <field name="sepaPaymentMethodId" type="string" column="sepa_payment_method_id" nullable="true"/>
+    <field name="sepaMandateId" type="string" column="sepa_mandate_id" nullable="true"/>
+    <field name="sepaMandateStatus" type="string" column="sepa_mandate_status" nullable="true"/>
     <one-to-many field="deliveries" target-entity="AppBundle\Entity\Delivery" mapped-by="store">
       <cascade>
         <cascade-persist/>
