@@ -4,11 +4,27 @@ import { useTranslation } from 'react-i18next';
 import { Moment } from 'moment';
 
 type Props = {
+  initialDateRange?: Moment[] | null;
   setDateRange: (range: Moment[]) => void;
 };
 
-export default function RangePicker({ setDateRange }: Props) {
-  const [isComplexPicker, setIsComplexPicker] = React.useState(false);
+// Whether the range exactly spans a single full calendar month, i.e. what
+// the simple "select month" picker can express
+function isFullMonthRange(range: Moment[]): boolean {
+  return (
+    range[0].isSame(range[0].clone().startOf('month'), 'day') &&
+    range[1].isSame(range[1].clone().endOf('month'), 'day') &&
+    range[0].isSame(range[1], 'month')
+  );
+}
+
+export default function RangePicker({
+  initialDateRange,
+  setDateRange,
+}: Props) {
+  const [isComplexPicker, setIsComplexPicker] = React.useState(
+    () => !!initialDateRange && !isFullMonthRange(initialDateRange),
+  );
 
   const { t } = useTranslation();
 
@@ -21,6 +37,12 @@ export default function RangePicker({ setDateRange }: Props) {
       {t('ADMIN_ORDERS_TO_INVOICE_FILTER_RANGE')}
       {isComplexPicker ? (
         <DatePicker.RangePicker
+          // antd's RangePicker types this as a Dayjs range; this app uses moment
+          defaultValue={
+            (initialDateRange
+              ? [initialDateRange[0], initialDateRange[1]]
+              : undefined) as any
+          }
           onChange={dates => {
             setDateRange(dates);
           }}
@@ -28,6 +50,7 @@ export default function RangePicker({ setDateRange }: Props) {
       ) : (
         <DatePicker
           picker="month"
+          defaultValue={initialDateRange ? initialDateRange[0] : undefined}
           onChange={date => {
             const range = [
               date.clone().local().startOf('month'),
