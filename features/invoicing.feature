@@ -394,3 +394,111 @@ Feature: Invoicing
         }
       }
       """
+
+  Scenario: Get invoice line items filtered by restaurant
+    Given the PHP memory limit is set to "1024M"
+    Given the fixtures files are loaded with purge:
+      | setup_default.yml |
+    Given the fixtures files are loaded:
+      | foodtech_orders.yml |
+    Given the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "GET" request to "/api/invoice_line_items?organization=/api/restaurants/1"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Order",
+        "@id":"/api/invoice_line_items",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          {
+            "@type":"InvoiceLineItem",
+            "@id":@string@,
+            "organizationId":"/api/restaurants/1",
+            "date":"@string@.isDateTime()",
+            "orderId":@integer@,
+            "orderNumber":@string@,
+            "description":@string@,
+            "subTotal":@integer@,
+            "tax":@integer@,
+            "total":@integer@,
+            "exports":[]
+          },
+          "@array_previous_repeat@"
+        ],
+        "hydra:totalItems":@integer@,
+        "hydra:view":{
+          "@*@":"@*@"
+        },
+        "hydra:search":{
+          "@*@":"@*@"
+        }
+      }
+      """
+
+  Scenario: Get invoice line items with a mix of last mile and foodtech orders
+    Given the PHP memory limit is set to "1024M"
+    Given the fixtures files are loaded with purge:
+      | setup_default.yml |
+    Given the fixtures files are loaded:
+      | package_delivery_orders.yml |
+      | foodtech_orders.yml         |
+    Given the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "GET" request to "/api/invoice_line_items?itemsPerPage=1"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Order",
+        "@id":"/api/invoice_line_items",
+        "@type":"hydra:Collection",
+        "hydra:member":@array@,
+        "hydra:totalItems":200,
+        "hydra:view":{
+          "@*@":"@*@"
+        },
+        "hydra:search":{
+          "@*@":"@*@"
+        }
+      }
+      """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "GET" request to "/api/invoice_line_items/grouped_by_organization?itemsPerPage=30"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Order",
+        "@id":"/api/invoice_line_items/grouped_by_organization",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          {
+            "@type":"InvoiceLineItemGroupedByOrganization",
+            "@id":@string@,
+            "organizationId":@string@,
+            "organizationLegalName":@string@,
+            "storeName":@string@,
+            "ordersCount":@integer@,
+            "subTotal":@integer@,
+            "tax":@integer@,
+            "total":@integer@
+          },
+          "@array_previous_repeat@"
+        ],
+        "hydra:totalItems":16,
+        "hydra:view":{
+          "@*@":"@*@"
+        },
+        "hydra:search":{
+          "@*@":"@*@"
+        }
+      }
+      """
