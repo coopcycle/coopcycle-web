@@ -713,6 +713,7 @@
         "ADMIN_ORDERS_TO_INVOICE_DOWNLOAD": "Descargar",
         "ADMIN_ORDERS_TO_INVOICE_ORGANIZATION_LABEL": "Organización (número de pedidos)",
         "ADMIN_ORDERS_TO_INVOICE_ORDER_NUMBER_LABEL": "Pedido #",
+        "ADMIN_ORDERS_TO_INVOICE_ORDER_STATE_LABEL": "Estado del pedido",
         "ADMIN_ORDERS_TO_INVOICE_DATE_LABEL": "Fecha",
         "ADMIN_ORDERS_TO_INVOICE_DESCRIPTION_LABEL": "Descripción",
         "ADMIN_ORDERS_TO_INVOICE_SUB_TOTAL_LABEL": "Subtotal (sin IVA)",

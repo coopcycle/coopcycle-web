@@ -8,10 +8,12 @@ import { useGetInvoiceLineItemsQuery } from '../../../../api/slice';
 import { prepareParams, SettlementFilter } from '../../redux/actions';
 import { usePrevious } from '../../../../dashboard/redux/utils';
 import type { InvoiceLineItem } from '../../../../api/types';
+import OrderStateLabel from '../../../../order/Label';
 
 type OrderRow = {
   rowKey: string;
   orderId: string;
+  orderState: string;
   fileExports: Array<{
     requestId: string;
     createdAt: string;
@@ -86,6 +88,7 @@ export default function OrdersTable({
         (order: InvoiceLineItem): OrderRow => ({
           rowKey: order['@id'],
           orderId: order.orderId,
+          orderState: order.orderState,
           fileExports: order.exports,
           number: order.orderNumber,
           date: order.date ? moment(order.date).format('l') : '?',
@@ -105,6 +108,14 @@ export default function OrdersTable({
       title: t('ADMIN_ORDERS_TO_INVOICE_ORDER_NUMBER_LABEL'),
       dataIndex: 'number',
       key: 'number',
+    },
+    {
+      title: t('ADMIN_ORDERS_TO_INVOICE_ORDER_STATE_LABEL'),
+      dataIndex: 'orderState',
+      key: 'orderState',
+      render: (orderState: string) => (
+        <OrderStateLabel order={{ state: orderState }} />
+      ),
     },
     {
       title: t('ADMIN_ORDERS_TO_INVOICE_EXPORTS_LABEL'),
