@@ -18,6 +18,7 @@ final class InvoiceLineItemsGroupedByOrganizationProvider implements ProviderInt
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly InvoiceLineItemAmountCalculator $amountCalculator,
         private readonly iterable $collectionExtensions,
     )
     {
@@ -90,6 +91,10 @@ final class InvoiceLineItemsGroupedByOrganizationProvider implements ProviderInt
         $delivery = $preloader->preload($orders, 'delivery');
         $preloader->preload($delivery, 'store');
 
+        // Needed by InvoiceLineItemAmountCalculator to detect meal voucher payments
+        $payments = $preloader->preload($orders, 'payments');
+        $preloader->preload($payments, 'method');
+
         return $orders;
     }
 
@@ -119,15 +124,19 @@ final class InvoiceLineItemsGroupedByOrganizationProvider implements ProviderInt
 
         foreach ($ordersByOrganization as $organizationId => $orders) {
             $store = $orders[0]->getDelivery()?->getStore();
-            $organization = $store ?? $orders[0]->getRestaurant();
+            $restaurant = $store ? null : $orders[0]->getRestaurant();
+            $organization = $store ?? $restaurant;
 
-            $total = array_reduce($orders, function ($carry, $order) {
-                return $carry + $order->getTotal();
-            }, 0);
-            $tax = array_reduce($orders, function ($carry, $order) {
-                return $carry + $order->getTaxTotal();
-            }, 0);
-            $subTotal = $total - $tax;
+            // Amounts represent what CoopCycle should invoice this organization for,
+            // not gross order volume: for restaurant orders already settled via
+            // Stripe Connect, that's 0 (see InvoiceLineItemAmountCalculator)
+            $subTotal = $tax = $total = 0;
+            foreach ($orders as $order) {
+                $amounts = $this->amountCalculator->compute($order, $restaurant);
+                $subTotal += $amounts->subTotal;
+                $tax += $amounts->tax;
+                $total += $amounts->total;
+            }
 
             $activityByOrganization[] = new InvoiceLineItemGroupedByOrganization(
                 $organizationId,

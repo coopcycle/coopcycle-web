@@ -30,7 +30,8 @@ Feature: Invoicing
             "subTotal":@integer@,
             "tax":@integer@,
             "total":@integer@,
-            "exports":[]
+            "exports":[],
+            "needsInvoicing":@boolean@
           },
           "@array_previous_repeat@"
         ],
@@ -44,7 +45,7 @@ Feature: Invoicing
         },
         "hydra:search":{
           "@type":"hydra:IriTemplate",
-          "hydra:template":"/api/invoice_line_items{?date,state,state[],exists[exports],organization,organization[]}",
+          "hydra:template":"/api/invoice_line_items{?date,state,state[],exists[exports],organization,organization[],settlement}",
           "hydra:variableRepresentation":"BasicRepresentation",
           "hydra:mapping":[
             {
@@ -81,6 +82,12 @@ Feature: Invoicing
               "@type":"IriTemplateMapping",
               "variable":"organization[]",
               "property":"organization",
+              "required":false
+            },
+            {
+              "@type":"IriTemplateMapping",
+              "variable":"settlement",
+              "property":"settlement",
               "required":false
             }
           ]
@@ -143,7 +150,8 @@ Feature: Invoicing
             "subTotal":@integer@,
             "tax":@integer@,
             "total":@integer@,
-            "exports":[]
+            "exports":[],
+            "needsInvoicing":@boolean@
           },
           "@array_previous_repeat@"
         ],
@@ -157,7 +165,7 @@ Feature: Invoicing
         },
         "hydra:search":{
           "@type":"hydra:IriTemplate",
-          "hydra:template":"/api/invoice_line_items{?date,state,state[],exists[exports],organization,organization[]}",
+          "hydra:template":"/api/invoice_line_items{?date,state,state[],exists[exports],organization,organization[],settlement}",
           "hydra:variableRepresentation":"BasicRepresentation",
           "hydra:mapping":[
             {
@@ -194,6 +202,12 @@ Feature: Invoicing
               "@type":"IriTemplateMapping",
               "variable":"organization[]",
               "property":"organization",
+              "required":false
+            },
+            {
+              "@type":"IriTemplateMapping",
+              "variable":"settlement",
+              "property":"settlement",
               "required":false
             }
           ]
@@ -231,7 +245,8 @@ Feature: Invoicing
             "subTotal":@integer@,
             "tax":@integer@,
             "total":@integer@,
-            "exports":[]
+            "exports":[],
+            "needsInvoicing":@boolean@
           },
           "@array_previous_repeat@"
         ],
@@ -242,7 +257,7 @@ Feature: Invoicing
         },
         "hydra:search":{
           "@type":"hydra:IriTemplate",
-          "hydra:template":"/api/invoice_line_items{?date,state,state[],exists[exports],organization,organization[]}",
+          "hydra:template":"/api/invoice_line_items{?date,state,state[],exists[exports],organization,organization[],settlement}",
           "hydra:variableRepresentation":"BasicRepresentation",
           "hydra:mapping":[
             {
@@ -279,6 +294,12 @@ Feature: Invoicing
               "@type":"IriTemplateMapping",
               "variable":"organization[]",
               "property":"organization",
+              "required":false
+            },
+            {
+              "@type":"IriTemplateMapping",
+              "variable":"settlement",
+              "property":"settlement",
               "required":false
             }
           ]
@@ -321,7 +342,7 @@ Feature: Invoicing
         "hydra:totalItems":8,
         "hydra:search":{
           "@type":"hydra:IriTemplate",
-          "hydra:template":"/api/invoice_line_items/grouped_by_organization{?date,state,state[],exists[exports],organization,organization[]}",
+          "hydra:template":"/api/invoice_line_items/grouped_by_organization{?date,state,state[],exists[exports],organization,organization[],settlement}",
           "hydra:variableRepresentation":"BasicRepresentation",
           "hydra:mapping":[
             {
@@ -358,6 +379,12 @@ Feature: Invoicing
               "@type":"IriTemplateMapping",
               "variable":"organization[]",
               "property":"organization",
+              "required":false
+            },
+            {
+              "@type":"IriTemplateMapping",
+              "variable":"settlement",
+              "property":"settlement",
               "required":false
             }
           ]
@@ -425,7 +452,8 @@ Feature: Invoicing
             "subTotal":@integer@,
             "tax":@integer@,
             "total":@integer@,
-            "exports":[]
+            "exports":[],
+            "needsInvoicing":@boolean@
           },
           "@array_previous_repeat@"
         ],
@@ -494,6 +522,176 @@ Feature: Invoicing
           "@array_previous_repeat@"
         ],
         "hydra:totalItems":16,
+        "hydra:view":{
+          "@*@":"@*@"
+        },
+        "hydra:search":{
+          "@*@":"@*@"
+        }
+      }
+      """
+
+  Scenario: Get invoice line items filtered by settlement status
+    Given the PHP memory limit is set to "1024M"
+    Given the fixtures files are loaded with purge:
+      | setup_default.yml |
+    Given the fixtures files are loaded:
+      | foodtech_orders.yml |
+    Given the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "GET" request to "/api/invoice_line_items?settlement=needs_invoicing"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Order",
+        "@id":"/api/invoice_line_items",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          {
+            "@type":"InvoiceLineItem",
+            "@id":@string@,
+            "organizationId":@string@,
+            "date":"@string@.isDateTime()",
+            "orderId":@integer@,
+            "orderNumber":@string@,
+            "description":@string@,
+            "subTotal":350,
+            "tax":0,
+            "total":350,
+            "exports":[],
+            "needsInvoicing":true
+          },
+          "@array_previous_repeat@"
+        ],
+        "hydra:totalItems":33,
+        "hydra:view":{
+          "@*@":"@*@"
+        },
+        "hydra:search":{
+          "@*@":"@*@"
+        }
+      }
+      """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "GET" request to "/api/invoice_line_items?settlement=settled"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Order",
+        "@id":"/api/invoice_line_items",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          {
+            "@type":"InvoiceLineItem",
+            "@id":@string@,
+            "organizationId":@string@,
+            "date":"@string@.isDateTime()",
+            "orderId":@integer@,
+            "orderNumber":@string@,
+            "description":@string@,
+            "subTotal":0,
+            "tax":0,
+            "total":0,
+            "exports":[],
+            "needsInvoicing":false
+          },
+          "@array_previous_repeat@"
+        ],
+        "hydra:totalItems":67,
+        "hydra:view":{
+          "@*@":"@*@"
+        },
+        "hydra:search":{
+          "@*@":"@*@"
+        }
+      }
+      """
+
+  Scenario: Get invoice line items filtered by settlement status with a mix of last mile and foodtech orders
+    Given the PHP memory limit is set to "1024M"
+    Given the fixtures files are loaded with purge:
+      | setup_default.yml |
+    Given the fixtures files are loaded:
+      | package_delivery_orders.yml |
+      | foodtech_orders.yml         |
+    Given the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "GET" request to "/api/invoice_line_items?settlement=needs_invoicing&itemsPerPage=1"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Order",
+        "@id":"/api/invoice_line_items",
+        "@type":"hydra:Collection",
+        "hydra:member":@array@,
+        "hydra:totalItems":133,
+        "hydra:view":{
+          "@*@":"@*@"
+        },
+        "hydra:search":{
+          "@*@":"@*@"
+        }
+      }
+      """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "GET" request to "/api/invoice_line_items?settlement=settled"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Order",
+        "@id":"/api/invoice_line_items",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          {
+            "@type":"InvoiceLineItem",
+            "@id":@string@,
+            "organizationId":"@string@.startsWith('/api/restaurants/')",
+            "date":"@string@.isDateTime()",
+            "orderId":@integer@,
+            "orderNumber":@string@,
+            "description":@string@,
+            "subTotal":0,
+            "tax":0,
+            "total":0,
+            "exports":[],
+            "needsInvoicing":false
+          },
+          "@array_previous_repeat@"
+        ],
+        "hydra:totalItems":67,
+        "hydra:view":{
+          "@*@":"@*@"
+        },
+        "hydra:search":{
+          "@*@":"@*@"
+        }
+      }
+      """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "GET" request to "/api/invoice_line_items?organization=/api/stores/1&settlement=settled"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Order",
+        "@id":"/api/invoice_line_items",
+        "@type":"hydra:Collection",
+        "hydra:member":[],
+        "hydra:totalItems":0,
         "hydra:view":{
           "@*@":"@*@"
         },

@@ -5,7 +5,7 @@ import { Moment } from 'moment';
 
 import { money } from '../../../../utils/format';
 import { useLazyGetInvoiceLineItemsGroupedByOrganizationQuery } from '../../../../api/slice';
-import { prepareParams } from '../../redux/actions';
+import { prepareParams, SettlementFilter } from '../../redux/actions';
 import { usePrevious } from '../../../../dashboard/redux/utils';
 import OrdersTable from '../OrdersTable';
 import type { InvoiceLineItemGroupedByOrganization } from '../../../../api/types';
@@ -26,6 +26,7 @@ type Props = {
   ordersStates: string[];
   dateRange: Moment[] | null;
   onlyNotInvoiced: boolean;
+  settlement: SettlementFilter;
   reloadKey: number;
   setSelectedOrganizationIds: (organizationIds: string[]) => void;
 };
@@ -34,6 +35,7 @@ export default function OrganizationsTable({
   ordersStates,
   dateRange,
   onlyNotInvoiced,
+  settlement,
   reloadKey,
   setSelectedOrganizationIds,
 }: Props) {
@@ -59,8 +61,9 @@ export default function OrganizationsTable({
       ],
       state: ordersStates,
       onlyNotInvoiced: onlyNotInvoiced,
+      settlement: settlement,
     });
-  }, [ordersStates, dateRange, onlyNotInvoiced]);
+  }, [ordersStates, dateRange, onlyNotInvoiced, settlement]);
 
   const { dataSource, total } = useMemo((): {
     dataSource: OrganizationRow[] | undefined;
@@ -176,6 +179,7 @@ export default function OrganizationsTable({
               ordersStates={ordersStates}
               dateRange={dateRange}
               onlyNotInvoiced={onlyNotInvoiced}
+              settlement={settlement}
               organizationId={record.organizationId}
               reloadKey={reloadKey}
             />
