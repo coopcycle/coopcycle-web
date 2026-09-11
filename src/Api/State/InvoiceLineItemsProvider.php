@@ -153,10 +153,10 @@ final class InvoiceLineItemsProvider implements ProviderInterface
         $organizationLegalName = null;
 
         if ($store) {
-            $organizationId = sprintf('store-%d', $store->getId());
+            $organizationId = sprintf('/api/stores/%d', $store->getId());
             $organizationLegalName = $store->getLegalName() ?? $store->getName();
         } elseif ($restaurant) {
-            $organizationId = sprintf('restaurant-%d', $restaurant->getId());
+            $organizationId = sprintf('/api/restaurants/%d', $restaurant->getId());
             $organizationLegalName = $restaurant->getLegalName() ?? $restaurant->getName();
         }
 

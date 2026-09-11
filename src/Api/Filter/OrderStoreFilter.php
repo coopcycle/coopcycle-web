@@ -13,9 +13,10 @@ use Symfony\Component\PropertyInfo\Type;
  * Filters orders by "organization", i.e. either a Store (on-demand delivery client)
  * or a restaurant/LocalBusiness (food order client).
  *
- * Values are expected in the "store-{id}" or "restaurant-{id}" format, as returned
- * by the invoice_line_items endpoints. Bare numeric values are also accepted for
- * backwards-compatibility and are treated as store ids.
+ * Values are expected to be the IRI of the organization (e.g. "/api/stores/1" or
+ * "/api/restaurants/1"), as returned by the invoice_line_items endpoints. Bare
+ * numeric values are also accepted for backwards-compatibility and are treated
+ * as store ids.
  */
 final class OrderStoreFilter extends AbstractFilter
 {
@@ -78,10 +79,10 @@ final class OrderStoreFilter extends AbstractFilter
         $restaurantIds = [];
 
         foreach ($values as $value) {
-            if (is_string($value) && str_starts_with($value, 'restaurant-')) {
-                $restaurantIds[] = (int) substr($value, strlen('restaurant-'));
-            } elseif (is_string($value) && str_starts_with($value, 'store-')) {
-                $storeIds[] = (int) substr($value, strlen('store-'));
+            if (is_string($value) && str_starts_with($value, '/api/restaurants/')) {
+                $restaurantIds[] = (int) substr($value, strlen('/api/restaurants/'));
+            } elseif (is_string($value) && str_starts_with($value, '/api/stores/')) {
+                $storeIds[] = (int) substr($value, strlen('/api/stores/'));
             } elseif (is_numeric($value)) {
                 // Backwards-compatibility: bare numeric ids are store ids
                 $storeIds[] = (int) $value;

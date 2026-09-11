@@ -101,9 +101,9 @@ final class InvoiceLineItemsGroupedByOrganizationProvider implements ProviderInt
             $restaurant = $store ? null : $order->getRestaurant();
 
             if ($store) {
-                $organizationId = sprintf('store-%d', $store->getId());
+                $organizationId = sprintf('/api/stores/%d', $store->getId());
             } elseif ($restaurant) {
-                $organizationId = sprintf('restaurant-%d', $restaurant->getId());
+                $organizationId = sprintf('/api/restaurants/%d', $restaurant->getId());
             } else {
                 //FIXME; currently only orders linked to a Store or a restaurant are supported
                 continue;
