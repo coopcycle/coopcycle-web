@@ -52,8 +52,9 @@ final class InvoiceLineItemsProvider implements ProviderInterface
 
         $qb = $this->entityManager->getRepository(Order::class)->createOptimizedQueryBuilder('o')
             // Additional optimization: preload relations with composite keys
-            ->addSelect('v', 'ex')
+            ->addSelect('v', 'vr', 'ex')
             ->leftJoin('o.vendors', 'v')
+            ->leftJoin('v.restaurant', 'vr')
             ->leftJoin('o.exports', 'ex');
 
         $queryNameGenerator = new QueryNameGenerator();
@@ -146,13 +147,25 @@ final class InvoiceLineItemsProvider implements ProviderInterface
     {
         $delivery = $order->getDelivery();
         $store = $delivery?->getStore();
+        $restaurant = $store ? null : $order->getRestaurant();
+
+        $organizationId = null;
+        $organizationLegalName = null;
+
+        if ($store) {
+            $organizationId = sprintf('store-%d', $store->getId());
+            $organizationLegalName = $store->getLegalName() ?? $store->getName();
+        } elseif ($restaurant) {
+            $organizationId = sprintf('restaurant-%d', $restaurant->getId());
+            $organizationLegalName = $restaurant->getLegalName() ?? $restaurant->getName();
+        }
 
         $request = $this->requestStack->getCurrentRequest();
         $requestId = $request->headers->get('X-Request-ID');
 
         $invoiceId = sprintf('%s-%s',
             $requestId,
-            substr(hash('sha256', $store?->getId() ?? 0), 0, 7)
+            substr(hash('sha256', $organizationId ?? 0), 0, 7)
         );
 
         $invoiceDate = new \DateTime();
@@ -201,7 +214,22 @@ final class InvoiceLineItemsProvider implements ProviderInterface
             } else {
                 $descriptionParts = array_merge($descriptionParts, $this->legacyDescription($order, $delivery));
             }
+        } elseif ($restaurant) {
+            $product = $this->translator->trans('adminDashboard.invoicing.line_item.product.restaurant_order', [], 'messages');
+            $descriptionParts[] = $restaurant->getName();
 
+            /** @var OrderItemInterface $item */
+            foreach ($order->getItems() as $item) {
+                $productVariant = $item->getVariant();
+
+                $descriptionParts[] = sprintf('%s x%d',
+                    $productVariant->getName(),
+                    $item->getQuantity()
+                );
+            }
+        }
+
+        if (count($descriptionParts) > 0) {
             $descriptionParts[] = Carbon::instance($orderDate)->locale($this->locale)->isoFormat('L');
 
             $description = sprintf('%s (%s)',
@@ -222,8 +250,8 @@ final class InvoiceLineItemsProvider implements ProviderInterface
             sprintf('%s-%d', $invoiceId, $order->getId()),
             $invoiceId,
             $invoiceDate,
-            $store?->getId(),
-            $store?->getLegalName() ?? $store?->getName(),
+            $organizationId,
+            $organizationLegalName,
             $this->settingsManager->get('accounting_account') ?? '',
             $product,
             $order->getId(),

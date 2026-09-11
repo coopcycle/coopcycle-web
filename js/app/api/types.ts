@@ -143,7 +143,8 @@ export type LocalBusiness = JsonLdEntity & {
 };
 
 export type InvoiceLineItemGroupedByOrganization = {
-  storeId: number;
+  // Identifier of the organization: either "store-{id}" or "restaurant-{id}"
+  storeId: string;
   organizationLegalName: string;
   storeName: string;
   ordersCount: number;
@@ -161,7 +162,8 @@ export type GetInvoiceLineItemsGroupedByOrganizationArgs = {
 export type InvoiceLineItem = {
   '@id': string;
   '@type': string;
-  storeId: number;
+  // Identifier of the organization: either "store-{id}" or "restaurant-{id}"
+  storeId: string;
   orderId: string;
   orderNumber: string;
   date: string;
