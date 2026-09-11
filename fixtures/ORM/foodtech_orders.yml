@@ -1,0 +1,113 @@
+include:
+  - user_admin.yml
+  - user_dispatcher.yml
+  - user_courier.yml
+
+# Self-contained tax category/rate, distinct from the ones defined in
+# sylius_taxation.yml (already loaded and persisted by setup_default.yml),
+# to avoid unique constraint collisions on `code`.
+AppBundle\Entity\Sylius\TaxRate:
+  foodtech_tax_rate:
+    name: "Foodtech VAT"
+    code: foodtech_tax_rate
+    amount: 0.1
+    includedInPrice: true
+    calculator: default
+
+AppBundle\Entity\Sylius\TaxCategory:
+  foodtech_tax_category:
+    code: foodtech_tax_category
+    name: "Foodtech VAT category"
+    rates: [ "@foodtech_tax_rate" ]
+
+AppBundle\Entity\Sylius\ProductVariant:
+  foodtech_product_variant:
+    taxCategory: "@foodtech_tax_category"
+    currentLocale: fr
+    name: 'Menu'
+    code: FOODTECH_MENU
+    price: 990
+
+AppBundle\Entity\Sylius\Product:
+  foodtech_product:
+    code: FOODTECH_MENU_PRODUCT
+    currentLocale: fr
+    name: 'Menu'
+    slug: foodtech-menu
+    enabled: true
+    variants: [ "@foodtech_product_variant" ]
+
+AppBundle\Entity\Base\GeoCoordinates:
+  foodtech_geo:
+    __construct: [ "48.8566", "2.3522" ]
+
+AppBundle\Entity\Address:
+  foodtech_restaurant_address:
+    addressLocality: 'Paris'
+    postalCode: '75001'
+    streetAddress: '10, Rue de Rivoli, 75001 Paris'
+    geo: "@foodtech_geo"
+
+AppBundle\Entity\Contract:
+  foodtech_contract:
+    flatDeliveryPrice: 350
+    customerAmount: 350
+    feeRate: 0.00
+
+AppBundle\Entity\LocalBusiness:
+  foodtech_restaurant_1:
+    name: 'Chez Foodtech'
+    address: "@foodtech_restaurant_address"
+    openingHours: [ 'Mo-Su 00:00-23:59' ]
+    enabled: true
+    contract: "@foodtech_contract"
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+    products:
+      - '@foodtech_product'
+    __calls:
+      - setMinimumAmount: [ 'delivery', 1000 ]
+      - addFulfillmentMethod: [ 'delivery', true ]
+
+  foodtech_restaurant_{2..8}:
+    name: '<company()>'
+    address: "@foodtech_restaurant_address"
+    openingHours: [ 'Mo-Su 00:00-23:59' ]
+    enabled: true
+    contract: "@foodtech_contract"
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+    products:
+      - '@foodtech_product'
+    __calls:
+      - setMinimumAmount: [ 'delivery', 1000 ]
+      - addFulfillmentMethod: [ 'delivery', true ]
+
+AppBundle\DataType\TsRange:
+  foodtech_shipping_time_range:
+    __factory:
+      create:
+        - <identity(new \DateTime('today 19:00:00'))>
+        - <identity(new \DateTime('today 19:30:00'))>
+
+# 100 foodtech (restaurant) orders, split the same way as package_delivery_orders.yml:
+# a dedicated batch for restaurant_1, and a random pool for the remaining 7 restaurants.
+AppBundle\Entity\Sylius\Order:
+  foodtech_order_{1..40}:
+    __factory:
+      '@sylius.factory.order::createForRestaurant':
+        - "@foodtech_restaurant_1"
+    __calls:
+      - setNumber: [ "F<current()>" ]
+      - setState: [ 'new' ]
+      - setShippingTimeRange: [ '@foodtech_shipping_time_range' ]
+      - setShippingAddress: [ '@foodtech_restaurant_address' ]
+    # The rest of initialization (items, pricing, taxes) is done by FoodtechOrderProcessor
+
+  foodtech_order_{41..100}:
+    __factory:
+      '@sylius.factory.order::createForRestaurant':
+        - '@foodtech_restaurant_<numberBetween(2, 8)>'
+    __calls:
+      - setNumber: [ "F<current()>" ]
+      - setState: [ 'new' ]
+      - setShippingTimeRange: [ '@foodtech_shipping_time_range' ]
+      - setShippingAddress: [ '@foodtech_restaurant_address' ]
