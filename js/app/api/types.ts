@@ -175,6 +175,10 @@ export type InvoiceLineItem = {
     requestId: string;
     createdAt: string;
   }>;
+  // Whether CoopCycle still needs to invoice this order's organization for it
+  // (always true for stores; for restaurants, only meal-voucher-paid orders —
+  // card orders are already settled automatically via Stripe Connect)
+  needsInvoicing: boolean;
 };
 
 export type GetInvoiceLineItemsArgs = {

@@ -18,6 +18,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\User;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Sylius\Payment\MealVoucherPaymentMethods;
 use AppBundle\Sylius\Taxation\TaxesHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr;
@@ -49,12 +50,7 @@ class RestaurantStats implements \Countable
 
     private $messengers;
 
-    private $mealVoucherCodes = [
-        'EDENRED',
-        'SWILE',
-        'CONECS',
-        'RESTOFLASH',
-    ];
+    private $mealVoucherCodes = MealVoucherPaymentMethods::CODES;
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,

@@ -5,7 +5,7 @@ import moment from 'moment';
 
 import { money } from '../../../../utils/format';
 import { useGetInvoiceLineItemsQuery } from '../../../../api/slice';
-import { prepareParams } from '../../redux/actions';
+import { prepareParams, SettlementFilter } from '../../redux/actions';
 import { usePrevious } from '../../../../dashboard/redux/utils';
 import type { InvoiceLineItem } from '../../../../api/types';
 
@@ -22,12 +22,14 @@ type OrderRow = {
   subTotal: string;
   tax: string;
   total: string;
+  needsInvoicing: boolean;
 };
 
 type Props = {
   ordersStates: string[];
   dateRange: moment.Moment[] | null;
   onlyNotInvoiced: boolean;
+  settlement: SettlementFilter;
   organizationId: string;
   reloadKey: number;
 };
@@ -36,6 +38,7 @@ export default function OrdersTable({
   ordersStates,
   dateRange,
   onlyNotInvoiced,
+  settlement,
   organizationId,
   reloadKey,
 }: Props) {
@@ -61,8 +64,9 @@ export default function OrdersTable({
       ],
       state: ordersStates,
       onlyNotInvoiced: onlyNotInvoiced,
+      settlement: settlement,
     });
-  }, [ordersStates, dateRange, onlyNotInvoiced, organizationId]);
+  }, [ordersStates, dateRange, onlyNotInvoiced, settlement, organizationId]);
 
   const { isFetching, data, refetch } = useGetInvoiceLineItemsQuery({
     params,
@@ -89,6 +93,7 @@ export default function OrdersTable({
           subTotal: money(order.subTotal),
           tax: money(order.tax),
           total: money(order.total),
+          needsInvoicing: order.needsInvoicing,
         }),
       ),
       total: data['hydra:totalItems'],
@@ -132,6 +137,21 @@ export default function OrdersTable({
       title: t('ADMIN_ORDERS_TO_INVOICE_DATE_LABEL'),
       dataIndex: 'date',
       key: 'date',
+    },
+    {
+      title: t('ADMIN_ORDERS_TO_INVOICE_SETTLEMENT_LABEL'),
+      dataIndex: 'needsInvoicing',
+      key: 'needsInvoicing',
+      render: (needsInvoicing: boolean) =>
+        needsInvoicing ? (
+          <Tag color="orange">
+            {t('ADMIN_ORDERS_TO_INVOICE_SETTLEMENT_NEEDS_INVOICING')}
+          </Tag>
+        ) : (
+          <Tag color="green">
+            {t('ADMIN_ORDERS_TO_INVOICE_SETTLEMENT_SETTLED')}
+          </Tag>
+        ),
     },
     {
       title: t('ADMIN_ORDERS_TO_INVOICE_DESCRIPTION_LABEL'),

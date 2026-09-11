@@ -45,6 +45,7 @@ use AppBundle\Message\CopyProducts;
 use AppBundle\Pixabay\Client as PixabayClient;
 use AppBundle\Service\MercadopagoManager;
 use AppBundle\Service\SettingsManager;
+use AppBundle\Sylius\Payment\MealVoucherPaymentMethods;
 use AppBundle\Sylius\Product\ProductInterface;
 use AppBundle\Sylius\Taxation\TaxesHelper;
 use AppBundle\Utils\PreparationTimeCalculator;
@@ -1849,7 +1850,7 @@ trait RestaurantTrait
         $qb->join(PaymentInterface::class, 'p', Expr\Join::WITH, 'p.order = o.id');
         $qb->join(PaymentMethodInterface::class, 'pm', Expr\Join::WITH, 'p.method = pm.id');
 
-        $paymentMethods = ['EDENRED', 'CONECS', 'SWILE', 'RESTOFLASH'];
+        $paymentMethods = MealVoucherPaymentMethods::CODES;
 
         $qb->andWhere('pm.code IN (:code)');
         $qb->andWhere('o.state = :order_state');
@@ -1928,7 +1929,7 @@ trait RestaurantTrait
             $records = [];
             foreach ($hash[$exported] as $order) {
 
-                $voucherPayment = $order->getLastPaymentByMethod(['EDENRED', 'CONECS', 'SWILE', 'RESTOFLASH'], PaymentInterface::STATE_COMPLETED);
+                $voucherPayment = $order->getLastPaymentByMethod(MealVoucherPaymentMethods::CODES, PaymentInterface::STATE_COMPLETED);
 
                 $records[] = [
                     $order->getNumber(),
