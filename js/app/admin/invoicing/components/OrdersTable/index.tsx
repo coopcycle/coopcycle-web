@@ -28,7 +28,7 @@ type Props = {
   ordersStates: string[];
   dateRange: moment.Moment[] | null;
   onlyNotInvoiced: boolean;
-  storeId: string;
+  organizationId: string;
   reloadKey: number;
 };
 
@@ -36,7 +36,7 @@ export default function OrdersTable({
   ordersStates,
   dateRange,
   onlyNotInvoiced,
-  storeId,
+  organizationId,
   reloadKey,
 }: Props) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -45,7 +45,7 @@ export default function OrdersTable({
   const previousReloadKey = usePrevious(reloadKey);
 
   const params = useMemo(() => {
-    if (!storeId) {
+    if (!organizationId) {
       return null;
     }
 
@@ -54,7 +54,7 @@ export default function OrdersTable({
     }
 
     return prepareParams({
-      store: [storeId],
+      organization: [organizationId],
       dateRange: [
         dateRange[0].format('YYYY-MM-DD'),
         dateRange[1].format('YYYY-MM-DD'),
@@ -62,7 +62,7 @@ export default function OrdersTable({
       state: ordersStates,
       onlyNotInvoiced: onlyNotInvoiced,
     });
-  }, [ordersStates, dateRange, onlyNotInvoiced, storeId]);
+  }, [ordersStates, dateRange, onlyNotInvoiced, organizationId]);
 
   const { isFetching, data, refetch } = useGetInvoiceLineItemsQuery({
     params,
@@ -177,7 +177,7 @@ export default function OrdersTable({
   }, [reloadKey, previousReloadKey, refetch]);
 
   return (
-    <div data-testid={`invoicing.orders.${storeId}`}>
+    <div data-testid={`invoicing.orders.${organizationId}`}>
       <Table
         style={{ marginTop: '48px' }}
         columns={columns}

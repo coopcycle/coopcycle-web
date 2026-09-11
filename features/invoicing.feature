@@ -22,7 +22,7 @@ Feature: Invoicing
           {
             "@type":"InvoiceLineItem",
             "@id":@string@,
-            "storeId":@integer@,
+            "organizationId":@string@,
             "date":"@string@.isDateTime()",
             "orderId":@integer@,
             "orderNumber":@string@,
@@ -44,7 +44,7 @@ Feature: Invoicing
         },
         "hydra:search":{
           "@type":"hydra:IriTemplate",
-          "hydra:template":"/api/invoice_line_items{?date,state,state[],exists[exports],store,store[]}",
+          "hydra:template":"/api/invoice_line_items{?date,state,state[],exists[exports],organization,organization[]}",
           "hydra:variableRepresentation":"BasicRepresentation",
           "hydra:mapping":[
             {
@@ -73,14 +73,14 @@ Feature: Invoicing
             },
             {
               "@type":"IriTemplateMapping",
-              "variable":"store",
-              "property":"store",
+              "variable":"organization",
+              "property":"organization",
               "required":false
             },
             {
               "@type":"IriTemplateMapping",
-              "variable":"store[]",
-              "property":"store",
+              "variable":"organization[]",
+              "property":"organization",
               "required":false
             }
           ]
@@ -122,7 +122,7 @@ Feature: Invoicing
     Given the user "admin" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "admin" sends a "GET" request to "/api/invoice_line_items?store=1"
+    And the user "admin" sends a "GET" request to "/api/invoice_line_items?organization=1"
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
@@ -135,7 +135,7 @@ Feature: Invoicing
           {
             "@type":"InvoiceLineItem",
             "@id":@string@,
-            "storeId":@integer@,
+            "organizationId":@string@,
             "date":"@string@.isDateTime()",
             "orderId":@integer@,
             "orderNumber":@string@,
@@ -149,15 +149,15 @@ Feature: Invoicing
         ],
         "hydra:totalItems":250,
         "hydra:view":{
-          "@id":"/api/invoice_line_items?store=1\u0026page=1",
+          "@id":"/api/invoice_line_items?organization=1\u0026page=1",
           "@type":"hydra:PartialCollectionView",
-          "hydra:first":"/api/invoice_line_items?store=1\u0026page=1",
-          "hydra:last":"/api/invoice_line_items?store=1\u0026page=9",
-          "hydra:next":"/api/invoice_line_items?store=1\u0026page=2"
+          "hydra:first":"/api/invoice_line_items?organization=1\u0026page=1",
+          "hydra:last":"/api/invoice_line_items?organization=1\u0026page=9",
+          "hydra:next":"/api/invoice_line_items?organization=1\u0026page=2"
         },
         "hydra:search":{
           "@type":"hydra:IriTemplate",
-          "hydra:template":"/api/invoice_line_items{?date,state,state[],exists[exports],store,store[]}",
+          "hydra:template":"/api/invoice_line_items{?date,state,state[],exists[exports],organization,organization[]}",
           "hydra:variableRepresentation":"BasicRepresentation",
           "hydra:mapping":[
             {
@@ -186,14 +186,14 @@ Feature: Invoicing
             },
             {
               "@type":"IriTemplateMapping",
-              "variable":"store",
-              "property":"store",
+              "variable":"organization",
+              "property":"organization",
               "required":false
             },
             {
               "@type":"IriTemplateMapping",
-              "variable":"store[]",
-              "property":"store",
+              "variable":"organization[]",
+              "property":"organization",
               "required":false
             }
           ]
@@ -210,7 +210,7 @@ Feature: Invoicing
     Given the user "admin" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "admin" sends a "GET" request to "/api/invoice_line_items?store[]=1&store[]=35&itemsPerPage=100"
+    And the user "admin" sends a "GET" request to "/api/invoice_line_items?organization[]=1&organization[]=35&itemsPerPage=100"
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
@@ -223,7 +223,7 @@ Feature: Invoicing
           {
             "@type":"InvoiceLineItem",
             "@id":@string@,
-            "storeId":@integer@,
+            "organizationId":@string@,
             "date":"@string@.isDateTime()",
             "orderId":@integer@,
             "orderNumber":@string@,
@@ -237,15 +237,15 @@ Feature: Invoicing
         ],
         "hydra:totalItems":@integer@,
         "hydra:view":{
-          "@id": "/api/invoice_line_items?itemsPerPage=100&store%5B%5D=1&store%5B%5D=35&page=1",
+          "@id": "/api/invoice_line_items?itemsPerPage=100&organization%5B%5D=1&organization%5B%5D=35&page=1",
           "@type": "hydra:PartialCollectionView",
-          "hydra:first": "/api/invoice_line_items?itemsPerPage=100&store%5B%5D=1&store%5B%5D=35&page=1",
-          "hydra:last": "/api/invoice_line_items?itemsPerPage=100&store%5B%5D=1&store%5B%5D=35&page=3",
-          "hydra:next": "/api/invoice_line_items?itemsPerPage=100&store%5B%5D=1&store%5B%5D=35&page=2"
+          "hydra:first": "/api/invoice_line_items?itemsPerPage=100&organization%5B%5D=1&organization%5B%5D=35&page=1",
+          "hydra:last": "/api/invoice_line_items?itemsPerPage=100&organization%5B%5D=1&organization%5B%5D=35&page=3",
+          "hydra:next": "/api/invoice_line_items?itemsPerPage=100&organization%5B%5D=1&organization%5B%5D=35&page=2"
         },
         "hydra:search":{
           "@type":"hydra:IriTemplate",
-          "hydra:template":"/api/invoice_line_items{?date,state,state[],exists[exports],store,store[]}",
+          "hydra:template":"/api/invoice_line_items{?date,state,state[],exists[exports],organization,organization[]}",
           "hydra:variableRepresentation":"BasicRepresentation",
           "hydra:mapping":[
             {
@@ -274,14 +274,14 @@ Feature: Invoicing
             },
             {
               "@type":"IriTemplateMapping",
-              "variable":"store",
-              "property":"store",
+              "variable":"organization",
+              "property":"organization",
               "required":false
             },
             {
               "@type":"IriTemplateMapping",
-              "variable":"store[]",
-              "property":"store",
+              "variable":"organization[]",
+              "property":"organization",
               "required":false
             }
           ]
@@ -311,7 +311,7 @@ Feature: Invoicing
           {
             "@type":"InvoiceLineItemGroupedByOrganization",
             "@id": @string@,
-            "storeId":@integer@,
+            "organizationId":@string@,
             "organizationLegalName":@string@,
             "storeName":@string@,
             "ordersCount":@integer@,
@@ -331,7 +331,7 @@ Feature: Invoicing
         },
         "hydra:search":{
           "@type":"hydra:IriTemplate",
-          "hydra:template":"/api/invoice_line_items/grouped_by_organization{?date,state,state[],exists[exports],store,store[]}",
+          "hydra:template":"/api/invoice_line_items/grouped_by_organization{?date,state,state[],exists[exports],organization,organization[]}",
           "hydra:variableRepresentation":"BasicRepresentation",
           "hydra:mapping":[
             {
@@ -360,14 +360,14 @@ Feature: Invoicing
             },
             {
               "@type":"IriTemplateMapping",
-              "variable":"store",
-              "property":"store",
+              "variable":"organization",
+              "property":"organization",
               "required":false
             },
             {
               "@type":"IriTemplateMapping",
-              "variable":"store[]",
-              "property":"store",
+              "variable":"organization[]",
+              "property":"organization",
               "required":false
             }
           ]

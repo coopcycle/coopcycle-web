@@ -3,20 +3,24 @@ import { RootState } from './store';
 import { ThunkAction, UnknownAction } from '@reduxjs/toolkit';
 
 export function prepareParams({
-  store,
+  organization,
   dateRange,
   state,
   onlyNotInvoiced,
 }: {
-  store?: string[];
+  organization?: string[];
   dateRange: string[];
   state?: string[];
   onlyNotInvoiced: boolean;
 }): string[] {
   let params = [];
 
-  if (store && store.length > 0) {
-    params.push(...store.map(storeId => `store[]=${storeId}`));
+  if (organization && organization.length > 0) {
+    params.push(
+      ...organization.map(
+        organizationId => `organization[]=${organizationId}`,
+      ),
+    );
   }
 
   if (state && state.length > 0) {

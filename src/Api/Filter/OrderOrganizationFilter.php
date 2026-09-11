@@ -18,9 +18,9 @@ use Symfony\Component\PropertyInfo\Type;
  * numeric values are also accepted for backwards-compatibility and are treated
  * as store ids.
  */
-final class OrderStoreFilter extends AbstractFilter
+final class OrderOrganizationFilter extends AbstractFilter
 {
-    private string $storeIdAlias = 'store';
+    private string $organizationIdAlias = 'organization';
 
     protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, ?Operation $operation = null, array $context = []): void
     {
@@ -29,7 +29,7 @@ final class OrderStoreFilter extends AbstractFilter
         }
 
         // expose alias in the API instead of a path to a nested property
-        if ($this->storeIdAlias !== $property) {
+        if ($this->organizationIdAlias !== $property) {
             return;
         }
 
@@ -95,14 +95,14 @@ final class OrderStoreFilter extends AbstractFilter
     public function getDescription(string $resourceClass): array
     {
         return [
-            'store' => [
-                'property' => $this->storeIdAlias,
+            'organization' => [
+                'property' => $this->organizationIdAlias,
                 'type' => Type::BUILTIN_TYPE_STRING,
                 'required' => false,
                 'is_collection' => false,
             ],
-            'store[]'=> [
-                'property' => $this->storeIdAlias,
+            'organization[]'=> [
+                'property' => $this->organizationIdAlias,
                 'type' => Type::BUILTIN_TYPE_STRING,
                 'required' => false,
                 'is_collection' => true,

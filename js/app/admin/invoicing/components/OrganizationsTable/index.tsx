@@ -12,7 +12,7 @@ import type { InvoiceLineItemGroupedByOrganization } from '../../../../api/types
 
 type OrganizationRow = {
   rowKey: string;
-  storeId: string;
+  organizationId: string;
   name: string;
   // Raw store name, shown as muted subtext when it differs from the
   // displayed name (i.e. when a distinct legalName is set)
@@ -27,7 +27,7 @@ type Props = {
   dateRange: Moment[] | null;
   onlyNotInvoiced: boolean;
   reloadKey: number;
-  setSelectedStoreIds: (storeIds: string[]) => void;
+  setSelectedOrganizationIds: (organizationIds: string[]) => void;
 };
 
 export default function OrganizationsTable({
@@ -35,7 +35,7 @@ export default function OrganizationsTable({
   dateRange,
   onlyNotInvoiced,
   reloadKey,
-  setSelectedStoreIds,
+  setSelectedOrganizationIds,
 }: Props) {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -73,8 +73,8 @@ export default function OrganizationsTable({
     return {
       dataSource: data['hydra:member'].map(
         (item: InvoiceLineItemGroupedByOrganization): OrganizationRow => ({
-          rowKey: item.storeId.toString(),
-          storeId: item.storeId.toString(),
+          rowKey: item.organizationId.toString(),
+          organizationId: item.organizationId.toString(),
           name: `${item.organizationLegalName} (${item.ordersCount})`,
           storeName:
             item.storeName !== item.organizationLegalName
@@ -176,7 +176,7 @@ export default function OrganizationsTable({
               ordersStates={ordersStates}
               dateRange={dateRange}
               onlyNotInvoiced={onlyNotInvoiced}
-              storeId={record.storeId}
+              organizationId={record.organizationId}
               reloadKey={reloadKey}
             />
           );
@@ -185,7 +185,7 @@ export default function OrganizationsTable({
       rowSelection={{
         type: 'checkbox',
         onChange: (_: React.Key[], selectedRows: OrganizationRow[]) => {
-          setSelectedStoreIds(selectedRows.map(row => row.storeId));
+          setSelectedOrganizationIds(selectedRows.map(row => row.organizationId));
         },
       }}
     />

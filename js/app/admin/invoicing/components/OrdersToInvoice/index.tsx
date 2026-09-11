@@ -13,7 +13,9 @@ import RangePicker from './RangePicker';
 const ordersStates = ['new', 'accepted', 'fulfilled'];
 
 export default () => {
-  const [selectedStoreIds, setSelectedStoreIds] = useState([] as string[]);
+  const [selectedOrganizationIds, setSelectedOrganizationIds] = useState(
+    [] as string[],
+  );
   const [dateRange, setDateRange] = useState(null as Moment[] | null);
   const [onlyNotInvoiced, setOnlyNotInvoiced] = useState(false);
 
@@ -24,7 +26,7 @@ export default () => {
   const { t } = useTranslation();
 
   const params = useMemo(() => {
-    if (selectedStoreIds.length === 0) {
+    if (selectedOrganizationIds.length === 0) {
       return null;
     }
 
@@ -33,7 +35,7 @@ export default () => {
     }
 
     return prepareParams({
-      store: selectedStoreIds,
+      organization: selectedOrganizationIds,
       dateRange: [
         dateRange[0].format('YYYY-MM-DD'),
         dateRange[1].format('YYYY-MM-DD'),
@@ -41,7 +43,7 @@ export default () => {
       state: ordersStates,
       onlyNotInvoiced: onlyNotInvoiced,
     });
-  }, [selectedStoreIds, dateRange, onlyNotInvoiced]);
+  }, [selectedOrganizationIds, dateRange, onlyNotInvoiced]);
 
   return (
     // marginTop: 48px: h5 marginTop (10px) + 38px
@@ -76,7 +78,7 @@ export default () => {
         dateRange={dateRange}
         onlyNotInvoiced={onlyNotInvoiced}
         reloadKey={reloadKey}
-        setSelectedStoreIds={setSelectedStoreIds}
+        setSelectedOrganizationIds={setSelectedOrganizationIds}
       />
       <div className="d-flex justify-content-end" style={{ marginTop: '24px' }}>
         <Button
