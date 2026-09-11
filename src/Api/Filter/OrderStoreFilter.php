@@ -7,16 +7,18 @@ use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\Operation;
 use AppBundle\Entity\Sylius\Order;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\Query\Expr\Join;
-use Doctrine\Persistence\ManagerRegistry;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
-use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
 use Symfony\Component\PropertyInfo\Type;
 
+/**
+ * Filters orders by "organization", i.e. either a Store (on-demand delivery client)
+ * or a restaurant/LocalBusiness (food order client).
+ *
+ * Values are expected in the "store-{id}" or "restaurant-{id}" format, as returned
+ * by the invoice_line_items endpoints. Bare numeric values are also accepted for
+ * backwards-compatibility and are treated as store ids.
+ */
 final class OrderStoreFilter extends AbstractFilter
 {
-    private string $storeIdProperty = 'delivery.store.id';
     private string $storeIdAlias = 'store';
 
     protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, ?Operation $operation = null, array $context = []): void
@@ -26,27 +28,67 @@ final class OrderStoreFilter extends AbstractFilter
         }
 
         // expose alias in the API instead of a path to a nested property
-        if ($this->storeIdAlias === $property) {
-
-            $alias = $queryBuilder->getRootAliases()[0];
-
-            [$alias, $field] = $this->addJoinsForNestedProperty($this->storeIdProperty, $alias, $queryBuilder, $queryNameGenerator, $resourceClass, Join::INNER_JOIN);
-
-            $valueParameter = $queryNameGenerator->generateParameterName($field);
-
-            if (is_array($value)) {
-
-                $queryBuilder
-                    ->andWhere($queryBuilder->expr()->in(sprintf('%s.%s', $alias, $field), sprintf(':%s', $valueParameter)))
-                    ->setParameter($valueParameter, $value);
-
-                return;
-            }
-
-            $queryBuilder
-                ->andWhere(\sprintf('%s.%s = :%s', $alias, $field, $valueParameter))
-                ->setParameter($valueParameter, $value, (string) $this->getDoctrineFieldType($property, $resourceClass));
+        if ($this->storeIdAlias !== $property) {
+            return;
         }
+
+        [$storeIds, $restaurantIds] = $this->splitOrganizationIds(is_array($value) ? $value : [$value]);
+
+        if (0 === count($storeIds) && 0 === count($restaurantIds)) {
+            return;
+        }
+
+        $rootAlias = $queryBuilder->getRootAliases()[0];
+        $conditions = [];
+
+        if (count($storeIds) > 0) {
+            $deliveryAlias = $queryNameGenerator->generateJoinAlias('delivery');
+            $storeAlias = $queryNameGenerator->generateJoinAlias('store');
+            $queryBuilder
+                ->leftJoin(sprintf('%s.delivery', $rootAlias), $deliveryAlias)
+                ->leftJoin(sprintf('%s.store', $deliveryAlias), $storeAlias);
+
+            $storeParameter = $queryNameGenerator->generateParameterName('storeIds');
+            $conditions[] = sprintf('%s.id IN (:%s)', $storeAlias, $storeParameter);
+            $queryBuilder->setParameter($storeParameter, $storeIds);
+        }
+
+        if (count($restaurantIds) > 0) {
+            $vendorAlias = $queryNameGenerator->generateJoinAlias('vendor');
+            $restaurantAlias = $queryNameGenerator->generateJoinAlias('restaurant');
+            $queryBuilder
+                ->leftJoin(sprintf('%s.vendors', $rootAlias), $vendorAlias)
+                ->leftJoin(sprintf('%s.restaurant', $vendorAlias), $restaurantAlias);
+
+            $restaurantParameter = $queryNameGenerator->generateParameterName('restaurantIds');
+            $conditions[] = sprintf('%s.id IN (:%s)', $restaurantAlias, $restaurantParameter);
+            $queryBuilder->setParameter($restaurantParameter, $restaurantIds);
+        }
+
+        $queryBuilder->andWhere($queryBuilder->expr()->orX(...$conditions));
+    }
+
+    /**
+     * @param array $values
+     * @return array{0: int[], 1: int[]}
+     */
+    private function splitOrganizationIds(array $values): array
+    {
+        $storeIds = [];
+        $restaurantIds = [];
+
+        foreach ($values as $value) {
+            if (is_string($value) && str_starts_with($value, 'restaurant-')) {
+                $restaurantIds[] = (int) substr($value, strlen('restaurant-'));
+            } elseif (is_string($value) && str_starts_with($value, 'store-')) {
+                $storeIds[] = (int) substr($value, strlen('store-'));
+            } elseif (is_numeric($value)) {
+                // Backwards-compatibility: bare numeric ids are store ids
+                $storeIds[] = (int) $value;
+            }
+        }
+
+        return [$storeIds, $restaurantIds];
     }
 
     public function getDescription(string $resourceClass): array
@@ -54,13 +96,13 @@ final class OrderStoreFilter extends AbstractFilter
         return [
             'store' => [
                 'property' => $this->storeIdAlias,
-                'type' => Type::BUILTIN_TYPE_INT,
+                'type' => Type::BUILTIN_TYPE_STRING,
                 'required' => false,
                 'is_collection' => false,
             ],
             'store[]'=> [
                 'property' => $this->storeIdAlias,
-                'type' => Type::BUILTIN_TYPE_INT,
+                'type' => Type::BUILTIN_TYPE_STRING,
                 'required' => false,
                 'is_collection' => true,
             ]

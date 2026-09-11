@@ -46,7 +46,7 @@ final class InvoiceLineItemsGroupedByOrganizationProvider implements ProviderInt
             } else {
                 // Fetch all orders first, and then apply the pagination extension
                 $orders = $this->getResultWithPreloadedEntities($qb);
-                $ordersGrouppedByStore = $this->groupByStore($orders);
+                $ordersGrouppedByOrganization = $this->groupByOrganization($orders);
 
                 // Relying on API Platform's pagination extension to get the pagination parameters (offset and page size)
                 $extension->applyToCollection(
@@ -60,14 +60,14 @@ final class InvoiceLineItemsGroupedByOrganizationProvider implements ProviderInt
 
                 $offset = $qb->getFirstResult();
                 $itemsPerPage = $qb->getMaxResults();
-                
-                return new ArrayPaginator($ordersGrouppedByStore, $offset, $itemsPerPage);
+
+                return new ArrayPaginator($ordersGrouppedByOrganization, $offset, $itemsPerPage);
             }
         }
 
         $orders = $this->getResultWithPreloadedEntities($qb);
 
-        return $this->groupByStore($orders);
+        return $this->groupByOrganization($orders);
     }
 
     private function getResultWithPreloadedEntities(QueryBuilder $qb): array
@@ -85,30 +85,40 @@ final class InvoiceLineItemsGroupedByOrganizationProvider implements ProviderInt
         $delivery = $preloader->preload($orders, 'delivery');
         $preloader->preload($delivery, 'store');
 
+        $vendors = $preloader->preload($orders, 'vendors');
+        $preloader->preload($vendors, 'restaurant');
+
         return $orders;
     }
 
-    private function groupByStore($orders)
+    private function groupByOrganization($orders)
     {
-        $ordersByStore = [];
+        $ordersByOrganization = [];
         foreach ($orders as $order) {
-            $storeId = $order->getDelivery()?->getStore()?->getId();
+            $store = $order->getDelivery()?->getStore();
+            $restaurant = $store ? null : $order->getRestaurant();
 
-            //FIXME; currently only On Demand Delivery orders for stores are supported
-            if (null === $storeId) {
+            if ($store) {
+                $organizationId = sprintf('store-%d', $store->getId());
+            } elseif ($restaurant) {
+                $organizationId = sprintf('restaurant-%d', $restaurant->getId());
+            } else {
+                //FIXME; currently only orders linked to a Store or a restaurant are supported
                 continue;
             }
 
-            if (!isset($ordersByStore[$storeId])) {
-                $ordersByStore[$storeId] = [];
+            if (!isset($ordersByOrganization[$organizationId])) {
+                $ordersByOrganization[$organizationId] = [];
             }
-            $ordersByStore[$storeId][] = $order;
+            $ordersByOrganization[$organizationId][] = $order;
         }
 
-        $activityByStore = [];
+        $activityByOrganization = [];
 
-        foreach ($ordersByStore as $orders) {
-            $store = $orders[0]->getDelivery()->getStore();
+        foreach ($ordersByOrganization as $organizationId => $orders) {
+            $store = $orders[0]->getDelivery()?->getStore();
+            $organization = $store ?? $orders[0]->getRestaurant();
+
             $total = array_reduce($orders, function ($carry, $order) {
                 return $carry + $order->getTotal();
             }, 0);
@@ -117,10 +127,10 @@ final class InvoiceLineItemsGroupedByOrganizationProvider implements ProviderInt
             }, 0);
             $subTotal = $total - $tax;
 
-            $activityByStore[] = new InvoiceLineItemGroupedByOrganization(
-                $store->getId(),
-                $store->getLegalName() ?? $store->getName(),
-                $store->getName(),
+            $activityByOrganization[] = new InvoiceLineItemGroupedByOrganization(
+                $organizationId,
+                $organization->getLegalName() ?? $organization->getName(),
+                $organization->getName(),
                 count($orders),
                 $subTotal,
                 $tax,
@@ -128,10 +138,10 @@ final class InvoiceLineItemsGroupedByOrganizationProvider implements ProviderInt
             );
         }
 
-        usort($activityByStore, function ($a, $b) {
+        usort($activityByOrganization, function ($a, $b) {
             return strcmp($a->organizationLegalName, $b->organizationLegalName);
         });
 
-        return $activityByStore;
+        return $activityByOrganization;
     }
 }

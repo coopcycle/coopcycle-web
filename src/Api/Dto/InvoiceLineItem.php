@@ -30,8 +30,10 @@ class InvoiceLineItem
 
     public readonly \DateTime $invoiceDate;
 
+    // Identifier of the organization to invoice: either a Store ("store-{id}")
+    // or a restaurant/LocalBusiness ("restaurant-{id}")
     #[Groups(["default_invoice_line_item"])]
-    public readonly ?int $storeId;
+    public readonly ?string $storeId;
 
     public readonly ?string $organizationLegalName;
 
@@ -67,7 +69,7 @@ class InvoiceLineItem
         string $id,
         string $invoiceId,
         \DateTime $invoiceDate,
-        ?int $storeId,
+        ?string $storeId,
         ?string $organizationLegalName,
         string $accountCode,
         string $product,
