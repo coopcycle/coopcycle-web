@@ -33,7 +33,7 @@ class InvoiceLineItem
     // IRI of the organization to invoice: either a Store ("/api/stores/{id}")
     // or a restaurant/LocalBusiness ("/api/restaurants/{id}")
     #[Groups(["default_invoice_line_item"])]
-    public readonly ?string $storeId;
+    public readonly ?string $organizationId;
 
     public readonly ?string $organizationLegalName;
 
@@ -69,7 +69,7 @@ class InvoiceLineItem
         string $id,
         string $invoiceId,
         \DateTime $invoiceDate,
-        ?string $storeId,
+        ?string $organizationId,
         ?string $organizationLegalName,
         string $accountCode,
         string $product,
@@ -86,7 +86,7 @@ class InvoiceLineItem
         $this->id = $id;
         $this->invoiceId = $invoiceId;
         $this->invoiceDate = $invoiceDate;
-        $this->storeId = $storeId;
+        $this->organizationId = $organizationId;
         $this->organizationLegalName = $organizationLegalName;
         $this->accountCode = $accountCode;
         $this->product = $product;

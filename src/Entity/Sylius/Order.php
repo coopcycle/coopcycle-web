@@ -47,7 +47,7 @@ use AppBundle\Api\Dto\LoopeatFormats;
 use AppBundle\Api\Dto\LoopeatReturns;
 use AppBundle\Api\Dto\EdenredCredentialsInput;
 use AppBundle\Api\Filter\OrderDateFilter;
-use AppBundle\Api\Filter\OrderStoreFilter;
+use AppBundle\Api\Filter\OrderOrganizationFilter;
 use AppBundle\Api\State\CartItemProcessor;
 use AppBundle\Api\State\ConfigurePaymentProcessor;
 use AppBundle\Api\State\CreateCreditNoteProcessor;
@@ -494,7 +494,7 @@ use Webmozart\Assert\Assert as WMAssert;
 #[ApiFilter(filterClass: OrderDateFilter::class, properties: ['date' => 'exact'])]
 #[ApiFilter(filterClass: SearchFilter::class, properties: ['state' => 'exact'])]
 #[ApiFilter(filterClass: ExistsFilter::class, properties: ['exports'])]
-#[ApiFilter(filterClass: OrderStoreFilter::class)]
+#[ApiFilter(filterClass: OrderOrganizationFilter::class)]
 class Order extends BaseOrder implements OrderInterface
 {
     use VytalCodeAwareTrait;
