@@ -166,6 +166,9 @@ export type InvoiceLineItem = {
   organizationId: string;
   orderId: string;
   orderNumber: string;
+  // Order state (new/accepted/fulfilled/...), distinct from whether it has
+  // been exported/invoiced yet
+  orderState: string;
   date: string;
   description: string;
   subTotal: number;

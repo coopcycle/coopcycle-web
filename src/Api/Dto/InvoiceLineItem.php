@@ -50,6 +50,11 @@ class InvoiceLineItem
     #[Groups(["default_invoice_line_item"])]
     public readonly string $orderNumber;
 
+    // Order state (new/accepted/fulfilled/...), distinct from whether it has
+    // been exported/invoiced yet
+    #[Groups(["default_invoice_line_item"])]
+    public readonly string $orderState;
+
     #[Groups(["default_invoice_line_item"])]
     public readonly string $description;
 
@@ -82,6 +87,7 @@ class InvoiceLineItem
         string $product,
         int $orderId,
         string $orderNumber,
+        string $orderState,
         \DateTime $date,
         string $description,
         int $subTotal,
@@ -100,6 +106,7 @@ class InvoiceLineItem
         $this->product = $product;
         $this->orderId = $orderId;
         $this->orderNumber = $orderNumber;
+        $this->orderState = $orderState;
         $this->date = $date;
         $this->description = $description;
         $this->subTotal = $subTotal;
