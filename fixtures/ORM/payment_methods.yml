@@ -9,6 +9,21 @@ Sylius\Component\Payment\Model\PaymentMethod:
     currentLocale: fr
     name: Edenred
     enabled: true
+  payment_method_conecs:
+    code: CONECS
+    currentLocale: fr
+    name: Conecs
+    enabled: true
+  payment_method_swile:
+    code: SWILE
+    currentLocale: fr
+    name: Swile
+    enabled: true
+  payment_method_restoflash:
+    code: RESTOFLASH
+    currentLocale: fr
+    name: Restoflash
+    enabled: true
   payment_method_cash_on_delivery:
     code: CASH_ON_DELIVERY
     currentLocale: fr

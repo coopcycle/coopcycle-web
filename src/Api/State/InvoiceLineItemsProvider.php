@@ -39,6 +39,7 @@ final class InvoiceLineItemsProvider implements ProviderInterface
         private readonly SettingsManager $settingsManager,
         private readonly TranslatorInterface $translator,
         private readonly PriceFormatter $priceFormatter,
+        private readonly InvoiceLineItemAmountCalculator $amountCalculator,
         private readonly string $locale,
         private readonly bool $packageDeliveryUiPriceBreakdownEnabled,
         private readonly iterable $collectionExtensions,
@@ -89,11 +90,30 @@ final class InvoiceLineItemsProvider implements ProviderInterface
     {
         $orders = iterator_to_array($data);
 
-        // Mark orders as exported
-        if (
+        // Optimization: to avoid extra queries preload one-to-many relations that will be used later
+        $this->preloadEntities($orders);
+
+        $onDemandDeliveryProduct = $this->productRepository->findOnDemandDeliveryProduct();
+
+        $invoiceLineItems = array_map(fn ($o) => $this->convertToInvoiceLineItem($o, $onDemandDeliveryProduct), $orders);
+
+        $isExportOperation =
             '_api_/invoice_line_items/export_get_collection' === $operationName
-            || '_api_/invoice_line_items/export/odoo_get_collection' === $operationName
-        ) {
+            || '_api_/invoice_line_items/export/odoo_get_collection' === $operationName;
+
+        if ($isExportOperation) {
+
+            // Orders that don't actually need invoicing (e.g. restaurant orders
+            // already settled automatically via Stripe Connect) shouldn't clutter
+            // the export, nor get wrongly marked as "already exported"
+            $exportedOrders = [];
+            $exportedLineItems = [];
+            foreach ($invoiceLineItems as $i => $lineItem) {
+                if ($lineItem->needsInvoicing) {
+                    $exportedOrders[] = $orders[$i];
+                    $exportedLineItems[] = $lineItem;
+                }
+            }
 
             $request = $this->requestStack->getCurrentRequest();
             $requestId = $request->headers->get('X-Request-ID');
@@ -102,18 +122,13 @@ final class InvoiceLineItemsProvider implements ProviderInterface
                 $this->security->getUser(),
                 $requestId,
             );
-            $exportCommand->addOrders($orders);
+            $exportCommand->addOrders($exportedOrders);
 
             $this->entityManager->persist($exportCommand);
             $this->entityManager->flush();
+
+            return $exportedLineItems;
         }
-
-        // Optimization: to avoid extra queries preload one-to-many relations that will be used later
-        $this->preloadEntities($orders);
-
-        $onDemandDeliveryProduct = $this->productRepository->findOnDemandDeliveryProduct();
-
-        $invoiceLineItems = array_map(fn ($o) => $this->convertToInvoiceLineItem($o, $onDemandDeliveryProduct), $orders);
 
         if ($data instanceof PaginatorInterface) {
             return new TraversablePaginator(
@@ -141,6 +156,10 @@ final class InvoiceLineItemsProvider implements ProviderInterface
         $preloader->preload($delivery, 'store');
         $taskCollectionItems = $preloader->preload($delivery, 'items');
         $preloader->preload($taskCollectionItems, 'task');
+
+        // Needed by InvoiceLineItemAmountCalculator to detect meal voucher payments
+        $payments = $preloader->preload($orders, 'payments');
+        $preloader->preload($payments, 'method');
     }
 
     private function convertToInvoiceLineItem(Order $order, ProductInterface $onDemandDeliveryProduct): InvoiceLineItem
@@ -246,6 +265,8 @@ final class InvoiceLineItemsProvider implements ProviderInterface
 
         $exports = $order->getExports()->map(fn($export) => $export->getExportCommand())->toArray();
 
+        $amounts = $this->amountCalculator->compute($order, $restaurant);
+
         return new InvoiceLineItem(
             sprintf('%s-%d', $invoiceId, $order->getId()),
             $invoiceId,
@@ -258,10 +279,11 @@ final class InvoiceLineItemsProvider implements ProviderInterface
             $order->getNumber(),
             $orderDate,
             $description,
-            $order->getTotal() - $order->getTaxTotal(),
-            $order->getTaxTotal(),
-            $order->getTotal(),
-            $exports
+            $amounts->subTotal,
+            $amounts->tax,
+            $amounts->total,
+            $exports,
+            $amounts->needsInvoicing
         );
     }
 

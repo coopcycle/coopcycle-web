@@ -65,6 +65,13 @@ class InvoiceLineItem
     #[Groups(["default_invoice_line_item"])]
     public readonly array $exports;
 
+    // Whether CoopCycle still needs to invoice this order's organization for it.
+    // Always true for Store (on-demand delivery) orders. For restaurant orders,
+    // true only when paid (fully or partially) by meal voucher — card payments
+    // are already automatically settled via Stripe Connect.
+    #[Groups(["default_invoice_line_item"])]
+    public readonly bool $needsInvoicing;
+
     public function __construct(
         string $id,
         string $invoiceId,
@@ -81,6 +88,7 @@ class InvoiceLineItem
         int $tax,
         int $total,
         array $exports,
+        bool $needsInvoicing,
     )
     {
         $this->id = $id;
@@ -98,6 +106,7 @@ class InvoiceLineItem
         $this->tax = $tax;
         $this->total = $total;
         $this->exports = $exports;
+        $this->needsInvoicing = $needsInvoicing;
     }
 
     // The only reason to have separate methods

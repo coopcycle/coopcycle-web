@@ -2,16 +2,20 @@ import { baseQueryWithReauth } from '../../../api/baseQuery';
 import { RootState } from './store';
 import { ThunkAction, UnknownAction } from '@reduxjs/toolkit';
 
+export type SettlementFilter = 'needs_invoicing' | 'settled' | 'all';
+
 export function prepareParams({
   organization,
   dateRange,
   state,
   onlyNotInvoiced,
+  settlement,
 }: {
   organization?: string[];
   dateRange: string[];
   state?: string[];
   onlyNotInvoiced: boolean;
+  settlement?: SettlementFilter;
 }): string[] {
   let params = [];
 
@@ -32,6 +36,10 @@ export function prepareParams({
 
   if (onlyNotInvoiced) {
     params.push('exists[exports]=false');
+  }
+
+  if (settlement && settlement !== 'all') {
+    params.push(`settlement=${settlement}`);
   }
 
   return params;

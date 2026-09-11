@@ -1,11 +1,11 @@
 import { useMemo, useState } from 'react';
 import Modal from 'react-modal';
 import { useTranslation } from 'react-i18next';
-import { Checkbox } from 'antd';
+import { Checkbox, Radio } from 'antd';
 import { Moment } from 'moment';
 
 import Button from '../../../../components/core/Button';
-import { prepareParams } from '../../redux/actions';
+import { prepareParams, SettlementFilter } from '../../redux/actions';
 import ExportModalContent from '../ExportModalContent';
 import OrganizationsTable from '../OrganizationsTable';
 import RangePicker from './RangePicker';
@@ -18,6 +18,8 @@ export default () => {
   );
   const [dateRange, setDateRange] = useState(null as Moment[] | null);
   const [onlyNotInvoiced, setOnlyNotInvoiced] = useState(false);
+  const [settlement, setSettlement] =
+    useState<SettlementFilter>('needs_invoicing');
 
   const [reloadKey, setReloadKey] = useState(0);
 
@@ -42,8 +44,9 @@ export default () => {
       ],
       state: ordersStates,
       onlyNotInvoiced: onlyNotInvoiced,
+      settlement: settlement,
     });
-  }, [selectedOrganizationIds, dateRange, onlyNotInvoiced]);
+  }, [selectedOrganizationIds, dateRange, onlyNotInvoiced, settlement]);
 
   return (
     // marginTop: 48px: h5 marginTop (10px) + 38px
@@ -59,6 +62,23 @@ export default () => {
             onChange={() => setOnlyNotInvoiced(!onlyNotInvoiced)}>
             {t('ADMIN_ORDERS_TO_INVOICE_FILTER_STATUS_NOT_INVOICED')}
           </Checkbox>
+        </div>
+        <div className="d-flex flex-column">
+          {t('ADMIN_ORDERS_TO_INVOICE_FILTER_SETTLEMENT')}
+          <Radio.Group
+            value={settlement}
+            onChange={e => setSettlement(e.target.value)}
+            optionType="button">
+            <Radio.Button value="needs_invoicing">
+              {t('ADMIN_ORDERS_TO_INVOICE_SETTLEMENT_NEEDS_INVOICING')}
+            </Radio.Button>
+            <Radio.Button value="settled">
+              {t('ADMIN_ORDERS_TO_INVOICE_SETTLEMENT_SETTLED')}
+            </Radio.Button>
+            <Radio.Button value="all">
+              {t('ADMIN_ORDERS_TO_INVOICE_SETTLEMENT_ALL')}
+            </Radio.Button>
+          </Radio.Group>
         </div>
         <div className="d-flex flex-column">
           {/*invisible text is used to align the Refresh button*/}
@@ -77,6 +97,7 @@ export default () => {
         ordersStates={ordersStates}
         dateRange={dateRange}
         onlyNotInvoiced={onlyNotInvoiced}
+        settlement={settlement}
         reloadKey={reloadKey}
         setSelectedOrganizationIds={setSelectedOrganizationIds}
       />
