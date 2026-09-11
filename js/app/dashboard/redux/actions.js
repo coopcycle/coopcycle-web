@@ -1841,7 +1841,7 @@ export function sendToWarehouse(tasks, warehouse) {
 
     // The backend resolves the linked pickup/dropoff pair from whatever tasks we send,
     // so a single selected task (a pickup or a dropoff) is enough.
-    createClient(dispatch).request({
+    return createClient(dispatch).request({
       method: 'post',
       url: `${warehouse['@id']}/relay`,
       data: {

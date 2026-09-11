@@ -9,7 +9,20 @@ import { selectAllWarehouses } from '../../../shared/src/logistics/redux/selecto
 
 const SendToWarehouseModalContent = ({ selectedTasks, warehouses, onSubmit }) => {
   const [warehouse, setWarehouse] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
   const { t } = useTranslation()
+
+  const handleFinish = async () => {
+    if (!warehouse || isLoading) {
+      return
+    }
+    setIsLoading(true)
+    try {
+      await onSubmit(selectedTasks, warehouse)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
     <div className="px-5 pt-5">
@@ -23,7 +36,7 @@ const SendToWarehouseModalContent = ({ selectedTasks, warehouses, onSubmit }) =>
         name="send-to-warehouse"
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
-        onFinish={ () => warehouse && onSubmit(selectedTasks, warehouse) }
+        onFinish={ handleFinish }
       >
         <Form.Item
           label={ t('ADMIN_DASHBOARD_CHOOSE_WAREHOUSE_LABEL') }
@@ -42,7 +55,7 @@ const SendToWarehouseModalContent = ({ selectedTasks, warehouses, onSubmit }) =>
           </Select>
         </Form.Item>
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" htmlType="submit" loading={ isLoading } disabled={ isLoading }>
             { t('ADMIN_DASHBOARD_TASK_FORM_SAVE') }
           </Button>
         </Form.Item>
