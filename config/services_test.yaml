@@ -44,6 +44,13 @@ services:
 
     Symfony\Contracts\HttpClient\HttpClientInterface $urbantzClient: '@urbantz_client_mock'
 
+    # Push notifications should never actually be sent in the test environment
+    # (no FIREBASE_CREDENTIALS is configured, and it would flood the logs with
+    # Messenger retry errors otherwise; see also the "the async messages are
+    # consumed" Behat step, which runs the real PushNotificationHandler)
+    AppBundle\Service\RemotePushNotificationManager:
+        class: Tests\Behat\Double\NullRemotePushNotificationManager
+
     AppBundle\CubeJs\TokenFactory:
         arguments:
           $databaseName: '%database_name%_test'
