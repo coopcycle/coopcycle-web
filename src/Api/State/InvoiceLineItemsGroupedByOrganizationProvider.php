@@ -26,7 +26,12 @@ final class InvoiceLineItemsGroupedByOrganizationProvider implements ProviderInt
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
         $resourceClass = $operation->getClass();
-        $qb = $this->entityManager->getRepository(Order::class)->createOptimizedQueryBuilder('o');
+        $qb = $this->entityManager->getRepository(Order::class)->createOptimizedQueryBuilder('o')
+            // OrderVendor has a composite identifier, EntityPreloader can't preload it;
+            // eager-load it via the query itself instead
+            ->addSelect('v', 'vr')
+            ->leftJoin('o.vendors', 'v')
+            ->leftJoin('v.restaurant', 'vr');
 
         $queryNameGenerator = new QueryNameGenerator();
         foreach ($this->collectionExtensions as $extension) {
@@ -84,9 +89,6 @@ final class InvoiceLineItemsGroupedByOrganizationProvider implements ProviderInt
 
         $delivery = $preloader->preload($orders, 'delivery');
         $preloader->preload($delivery, 'store');
-
-        $vendors = $preloader->preload($orders, 'vendors');
-        $preloader->preload($vendors, 'restaurant');
 
         return $orders;
     }
