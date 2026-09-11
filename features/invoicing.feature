@@ -34,12 +34,12 @@ Feature: Invoicing
           },
           "@array_previous_repeat@"
         ],
-        "hydra:totalItems":1000,
+        "hydra:totalItems":100,
         "hydra:view":{
           "@id":"/api/invoice_line_items?page=1",
           "@type":"hydra:PartialCollectionView",
           "hydra:first":"/api/invoice_line_items?page=1",
-          "hydra:last":"/api/invoice_line_items?page=34",
+          "hydra:last":"/api/invoice_line_items?page=4",
           "hydra:next":"/api/invoice_line_items?page=2"
         },
         "hydra:search":{
@@ -89,7 +89,7 @@ Feature: Invoicing
       """
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "admin" sends a "GET" request to "/api/invoice_line_items?page=34"
+    And the user "admin" sends a "GET" request to "/api/invoice_line_items?page=4"
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
@@ -99,13 +99,13 @@ Feature: Invoicing
         "@id":"/api/invoice_line_items",
         "@type":"hydra:Collection",
         "hydra:member":"@array@.count(10)",
-        "hydra:totalItems":1000,
+        "hydra:totalItems":100,
         "hydra:view":{
-          "@id":"/api/invoice_line_items?page=34",
+          "@id":"/api/invoice_line_items?page=4",
           "@type":"hydra:PartialCollectionView",
           "hydra:first":"/api/invoice_line_items?page=1",
-          "hydra:last":"/api/invoice_line_items?page=34",
-          "hydra:previous":"/api/invoice_line_items?page=33"
+          "hydra:last":"/api/invoice_line_items?page=4",
+          "hydra:previous":"/api/invoice_line_items?page=3"
         },
         "hydra:search":{
           "@*@":"@*@"
@@ -147,12 +147,12 @@ Feature: Invoicing
           },
           "@array_previous_repeat@"
         ],
-        "hydra:totalItems":250,
+        "hydra:totalItems":40,
         "hydra:view":{
           "@id":"/api/invoice_line_items?organization=1\u0026page=1",
           "@type":"hydra:PartialCollectionView",
           "hydra:first":"/api/invoice_line_items?organization=1\u0026page=1",
-          "hydra:last":"/api/invoice_line_items?organization=1\u0026page=9",
+          "hydra:last":"/api/invoice_line_items?organization=1\u0026page=2",
           "hydra:next":"/api/invoice_line_items?organization=1\u0026page=2"
         },
         "hydra:search":{
@@ -210,7 +210,7 @@ Feature: Invoicing
     Given the user "admin" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "admin" sends a "GET" request to "/api/invoice_line_items?organization[]=1&organization[]=35&itemsPerPage=100"
+    And the user "admin" sends a "GET" request to "/api/invoice_line_items?organization[]=1&organization[]=5&itemsPerPage=100"
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
@@ -237,11 +237,8 @@ Feature: Invoicing
         ],
         "hydra:totalItems":@integer@,
         "hydra:view":{
-          "@id": "/api/invoice_line_items?itemsPerPage=100&organization%5B%5D=1&organization%5B%5D=35&page=1",
-          "@type": "hydra:PartialCollectionView",
-          "hydra:first": "/api/invoice_line_items?itemsPerPage=100&organization%5B%5D=1&organization%5B%5D=35&page=1",
-          "hydra:last": "/api/invoice_line_items?itemsPerPage=100&organization%5B%5D=1&organization%5B%5D=35&page=3",
-          "hydra:next": "/api/invoice_line_items?itemsPerPage=100&organization%5B%5D=1&organization%5B%5D=35&page=2"
+          "@id": "/api/invoice_line_items?itemsPerPage=100&organization%5B%5D=1&organization%5B%5D=5",
+          "@type": "hydra:PartialCollectionView"
         },
         "hydra:search":{
           "@type":"hydra:IriTemplate",
@@ -321,14 +318,7 @@ Feature: Invoicing
           },
           "@array_previous_repeat@"
         ],
-        "hydra:totalItems":50,
-        "hydra:view":{
-          "@id":"/api/invoice_line_items/grouped_by_organization?page=1",
-          "@type":"hydra:PartialCollectionView",
-          "hydra:first":"/api/invoice_line_items/grouped_by_organization?page=1",
-          "hydra:last":"/api/invoice_line_items/grouped_by_organization?page=2",
-          "hydra:next":"/api/invoice_line_items/grouped_by_organization?page=2"
-        },
+        "hydra:totalItems":8,
         "hydra:search":{
           "@type":"hydra:IriTemplate",
           "hydra:template":"/api/invoice_line_items/grouped_by_organization{?date,state,state[],exists[exports],organization,organization[]}",

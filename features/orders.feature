@@ -1678,7 +1678,7 @@ Feature: Orders
         "@context":"/api/contexts/Order",
         "@id":"/api/orders",
         "@type":"hydra:Collection",
-        "hydra:totalItems":1000,
+        "hydra:totalItems":100,
         "hydra:member":[
           {
             "@id": @string@,
@@ -1702,7 +1702,7 @@ Feature: Orders
           "@id":"/api/orders?page=1",
           "@type":"hydra:PartialCollectionView",
           "hydra:first":"/api/orders?page=1",
-          "hydra:last":"/api/orders?page=34",
+          "hydra:last":"/api/orders?page=4",
           "hydra:next":"/api/orders?page=2"
         },
         "hydra:search":{
