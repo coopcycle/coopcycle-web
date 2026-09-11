@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Modal from 'react-modal';
 import { useTranslation } from 'react-i18next';
 import { Checkbox, Radio } from 'antd';
@@ -6,6 +6,7 @@ import { Moment } from 'moment';
 
 import Button from '../../../../components/core/Button';
 import { prepareParams, SettlementFilter } from '../../redux/actions';
+import { dateRangeFromParams, syncDateRangeToUrl } from '../../utils/dateRangeUrl';
 import ExportModalContent from '../ExportModalContent';
 import OrganizationsTable from '../OrganizationsTable';
 import RangePicker from './RangePicker';
@@ -16,10 +17,18 @@ export default () => {
   const [selectedOrganizationIds, setSelectedOrganizationIds] = useState(
     [] as string[],
   );
-  const [dateRange, setDateRange] = useState(null as Moment[] | null);
+  const [dateRange, setDateRange] = useState<Moment[] | null>(() =>
+    dateRangeFromParams(window.location.search),
+  );
   const [onlyNotInvoiced, setOnlyNotInvoiced] = useState(false);
   const [settlement, setSettlement] =
     useState<SettlementFilter>('needs_invoicing');
+
+  useEffect(() => {
+    if (dateRange) {
+      syncDateRangeToUrl(dateRange);
+    }
+  }, [dateRange]);
 
   const [reloadKey, setReloadKey] = useState(0);
 
@@ -54,7 +63,10 @@ export default () => {
       <h5>{t('ADMIN_ORDERS_TO_INVOICE_TITLE')}</h5>
       <div className="d-flex" style={{ marginTop: '12px', gap: '24px' }}>
         {t('ADMIN_DASHBOARD_NAV_FILTERS')}:
-        <RangePicker setDateRange={setDateRange} />
+        <RangePicker
+          initialDateRange={dateRange}
+          setDateRange={setDateRange}
+        />
         <div className="d-flex flex-column">
           {t('ADMIN_ORDERS_TO_INVOICE_FILTER_STATUS')}
           <Checkbox
