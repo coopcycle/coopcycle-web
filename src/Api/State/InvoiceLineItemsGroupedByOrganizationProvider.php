@@ -51,7 +51,7 @@ final class InvoiceLineItemsGroupedByOrganizationProvider implements ProviderInt
             } else {
                 // Fetch all orders first, and then apply the pagination extension
                 $orders = $this->getResultWithPreloadedEntities($qb);
-                $ordersGrouppedByOrganization = $this->groupByOrganization($orders);
+                $ordersGroupedByOrganization = $this->groupByOrganization($orders);
 
                 // Relying on API Platform's pagination extension to get the pagination parameters (offset and page size)
                 $extension->applyToCollection(
@@ -66,7 +66,7 @@ final class InvoiceLineItemsGroupedByOrganizationProvider implements ProviderInt
                 $offset = $qb->getFirstResult();
                 $itemsPerPage = $qb->getMaxResults();
 
-                return new ArrayPaginator($ordersGrouppedByOrganization, $offset, $itemsPerPage);
+                return new ArrayPaginator($ordersGroupedByOrganization, $offset, $itemsPerPage);
             }
         }
 
