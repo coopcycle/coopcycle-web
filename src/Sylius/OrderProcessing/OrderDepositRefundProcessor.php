@@ -95,6 +95,9 @@ final class OrderDepositRefundProcessor implements OrderProcessorInterface
                 foreach ($reusablePackagings as $reusablePackaging) {
 
                     $pkg = $reusablePackaging->getReusablePackaging();
+                    if (is_null($pkg)) {
+                        continue;
+                    }
                     $units = $this->getUnits($order, $item, $reusablePackaging, $pkg);
 
                     $label = $pkg->getAdjustmentLabel($this->translator, $units);
