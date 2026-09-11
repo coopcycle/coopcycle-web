@@ -47,7 +47,7 @@
           </a>
         </li>
         {% endif %}
-        {% if is_granted('ROLE_ADMIN') and store.id is not empty %}
+        {% if (is_granted('ROLE_ADMIN') or is_granted('ROLE_STORE')) and store.id is not empty %}
         <li role="presentation">
           <a href="{% if store.id is not empty %}{{ path(store_route, { id: store.id }) }}{% endif %}#sepa" {% if is_main_screen %}role="tab" data-toggle="tab" aria-controls="sepa"{% endif %}>
             {{ 'store.form.section.sepa'|trans }}

@@ -4,28 +4,3 @@
 {% else %}
   {% include "restaurant/form/_partials/contract_readonly.html.twig" with { restaurant: restaurant } %}
 {% endif %}
-
-{% if is_granted('ROLE_ADMIN') and restaurant.id is not null %}
-<hr>
-
-<h3>{{ 'store.form.section.sepa'|trans }}</h3>
-
-<div class="form-group">
-  <label>{{ 'store.sepa.mandate_status.label'|trans }}</label>
-  <p>
-    {% set mandate_status = restaurant.sepaMandateStatus ?? 'none' %}
-    <span class="label label-{{ mandate_status == 'active' ? 'success' : (mandate_status == 'failed' ? 'danger' : 'default') }}">
-      {{ ('store.sepa.mandate_status.' ~ mandate_status)|trans }}
-    </span>
-  </p>
-  <span class="help-block">{{ 'store.sepa.mandate_status.help'|trans }}</span>
-</div>
-
-<div class="form-group" data-widget="sepa-setup">
-  <button type="button" class="btn btn-default" data-role="sepa-setup-trigger"
-    data-endpoint="{{ path('admin_restaurant_sepa_setup', { id: restaurant.id }) }}">
-    {{ 'store.sepa.send_setup_link'|trans }}
-  </button>
-  <span class="help-block">{{ 'store.sepa.send_setup_link.help'|trans }}</span>
-</div>
-{% endif %}

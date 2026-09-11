@@ -1733,13 +1733,20 @@ form.store.cyke_time_slot.invalid: 'This value should match the schema.org openi
 store.form.section.cyke: Cyke
 store.form.section.sepa: SEPA Direct Debit
 store.sepa.mandate_status.label: Mandate status
-store.sepa.mandate_status.help: 'Once the store has completed the setup link, they can be charged automatically via SEPA Direct Debit from the invoicing page.'
+store.sepa.mandate_status.help: 'Once set up, this can be charged automatically via SEPA Direct Debit from the invoicing page.'
 store.sepa.mandate_status.none: 'Not set up'
-store.sepa.mandate_status.pending: 'Pending (waiting for the store to complete setup)'
+store.sepa.mandate_status.pending: 'Pending (waiting for setup to be completed)'
 store.sepa.mandate_status.active: Active
 store.sepa.mandate_status.failed: 'Failed / cancelled'
 store.sepa.send_setup_link: Send SEPA setup link
-store.sepa.send_setup_link.help: 'Opens a Stripe-hosted page where the store can enter their IBAN and accept the SEPA mandate themselves.'
+store.sepa.send_setup_link.help: 'Opens a Stripe-hosted page where the IBAN can be entered and the SEPA mandate accepted. Copy the link, or send it by email.'
+store.sepa.copy_link: Copy link
+store.sepa.send_by_email: Send by email
+store.sepa.recipient_email.label: Recipient
+store.sepa.recipient_email.manual: 'Enter an email address...'
+store.sepa.recipient_email.manual_label: Email address
+store.sepa.setup_now: Set up SEPA Direct Debit
+store.sepa.setup_now.help: 'Enter your IBAN and accept the SEPA mandate on a Stripe-hosted page, so we can charge you automatically for what you owe instead of you having to pay invoices manually.'
 form.payment.edenred.refund_amount.help: Edenred does not support partial refunds.
 restaurant.form.use_paygreen.label: Use Paygreen for this shop
 restaurant.meal_vouchers_transactions.emitter: Emitter

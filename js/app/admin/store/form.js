@@ -10,6 +10,7 @@ import TagsSelect from '../../components/TagsSelect'
 import { addressMapper } from '../../widgets/addressForm'
 import i18n from '../../i18n'
 import DeliveryZonePicker from '../../components/DeliveryZonePicker'
+import initSepaSetupWidgets from '../../widgets/sepaSetup'
 
 import '@uppy/core/css/style.min.css';
 import '@uppy/dashboard/css/style.min.css';
@@ -296,29 +297,7 @@ if (document.querySelector('[data-clipboard-target]')) {
   })
 }
 
-const sepaSetupWidget = document.querySelector('[data-widget="sepa-setup"]')
-
-if (sepaSetupWidget) {
-  const endpoint = sepaSetupWidget.dataset.endpoint
-  const trigger = sepaSetupWidget.querySelector('[data-role="sepa-setup-trigger"]')
-
-  trigger.addEventListener('click', () => {
-    trigger.setAttribute('disabled', 'disabled')
-
-    fetch(endpoint, {
-      method: 'POST',
-      credentials: 'same-origin',
-    })
-      .then(res => res.ok ? res.json() : Promise.reject(res))
-      .then(({ url }) => {
-        window.location.href = url
-      })
-      .catch(() => {
-        trigger.removeAttribute('disabled')
-        window.alert(i18n.t('SOMETHING_WENT_WRONG'))
-      })
-  })
-}
+initSepaSetupWidgets()
 
 // Delete confirmation
 $('#store_delete').on('click', e => {

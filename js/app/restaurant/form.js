@@ -15,6 +15,7 @@ import i18n from '../i18n'
 import DropzoneWidget from '../widgets/Dropzone'
 import AddressAutosuggestFormGroup from '../widgets/AddressAutosuggestFormGroup'
 import DeliveryZonePicker from '../components/DeliveryZonePicker'
+import initSepaSetupWidgets from '../widgets/sepaSetup'
 
 import 'prismjs/themes/prism.css'
 import 'prismjs/plugins/toolbar/prism-toolbar.css'
@@ -417,21 +418,4 @@ if (addDeliveryPerimeterBtn) {
   })
 }
 
-document.querySelectorAll('[data-role="sepa-setup-trigger"]').forEach(trigger => {
-  trigger.addEventListener('click', () => {
-    trigger.setAttribute('disabled', 'disabled')
-
-    fetch(trigger.dataset.endpoint, {
-      method: 'POST',
-      credentials: 'same-origin',
-    })
-      .then(res => res.ok ? res.json() : Promise.reject(res))
-      .then(({ url }) => {
-        window.location.href = url
-      })
-      .catch(() => {
-        trigger.removeAttribute('disabled')
-        window.alert(i18n.t('SOMETHING_WENT_WRONG'))
-      })
-  })
-})
+initSepaSetupWidgets()

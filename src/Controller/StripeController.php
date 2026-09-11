@@ -159,10 +159,16 @@ class StripeController extends AbstractController
         return $this->redirect($redirect);
     }
 
-    #[Route(path: '/admin/stores/{id}/sepa/setup', name: 'admin_store_sepa_setup', methods: ['POST'])]
+    /**
+     * Under /dashboard rather than /admin, since a store/restaurant owner
+     * (ROLE_STORE/ROLE_RESTAURANT) must be able to set up their own SEPA
+     * mandate directly - not just an admin. Access is still enforced per
+     * object below, via the same 'edit' voter used by the store/restaurant
+     * edit forms themselves.
+     */
+    #[Route(path: '/dashboard/stores/{id}/sepa/setup', name: 'dashboard_store_sepa_setup', methods: ['POST'])]
     public function storeSepaSetupAction(
         int $id,
-        Request $request,
         StripeManager $stripeManager
     ) {
         $store = $this->entityManager->getRepository(Store::class)->find($id);
@@ -171,14 +177,14 @@ class StripeController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        // Built as a raw path rather than generateUrl(), since the admin
-        // store edit page is a client-side (React) route, not a Symfony one.
-        $storeAdminUrl = sprintf('%s/admin/stores/%d', $request->getSchemeAndHttpHost(), $store->getId());
+        $this->denyAccessUnlessGranted('edit', $store);
 
-        return $this->sepaSetupAction($store, $storeAdminUrl, $stripeManager);
+        $session = $this->createSepaSetupSession($store, $this->sepaSetupRedirectUrl('dashboard_store', $store), $stripeManager);
+
+        return new JsonResponse(['url' => $session->url]);
     }
 
-    #[Route(path: '/admin/restaurants/{id}/sepa/setup', name: 'admin_restaurant_sepa_setup', methods: ['POST'])]
+    #[Route(path: '/dashboard/restaurants/{id}/sepa/setup', name: 'dashboard_restaurant_sepa_setup', methods: ['POST'])]
     public function restaurantSepaSetupAction(
         int $id,
         StripeManager $stripeManager
@@ -189,15 +195,81 @@ class StripeController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $restaurantAdminUrl = $this->generateUrl('admin_restaurant', ['id' => $restaurant->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+        $this->denyAccessUnlessGranted('edit', $restaurant);
 
-        return $this->sepaSetupAction($restaurant, $restaurantAdminUrl, $stripeManager);
+        $session = $this->createSepaSetupSession($restaurant, $this->sepaSetupRedirectUrl('dashboard_restaurant', $restaurant), $stripeManager);
+
+        return new JsonResponse(['url' => $session->url]);
     }
 
-    private function sepaSetupAction(SepaDebitablePayerInterface $payer, string $redirectUrl, StripeManager $stripeManager): JsonResponse
+    /**
+     * Admin-only: generates the same setup link as above, but emails it to
+     * an address of the admin's choosing instead of redirecting them to it -
+     * the admin isn't the one who should complete the Stripe form.
+     */
+    #[Route(path: '/admin/stores/{id}/sepa/setup/email', name: 'admin_store_sepa_setup_email', methods: ['POST'])]
+    public function storeSepaSetupEmailAction(
+        int $id,
+        Request $request,
+        StripeManager $stripeManager,
+        EmailManager $emailManager
+    ) {
+        $store = $this->entityManager->getRepository(Store::class)->find($id);
+
+        if (null === $store) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->sepaSetupEmailAction($store, $this->sepaSetupRedirectUrl('dashboard_store', $store), $request, $stripeManager, $emailManager);
+    }
+
+    #[Route(path: '/admin/restaurants/{id}/sepa/setup/email', name: 'admin_restaurant_sepa_setup_email', methods: ['POST'])]
+    public function restaurantSepaSetupEmailAction(
+        int $id,
+        Request $request,
+        StripeManager $stripeManager,
+        EmailManager $emailManager
+    ) {
+        $restaurant = $this->entityManager->getRepository(LocalBusiness::class)->find($id);
+
+        if (null === $restaurant) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->sepaSetupEmailAction($restaurant, $this->sepaSetupRedirectUrl('dashboard_restaurant', $restaurant), $request, $stripeManager, $emailManager);
+    }
+
+    private function sepaSetupRedirectUrl(string $routeName, SepaDebitablePayerInterface $payer): string
     {
+        return $this->generateUrl($routeName, ['id' => $payer->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+    }
+
+    private function sepaSetupEmailAction(
+        SepaDebitablePayerInterface $payer,
+        string $redirectUrl,
+        Request $request,
+        StripeManager $stripeManager,
+        EmailManager $emailManager
+    ): JsonResponse {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
+        $data = json_decode($request->getContent(), true) ?? [];
+        $email = $data['email'] ?? $request->request->get('email');
+
+        if (!$email || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return new JsonResponse(['error' => 'Invalid email'], 400);
+        }
+
+        $session = $this->createSepaSetupSession($payer, $redirectUrl, $stripeManager);
+
+        $message = $emailManager->createSepaSetupLinkMessage($payer, $session->url);
+        $emailManager->sendTo($message, $email);
+
+        return new JsonResponse(['ok' => true]);
+    }
+
+    private function createSepaSetupSession(SepaDebitablePayerInterface $payer, string $redirectUrl, StripeManager $stripeManager): Stripe\Checkout\Session
+    {
         $stripeManager->setupStripeApi();
 
         $session = $stripeManager->createSepaSetupCheckoutSession(
@@ -208,7 +280,7 @@ class StripeController extends AbstractController
 
         $this->entityManager->flush();
 
-        return new JsonResponse(['url' => $session->url]);
+        return $session;
     }
 
     /**

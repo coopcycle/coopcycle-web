@@ -28,7 +28,7 @@
       {% include "store/_partials/cyke.html.twig" %}
     </div>
     {% endif %}
-    {% if store.id is not empty and is_granted('ROLE_ADMIN') %}
+    {% if store.id is not empty and (is_granted('ROLE_ADMIN') or is_granted('ROLE_STORE')) %}
     <div role="tabpanel" class="tab-pane" id="sepa">
       {% include "store/_partials/sepa.html.twig" %}
     </div>
