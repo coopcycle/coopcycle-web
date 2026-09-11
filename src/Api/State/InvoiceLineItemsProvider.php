@@ -277,6 +277,7 @@ final class InvoiceLineItemsProvider implements ProviderInterface
             $product,
             $order->getId(),
             $order->getNumber(),
+            $order->getState(),
             $orderDate,
             $description,
             $amounts->subTotal,

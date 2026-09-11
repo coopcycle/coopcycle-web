@@ -761,6 +761,7 @@
         "ADMIN_ORDERS_TO_INVOICE_DOWNLOAD": "Télécharger",
         "ADMIN_ORDERS_TO_INVOICE_ORGANIZATION_LABEL": "Organisation (nombre de commandes)",
         "ADMIN_ORDERS_TO_INVOICE_ORDER_NUMBER_LABEL": "Commande #",
+        "ADMIN_ORDERS_TO_INVOICE_ORDER_STATE_LABEL": "Statut de la commande",
         "ADMIN_ORDERS_TO_INVOICE_DATE_LABEL": "Date",
         "ADMIN_ORDERS_TO_INVOICE_DESCRIPTION_LABEL": "Description",
         "ADMIN_ORDERS_TO_INVOICE_SUB_TOTAL_LABEL": "Sous-total (hors TVA)",
