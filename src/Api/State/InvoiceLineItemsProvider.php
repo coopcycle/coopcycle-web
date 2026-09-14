@@ -40,6 +40,7 @@ final class InvoiceLineItemsProvider implements ProviderInterface
         private readonly TranslatorInterface $translator,
         private readonly PriceFormatter $priceFormatter,
         private readonly InvoiceLineItemAmountCalculator $amountCalculator,
+        private readonly InvoiceLineItemStateFilter $stateFilter,
         private readonly string $locale,
         private readonly bool $packageDeliveryUiPriceBreakdownEnabled,
         private readonly iterable $collectionExtensions,
@@ -57,6 +58,8 @@ final class InvoiceLineItemsProvider implements ProviderInterface
             ->leftJoin('o.vendors', 'v')
             ->leftJoin('v.restaurant', 'vr')
             ->leftJoin('o.exports', 'ex');
+
+        $this->stateFilter->apply($qb, 'o', 'v');
 
         $queryNameGenerator = new QueryNameGenerator();
         foreach ($this->collectionExtensions as $extension) {

@@ -7,13 +7,11 @@ export type SettlementFilter = 'needs_invoicing' | 'settled' | 'all';
 export function prepareParams({
   organization,
   dateRange,
-  state,
   onlyNotInvoiced,
   settlement,
 }: {
   organization?: string[];
   dateRange: string[];
-  state?: string[];
   onlyNotInvoiced: boolean;
   settlement?: SettlementFilter;
 }): string[] {
@@ -27,9 +25,8 @@ export function prepareParams({
     );
   }
 
-  if (state && state.length > 0) {
-    params.push(...state.map(state => `state[]=${state}`));
-  }
+  // Which order states are invoiceable is a business rule enforced
+  // server-side (InvoiceLineItemStateFilter), not a client-chosen filter.
 
   params.push(`date[after]=${dateRange[0]}`);
   params.push(`date[before]=${dateRange[1]}`);

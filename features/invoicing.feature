@@ -707,3 +707,32 @@ Feature: Invoicing
         }
       }
       """
+
+  Scenario: Foodtech orders only appear once fulfilled, unlike store orders
+    Given the PHP memory limit is set to "1024M"
+    Given the fixtures files are loaded with purge:
+      | setup_default.yml |
+    Given the fixtures files are loaded:
+      | foodtech_orders.yml |
+    Given the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "GET" request to "/api/invoice_line_items?itemsPerPage=250"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Order",
+        "@id":"/api/invoice_line_items",
+        "@type":"hydra:Collection",
+        "hydra:member":@array@,
+        "hydra:totalItems":100,
+        "hydra:view":{
+          "@*@":"@*@"
+        },
+        "hydra:search":{
+          "@*@":"@*@"
+        }
+      }
+      """

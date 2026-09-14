@@ -19,6 +19,7 @@ final class InvoiceLineItemsGroupedByOrganizationProvider implements ProviderInt
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly InvoiceLineItemAmountCalculator $amountCalculator,
+        private readonly InvoiceLineItemStateFilter $stateFilter,
         private readonly iterable $collectionExtensions,
     )
     {
@@ -33,6 +34,8 @@ final class InvoiceLineItemsGroupedByOrganizationProvider implements ProviderInt
             ->addSelect('v', 'vr')
             ->leftJoin('o.vendors', 'v')
             ->leftJoin('v.restaurant', 'vr');
+
+        $this->stateFilter->apply($qb, 'o', 'v');
 
         $queryNameGenerator = new QueryNameGenerator();
         foreach ($this->collectionExtensions as $extension) {

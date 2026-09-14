@@ -23,7 +23,6 @@ type OrganizationRow = {
 };
 
 type Props = {
-  ordersStates: string[];
   dateRange: Moment[] | null;
   onlyNotInvoiced: boolean;
   settlement: SettlementFilter;
@@ -32,7 +31,6 @@ type Props = {
 };
 
 export default function OrganizationsTable({
-  ordersStates,
   dateRange,
   onlyNotInvoiced,
   settlement,
@@ -59,11 +57,10 @@ export default function OrganizationsTable({
         dateRange[0].format('YYYY-MM-DD'),
         dateRange[1].format('YYYY-MM-DD'),
       ],
-      state: ordersStates,
       onlyNotInvoiced: onlyNotInvoiced,
       settlement: settlement,
     });
-  }, [ordersStates, dateRange, onlyNotInvoiced, settlement]);
+  }, [dateRange, onlyNotInvoiced, settlement]);
 
   const { dataSource, total } = useMemo((): {
     dataSource: OrganizationRow[] | undefined;
@@ -176,7 +173,6 @@ export default function OrganizationsTable({
         expandedRowRender: (record: OrganizationRow) => {
           return (
             <OrdersTable
-              ordersStates={ordersStates}
               dateRange={dateRange}
               onlyNotInvoiced={onlyNotInvoiced}
               settlement={settlement}
