@@ -28,7 +28,6 @@ type OrderRow = {
 };
 
 type Props = {
-  ordersStates: string[];
   dateRange: moment.Moment[] | null;
   onlyNotInvoiced: boolean;
   settlement: SettlementFilter;
@@ -37,7 +36,6 @@ type Props = {
 };
 
 export default function OrdersTable({
-  ordersStates,
   dateRange,
   onlyNotInvoiced,
   settlement,
@@ -64,11 +62,10 @@ export default function OrdersTable({
         dateRange[0].format('YYYY-MM-DD'),
         dateRange[1].format('YYYY-MM-DD'),
       ],
-      state: ordersStates,
       onlyNotInvoiced: onlyNotInvoiced,
       settlement: settlement,
     });
-  }, [ordersStates, dateRange, onlyNotInvoiced, settlement, organizationId]);
+  }, [dateRange, onlyNotInvoiced, settlement, organizationId]);
 
   const { isFetching, data, refetch } = useGetInvoiceLineItemsQuery({
     params,

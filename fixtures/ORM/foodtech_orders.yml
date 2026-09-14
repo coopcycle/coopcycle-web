@@ -97,7 +97,7 @@ AppBundle\Entity\Sylius\Order:
         - "@foodtech_restaurant_1"
     __calls:
       - setNumber: [ "F<current()>" ]
-      - setState: [ 'new' ]
+      - setState: [ 'fulfilled' ]
       - setShippingTimeRange: [ '@foodtech_shipping_time_range' ]
       - setShippingAddress: [ '@foodtech_restaurant_address' ]
     # The rest of initialization (items, pricing, taxes) is done by FoodtechOrderProcessor
@@ -108,6 +108,28 @@ AppBundle\Entity\Sylius\Order:
         - '@foodtech_restaurant_<numberBetween(2, 8)>'
     __calls:
       - setNumber: [ "F<current()>" ]
+      - setState: [ 'fulfilled' ]
+      - setShippingTimeRange: [ '@foodtech_shipping_time_range' ]
+      - setShippingAddress: [ '@foodtech_restaurant_address' ]
+
+  # Not yet fulfilled: unlike Store orders, these should never appear in
+  # invoicing (see InvoiceLineItemStateFilter)
+  foodtech_order_not_fulfilled_new:
+    __factory:
+      '@sylius.factory.order::createForRestaurant':
+        - "@foodtech_restaurant_1"
+    __calls:
+      - setNumber: [ "FNOTFULFILLEDNEW" ]
       - setState: [ 'new' ]
+      - setShippingTimeRange: [ '@foodtech_shipping_time_range' ]
+      - setShippingAddress: [ '@foodtech_restaurant_address' ]
+
+  foodtech_order_not_fulfilled_accepted:
+    __factory:
+      '@sylius.factory.order::createForRestaurant':
+        - "@foodtech_restaurant_1"
+    __calls:
+      - setNumber: [ "FNOTFULFILLEDACCEPTED" ]
+      - setState: [ 'accepted' ]
       - setShippingTimeRange: [ '@foodtech_shipping_time_range' ]
       - setShippingAddress: [ '@foodtech_restaurant_address' ]

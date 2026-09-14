@@ -11,8 +11,6 @@ import ExportModalContent from '../ExportModalContent';
 import OrganizationsTable from '../OrganizationsTable';
 import RangePicker from './RangePicker';
 
-const ordersStates = ['new', 'accepted', 'fulfilled'];
-
 export default () => {
   const [selectedOrganizationIds, setSelectedOrganizationIds] = useState(
     [] as string[],
@@ -50,7 +48,6 @@ export default () => {
         dateRange[0].format('YYYY-MM-DD'),
         dateRange[1].format('YYYY-MM-DD'),
       ],
-      state: ordersStates,
       onlyNotInvoiced: onlyNotInvoiced,
       settlement: settlement,
     });
@@ -105,7 +102,6 @@ export default () => {
         </div>
       </div>
       <OrganizationsTable
-        ordersStates={ordersStates}
         dateRange={dateRange}
         onlyNotInvoiced={onlyNotInvoiced}
         settlement={settlement}
