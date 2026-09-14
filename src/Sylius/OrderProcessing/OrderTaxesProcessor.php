@@ -108,6 +108,13 @@ final class OrderTaxesProcessor implements OrderProcessorInterface, TaxableInter
             $neutral = $taxRate->isIncludedInPrice()
         );
         $taxAdjustment->setOriginCode($taxRate->getCode());
+        // Preserve the exact base this adjustment's amount was calculated
+        // from. A single order item can carry several tax adjustments at
+        // different rates (see ZeltyMenuVatVentilator), so the item's own
+        // total is not enough downstream to know each rate's share —
+        // storing it here means excl-tax-per-rate reporting (see
+        // AppBundle\Utils\RestaurantStats) never has to reconstruct it.
+        $taxAdjustment->setDetails(['base' => (int) $base]);
 
         return $taxAdjustment;
     }
