@@ -1,12 +1,14 @@
-import React from 'react';
-import { Tooltip } from 'antd';
+import React, { useCallback } from 'react';
+import { App, Tooltip } from 'antd';
 import { PlusOutlined, StarFilled } from '@ant-design/icons';
 import { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
+import { usePutShiftMutation } from '../../../api/slice';
 import { Shift, ShiftActivity } from '../../../api/types';
 import ShiftCard from './ShiftCard';
-import { shiftIsOnDay, sortByStart } from '../utils/date';
+import { CellData, DraggableCard, DropCell, useCellDropMonitor } from './DragDrop';
+import { shiftIsOnDay, sortByStart, withDay } from '../utils/date';
 import { shiftTypeColor } from '../utils/shiftTypeColor';
 import { activityDisplayLabel } from '../utils/activityLabel';
 
@@ -51,11 +53,50 @@ export default function ActivityGrid({
   bankHolidays,
 }: Props) {
   const { t } = useTranslation();
+  const { message } = App.useApp();
 
   const days = [...Array(7)].map((_, i) => weekStart.add(i, 'day'));
   const today = dayjs().format('YYYY-MM-DD');
 
   const sortedShifts = sortByStart(shifts);
+
+  const [putShift] = usePutShiftMutation();
+
+  // Dropping a card on a different day moves the shift there (keeping its
+  // wall-clock time); dropping on a different activity row retypes it
+  // instead. Both can happen from a single drag.
+  const onMove = useCallback(
+    async (source: CellData, destination: CellData) => {
+      const { shiftUri, activity: fromActivity, dayKey: fromDayKey } = source;
+      const { activity: toActivity, dayKey: toDayKey } = destination;
+      if (fromActivity === toActivity && fromDayKey === toDayKey) {
+        return;
+      }
+
+      const shift = shifts.find(s => s['@id'] === shiftUri);
+      if (!shift) {
+        return;
+      }
+
+      try {
+        await putShift({
+          '@id': shift['@id'],
+          activity: toActivity,
+          startsAt: withDay(shift.startsAt, toDayKey),
+          endsAt: withDay(shift.endsAt, toDayKey),
+          slots: shift.slots,
+          breakMinutes: shift.breakMinutes,
+          comment: shift.comment,
+          users: shift.assignments.map(a => a.user['@id']),
+        }).unwrap();
+        message.success(t('SHIFT_PLANNING_SAVED'));
+      } catch {
+        message.error(t('SHIFT_PLANNING_ERROR'));
+      }
+    },
+    [shifts, putShift, message, t],
+  );
+  useCellDropMonitor(onMove);
 
   return (
     <div className="shift-planning__grid-container">
@@ -104,26 +145,34 @@ export default function ActivityGrid({
                   {activityDisplayLabel(activity, t)}
                 </span>
               </div>
-              {days.map(day => (
-                <div
-                  key={day.format('YYYY-MM-DD')}
-                  className="shift-planning__cell shift-planning__cell--clickable"
-                  onClick={() => onCreate(day, activity.slug)}>
-                  {activityShifts
-                    .filter(s => shiftIsOnDay(s, day))
-                    .map(shift => (
-                      <ShiftCard
-                        key={shift['@id']}
-                        shift={shift}
-                        onClick={onEdit}
-                        activities={activities}
-                        showAssignees
-                        allowDuplicate
-                      />
-                    ))}
-                  <AddShiftButton onClick={() => onCreate(day, activity.slug)} />
-                </div>
-              ))}
+              {days.map(day => {
+                const dayKey = day.format('YYYY-MM-DD');
+
+                return (
+                  <DropCell
+                    key={dayKey}
+                    data={{ activity: activity.slug, dayKey }}
+                    className="shift-planning__cell shift-planning__cell--clickable"
+                    onClick={() => onCreate(day, activity.slug)}>
+                    {activityShifts
+                      .filter(s => shiftIsOnDay(s, day))
+                      .map(shift => (
+                        <DraggableCard
+                          key={shift['@id']}
+                          data={{ shiftUri: shift['@id'], activity: activity.slug, dayKey }}>
+                          <ShiftCard
+                            shift={shift}
+                            onClick={onEdit}
+                            activities={activities}
+                            showAssignees
+                            allowDuplicate
+                          />
+                        </DraggableCard>
+                      ))}
+                    <AddShiftButton onClick={() => onCreate(day, activity.slug)} />
+                  </DropCell>
+                );
+              })}
             </React.Fragment>
           );
         })}

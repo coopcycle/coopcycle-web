@@ -126,6 +126,21 @@
         background: #f5f5f5;
       }
     }
+
+    // Highlighted while a shift card is dragged over this cell as a
+    // drop target (day/rider/activity move — see EmployeeGrid & ActivityGrid)
+    &--drag-over {
+      background: #e6f4ff;
+    }
+  }
+
+  // Wraps a ShiftCard/OpenSlotCard to make it draggable (see DragDrop.tsx)
+  &__draggable {
+    cursor: grab;
+
+    &--dragging {
+      opacity: 0.4;
+    }
   }
 
   &__add-shift {

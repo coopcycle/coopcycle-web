@@ -78,6 +78,11 @@ export function netHours(
   return Math.max(0, minutes) / 60;
 }
 
+/** Same wall-clock time, moved to a different day (YYYY-MM-DD) */
+export function withDay(iso: string, dayKey: string): string {
+  return `${dayKey}T${iso.slice(11)}`;
+}
+
 export function minutesFromMidnight(iso: string): number {
   const [h, m] = wallClockTime(iso).split(':').map(Number);
   return h * 60 + m;

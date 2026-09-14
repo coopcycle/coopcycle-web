@@ -1,10 +1,10 @@
-import React, { useMemo, useState } from 'react';
-import { Button, Select, Tooltip } from 'antd';
+import React, { useCallback, useMemo, useState } from 'react';
+import { App, Button, Select, Tooltip } from 'antd';
 import { CloseOutlined, PlusOutlined, StarFilled } from '@ant-design/icons';
 import { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
-import { useGetEmployeeProfilesQuery } from '../../../api/slice';
+import { useGetEmployeeProfilesQuery, usePutShiftMutation } from '../../../api/slice';
 import {
   HolidayRequest,
   PlanningUser,
@@ -16,12 +16,14 @@ import Avatar from '../../../components/Avatar';
 import ShiftCard from './ShiftCard';
 import OpenSlotCard from './OpenSlotCard';
 import HolidayBar from './HolidayBar';
+import { CellData, DraggableCard, DropCell, useCellDropMonitor } from './DragDrop';
 import {
   findOverlappingShift,
   holidayCoversDay,
   netHours,
   shiftIsOnDay,
   sortByStart,
+  withDay,
 } from '../utils/date';
 
 // 7.5 -> "7.5h", 12 -> "12h"
@@ -77,8 +79,10 @@ export default function EmployeeGrid({
   bankHolidays,
 }: Props) {
   const { t } = useTranslation();
+  const { message } = App.useApp();
 
   const [isAdding, setIsAdding] = useState(false);
+  const [putShift] = usePutShiftMutation();
 
   const days = [...Array(7)].map((_, i) => weekStart.add(i, 'day'));
   const today = dayjs().format('YYYY-MM-DD');
@@ -127,6 +131,49 @@ export default function EmployeeGrid({
 
   const visibleUris = new Set(users.map(u => u['@id']));
   const candidates = allUsers.filter(u => !visibleUris.has(u['@id']));
+
+  // Dropping a card on a different day moves the shift there (keeping its
+  // wall-clock time); dropping on a different rider's row reassigns it to
+  // that rider instead. Both can happen from a single drag.
+  const onMove = useCallback(
+    async (source: CellData, destination: CellData) => {
+      const { shiftUri, userUri: fromUserUri, dayKey: fromDayKey } = source;
+      const { userUri: toUserUri, dayKey: toDayKey } = destination;
+      if (fromUserUri === toUserUri && fromDayKey === toDayKey) {
+        return;
+      }
+
+      const shift = shifts.find(s => s['@id'] === shiftUri);
+      if (!shift) {
+        return;
+      }
+
+      const newUsers =
+        toUserUri === fromUserUri
+          ? shift.assignments.map(a => a.user['@id'])
+          : shift.assignments.map(a =>
+              a.user['@id'] === fromUserUri ? (toUserUri as Uri) : a.user['@id'],
+            );
+
+      try {
+        await putShift({
+          '@id': shift['@id'],
+          activity: shift.activity,
+          startsAt: withDay(shift.startsAt, toDayKey),
+          endsAt: withDay(shift.endsAt, toDayKey),
+          slots: shift.slots,
+          breakMinutes: shift.breakMinutes,
+          comment: shift.comment,
+          users: newUsers,
+        }).unwrap();
+        message.success(t('SHIFT_PLANNING_SAVED'));
+      } catch {
+        message.error(t('SHIFT_PLANNING_ERROR'));
+      }
+    },
+    [shifts, putShift, message, t],
+  );
+  useCellDropMonitor(onMove);
 
   return (
     <div className="shift-planning__grid-container">
@@ -260,29 +307,37 @@ export default function EmployeeGrid({
                   onClick={() => onRemoveUser(user['@id'])}
                 />
               </div>
-              {days.map(day => (
-                <div
-                  key={day.format('YYYY-MM-DD')}
-                  className="shift-planning__cell shift-planning__cell--clickable"
-                  onClick={() => onCreate(day, user['@id'])}>
-                  {userHolidays.filter(h => holidayCoversDay(h, day)).map(h => (
-                    <HolidayBar key={h['@id']} holidayRequest={h} />
-                  ))}
-                  {userShifts.filter(s => shiftIsOnDay(s, day)).map(shift => (
-                    <ShiftCard
-                      key={shift['@id']}
-                      shift={shift}
-                      onClick={onEdit}
-                      conflictWith={findOverlappingShift(shift, userShifts)}
-                      activities={activities}
-                      allowDuplicate
+              {days.map(day => {
+                const dayKey = day.format('YYYY-MM-DD');
+
+                return (
+                  <DropCell
+                    key={dayKey}
+                    data={{ userUri: user['@id'], dayKey }}
+                    className="shift-planning__cell shift-planning__cell--clickable"
+                    onClick={() => onCreate(day, user['@id'])}>
+                    {userHolidays.filter(h => holidayCoversDay(h, day)).map(h => (
+                      <HolidayBar key={h['@id']} holidayRequest={h} />
+                    ))}
+                    {userShifts.filter(s => shiftIsOnDay(s, day)).map(shift => (
+                      <DraggableCard
+                        key={shift['@id']}
+                        data={{ shiftUri: shift['@id'], userUri: user['@id'], dayKey }}>
+                        <ShiftCard
+                          shift={shift}
+                          onClick={onEdit}
+                          conflictWith={findOverlappingShift(shift, userShifts)}
+                          activities={activities}
+                          allowDuplicate
+                        />
+                      </DraggableCard>
+                    ))}
+                    <AddShiftButton
+                      onClick={() => onCreate(day, user['@id'])}
                     />
-                  ))}
-                  <AddShiftButton
-                    onClick={() => onCreate(day, user['@id'])}
-                  />
-                </div>
-              ))}
+                  </DropCell>
+                );
+              })}
             </React.Fragment>
           );
         })}
