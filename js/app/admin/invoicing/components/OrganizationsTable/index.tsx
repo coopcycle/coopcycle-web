@@ -20,6 +20,7 @@ type OrganizationRow = {
   subTotal: string;
   tax: string;
   total: string;
+  sepaMandateStatus: string | null;
 };
 
 type Props = {
@@ -83,6 +84,7 @@ export default function OrganizationsTable({
           subTotal: money(item.subTotal),
           tax: money(item.tax),
           total: money(item.total),
+          sepaMandateStatus: item.sepaMandateStatus,
         }),
       ),
       total: data['hydra:totalItems'],
@@ -117,6 +119,15 @@ export default function OrganizationsTable({
       title: t('ADMIN_ORDERS_TO_INVOICE_TOTAL_LABEL'),
       dataIndex: 'total',
       key: 'total',
+    },
+    {
+      title: t('ADMIN_ORDERS_TO_INVOICE_SEPA_MANDATE_LABEL'),
+      dataIndex: 'sepaMandateStatus',
+      key: 'sepaMandateStatus',
+      render: (status: string | null) =>
+        t(
+          `ADMIN_ORDERS_TO_INVOICE_SEPA_MANDATE_${(status || 'none').toUpperCase()}`,
+        ),
     },
   ];
 

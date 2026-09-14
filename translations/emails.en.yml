@@ -45,6 +45,12 @@ admin.send_invitation.body: |
   <br>
   This is an invitation to the CoopCycle space, to finalize the creation of your account please click on the following link.
 admin.send_invitation.create_password: Create my password
+admin.send_sepa_setup_link.subject: Set up SEPA Direct Debit
+admin.send_sepa_setup_link.body: |
+  Hello,
+  <br>
+  To set up SEPA Direct Debit for <strong>%name%</strong>, please enter your IBAN and accept the mandate by clicking on the following link.
+admin.send_sepa_setup_link.cta: Set up SEPA Direct Debit
 admin.pledge.body: |
   Hello,
   <br>

@@ -1400,6 +1400,15 @@ restaurants.meal_vouchers_transactions.disclaimer: This page lists all the order
   You must therefore send an invoice to each restaurant, to claim the commissions due.
 restaurants.meal_vouchers_transactions.amount: Amount paid with Edenred
 restaurants.meal_vouchers_transactions.title: Meal vouchers transactions
+restaurants.meal_vouchers_transactions.charge_sepa: Charge via SEPA
+restaurants.meal_vouchers_transactions.charge_sepa.no_orders: There are no not-yet-invoiced meal voucher orders for this restaurant this month.
+restaurants.meal_vouchers_transactions.charge_sepa.no_mandate: '%name% does not have an active SEPA mandate yet.'
+restaurants.meal_vouchers_transactions.charge_sepa.success: '%name% was successfully charged %amount% via SEPA Direct Debit.'
+restaurants.meal_vouchers_transactions.charge_sepa.failed: 'Charging %name% via SEPA Direct Debit failed: %error%'
+restaurants.meal_vouchers_transactions.sepa_mandate_status.none: 'SEPA: not set up'
+restaurants.meal_vouchers_transactions.sepa_mandate_status.pending: 'SEPA: pending'
+restaurants.meal_vouchers_transactions.sepa_mandate_status.active: 'SEPA: active'
+restaurants.meal_vouchers_transactions.sepa_mandate_status.failed: 'SEPA: failed'
 form.product.alcohol.label: This product is an alcoholic beverage
 form.product.alcohol.help: Check this box only if this product is an alcoholic beverage, like a bottle of wine.
 form.checkout_address.reusable_packaging_vytal_enabled.label: I want to use Vytal containers
@@ -1722,6 +1731,22 @@ form.store.cyke_time_slot.help: 'The opening hours used to schedule deliveries s
 form.store.cyke_time_slot.placeholder: 'Mo-Fr 09:00-18:00, Sa 09:00-16:00'
 form.store.cyke_time_slot.invalid: 'This value should match the schema.org opening hours format, e.g. "Mo-Fr 09:00-18:00, Sa 09:00-16:00"'
 store.form.section.cyke: Cyke
+store.form.section.sepa: SEPA Direct Debit
+store.sepa.mandate_status.label: Mandate status
+store.sepa.mandate_status.help: 'Once set up, this can be charged automatically via SEPA Direct Debit from the invoicing page.'
+store.sepa.mandate_status.none: 'Not set up'
+store.sepa.mandate_status.pending: 'Pending (waiting for setup to be completed)'
+store.sepa.mandate_status.active: Active
+store.sepa.mandate_status.failed: 'Failed / cancelled'
+store.sepa.send_setup_link: Send SEPA setup link
+store.sepa.send_setup_link.help: 'Opens a Stripe-hosted page where the IBAN can be entered and the SEPA mandate accepted. Copy the link, or send it by email.'
+store.sepa.copy_link: Copy link
+store.sepa.send_by_email: Send by email
+store.sepa.recipient_email.label: Recipient
+store.sepa.recipient_email.manual: 'Enter an email address...'
+store.sepa.recipient_email.manual_label: Email address
+store.sepa.setup_now: Set up SEPA Direct Debit
+store.sepa.setup_now.help: 'Enter your IBAN and accept the SEPA mandate on a Stripe-hosted page, so we can charge you automatically for what you owe instead of you having to pay invoices manually.'
 form.payment.edenred.refund_amount.help: Edenred does not support partial refunds.
 restaurant.form.use_paygreen.label: Use Paygreen for this shop
 restaurant.meal_vouchers_transactions.emitter: Emitter

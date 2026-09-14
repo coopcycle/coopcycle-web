@@ -1,0 +1,6 @@
+{% include "_partials/sepa_setup.html.twig" with {
+  payer: restaurant,
+  setup_endpoint: path('dashboard_restaurant_sepa_setup', { id: restaurant.id }),
+  setup_email_endpoint: path('admin_restaurant_sepa_setup_email', { id: restaurant.id }),
+  modal_id: 'restaurant-sepa-email-modal',
+} %}

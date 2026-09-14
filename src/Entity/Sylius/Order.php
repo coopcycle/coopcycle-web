@@ -54,6 +54,8 @@ use AppBundle\Api\State\CreateCreditNoteProcessor;
 use AppBundle\Api\State\EdenredCredentialsProcessor;
 use AppBundle\Api\State\InvoiceLineItemsGroupedByOrganizationProvider;
 use AppBundle\Api\State\InvoiceLineItemsProvider;
+use AppBundle\Api\State\InvoiceLineItemsSepaChargeProcessor;
+use AppBundle\Api\Dto\InvoiceLineItemSepaChargeResult;
 use AppBundle\Api\State\LoopeatFormatsProcessor;
 use AppBundle\Api\State\LoopeatReturnsProcessor;
 use AppBundle\Api\State\OrderPaymentsProvider;
@@ -452,6 +454,18 @@ use Webmozart\Assert\Assert as WMAssert;
             normalizationContext: ['groups' => ['odoo_export_invoice_line_item']],
             security: 'is_granted(\'ROLE_ADMIN\')',
             provider: InvoiceLineItemsProvider::class
+        ),
+        new Post(
+            uriTemplate: '/invoice_line_items/charge_sepa',
+            openapiContext: [
+                'summary' => 'Invoicing: Charge the stores matching the given filter via SEPA Direct Debit',
+                'description' => 'Charges, via Stripe SEPA Direct Debit, every store whose active mandate covers the orders matching the given filter (same filters as /invoice_line_items/export). Stores without an active mandate are skipped and reported as such.'
+            ],
+            output: InvoiceLineItemSepaChargeResult::class,
+            normalizationContext: ['groups' => ['default_invoice_line_item']],
+            security: 'is_granted(\'ROLE_ADMIN\')',
+            input: false,
+            processor: InvoiceLineItemsSepaChargeProcessor::class
         ),
         new Post(
             uriTemplate: '/orders/{id}/credit_notes',

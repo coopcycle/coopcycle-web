@@ -1252,6 +1252,22 @@ deliveries.section.past: Passées
 stores.address_book: Carnet d'adresses
 store.form.section.settings: Paramètres
 store.form.section.cyke: Cyke
+store.form.section.sepa: Prélèvement SEPA
+store.sepa.mandate_status.label: Statut du mandat
+store.sepa.mandate_status.help: 'Une fois configuré, un prélèvement SEPA automatique peut être effectué depuis la page de facturation.'
+store.sepa.mandate_status.none: 'Non configuré'
+store.sepa.mandate_status.pending: 'En attente (configuration non terminée)'
+store.sepa.mandate_status.active: Actif
+store.sepa.mandate_status.failed: 'Échoué / annulé'
+store.sepa.send_setup_link: Envoyer le lien de configuration SEPA
+store.sepa.send_setup_link.help: 'Ouvre une page hébergée par Stripe permettant de saisir un IBAN et d''accepter le mandat SEPA. Copiez le lien, ou envoyez-le par email.'
+store.sepa.copy_link: Copier le lien
+store.sepa.send_by_email: Envoyer par email
+store.sepa.recipient_email.label: Destinataire
+store.sepa.recipient_email.manual: 'Saisir une adresse email...'
+store.sepa.recipient_email.manual_label: Adresse email
+store.sepa.setup_now: Configurer le prélèvement SEPA
+store.sepa.setup_now.help: 'Saisissez votre IBAN et acceptez le mandat SEPA sur une page hébergée par Stripe, afin que nous puissions vous prélever automatiquement au lieu de devoir régler des factures manuellement.'
 form.store.cyke_user_email: Email utilisateur Cyke
 form.store.cyke_user_token: Jeton API Cyke
 form.store.cyke_webhook_url.label: URL du webhook Cyke
@@ -1299,6 +1315,15 @@ restaurants.meal_vouchers_transactions.disclaimer: Cette page liste l'ensemble d
   restaurant, pour réclamer les commissions dûes.
 restaurants.meal_vouchers_transactions.amount: Montant payé en titres-restaurant
 restaurants.meal_vouchers_transactions.title: Transactions titres-restaurant
+restaurants.meal_vouchers_transactions.charge_sepa: Prélever via SEPA
+restaurants.meal_vouchers_transactions.charge_sepa.no_orders: Il n'y a aucune commande titres-restaurant non facturée pour ce restaurant ce mois-ci.
+restaurants.meal_vouchers_transactions.charge_sepa.no_mandate: "%name% n'a pas encore de mandat SEPA actif."
+restaurants.meal_vouchers_transactions.charge_sepa.success: '%name% a été prélevé avec succès de %amount% par SEPA.'
+restaurants.meal_vouchers_transactions.charge_sepa.failed: 'Le prélèvement SEPA de %name% a échoué : %error%'
+restaurants.meal_vouchers_transactions.sepa_mandate_status.none: 'SEPA : non configuré'
+restaurants.meal_vouchers_transactions.sepa_mandate_status.pending: 'SEPA : en attente'
+restaurants.meal_vouchers_transactions.sepa_mandate_status.active: 'SEPA : actif'
+restaurants.meal_vouchers_transactions.sepa_mandate_status.failed: 'SEPA : échoué'
 form.product.alcohol.label: Ce produit est une boisson alcoolisée
 form.product.alcohol.help: Cochez cette case seulement si ce produit est une boisson
   alcoolisée, comme une bouteille de vin.

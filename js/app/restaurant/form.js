@@ -15,6 +15,7 @@ import i18n from '../i18n'
 import DropzoneWidget from '../widgets/Dropzone'
 import AddressAutosuggestFormGroup from '../widgets/AddressAutosuggestFormGroup'
 import DeliveryZonePicker from '../components/DeliveryZonePicker'
+import initSepaSetupWidgets from '../widgets/sepaSetup'
 
 import 'prismjs/themes/prism.css'
 import 'prismjs/plugins/toolbar/prism-toolbar.css'
@@ -416,3 +417,5 @@ if (addDeliveryPerimeterBtn) {
     container.appendChild(item)
   })
 }
+
+initSepaSetupWidgets()

@@ -53,6 +53,12 @@ admin.send_invitation.body: |
   <br>
   Ceci est une invitation à l'espace CoopCycle, pour finaliser la création de votre compte veuillez cliquer sur lien suivant.
 admin.send_invitation.create_password: Créer mon mot de passe
+admin.send_sepa_setup_link.subject: Configuration du prélèvement SEPA
+admin.send_sepa_setup_link.body: |
+  Bonjour,
+  <br>
+  Pour configurer le prélèvement SEPA pour <strong>%name%</strong>, veuillez saisir votre IBAN et accepter le mandat en cliquant sur le lien suivant.
+admin.send_sepa_setup_link.cta: Configurer le prélèvement SEPA
 admin.pledge.subject: Une nouvelle suggestion a été envoyée !
 admin.pledge.body: |
   Bonjour,

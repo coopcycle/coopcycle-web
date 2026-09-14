@@ -1135,6 +1135,10 @@ services:
     arguments:
       $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
 
+  AppBundle\Api\State\InvoiceLineItemsSepaChargeProcessor:
+    arguments:
+      $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+
   AppBundle\Api\State\MyOrdersProvider:
     arguments:
       $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
