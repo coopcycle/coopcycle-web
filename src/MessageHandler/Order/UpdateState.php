@@ -19,6 +19,7 @@ use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderTransitions;
 use AppBundle\Utils\OrderTimeHelper;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Payment\PaymentTransitions;
@@ -42,6 +43,7 @@ use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
         private readonly MessageBusInterface $eventBus,
         private readonly OrderTimeHelper $orderTimeHelper,
         private readonly EntityManagerInterface $entityManager,
+        private readonly LoggerInterface $checkoutLogger,
     )
     {
 
@@ -137,9 +139,13 @@ use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
             // https://github.com/coopcycle/coopcycle-web/issues/698
 
             if (null === $order->getShippingTimeRange()) {
-                $order->setShippingTimeRange(
-                    $this->orderTimeHelper->getShippingTimeRange($order)
-                );
+                $shippingTimeRange = $this->orderTimeHelper->getShippingTimeRange($order);
+                if (null === $shippingTimeRange) {
+                    // This should not happen, as CheckoutHandler assigns the range before the payment
+                    $this->checkoutLogger->error(sprintf('Order #%d | UpdateState | no shipping time range available after successful checkout',
+                        $order->getId()));
+                }
+                $order->setShippingTimeRange($shippingTimeRange);
             }
 
             if (null !== $payment) {

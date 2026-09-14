@@ -6,6 +6,7 @@ use AppBundle\Message\Order\Command\Checkout;
 use AppBundle\Domain\Order\Event;
 use AppBundle\Payment\Gateway;
 use AppBundle\Service\LoggingUtils;
+use AppBundle\Utils\OrderTimeHelper;
 use Doctrine\Common\Collections\ArrayCollection;
 use Psr\Log\LoggerInterface;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
@@ -14,6 +15,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsMessageHandler(bus: 'command.bus')]
 class CheckoutHandler
@@ -22,6 +24,8 @@ class CheckoutHandler
         private MessageBusInterface $eventBus,
         private OrderNumberAssignerInterface $orderNumberAssigner,
         private Gateway $gateway,
+        private OrderTimeHelper $orderTimeHelper,
+        private TranslatorInterface $translator,
         private LoggerInterface $checkoutLogger,
         private LoggingUtils $loggingUtils)
     {
@@ -34,6 +38,35 @@ class CheckoutHandler
 
         // Assign a number to the order in any case
         $this->orderNumberAssigner->assignNumber($order);
+
+        // When the customer chose "ASAP", the cart has no shipping time range yet.
+        // Lock the first available range *BEFORE* authorizing the payment,
+        // otherwise the last range of the day may expire while the payment is processed,
+        // and the order would be stored without a shipping time range.
+        $hasAssignedShippingTimeRange = false;
+        if ($order->hasVendor() && null === $order->getShippingTimeRange()) {
+
+            $shippingTimeRange = $this->orderTimeHelper->getShippingTimeRange($order);
+
+            if (null === $shippingTimeRange) {
+
+                $this->checkoutLogger->warning('CheckoutHandler | no shipping time range available',
+                    ['order' => $this->loggingUtils->getOrderId($order)]);
+
+                $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
+                if (!$order->isFree() && null !== $payment) {
+                    $event = new Event\CheckoutFailed($order, $payment,
+                        $this->translator->trans('order.shippedAt.notAvailable', [], 'validators'));
+                    $this->eventBus->dispatch(
+                        (new Envelope($event))->with(new DispatchAfterCurrentBusStamp())
+                    );
+                    return;
+                }
+            } else {
+                $order->setShippingTimeRange($shippingTimeRange);
+                $hasAssignedShippingTimeRange = true;
+            }
+        }
 
         // Bail early if order is free
         if ($order->isFree()) {
@@ -97,6 +130,11 @@ class CheckoutHandler
             } catch (\Exception $e) {
                 $this->checkoutLogger->error(sprintf('CheckoutHandler | CheckoutFailed: %s', $e->getMessage()),
                     ['order' => $this->loggingUtils->getOrderId($order), 'exception' => $e]);
+
+                // Restore "ASAP" mode, the customer may retry later
+                if ($hasAssignedShippingTimeRange) {
+                    $order->setShippingTimeRange(null);
+                }
 
                 $event = new Event\CheckoutFailed($order, $payment, $e->getMessage());
                 $this->eventBus->dispatch(

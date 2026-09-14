@@ -20,6 +20,7 @@ use AppBundle\Utils\OrderTimeHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
+use Psr\Log\NullLogger;
 use SM\Factory\FactoryInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
@@ -66,7 +67,8 @@ class UpdateStateTest extends KernelTestCase
             $this->orderProcessor->reveal(),
             $this->eventBus->reveal(),
             $this->orderTimeHelper->reveal(),
-            $this->entityManager->reveal()
+            $this->entityManager->reveal(),
+            new NullLogger()
         );
     }
 
