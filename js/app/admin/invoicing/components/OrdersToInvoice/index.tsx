@@ -21,8 +21,7 @@ export default () => {
     dateRangeFromParams(window.location.search),
   );
   const [onlyNotInvoiced, setOnlyNotInvoiced] = useState(false);
-  const [settlement, setSettlement] =
-    useState<SettlementFilter>('needs_invoicing');
+  const [settlement, setSettlement] = useState<SettlementFilter>('all');
 
   useEffect(() => {
     if (dateRange) {
@@ -81,14 +80,14 @@ export default () => {
             value={settlement}
             onChange={e => setSettlement(e.target.value)}
             optionType="button">
+            <Radio.Button value="all">
+              {t('ADMIN_ORDERS_TO_INVOICE_SETTLEMENT_ALL')}
+            </Radio.Button>
             <Radio.Button value="needs_invoicing">
               {t('ADMIN_ORDERS_TO_INVOICE_SETTLEMENT_NEEDS_INVOICING')}
             </Radio.Button>
             <Radio.Button value="settled">
               {t('ADMIN_ORDERS_TO_INVOICE_SETTLEMENT_SETTLED')}
-            </Radio.Button>
-            <Radio.Button value="all">
-              {t('ADMIN_ORDERS_TO_INVOICE_SETTLEMENT_ALL')}
             </Radio.Button>
           </Radio.Group>
         </div>
