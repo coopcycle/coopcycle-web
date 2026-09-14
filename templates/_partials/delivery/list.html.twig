@@ -13,6 +13,9 @@
     <th></th>
     <th></th>
     <th></th>
+    {% if show_bookmark_delete is defined and show_bookmark_delete %}
+    <th></th>
+    {% endif %}
   </thead>
   <tbody>
   {% for delivery in deliveries %}
@@ -109,6 +112,25 @@
           </a>
         </div>
       </td>
+      {% if show_bookmark_delete is defined and show_bookmark_delete %}
+      <td class="text-center">
+        {% if delivery.order is defined and delivery.order is not empty %}
+        <button type="button"
+          class="btn btn-link text-danger p-0"
+          title="{{ 'stores.deliveries.bookmarks.remove'|trans }}"
+          data-testid="bookmark__delete"
+          data-order-id="{{ delivery.order.id }}"
+          {{ stimulus_controller('order-bookmark-delete', {
+            confirmMessage: 'stores.deliveries.bookmarks.confirm'|trans({ '%number%': delivery.order.number }),
+            errorMessage:   'stores.deliveries.bookmarks.error'|trans,
+            emptyMessage:   'stores.deliveries.bookmarks.empty_message'|trans,
+          }) }}
+          data-action="order-bookmark-delete#delete">
+          <i {{ stimulus_target('order-bookmark-delete', 'icon') }} class="fa fa-trash fa-lg" aria-hidden="true"></i>
+        </button>
+        {% endif %}
+      </td>
+      {% endif %}
     </tr>
   {% endfor %}
   </tbody>

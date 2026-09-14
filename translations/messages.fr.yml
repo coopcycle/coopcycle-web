@@ -728,6 +728,9 @@ stores.orders: Commandes
 stores.addresses: Adresses
 stores.deliveries.bookmarks: Commandes enregistrées
 stores.deliveries.bookmarks.empty_message: Marquez les commandes sur la page de Livraison pour les retrouver facilement plus tard
+stores.deliveries.bookmarks.remove: Retirer des commandes enregistrées
+stores.deliveries.bookmarks.confirm: 'Confirmez-vous la suppression de %number% des commandes enregistrées ?'
+stores.deliveries.bookmarks.error: Impossible de supprimer le signet
 stores.recurrence_rules: Règles de récurrence
 stores.recurrence_rules.empty_message: Lorsqu\'une commande récurrente est créée, les règles de récurrence apparaîtront ici
 recurrence_rules.table.repeat: Répéter

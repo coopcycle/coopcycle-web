@@ -893,6 +893,9 @@ stores.deliveries.heading2: 'Delivery %delivery_id%'
 stores.deliveries.task_unassigned: Unassigned
 stores.deliveries.bookmarks: Saved orders
 stores.deliveries.bookmarks.empty_message: Bookmark orders on the Delivery page to find them easily later
+stores.deliveries.bookmarks.remove: Remove from saved orders
+stores.deliveries.bookmarks.confirm: 'Do you confirm the deletion of %number% from saved orders?'
+stores.deliveries.bookmarks.error: Could not delete the bookmark
 stores.orders: Orders
 stores.addresses: Addresses
 stores.recurrence_rules: Recurrence rules

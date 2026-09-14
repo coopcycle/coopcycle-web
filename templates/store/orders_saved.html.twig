@@ -11,7 +11,7 @@
 
   <h3>{{ 'stores.deliveries.bookmarks'|trans }}</h3>
 
-  {% include '_partials/delivery/list.html.twig' with { deliveries: bookmarks, empty_message: 'stores.deliveries.bookmarks.empty_message' } %}
+  {% include '_partials/delivery/list.html.twig' with { deliveries: bookmarks, empty_message: 'stores.deliveries.bookmarks.empty_message', show_bookmark_delete: true } %}
 
 {% endblock %}
 

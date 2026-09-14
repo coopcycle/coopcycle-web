@@ -32,6 +32,7 @@ use AppBundle\Action\Order\Pay as OrderPay;
 use AppBundle\Action\Order\PaymentDetails as PaymentDetailsController;
 use AppBundle\Action\Order\PaymentMethods as PaymentMethodsController;
 use AppBundle\Action\Order\Refuse as OrderRefuse;
+use AppBundle\Action\Order\RemoveBookmark as OrderRemoveBookmark;
 use AppBundle\Action\Order\Restore as OrderRestore;
 use AppBundle\Action\Order\Tip as OrderTip;
 use AppBundle\Action\Order\Timing as OrderTiming;
@@ -476,6 +477,13 @@ use Webmozart\Assert\Assert as WMAssert;
             input: PaymentRefundInput::class,
             processor: OrderRefundProcessor::class,
             denormalizationContext: ['groups' => ['payment_refund']],
+        ),
+        new Delete(
+            uriTemplate: '/orders/{id}/bookmark',
+            controller: OrderRemoveBookmark::class,
+            openapiContext: ['summary' => 'Removes an Order from saved orders (bookmarks).'],
+            security: 'is_granted(\'edit\', object)',
+            write: false,
         ),
         new GetCollection(
             uriTemplate: '/orders/{id}/refunds',
