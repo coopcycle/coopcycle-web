@@ -145,7 +145,7 @@ trait RdcStatusUpdateHandlerTrait
 
         $loUri = $this->extractLoUri($pickup);
         if (is_null($loUri)) {
-            $this->logger->warning('No rdc_lo_uri found in pickup metadata', [
+            $this->logger->warning('No rdc.lo_uri found in delivery metadata', [
                 'delivery_id' => $task->getDelivery()?->getId(),
             ]);
             return;
@@ -172,9 +172,14 @@ trait RdcStatusUpdateHandlerTrait
 
     private function extractLoUri(Task $pickup): ?string
     {
-        $metadata = $pickup->getMetadata();
+        $delivery = $pickup->getDelivery();
+        if (is_null($delivery)) {
+            return null;
+        }
 
-        return $metadata['rdc_lo_uri'] ?? null;
+        $metadata = $delivery->getMetadata();
+
+        return $metadata['rdc']['lo_uri'] ?? null;
     }
 
     private function fetchLoRevision(RdcClientInterface $rdcClient, string $loUri): ?string

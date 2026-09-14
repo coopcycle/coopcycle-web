@@ -377,6 +377,47 @@ class RdcServiceRequestMapperTest extends TestCase
         $this->assertNull($this->invokeExtractWeight($location));
     }
 
+    public function testMapToDeliveryWritesRdcProvenanceToDeliveryMetadata(): void
+    {
+        $apiRequest = new \AppBundle\Integration\Rdc\DTO\RdcApiServiceRequest(
+            uri: 'https://rdc.example.com/lo/123',
+            externalReferences: [
+                ['externalReferenceType' => 'REQUESTOR_LABEL_ID', 'reference' => 'TEST-BARCODE'],
+            ],
+            startLocation: [
+                'location' => [
+                    'address' => [
+                        'addressCountry' => ['countryCode' => 'FR'],
+                        'addressLocality' => 'Paris',
+                        'postalCode' => '75001',
+                        'addressLines' => ['1 rue de Rivoli'],
+                    ],
+                ],
+            ],
+            endLocation: [
+                'location' => [
+                    'address' => [
+                        'addressCountry' => ['countryCode' => 'FR'],
+                        'addressLocality' => 'Lyon',
+                        'postalCode' => '69001',
+                        'addressLines' => ['1 place Bellecour'],
+                    ],
+                ],
+            ],
+        );
+
+        $delivery = $this->mapper->mapToDelivery($apiRequest, new \AppBundle\Entity\Store());
+
+        $deliveryMetadata = $delivery->getMetadata();
+        $this->assertSame('https://rdc.example.com/lo/123', $deliveryMetadata['rdc']['lo_uri']);
+        $this->assertArrayHasKey('created_at', $deliveryMetadata['rdc']);
+
+        // Provenance no longer lives on the pickup task metadata
+        $pickupMetadata = $delivery->getPickup()->getMetadata();
+        $this->assertArrayNotHasKey('rdc_lo_uri', $pickupMetadata);
+        $this->assertArrayNotHasKey('rdc_created_at', $pickupMetadata);
+    }
+
     public function testMapToDeliveryWritesBarcodeToMetadataBarcodeKey(): void
     {
         $apiRequest = $this->buildApiRequestWithBarcode('TEST-001');
@@ -387,6 +428,57 @@ class RdcServiceRequestMapperTest extends TestCase
         $this->assertArrayHasKey('barcode', $pickupMetadata);
         $this->assertSame('TEST-001', $pickupMetadata['barcode']);
         $this->assertArrayNotHasKey('rdc_barcode', $pickupMetadata);
+    }
+
+    public function testMapToDeliveryWritesExternalReferenceToDelivery(): void
+    {
+        $apiRequest = new \AppBundle\Integration\Rdc\DTO\RdcApiServiceRequest(
+            externalReferences: [
+                ['externalReferenceType' => 'REQUESTOR_LABEL_ID', 'reference' => 'TEST-BARCODE'],
+                ['externalReferenceType' => 'REQUESTOR_ID', 'reference' => 'EXT-REF-42'],
+            ],
+            startLocation: [
+                'location' => [
+                    'address' => [
+                        'addressCountry' => ['countryCode' => 'FR'],
+                        'addressLocality' => 'Paris',
+                        'postalCode' => '75001',
+                        'addressLines' => ['1 rue de Rivoli'],
+                    ],
+                ],
+            ],
+            endLocation: [
+                'location' => [
+                    'address' => [
+                        'addressCountry' => ['countryCode' => 'FR'],
+                        'addressLocality' => 'Paris',
+                        'postalCode' => '75002',
+                        'addressLines' => ['2 rue de la Paix'],
+                    ],
+                ],
+            ],
+        );
+
+        $delivery = $this->mapper->mapToDelivery($apiRequest, new \AppBundle\Entity\Store());
+
+        $this->assertSame('EXT-REF-42', $delivery->getExternalReference());
+        // Barcode lives on the pickup task's metadata, distinct from externalReference.
+        $pickupMetadata = $delivery->getPickup()->getMetadata();
+        $this->assertSame('TEST-BARCODE', $pickupMetadata['barcode']);
+        // Legacy metadata keys are gone.
+        $pickupMetadata = $delivery->getPickup()->getMetadata();
+        $this->assertArrayNotHasKey('rdc_external_ref', $pickupMetadata);
+        $this->assertArrayNotHasKey('rdc_contract_ref', $pickupMetadata);
+    }
+
+    public function testMapToDeliveryLeavesExternalReferenceNullWhenAbsent(): void
+    {
+        // Only REQUESTOR_LABEL_ID (barcode) present, no REQUESTOR_ID.
+        $apiRequest = $this->buildApiRequestWithBarcode('TEST-ONLY-BARCODE');
+
+        $delivery = $this->mapper->mapToDelivery($apiRequest, new \AppBundle\Entity\Store());
+
+        $this->assertNull($delivery->getExternalReference());
     }
 
     public function testMapToDeliverySetsWeightOnDropoffFromStartLocationBatches(): void

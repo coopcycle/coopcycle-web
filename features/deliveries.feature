@@ -108,6 +108,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -201,6 +202,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "pickup":{"@*@":"@*@"},
         "dropoff":{"@*@":"@*@"},
         "tasks":@array@,
@@ -253,6 +255,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
@@ -345,6 +348,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "pickup":{"@*@":"@*@"},
         "dropoff":{"@*@":"@*@"},
         "tasks":@array@,
@@ -399,6 +403,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -512,6 +517,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "pickup":{"@*@":"@*@"},
         "dropoff":{"@*@":"@*@"},
         "tasks":@array@,
@@ -660,6 +666,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -802,6 +809,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -954,6 +962,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1068,6 +1077,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1185,6 +1195,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1342,6 +1353,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1460,6 +1472,7 @@ Feature: Deliveries
                 "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1578,6 +1591,7 @@ Feature: Deliveries
                 "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1699,6 +1713,7 @@ Feature: Deliveries
           "distance":@integer@,
           "duration":@integer@,
           "polyline":@string@,
+          "metadata": {"@*@": "@*@"},
           "tasks":@array@,
           "pickup":{
             "@id":"@string@.startsWith('/api/tasks')",
@@ -1820,6 +1835,7 @@ Feature: Deliveries
           "distance":@integer@,
           "duration":@integer@,
           "polyline":@string@,
+          "metadata": {"@*@": "@*@"},
           "tasks":@array@,
           "pickup":{
             "@id":"@string@.startsWith('/api/tasks')",
@@ -2025,6 +2041,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -2144,6 +2161,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -2380,6 +2398,7 @@ Feature: Deliveries
                 "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -2499,6 +2518,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -2609,6 +2629,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -2723,6 +2744,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
@@ -2839,6 +2861,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -2953,6 +2976,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -3068,6 +3092,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -3178,6 +3203,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -3397,6 +3423,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":@array@,
         "pickup": {
             "@id": "@string@.startsWith('/api/tasks')",
@@ -3522,6 +3549,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -3661,6 +3689,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -3761,6 +3790,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -3877,6 +3907,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -4044,6 +4075,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -4397,6 +4429,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -4518,6 +4551,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -4736,6 +4770,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -4873,6 +4908,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -5003,6 +5039,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks": [
           {
             "@id": "\/api\/tasks\/1",
@@ -5079,6 +5116,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks": [
           {
             "@id": "\/api\/tasks\/1",
@@ -5174,6 +5212,7 @@ Feature: Deliveries
                 "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks": [
           {
             "@id": "\/api\/tasks\/1",
@@ -5241,6 +5280,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks": [
           {
             "@id": "\/api\/tasks\/1",
@@ -5330,6 +5370,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks": [
           {
             "@id": "\/api\/tasks\/1",
@@ -5400,6 +5441,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks": [
           {
             "@id": "\/api\/tasks\/1",
@@ -5655,6 +5697,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks": [
           {"@*@": "@*@"},
           {"@*@": "@*@"}
@@ -5710,6 +5753,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks": [
           {"@*@": "@*@"},
           {"@*@": "@*@"}
@@ -5930,6 +5974,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks": [
           {
             "@id": "\/api\/tasks\/1",
@@ -6006,6 +6051,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks": [
           {
             "@id": "\/api\/tasks\/1",
@@ -6103,6 +6149,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks": [
           {
             "@id": "\/api\/tasks\/1",
@@ -6179,6 +6226,7 @@ Feature: Deliveries
         "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
+        "metadata": {"@*@": "@*@"},
         "tasks": [
           {
             "@id": "\/api\/tasks\/1",

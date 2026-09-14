@@ -993,6 +993,7 @@ Feature: Manage restaurants
             "distance":@integer@,
             "duration":@integer@,
             "polyline":@string@,
+            "metadata": {"@*@": "@*@"},
             "pickup":{
               "@id":@string@,
               "@type":"Task",

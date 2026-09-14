@@ -471,6 +471,7 @@ class SyncTransportersCommand extends Command {
         $delivery = new Delivery();
         $delivery->setTasks([$pickup, $dropoff]);
         $delivery->setStore($this->store);
+        $delivery->setExternalReference($point->getId());
 
         if (!$this->dryRun) {
             $this->entityManager->persist($edi);
@@ -512,6 +513,7 @@ class SyncTransportersCommand extends Command {
         $delivery = new Delivery();
         $delivery->setTasks([$pickup, $dropoff]);
         $delivery->setStore($this->store);
+        $delivery->setExternalReference($point->getId());
 
         if (!$this->dryRun) {
             $this->entityManager->persist($edi);

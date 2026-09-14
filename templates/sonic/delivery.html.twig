@@ -6,3 +6,20 @@
 <p>{{ delivery.pickup.address.name }}</p>
 <p>{{ delivery.dropoff.address.streetAddress }}</p>
 <p>{{ delivery.dropoff.address.name }}</p>
+{% if delivery.metadata is not empty %}
+<h4>Metadata</h4>
+{% import _self as macros %}
+<table>
+{{ macros.metadata_rows(delivery.metadata, '') }}
+</table>
+{% endif %}
+
+{% macro metadata_rows(metadata, prefix) %}
+    {% for key, value in metadata %}
+        {% if value is iterable %}
+            {{ _self.metadata_rows(value, prefix ~ key ~ '.') }}
+        {% elseif value is not null %}
+            <tr><td>{{ prefix ~ key }}</td><td>{{ value }}</td></tr>
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
