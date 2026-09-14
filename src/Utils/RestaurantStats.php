@@ -174,53 +174,9 @@ class RestaurantStats implements \Countable
 
         }, $this->result);
 
-        //
-        // Add "virtual" adjustments with items total excl. tax
-        //
-
-        $qb = $this->entityManager
-            ->getRepository(OrderItem::class)
-            ->createQueryBuilder('oi');
-
-        $qb
-            ->select('IDENTITY(oi.order) AS order_id')
-            ->addSelect('a.originCode AS tax_rate_code')
-            ->addSelect('(SUM(oi.total) - SUM(a.amount)) AS items_total_excl_tax')
-            ->leftJoin(Adjustment::class, 'a', Expr\Join::WITH, 'a.orderItem = oi.id')
-            ->andWhere(
-                $qb->expr()->in('oi.order', ':ids')
-            )
-            ->andWhere('a.type = :tax')
-            ->groupBy('order_id', 'tax_rate_code')
-            ->setParameter('ids', $this->ids)
-            ->setParameter('tax', AdjustmentInterface::TAX_ADJUSTMENT);
-
-        $totalExclTaxByRate = $qb->getQuery()->getArrayResult();
-
-        $byOrderId = [];
-        foreach ($totalExclTaxByRate as $entry) {
-            $byOrderId[$entry['order_id']][] = $entry;
-        }
-
-        $this->result = array_map(function ($order) use ($byOrderId) {
-
-            if (array_key_exists($order->id, $byOrderId)) {
-                foreach ($byOrderId[$order->id] as $entry) {
-
-                    $order->adjustments[] = [
-                        'type'          => 'items_total_excl_tax',
-                        'amount'        => $entry['items_total_excl_tax'],
-                        'neutral'       => true,
-                        'order_id'      => $order->id,
-                        'order_item_id' => null,
-                        'origin_code'   => $entry['tax_rate_code'],
-                    ];
-                }
-            }
-
-            return $order;
-
-        }, $this->result);
+        // Items total excl. tax, per product tax rate, is derived in
+        // computeTaxes() from the tax adjustment totals themselves (see the
+        // comment there) rather than queried here.
     }
 
     private function addVendors()
@@ -477,8 +433,21 @@ class RestaurantStats implements \Countable
     {
         $this->serviceTaxRateCode = $this->taxesHelper->getServiceTaxRateCode();
 
-        $productTaxColumns =
-            array_map(fn (TaxRate $rate) => $rate->getCode(), $this->taxesHelper->getBaseRates());
+        $baseRates = $this->taxesHelper->getBaseRates();
+
+        $productTaxColumns = array_map(fn (TaxRate $rate) => $rate->getCode(), $baseRates);
+
+        // Rate (e.g. 0.10 for 10%) by code, used below to derive the excl.
+        // tax total of a rate from its tax total: base = tax / rate. This
+        // holds whether or not the rate is included in the item price (see
+        // Sylius\Component\Taxation\Calculator\DefaultCalculator), so it
+        // works uniformly for every order regardless of how its tax
+        // adjustments were computed.
+        $rateAmountByCode = array_reduce($baseRates, function ($carry, TaxRate $rate) {
+            $carry[$rate->getCode()] = $rate->getAmount();
+
+            return $carry;
+        }, []);
 
         $this->taxColumns = array_merge(
             $productTaxColumns,
@@ -522,30 +491,42 @@ class RestaurantStats implements \Countable
                 $this->taxTotals[$order->getId()][$taxRateCode] += $adjustment['amount'];
             }
 
-            $itemsTotalExclTaxAdjustments =
-                array_filter($order->adjustments, fn($adjustment) => $adjustment['type'] === 'items_total_excl_tax');
-
+            // Items total excl. tax, per rate: derived from this order's own
+            // tax totals above (base = tax / rate) rather than from
+            // SUM(orderItem.total) grouped by rate.
+            //
+            // The latter used to be queried directly (see former "virtual
+            // adjustments" query in addAdjustments()), but a single order
+            // item can carry several TAX_ADJUSTMENT rows at different rates
+            // — ZeltyMenuVatVentilator splits a bundled menu's price across
+            // each component's rate, adding one tax adjustment per rate to
+            // the *same* order item. Grouping by rate while summing
+            // orderItem.total then counted that item's full total once per
+            // rate instead of once per slice, inflating every rate column
+            // whenever an order mixed rates (exactly what
+            // ApplyTaxesCommand's re-run surfaced, since ventilation didn't
+            // exist yet the first time taxes were applied).
+            //
+            // Deriving straight from the tax total sidesteps this entirely:
+            // each tax adjustment already carries only its own slice's
+            // amount, so summing those by rate (done above, into taxTotals)
+            // is already correct, and dividing by the rate recovers the
+            // matching excl. tax base.
             $this->itemsTotalExclTaxTotals[$order->getId()] = array_combine(
-                $this->productTaxColumns,
-                array_pad([], count($this->productTaxColumns), 0)
+                $productTaxColumns,
+                array_pad([], count($productTaxColumns), 0)
             );
 
-            foreach ($itemsTotalExclTaxAdjustments as $adjustment) {
+            foreach ($productTaxColumns as $taxRateCode) {
 
-                $taxRateCode = $adjustment['origin_code'];
+                $taxTotal = $this->taxTotals[$order->getId()][$taxRateCode] ?? 0;
+                $rateAmount = $rateAmountByCode[$taxRateCode] ?? 0;
 
-                // This allows showing fewer columns
-                if (!in_array($taxRateCode, $this->taxColumns)) {
-                    $matchingBaseRateCode = $this->taxesHelper->getMatchingBaseRateCode($taxRateCode);
-                    // Keep the original code when nothing matches, as above:
-                    // it has no column and is not rendered, but it must not
-                    // become a null array key.
-                    if (!empty($matchingBaseRateCode)) {
-                        $taxRateCode = $matchingBaseRateCode;
-                    }
+                if ($taxTotal === 0 || $rateAmount <= 0) {
+                    continue;
                 }
 
-                $this->itemsTotalExclTaxTotals[$order->getId()][$taxRateCode] = $adjustment['amount'];
+                $this->itemsTotalExclTaxTotals[$order->getId()][$taxRateCode] = (int) round($taxTotal / $rateAmount);
             }
         }
     }
