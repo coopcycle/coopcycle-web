@@ -262,8 +262,16 @@ const Task = ({
                 </label>
                 <ul className="list-unstyled">
                   {documents.map((documentUrl, index) => (
-                    <li key={`task-${taskId}-document-${index}`}>
+                    <li key={`task-${taskId}-document-${index}`} className="d-flex justify-content-between align-items-center">
                       <a href={documentUrl} target="_blank" rel="noreferrer">{basename(documentUrl)}</a>
+                      <button
+                        type="button"
+                        className="btn btn-sm"
+                        aria-label={t('ADMIN_DASHBOARD_DELETE')}
+                        title={t('ADMIN_DASHBOARD_DELETE')}
+                        onClick={() => documentsArrayHelpersRef.current.remove(index)}>
+                        <DeleteOutlined />
+                      </button>
                     </li>
                   ))}
                 </ul>
