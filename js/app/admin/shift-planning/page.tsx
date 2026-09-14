@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Provider } from 'react-redux';
-import { Badge, Button, Segmented, Space, Spin } from 'antd';
-import { CarryOutOutlined } from '@ant-design/icons';
+import { Badge, Button, Dropdown, Segmented, Space, Spin } from 'antd';
+import { CarryOutOutlined, EllipsisOutlined } from '@ant-design/icons';
 import { useHotkey } from '@tanstack/react-hotkeys';
 import dayjs, { Dayjs } from 'dayjs';
 import isoWeek from 'dayjs/plugin/isoWeek';
@@ -21,6 +21,7 @@ import EmployeeGrid from './components/EmployeeGrid';
 import ActivityGrid from './components/ActivityGrid';
 import CalendarGrid from './components/CalendarGrid';
 import ShiftModal, { ShiftModalState } from './components/ShiftModal';
+import ShiftPresetPickerModal from './components/ShiftPresetPickerModal';
 import HolidayRequestsDrawer from './components/HolidayRequestsDrawer';
 import WeekActionsMenu from './components/WeekActionsMenu';
 import ClearWeekButton from './components/ClearWeekButton';
@@ -50,6 +51,7 @@ const Planning = () => {
     () => weekFromParams(window.location.search) ?? dayjs().startOf('isoWeek'),
   );
   const [modalState, setModalState] = useState<ShiftModalState>(null);
+  const [presetPickerOpen, setPresetPickerOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [typeFilter, setTypeFilter] = useState<string[]>([]);
   const [view, setView] = useState<View>('employee');
@@ -252,11 +254,22 @@ const Planning = () => {
             <ClearWeekButton weekStart={weekStart} />
             <PublishWeekButton weekStart={weekStart} />
           </Space>
-          <Button
+          <Dropdown.Button
             type="primary"
-            onClick={() => setModalState({ date: weekStart })}>
+            icon={<EllipsisOutlined />}
+            trigger={['click']}
+            onClick={() => setModalState({ date: weekStart })}
+            menu={{
+              items: [
+                {
+                  key: 'preset',
+                  label: t('SHIFT_PLANNING_NEW_SHIFT_FROM_TEMPLATE'),
+                  onClick: () => setPresetPickerOpen(true),
+                },
+              ],
+            }}>
             {t('SHIFT_PLANNING_NEW_SHIFT')}
-          </Button>
+          </Dropdown.Button>
         </div>
       )}
       {section === 'employees' && (
@@ -338,6 +351,15 @@ const Planning = () => {
         open={drawerOpen}
         holidayRequests={reviewHolidays}
         onClose={() => setDrawerOpen(false)}
+      />
+      <ShiftPresetPickerModal
+        activities={activities ?? []}
+        open={presetPickerOpen}
+        onClose={() => setPresetPickerOpen(false)}
+        onSelect={preset => {
+          setPresetPickerOpen(false);
+          setModalState({ date: weekStart, preset });
+        }}
       />
     </div>
   );

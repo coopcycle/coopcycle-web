@@ -59,6 +59,8 @@ import {
   CreateShiftTemplateRequest,
   ApplyShiftTemplateRequest,
   ApplyShiftTemplateResult,
+  ShiftPreset,
+  CreateShiftPresetRequest,
   PlanningUser,
   ShiftSettings,
   PutShiftSettingsRequest,
@@ -100,6 +102,7 @@ export const apiSlice = createApi({
     'SchedulePublication',
     'EmployeeProfile',
     'ShiftTemplate',
+    'ShiftPreset',
   ],
   // The "endpoints" represent operations and requests for this server
   // uri is passed in JSON-LD '@id' key, https://www.w3.org/TR/2014/REC-json-ld-20140116/#node-identifiers
@@ -558,6 +561,27 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ['Shift'],
     }),
+    getShiftPresets: builder.query<ShiftPreset[], void>({
+      query: () => 'api/shift_presets',
+      transformResponse: (response: HydraCollection<ShiftPreset>) =>
+        response['hydra:member'],
+      providesTags: ['ShiftPreset'],
+    }),
+    createShiftPreset: builder.mutation<ShiftPreset, CreateShiftPresetRequest>({
+      query: body => ({
+        url: 'api/shift_presets',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['ShiftPreset'],
+    }),
+    deleteShiftPreset: builder.mutation<void, Uri>({
+      query: uri => ({
+        url: uri,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['ShiftPreset'],
+    }),
     getHolidayRequests: builder.query<
       HydraCollection<HolidayRequest>,
       GetHolidayRequestsArgs
@@ -926,6 +950,9 @@ export const {
   useCreateShiftTemplateMutation,
   useDeleteShiftTemplateMutation,
   useApplyShiftTemplateMutation,
+  useGetShiftPresetsQuery,
+  useCreateShiftPresetMutation,
+  useDeleteShiftPresetMutation,
   useGetHolidayRequestsQuery,
   useGetMyHolidayRequestsQuery,
   usePostHolidayRequestMutation,

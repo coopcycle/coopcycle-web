@@ -608,3 +608,66 @@
     margin-left: 6px;
   }
 }
+
+// "New shift from template" gallery (ShiftPresetPickerModal)
+.shift-preset-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 2px;
+}
+
+.shift-preset-tile {
+  appearance: none;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  padding: 8px 12px;
+  text-align: left;
+  color: rgba(0, 0, 0, 0.85);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  transition: box-shadow 0.15s, border-color 0.15s;
+
+  &:hover {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  }
+
+  &--selected {
+    border-color: #1677ff;
+  }
+}
+
+.shift-preset-tile__name {
+  font-weight: 600;
+}
+
+.shift-preset-tile__time {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.shift-preset-details {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
+
+  dl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 4px 12px;
+    margin: 0 0 12px;
+  }
+
+  dt {
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.65);
+  }
+
+  dd {
+    margin: 0;
+  }
+}

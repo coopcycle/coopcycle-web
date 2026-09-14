@@ -4,6 +4,7 @@ import {
   App,
   Button,
   DatePicker,
+  Dropdown,
   Form,
   Input,
   InputNumber,
@@ -12,6 +13,7 @@ import {
   Select,
   TimePicker,
 } from 'antd';
+import { EllipsisOutlined } from '@ant-design/icons';
 import dayjs, { Dayjs } from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import {
@@ -26,6 +28,7 @@ import {
   PlanningUser,
   Shift,
   ShiftActivity,
+  ShiftPreset,
   Uri,
 } from '../../../api/types';
 import {
@@ -39,6 +42,7 @@ import { activityLabel, activityDisplayLabel } from '../utils/activityLabel';
 import { availabilityConflict } from '../utils/availability';
 import { datePickerProps } from '../../../utils/antd';
 import ReportTimeModal from './ReportTimeModal';
+import SaveShiftPresetModal from './SaveShiftPresetModal';
 
 export type ShiftModalState = {
   shift?: Shift;
@@ -48,6 +52,8 @@ export type ShiftModalState = {
   activity?: string;
   /** Prefill the start time, e.g. when created from a Calendar-view click; end defaults to start + 2h */
   time?: Dayjs;
+  /** Prefill everything but assignees from a saved ShiftPreset — see "New shift from template" */
+  preset?: ShiftPreset;
 } | null;
 
 type Props = {
@@ -97,6 +103,7 @@ export default function ShiftModal({
   const freshShift =
     (shift && shifts.find(s => s['@id'] === shift['@id'])) || shift;
   const [reportUser, setReportUser] = useState<string | null>(null);
+  const [presetModalOpen, setPresetModalOpen] = useState(false);
 
   useEffect(() => {
     if (!state) {
@@ -115,6 +122,22 @@ export default function ShiftModal({
         comment: state.shift.comment ?? undefined,
         requiredSkills: state.shift.requiredSkills.map(s => s['@id']),
         users: state.shift.assignments.map(a => a.user['@id']),
+      });
+    } else if (state.preset) {
+      const preset = state.preset;
+      const date = state.date || dayjs();
+      const [startH, startM] = preset.startTime.split(':').map(Number);
+      const [endH, endM] = preset.endTime.split(':').map(Number);
+
+      form.setFieldsValue({
+        activity: preset.activity,
+        date,
+        times: [date.hour(startH).minute(startM), date.hour(endH).minute(endM)],
+        slots: preset.slots,
+        breakMinutes: preset.breakMinutes,
+        comment: preset.comment ?? undefined,
+        requiredSkills: preset.requiredSkills.map(s => s['@id']),
+        users: [],
       });
     } else {
       const start = state.time || (state.date || dayjs()).hour(9).minute(0);
@@ -135,11 +158,29 @@ export default function ShiftModal({
     }
   }, [state, form, activities]);
 
+  const selectedActivity = Form.useWatch('activity', form);
   const selectedDate = Form.useWatch('date', form);
   const selectedTimes = Form.useWatch('times', form);
   const selectedUsers = Form.useWatch('users', form) || [];
   const selectedSlots = Form.useWatch('slots', form);
+  const selectedBreakMinutes = Form.useWatch('breakMinutes', form);
+  const selectedComment = Form.useWatch('comment', form);
   const selectedSkills = Form.useWatch('requiredSkills', form) || [];
+
+  // Snapshot for "Save as template" — everything the form currently holds
+  // except assignees; only buildable once the required fields have values
+  const presetSnapshot =
+    selectedActivity && selectedTimes?.[0] && selectedTimes?.[1]
+      ? {
+          activity: selectedActivity,
+          startTime: selectedTimes[0].format('HH:mm'),
+          endTime: selectedTimes[1].format('HH:mm'),
+          slots: selectedSlots ?? 1,
+          breakMinutes: selectedBreakMinutes ?? 0,
+          comment: selectedComment || null,
+          requiredSkills: selectedSkills,
+        }
+      : null;
 
   const isOverstaffed =
     typeof selectedSlots === 'number' && selectedUsers.length > selectedSlots;
@@ -277,13 +318,25 @@ export default function ShiftModal({
             </Button>
           </Popconfirm>
         ) : null,
-        <Button
+        <Dropdown.Button
           key="submit"
           type="primary"
+          icon={<EllipsisOutlined />}
+          trigger={['click']}
           loading={isCreating || isUpdating}
-          onClick={() => form.submit()}>
+          onClick={() => form.submit()}
+          menu={{
+            items: [
+              {
+                key: 'save-as-preset',
+                label: t('SHIFT_PRESET_SAVE'),
+                disabled: !presetSnapshot,
+                onClick: () => setPresetModalOpen(true),
+              },
+            ],
+          }}>
           {t('SHIFT_PLANNING_SAVE')}
-        </Button>,
+        </Dropdown.Button>,
       ]}>
       <Form form={form} layout="vertical" onFinish={onFinish}>
         <Form.Item
@@ -481,6 +534,13 @@ export default function ShiftModal({
           }
           open
           onClose={() => setReportUser(null)}
+        />
+      )}
+      {presetSnapshot && (
+        <SaveShiftPresetModal
+          snapshot={presetSnapshot}
+          open={presetModalOpen}
+          onClose={() => setPresetModalOpen(false)}
         />
       )}
     </Modal>

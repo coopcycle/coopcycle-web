@@ -851,6 +851,33 @@ export type ApplyShiftTemplateResult = JsonLdEntity & {
   created: number;
 };
 
+/**
+ * A reusable, named shape for a single shift — never assignees. Distinct
+ * from ShiftTemplate, which snapshots a whole week (with assignees).
+ */
+export type ShiftPreset = JsonLdEntity & {
+  id: number;
+  name: string;
+  activity: string;
+  startTime: string; // "HH:MM"
+  endTime: string; // "HH:MM"
+  slots: number;
+  breakMinutes: number;
+  comment: string | null;
+  requiredSkills: Skill[];
+};
+
+export type CreateShiftPresetRequest = {
+  name: string;
+  activity: string;
+  startTime: string;
+  endTime: string;
+  slots: number;
+  breakMinutes?: number;
+  comment?: string | null;
+  requiredSkills?: Uri[];
+};
+
 // null = that rule is disabled
 export type LegalRules = Record<string, number | null>;
 
