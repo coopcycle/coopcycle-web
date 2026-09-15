@@ -9,6 +9,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Task;
+use AppBundle\Entity\TaskImage;
 use AppBundle\Service\DeliveryOrderManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TaskManager;
@@ -865,6 +866,136 @@ class SyncTransportersCommandTest extends KernelTestCase {
             $dropoffReportEDIMessage->getPods()
         );
 
+    }
+
+    /**
+     * The proof the courier uploaded must be reported as its own POD|CFM event:
+     * per REPORT 3.1 that is the only status attesting the receipt image is
+     * available, and it has to follow the LIV|CFM it confirms.
+     *
+     * The EntityManager is cleared before the command runs, because the cron is
+     * a separate process: this is what exercises the tasks_edifact_messages join
+     * rows and task_image.task_id for real, instead of a warm identity map.
+     */
+    public function testProofOfDeliveryIsReportedAsItsOwnPodEvent(): void
+    {
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/test.edi', self::FS_MASK_DBS),
+            self::EDI_SAMPLE
+        );
+
+        $commandTester = new CommandTester($this->initCommand());
+        $commandTester->execute(['transporter' => 'DBSCHENKER']);
+
+        $deliveries = $this->entityManager->getRepository(Delivery::class)->findAll();
+        /** @var Delivery $delivery */
+        $delivery = array_shift($deliveries);
+        $dropoff = $delivery->getDropoff();
+
+        $this->taskManager->start($delivery->getPickup());
+        $this->entityManager->flush();
+        $this->taskManager->markAsDone($delivery->getPickup());
+        $this->entityManager->flush();
+        $this->taskManager->start($dropoff);
+        $this->entityManager->flush();
+
+        // The app uploads the proofs, then marks the task as done.
+        foreach (['pod-1.jpg', 'pod-2.jpg'] as $imageName) {
+            $image = new TaskImage();
+            $image->setImageName($imageName);
+            $image->setTask($dropoff);
+            $this->entityManager->persist($image);
+        }
+        $this->entityManager->flush();
+
+        $this->taskManager->markAsDone($dropoff);
+        $this->entityManager->flush();
+
+        // One POD|CFM carrying both images, on top of the 3 status reports.
+        $this->entityManager->clear();
+        $unsynced = $this->entityManager->getRepository(EDIFACTMessage::class)->getUnsynced('DBSCHENKER');
+        $this->assertCount(4, $unsynced);
+        $this->assertEquals('POD|CFM', end($unsynced)->getSubMessageType());
+        $this->assertCount(2, end($unsynced)->getPods());
+
+        $commandTester->execute(['transporter' => 'DBSCHENKER']);
+
+        $dir_list = $this->syncDBSchenkerFs->listContents(sprintf('from_%s', self::FS_MASK_DBS))->toArray();
+        $this->assertCount(1, $dir_list);
+        $reportContent = $this->syncDBSchenkerFs->read($dir_list[0]['path']);
+
+        $this->assertStringContainsString("RSJ+MS+POD+CFM'", $reportContent);
+        // The `:` of the scheme is escaped with the release character: `http?://`
+        $this->assertStringContainsString("/media/tasks/images/pod-1.jpg:FT'", $reportContent);
+        $this->assertStringContainsString("/media/tasks/images/pod-2.jpg:FT'", $reportContent);
+
+        // POD|CFM confirms the LIV|CFM, so it must come after it.
+        $this->assertGreaterThan(
+            strpos($reportContent, "RSJ+MS+LIV+CFM'"),
+            strpos($reportContent, "RSJ+MS+POD+CFM'")
+        );
+    }
+
+    /**
+     * A proof that lands after the POD|CFM has been sent produces a further
+     * POD|CFM carrying only that image: nothing is lost, and nothing is resent.
+     */
+    public function testLateProofIsReportedInAFurtherPodEvent(): void
+    {
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/test.edi', self::FS_MASK_DBS),
+            self::EDI_SAMPLE
+        );
+
+        $commandTester = new CommandTester($this->initCommand());
+        $commandTester->execute(['transporter' => 'DBSCHENKER']);
+
+        $deliveries = $this->entityManager->getRepository(Delivery::class)->findAll();
+        /** @var Delivery $delivery */
+        $delivery = array_shift($deliveries);
+        $dropoff = $delivery->getDropoff();
+
+        $this->taskManager->start($delivery->getPickup());
+        $this->entityManager->flush();
+        $this->taskManager->markAsDone($delivery->getPickup());
+        $this->entityManager->flush();
+        $this->taskManager->start($dropoff);
+        $this->entityManager->flush();
+
+        $image = new TaskImage();
+        $image->setImageName('pod-1.jpg');
+        $image->setTask($dropoff);
+        $this->entityManager->persist($image);
+        $this->entityManager->flush();
+
+        $this->taskManager->markAsDone($dropoff);
+        $this->entityManager->flush();
+        $this->entityManager->clear();
+
+        $commandTester->execute(['transporter' => 'DBSCHENKER']);
+
+        // The courier adds a second photo once everything has been sent.
+        $dropoff = $this->entityManager->getRepository(Task::class)->find($dropoff->getId());
+        $late = new TaskImage();
+        $late->setImageName('pod-late.jpg');
+        $late->setTask($dropoff);
+        $this->entityManager->persist($late);
+        $this->entityManager->flush();
+        $this->entityManager->clear();
+
+        $unsynced = $this->entityManager->getRepository(EDIFACTMessage::class)->getUnsynced('DBSCHENKER');
+        $this->assertCount(1, $unsynced);
+        $this->assertEquals('POD|CFM', $unsynced[0]->getSubMessageType());
+        // Only the new image: the first one was already reported.
+        $this->assertCount(1, $unsynced[0]->getPods());
+
+        $commandTester->execute(['transporter' => 'DBSCHENKER']);
+
+        $dir_list = $this->syncDBSchenkerFs->listContents(sprintf('from_%s', self::FS_MASK_DBS))->toArray();
+        $this->assertCount(2, $dir_list);
+        $reportContent = $this->syncDBSchenkerFs->read($dir_list[1]['path']);
+        $this->assertStringContainsString("/media/tasks/images/pod-late.jpg:FT'", $reportContent);
+        $this->assertStringNotContainsString('pod-1.jpg', $reportContent);
     }
 
     public function testValidSyncOneTaskWithPackages(): void
