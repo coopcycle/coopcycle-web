@@ -45,9 +45,43 @@ class ZeltyOptionMapper
             $optionMap[$zeltyOption->id] = $option;
 
             $this->importOptionValuesForOption($option, $zeltyOption, $optionValueMap, $locale);
+            $this->disableRemovedOptionValues($option, $zeltyOption);
         }
 
         return $optionMap;
+    }
+
+    /**
+     * A value still listed in the option's value_ids gets refreshed by
+     * importOptionValuesForOption() above — but nothing ever revisited a
+     * value removed from an option entirely (e.g. the same Zelty option id
+     * offering a different set of values per catalog — "Frites au cheddar"
+     * exists under "Choix des frites" in the Click and Collect catalog but
+     * not in Naofood's), so it lingered forever, still enabled, no longer
+     * reflecting what this option actually offers today.
+     *
+     * Unlike the equivalent tag-taxon cleanup, disabling genuinely works
+     * here: ProductOptionValue::enabled is covered by the global
+     * DisabledFilter, so a disabled value disappears from display on its
+     * own — no need to detach or remove anything.
+     */
+    private function disableRemovedOptionValues(ProductOption $option, ZeltyOption $zeltyOption): void
+    {
+        $currentValueIds = array_flip($zeltyOption->valueIds);
+
+        foreach ($option->getValues() as $value) {
+            if (!$value instanceof ProductOptionValue) {
+                continue;
+            }
+
+            $zeltyId = $value->getZeltyId();
+
+            if ($zeltyId === null || isset($currentValueIds[$zeltyId])) {
+                continue;
+            }
+
+            $value->setEnabled(false);
+        }
     }
 
     /**

@@ -175,4 +175,72 @@ class ZeltyOptionMapperTest extends TestCase
 
         $this->assertFalse($optionMap['ZO_BREAD']->isAdditional());
     }
+
+    /**
+     * The same Zelty option id can offer a different set of values per
+     * catalog — "Choix des frites" has "Frites au cheddar" in the Click and
+     * Collect catalog but not in Naofood's. Nothing used to revisit a value
+     * dropped from an option's value_ids, so it stayed enabled forever, no
+     * longer reflecting what the option actually offers. A value still
+     * listed must stay untouched; one no longer listed must be disabled.
+     */
+    public function testValueRemovedFromAnOptionInZeltyIsDisabled(): void
+    {
+        $restaurant = new LocalBusiness();
+        (new ReflectionProperty($restaurant, 'id'))->setValue($restaurant, 178);
+
+        $existingOption = new ProductOption();
+        $existingOption->setCode('ZO267689_178');
+        $existingOption->setRestaurant($restaurant);
+        $existingOption->setFallbackLocale('fr');
+        $existingOption->setCurrentLocale('fr');
+
+        $kept = new ProductOptionValue();
+        $kept->setCode('ZOV1356900_178');
+        $kept->setZeltyId('ZOV1356900');
+        $kept->setFallbackLocale('fr');
+        $kept->setCurrentLocale('fr');
+        $kept->setValue('Frites au parmesan');
+        $kept->setEnabled(true);
+        $existingOption->addValue($kept);
+
+        $stale = new ProductOptionValue();
+        $stale->setCode('ZOV1356901_178');
+        $stale->setZeltyId('ZOV1356901');
+        $stale->setFallbackLocale('fr');
+        $stale->setCurrentLocale('fr');
+        $stale->setValue('Frites au cheddar');
+        $stale->setEnabled(true);
+        $existingOption->addValue($stale);
+
+        $optionRepository = $this->createMock(ObjectRepository::class);
+        $optionRepository->method('findOneBy')->willReturn($existingOption);
+
+        $valueRepository = $this->createMock(ObjectRepository::class);
+        $valueRepository->method('findOneBy')->willReturn($kept);
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->method('getRepository')->willReturnCallback(
+            fn (string $class) => $class === ProductOption::class ? $optionRepository : $valueRepository
+        );
+
+        $filters = $this->createMock(FilterCollection::class);
+        $filters->method('isEnabled')->willReturn(false);
+        $em->method('getFilters')->willReturn($filters);
+
+        // Naofood's current "Choix des frites": only parmesan and épices —
+        // cheddar isn't in this catalog's value_ids at all.
+        $zeltyOption = new ZeltyOption(
+            id: 'ZO267689',
+            name: 'Choix des frites',
+            valueIds: ['ZOV1356900'],
+        );
+        $zeltyValue = new ZeltyOptionValue(id: 'ZOV1356900', name: 'Frites au parmesan');
+
+        $mapper = new ZeltyOptionMapper($em);
+        $mapper->importOptions([$zeltyOption], [$zeltyValue], $restaurant, 'fr');
+
+        $this->assertTrue($kept->isEnabled(), 'A value still offered by the option must stay untouched.');
+        $this->assertFalse($stale->isEnabled(), 'A value no longer offered by the option must be disabled.');
+    }
 }
