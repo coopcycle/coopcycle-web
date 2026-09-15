@@ -184,6 +184,8 @@ class ZeltyImportService
 
         if ($taxon === null) {
             $taxon = $this->createRootTaxon($restaurant, $catalog, $locale, $code, $this->em);
+        } else {
+            $this->guardAgainstCatalogMismatch($taxon, $catalog, $restaurant);
         }
 
         $this->ensureRestaurantHasTaxon($restaurant, $taxon);
@@ -191,6 +193,38 @@ class ZeltyImportService
         return $taxon;
     }
 
+    /**
+     * The root taxon's code is keyed only by restaurant ID, not by which
+     * Zelty catalog built it — so importing a *different* catalog for the
+     * same restaurant (the wrong one selected on Zelty's side, or picked by
+     * mistake on the admin's manual pull screen) would otherwise silently
+     * reuse and rewrite this same taxon, mixing tags/menus from two
+     * unrelated catalogs together under one tree with no trace of the mix-up.
+     *
+     * A taxon created before this guard existed has no recorded catalog id
+     * yet; its first import after this fix adopts the current catalog as the
+     * taxon's source of truth instead of blocking it outright.
+     */
+    private function guardAgainstCatalogMismatch(Taxon $taxon, ZeltyCatalog $catalog, LocalBusiness $restaurant): void
+    {
+        if (!$taxon->hasZeltyId()) {
+            $taxon->setZeltyId($catalog->id);
+
+            return;
+        }
+
+        if ($taxon->getZeltyId() !== $catalog->id) {
+            throw new \RuntimeException(sprintf(
+                'Refusing to import Zelty catalog "%s" (%s) for restaurant %d: ' .
+                'its existing catalog taxon was built from a different catalog (%s). ' .
+                'Importing would silently mix two unrelated catalogs together.',
+                $catalog->name ?? $catalog->id,
+                $catalog->id,
+                $restaurant->getId(),
+                $taxon->getZeltyId()
+            ));
+        }
+    }
 
     /**
      * Create a new root taxon for the imported catalog.
@@ -205,6 +239,7 @@ class ZeltyImportService
         $taxon = new Taxon();
         $taxon->setCode($code);
         $taxon->setCurrentLocale($locale);
+        $taxon->setZeltyId($catalog->id);
 
         $slug = sprintf('imported-catalog-from-zelty-%d', $restaurant->getId());
         $taxon->setSlug($this->slugify->slugify($slug));
