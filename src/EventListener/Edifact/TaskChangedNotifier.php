@@ -12,7 +12,8 @@ class TaskChangedNotifier {
 
     public function __construct(
         private EntityManagerInterface $em,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
+        private TransporterPodNotifier $podNotifier,
     ) { }
 
     public function __invoke(Task $task, PostUpdateEventArgs $event): void
@@ -41,6 +42,10 @@ class TaskChangedNotifier {
                 $task->getType(), $changeset['status'][1])
             )
         };
+
+        // The proof may already be there: the images are uploaded either side
+        // of this transition. TransporterPodNotifier is a no-op if not.
+        $this->podNotifier->notify($task);
    }
 
     private function scheduleEdifactSubMessage(

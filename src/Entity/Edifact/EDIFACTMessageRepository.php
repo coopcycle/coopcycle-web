@@ -53,7 +53,10 @@ class EDIFACTMessageRepository extends EntityRepository {
             ->andWhere('e.direction = :direction')
             ->andWhere('e.transporter = :transporter')
             ->setParameter('direction', EDIFACTMessage::DIRECTION_OUTBOUND)
-            ->setParameter('transporter', $transporter);
+            ->setParameter('transporter', $transporter)
+            // POD|CFM confirms the LIV|CFM it follows, so the events of a
+            // shipment must reach the transporter in the order they happened.
+            ->orderBy('e.id', 'ASC');
 
 
         return $qb->getQuery()->getResult();

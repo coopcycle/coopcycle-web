@@ -3,20 +3,11 @@
 namespace AppBundle\Transporter;
 
 use AppBundle\Entity\Edifact\EDIFACTMessage;
-use AppBundle\Entity\Task;
-use AppBundle\Entity\TaskImage;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Transporter\Interface\ReportGeneratorInterface;
 use Transporter\TransporterImpl;
 use Transporter\TransporterOptions;
 
 class ReportFromCC {
-
-    public function __construct(
-        private UrlGeneratorInterface $urlGenerator,
-        private EntityManagerInterface $entityManager
-    ) { }
 
     public function generateReport(
         EDIFACTMessage $message,
@@ -28,13 +19,8 @@ class ReportFromCC {
         $generator->setDocID(strval($message->getId()));
         $generator->setReference($message->getReference());
         $generator->setReceipt($message->getReference());
-        $pods = $this->attachedFiles($message);
-        if (!empty($pods)) {
-            $generator->setPods($pods);
-
-            //Persist pods on the messages entity to keep valid logs
-            $message->setPods($pods);
-            $this->entityManager->persist($message);
+        if (!empty($message->getPods())) {
+            $generator->setPods($message->getPods());
         }
         if (!is_null($message->getAppointment())) {
             $generator->setAppointment($message->getAppointment());
@@ -61,25 +47,5 @@ class ReportFromCC {
         }
 
         return $interchange->generate();
-    }
-
-    //FIXME: This is a bit hacky, i'd prefer to attach a listener on the Task entity.
-    //       But due to an optimization TaskImage are send AFTER the task is created.
-    //       So... this is what i come up with.
-    private function attachedFiles(EDIFACTMessage $message): array
-    {
-        if ($message->getSubMessageType() !== 'LIV|CFM') {
-            return $message->getPods();
-        }
-        $pods = $message->getTasks()->map(
-            fn(Task $t) => $t->getImages()->map(
-                fn(TaskImage $i) => $this->urlGenerator->generate(
-                    'task_image_public',
-                    ['path' => $i->getImageName()],
-                    UrlGeneratorInterface::ABSOLUTE_URL
-                )
-            )->toArray()
-        )->toArray();
-        return array_unique(array_merge($message->getPods(), ...$pods));
     }
 }
