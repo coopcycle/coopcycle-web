@@ -48,6 +48,53 @@ class ZeltyTaxonMapper
             $taxon = $this->importTagAsTaxon($tag, $parentTaxon, $locale);
             $this->linkProductsToTaxon($taxon, $tag->itemIds, $productsMap);
         }
+
+        $this->removeStaleTagTaxons($parentTaxon, $tags);
+    }
+
+    /**
+     * A tag still present in the catalog gets its stale product links
+     * cleaned up by linkProductsToTaxon() above — but a tag deleted from
+     * Zelty entirely is never visited by that loop at all, so nothing ever
+     * revisits the taxon importTagAsTaxon() created for it on a previous
+     * import. Left alone it lingers forever, and disabling it wouldn't even
+     * hide it: unlike Product/ProductOptionValue, Taxon.enabled isn't
+     * checked anywhere in the menu display path (Taxon::getMenuChildren()
+     * returns getChildren() unfiltered, and DisabledFilter doesn't cover
+     * Taxon at all) — only actually removing it from the tree does.
+     *
+     * The root taxon's children mix tag-derived categories with
+     * menu-derived ones (importMenus() parents menu taxons under the same
+     * root), so this only touches children whose Zelty id looks like a tag
+     * id ("ZT...") — anything else is a sibling menu taxon this loop has no
+     * business touching.
+     */
+    private function removeStaleTagTaxons(Taxon $parentTaxon, array $tags): void
+    {
+        $currentTagIds = array_map(fn (ZeltyTag $tag) => $tag->id, $tags);
+
+        foreach ($parentTaxon->getChildren() as $child) {
+            $zeltyId = $child->getZeltyId();
+
+            if ($zeltyId === null || !str_starts_with($zeltyId, 'ZT')) {
+                continue;
+            }
+
+            if (in_array($zeltyId, $currentTagIds, true)) {
+                continue;
+            }
+
+            $this->removeTaxonAndItsProductLinks($child);
+        }
+    }
+
+    private function removeTaxonAndItsProductLinks(Taxon $taxon): void
+    {
+        foreach ($this->em->getRepository(ProductTaxon::class)->findBy(['taxon' => $taxon]) as $productTaxon) {
+            $this->em->remove($productTaxon);
+        }
+
+        $this->em->remove($taxon);
     }
 
     private function importMenuAsTaxon(ZeltyItem $menu, Taxon $parentTaxon, string $locale): Taxon
