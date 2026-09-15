@@ -1182,6 +1182,7 @@ order.list.reorder: Commander de nouveau
 search.orders: Rechercher une commande (numéro, email du client…)
 basics.configure: Configurer
 basics.updated_at: Mis à jour le %date%
+basics.last_updated: Mis à jour %time%
 basics.description: Description
 basics.import: Importer
 activity.task.started: "@%owner% a démarré la tâche #task/%aggregate_id%\n"

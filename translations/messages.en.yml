@@ -975,6 +975,7 @@ basics.are_you_sure: Are you sure?
 basics.no_entries: No element yet
 basics.created_at: Created at %date%
 basics.updated_at: Updated at %date%
+basics.last_updated: Last updated %time%
 basics.date_range: From %start% to %end%
 basics.total_including_tax: Total including all taxes
 basics.platform_fees: Platform fees
