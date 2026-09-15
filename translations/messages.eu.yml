@@ -700,7 +700,6 @@ activity.task.done: "@%owner% #task/%aggregate_id% zeregina burutu du\n"
 activity.task.failed: "@%owner% ezin izan du #task/%aggregate_id% zeregina burutu\n"
 activity.task.cancelled: "@%owner% #task/%aggregate_id% zeregina bertan behera utzi\
   \ du\n"
-social.sign_in_with_facebook: 'Hasi saioa Facebook-ekin'
 embed.delivery.submit.help: 'Egin klik banaketa erreserbatzeko.'
 pagination.previous: 'Aurrekoa'
 pagination.next: 'Hurrengoa'

@@ -716,7 +716,6 @@ activity.task.started: "@%owner% incarico iniziato #task/%aggregate_id%\n"
 activity.task.done: "@%owner% incarico completato #task/%aggregate_id%\n"
 activity.order.accepted: "Ordine #order/%aggregate_id% è stato accettato\n"
 activity.order.refused: "Ordine #order/%aggregate_id% è stato rifiutato\n"
-social.sign_in_with_facebook: Iscriviti con Facebook
 embed.delivery.submit.help: Clicca per prenotare la consegna.
 embed.delivery.confirm_message: Il tuo ordine è stato realizzato e riceverai a breve
   un'email di riepilogo. Verificheremo il tuo ordine e ti invieremo un'email di conferma

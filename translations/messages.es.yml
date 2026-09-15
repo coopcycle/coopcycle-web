@@ -698,7 +698,6 @@ embed.delivery.title: Formulario de creación de entrega
 embed.delivery.configure_pricing_rule_set: Primero debes configurar una regla de tarificación
   para aplicar
 form.address.company.label: Empresa
-social.sign_in_with_facebook: Conéctate con Facebook
 delivery.table.heading.summary: Resumen
 delivery.table.heading.courier: Mensajero
 delivery.table.heading.order: Pedido

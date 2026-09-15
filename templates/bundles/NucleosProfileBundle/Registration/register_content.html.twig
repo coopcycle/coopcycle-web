@@ -3,15 +3,6 @@
 {% trans_default_domain 'NucleosProfileBundle' %}
 
 <div class="mx-auto px-4 max-w-md">
-  <div class="text-center mt-4">
-    {# https://daisyui.com/components/button/#login-buttons #}
-    <a href="{{ hwi_oauth_authorization_url('facebook')|oauth2_proxy }}" class="btn bg-[#1A77F2] text-white border-[#005fd8]" alt="{{ 'social.sign_in_with_facebook'|trans }}" rel="nofollow">
-      <i class="fa fa-facebook-official"></i>  {{ 'social.sign_in_with_facebook'|trans({}, 'messages') }}
-    </a>
-  </div>
-
-  <div class="divider"></div>
-
   {{ form_start(form, {'method': 'post', 'action': path('nucleos_profile_registration_register'), 'attr': {'class': 'nucleos_profile_registration_register'}}) }}
     {{ form_row(form.email) }}
     <div id="existing_user_error" class="alert alert-warning mt-1 hidden">

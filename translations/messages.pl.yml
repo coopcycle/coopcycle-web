@@ -557,7 +557,6 @@ activity.order.created: "Zamówienie #order/%aggregate_id% zostało złożone pr
 activity.order.accepted: "Zamówienie #order/%aggregate_id% zostało zaakceptowane\n"
 activity.order.refused: "Zamówienie  #order/%aggregate_id% zostało odrzucone\n"
 activity.order.picked: "@%owner% wybrał zamówienie #order/%aggregate_id%\n"
-social.sign_in_with_facebook: Zaloguj się przez Facebook
 embed.delivery.submit.help: Kliknij aby zarezerwować dostawę.
 basics.continue: Kontynuuj
 basics.add: Dodaj

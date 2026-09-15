@@ -30,9 +30,6 @@ nucleos_profile_profile_show:
         _controller: AppBundle\Controller\ProfileController::indexAction
         layout: 'profile.html.twig'
 
-facebook_login:
-    path: /login/check-facebook
-
 coopcycle_admin:
     resource: '@AppBundle/Resources/config/routing/admin.yml'
 

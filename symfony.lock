@@ -170,19 +170,6 @@
             "fixtures/.gitignore"
         ]
     },
-    "hwi/oauth-bundle": {
-        "version": "1.4",
-        "recipe": {
-            "repo": "github.com/symfony/recipes-contrib",
-            "branch": "main",
-            "version": "0.6",
-            "ref": "18ce21f16066cccfa0803c9e846a2e4f4bec92ab"
-        },
-        "files": [
-            "config/packages/hwi_oauth.yaml",
-            "config/routes/hwi_oauth_routing.yaml"
-        ]
-    },
     "invenso/rector": {
         "version": "1.0.2"
     },

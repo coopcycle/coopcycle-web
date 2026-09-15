@@ -25,7 +25,6 @@ use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUserInterface;
 use Serializable;
 use Sylius\Component\Channel\Model\ChannelAwareInterface;
 use Sylius\Component\Channel\Model\ChannelInterface;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterface;
 
 #[ApiResource(
@@ -50,7 +49,6 @@ use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterfac
     ],
     normalizationContext: ['groups' => ['user', 'order']]
 )]
-#[UniqueEntity('facebookId')]
 #[ApiFilter(filterClass: UserRoleFilter::class, properties: ['roles'])]
 class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface, LegacyPasswordAuthenticatedUserInterface, Serializable, EmailTwoFactorInterface
 {
@@ -71,10 +69,6 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface, 
     private $remotePushTokens;
 
     protected $channel;
-
-    protected $facebookId;
-
-    protected $facebookAccessToken;
 
     protected $quotesAllowed = false;
 
@@ -185,26 +179,6 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface, 
         if (null !== $this->customer) {
             $this->customer->setTelephone($telephone);
         }
-    }
-
-    public function setFacebookId($facebookId)
-    {
-        $this->facebookId = $facebookId;
-    }
-
-    public function getFacebookId()
-    {
-        return $this->facebookId;
-    }
-
-    public function setFacebookAccessToken($facebookAccessToken)
-    {
-        $this->facebookAccessToken = $facebookAccessToken;
-    }
-
-    public function getFacebookAccessToken()
-    {
-        return $this->facebookAccessToken;
     }
 
     public function setRestaurants($restaurants)

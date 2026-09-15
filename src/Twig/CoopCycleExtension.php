@@ -57,7 +57,6 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFilter('promotion_rule_for_humans', array(PromotionRuntime::class, 'ruleForHumans')),
             new TwigFilter('promotion_action_for_humans', array(PromotionRuntime::class, 'actionForHumans')),
             new TwigFilter('get_iri_from_item', array($this, 'getIriFromResource')),
-            new TwigFilter('oauth2_proxy', array(OAuthRuntime::class, 'modifyUrl')),
             new TwigFilter('restaurant_microdata', array(LocalBusinessRuntime::class, 'seo')),
             new TwigFilter('delay_for_humans', array(LocalBusinessRuntime::class, 'delayForHumans')),
             new TwigFilter('grams_to_kilos', array($this, 'gramsToKilos')),

@@ -547,7 +547,6 @@ activity.order.refused: "Comanda #order/%aggregate_id% ha estat rebutjada\n"
 activity.order.picked: "@%owner% ha rebut la comanda #order/%aggregate_id%\n"
 activity.order.dropped: "@%owner% ha entregat la comanda #order/%aggregate_id%\n"
 activity.order.fulfilled: "Comanda #order/#%aggregate_id% és complerta\n"
-social.sign_in_with_facebook: Inicieu la sessió amb Facebook
 embed.delivery.summary: "Has fet una comanda que serà lliurada el <strong>%dropoff_date%</strong>\
   \ a l'adreça següent: <strong>%dropoff_adress%</strong> <br> Hem calculat un trajecte\
   \ de <strong>%distance% quilòmetres</strong>. <br> El preu total del lliurament\

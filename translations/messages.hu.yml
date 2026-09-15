@@ -434,7 +434,6 @@ form.registration.username.help: "A felhasználóneved nem lehet hosszabb 15 kar
   \ kivéve az aláhúzásjeleket.\n"
 form.registration.legal.label: 'Elfogadom a Felhasználási feltételeket és az Adatvédelmi
   irányelveket'
-social.sign_in_with_facebook: 'Bejelentkezés Facebookkal'
 embed.delivery.summary: "Kézbesítést kérted <strong>%dropoff_date%</strong> dátummal\
   \ az alábbi címre: <strong>%dropoff_address%</strong> <br> A távolság <strong>%distance%\
   \ kilométer</strong> lett kiszámítva. <br> A kézbesítési ár <strong>%total_excluding_tax%\

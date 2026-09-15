@@ -796,7 +796,6 @@ activity.order.refused: "Lo pediu #order/%aggregate_id% ha estau refusau\n"
 activity.order.picked: "@%owner% ha recibiu lo pediu #order/%aggregate_id%\n"
 activity.order.dropped: "@%owner% ha entregau lo pediu #order/%aggregate_id%\n"
 activity.order.fulfilled: "Pediu #order/#%aggregate_id% ye rematau\n"
-social.sign_in_with_facebook: 'Connecta-te con Facebook'
 embed.delivery.summary: "Ha solicitau un pediu que será entregau en <strong>%dropoff_date%</strong>\
   \ a la siguient adreza: <strong>%dropoff_address%</strong> <br> Calculamos la distancia\
   \ de <strong>%distance% kilometros</strong>. <br> Lo pre d'o pediu ye <strong>%total_excluding_tax%\

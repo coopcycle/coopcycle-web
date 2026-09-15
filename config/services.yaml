@@ -374,10 +374,6 @@ services:
     tags:
       - { name: kernel.event_listener, event: kernel.request }
 
-  coopcycle.user_provider:
-    class: AppBundle\Security\NucleosUserBundleUserProvider
-    arguments: ['@nucleos_user.user_manager', { facebook: facebookId }]
-
   AppBundle\EventListener\MaintenanceListener:
     arguments:
       $redis: '@snc_redis.default'
@@ -1904,13 +1900,6 @@ services:
 
   AppBundle\Transporter\Proximus\ProximusTransformer:
     lazy: true
-
-  hwi_oauth.user.provider.entity:
-    class: HWI\Bundle\OAuthBundle\Security\Core\User\EntityUserProvider
-    arguments:
-      $class: AppBundle\Entity\User
-      $properties:
-        'facebook': 'facebook'
 
   sentry.callback.before_send:
     class: 'AppBundle\Service\Sentry'

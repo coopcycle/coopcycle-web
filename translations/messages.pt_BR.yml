@@ -699,7 +699,6 @@ activity.order.refused: "Pedido #order/%aggregate_id% foi recusado\n"
 activity.order.picked: "@%owner% coletou o pedido #order/%aggregate_id%\n"
 activity.order.dropped: "@%owner% abandonou o pedido #order/%aggregate_id%\n"
 activity.order.fulfilled: "Pedido #order/#%aggregate_id% foi cumprido\n"
-social.sign_in_with_facebook: Conecte-se com Facebook
 embed.delivery.summary: "Você solicitou uma entrega em <strong>%dropoff_date%</strong>\
   \ no seguinte endereço: <strong>%dropoff_address%</strong> <br> Calculamos a distância\
   \ de <strong>%distance% quilômetros</strong>. <br> O valor da entrega é <strong>%total_excluding_tax%\
