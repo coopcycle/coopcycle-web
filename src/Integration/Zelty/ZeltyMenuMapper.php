@@ -578,6 +578,10 @@ class ZeltyMenuMapper
     ): void {
         $value->setZeltyId($dishId);
         $value->setZeltyInternalId(isset($productsMap[$dishId]) ? $productsMap[$dishId]->getZeltyInternalId() : null);
+
+        if (isset($productsMap[$dishId])) {
+            $value->setProduct($productsMap[$dishId]);
+        }
     }
 
     /**
@@ -608,8 +612,6 @@ class ZeltyMenuMapper
         if ($value === null) {
             $value = new ProductOptionValue();
             $value->setCode($valueCode);
-            $value->setZeltyId($dishId);
-            $value->setZeltyInternalId(isset($productsMap[$dishId]) ? $productsMap[$dishId]->getZeltyInternalId() : null);
             $value->setCurrentLocale($locale);
 
             [$dishName] = $this->extractDishInfo($dishId, $productsMap);
@@ -618,6 +620,12 @@ class ZeltyMenuMapper
 
             $this->em->persist($value);
         }
+
+        // Whether just created or found via the filter-bypassed lookup above
+        // (e.g. a previously-disabled value hidden from $option->getValues()),
+        // refresh metadata including the product link so a re-import backfills
+        // it on values created before this link existed.
+        $this->updateExistingOptionValueMetadata($value, $dishId, $productsMap);
 
         $this->optionValuesByCode[$valueCode] = $value;
 

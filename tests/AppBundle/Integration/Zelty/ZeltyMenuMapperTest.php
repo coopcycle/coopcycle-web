@@ -231,6 +231,48 @@ class ZeltyMenuMapperTest extends TestCase
         $this->assertSame($zeltyVariant, $menuMap['ZM3']->getVariants()->last());
     }
 
+    /**
+     * ProductOptionValue::$product drives DisabledProductListener, which
+     * disables an option value when its linked product is disabled. Menu
+     * part option values must carry that link too, so disabling a dish
+     * disables the corresponding choice on every menu that offers it.
+     */
+    public function testPartOptionValueIsLinkedToItsDishProduct(): void
+    {
+        $reduced = $this->taxCategory('BASE_REDUCED');
+        $burger = $this->dishProduct($reduced);
+        $productsMap = ['ZD_BURGER' => $burger];
+        $menuPartsMap = [
+            'ZMP_BURGER' => new ZeltyMenuPart(id: 'ZMP_BURGER', name: 'Burger', dishIds: ['ZD_BURGER']),
+        ];
+
+        $menu = new ZeltyItem(
+            id: 'ZM4',
+            type: ZeltyItem::TYPE_MENU,
+            name: 'Menu Burger',
+            price: new ZeltyPrice(price: 690),
+            parts: ['ZMP_BURGER'],
+        );
+
+        $mapper = $this->buildMapper();
+        $restaurant = new LocalBusiness();
+
+        $menuMap = $mapper->importMenus(
+            [$menu],
+            $menuPartsMap,
+            $productsMap,
+            [],
+            $restaurant,
+            'fr',
+        );
+
+        $menuProduct = $menuMap['ZM4'];
+        $option = $menuProduct->getOptions()->first();
+        $value = $option->getValues()->first();
+
+        $this->assertSame($burger, $value->getProduct());
+    }
+
     private function dishProduct(TaxCategory $taxCategory): Product
     {
         $product = new Product();
