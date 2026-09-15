@@ -1,9 +1,7 @@
 {% trans_default_domain 'NucleosUserBundle' %}
 
-<div class="mx-auto px-4">
-  {% if error %}
-  <div class="alert alert-danger">{{ error }}</div>
-  {% endif %}
+<div class="mx-auto px-4 max-w-md">
+  {{ form_errors(form) }}
 
   <div class="text-center mt-4">
     <a href="{{ hwi_oauth_authorization_url('facebook')|oauth2_proxy }}" class="btn bg-[#1A77F2] text-white border-[#005fd8]" alt="{{ 'social.sign_in_with_facebook'|trans }}" rel="nofollow">
