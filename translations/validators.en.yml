@@ -41,6 +41,7 @@ product.name.modified: You have changed the product name
 task.before.mustBeGreaterThanAfter: The time frame is not valid
 
 product_option.valuesRange.notAllowed: You can't define a range for a mandatory option
+product_option.values.duplicateProductLink: "Several values are linked to the same product (\"%product%\"); each value must be linked to a different product, or to none"
 
 product.reusablePackagingUnit.mustBeGreaterThanZero: You must specify a quantity greater than 0
 

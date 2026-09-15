@@ -40,6 +40,7 @@ product.name.modified: Vous avez modifié le nom du produit
 task.before.mustBeGreaterThanAfter: La plage horaire n'est pas valide
 
 product_option.valuesRange.notAllowed: Vous ne pouvez pas définir d'intervalle pour une option obligatoire
+product_option.values.duplicateProductLink: "Plusieurs valeurs sont liées au même produit (« %product% ») ; chaque valeur doit être liée à un produit différent, ou à aucun"
 
 product.reusablePackagingUnit.mustBeGreaterThanZero: Vous devez spécifier une quantité supérieure à 0
 

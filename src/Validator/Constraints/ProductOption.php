@@ -8,6 +8,7 @@ use Symfony\Component\Validator\Constraint;
 class ProductOption extends Constraint
 {
     public $rangeNotAllowed = 'product_option.valuesRange.notAllowed';
+    public $duplicateProductLink = 'product_option.values.duplicateProductLink';
 
     public function validatedBy(): string
     {
