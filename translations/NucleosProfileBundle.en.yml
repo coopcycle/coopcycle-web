@@ -14,6 +14,7 @@ registration:
 
 form:
   username: Username
+  fullName: Full name
 
 form.registration.username.help: |
   Your username cannot be longer than 15 characters.

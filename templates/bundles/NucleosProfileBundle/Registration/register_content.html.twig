@@ -12,6 +12,7 @@
       {{ 'registration.email.taken.use.another'|trans({}, 'messages') }}
     </div>
     {{ form_row(form.username) }}
+    {{ form_row(form.fullName) }}
     {{ form_row(form.plainPassword) }}
 
     {% if form.legal is defined %}

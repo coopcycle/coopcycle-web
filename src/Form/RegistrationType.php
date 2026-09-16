@@ -51,6 +51,19 @@ class RegistrationType extends AbstractTypeExtension
             return;
         }
 
+        // Unlike the API/app signup flow above, the base web registration
+        // form (Nucleos\ProfileBundle\Form\Type\RegistrationFormType) only
+        // collects email/username/password — no name at all. A customer
+        // could then go their whole lifetime never providing one, since
+        // UpdateProfileType's own fullName field is optional too. That
+        // surfaced in production as a hard failure pushing their order to
+        // Zelty, which requires a non-empty customer name. Collecting it
+        // once, up front, closes the gap at its source.
+        $builder->add('fullName', TextType::class, [
+            'label' => 'form.fullName',
+            'property_path' => 'customer.fullName',
+        ]);
+
         if ($this->splitTermsAndConditionsAndPrivacyPolicy) {
             $builder->add('termsAndConditionsAndPrivacyPolicy', TermsAndConditionsAndPrivacyPolicyType::class, [
                 'label' => false,
