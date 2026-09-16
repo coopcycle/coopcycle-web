@@ -228,6 +228,62 @@ class ZeltyOrderNormalizerTest extends TestCase
         $this->assertSame(256, strlen($payload['comment']));
     }
 
+    /**
+     * A customer who signed up through the web never has firstName/lastName
+     * captured (the web registration form only collects email/username/
+     * password, unlike the app's own signup flow) — Zelty rejects the whole
+     * order push unless one of customer.fname/name/company is non-empty, so
+     * this falls back to the email's local part instead of failing outright.
+     */
+    public function testCustomerWithNoNameFallsBackToEmailLocalPart(): void
+    {
+        $customer = $this->createMock(Customer::class);
+        $customer->method('getId')->willReturn(42);
+        $customer->method('getFirstName')->willReturn(null);
+        $customer->method('getLastName')->willReturn(null);
+        $customer->method('getEmail')->willReturn('vincecru@hotmail.fr');
+        $customer->method('getTelephone')->willReturn('+33670278006');
+
+        $order = $this->buildMinimalOrder([], 0, customer: $customer);
+
+        $payload = $this->normalizer->normalize($order);
+
+        $this->assertSame('vincecru', $payload['customer']['fname']);
+        $this->assertNull($payload['customer']['name']);
+    }
+
+    public function testCustomerWithBlankStringNameAlsoFallsBack(): void
+    {
+        $customer = $this->createMock(Customer::class);
+        $customer->method('getId')->willReturn(42);
+        $customer->method('getFirstName')->willReturn('');
+        $customer->method('getLastName')->willReturn('');
+        $customer->method('getEmail')->willReturn('a@b.com');
+        $customer->method('getTelephone')->willReturn(null);
+
+        $order = $this->buildMinimalOrder([], 0, customer: $customer);
+
+        $payload = $this->normalizer->normalize($order);
+
+        $this->assertSame('a', $payload['customer']['fname']);
+    }
+
+    public function testCustomerWithNoNameAndNoEmailFallsBackToAGenericName(): void
+    {
+        $customer = $this->createMock(Customer::class);
+        $customer->method('getId')->willReturn(42);
+        $customer->method('getFirstName')->willReturn(null);
+        $customer->method('getLastName')->willReturn(null);
+        $customer->method('getEmail')->willReturn(null);
+        $customer->method('getTelephone')->willReturn('+33670278006');
+
+        $order = $this->buildMinimalOrder([], 0, customer: $customer);
+
+        $payload = $this->normalizer->normalize($order);
+
+        $this->assertSame('Client', $payload['customer']['fname']);
+    }
+
     public function testSupportsNormalization(): void
     {
         $order = $this->createMock(OrderInterface::class);
@@ -345,13 +401,13 @@ class ZeltyOrderNormalizerTest extends TestCase
         (new ZeltyOrderNormalizer($logger))->normalize($order);
     }
 
-    private function buildMinimalOrder(array $items, int $total, ?string $notes = null): OrderInterface&\PHPUnit\Framework\MockObject\MockObject
+    private function buildMinimalOrder(array $items, int $total, ?string $notes = null, ?Customer $customer = null): OrderInterface&\PHPUnit\Framework\MockObject\MockObject
     {
         $order = $this->createMock(OrderInterface::class);
         $order->method('getId')->willReturn(1);
         $order->method('getNumber')->willReturn('ABC123');
         $order->method('getPickupExpectedAt')->willReturn(null);
-        $order->method('getCustomer')->willReturn(null);
+        $order->method('getCustomer')->willReturn($customer);
         $order->method('getShippingAddress')->willReturn(null);
         $order->method('getItems')->willReturn(new ArrayCollection($items));
         $order->method('getItemsTotal')->willReturn($total);

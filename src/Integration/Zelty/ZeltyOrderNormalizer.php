@@ -60,13 +60,43 @@ class ZeltyOrderNormalizer implements NormalizerInterface
             return null;
         }
 
+        [$fname, $name] = $this->resolveCustomerName($customer);
+
         return [
             'remote_id' => (string) $customer->getId(),
-            'fname'     => $customer->getFirstName(),
-            'name'      => $customer->getLastName(),
+            'fname'     => $fname,
+            'name'      => $name,
             'mail'      => $customer->getEmail(),
             'phone'     => $customer->getTelephone(),
         ];
+    }
+
+    /**
+     * Zelty rejects the whole order push unless at least one of
+     * customer.fname/name/company is non-empty. A customer who signed up
+     * through the web (rather than the mobile app) never has firstName/
+     * lastName captured in the first place — the web registration form only
+     * collects email/username/password, and the profile form's fullName is
+     * optional — so this is reached in production, not just a theoretical
+     * edge case.
+     *
+     * Falling back to the email's local part keeps the order flowing
+     * instead of failing outright; it's a stand-in for a real identity, not
+     * a fix for the missing name itself.
+     */
+    private function resolveCustomerName(Customer $customer): array
+    {
+        $fname = $customer->getFirstName();
+        $name = $customer->getLastName();
+
+        if (!empty($fname) || !empty($name)) {
+            return [$fname, $name];
+        }
+
+        $email = $customer->getEmail();
+        $localPart = $email ? strstr($email, '@', true) : false;
+
+        return [$localPart !== false && $localPart !== '' ? $localPart : 'Client', null];
     }
 
     private function normalizeAddress(OrderInterface $order): ?array
