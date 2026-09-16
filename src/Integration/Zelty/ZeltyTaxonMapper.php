@@ -74,6 +74,9 @@ class ZeltyTaxonMapper
         $currentTagIds = array_map(fn (ZeltyTag $tag) => $tag->id, $tags);
 
         foreach ($parentTaxon->getChildren() as $child) {
+            // getChildren() is typed to the base TaxonInterface; every child
+            // is actually our own entity, this just narrows it for PHPStan.
+            /** @var Taxon $child */
             $zeltyId = $child->getZeltyId();
 
             if ($zeltyId === null || !str_starts_with($zeltyId, 'ZT')) {
