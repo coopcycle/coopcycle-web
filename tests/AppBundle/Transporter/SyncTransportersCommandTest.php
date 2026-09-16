@@ -998,6 +998,189 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->assertStringNotContainsString('pod-1.jpg', $reportContent);
     }
 
+    /**
+     * A photo taken on a pickup is not a proof of delivery.
+     */
+    public function testPickupProofIsNotReportedAsPod(): void
+    {
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/test.edi', self::FS_MASK_DBS),
+            self::EDI_SAMPLE
+        );
+
+        $commandTester = new CommandTester($this->initCommand());
+        $commandTester->execute(['transporter' => 'DBSCHENKER']);
+
+        $deliveries = $this->entityManager->getRepository(Delivery::class)->findAll();
+        /** @var Delivery $delivery */
+        $delivery = array_shift($deliveries);
+        $pickup = $delivery->getPickup();
+
+        $this->taskManager->start($pickup);
+        $this->entityManager->flush();
+
+        $image = new TaskImage();
+        $image->setImageName('pickup-photo.jpg');
+        $image->setTask($pickup);
+        $this->entityManager->persist($image);
+        $this->entityManager->flush();
+
+        $this->taskManager->markAsDone($pickup);
+        $this->entityManager->flush();
+        $this->entityManager->clear();
+
+        $unsynced = $this->entityManager->getRepository(EDIFACTMessage::class)->getUnsynced('DBSCHENKER');
+        $this->assertEquals(
+            ['AAR|CFM', 'MLV|CFM'],
+            array_map(fn(EDIFACTMessage $m) => $m->getSubMessageType(), $unsynced)
+        );
+    }
+
+    /**
+     * A failed delivery has no proof of delivery to report: the guard is on
+     * isDone(), not on isCompleted(), which is also true for FAILED.
+     */
+    public function testFailedDeliveryIsNotReportedAsPod(): void
+    {
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/test.edi', self::FS_MASK_DBS),
+            self::EDI_SAMPLE
+        );
+
+        $commandTester = new CommandTester($this->initCommand());
+        $commandTester->execute(['transporter' => 'DBSCHENKER']);
+
+        $deliveries = $this->entityManager->getRepository(Delivery::class)->findAll();
+        /** @var Delivery $delivery */
+        $delivery = array_shift($deliveries);
+        $dropoff = $delivery->getDropoff();
+
+        $this->taskManager->start($delivery->getPickup());
+        $this->entityManager->flush();
+        $this->taskManager->markAsDone($delivery->getPickup());
+        $this->entityManager->flush();
+        $this->taskManager->start($dropoff);
+        $this->entityManager->flush();
+
+        $image = new TaskImage();
+        $image->setImageName('doorstep.jpg');
+        $image->setTask($dropoff);
+        $this->entityManager->persist($image);
+        $this->entityManager->flush();
+
+        $this->taskManager->markAsFailed($dropoff);
+        $this->entityManager->flush();
+        $this->entityManager->clear();
+
+        $unsynced = $this->entityManager->getRepository(EDIFACTMessage::class)->getUnsynced('DBSCHENKER');
+        $this->assertEquals(
+            ['AAR|CFM', 'MLV|CFM'],
+            array_map(fn(EDIFACTMessage $m) => $m->getSubMessageType(), $unsynced)
+        );
+    }
+
+    /**
+     * AddImagesToTasks links an image that was uploaded earlier, so the proof
+     * reaches the notifier as an update of the image, not as an insert.
+     */
+    public function testProofLinkedAfterUploadIsReported(): void
+    {
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/test.edi', self::FS_MASK_DBS),
+            self::EDI_SAMPLE
+        );
+
+        $commandTester = new CommandTester($this->initCommand());
+        $commandTester->execute(['transporter' => 'DBSCHENKER']);
+
+        $deliveries = $this->entityManager->getRepository(Delivery::class)->findAll();
+        /** @var Delivery $delivery */
+        $delivery = array_shift($deliveries);
+        $dropoff = $delivery->getDropoff();
+
+        $this->taskManager->start($delivery->getPickup());
+        $this->entityManager->flush();
+        $this->taskManager->markAsDone($delivery->getPickup());
+        $this->entityManager->flush();
+        $this->taskManager->start($dropoff);
+        $this->entityManager->flush();
+        $this->taskManager->markAsDone($dropoff);
+        $this->entityManager->flush();
+
+        // Uploaded with no task, the way POST /api/task_images does when the
+        // app does not send the X-Attach-To header.
+        $image = new TaskImage();
+        $image->setImageName('linked-later.jpg');
+        $this->entityManager->persist($image);
+        $this->entityManager->flush();
+
+        $unsynced = $this->entityManager->getRepository(EDIFACTMessage::class)->getUnsynced('DBSCHENKER');
+        $this->assertCount(3, $unsynced);
+
+        // ... and linked afterwards by PUT /api/tasks/images.
+        $image->setTask($dropoff);
+        $this->entityManager->flush();
+        $this->entityManager->clear();
+
+        $unsynced = $this->entityManager->getRepository(EDIFACTMessage::class)->getUnsynced('DBSCHENKER');
+        $this->assertCount(4, $unsynced);
+        $this->assertEquals('POD|CFM', end($unsynced)->getSubMessageType());
+        $this->assertCount(1, end($unsynced)->getPods());
+    }
+
+    /**
+     * A task that did not come from a transporter import has nothing to report,
+     * even though its image reaches the notifier like any other.
+     */
+    public function testTaskWithoutImportMessageIsIgnored(): void
+    {
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/test.edi', self::FS_MASK_DBS),
+            self::EDI_SAMPLE
+        );
+
+        $commandTester = new CommandTester($this->initCommand());
+        $commandTester->execute(['transporter' => 'DBSCHENKER']);
+
+        $deliveries = $this->entityManager->getRepository(Delivery::class)->findAll();
+        /** @var Delivery $delivery */
+        $delivery = array_shift($deliveries);
+        $dropoff = $delivery->getDropoff();
+
+        $this->taskManager->start($delivery->getPickup());
+        $this->entityManager->flush();
+        $this->taskManager->markAsDone($delivery->getPickup());
+        $this->entityManager->flush();
+        $this->taskManager->start($dropoff);
+        $this->entityManager->flush();
+        $this->taskManager->markAsDone($dropoff);
+        $this->entityManager->flush();
+
+        // An ordinary dropoff, with no EDIFACT message attached to it.
+        $ownTask = new Task();
+        $ownTask->setType(Task::TYPE_DROPOFF);
+        $ownTask->setStatus(Task::STATUS_DONE);
+        $ownTask->setAddress($dropoff->getAddress());
+        $ownTask->setDoneAfter(new \DateTime('-1 hour'));
+        $ownTask->setDoneBefore(new \DateTime('+1 hour'));
+        $this->entityManager->persist($ownTask);
+        $this->entityManager->flush();
+
+        $image = new TaskImage();
+        $image->setImageName('not-a-transporter-delivery.jpg');
+        $image->setTask($ownTask);
+        $this->entityManager->persist($image);
+        $this->entityManager->flush();
+        $this->entityManager->clear();
+
+        // Only the 3 status reports of the imported delivery.
+        $unsynced = $this->entityManager->getRepository(EDIFACTMessage::class)->getUnsynced('DBSCHENKER');
+        $this->assertEquals(
+            ['AAR|CFM', 'MLV|CFM', 'LIV|CFM'],
+            array_map(fn(EDIFACTMessage $m) => $m->getSubMessageType(), $unsynced)
+        );
+    }
+
     public function testValidSyncOneTaskWithPackages(): void
     {
         // Insert edi to sync
