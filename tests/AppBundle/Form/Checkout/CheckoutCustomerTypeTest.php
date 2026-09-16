@@ -128,8 +128,8 @@ class CheckoutCustomerTypeTest extends TypeTestCase
     public function testFullNameJustTypedByAGuestIsAppliedToTheMatchedExistingCustomer(): void
     {
         $existingCustomer = new Customer();
-        $existingCustomer->setEmail('vincecru@hotmail.fr');
-        $existingCustomer->setEmailCanonical('vincecru@hotmail.fr');
+        $existingCustomer->setEmail('john.doe@example.com');
+        $existingCustomer->setEmailCanonical('john.doe@example.com');
         // No name at all: the production starting state.
 
         $canonicalizer = $this->createMock(Canonicalizer::class);
@@ -137,7 +137,7 @@ class CheckoutCustomerTypeTest extends TypeTestCase
 
         $customerRepository = $this->createMock(RepositoryInterface::class);
         $customerRepository->method('findOneBy')
-            ->with(['emailCanonical' => 'vincecru@hotmail.fr'])
+            ->with(['emailCanonical' => 'john.doe@example.com'])
             ->willReturn($existingCustomer);
 
         $factory = $this->buildFactory(new CheckoutCustomerType($canonicalizer, $customerRepository));
@@ -160,9 +160,9 @@ class CheckoutCustomerTypeTest extends TypeTestCase
 
         $form->submit([
             'customer' => [
-                'email' => 'vincecru@hotmail.fr',
-                'fullName' => 'Vincent Crucifère',
-                'phoneNumber' => '+33670278006',
+                'email' => 'john.doe@example.com',
+                'fullName' => 'John Doe',
+                'phoneNumber' => '+33612345678',
                 'legal' => '1',
             ],
         ]);
@@ -170,7 +170,7 @@ class CheckoutCustomerTypeTest extends TypeTestCase
         $resultingCustomer = $form->get('customer')->getData();
 
         $this->assertSame($existingCustomer, $resultingCustomer, 'The matched, pre-existing row must still be reused.');
-        $this->assertSame('Vincent Crucifère', $resultingCustomer->getFullName());
+        $this->assertSame('John Doe', $resultingCustomer->getFullName());
     }
 
     private function buildFactory(CheckoutCustomerType $checkoutCustomerType): FormFactoryInterface

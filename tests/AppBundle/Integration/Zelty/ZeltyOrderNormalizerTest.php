@@ -241,14 +241,14 @@ class ZeltyOrderNormalizerTest extends TestCase
         $customer->method('getId')->willReturn(42);
         $customer->method('getFirstName')->willReturn(null);
         $customer->method('getLastName')->willReturn(null);
-        $customer->method('getEmail')->willReturn('vincecru@hotmail.fr');
-        $customer->method('getTelephone')->willReturn('+33670278006');
+        $customer->method('getEmail')->willReturn('john.doe@example.com');
+        $customer->method('getTelephone')->willReturn('+33612345678');
 
         $order = $this->buildMinimalOrder([], 0, customer: $customer);
 
         $payload = $this->normalizer->normalize($order);
 
-        $this->assertSame('vincecru', $payload['customer']['fname']);
+        $this->assertSame('john.doe', $payload['customer']['fname']);
         $this->assertNull($payload['customer']['name']);
     }
 
@@ -275,7 +275,7 @@ class ZeltyOrderNormalizerTest extends TestCase
         $customer->method('getFirstName')->willReturn(null);
         $customer->method('getLastName')->willReturn(null);
         $customer->method('getEmail')->willReturn(null);
-        $customer->method('getTelephone')->willReturn('+33670278006');
+        $customer->method('getTelephone')->willReturn('+33612345678');
 
         $order = $this->buildMinimalOrder([], 0, customer: $customer);
 
