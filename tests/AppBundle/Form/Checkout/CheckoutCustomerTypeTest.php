@@ -7,14 +7,19 @@ use AppBundle\Entity\User;
 use AppBundle\Form\Checkout\CheckoutCustomerType;
 use AppBundle\Form\Type\LegalType;
 use AppBundle\Form\Type\PhoneNumberType;
+use AppBundle\Validator\Constraints\UserWithSameEmailNotExistsValidator;
+use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Nucleos\UserBundle\Util\Canonicalizer;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\TypeTestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Validator\ConstraintValidatorFactory;
 use Symfony\Component\Validator\Validation;
 
 /**
@@ -108,6 +113,89 @@ class CheckoutCustomerTypeTest extends TypeTestCase
         $form = $this->buildCustomerForm($customer);
 
         $this->assertFalse($form->has('fullName'));
+    }
+
+    /**
+     * Reproduces the production bug directly, at submit time: a guest fills
+     * in the required fullName field, but their email already matches an
+     * existing, nameless Customer row in the database (e.g. one left over
+     * from a web signup that never collected a name). The SUBMIT listener
+     * swaps in that old row (as it must, to avoid creating a duplicate
+     * customer) and must carry the freshly-typed fullName onto it —
+     * mirroring the existing phoneNumber carry-over right above it — or the
+     * order ends up with the stale, empty name Zelty then rejects.
+     */
+    public function testFullNameJustTypedByAGuestIsAppliedToTheMatchedExistingCustomer(): void
+    {
+        $existingCustomer = new Customer();
+        $existingCustomer->setEmail('vincecru@hotmail.fr');
+        $existingCustomer->setEmailCanonical('vincecru@hotmail.fr');
+        // No name at all: the production starting state.
+
+        $canonicalizer = $this->createMock(Canonicalizer::class);
+        $canonicalizer->method('canonicalize')->willReturnArgument(0);
+
+        $customerRepository = $this->createMock(RepositoryInterface::class);
+        $customerRepository->method('findOneBy')
+            ->with(['emailCanonical' => 'vincecru@hotmail.fr'])
+            ->willReturn($existingCustomer);
+
+        $factory = $this->buildFactory(new CheckoutCustomerType($canonicalizer, $customerRepository));
+
+        $order = new class(null) {
+            public function __construct(private readonly ?Customer $customer) {}
+
+            public function getCustomer(): ?Customer
+            {
+                return $this->customer;
+            }
+        };
+
+        $form = $factory->createBuilder(FormType::class, $order)
+            ->add('customer', CheckoutCustomerType::class, [
+                'mapped' => false,
+                'data' => null,
+            ])
+            ->getForm();
+
+        $form->submit([
+            'customer' => [
+                'email' => 'vincecru@hotmail.fr',
+                'fullName' => 'Vincent Crucifère',
+                'phoneNumber' => '+33670278006',
+                'legal' => '1',
+            ],
+        ]);
+
+        $resultingCustomer = $form->get('customer')->getData();
+
+        $this->assertSame($existingCustomer, $resultingCustomer, 'The matched, pre-existing row must still be reused.');
+        $this->assertSame('Vincent Crucifère', $resultingCustomer->getFullName());
+    }
+
+    private function buildFactory(CheckoutCustomerType $checkoutCustomerType): FormFactoryInterface
+    {
+        $phoneNumberType = new PhoneNumberType('FR');
+        $legalType = new LegalType($this->createMock(UrlGeneratorInterface::class));
+
+        // UserWithSameEmailNotExistsValidator needs a UserManager injected by
+        // the container in real life; a plain Validation::createValidator()
+        // can't construct it on its own, so it's pre-supplied here — its
+        // actual behavior is irrelevant to this test, which only submits a
+        // brand-new email that no user has.
+        $userWithSameEmailValidator = new UserWithSameEmailNotExistsValidator(
+            $this->createMock(UserManagerInterface::class)
+        );
+        $validator = Validation::createValidatorBuilder()
+            ->setConstraintValidatorFactory(new ConstraintValidatorFactory([
+                UserWithSameEmailNotExistsValidator::class => $userWithSameEmailValidator,
+            ]))
+            ->getValidator();
+
+        return Forms::createFormFactoryBuilder()
+            ->addExtension(new PreloadedExtension([$checkoutCustomerType, $phoneNumberType, $legalType], []))
+            ->addExtension(new ValidatorExtension($validator))
+            ->getFormFactory();
     }
 
     private function buildCustomerForm(?Customer $customer): FormInterface

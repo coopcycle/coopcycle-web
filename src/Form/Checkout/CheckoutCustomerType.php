@@ -101,6 +101,23 @@ class CheckoutCustomerType extends AbstractType
                     $phoneNumber = $form->get('phoneNumber')->getData();
                     $customer->setTelephone($phoneNumber);
 
+                    // Mirrors the phoneNumber fix above (see git blame): this
+                    // swaps in the *old* database row, discarding whatever
+                    // fullName the data mapper had just written onto the
+                    // in-memory Customer built for this checkout. Left
+                    // uncopied, a row that never had a name (e.g. a web
+                    // signup — RegistrationType's base form collects no
+                    // name at all) stays nameless forever, even though
+                    // fullName is a required field on this very form —
+                    // and Zelty rejects the whole order push on an empty
+                    // customer name.
+                    if ($form->has('fullName')) {
+                        $fullName = $form->get('fullName')->getData();
+                        if (!empty($fullName)) {
+                            $customer->setFullName($fullName);
+                        }
+                    }
+
                     $event->setData($customer);
                 // new customer
                 } else {
