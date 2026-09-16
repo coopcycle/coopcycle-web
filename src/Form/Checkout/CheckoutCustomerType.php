@@ -114,6 +114,10 @@ class CheckoutCustomerType extends AbstractType
                     if ($form->has('fullName')) {
                         $fullName = $form->get('fullName')->getData();
                         if (!empty($fullName)) {
+                            // setFullName() isn't part of CustomerInterface,
+                            // only our own entity; the repository always
+                            // returns one in practice.
+                            /** @var Customer $customer */
                             $customer->setFullName($fullName);
                         }
                     }
