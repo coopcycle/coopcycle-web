@@ -104,6 +104,8 @@ class SyncTransportersCommandTest extends KernelTestCase {
     RSJ+MS+LIV+CFM'
     EDI;
 
+    const INCIDENT_POD_URL = 'https://demo.coopcycle.org/media/incidents/images/damaged-parcel.jpg';
+
     const FS_MASK_DBS = 'testingdbs';
     const FS_MASK_TALIAE = 'testingtaliae';
 
@@ -1179,6 +1181,51 @@ class SyncTransportersCommandTest extends KernelTestCase {
             ['AAR|CFM', 'MLV|CFM', 'LIV|CFM'],
             array_map(fn(EDIFACTMessage $m) => $m->getSubMessageType(), $unsynced)
         );
+    }
+
+    /**
+     * A report filed through the incident modal carries a failure status rather
+     * than a CFM one, and its pods are incident images. ReportFromCC resolves
+     * both codes with constant(), so an unmapped one would take the whole batch
+     * down; this covers the message-to-wire half of that path. The action that
+     * builds the message is covered by IncidentActionTransporterReportTest.
+     */
+    public function testIncidentReportWithPodsReachesTheWire(): void
+    {
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/test.edi', self::FS_MASK_DBS),
+            self::EDI_SAMPLE
+        );
+
+        $commandTester = new CommandTester($this->initCommand());
+        $commandTester->execute(['transporter' => 'DBSCHENKER']);
+
+        $deliveries = $this->entityManager->getRepository(Delivery::class)->findAll();
+        /** @var Delivery $delivery */
+        $delivery = array_shift($deliveries);
+        $dropoff = $delivery->getDropoff();
+
+        $report = new EDIFACTMessage();
+        $report->setMessageType(EDIFACTMessage::MESSAGE_TYPE_REPORT);
+        $report->setSubMessageType('RST|DAF');
+        $report->setTransporter('DBSCHENKER');
+        $report->setDirection(EDIFACTMessage::DIRECTION_OUTBOUND);
+        $report->setReference($dropoff->getImportMessage()->getReference());
+        $report->setPods([self::INCIDENT_POD_URL]);
+
+        $dropoff->addEdifactMessage($report);
+        $this->entityManager->persist($report);
+        $this->entityManager->flush();
+        $this->entityManager->clear();
+
+        $commandTester->execute(['transporter' => 'DBSCHENKER']);
+
+        $dir_list = $this->syncDBSchenkerFs->listContents(sprintf('from_%s', self::FS_MASK_DBS))->toArray();
+        $this->assertCount(1, $dir_list);
+        $reportContent = $this->syncDBSchenkerFs->read($dir_list[0]['path']);
+
+        $this->assertStringContainsString("RSJ+MS+RST+DAF'", $reportContent);
+        $this->assertStringContainsString("damaged-parcel.jpg:FT'", $reportContent);
     }
 
     public function testValidSyncOneTaskWithPackages(): void
