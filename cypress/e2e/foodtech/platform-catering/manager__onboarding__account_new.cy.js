@@ -13,6 +13,9 @@ describe('Platform catering; manager; onboarding with a new user account', () =>
 
     cy.wait('@getSuggest', { timeout: 5000 })
 
+    cy.get('#businessAccountRegistration_user_fullName').clear()
+    cy.get('#businessAccountRegistration_user_fullName').type('John Doe')
+
     cy.get(
       'input[name="businessAccountRegistration[user][plainPassword][first]"]',
     ).type('12345678')
@@ -44,6 +47,9 @@ describe('Platform catering; manager; onboarding with a new user account', () =>
     cy.get('#businessAccountRegistration_user_username').type('manager01')
 
     cy.wait('@getSuggest', { timeout: 5000 })
+
+    cy.get('#businessAccountRegistration_user_fullName').clear()
+    cy.get('#businessAccountRegistration_user_fullName').type('John Doe')
 
     cy.get(
       'input[name="businessAccountRegistration[user][plainPassword][first]"]',

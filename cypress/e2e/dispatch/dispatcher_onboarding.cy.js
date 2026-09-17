@@ -13,6 +13,8 @@ describe('Dispatch; dispatcher; onboarding', () => {
     cy.get('#registration_form_username').type('dispatch01')
     cy.get('#registration_form_email').clear()
     cy.get('#registration_form_email').type('dispatch01@demo.coopcycle.org')
+    cy.get('#registration_form_fullName').clear()
+    cy.get('#registration_form_fullName').type('John Doe')
     cy.get('#registration_form_plainPassword_first').clear()
     cy.get('#registration_form_plainPassword_first').type('12345678')
     cy.get('#registration_form_plainPassword_second').clear()

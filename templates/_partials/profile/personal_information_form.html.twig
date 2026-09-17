@@ -5,6 +5,9 @@
   <div class="form rounded-bottom">
     {{ form_row(form.username) }}
     {{ form_row(form.email) }}
+    {% if form.fullName is defined %}
+      {{ form_row(form.fullName) }}
+    {% endif %}
     <div id="existing_user_error" class="alert alert-warning mt-1 hidden">
       <i class="fa fa-warning mr-1"></i>
       {{ 'registration.email.taken'|trans }}
