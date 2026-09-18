@@ -67,6 +67,10 @@ const SameDayPicker = ({ format, taskId }: Props) => {
   }, [taskValues.after]);
 
   const handleDateChange = newValue => {
+    if (!newValue) {
+      return;
+    }
+
     const afterHour = moment(taskValues.after).format('HH:mm:ss');
     const beforeHour = moment(taskValues.before).format('HH:mm:ss');
     const newDate = newValue.format('YYYY-MM-DD');
@@ -104,6 +108,7 @@ const SameDayPicker = ({ format, taskId }: Props) => {
           className="picker-container__datepicker mr-2"
           format={format}
           // defaultValue={afterValue || defaultAfterValue}
+          allowClear={false}
           value={moment(taskValues.after)}
           onChange={newDate => {
             handleDateChange(newDate);
