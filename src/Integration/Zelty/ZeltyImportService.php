@@ -51,8 +51,10 @@ class ZeltyImportService
         $productsMap = $this->importDishes($catalog, $restaurant, $optionsMap, $locale, $taxCategoryMap);
         $menusMap = $this->importMenus($catalog, $restaurant, $locale, $productsMap, $optionsMap, $taxCategoryMap);
 
+        $this->stampCatalogOwnership($catalog, $productsMap, $menusMap);
+
         $importedCodes = array_merge(array_keys($productsMap), array_keys($menusMap));
-        $this->disableRemovedProducts($restaurant, $importedCodes);
+        $this->disableRemovedProducts($restaurant, $catalog, $importedCodes);
 
         $allItemsMap = array_merge($productsMap, $menusMap);
         $this->taxonMapper->importTags($catalog->tags, $rootTaxon, $allItemsMap, $locale);
@@ -60,9 +62,25 @@ class ZeltyImportService
         $this->logInfo(sprintf('Completed Zelty catalog import for restaurant %d', $restaurant->getId()));
     }
 
-    private function disableRemovedProducts(LocalBusiness $restaurant, array $importedCodes): void
+    /**
+     * Record which catalog every imported product belongs to, so that a
+     * later import of *another* catalog for the same restaurant can tell
+     * the two apart instead of treating everything it did not just import
+     * as removed.
+     *
+     * @param array<string, \AppBundle\Entity\Sylius\Product> $productsMap
+     * @param array<string, \AppBundle\Entity\Sylius\Product> $menusMap
+     */
+    private function stampCatalogOwnership(ZeltyCatalog $catalog, array $productsMap, array $menusMap): void
     {
-        $stale = $this->productRepository->findZeltyProductsForRestaurantNotIn($restaurant, $importedCodes);
+        foreach (array_merge($productsMap, $menusMap) as $product) {
+            $product->setZeltyCatalogId($catalog->id);
+        }
+    }
+
+    private function disableRemovedProducts(LocalBusiness $restaurant, ZeltyCatalog $catalog, array $importedCodes): void
+    {
+        $stale = $this->productRepository->findZeltyProductsForRestaurantNotIn($restaurant, $catalog->id, $importedCodes);
 
         foreach ($stale as $product) {
             $product->setEnabled(false);
@@ -174,18 +192,36 @@ class ZeltyImportService
     }
 
     /**
-     * Create or retrieve the root taxon for imported catalog.
+     * Create or retrieve the root taxon for the imported catalog.
+     *
+     * The code is keyed by restaurant *and* catalog: a restaurant's Zelty
+     * account can hold several catalogs ("Click&Collect", a copy of it for
+     * another channel...), and each one deserves its own menu tree. Keying
+     * on the restaurant alone used to force every catalog through a single
+     * taxon, so importing a second one either mixed both trees together or,
+     * once that was guarded against, dead-ended the shop on whichever
+     * catalog happened to be imported first — including an empty one pulled
+     * by mistake.
+     *
+     * A restaurant imported before this became per-catalog still has a taxon
+     * under the legacy restaurant-only code; it is kept (renaming it would
+     * strand the shop's active menu pointer) and adopted as the tree for the
+     * catalog that built it.
      */
     private function createOrGetRootTaxon(LocalBusiness $restaurant, ZeltyCatalog $catalog, string $locale): Taxon
     {
-        $code = 'zelty_import_' . $restaurant->getId();
+        $repository = $this->em->getRepository(Taxon::class);
 
-        $taxon = $this->em->getRepository(Taxon::class)->findOneBy(['code' => $code]);
+        $code = self::rootTaxonCode($restaurant, $catalog);
+
+        $taxon = $repository->findOneBy(['code' => $code]);
+
+        if ($taxon === null) {
+            $taxon = $this->findLegacyRootTaxon($repository, $restaurant, $catalog);
+        }
 
         if ($taxon === null) {
             $taxon = $this->createRootTaxon($restaurant, $catalog, $locale, $code, $this->em);
-        } else {
-            $this->guardAgainstCatalogMismatch($taxon, $catalog, $restaurant);
         }
 
         $this->ensureRestaurantHasTaxon($restaurant, $taxon);
@@ -193,37 +229,39 @@ class ZeltyImportService
         return $taxon;
     }
 
-    /**
-     * The root taxon's code is keyed only by restaurant ID, not by which
-     * Zelty catalog built it — so importing a *different* catalog for the
-     * same restaurant (the wrong one selected on Zelty's side, or picked by
-     * mistake on the admin's manual pull screen) would otherwise silently
-     * reuse and rewrite this same taxon, mixing tags/menus from two
-     * unrelated catalogs together under one tree with no trace of the mix-up.
-     *
-     * A taxon created before this guard existed has no recorded catalog id
-     * yet; its first import after this fix adopts the current catalog as the
-     * taxon's source of truth instead of blocking it outright.
-     */
-    private function guardAgainstCatalogMismatch(Taxon $taxon, ZeltyCatalog $catalog, LocalBusiness $restaurant): void
+    private static function rootTaxonCode(LocalBusiness $restaurant, ZeltyCatalog $catalog): string
     {
+        // The restaurant id stays in the code even though a Zelty catalog id
+        // is a uuid: two shops on the same instance sharing a Zelty account
+        // would otherwise pull the same catalog into one shared taxon.
+        return sprintf('zelty_import_%d_%s', $restaurant->getId(), $catalog->id);
+    }
+
+    /**
+     * The taxon a pre-multi-catalog import left behind, if it belongs to the
+     * catalog being imported. A taxon created before catalog ids were
+     * recorded at all has no id to compare against, so it adopts the current
+     * catalog rather than being left orphaned next to a fresh duplicate of
+     * the same tree.
+     *
+     * A legacy taxon built from a *different* catalog is simply not ours:
+     * this import gets its own taxon and leaves that one untouched.
+     */
+    private function findLegacyRootTaxon($repository, LocalBusiness $restaurant, ZeltyCatalog $catalog): ?Taxon
+    {
+        $taxon = $repository->findOneBy(['code' => 'zelty_import_' . $restaurant->getId()]);
+
+        if ($taxon === null) {
+            return null;
+        }
+
         if (!$taxon->hasZeltyId()) {
             $taxon->setZeltyId($catalog->id);
 
-            return;
+            return $taxon;
         }
 
-        if ($taxon->getZeltyId() !== $catalog->id) {
-            throw new \RuntimeException(sprintf(
-                'Refusing to import Zelty catalog "%s" (%s) for restaurant %d: ' .
-                'its existing catalog taxon was built from a different catalog (%s). ' .
-                'Importing would silently mix two unrelated catalogs together.',
-                $catalog->name ?? $catalog->id,
-                $catalog->id,
-                $restaurant->getId(),
-                $taxon->getZeltyId()
-            ));
-        }
+        return $taxon->getZeltyId() === $catalog->id ? $taxon : null;
     }
 
     /**
@@ -241,7 +279,10 @@ class ZeltyImportService
         $taxon->setCurrentLocale($locale);
         $taxon->setZeltyId($catalog->id);
 
-        $slug = sprintf('imported-catalog-from-zelty-%d', $restaurant->getId());
+        // Taxon slugs are unique per locale, so the catalog id belongs here
+        // too: without it a restaurant's second catalog would collide with
+        // the first one's root taxon on insert.
+        $slug = sprintf('imported-catalog-from-zelty-%d-%s', $restaurant->getId(), $catalog->id);
         $taxon->setSlug($this->slugify->slugify($slug));
 
         $name = $catalog->name ?? 'Imported catalog from Zelty';

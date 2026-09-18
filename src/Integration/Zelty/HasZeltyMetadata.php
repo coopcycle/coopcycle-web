@@ -47,6 +47,23 @@ trait HasZeltyMetadata
         return isset($this->metadata['zelty_id']) && $this->metadata['zelty_id'] !== null;
     }
 
+    /**
+     * Which Zelty catalog this entity was imported from. A restaurant can
+     * import several, and telling them apart is what keeps one catalog's
+     * import from disabling another's products.
+     */
+    public function getZeltyCatalogId(): ?string
+    {
+        return $this->metadata['zelty_catalog_id'] ?? null;
+    }
+
+    public function setZeltyCatalogId(?string $catalogId): self
+    {
+        $this->metadata['zelty_catalog_id'] = $catalogId;
+
+        return $this;
+    }
+
     public function getZeltyInternalId(): ?string
     {
         return $this->metadata['zelty_internal_id'] ?? null;
