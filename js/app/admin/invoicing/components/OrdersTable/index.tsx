@@ -5,13 +5,15 @@ import moment from 'moment';
 
 import { money } from '../../../../utils/format';
 import { useGetInvoiceLineItemsQuery } from '../../../../api/slice';
-import { prepareParams } from '../../redux/actions';
+import { prepareParams, SettlementFilter } from '../../redux/actions';
 import { usePrevious } from '../../../../dashboard/redux/utils';
 import type { InvoiceLineItem } from '../../../../api/types';
+import OrderStateLabel from '../../../../order/Label';
 
 type OrderRow = {
   rowKey: string;
   orderId: string;
+  orderState: string;
   fileExports: Array<{
     requestId: string;
     createdAt: string;
@@ -22,21 +24,22 @@ type OrderRow = {
   subTotal: string;
   tax: string;
   total: string;
+  needsInvoicing: boolean;
 };
 
 type Props = {
-  ordersStates: string[];
   dateRange: moment.Moment[] | null;
   onlyNotInvoiced: boolean;
-  storeId: string;
+  settlement: SettlementFilter;
+  organizationId: string;
   reloadKey: number;
 };
 
 export default function OrdersTable({
-  ordersStates,
   dateRange,
   onlyNotInvoiced,
-  storeId,
+  settlement,
+  organizationId,
   reloadKey,
 }: Props) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -45,7 +48,7 @@ export default function OrdersTable({
   const previousReloadKey = usePrevious(reloadKey);
 
   const params = useMemo(() => {
-    if (!storeId) {
+    if (!organizationId) {
       return null;
     }
 
@@ -54,15 +57,15 @@ export default function OrdersTable({
     }
 
     return prepareParams({
-      store: [storeId],
+      organization: [organizationId],
       dateRange: [
         dateRange[0].format('YYYY-MM-DD'),
         dateRange[1].format('YYYY-MM-DD'),
       ],
-      state: ordersStates,
       onlyNotInvoiced: onlyNotInvoiced,
+      settlement: settlement,
     });
-  }, [ordersStates, dateRange, onlyNotInvoiced, storeId]);
+  }, [dateRange, onlyNotInvoiced, settlement, organizationId]);
 
   const { isFetching, data, refetch } = useGetInvoiceLineItemsQuery({
     params,
@@ -82,6 +85,7 @@ export default function OrdersTable({
         (order: InvoiceLineItem): OrderRow => ({
           rowKey: order['@id'],
           orderId: order.orderId,
+          orderState: order.orderState,
           fileExports: order.exports,
           number: order.orderNumber,
           date: order.date ? moment(order.date).format('l') : '?',
@@ -89,6 +93,7 @@ export default function OrdersTable({
           subTotal: money(order.subTotal),
           tax: money(order.tax),
           total: money(order.total),
+          needsInvoicing: order.needsInvoicing,
         }),
       ),
       total: data['hydra:totalItems'],
@@ -100,6 +105,14 @@ export default function OrdersTable({
       title: t('ADMIN_ORDERS_TO_INVOICE_ORDER_NUMBER_LABEL'),
       dataIndex: 'number',
       key: 'number',
+    },
+    {
+      title: t('ADMIN_ORDERS_TO_INVOICE_ORDER_STATE_LABEL'),
+      dataIndex: 'orderState',
+      key: 'orderState',
+      render: (orderState: string) => (
+        <OrderStateLabel order={{ state: orderState }} />
+      ),
     },
     {
       title: t('ADMIN_ORDERS_TO_INVOICE_EXPORTS_LABEL'),
@@ -132,6 +145,21 @@ export default function OrdersTable({
       title: t('ADMIN_ORDERS_TO_INVOICE_DATE_LABEL'),
       dataIndex: 'date',
       key: 'date',
+    },
+    {
+      title: t('ADMIN_ORDERS_TO_INVOICE_SETTLEMENT_LABEL'),
+      dataIndex: 'needsInvoicing',
+      key: 'needsInvoicing',
+      render: (needsInvoicing: boolean) =>
+        needsInvoicing ? (
+          <Tag color="orange">
+            {t('ADMIN_ORDERS_TO_INVOICE_SETTLEMENT_NEEDS_INVOICING')}
+          </Tag>
+        ) : (
+          <Tag color="green">
+            {t('ADMIN_ORDERS_TO_INVOICE_SETTLEMENT_SETTLED')}
+          </Tag>
+        ),
     },
     {
       title: t('ADMIN_ORDERS_TO_INVOICE_DESCRIPTION_LABEL'),
@@ -177,7 +205,7 @@ export default function OrdersTable({
   }, [reloadKey, previousReloadKey, refetch]);
 
   return (
-    <div data-testid={`invoicing.orders.${storeId}`}>
+    <div data-testid={`invoicing.orders.${organizationId}`}>
       <Table
         style={{ marginTop: '48px' }}
         columns={columns}

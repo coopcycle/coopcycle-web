@@ -6,6 +6,7 @@ use AppBundle\Entity\User;
 use AppBundle\Entity\RemotePushToken;
 use Doctrine\ORM\EntityManagerInterface;
 use Kreait\Firebase\Contract\Messaging;
+use Kreait\Firebase\Exception\FirebaseException;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\MessageTarget;
 use Psr\Log\LoggerInterface;
@@ -99,7 +100,16 @@ class RemotePushNotificationManager
         $deviceTokens = array_values($deviceTokens);
 
         // @see https://firebase-php.readthedocs.io/en/stable/cloud-messaging.html#send-messages-in-batches
-        $report = $this->firebaseMessaging->sendMulticast($message, $deviceTokens);
+        try {
+            $report = $this->firebaseMessaging->sendMulticast($message, $deviceTokens);
+        } catch (FirebaseException $e) {
+            // Firebase isn't configured (e.g. no FIREBASE_CREDENTIALS locally) or
+            // unreachable; a push notification is best-effort, not worth letting
+            // Messenger retry/fail the whole message over
+            $this->pushNotificationLogger->warning(sprintf('FCM: Could not send message: %s', $e->getMessage()));
+
+            return;
+        }
 
         if ($report->hasFailures()) {
             foreach ($report->failures()->getItems() as $failure) {

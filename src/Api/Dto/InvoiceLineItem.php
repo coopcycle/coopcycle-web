@@ -30,8 +30,10 @@ class InvoiceLineItem
 
     public readonly \DateTime $invoiceDate;
 
+    // IRI of the organization to invoice: either a Store ("/api/stores/{id}")
+    // or a restaurant/LocalBusiness ("/api/restaurants/{id}")
     #[Groups(["default_invoice_line_item"])]
-    public readonly ?int $storeId;
+    public readonly ?string $organizationId;
 
     public readonly ?string $organizationLegalName;
 
@@ -48,6 +50,11 @@ class InvoiceLineItem
     #[Groups(["default_invoice_line_item"])]
     public readonly string $orderNumber;
 
+    // Order state (new/accepted/fulfilled/...), distinct from whether it has
+    // been exported/invoiced yet
+    #[Groups(["default_invoice_line_item"])]
+    public readonly string $orderState;
+
     #[Groups(["default_invoice_line_item"])]
     public readonly string $description;
 
@@ -63,39 +70,50 @@ class InvoiceLineItem
     #[Groups(["default_invoice_line_item"])]
     public readonly array $exports;
 
+    // Whether CoopCycle still needs to invoice this order's organization for it.
+    // Always true for Store (on-demand delivery) orders. For restaurant orders,
+    // true only when paid (fully or partially) by meal voucher — card payments
+    // are already automatically settled via Stripe Connect.
+    #[Groups(["default_invoice_line_item"])]
+    public readonly bool $needsInvoicing;
+
     public function __construct(
         string $id,
         string $invoiceId,
         \DateTime $invoiceDate,
-        ?int $storeId,
+        ?string $organizationId,
         ?string $organizationLegalName,
         string $accountCode,
         string $product,
         int $orderId,
         string $orderNumber,
+        string $orderState,
         \DateTime $date,
         string $description,
         int $subTotal,
         int $tax,
         int $total,
         array $exports,
+        bool $needsInvoicing,
     )
     {
         $this->id = $id;
         $this->invoiceId = $invoiceId;
         $this->invoiceDate = $invoiceDate;
-        $this->storeId = $storeId;
+        $this->organizationId = $organizationId;
         $this->organizationLegalName = $organizationLegalName;
         $this->accountCode = $accountCode;
         $this->product = $product;
         $this->orderId = $orderId;
         $this->orderNumber = $orderNumber;
+        $this->orderState = $orderState;
         $this->date = $date;
         $this->description = $description;
         $this->subTotal = $subTotal;
         $this->tax = $tax;
         $this->total = $total;
         $this->exports = $exports;
+        $this->needsInvoicing = $needsInvoicing;
     }
 
     // The only reason to have separate methods

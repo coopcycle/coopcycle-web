@@ -13,7 +13,7 @@ parameters:
     excludePaths:
         - app/DoctrineMigrations/Version20171202224801.php
         - app/DoctrineMigrations/Version20171230131300.php
-        - src/Api/Filter/OrderStoreFilter.php
+        - src/Api/Filter/OrderOrganizationFilter.php
     ignoreErrors:
         - '#Access to an undefined property #'
         - '#Call to an undefined method Symfony\\Component\\Form\\FormInterface::getClickedButton\(\)#'
