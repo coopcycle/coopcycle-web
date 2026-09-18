@@ -60,6 +60,76 @@ class DeliveryTest extends TestCase
         $this->assertSame(['id' => 'PARCEL-1'], $delivery->getMetadata()['rdc']['parcel']);
     }
 
+    public function testExternalReferenceIsMirroredOnExistingTasks()
+    {
+        $delivery = new Delivery();
+
+        $delivery->setExternalReference('EXT-REF-42');
+
+        $this->assertSame('EXT-REF-42', $delivery->getPickup()->getMetadata()['external_reference']);
+        $this->assertSame('EXT-REF-42', $delivery->getDropoff()->getMetadata()['external_reference']);
+    }
+
+    public function testExternalReferenceIsMirroredOnTasksAddedAfterwards()
+    {
+        $delivery = new Delivery();
+        $delivery->setExternalReference('EXT-REF-42');
+
+        $dropoff = new Task();
+        $dropoff->setType(Task::TYPE_DROPOFF);
+        $delivery->addTask($dropoff);
+
+        $this->assertSame('EXT-REF-42', $dropoff->getMetadata()['external_reference']);
+    }
+
+    public function testExternalReferenceIsMirroredWhenTasksAreSetAfterwards()
+    {
+        // The order used by SyncTransportersCommand: setTasks() then setExternalReference()
+        $pickup = new Task();
+        $pickup->setType(Task::TYPE_PICKUP);
+        $dropoff = new Task();
+        $dropoff->setType(Task::TYPE_DROPOFF);
+
+        $delivery = new Delivery();
+        $delivery->setTasks([$pickup, $dropoff]);
+        $delivery->setExternalReference('EXT-REF-42');
+
+        $this->assertSame('EXT-REF-42', $pickup->getMetadata()['external_reference']);
+        $this->assertSame('EXT-REF-42', $dropoff->getMetadata()['external_reference']);
+    }
+
+    public function testExternalReferenceIsMirroredWhenTheWholeMetadataBagIsSet()
+    {
+        // This is the path taken by the API, which deserializes into Delivery::$metadata
+        $delivery = new Delivery();
+
+        $delivery->setMetadata(['external_reference' => 'EXT-REF-42']);
+
+        $this->assertSame('EXT-REF-42', $delivery->getPickup()->getMetadata()['external_reference']);
+        $this->assertSame('EXT-REF-42', $delivery->getDropoff()->getMetadata()['external_reference']);
+    }
+
+    public function testTasksOfADeliveryWithoutExternalReferenceKeepACleanMetadataBag()
+    {
+        $delivery = new Delivery();
+
+        $delivery->setMetadata('rdc.lo_uri', 'https://example.org/lo/1');
+
+        $this->assertArrayNotHasKey('external_reference', $delivery->getPickup()->getMetadata());
+        $this->assertArrayNotHasKey('external_reference', $delivery->getDropoff()->getMetadata());
+    }
+
+    public function testUnsettingTheExternalReferenceClearsItOnTasks()
+    {
+        $delivery = new Delivery();
+        $delivery->setExternalReference('EXT-REF-42');
+
+        $delivery->setExternalReference(null);
+
+        $this->assertArrayNotHasKey('external_reference', $delivery->getPickup()->getMetadata());
+        $this->assertArrayNotHasKey('external_reference', $delivery->getDropoff()->getMetadata());
+    }
+
     public function testToExpressionLanguageValues()
     {
         $pickupAddress = new Address();
