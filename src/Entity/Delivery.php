@@ -222,6 +222,12 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     private $store;
 
     /**
+     * Key under which the external reference is stored, both in the delivery
+     * metadata bag and — mirrored — in the metadata of each of its tasks.
+     */
+    public const EXTERNAL_REFERENCE_KEY = 'external_reference';
+
+    /**
      * Free-form key/value metadata attached to the delivery.
      *
      * Used to surface delivery-level attributes assigned by upstream systems
@@ -263,6 +269,11 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         $deliveryPosition = $taskCollection->findTaskPosition($task);
         $task->setMetadata('delivery_position', $deliveryPosition + 1); // we prefer it to be 1-indexed for user display
 
+        // Tasks can join before or after the external reference is known
+        // (`SyncTransportersCommand` sets it after `setTasks()`), so both this
+        // and `setMetadata()` mirror it — whichever happens last wins.
+        $this->mirrorExternalReferenceTo($task);
+
         return $taskCollection;
     }
 
@@ -293,14 +304,12 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
      */
     public function getExternalReference(): ?string
     {
-        return $this->metadata['external_reference'] ?? null;
+        return $this->getMetadata()[self::EXTERNAL_REFERENCE_KEY] ?? null;
     }
 
     public function setExternalReference(?string $externalReference): self
     {
-        $this->metadata['external_reference'] = $externalReference;
-
-        return $this;
+        return $this->setMetadata(self::EXTERNAL_REFERENCE_KEY, $externalReference);
     }
 
     public function getMetadata(): array
@@ -330,6 +339,8 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
             }
         }
 
+        $this->mirrorExternalReferenceToTasks();
+
         return $this;
     }
 
@@ -346,6 +357,45 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
 
         $node = $value;
         unset($node);
+    }
+
+    private function mirrorExternalReferenceToTasks(): void
+    {
+        foreach ($this->getTasks() as $task) {
+            $this->mirrorExternalReferenceTo($task);
+        }
+    }
+
+    /**
+     * Copy the delivery external reference into the task metadata bag, under
+     * the same `external_reference` key.
+     *
+     * A Task is serialized by `/api/tasks` without any link back to its
+     * Delivery (`Task::$delivery` is in no serialization group), so consumers
+     * of that endpoint have no way to correlate a task with the upstream
+     * system that produced the delivery. Mirroring the reference down is what
+     * makes it reachable there — see `TaskNormalizer`, which surfaces the
+     * metadata bag as-is.
+     */
+    private function mirrorExternalReferenceTo(Task $task): void
+    {
+        $externalReference = $this->getExternalReference();
+
+        if (!is_null($externalReference)) {
+            $task->setMetadata(self::EXTERNAL_REFERENCE_KEY, $externalReference);
+
+            return;
+        }
+
+        // Nothing to mirror: leave the metadata of deliveries that never had a
+        // reference untouched, but do clear one that has just been unset.
+        $metadata = $task->getMetadata();
+        if (!array_key_exists(self::EXTERNAL_REFERENCE_KEY, $metadata)) {
+            return;
+        }
+
+        unset($metadata[self::EXTERNAL_REFERENCE_KEY]);
+        $task->setMetadata($metadata);
     }
 
     public function getWeight()
