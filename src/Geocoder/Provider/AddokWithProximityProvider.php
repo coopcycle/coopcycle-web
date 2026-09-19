@@ -192,7 +192,7 @@ final class AddokWithProximityProvider extends AbstractHttpProvider
         $context = !empty($properties->context) ? $properties->context : null;
         if ($context) {
             $contextParts = explode(',', $context);
-            $departmentCode = trim($contextParts[0] ?? '');
+            $departmentCode = trim($contextParts[0]);
             $departementLabel = trim($contextParts[1] ?? '');
             $regionLabel = trim($contextParts[2] ?? '');
 
