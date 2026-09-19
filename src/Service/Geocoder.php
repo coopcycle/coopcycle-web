@@ -4,11 +4,11 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
+use AppBundle\Geocoder\Provider\AddokWithProximityProvider;
 use AppBundle\Utils\GeoUtils;
 use Geocoder\Geocoder as GeocoderInterface;
 use Geocoder\Location;
 use Geocoder\Model\Bounds;
-use Geocoder\Provider\Addok\Addok as AddokProvider;
 use Geocoder\Provider\Chain\Chain as ChainProvider;
 use Geocoder\Provider\GeocodeEarth\GeocodeEarth as GeocodeEarthProvider;
 use Geocoder\Provider\GoogleMaps\GoogleMaps as GoogleMapsProvider;
@@ -123,7 +123,7 @@ class Geocoder
         $httpClient  = new GuzzleClient(['handler' => $stack, 'timeout' => 30.0]);
         $httpAdapter = new Client($httpClient);
 
-        return new AddokProvider($httpAdapter, 'https://data.geopf.fr/geocodage');
+        return new AddokWithProximityProvider($httpAdapter, 'https://data.geopf.fr/geocodage');
     }
 
     private function createGoogleMapsProvider()
@@ -167,6 +167,10 @@ class Geocoder
             // forming the south-west and north-east corners of a bounding box (min lon, min lat, max lon, max lat).
             // @see https://opencagedata.com/api#forward-opt
             // @see https://opencagedata.com/bounds-finder
+            //
+            // The `proximity` data key is consumed by OpenCage, Google, GeocodeEarth
+            // and by AddokWithProximityProvider (which forwards it as `lat`/`lon`
+            // to the addok REST API).
             [ $latitude, $longitude ] = explode(',', $latlng);
             $viewbox = GeoUtils::getViewbox(floatval($latitude), floatval($longitude), 50);
             [ $lngMax, $latMax, $lngMin, $latMin ] = $viewbox;
