@@ -864,7 +864,6 @@ activity.order.fulfilled: "La commande #order/%aggregate_id% est terminée\n"
 activity.order.cancelled: "La commande #order/%aggregate_id% est annulée\n"
 activity.order.delayed: "La commande #order/%aggregate_id% a été retardée\n"
 activity.order.restored: "La commande #order/%aggregate_id% a été restaurée"
-activity.recurrence_rules.generate_orders_failed: "Les commandes récurrentes n'ont pas pu être créées pour le %date%\n"
 embed.delivery.summary: "Vous avez demandé une course qui vous sera déposée le <strong>%dropoff_date%</strong>\
   \ à l'adresse suivante : <strong>%dropoff_address%</strong><br>Nous avons calculé\
   \ une distance de <strong>%distance% kilomètres</strong>. <br>Selon nos tarifs,\
