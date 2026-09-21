@@ -492,22 +492,21 @@ Feature: Task recurrence rules
     And the user "bob" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "bob" sends a "GET" request to "/api/recurrence_rules/generate_orders?date=2025-04-14"
+    And the user "bob" sends a "POST" request to "/api/recurrence_rules/generate_orders?date=2025-04-14"
     Then the response status code should be 201
     And the response should be in JSON
     And the JSON should match:
       """
       {
-        "@context": "/api/contexts/RecurrenceRule",
-        "@id": "/api/recurrence_rules/generate_orders",
-        "@type": "hydra:Collection",
-        "hydra:member": [
-        ],
-        "hydra:totalItems": 0,
-        "hydra:view": {
-          "@id": "/api/recurrence_rules/generate_orders?date=2025-04-14",
-          "@type": "hydra:PartialCollectionView"
-        }
+        "@context": "/api/contexts/RecurrenceRuleGeneration",
+        "@id": "/api/recurrence_rule_generations/1",
+        "@type": "RecurrenceRuleGeneration",
+        "date": "2025-04-14",
+        "status": "completed",
+        "succeeded": 1,
+        "failed": 0,
+        "attempts": 1,
+        "errors": []
       }
       """
     Then the database should contain an order with a total price 699
@@ -524,22 +523,21 @@ Feature: Task recurrence rules
     And the user "bob" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "bob" sends a "GET" request to "/api/recurrence_rules/generate_orders?date=2025-04-21"
+    And the user "bob" sends a "POST" request to "/api/recurrence_rules/generate_orders?date=2025-04-21"
     Then the response status code should be 201
     And the response should be in JSON
     And the JSON should match:
       """
       {
-        "@context": "/api/contexts/RecurrenceRule",
-        "@id": "/api/recurrence_rules/generate_orders",
-        "@type": "hydra:Collection",
-        "hydra:member": [
-        ],
-        "hydra:totalItems": 0,
-        "hydra:view": {
-          "@id": "/api/recurrence_rules/generate_orders?date=2025-04-21",
-          "@type": "hydra:PartialCollectionView"
-        }
+        "@context": "/api/contexts/RecurrenceRuleGeneration",
+        "@id": "/api/recurrence_rule_generations/1",
+        "@type": "RecurrenceRuleGeneration",
+        "date": "2025-04-21",
+        "status": "completed",
+        "succeeded": 1,
+        "failed": 0,
+        "attempts": 1,
+        "errors": []
       }
       """
     Then the database should contain an order with a total price 500
@@ -555,7 +553,7 @@ Feature: Task recurrence rules
     And the user "bob" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "bob" sends a "GET" request to "/api/recurrence_rules/generate_orders?date=2025-04-21"
+    And the user "bob" sends a "POST" request to "/api/recurrence_rules/generate_orders?date=2025-04-21"
     Then the response status code should be 400
     And the response should be in JSON
     And the JSON should match:
@@ -581,64 +579,61 @@ Feature: Task recurrence rules
     And the user "bob" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "bob" sends a "GET" request to "/api/recurrence_rules/generate_orders?date=2025-04-21"
+    And the user "bob" sends a "POST" request to "/api/recurrence_rules/generate_orders?date=2025-04-21"
     Then the response status code should be 201
     And the response should be in JSON
     And the JSON should match:
       """
       {
-        "@context": "/api/contexts/RecurrenceRule",
-        "@id": "/api/recurrence_rules/generate_orders",
-        "@type": "hydra:Collection",
-        "hydra:member": [
-        ],
-        "hydra:totalItems": 0,
-        "hydra:view": {
-          "@id": "/api/recurrence_rules/generate_orders?date=2025-04-21",
-          "@type": "hydra:PartialCollectionView"
-        }
+        "@context": "/api/contexts/RecurrenceRuleGeneration",
+        "@id": "/api/recurrence_rule_generations/1",
+        "@type": "RecurrenceRuleGeneration",
+        "date": "2025-04-21",
+        "status": "completed",
+        "succeeded": 1,
+        "failed": 0,
+        "attempts": 1,
+        "errors": []
       }
       """
     Then the database should contain 1 order
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "bob" sends a "GET" request to "/api/recurrence_rules/generate_orders?date=2025-04-28"
+    And the user "bob" sends a "POST" request to "/api/recurrence_rules/generate_orders?date=2025-04-28"
     Then the response status code should be 201
     And the response should be in JSON
     And the JSON should match:
       """
       {
-        "@context": "/api/contexts/RecurrenceRule",
-        "@id": "/api/recurrence_rules/generate_orders",
-        "@type": "hydra:Collection",
-        "hydra:member": [
-        ],
-        "hydra:totalItems": 0,
-        "hydra:view": {
-          "@id": "/api/recurrence_rules/generate_orders?date=2025-04-28",
-          "@type": "hydra:PartialCollectionView"
-        }
+        "@context": "/api/contexts/RecurrenceRuleGeneration",
+        "@id": "/api/recurrence_rule_generations/2",
+        "@type": "RecurrenceRuleGeneration",
+        "date": "2025-04-28",
+        "status": "completed",
+        "succeeded": 0,
+        "failed": 0,
+        "attempts": 1,
+        "errors": []
       }
       """
     Then the database should contain 1 order
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "bob" sends a "GET" request to "/api/recurrence_rules/generate_orders?date=2025-05-05"
+    And the user "bob" sends a "POST" request to "/api/recurrence_rules/generate_orders?date=2025-05-05"
     Then the response status code should be 201
     And the response should be in JSON
     And the JSON should match:
       """
       {
-        "@context": "/api/contexts/RecurrenceRule",
-        "@id": "/api/recurrence_rules/generate_orders",
-        "@type": "hydra:Collection",
-        "hydra:member": [
-        ],
-        "hydra:totalItems": 0,
-        "hydra:view": {
-          "@id": "/api/recurrence_rules/generate_orders?date=2025-05-05",
-          "@type": "hydra:PartialCollectionView"
-        }
+        "@context": "/api/contexts/RecurrenceRuleGeneration",
+        "@id": "/api/recurrence_rule_generations/3",
+        "@type": "RecurrenceRuleGeneration",
+        "date": "2025-05-05",
+        "status": "completed",
+        "succeeded": 1,
+        "failed": 0,
+        "attempts": 1,
+        "errors": []
       }
       """
     Then the database should contain 2 orders
@@ -655,23 +650,79 @@ Feature: Task recurrence rules
     And the user "bob" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "bob" sends a "GET" request to "/api/recurrence_rules/generate_orders?date=2025-04-15"
+    And the user "bob" sends a "POST" request to "/api/recurrence_rules/generate_orders?date=2025-04-15"
     Then the response status code should be 201
     And the response should be in JSON
     And the JSON should match:
       """
       {
-        "@context": "/api/contexts/RecurrenceRule",
-        "@id": "/api/recurrence_rules/generate_orders",
-        "@type": "hydra:Collection",
-        "hydra:member": [
-        ],
-        "hydra:totalItems": 0,
-        "hydra:view": {
-          "@id": "/api/recurrence_rules/generate_orders?date=2025-04-15",
-          "@type": "hydra:PartialCollectionView"
-        }
+        "@context": "/api/contexts/RecurrenceRuleGeneration",
+        "@id": "/api/recurrence_rule_generations/1",
+        "@type": "RecurrenceRuleGeneration",
+        "date": "2025-04-15",
+        "status": "completed",
+        "succeeded": 0,
+        "failed": 0,
+        "attempts": 1,
+        "errors": []
       }
       """
     Then the database should contain 0 orders
 
+
+  Scenario: Watch a generation that already ran for the date
+    Given the current time is "2025-04-14 9:00:00"
+    Given the fixtures files are loaded:
+      | sylius_products.yml  |
+      | sylius_taxation.yml  |
+      | payment_methods.yml  |
+      | users.yml            |
+      | recurrence_rules_w_time_slot_pricing.yml |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/recurrence_rules/generate_orders?date=2025-04-14"
+    Then the response status code should be 201
+    # Asking a second time runs the date again, and the rules that already made
+    # an order for it are skipped, so nothing is generated twice. No
+    # "Content-Type" either: the dashboard posts no body, so it sends none.
+    When I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/recurrence_rules/generate_orders?date=2025-04-14"
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context": "/api/contexts/RecurrenceRuleGeneration",
+        "@id": "/api/recurrence_rule_generations/1",
+        "@type": "RecurrenceRuleGeneration",
+        "date": "2025-04-14",
+        "status": "completed",
+        "succeeded": 0,
+        "failed": 0,
+        "attempts": 1,
+        "errors": []
+      }
+      """
+    Then the database should contain 1 order
+    # The dashboard follows the run by its own URI while it is in progress
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/recurrence_rule_generations/1"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context": "/api/contexts/RecurrenceRuleGeneration",
+        "@id": "/api/recurrence_rule_generations/1",
+        "@type": "RecurrenceRuleGeneration",
+        "date": "2025-04-14",
+        "status": "completed",
+        "succeeded": 0,
+        "failed": 0,
+        "attempts": 1,
+        "errors": []
+      }
+      """

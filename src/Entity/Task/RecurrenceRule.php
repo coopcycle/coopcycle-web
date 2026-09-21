@@ -11,7 +11,6 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\Task\RecurrenceRuleBetween as BetweenController;
-use AppBundle\Action\Task\GenerateOrders;
 use AppBundle\Entity\Store;
 use AppBundle\Validator\Constraints\RecurrenceRuleTemplate as AssertRecurrenceRuleTemplate;
 use Gedmo\SoftDeleteable\SoftDeleteable as SoftDeleteableInterface;
@@ -26,7 +25,8 @@ use Symfony\Component\Validator\Constraints as Assert;
     shortName: 'RecurrenceRule',
     operations: [
         new Get(
-            // Make sure to add requirements for operations like "/recurrence_rules/generate_orders" to work
+            // Make sure to add requirements, so "/recurrence_rules/generate_orders"
+            // (declared on RecurrenceRuleGeneration) is not swallowed by this route
             requirements: ['id' => '[0-9]+'],
         ),
         new Put(),
@@ -37,11 +37,6 @@ use Symfony\Component\Validator\Constraints as Assert;
             uriTemplate: '/recurrence_rules/{id}/between',
             controller: BetweenController::class,
             write: false
-        ),
-        new GetCollection(
-            uriTemplate: '/recurrence_rules/generate_orders',
-            status: 201,
-            controller: GenerateOrders::class,
         ),
     ],
     normalizationContext: ['groups' => ['task_recurrence_rule']],

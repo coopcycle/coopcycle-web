@@ -6,6 +6,8 @@ namespace AppBundle\MessageHandler;
 
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task;
+use AppBundle\Entity\Task\RecurrenceRuleGeneration;
+use AppBundle\Entity\Task\RecurrenceRuleGenerationRepository;
 use AppBundle\Exception\GenerateOrdersException;
 use AppBundle\Message\GenerateOrdersForDate;
 use AppBundle\Service\DeliveryCreatedNotifier;
@@ -21,6 +23,7 @@ class GenerateOrdersForDateHandler
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly RecurrenceRuleGenerationRepository $generationRepository,
         private readonly DeliveryOrderManager $deliveryOrderManager,
         private readonly DeliveryCreatedNotifier $deliveryCreatedNotifier,
         private readonly LoggerInterface $logger,
@@ -31,6 +34,10 @@ class GenerateOrdersForDateHandler
     public function __invoke(GenerateOrdersForDate $message): void
     {
         $date = $message->getDate();
+
+        $generation = $this->loadGeneration($date);
+        $generation->start();
+        $this->entityManager->flush();
 
         $this->entityManager->getFilters()->enable('soft_deleteable');
         try {
@@ -53,6 +60,9 @@ class GenerateOrdersForDateHandler
         });
 
         if (empty($subscriptions)) {
+            $generation->finish();
+            $this->entityManager->flush();
+
             $this->logger->info(
                 sprintf('Generated %d recurring order(s)', 0),
                 ['date' => $date, 'recurrence_rules' => 0]
@@ -61,26 +71,22 @@ class GenerateOrdersForDateHandler
             return;
         }
 
-        $count = 0;
-
         // Send a single recap notification for all the deliveries created below,
         // instead of one notification per delivery
         $this->deliveryCreatedNotifier->startBatch();
-
-        $failures = [];
 
         try {
             foreach ($subscriptions as $subscription) {
                 try {
                     $order = $this->deliveryOrderManager->createOrderFromRecurrenceRule($subscription, $date);
                     if (!is_null($order)) {
-                        $count++;
+                        $generation->succeed();
                     }
                 } catch (\Throwable $e) {
                     // One bad rule should not block the other rules for the date.
                     // Failed rules are retried with the whole message, successes
                     // are skipped on retry via filterWithoutOrdersOnDate().
-                    $failures[] = $subscription->getId();
+                    $generation->fail($subscription->getId(), $e->getMessage());
                     $this->logger->error(
                         sprintf('Failed to generate recurring order: %s', $e->getMessage()),
                         ['date' => $date, 'recurrence_rule' => $subscription->getId()]
@@ -93,21 +99,43 @@ class GenerateOrdersForDateHandler
             // Unexpected failure (loading rules, dispatching recap, ...):
             // send nothing, so retries don't spam partial recaps.
             $this->deliveryCreatedNotifier->abortBatch();
+            $generation->abort($e->getMessage());
+            $this->entityManager->flush();
+
             throw $e;
         }
 
-        if (!empty($failures)) {
+        $generation->finish();
+        $this->entityManager->flush();
+
+        if ($generation->getFailed() > 0) {
             throw new GenerateOrdersException(
-                sprintf('Failed to generate recurring orders for %d rule(s): %s', count($failures), implode(', ', $failures))
+                sprintf('Failed to generate recurring orders for %d rule(s): %s',
+                    $generation->getFailed(),
+                    implode(', ', array_map(fn(array $error) => $error['recurrence_rule'], $generation->getErrors())))
             );
         }
 
-        // There is no feedback channel to the dashboard yet, so this log line is
-        // the only record that a generation ran and what it produced
         $this->logger->info(
-            sprintf('Generated %d recurring order(s)', $count),
+            sprintf('Generated %d recurring order(s)', $generation->getSucceeded()),
             ['date' => $date, 'recurrence_rules' => count($subscriptions)]
         );
+    }
+
+    /**
+     * The run is recorded whether or not it was asked for over HTTP, so a
+     * message dispatched by hand still leaves the same trace.
+     */
+    private function loadGeneration(string $date): RecurrenceRuleGeneration
+    {
+        $generation = $this->generationRepository->findOneByDate($date);
+
+        if (is_null($generation)) {
+            $generation = new RecurrenceRuleGeneration(new \DateTime($date));
+            $this->entityManager->persist($generation);
+        }
+
+        return $generation;
     }
 
     private function filterByDate(Task\RecurrenceRule $recurrence, string $startDate): bool

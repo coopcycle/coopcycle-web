@@ -32,7 +32,7 @@ import {
   PutDeliveryRequest,
   PutRecurrenceRuleRequest,
   RecurrenceRulesGenerateOrdersRequest,
-  RecurrenceRulesGenerateOrdersResponse,
+  RecurrenceRuleGeneration,
   CreatePricingRuleSetRequest,
   UpdatePricingRuleSetRequest,
   TimeSlotChoices,
@@ -283,15 +283,19 @@ export const apiSlice = createApi({
       }),
     }),
     recurrenceRulesGenerateOrders: builder.mutation<
-      RecurrenceRulesGenerateOrdersResponse,
+      RecurrenceRuleGeneration,
       RecurrenceRulesGenerateOrdersRequest
     >({
       query: date => ({
         url: 'api/recurrence_rules/generate_orders',
+        method: 'POST',
         params: {
           date: date.format('YYYY-MM-DD'),
         },
       }),
+    }),
+    getRecurrenceRuleGeneration: builder.query<RecurrenceRuleGeneration, Uri>({
+      query: (uri: Uri) => uri,
     }),
 
     getInvoiceLineItemsGroupedByOrganization: builder.query<
@@ -923,6 +927,7 @@ export const {
   usePutRecurrenceRuleMutation,
   useDeleteRecurrenceRuleMutation,
   useRecurrenceRulesGenerateOrdersMutation,
+  useGetRecurrenceRuleGenerationQuery,
   useLazyGetInvoiceLineItemsGroupedByOrganizationQuery,
   useGetInvoiceLineItemsQuery,
   useGetPricingRuleSetsQuery,
