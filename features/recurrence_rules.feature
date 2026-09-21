@@ -502,13 +502,8 @@ Feature: Task recurrence rules
         "@id": "/api/recurrence_rules/generate_orders",
         "@type": "hydra:Collection",
         "hydra:member": [
-          {
-            "@id": "/api/orders/1",
-            "@type": "http://schema.org/Order",
-            "paymentGateway": "stripe"
-          }
         ],
-        "hydra:totalItems": 1,
+        "hydra:totalItems": 0,
         "hydra:view": {
           "@id": "/api/recurrence_rules/generate_orders?date=2025-04-14",
           "@type": "hydra:PartialCollectionView"
@@ -539,13 +534,8 @@ Feature: Task recurrence rules
         "@id": "/api/recurrence_rules/generate_orders",
         "@type": "hydra:Collection",
         "hydra:member": [
-          {
-            "@id": "/api/orders/1",
-            "@type": "http://schema.org/Order",
-            "paymentGateway": "stripe"
-          }
         ],
-        "hydra:totalItems": 1,
+        "hydra:totalItems": 0,
         "hydra:view": {
           "@id": "/api/recurrence_rules/generate_orders?date=2025-04-21",
           "@type": "hydra:PartialCollectionView"
@@ -601,19 +591,15 @@ Feature: Task recurrence rules
         "@id": "/api/recurrence_rules/generate_orders",
         "@type": "hydra:Collection",
         "hydra:member": [
-          {
-            "@id": "/api/orders/1",
-            "@type": "http://schema.org/Order",
-            "paymentGateway": "stripe"
-          }
         ],
-        "hydra:totalItems": 1,
+        "hydra:totalItems": 0,
         "hydra:view": {
           "@id": "/api/recurrence_rules/generate_orders?date=2025-04-21",
           "@type": "hydra:PartialCollectionView"
         }
       }
       """
+    Then the database should contain 1 order
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "GET" request to "/api/recurrence_rules/generate_orders?date=2025-04-28"
@@ -634,6 +620,7 @@ Feature: Task recurrence rules
         }
       }
       """
+    Then the database should contain 1 order
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "GET" request to "/api/recurrence_rules/generate_orders?date=2025-05-05"
@@ -646,19 +633,15 @@ Feature: Task recurrence rules
         "@id": "/api/recurrence_rules/generate_orders",
         "@type": "hydra:Collection",
         "hydra:member": [
-          {
-            "@id": "/api/orders/2",
-            "@type": "http://schema.org/Order",
-            "paymentGateway": "stripe"
-          }
         ],
-        "hydra:totalItems": 1,
+        "hydra:totalItems": 0,
         "hydra:view": {
           "@id": "/api/recurrence_rules/generate_orders?date=2025-05-05",
           "@type": "hydra:PartialCollectionView"
         }
       }
       """
+    Then the database should contain 2 orders
 
   Scenario: Dont generate orders based on the disabled recurrence rule
     Given the current time is "2025-04-14 9:00:00"
@@ -690,4 +673,5 @@ Feature: Task recurrence rules
         }
       }
       """
+    Then the database should contain 0 orders
 

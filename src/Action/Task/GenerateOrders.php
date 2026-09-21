@@ -1,34 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AppBundle\Action\Task;
 
-use AppBundle\Entity\Sylius\Order;
-use AppBundle\Entity\Task;
-use AppBundle\Service\DeliveryCreatedNotifier;
-use AppBundle\Service\DeliveryOrderManager;
+use AppBundle\Message\GenerateOrdersForDate;
 use Carbon\Carbon;
-use Doctrine\ORM\EntityManagerInterface;
-use Recurr\Transformer\ArrayTransformer;
-use Recurr\Transformer\Constraint\BetweenConstraint;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 class GenerateOrders
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
-        private readonly DeliveryOrderManager $deliveryOrderManager,
-        private readonly DeliveryCreatedNotifier $deliveryCreatedNotifier,
+        private readonly MessageBusInterface $messageBus,
     )
     {
     }
 
-    public function __invoke($data, Request $request)
+    public function __invoke($data, Request $request): array
     {
         //get query parameters
         $queryParams = $request->query->all();
 
-        $date = $queryParams['date'];
+        $date = $queryParams['date'] ?? null;
 
         if (empty($date)) {
             throw new BadRequestHttpException('Date is required');
@@ -38,70 +33,12 @@ class GenerateOrders
             throw new BadRequestHttpException('Date must be in the future');
         }
 
-        $this->entityManager->getFilters()->enable('soft_deleteable');
-        $allSubscriptions = $this->entityManager->getRepository(Task\RecurrenceRule::class)->findByGenerateOrders(true);
-        $this->entityManager->getFilters()->disable('soft_deleteable');
+        // On instances with many recurrence rules the generation takes up to a
+        // minute, long enough for the client to drop the connection, so it runs
+        // on a worker. The created tasks reach the dashboard on their own,
+        // through the 'task:created' websocket broadcast.
+        $this->messageBus->dispatch(new GenerateOrdersForDate($date));
 
-        $subscriptions = array_filter($allSubscriptions, function ($subscription) {
-            return !$subscription->isPaused();
-        });
-
-        $subscriptions = array_filter($subscriptions, function ($subscription) use ($date) {
-            return $this->filterByDate($subscription, $date);
-        });
-
-        $subscriptions = array_filter($subscriptions, function ($subscription) use ($date) {
-            return $this->filterWithoutOrdersOnDate($subscription, $date);
-        });
-
-        $orders = [];
-
-        // Send a single recap notification for all the deliveries created below,
-        // instead of one notification per delivery
-        $this->deliveryCreatedNotifier->startBatch();
-
-        try {
-            foreach ($subscriptions as $subscription) {
-                $order = $this->deliveryOrderManager->createOrderFromRecurrenceRule($subscription, $date);
-                if (null !== $order) {
-                    $orders[] = $order;
-                }
-            }
-        } finally {
-            $this->deliveryCreatedNotifier->endBatch();
-        }
-
-        return $orders;
-    }
-
-    private function filterByDate(Task\RecurrenceRule $recurrence, string $startDate): bool
-    {
-        $after = new \DateTime($startDate . ' 00:00');
-        $before = new \DateTime($startDate . ' 23:59');
-
-        $transformer = new ArrayTransformer();
-        $constraint = new BetweenConstraint(
-            $after,
-            $before,
-            $inc = true
-        );
-
-        $rule = $recurrence->getRule();
-
-        $rule->setStartDate($recurrence->getCreatedAt());
-        $rule->setEndDate(null);
-
-        $occurrences = $transformer->transform($rule, $constraint);
-
-        return count($occurrences) > 0;
-    }
-
-    private function filterWithoutOrdersOnDate(Task\RecurrenceRule $subscription, string $startDate): bool
-    {
-        $date = new \DateTime($startDate . ' 00:00');
-
-        $orders = $this->entityManager->getRepository(Order::class)->findBySubscriptionAndDate($subscription, $date);
-
-        return 0 === count($orders);
+        return [];
     }
 }

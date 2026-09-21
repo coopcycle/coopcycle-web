@@ -3,5 +3,8 @@ framework:
         transports:
             zelty_catalog_sync:
                 dsn: 'sync://'
+            generate_orders_sync:
+                dsn: 'sync://'
         routing:
             'AppBundle\Message\Zelty\ProcessZeltyCatalog': zelty_catalog_sync
+            'AppBundle\Message\GenerateOrdersForDate': generate_orders_sync

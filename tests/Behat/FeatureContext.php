@@ -1385,6 +1385,15 @@ class FeatureContext implements Context, SnippetAcceptingContext
         }
     }
 
+    #[Then('the database should contain :count order')]
+    #[Then('the database should contain :count orders')]
+    public function theDatabaseShouldContainOrders($count): void
+    {
+        $orders = $this->doctrine->getRepository(Order::class)->findAll();
+
+        Assert::assertCount((int) $count, $orders);
+    }
+
     #[Then('the database should contain a payment with method :methodCode and amount :amount')]
     public function theDatabaseShouldContainAPaymentWithMethod($methodCode, $amount)
     {
