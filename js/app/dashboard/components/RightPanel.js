@@ -2,6 +2,9 @@ import React, { useEffect, useRef } from 'react'
 import { DragDropContext } from '@hello-pangea/dnd'
 import Split from 'react-split'
 import { useHotkey } from '@tanstack/react-hotkeys'
+import { Alert, Flex } from 'antd'
+import { LoadingOutlined } from '@ant-design/icons'
+import { useTranslation } from 'react-i18next'
 
 import { ToastContainer } from 'react-toastify'
 
@@ -28,6 +31,7 @@ import { selectSelectedDate } from '../../../shared/src/logistics/redux'
 const DashboardApp = ({ loadingAnim }) => {
 
   const dispatch = useDispatch()
+  const { t } = useTranslation()
 
   const toursEnabled = useSelector(selectAreToursEnabled)
   const couriersList = useSelector(selectCouriers)
@@ -47,7 +51,6 @@ const DashboardApp = ({ loadingAnim }) => {
     {
       isUninitialized,
       isLoading: isGeneratingOrdersForRecurrenceRules,
-      isError: isGenerateOrdersForRecurrenceRulesError,
     },
   ] = useRecurrenceRulesGenerateOrdersMutation()
 
@@ -63,15 +66,7 @@ const DashboardApp = ({ loadingAnim }) => {
     }
 
   const children = [
-    <UnassignedTasks
-      key="split_unassigned"
-      isGeneratingOrdersForRecurrenceRules={
-        isGeneratingOrdersForRecurrenceRules
-      }
-      isGenerateOrdersForRecurrenceRulesError={
-        isGenerateOrdersForRecurrenceRulesError
-      }
-    />,
+    <UnassignedTasks key="split_unassigned" />,
     <UnassignedTours
       key="split_unassigned_tours"
       splitCollapseAction={splitCollapseAction}
@@ -109,6 +104,18 @@ const DashboardApp = ({ loadingAnim }) => {
 
   return (
     <div className="dashboard__aside-container">
+      {isGeneratingOrdersForRecurrenceRules ? (
+        <Alert
+          banner
+          className="dashboard__generate-orders-status"
+          type="info"
+          message={
+            <Flex align="center" gap="small">
+              <LoadingOutlined spin /> {t('DASHBOARD_GENERATING_ORDERS')}
+            </Flex>
+          }
+        />
+      ) : null}
       <DragDropContext
         // https://github.com/atlassian/@hello-pangea/dnd/blob/master/docs/patterns/multi-drag.md
         onDragStart={ (result) => dispatch(handleDragStart(result)) }

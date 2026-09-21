@@ -43,6 +43,18 @@ html, body {
     position: relative;
   }
 
+  // The generation runs on a worker, so pin its status to the top of the aside:
+  // wherever the panels happen to be scrolled, it stays in sight. It never
+  // swallows a click - the dispatcher keeps working while the orders are made.
+  &__generate-orders-status {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    pointer-events: none;
+  }
+
   &__map {
     flex-direction: column;
   }
