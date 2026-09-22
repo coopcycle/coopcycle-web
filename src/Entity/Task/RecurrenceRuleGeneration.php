@@ -22,14 +22,16 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
 #[ApiResource(
     shortName: 'RecurrenceRuleGeneration',
     operations: [
+        // Declared first on purpose: API Platform builds the "@id" of a run
+        // from the first item GET it finds, and this is the one that points at
+        // the run itself rather than at the endpoint that started it.
         new Get(
             requirements: ['id' => '[0-9]+'],
+            security: "is_granted('ROLE_DISPATCHER')",
         ),
         // Kept on this resource rather than on RecurrenceRule, so the response
         // is serialized with this class' groups. A POST because asking for a
-        // date queues work - and because API Platform builds the "@id" of a
-        // response from the operation's own URI, which on a custom GET would
-        // make the run point at the endpoint that made it instead of at itself.
+        // date queues work.
         new Post(
             uriTemplate: '/recurrence_rules/generate_orders',
             controller: GenerateOrders::class,
@@ -37,6 +39,19 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
             deserialize: false,
             write: false,
             status: 201,
+            security: "is_granted('ROLE_DISPATCHER')",
+        ),
+        // The same thing over GET, as the endpoint answered before the
+        // generation moved to a worker - clients out there still call it that
+        // way, and a verb change would break them.
+        new Get(
+            uriTemplate: '/recurrence_rules/generate_orders',
+            controller: GenerateOrders::class,
+            read: false,
+            deserialize: false,
+            write: false,
+            status: 201,
+            security: "is_granted('ROLE_DISPATCHER')",
         ),
     ],
     normalizationContext: ['groups' => ['recurrence_rule_generation']],

@@ -726,3 +726,39 @@ Feature: Task recurrence rules
         "errors": []
       }
       """
+
+  Scenario: Generate orders with a GET request
+    Given the current time is "2025-04-14 9:00:00"
+    Given the fixtures files are loaded:
+      | sylius_products.yml  |
+      | sylius_taxation.yml  |
+      | payment_methods.yml  |
+      | users.yml            |
+      | recurrence_rules_w_time_slot_pricing.yml |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    # The endpoint answered a GET before the generation moved to a worker, and
+    # clients out there still call it that way
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/recurrence_rules/generate_orders?date=2025-04-14"
+    Then the response status code should be 201
+    And the response should be in JSON
+    # On a GET, API Platform names the run after the endpoint that made it
+    # rather than after the run itself - which is the "@id" this endpoint has
+    # always returned. The POST above is the one that hands back a usable URI.
+    And the JSON should match:
+      """
+      {
+        "@context": "/api/contexts/RecurrenceRuleGeneration",
+        "@id": "/api/recurrence_rules/generate_orders",
+        "@type": "RecurrenceRuleGeneration",
+        "date": "2025-04-14",
+        "status": "completed",
+        "succeeded": 1,
+        "failed": 0,
+        "attempts": 1,
+        "errors": []
+      }
+      """
+    Then the database should contain 1 order
