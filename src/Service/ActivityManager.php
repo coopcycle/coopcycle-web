@@ -26,6 +26,8 @@ class ActivityManager
         OrderEvents\OrderFulfilled::class,
         OrderEvents\OrderPriceUpdated::class,
         OrderEvents\OrderStateChanged::class,
+        OrderEvents\OrderPreparationStarted::class,
+        OrderEvents\OrderPreparationFinished::class,
         TaskEvents\TaskCreated::class,
         TaskEvents\TaskUpdated::class,
         TaskEvents\TaskAssigned::class,
@@ -35,6 +37,9 @@ class ActivityManager
         TaskEvents\TaskFailed::class,
         TaskEvents\TaskCancelled::class,
         TaskEvents\TaskRescheduled::class,
+        TaskEvents\TaskRestored::class,
+        TaskEvents\TaskBarcodeScanned::class,
+        TaskEvents\TaskIncidentReported::class,
         TourEvents\TourCreated::class,
         TourEvents\TourUpdated::class
     ];
@@ -150,6 +155,10 @@ class ActivityManager
                     '%old_price%' => $this->priceFormatter->formatWithSymbol((int) ($payload['old_total'] ?? 0)),
                     '%new_price%' => $this->priceFormatter->formatWithSymbol((int) ($payload['new_total'] ?? 0)),
                 ];
+            case TaskEvents\TaskIncidentReported::messageName():
+                return [
+                    '%reason%' => $this->translateIncidentReason($payload['reason'] ?? ''),
+                ];
             case OrderEvents\OrderStateChanged::messageName():
                 $state = $payload['newState'] ?? '';
                 return [
@@ -158,5 +167,26 @@ class ActivityManager
         }
 
         return [];
+    }
+
+    /**
+     * Known presets have a translation; other reasons (e.g. failure reasons
+     * reported from the app) are displayed as a humanized version of the code.
+     */
+    private function translateIncidentReason(string $reason): string
+    {
+        if ('' === $reason) {
+            return '';
+        }
+
+        $key = sprintf('incident.reason.%s', $reason);
+        $label = $this->translator->trans($key);
+
+        if ($label === $key) {
+            $label = ucfirst(strtolower(str_replace('_', ' ', $reason)));
+        }
+
+        // The separator is part of the parameter, so that nothing is displayed when there is no reason
+        return sprintf(': %s', $label);
     }
 }
