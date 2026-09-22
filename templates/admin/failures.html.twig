@@ -6,10 +6,12 @@
 
 {% block breadcrumb %}
   {{ parent() }}
+  <li><a href="{{ path('admin_incidents') }}">{% trans %}adminDashboard.incidents.title{% endtrans %}</a></li>
   <li>{% trans %}adminDashboard.failureSet.title{% endtrans %}</li>
 {% endblock %}
 
 {% block content %}
+  {% include 'admin/_partials/incidents_nav.html.twig' %}
   <div class="text-right mb-4">
     <a class="btn btn-success" href="{{ path('admin_deliveries_failures_failurereasonset_new') }}"><i class="fa fa-plus"></i> {% trans %}adminDashboard.failureSet.createNew{% endtrans %}</a>
   </div>

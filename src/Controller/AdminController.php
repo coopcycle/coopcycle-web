@@ -1297,7 +1297,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    #[Route(path: '/admin/deliveries/failures', name: 'admin_failures_list')]
+    #[Route(path: '/admin/incidents/failures', name: 'admin_failures_list')]
     public function failuresAction()
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -1310,7 +1310,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    #[Route(path: '/admin/deliveries/failures/new', name: 'admin_deliveries_failures_failurereasonset_new')]
+    #[Route(path: '/admin/incidents/failures/new', name: 'admin_deliveries_failures_failurereasonset_new')]
     public function newFailureReasonSetAction(Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -1319,7 +1319,7 @@ class AdminController extends AbstractController
         return $this->renderFailureReasonSetForm($failureReasonSet, $request);
     }
 
-    #[Route(path: '/admin/deliveries/failures/{id}', name: 'admin_deliveries_failures_failurereasonset')]
+    #[Route(path: '/admin/incidents/failures/{id}', name: 'admin_deliveries_failures_failurereasonset')]
     public function failureReasonSetAction($id, Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -1330,7 +1330,7 @@ class AdminController extends AbstractController
         return $this->renderFailureReasonSetForm($failureReasonSet, $request);
     }
 
-    #[Route(path: '/admin/deliveries/failures/{id}/delete', methods: ['POST'], name: 'admin_failures_delete')]
+    #[Route(path: '/admin/incidents/failures/{id}/delete', methods: ['POST'], name: 'admin_failures_delete')]
     public function deleteFailureReasonSetAction($id)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
