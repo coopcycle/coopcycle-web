@@ -806,6 +806,7 @@
         "PRICING_RULE_PICKER_UNIT_KG": "kg",
         "DELIVERY_FORM_KEEP_ORIGINAL_PRICE": "Conserver le prix d'origine",
         "DELIVERY_FORM_APPLY_NEW_PRICE": "Appliquer le nouveau prix",
+        "DELIVERY_FORM_ASSIGNED_READONLY": "Cette livraison a été assignée à un livreur et ne peut plus être modifiée.",
         "CART_SHIPPING_ADDRESS_MAP_PICKER": "Adresse sélectionnée sur la carte",
         "CART_SHIPPING_ADDRESS_PLUS_CODE": "Adresse sélectionnée via le plus code",
         "ADDRESS_AUTOSUGGEST_MAP_PICKER_LABEL": "Vous ne trouvez pas votre adresse ?",

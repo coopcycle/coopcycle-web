@@ -1,0 +1,80 @@
+context('Modify delivery (role: store)', () => {
+  afterEach(() => {
+    cy.removeEnvVar('PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED')
+  })
+
+  it('modify delivery until it is assigned, with price re-calculation', () => {
+    // Price is 1.00 € per kg
+    cy.loadFixturesWithSetup(['store_with_weight_pricing.yml'])
+    cy.setEnvVar('PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED', '0')
+
+    cy.login('store_1', 'store_1')
+
+    cy.urlmatch(/\/dashboard$/)
+
+    cy.get('a').contains('Créer une nouvelle commande').click()
+
+    cy.betaEnterAddressAtPosition(
+      0,
+      '23 Avenue Claude Vellefaux, 75010 Paris, France',
+      /^23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/i,
+      'Office',
+      '+33112121212',
+      'John Doe',
+    )
+
+    cy.betaEnterAddressAtPosition(
+      1,
+      '72 Rue Saint-Maur, 75011 Paris, France',
+      /^72,? Rue Saint-Maur,? 75011,? Paris,? France/i,
+      'Office',
+      '+33112121212',
+      'Jane smith',
+    )
+
+    cy.betaEnterWeightAtPosition(1, 2.5)
+
+    cy.get('[data-testid="tax-included"]').contains('3,00 €')
+
+    cy.get('button[type="submit"]').click()
+
+    // Delivery page (edit mode)
+    cy.urlmatch(/\/dashboard\/deliveries\/[0-9]+$/)
+
+    cy.get('[data-testid="tax-included"]').contains('3,00 €')
+    cy.get('[data-testid="delivery-assigned-alert"]').should('not.exist')
+
+    // Modify the weight; the price is re-calculated
+    cy.betaEnterWeightAtPosition(1, 5)
+
+    cy.get('[data-testid="tax-included-previous"]').contains('3,00 €')
+    cy.get('[data-testid="tax-included"]').contains('5,00 €')
+
+    // Save the changes
+    cy.get('button[type="submit"]').should('exist').click()
+
+    cy.urlmatch(/\/dashboard\/deliveries\/[0-9]+$/)
+
+    cy.get('[data-testid="tax-included"]').contains('5,00 €')
+    cy.get('[data-testid="tax-included-previous"]').should('not.exist')
+  })
+
+  it('can not modify a delivery once it is assigned', () => {
+    cy.loadFixturesWithSetup([
+      'store_basic.yml',
+      'package_delivery_order_assigned.yml',
+    ])
+    cy.setEnvVar('PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED', '0')
+
+    cy.login('store_1', 'store_1')
+
+    cy.visit('/dashboard/deliveries/1')
+
+    cy.get('[data-testid="delivery-itinerary"]', {
+      timeout: 10000,
+    }).should('be.visible')
+
+    cy.get('[data-testid="delivery-assigned-alert"]').should('be.visible')
+    cy.get('button[type="submit"]').should('not.exist')
+  })
+})

@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { Button, Checkbox, Tooltip } from 'antd';
 import { Formik, Form, FieldArray, FormikErrors } from 'formik';
 import moment, { Moment } from 'moment';
-import { InfoCircleOutlined } from '@ant-design/icons'
+import { InfoCircleOutlined } from '@ant-design/icons';
 
 import Spinner from '../../components/core/Spinner.js';
 import BarcodesModal from '../../../../assets/react/controllers/BarcodesModal.jsx';
@@ -160,6 +160,8 @@ type Props = {
   deliveryNodeId?: Uri;
   delivery?: Delivery;
   order?: OrderType;
+  // true when at least one task of the delivery has been assigned to a courier
+  isAssigned?: boolean;
   preLoadedFormData?: PutDeliveryRequest;
   shopifyOrder?: ShopifyOrder | null;
 };
@@ -172,6 +174,7 @@ const DeliveryForm = ({
   deliveryNodeId,
   delivery,
   order,
+  isAssigned = false,
   preLoadedFormData,
   shopifyOrder,
 }: Props) => {
@@ -216,6 +219,15 @@ const DeliveryForm = ({
   const { t } = useTranslation();
 
   const { logger } = useDatadog();
+
+  // Store owners can modify a delivery until it has been assigned to a courier
+  const isLockedForStore =
+    mode === Mode.DELIVERY_UPDATE && !isDispatcher && isAssigned;
+
+  const canSubmit =
+    mode === Mode.DELIVERY_CREATE ||
+    isDispatcher ||
+    (mode === Mode.DELIVERY_UPDATE && !isLockedForStore);
 
   const handleTaskExpansion = (taskIndex: number, isExpanded: boolean) => {
     setExpandedTasks(prev => ({
@@ -357,7 +369,6 @@ const DeliveryForm = ({
       }
 
       setInitialValues(initialValues);
-
 
       // For simple deliveries, expand all tasks by default
       if (initialValues.tasks.length <= 2) {
@@ -727,9 +738,10 @@ const DeliveryForm = ({
                   </div>
                 ) : null}
 
-                {mode === Mode.DELIVERY_CREATE && isDispatcher && isReverseDeliveryEnabled ? (
-                  <div
-                    className="border-top py-3">
+                {mode === Mode.DELIVERY_CREATE &&
+                isDispatcher &&
+                isReverseDeliveryEnabled ? (
+                  <div className="border-top py-3">
                     <Checkbox
                       name="delivery.add_reverse"
                       onChange={e => {
@@ -744,7 +756,18 @@ const DeliveryForm = ({
                   </div>
                 ) : null}
 
-                {mode === Mode.DELIVERY_CREATE || isDispatcher ? (
+                {isLockedForStore ? (
+                  <div className="border-top py-3">
+                    <div
+                      className="alert alert-warning mb-0"
+                      role="alert"
+                      data-testid="delivery-assigned-alert">
+                      {t('DELIVERY_FORM_ASSIGNED_READONLY')}
+                    </div>
+                  </div>
+                ) : null}
+
+                {canSubmit ? (
                   <div className="border-top py-3">
                     <SuggestionModal />
                     <Button
