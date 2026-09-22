@@ -73,4 +73,15 @@ class DeliveryCreatedNotifier
 
         $this->messageBus->dispatch(new DeliveriesCreated($deliveries));
     }
+
+    /**
+     * Discards the current batch without dispatching anything.
+     * Used when generation fails, so a retry doesn't send
+     * a recap for a partial batch on every attempt.
+     */
+    public function abortBatch(): void
+    {
+        $this->batching = false;
+        $this->batch = [];
+    }
 }

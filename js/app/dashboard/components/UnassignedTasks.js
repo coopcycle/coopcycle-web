@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import _ from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
 import { Draggable, Droppable } from '@hello-pangea/dnd'
-import { Alert, Flex, Popover } from 'antd'
+import { Popover } from 'antd'
 import { useTranslation } from 'react-i18next'
 
 import Task from './Task'
@@ -33,7 +33,6 @@ import {
 import { getDroppableListStyle } from '../utils'
 import clsx from 'clsx'
 import UnassignedTasksFilters from '../../components/UnassignedTasksFilters'
-import { LoadingOutlined } from '@ant-design/icons'
 
 const StandaloneTasks = ({ tasks, offset }) => {
   // waiting for https://github.com/coopcycle/coopcycle-web/issues/4196 to resolve to bring this code back
@@ -95,7 +94,7 @@ const Buttons = () => {
   )
 }
 
-export const UnassignedTasks = ({ isGeneratingOrdersForRecurrenceRules, isGenerateOrdersForRecurrenceRulesError }) => {
+export const UnassignedTasks = () => {
   const dispatch = useDispatch()
   const { t } = useTranslation()
 
@@ -147,23 +146,6 @@ export const UnassignedTasks = ({ isGeneratingOrdersForRecurrenceRules, isGenera
           opacity: unassignedTasksLoading ? 0.7 : 1,
           pointerEvents: unassignedTasksLoading ? 'none' : 'initial',
         }}>
-        {isGeneratingOrdersForRecurrenceRules ? (
-          <Alert
-            type="info"
-            message={
-              <Flex align="center" gap="small">
-                <LoadingOutlined spin /> {t('DASHBOARD_GENERATING_ORDERS')}
-              </Flex>
-            }
-          />
-        ) : null}
-        {isGenerateOrdersForRecurrenceRulesError ? (
-          <Alert
-            type="error"
-            showIcon
-            message={t('DASHBOARD_GENERATE_ORDERS_ERROR')}
-          />
-        ) : null}
         {isRecurrenceRulesVisible &&
           recurrenceRules.map((rrule, index) => (
             <RecurrenceRule

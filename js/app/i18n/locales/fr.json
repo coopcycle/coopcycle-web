@@ -38,6 +38,7 @@
         "DASHBOARD_ASSIGNED": "Assignées",
         "DASHBOARD_UNASSIGNED_TOURS": "Tournées non assignées",
         "DASHBOARD_GENERATING_ORDERS": "Vérification des règles de récurrence ...",
+        "DASHBOARD_GENERATE_ORDERS_ERROR": "Une erreur est survenue lors de la création des commandes récurrentes",
         "ADMIN_DASHBOARD_COURIER": "Coursier",
         "ADMIN_DASHBOARD_COURIERS": "Coursiers",
         "ADMIN_DASHBOARD_CANCEL": "Annuler",

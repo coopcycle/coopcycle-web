@@ -1,7 +1,10 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { DragDropContext } from '@hello-pangea/dnd'
 import Split from 'react-split'
 import { useHotkey } from '@tanstack/react-hotkeys'
+import { Alert, Flex } from 'antd'
+import { LoadingOutlined } from '@ant-design/icons'
+import { useTranslation } from 'react-i18next'
 
 import { ToastContainer } from 'react-toastify'
 
@@ -21,13 +24,22 @@ import { handleDragEnd, handleDragStart } from '../redux/handleDrag'
 import { selectCouriers, selectSplitDirection, selectAreToursEnabled, selectVisibleTaskIds } from '../redux/selectors'
 import { useDispatch, useSelector } from 'react-redux'
 import VehicleSelectMenu from './context-menus/VehicleSelectMenu'
-import { useRecurrenceRulesGenerateOrdersMutation } from '../../api/slice'
+import {
+  useGetRecurrenceRuleGenerationQuery,
+  useRecurrenceRulesGenerateOrdersMutation,
+} from '../../api/slice'
 import { selectSelectedDate } from '../../../shared/src/logistics/redux'
 
+const GENERATION_POLLING_INTERVAL = 3000
+
+function _isRunning(generation) {
+  return generation?.status === 'pending' || generation?.status === 'started'
+}
 
 const DashboardApp = ({ loadingAnim }) => {
 
   const dispatch = useDispatch()
+  const { t } = useTranslation()
 
   const toursEnabled = useSelector(selectAreToursEnabled)
   const couriersList = useSelector(selectCouriers)
@@ -42,14 +54,31 @@ const DashboardApp = ({ loadingAnim }) => {
     dispatch(selectTasksByIds([]))
   })
 
+  const [generation, setGeneration] = useState(null)
+
+  const generationRequested = useRef(false)
+
   const [
     generateOrders,
     {
-      isUninitialized,
-      isLoading: isGeneratingOrdersForRecurrenceRules,
-      isError: isGenerateOrdersForRecurrenceRulesError,
+      isError: isGenerateOrdersRequestError,
+      data: queuedGeneration,
     },
   ] = useRecurrenceRulesGenerateOrdersMutation()
+
+  // The endpoint only reports that the date was queued - the orders are made on
+  // a worker - so follow the run by its own URI, and stop asking once it is over.
+  const { data: polledGeneration } = useGetRecurrenceRuleGenerationQuery(
+    generation?.['@id'],
+    {
+      skip: !generation,
+      pollingInterval: _isRunning(generation) ? GENERATION_POLLING_INTERVAL : 0,
+    },
+  )
+
+  const isGeneratingOrders = _isRunning(generation)
+  const isGenerateOrdersError =
+    isGenerateOrdersRequestError || generation?.status === 'failed'
 
   const splitRef = useRef(),
     splitCollapseAction = () => {
@@ -63,15 +92,7 @@ const DashboardApp = ({ loadingAnim }) => {
     }
 
   const children = [
-    <UnassignedTasks
-      key="split_unassigned"
-      isGeneratingOrdersForRecurrenceRules={
-        isGeneratingOrdersForRecurrenceRules
-      }
-      isGenerateOrdersForRecurrenceRulesError={
-        isGenerateOrdersForRecurrenceRulesError
-      }
-    />,
+    <UnassignedTasks key="split_unassigned" />,
     <UnassignedTours
       key="split_unassigned_tours"
       splitCollapseAction={splitCollapseAction}
@@ -96,7 +117,18 @@ const DashboardApp = ({ loadingAnim }) => {
   }, [])
 
   useEffect(() => {
-    if (!isUninitialized) {
+    const latest = polledGeneration ?? queuedGeneration
+
+    if (latest) {
+      setGeneration(latest)
+    }
+  }, [polledGeneration, queuedGeneration])
+
+  useEffect(() => {
+    // A ref, not the mutation's own isUninitialized: StrictMode runs this effect
+    // twice on mount, and both runs read the same render - so isUninitialized is
+    // still true on the second one, and the date gets asked for twice.
+    if (generationRequested.current) {
       return
     }
 
@@ -104,11 +136,29 @@ const DashboardApp = ({ loadingAnim }) => {
       return
     }
 
+    generationRequested.current = true
     generateOrders(date)
-  }, [date, generateOrders, isUninitialized]);
+  }, [date, generateOrders]);
 
   return (
     <div className="dashboard__aside-container">
+      {isGeneratingOrders || isGenerateOrdersError ? (
+        <Alert
+          banner
+          className="dashboard__generate-orders-status"
+          type={isGenerateOrdersError ? 'error' : 'info'}
+          showIcon={isGenerateOrdersError}
+          message={
+            isGenerateOrdersError ? (
+              t('DASHBOARD_GENERATE_ORDERS_ERROR')
+            ) : (
+              <Flex align="center" gap="small">
+                <LoadingOutlined spin /> {t('DASHBOARD_GENERATING_ORDERS')}
+              </Flex>
+            )
+          }
+        />
+      ) : null}
       <DragDropContext
         // https://github.com/atlassian/@hello-pangea/dnd/blob/master/docs/patterns/multi-drag.md
         onDragStart={ (result) => dispatch(handleDragStart(result)) }

@@ -615,9 +615,19 @@ export type OrderValidation = {
   warnings?: string[];
 };
 
-export type RecurrenceRulesGenerateOrdersResponse = {
-  generated: number;
-  orders: Order[];
+// The state of one run of the order generation, for one date. There is at most
+// one per date, and it outlives the run, so a failure is still readable later.
+export type RecurrenceRuleGeneration = {
+  '@id': Uri;
+  date: string;
+  status: 'pending' | 'started' | 'completed' | 'failed';
+  succeeded: number;
+  failed: number;
+  attempts: number;
+  errors: {
+    recurrence_rule: number | null;
+    message: string;
+  }[];
 };
 
 export type PaymentMethod = {

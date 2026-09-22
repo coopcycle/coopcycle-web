@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd" xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
+  <entity name="AppBundle\Entity\Task\RecurrenceRuleGeneration" table="task_rrule_generation" repository-class="AppBundle\Entity\Task\RecurrenceRuleGenerationRepository">
+    <unique-constraints>
+      <unique-constraint name="task_rrule_generation_date_uniq" columns="date"/>
+    </unique-constraints>
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="date" type="date" column="date" nullable="false"/>
+    <field name="status" type="string" column="status" length="16" nullable="false"/>
+    <field name="succeeded" type="integer" column="succeeded" nullable="false"/>
+    <field name="failed" type="integer" column="failed" nullable="false"/>
+    <field name="attempts" type="integer" column="attempts" nullable="false"/>
+    <field name="errors" type="json" column="errors" nullable="false"/>
+    <field name="startedAt" type="datetime" column="started_at" nullable="true"/>
+    <field name="finishedAt" type="datetime" column="finished_at" nullable="true"/>
+    <field name="createdAt" type="datetime" column="created_at">
+      <gedmo:timestampable on="create"/>
+    </field>
+    <field name="updatedAt" type="datetime" column="updated_at">
+      <gedmo:timestampable on="update"/>
+    </field>
+  </entity>
+</doctrine-mapping>
