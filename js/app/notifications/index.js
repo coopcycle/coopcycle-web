@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { render } from '../utils/react'
 import { Badge, Popover } from 'antd'
 import Centrifuge from 'centrifuge'
+import axios from 'axios'
 
 import NotificationList from './NotificationList'
 
@@ -45,24 +46,20 @@ const Notifications = ({ initialNotifications, initialCount, centrifuge, namespa
   }, [])
 
   const onRemove = (notification) => {
-    const httpClient = new window._auth.httpClient()
-    httpClient.delete(`${removeURL}/${notification.id}?format=json`).then(({ response }) => {
-      if (!response) {
-        return
-      }
-      setNotifications(Object.values(response.notifications))
-      setCount(response.unread)
+    axios.delete(`${removeURL}/${notification.id}?format=json`, {
+      headers: { 'Content-Type': 'application/json' },
+    }).then(({ data }) => {
+      setNotifications(Object.values(data.notifications))
+      setCount(data.unread)
     })
   }
 
   const onDeleteAll = async () => {
-    const httpClient = new window._auth.httpClient()
-    return httpClient.post(`${removeNotificationsURL}?all=true&format=json`, {}).then(({ response }) => {
-      if (!response) {
-        return
-      }
-      setNotifications(Object.values(response.notifications))
-      setCount(response.unread)
+    return axios.post(`${removeNotificationsURL}?all=true&format=json`, {}, {
+      headers: { 'Content-Type': 'application/json' },
+    }).then(({ data }) => {
+      setNotifications(Object.values(data.notifications))
+      setCount(data.unread)
     })
   }
 
@@ -96,13 +93,8 @@ function bootstrap(el, options) {
 
   const theme = el.dataset.notificationTheme || 'light'
 
-  const httpClient = new window._auth.httpClient()
-  httpClient.get(options.notificationsURL, { format: 'json' })
-  .then(({ response: result }) => {
-
-    if (!result) {
-      return
-    }
+  axios.get(options.notificationsURL, { params: { format: 'json' } })
+  .then(({ data: result }) => {
 
     const { unread, notifications } = result
 
@@ -120,15 +112,11 @@ function bootstrap(el, options) {
   .catch(() => { /* Fail silently */ })
 }
 
-// profile_jwt is still needed here, but only for the Centrifugo
-// credentials (token/namespace/username) — not for login, which
-// window._auth.httpClient already handles (JWT + refresh) by itself.
-const httpClient = new window._auth.httpClient()
-httpClient.get(window.Routing.generate('profile_jwt'))
-  .then(({ response: result }) => {
-    if (!result) {
-      return
-    }
+// profile_jwt is a session-authenticated route (it is what issues the JWT),
+// so it must not go through window._auth.httpClient: that client is only set
+// up on pages injecting _auth, and it refreshes its token via this very route.
+axios.get(window.Routing.generate('profile_jwt'))
+  .then(({ data: result }) => {
     const options = {
       notificationsURL: window.Routing.generate('profile_notifications'),
       removeNotificationURL:    window.Routing.generate('profile_notification_remove'),
