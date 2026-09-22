@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {
+  Alert,
   Button,
   Divider,
   Drawer,
@@ -25,6 +26,7 @@ import {
   selectOrder,
   selectTransporterEnabled,
 } from '../../[id]/redux/incidentSlice';
+import { Order } from '../../../../api/types';
 
 async function _handleCancelButton(id) {
   const httpClient = new window._auth.httpClient();
@@ -34,13 +36,31 @@ async function _handleCancelButton(id) {
   );
 }
 
+// The price difference action is always offered, so that dispatchers know it
+// exists. Returns the key explaining why it cannot be used, or null when it can.
+function _priceDiffDisabledReason(isLastmile: boolean, order: Order | null) {
+  if (!order) {
+    return 'INCIDENTS_PRICE_DIFF_DISABLED_NO_ORDER';
+  }
+
+  if (order.state === 'cancelled') {
+    return 'INCIDENTS_PRICE_DIFF_DISABLED_ORDER_CANCELLED';
+  }
+
+  if (!isLastmile) {
+    return 'INCIDENTS_PRICE_DIFF_DISABLED_NOT_LASTMILE';
+  }
+
+  return null;
+}
+
 const styles = {
   btn: {
     width: '100%',
   },
 };
 
-export default function ({ isLastmile }) {
+export default function ({ isLastmile }: { isLastmile: boolean }) {
   const loaded = useSelector(selectLoaded);
   const incident = useSelector(selectIncident);
   const images = useSelector(selectImages);
@@ -68,6 +88,8 @@ export default function ({ isLastmile }) {
   const [transporterForm] = Form.useForm();
   const [creditNoteForm] = Form.useForm();
   const [refundLiablePartyForm] = Form.useForm();
+
+  const priceDiffDisabledReason = _priceDiffDisabledReason(isLastmile, order);
 
   const buttons = [
     {
@@ -107,11 +129,13 @@ export default function ({ isLastmile }) {
         <Button
           data-testid="apply-price-diff-button"
           style={styles.btn}
+          disabled={!!priceDiffDisabledReason}
           onClick={() => setPriceDiffDrawer(true)}>
           {t('APPLY_A_PRICE_DIFFERENCE')}
         </Button>
       ),
-      shouldRender: isLastmile && order && order.state !== 'cancelled',
+      info: priceDiffDisabledReason ? t(priceDiffDisabledReason) : null,
+      shouldRender: true,
     },
     {
       key: 'transporter-report',
@@ -152,6 +176,15 @@ export default function ({ isLastmile }) {
       <React.Fragment key={b.key}>
         {!!index && <Divider>{t('OR')}</Divider>}
         <p>{b.component()}</p>
+        {b.info && (
+          <Alert
+            className="mb-3"
+            data-testid={`${b.key}-info`}
+            showIcon
+            message={b.info}
+            type="info"
+          />
+        )}
       </React.Fragment>
     ));
 
