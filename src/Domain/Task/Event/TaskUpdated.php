@@ -3,12 +3,13 @@
 namespace AppBundle\Domain\Task\Event;
 
 use AppBundle\Domain\DomainEvent;
+use AppBundle\Domain\HasIconInterface;
 use AppBundle\Domain\SilentEventInterface;
 use AppBundle\Domain\Task\Event;
 use AppBundle\Entity\Task;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class TaskUpdated extends Event implements DomainEvent, SilentEventInterface
+class TaskUpdated extends Event implements DomainEvent, SilentEventInterface, HasIconInterface
 {
     public function __construct(
         Task $task,
@@ -20,6 +21,11 @@ class TaskUpdated extends Event implements DomainEvent, SilentEventInterface
     public function getCourier()
     {
         return $this->task->getAssignedCourier();
+    }
+
+    public static function iconName()
+    {
+        return 'pencil';
     }
 
     public static function messageName(): string

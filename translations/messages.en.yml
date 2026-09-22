@@ -934,6 +934,9 @@ activity.order.fulfilled: "Order #order/#%aggregate_id% is fulfilled\n"
 activity.order.cancelled: "Order #order/#%aggregate_id% is cancelled\n"
 activity.order.delayed: "Order #order/#%aggregate_id% has been delayed\n"
 activity.order.updated: "Order #order/%aggregate_id% has been updated\n"
+activity.task.updated: "@%owner% updated task #task/%aggregate_id%\n"
+activity.order.price_updated: "@%owner% changed the price of order #order/%aggregate_id% from %old_price% to %new_price%\n"
+activity.order.state_changed: "Order #order/%aggregate_id% is now %state%\n"
 activity.order.restored: "Order #order/%aggregate_id% has been restored"
 embed.delivery.summary: "You have requested a delivery on <strong>%dropoff_date%</strong>\
   \ at the following address: <strong>%dropoff_address%</strong> <br> We calculated\
