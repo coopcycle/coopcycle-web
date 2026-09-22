@@ -6,6 +6,7 @@ use AppBundle\Domain\HasIconInterface;
 use AppBundle\Domain\Order\Event as OrderEvents;
 use AppBundle\Domain\Task\Event as TaskEvents;
 use AppBundle\Domain\Tour\Event as TourEvents;
+use AppBundle\Utils\PriceFormatter;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Type;
@@ -23,6 +24,10 @@ class ActivityManager
         OrderEvents\OrderPicked::class,
         OrderEvents\OrderDropped::class,
         OrderEvents\OrderFulfilled::class,
+        OrderEvents\OrderPriceUpdated::class,
+        OrderEvents\OrderStateChanged::class,
+        OrderEvents\OrderPreparationStarted::class,
+        OrderEvents\OrderPreparationFinished::class,
         TaskEvents\TaskCreated::class,
         TaskEvents\TaskUpdated::class,
         TaskEvents\TaskAssigned::class,
@@ -32,13 +37,17 @@ class ActivityManager
         TaskEvents\TaskFailed::class,
         TaskEvents\TaskCancelled::class,
         TaskEvents\TaskRescheduled::class,
+        TaskEvents\TaskRestored::class,
+        TaskEvents\TaskBarcodeScanned::class,
+        TaskEvents\TaskIncidentReported::class,
         TourEvents\TourCreated::class,
         TourEvents\TourUpdated::class
     ];
 
     public function __construct(
         ManagerRegistry $doctrine,
-        TranslatorInterface $translator)
+        TranslatorInterface $translator,
+        private readonly PriceFormatter $priceFormatter)
     {
         $this->doctrine = $doctrine;
         $this->translator = $translator;
@@ -96,6 +105,7 @@ class ActivityManager
 
             $data = [
                 'name' => $event['name'],
+                'data' => isset($event['data']) ? (json_decode($event['data'], true) ?: []) : [],
                 'metadata' => isset($event['metadata']) ? json_decode($event['metadata'], true) : [],
                 'createdAt' => new \DateTime($event['created_at']),
                 'aggregateId' => $event['aggregate_id'],
@@ -113,9 +123,11 @@ class ActivityManager
             }
 
             $transParams = [
-                '%owner%' => $data['owner'],
+                '%owner%' => $data['owner'] ?? '',
                 '%aggregate_id%' => $data['aggregateId'],
             ];
+
+            $transParams = array_merge($transParams, $this->getEventSpecificParams($data['name'], $data['data']));
 
             $key = 'activity.' . str_replace(':', '.', $data['name']);
             $data['forHumans'] = $this->translator->trans($key, $transParams);
@@ -130,5 +142,51 @@ class ActivityManager
         });
 
         return $events;
+    }
+
+    /**
+     * Extra translation parameters, depending on the event payload.
+     */
+    private function getEventSpecificParams(string $name, array $payload): array
+    {
+        switch ($name) {
+            case OrderEvents\OrderPriceUpdated::messageName():
+                return [
+                    '%old_price%' => $this->priceFormatter->formatWithSymbol((int) ($payload['old_total'] ?? 0)),
+                    '%new_price%' => $this->priceFormatter->formatWithSymbol((int) ($payload['new_total'] ?? 0)),
+                ];
+            case TaskEvents\TaskIncidentReported::messageName():
+                return [
+                    '%reason%' => $this->translateIncidentReason($payload['reason'] ?? ''),
+                ];
+            case OrderEvents\OrderStateChanged::messageName():
+                $state = $payload['newState'] ?? '';
+                return [
+                    '%state%' => $state ? strtolower($this->translator->trans(sprintf('order.state.%s', $state))) : '',
+                ];
+        }
+
+        return [];
+    }
+
+    /**
+     * Known presets have a translation; other reasons (e.g. failure reasons
+     * reported from the app) are displayed as a humanized version of the code.
+     */
+    private function translateIncidentReason(string $reason): string
+    {
+        if ('' === $reason) {
+            return '';
+        }
+
+        $key = sprintf('incident.reason.%s', $reason);
+        $label = $this->translator->trans($key);
+
+        if ($label === $key) {
+            $label = ucfirst(strtolower(str_replace('_', ' ', $reason)));
+        }
+
+        // The separator is part of the parameter, so that nothing is displayed when there is no reason
+        return sprintf(': %s', $label);
     }
 }

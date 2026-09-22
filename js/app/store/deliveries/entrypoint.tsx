@@ -34,6 +34,8 @@ type Props = {
   order?: string;
   formData?: string;
   isDispatcher: boolean;
+  isAssigned: boolean;
+  backUrl?: string;
   isDebugPricing: boolean;
   isPriceBreakdownEnabled: boolean;
   isReverseDeliveryEnabled: boolean;
@@ -49,6 +51,8 @@ const Form = ({
   order,
   formData,
   isDispatcher,
+  isAssigned,
+  backUrl,
   isDebugPricing,
   isPriceBreakdownEnabled,
   isReverseDeliveryEnabled,
@@ -68,7 +72,11 @@ const Form = ({
   return (
     <UserContext.Provider value={{ isDispatcher }}>
       <FlagsContext.Provider
-        value={{ isDebugPricing, isPriceBreakdownEnabled, isReverseDeliveryEnabled }}>
+        value={{
+          isDebugPricing,
+          isPriceBreakdownEnabled,
+          isReverseDeliveryEnabled,
+        }}>
         <UploadContext.Provider value={{ endpoint: documentUploadEndpoint }}>
           <DeliveryForm
             storeNodeId={storeNodeId}
@@ -76,9 +84,11 @@ const Form = ({
             deliveryNodeId={deliveryNodeId}
             delivery={delivery ? JSON.parse(delivery) : null}
             order={order ? JSON.parse(order) : null}
+            isAssigned={isAssigned}
+            backUrl={backUrl}
             preLoadedFormData={formData ? JSON.parse(formData) : null}
             shopifyOrder={shopifyOrder ? JSON.parse(shopifyOrder) : null}
-            />
+          />
         </UploadContext.Provider>
       </FlagsContext.Provider>
     </UserContext.Provider>
@@ -103,6 +113,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const order = container.dataset.order || undefined;
   const formData = container.dataset.formData || undefined;
   const isDispatcher = container.dataset.isDispatcher === 'true';
+  const isAssigned = container.dataset.isAssigned === 'true';
+  const backUrl = container.dataset.backUrl || undefined;
   const isDebugPricing = container.dataset.isDebugPricing === 'true';
   const isPriceBreakdownEnabled =
     container.dataset.isPriceBreakdownEnabled === 'true';
@@ -123,6 +135,8 @@ document.addEventListener('DOMContentLoaded', () => {
           order={order}
           formData={formData}
           isDispatcher={isDispatcher}
+          isAssigned={isAssigned}
+          backUrl={backUrl}
           isDebugPricing={isDebugPricing}
           isPriceBreakdownEnabled={isPriceBreakdownEnabled}
           isReverseDeliveryEnabled={isReverseDeliveryEnabled}

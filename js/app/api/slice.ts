@@ -254,6 +254,12 @@ export const apiSlice = createApi({
         };
       },
     }),
+    cancelDelivery: builder.mutation<void, string>({
+      query: uri => ({
+        url: uri,
+        method: 'DELETE',
+      }),
+    }),
     putDelivery: builder.mutation<Delivery, PutDeliveryRequest>({
       query({ '@id': uri, ...body }) {
         return {
@@ -781,10 +787,7 @@ export const apiSlice = createApi({
       query: () => 'api/shift_settings',
       providesTags: ['ShiftSettings'],
     }),
-    putShiftSettings: builder.mutation<
-      ShiftSettings,
-      PutShiftSettingsRequest
-    >({
+    putShiftSettings: builder.mutation<ShiftSettings, PutShiftSettingsRequest>({
       query: body => ({
         url: 'api/shift_settings',
         method: 'PUT',
@@ -793,7 +796,10 @@ export const apiSlice = createApi({
       invalidatesTags: ['ShiftSettings'],
     }),
 
-    generateSchedule: builder.mutation<ShiftScheduleSuggestion, { week: string }>({
+    generateSchedule: builder.mutation<
+      ShiftScheduleSuggestion,
+      { week: string }
+    >({
       query: body => ({
         url: 'api/shifts/generate_schedule',
         method: 'POST',
@@ -923,6 +929,7 @@ export const {
   useCalculatePriceMutation,
   useSuggestOptimizationsMutation,
   usePostDeliveryMutation,
+  useCancelDeliveryMutation,
   usePutDeliveryMutation,
   usePutRecurrenceRuleMutation,
   useDeleteRecurrenceRuleMutation,

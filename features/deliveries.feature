@@ -5163,6 +5163,146 @@ Feature: Deliveries
       }
       """
 
+  Scenario: Update delivery as a store owner re-calculates the price
+    Given the fixtures files are loaded:
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | store_with_task_pricing.yml |
+    Given the current time is "2020-04-02 9:00:00"
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_STORE"
+    And the store with name "Acme" belongs to user "bob"
+    Given the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store": "/api/stores/1",
+        "tasks": [
+          {
+            "type": "PICKUP",
+            "address": "24, Rue de la Paix",
+            "before": "2020-04-03 13:00"
+          },
+          {
+            "type": "DROPOFF",
+            "address": "48, Rue de Rivoli",
+            "before": "2020-04-03 13:30"
+          }
+        ]
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@id":"/api/deliveries/1",
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "total": 699,
+          "@*@": "@*@"
+        },
+        "@*@": "@*@"
+      }
+      """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/deliveries/1" with body:
+      """
+      {
+        "tasks": [
+          {
+            "id": 1
+          },
+          {
+            "id": 2
+          },
+          {
+            "type": "DROPOFF",
+            "address": "48, Rue de Rivoli",
+            "before": "2020-04-03 15:30"
+          }
+        ]
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@id":"/api/deliveries/1",
+        "tasks": "@array@.count(3)",
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "total": 899,
+          "@*@": "@*@"
+        },
+        "@*@": "@*@"
+      }
+      """
+
+  Scenario: Store owner can not update a delivery once it has been assigned
+    Given the fixtures files are loaded:
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | store_with_task_pricing.yml |
+    Given the current time is "2020-04-02 9:00:00"
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_STORE"
+    And the store with name "Acme" belongs to user "bob"
+    Given the user "sarah" is loaded:
+      | email      | sarah@coopcycle.org |
+      | password   | 123456              |
+    And the user "sarah" has role "ROLE_COURIER"
+    Given the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store": "/api/stores/1",
+        "tasks": [
+          {
+            "type": "PICKUP",
+            "address": "24, Rue de la Paix",
+            "before": "2020-04-03 13:00"
+          },
+          {
+            "type": "DROPOFF",
+            "address": "48, Rue de Rivoli",
+            "before": "2020-04-03 13:30"
+          }
+        ]
+      }
+      """
+    Then the response status code should be 201
+    Given the tasks with ids "1,2" are assigned to "sarah"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/deliveries/1" with body:
+      """
+      {
+        "tasks": [
+          {
+            "id": 1
+          },
+          {
+            "id": 2,
+            "comments": "Updated comments"
+          }
+        ]
+      }
+      """
+    Then the response status code should be 403
+
   Scenario: Update delivery without recalculatePrice should maintain previously calculated price
     Given the fixtures files are loaded:
       | sylius_products.yml |

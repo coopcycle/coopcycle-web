@@ -9,6 +9,7 @@ use AppBundle\Api\Dto\DeliveryFromTasksInput;
 use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Domain\Order\Event\OrderPriceUpdated;
 use AppBundle\Entity\Delivery;
+use AppBundle\Message\DeliveryUpdated;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\UpdateManualSupplements;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
@@ -25,6 +26,7 @@ use Recurr\Exception\InvalidRRule;
 use Recurr\Rule;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Payment\Repository\PaymentMethodRepositoryInterface;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -132,7 +134,42 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
 
             $order = $delivery->getOrder();
 
-            if ($this->authorizationCheckerInterface->isGranted('ROLE_DISPATCHER')) {
+            $isDispatcher = $this->authorizationCheckerInterface->isGranted('ROLE_DISPATCHER');
+
+            // Store owners can modify a delivery until it has been assigned to a courier
+            if (!$isDispatcher && $this->hasAssignedTasks($delivery)) {
+                throw new AccessDeniedHttpException('Delivery can not be modified once it has been assigned');
+            }
+
+            if (!$isDispatcher && !is_null($order) && $data instanceof DeliveryInputDto) {
+                // Store owners can not choose to keep the previous price:
+                // the price is always re-calculated using the pricing rules,
+                // keeping the manual supplements previously added by a dispatcher.
+                // A price set manually by a dispatcher is kept as is.
+                $oldTotal = $order->getTotal();
+                $oldTaxTotal = $order->getTaxTotal();
+
+                if ($order->getDeliveryPrice() instanceof ArbitraryPrice) {
+                    $this->logger->info('Keeping existing arbitrary price', ['order' => $order->getId()]);
+                } else {
+                    $productVariants = $this->pricingManager->getProductVariantsWithPricingStrategy(
+                        $delivery,
+                        new CalculateUsingPricingRules($order->getManualSupplements())
+                    );
+                    $this->pricingManager->processDeliveryOrder($order, $productVariants);
+                }
+
+                if ($oldTotal !== $order->getTotal() || $oldTaxTotal !== $order->getTaxTotal()) {
+                    $this->eventBus->dispatch(new OrderPriceUpdated($order,
+                        $order->getTotal(),
+                        $order->getTaxTotal(),
+                        $oldTotal,
+                        $oldTaxTotal
+                    ));
+                }
+            }
+
+            if ($isDispatcher) {
                 if (is_null($order)) {
                     // Should not happen normally, but just in case
                     // if there is still some delivery created without an order
@@ -273,7 +310,23 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
 
         $this->persistProcessor->process($delivery, $operation, $uriVariables, $context);
 
+        // Let dispatchers know when a delivery has been modified by a store owner
+        if (!$isCreateOrderMode && !$this->authorizationCheckerInterface->isGranted('ROLE_DISPATCHER')) {
+            $this->eventBus->dispatch(new DeliveryUpdated($delivery));
+        }
+
         return $delivery;
+    }
+
+    private function hasAssignedTasks(Delivery $delivery): bool
+    {
+        foreach ($delivery->getTasks() as $task) {
+            if ($task->isAssigned()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function hasManualSupplementsChanged(ManualSupplements $manualSupplements, OrderInterface $existingOrder): bool

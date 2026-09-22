@@ -807,6 +807,9 @@ notifications.tap_to_open: Appuyez pour ouvrir
 notifications.delivery_created: Une livraison avec enlèvement %date% a été créée
 notifications.deliveries_created: '%count% livraisons avec enlèvement %date% ont été créées'
 notifications.deliveries_created.no_date: '%count% livraisons ont été créées'
+notifications.delivery_updated: 'La livraison avec enlèvement %date% a été modifiée par %store%'
+notifications.delivery_cancelled: 'La livraison avec enlèvement %date% a été annulée par %store%'
+notifications.delivery_changed.order: 'Commande %number%'
 notifications.tasks_changed: Les tâches du %date% ont changé !
 notifications.tasks_changed_today: Vos tâches pour aujourd'hui ont été mises à jour
 notifications.shifts.assigned: Un créneau vous a été assigné le %date%
@@ -1539,6 +1542,20 @@ form.package.maxWeight.help: "(Non utilisé ailleurs sur la plateforme pour le m
 roles.ROLE_DISPATCHER: "Dispatcheur"
 roles.ROLE_DISPATCHER.help: "Dispatcheur : Accès complet aux tâches\n"
 activity.order.updated: "La commande #order/%aggregate_id% a été mise à jour\n"
+activity.task.updated: "@%owner% a modifié la tâche #task/%aggregate_id%\n"
+activity.order.price_updated: "@%owner% a modifié le prix de la commande #order/%aggregate_id% de %old_price% à %new_price%\n"
+activity.order.state_changed: "La commande #order/%aggregate_id% est maintenant %state%\n"
+activity.order.checkout_failed: "Le paiement de la commande #order/%aggregate_id% a échoué\n"
+activity.order.preparation_started: "La préparation de la commande #order/%aggregate_id% a commencé\n"
+activity.order.preparation_finished: "La préparation de la commande #order/%aggregate_id% est terminée\n"
+activity.task.restored: "@%owner% a restauré la tâche #task/%aggregate_id%\n"
+activity.task.scanned: "@%owner% a scanné le code-barres de la tâche #task/%aggregate_id%\n"
+activity.task.incident-reported: "@%owner% a signalé un incident sur la tâche #task/%aggregate_id%%reason%\n"
+incident.reason.PRICE_REVIEW_NEEDED: Prix à vérifier
+incident.reason.REFUND_NEEDED: Remboursement nécessaire
+incident.reason.ADDRESS_REVIEW_NEEDED: Adresse à vérifier
+incident.reason.STORE_UNAVAILABLE: Commerce indisponible
+incident.reason.DELIVERY_DELAYS: Retards de livraison
 basics.select_all: "Tout sélectionner"
 basics.delete_selected: "Supprimer la sélection"
 delivery.table.heading.owner: "Propriétaire"

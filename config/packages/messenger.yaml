@@ -65,6 +65,8 @@ framework:
             'AppBundle\Message\CalculateRoute': async
             'AppBundle\Message\DeliveryCreated': async
             'AppBundle\Message\DeliveriesCreated': async
+            'AppBundle\Message\DeliveryUpdated': async
+            'AppBundle\Message\DeliveryCancelled': async
             'Symfony\Component\Mailer\Messenger\SendEmailMessage': async
             'AppBundle\Message\PushNotification': async
             'AppBundle\Message\ImportTasks': async

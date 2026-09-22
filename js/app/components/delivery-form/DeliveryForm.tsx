@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { Button, Checkbox, Tooltip } from 'antd';
+import { Button, Checkbox, Popconfirm, Tooltip } from 'antd';
 import { Formik, Form, FieldArray, FormikErrors } from 'formik';
 import moment, { Moment } from 'moment';
-import { InfoCircleOutlined } from '@ant-design/icons'
+import { InfoCircleOutlined } from '@ant-design/icons';
 
 import Spinner from '../../components/core/Spinner.js';
 import BarcodesModal from '../../../../assets/react/controllers/BarcodesModal.jsx';
@@ -18,6 +18,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import './DeliveryForm.scss';
 
 import {
+  useCancelDeliveryMutation,
   useGetStoreAddressesQuery,
   useGetStoreQuery,
   useGetTagsQuery,
@@ -42,6 +43,7 @@ import {
   Task as TaskType,
   TaskPayload,
   Delivery,
+  HydraError,
   Order as OrderType,
   ManualSupplementValues,
 } from '../../api/types';
@@ -160,6 +162,10 @@ type Props = {
   deliveryNodeId?: Uri;
   delivery?: Delivery;
   order?: OrderType;
+  // true when at least one task of the delivery has been assigned to a courier
+  isAssigned?: boolean;
+  // where to redirect after the delivery has been cancelled
+  backUrl?: string;
   preLoadedFormData?: PutDeliveryRequest;
   shopifyOrder?: ShopifyOrder | null;
 };
@@ -172,6 +178,8 @@ const DeliveryForm = ({
   deliveryNodeId,
   delivery,
   order,
+  isAssigned = false,
+  backUrl,
   preLoadedFormData,
   shopifyOrder,
 }: Props) => {
@@ -216,6 +224,49 @@ const DeliveryForm = ({
   const { t } = useTranslation();
 
   const { logger } = useDatadog();
+
+  // Store owners can modify a delivery until it has been assigned to a courier
+  const isLockedForStore =
+    mode === Mode.DELIVERY_UPDATE && !isDispatcher && isAssigned;
+
+  const [cancelDelivery, { isLoading: isCancelling }] =
+    useCancelDeliveryMutation();
+  const [cancelError, setCancelError] = useState<string | null>(null);
+
+  const isCancelled = useMemo(() => {
+    const tasks = delivery?.tasks ?? [];
+    return tasks.length > 0 && tasks.every(task => task.status === 'CANCELLED');
+  }, [delivery]);
+
+  // The delivery can be cancelled until it has been assigned to a courier
+  const canCancel =
+    mode === Mode.DELIVERY_UPDATE &&
+    Boolean(deliveryNodeId) &&
+    !isAssigned &&
+    !isCancelled;
+
+  const handleCancelDelivery = async () => {
+    if (!deliveryNodeId) {
+      return;
+    }
+    setCancelError(null);
+    const { error } = await cancelDelivery(deliveryNodeId);
+    if (error) {
+      const description =
+        'data' in error
+          ? (error.data as HydraError | undefined)?.['hydra:description']
+          : undefined;
+      setCancelError(description ?? t('DELIVERY_FORM_CANCEL_ERROR'));
+      return;
+    }
+    window.location.href =
+      backUrl ?? (isDispatcher ? '/admin/deliveries' : '/dashboard');
+  };
+
+  const canSubmit =
+    mode === Mode.DELIVERY_CREATE ||
+    isDispatcher ||
+    (mode === Mode.DELIVERY_UPDATE && !isLockedForStore);
 
   const handleTaskExpansion = (taskIndex: number, isExpanded: boolean) => {
     setExpandedTasks(prev => ({
@@ -357,7 +408,6 @@ const DeliveryForm = ({
       }
 
       setInitialValues(initialValues);
-
 
       // For simple deliveries, expand all tasks by default
       if (initialValues.tasks.length <= 2) {
@@ -727,9 +777,10 @@ const DeliveryForm = ({
                   </div>
                 ) : null}
 
-                {mode === Mode.DELIVERY_CREATE && isDispatcher && isReverseDeliveryEnabled ? (
-                  <div
-                    className="border-top py-3">
+                {mode === Mode.DELIVERY_CREATE &&
+                isDispatcher &&
+                isReverseDeliveryEnabled ? (
+                  <div className="border-top py-3">
                     <Checkbox
                       name="delivery.add_reverse"
                       onChange={e => {
@@ -744,7 +795,18 @@ const DeliveryForm = ({
                   </div>
                 ) : null}
 
-                {mode === Mode.DELIVERY_CREATE || isDispatcher ? (
+                {isLockedForStore ? (
+                  <div className="border-top py-3">
+                    <div
+                      className="alert alert-warning mb-0"
+                      role="alert"
+                      data-testid="delivery-assigned-alert">
+                      {t('DELIVERY_FORM_ASSIGNED_READONLY')}
+                    </div>
+                  </div>
+                ) : null}
+
+                {canSubmit ? (
                   <div className="border-top py-3">
                     <SuggestionModal />
                     <Button
@@ -762,6 +824,32 @@ const DeliveryForm = ({
                     <div className="alert alert-danger" role="alert">
                       {error.errorMessage}
                     </div>
+                  </div>
+                ) : null}
+
+                {canCancel ? (
+                  <div className="border-top py-3">
+                    <Popconfirm
+                      title={t('DELIVERY_FORM_CANCEL_DELIVERY_CONFIRM')}
+                      okText={t('YES')}
+                      cancelText={t('NO')}
+                      okButtonProps={{ danger: true, loading: isCancelling }}
+                      onConfirm={handleCancelDelivery}>
+                      <Button
+                        danger
+                        style={{ height: '2.5em' }}
+                        disabled={isSubmitting || isCancelling}
+                        data-testid="cancel-delivery-button">
+                        {t('DELIVERY_FORM_CANCEL_DELIVERY')}
+                      </Button>
+                    </Popconfirm>
+                    {cancelError ? (
+                      <div
+                        className="alert alert-danger mt-3 mb-0"
+                        role="alert">
+                        {cancelError}
+                      </div>
+                    ) : null}
                   </div>
                 ) : null}
               </div>

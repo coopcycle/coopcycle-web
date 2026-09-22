@@ -101,9 +101,11 @@ export const OrderEditing = ({
   const { t } = useTranslation();
   const { values, setFieldValue } = useDeliveryFormFormikContext();
 
+  // Store owners can not choose to keep the original price:
+  // the new price is always applied when the delivery is modified
   const [selectedPriceOption, setSelectedPriceOption] = useState<
     'original' | 'new'
-  >('original');
+  >(isDispatcher ? 'original' : 'new');
 
   useEffect(() => {
     setFieldValue('order.recalculatePrice', selectedPriceOption === 'new');
@@ -142,6 +144,17 @@ export const OrderEditing = ({
     );
   }, [existingSupplements, values.order.manualSupplements]);
 
+  const hasTotalChanged = useMemo(() => {
+    if (!updatedOrder) {
+      return false;
+    }
+
+    return (
+      updatedOrder.total !== existingOrder.total ||
+      updatedOrder.taxTotal !== existingOrder.taxTotal
+    );
+  }, [existingOrder, updatedOrder]);
+
   return (
     <div>
       {isPriceBreakdownEnabled ? (
@@ -150,61 +163,74 @@ export const OrderEditing = ({
           {!overridePrice &&
           updatedOrder &&
           hasCalculatedOrderItemsChanged(existingOrder, updatedOrder) ? (
-            <>
-              <Radio.Group
-                className="w-100"
-                value={selectedPriceOption}
-                onChange={e => setSelectedPriceOption(e.target.value)}>
-                <Collapse
-                  activeKey={['original']}
-                  items={[
-                    {
-                      key: 'original',
-                      label: (
-                        <Radio
-                          value="original"
-                          data-testid="keep-original-price">
-                          {t('DELIVERY_FORM_KEEP_ORIGINAL_PRICE')}
-                        </Radio>
-                      ),
-                      children: (
-                        <Cart
-                          orderItems={getCalculatedOrderItems(
-                            existingOrder.items,
-                          )}
-                          overridePrice={selectedPriceOption !== 'original'}
-                        />
-                      ),
-                      showArrow: false,
-                    },
-                  ]}
+            !isDispatcher ? (
+              <>
+                <Cart
+                  orderItems={getCalculatedOrderItems(existingOrder.items)}
+                  overridePrice={true}
                 />
+                <Cart
+                  orderItems={getCalculatedOrderItems(updatedOrder.items)}
+                  overridePrice={overridePrice}
+                />
+              </>
+            ) : (
+              <>
+                <Radio.Group
+                  className="w-100"
+                  value={selectedPriceOption}
+                  onChange={e => setSelectedPriceOption(e.target.value)}>
+                  <Collapse
+                    activeKey={['original']}
+                    items={[
+                      {
+                        key: 'original',
+                        label: (
+                          <Radio
+                            value="original"
+                            data-testid="keep-original-price">
+                            {t('DELIVERY_FORM_KEEP_ORIGINAL_PRICE')}
+                          </Radio>
+                        ),
+                        children: (
+                          <Cart
+                            orderItems={getCalculatedOrderItems(
+                              existingOrder.items,
+                            )}
+                            overridePrice={selectedPriceOption !== 'original'}
+                          />
+                        ),
+                        showArrow: false,
+                      },
+                    ]}
+                  />
 
-                <Collapse
-                  className="mt-2"
-                  activeKey={['new']}
-                  items={[
-                    {
-                      key: 'new',
-                      label: (
-                        <Radio value="new" data-testid="apply-new-price">
-                          {t('DELIVERY_FORM_APPLY_NEW_PRICE')}
-                        </Radio>
-                      ),
-                      children: (
-                        <Cart
-                          orderItems={getCalculatedOrderItems(
-                            updatedOrder.items,
-                          )}
-                          overridePrice={overridePrice}
-                        />
-                      ),
-                      showArrow: false,
-                    },
-                  ]}
-                />
-              </Radio.Group>
-            </>
+                  <Collapse
+                    className="mt-2"
+                    activeKey={['new']}
+                    items={[
+                      {
+                        key: 'new',
+                        label: (
+                          <Radio value="new" data-testid="apply-new-price">
+                            {t('DELIVERY_FORM_APPLY_NEW_PRICE')}
+                          </Radio>
+                        ),
+                        children: (
+                          <Cart
+                            orderItems={getCalculatedOrderItems(
+                              updatedOrder.items,
+                            )}
+                            overridePrice={overridePrice}
+                          />
+                        ),
+                        showArrow: false,
+                      },
+                    ]}
+                  />
+                </Radio.Group>
+              </>
+            )
           ) : (
             <Cart
               orderItems={getCalculatedOrderItems(existingOrder.items)}
@@ -238,7 +264,8 @@ export const OrderEditing = ({
         {/* Show both an old and a new total price when there is a price change */}
         {!overridePrice &&
         updatedOrder &&
-        (selectedPriceOption === 'new' || hasSupplementsChanged) ? (
+        (selectedPriceOption === 'new' || hasSupplementsChanged) &&
+        (isDispatcher || hasTotalChanged) ? (
           <>
             <TotalPrice
               overridePrice={true}
