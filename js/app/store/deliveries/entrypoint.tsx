@@ -35,6 +35,7 @@ type Props = {
   formData?: string;
   isDispatcher: boolean;
   isAssigned: boolean;
+  backUrl?: string;
   isDebugPricing: boolean;
   isPriceBreakdownEnabled: boolean;
   isReverseDeliveryEnabled: boolean;
@@ -51,6 +52,7 @@ const Form = ({
   formData,
   isDispatcher,
   isAssigned,
+  backUrl,
   isDebugPricing,
   isPriceBreakdownEnabled,
   isReverseDeliveryEnabled,
@@ -83,6 +85,7 @@ const Form = ({
             delivery={delivery ? JSON.parse(delivery) : null}
             order={order ? JSON.parse(order) : null}
             isAssigned={isAssigned}
+            backUrl={backUrl}
             preLoadedFormData={formData ? JSON.parse(formData) : null}
             shopifyOrder={shopifyOrder ? JSON.parse(shopifyOrder) : null}
           />
@@ -111,6 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const formData = container.dataset.formData || undefined;
   const isDispatcher = container.dataset.isDispatcher === 'true';
   const isAssigned = container.dataset.isAssigned === 'true';
+  const backUrl = container.dataset.backUrl || undefined;
   const isDebugPricing = container.dataset.isDebugPricing === 'true';
   const isPriceBreakdownEnabled =
     container.dataset.isPriceBreakdownEnabled === 'true';
@@ -132,6 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
           formData={formData}
           isDispatcher={isDispatcher}
           isAssigned={isAssigned}
+          backUrl={backUrl}
           isDebugPricing={isDebugPricing}
           isPriceBreakdownEnabled={isPriceBreakdownEnabled}
           isReverseDeliveryEnabled={isReverseDeliveryEnabled}

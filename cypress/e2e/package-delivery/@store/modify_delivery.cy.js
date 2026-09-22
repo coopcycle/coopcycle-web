@@ -76,5 +76,43 @@ context('Modify delivery (role: store)', () => {
 
     cy.get('[data-testid="delivery-assigned-alert"]').should('be.visible')
     cy.get('button[type="submit"]').should('not.exist')
+    cy.get('[data-testid="cancel-delivery-button"]').should('not.exist')
+  })
+
+  it('cancel a delivery, with a confirmation', () => {
+    cy.loadFixturesWithSetup([
+      'store_basic.yml',
+      'package_delivery_order_multi_dropoff.yml',
+    ])
+    cy.setEnvVar('PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED', '0')
+
+    cy.login('store_1', 'store_1')
+
+    cy.visit('/dashboard/deliveries/1')
+
+    cy.get('[data-testid="delivery-itinerary"]', {
+      timeout: 10000,
+    }).should('be.visible')
+
+    cy.get('[data-testid="cancel-delivery-button"]').click()
+
+    // Dismiss the confirmation: nothing happens
+    cy.get('.ant-popconfirm').should('be.visible')
+    cy.get('.ant-popconfirm .ant-btn-default').click()
+    cy.get('.ant-popconfirm').should('not.be.visible')
+    cy.urlmatch(/\/dashboard\/deliveries\/1$/)
+
+    // Confirm the cancellation
+    cy.get('[data-testid="cancel-delivery-button"]').click()
+    cy.get('.ant-popconfirm .ant-btn-dangerous').click()
+
+    cy.urlmatch(/\/dashboard$/)
+
+    // The delivery is cancelled, it can not be cancelled again
+    cy.visit('/dashboard/deliveries/1')
+    cy.get('[data-testid="delivery-itinerary"]', {
+      timeout: 10000,
+    }).should('be.visible')
+    cy.get('[data-testid="cancel-delivery-button"]').should('not.exist')
   })
 })

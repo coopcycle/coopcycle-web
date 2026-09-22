@@ -90,6 +90,7 @@
     data-order="{{ order ? order|serialize('jsonld', {groups: ['order', 'pricing_deliveries']}) : '' }}"
     data-form-data="{{ formData ? formData|serialize('jsonld', {groups: ['delivery', 'address', 'barcode']}) : '' }}"
     data-is-dispatcher="{{ isDispatcher ? 'true' : 'false' }}"
+    data-back-url="{{ path(routes.back) }}"
     data-is-assigned="{{ (not is_new and delivery.tasks|filter(t => t.assigned)|length > 0) ? 'true' : 'false' }}"
     data-is-debug-pricing="{{ debug_pricing ? 'true' : 'false' }}"
     data-is-price-breakdown-enabled="{{ ui_package_delivery_price_breakdown_enabled ? 'true' : 'false' }}"
