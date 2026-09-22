@@ -1,0 +1,28 @@
+{% extends 'emails/layout.mjml.twig' %}
+
+{% block content %}
+  <mj-text align="left" line-height="20px">
+    {{ body }}
+  </mj-text>
+  {% if delivery.order is not null %}
+    <mj-text align="left" line-height="20px">
+      {{ 'notifications.delivery_changed.order'|trans({ '%number%': delivery.order.number }) }}
+    </mj-text>
+  {% endif %}
+  {% for task in delivery.tasks %}
+    <mj-text align="left" line-height="20px">
+      {% if task.isCancelled() %}<del>{% endif %}
+      <strong>{{ ('task.type.' ~ task.type)|trans }}</strong>
+      {{ task.after|date('d/m/Y H:i') }} - {{ task.before|date('H:i') }}
+      &middot; {{ task.address.streetAddress }}
+      {% if task.isCancelled() %}</del>{% endif %}
+    </mj-text>
+  {% endfor %}
+  <mj-button
+    href="{{ delivery.order is not null ? url('admin_order', { id: delivery.order.id }) : url('admin_dashboard_fullscreen', { date: delivery.pickup.after|date('Y-m-d'), nav: 'on' }) }}"
+    background-color="{{ coopcycle_theme_color('primary', '#10ac84') }}"
+    color="{{ coopcycle_theme_color('primary-content', 'white') }}"
+    font-family="Raleway, Arial, sans-serif">
+    {{ 'basics.view'|trans({}, 'messages') }}
+  </mj-button>
+{% endblock %}

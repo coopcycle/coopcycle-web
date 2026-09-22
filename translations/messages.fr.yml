@@ -807,6 +807,9 @@ notifications.tap_to_open: Appuyez pour ouvrir
 notifications.delivery_created: Une livraison avec enlèvement %date% a été créée
 notifications.deliveries_created: '%count% livraisons avec enlèvement %date% ont été créées'
 notifications.deliveries_created.no_date: '%count% livraisons ont été créées'
+notifications.delivery_updated: 'La livraison avec enlèvement %date% a été modifiée par %store%'
+notifications.delivery_cancelled: 'La livraison avec enlèvement %date% a été annulée par %store%'
+notifications.delivery_changed.order: 'Commande %number%'
 notifications.tasks_changed: Les tâches du %date% ont changé !
 notifications.tasks_changed_today: Vos tâches pour aujourd'hui ont été mises à jour
 notifications.shifts.assigned: Un créneau vous a été assigné le %date%

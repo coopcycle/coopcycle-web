@@ -1306,6 +1306,9 @@ notifications.tap_to_open: Tap to open
 notifications.delivery_created: A delivery to be picked up %date% has been created
 notifications.deliveries_created: '%count% deliveries to be picked up %date% have been created'
 notifications.deliveries_created.no_date: '%count% deliveries have been created'
+notifications.delivery_updated: 'The delivery to be picked up %date% has been modified by %store%'
+notifications.delivery_cancelled: 'The delivery to be picked up %date% has been cancelled by %store%'
+notifications.delivery_changed.order: 'Order %number%'
 notifications.tasks_changed: Tasks for %date% changed!
 notifications.tasks_changed_today: Your tasks for today have been updated
 notifications.shifts.assigned: You have been assigned a shift on %date%

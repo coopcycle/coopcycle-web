@@ -9,6 +9,7 @@ use AppBundle\Api\Dto\DeliveryFromTasksInput;
 use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Domain\Order\Event\OrderPriceUpdated;
 use AppBundle\Entity\Delivery;
+use AppBundle\Message\DeliveryUpdated;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\UpdateManualSupplements;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
@@ -308,6 +309,11 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
         }
 
         $this->persistProcessor->process($delivery, $operation, $uriVariables, $context);
+
+        // Let dispatchers know when a delivery has been modified by a store owner
+        if (!$isCreateOrderMode && !$this->authorizationCheckerInterface->isGranted('ROLE_DISPATCHER')) {
+            $this->eventBus->dispatch(new DeliveryUpdated($delivery));
+        }
 
         return $delivery;
     }
