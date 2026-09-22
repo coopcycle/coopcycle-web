@@ -69,7 +69,7 @@ final class Version20260907160000 extends AbstractMigration
                  SELECT DISTINCT ON (tci.parent_id) tci.parent_id AS id, t.metadata->>'barcode' AS barcode
                  FROM task_collection_item tci
                  JOIN task t ON tci.task_id = t.id
-                 WHERE t.type = 'PICKUP'
+                 WHERE t.type = 'DROPOFF'
                    AND t.metadata->>'barcode' IS NOT NULL
                    AND t.metadata->>'barcode' <> ''
                    AND t.metadata->>'rdc_lo_uri' IS NULL
