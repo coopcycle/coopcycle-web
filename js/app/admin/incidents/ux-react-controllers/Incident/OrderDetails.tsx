@@ -10,6 +10,7 @@ import {
   selectIncident,
   selectLoaded,
   selectOrder,
+  selectServiceTaxRate,
 } from '../../[id]/redux/incidentSlice';
 import { useTranslation } from 'react-i18next';
 
@@ -71,11 +72,15 @@ function CustomerName({ customer }) {
   );
 }
 
-function Adjustment(adjustments, adjustmentType) {
-  const total = adjustments[adjustmentType].reduce(
+function _sumAdjustments(adjustments, adjustmentType): number {
+  return (adjustments[adjustmentType] ?? []).reduce(
     (total, adjustment) => total + adjustment.amount,
     0,
   );
+}
+
+function Adjustment(adjustments, adjustmentType) {
+  const total = _sumAdjustments(adjustments, adjustmentType);
   if (total === 0) {
     return;
   }
@@ -89,19 +94,75 @@ function Adjustment(adjustments, adjustmentType) {
 
 function OrderDetails({ order }) {
   const { t } = useTranslation();
+
+  //FIXME: replace with useAppSelector after migrating away from ux-react-controllers
+  const serviceTaxRate = selectServiceTaxRate(store.getState());
+  // The incident amount is stored the same way the service tax rate is
+  const taxIncluded = serviceTaxRate?.includedInPrice ?? true;
+
+  const incidentTotal = _sumAdjustments(order.adjustments, 'incident');
+  const incidentTaxTotal = order.incidentTaxTotal ?? 0;
+  const incidentTotalTaxIncluded = taxIncluded
+    ? incidentTotal
+    : incidentTotal + incidentTaxTotal;
+
+  const hasIncidents = order.adjustments.incident?.length > 0;
+  // Delivery fees only exist on foodtech orders
+  const hasDeliveryFees = order.adjustments.delivery?.length > 0;
+
   return (
     <>
       <h5>{t('ORDER_DETAILS')}</h5>
+      {hasDeliveryFees && (
+        <>
+          <p>
+            {t('SUBTOTAL')}
+            <span>{money(order.itemsTotal)}</span>
+          </p>
+          {Adjustment(order.adjustments, 'delivery')}
+        </>
+      )}
+      {hasIncidents && (
+        <>
+          <p>
+            {t('INCIDENTS_INITIAL_PRICE_TAX_INCLUDED')}
+            <span data-testid="order-initial-total">
+              {money(order.total - incidentTotalTaxIncluded)}
+            </span>
+          </p>
+          {order.adjustments.incident.map(adjustment => (
+            <p key={adjustment.id}>
+              {taxIncluded
+                ? t('INCIDENTS_INCIDENT_AMOUNT_TAX_INCLUDED')
+                : t('INCIDENTS_INCIDENT_AMOUNT_TAX_EXCLUDED')}
+              <span>{money(adjustment.amount)}</span>
+            </p>
+          ))}
+          {incidentTaxTotal !== 0 && (
+            <p className="text-muted">
+              {t('INCIDENTS_INCIDENT_TAX')}
+              <span data-testid="order-incident-tax">
+                {money(incidentTaxTotal)}
+              </span>
+            </p>
+          )}
+        </>
+      )}
       <p>
-        {t('SUBTOTAL')}
-        <span>{money(order.itemsTotal)}</span>
-      </p>
-      {Adjustment(order.adjustments, 'delivery')}
-      {Adjustment(order.adjustments, 'tax')}
-      {Adjustment(order.adjustments, 'incident')}
-      <p>
-        {t('TOTAL')}
+        <strong>
+          {hasIncidents
+            ? t('INCIDENTS_NEW_TOTAL_TAX_INCLUDED')
+            : t('INCIDENTS_TOTAL_TAX_INCLUDED')}
+        </strong>
         <span data-testid="order-total">{money(order.total)}</span>
+      </p>
+      <p className="text-muted">
+        {hasIncidents
+          ? t('INCIDENTS_NEW_TOTAL_TAX_EXCLUDED')
+          : t('INCIDENTS_TOTAL_TAX_EXCLUDED')}
+        <span data-testid="order-total-tax-excluded">
+          {money(order.total - order.taxTotal)}
+        </span>
       </p>
       <hr />
     </>
