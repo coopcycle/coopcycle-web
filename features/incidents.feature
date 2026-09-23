@@ -830,6 +830,91 @@ Feature: Incidents
       """
     And the database should contain an order with a total price 499
 
+  Scenario: Apply price difference
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml        |
+      | payment_methods.yml        |
+      | sylius_products.yml        |
+      | store_with_manual_supplements.yml |
+      | package_delivery_order.yml |
+    And the setting "subject_to_vat" has value "1"
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the user "dispatcher" is loaded:
+      | email      | dispatcher@coopcycle.org |
+      | password   | 123456            |
+    And the user "dispatcher" has role "ROLE_DISPATCHER"
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/incidents" with body:
+      """
+      {
+        "description": "Waited 30 minutes",
+        "failureReasonCode": "DAMAGED",
+        "task": "/api/tasks/2"
+      }
+      """
+    Then the response status code should be 201
+    And the database should contain an order with a total price 499
+    Given the user "dispatcher" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "dispatcher" sends a "PUT" request to "/api/incidents/1/action" with body:
+      """
+      {
+        "action": "applied_price_diff",
+        "diff": 300
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Incident",
+        "@id":"@string@",
+        "@type":"Incident",
+        "id":@integer@,
+        "title":"@string@",
+        "status":"OPEN",
+        "priority":@integer@,
+        "task":{"id":2,"status":"@string@","type":"@string@"},
+        "author":{"id":@integer@,"username":@string@},
+        "delivery":{"id":@integer@},
+        "order":{"id":@integer@,"restaurant":{"id":null,"name":null},"customer":{"id":null,"username":null}},
+        "store":{"id":@integer@,"name":@string@},
+        "failureReasonCode":"DAMAGED",
+        "description":"Waited 30 minutes",
+        "images":[],
+        "events":[
+          {
+            "@type": "IncidentEvent",
+            "@id":"@string@",
+            "id":@integer@,
+            "type":"applied_price_diff",
+            "message":null,
+            "metadata":{
+              "diff": 300,
+              "diff_tax_excluded": 250,
+              "diff_tax_included": 300
+            },
+            "createdBy":"/api/users/3",
+            "createdAt":"@string@.isDateTime()"
+          }
+        ],
+        "createdBy":"/api/users/2",
+        "createdAt":"@string@.isDateTime()",
+        "updatedAt":"@string@.isDateTime()",
+        "tags":[],
+        "metadata": {"@*@": "@*@"}
+      }
+      """
+    And the database should contain an order with a total price 799
+
   Scenario: Report incident: pre-fill missing manual supplements in suggestion
     Given the fixtures files are loaded:
       | sylius_taxation.yml        |
