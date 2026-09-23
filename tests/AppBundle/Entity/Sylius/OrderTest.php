@@ -8,12 +8,14 @@ use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Entity\ReusablePackagings;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Product\ProductInterface;
 use AppBundle\Sylius\Product\ProductVariantInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
+use Sylius\Component\Order\Model\Adjustment;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 
@@ -201,5 +203,54 @@ class OrderTest extends TestCase
 
         $this->assertEquals('123456', $order->getLoopeatAccessToken());
         $this->assertEquals('654321', $order->getLoopeatRefreshToken());
+    }
+
+    public function testGetIncidentTaxTotalWithUntaggedTaxAdjustments()
+    {
+        // Tax lines computed before they were tagged with what they tax
+        $taxAdjustment = new Adjustment();
+        $taxAdjustment->setType(AdjustmentInterface::TAX_ADJUSTMENT);
+        $taxAdjustment->setAmount(50);
+        $taxAdjustment->setNeutral(true);
+
+        $order = new Order();
+        $order->addAdjustment($taxAdjustment);
+
+        // Without a delivery fee, they can only be for incidents
+        $this->assertEquals(50, $order->getIncidentTaxTotal());
+
+        $deliveryAdjustment = new Adjustment();
+        $deliveryAdjustment->setType(AdjustmentInterface::DELIVERY_ADJUSTMENT);
+        $deliveryAdjustment->setAmount(350);
+
+        $order->addAdjustment($deliveryAdjustment);
+
+        $this->assertEquals(0, $order->getIncidentTaxTotal());
+    }
+
+    public function testGetIncidentTaxTotalWithTaggedTaxAdjustments()
+    {
+        $deliveryTaxAdjustment = new Adjustment();
+        $deliveryTaxAdjustment->setType(AdjustmentInterface::TAX_ADJUSTMENT);
+        $deliveryTaxAdjustment->setAmount(58);
+        $deliveryTaxAdjustment->setNeutral(true);
+        $deliveryTaxAdjustment->setDetails(['taxable_type' => AdjustmentInterface::DELIVERY_ADJUSTMENT]);
+
+        $incidentTaxAdjustment = new Adjustment();
+        $incidentTaxAdjustment->setType(AdjustmentInterface::TAX_ADJUSTMENT);
+        $incidentTaxAdjustment->setAmount(50);
+        $incidentTaxAdjustment->setNeutral(true);
+        $incidentTaxAdjustment->setDetails(['taxable_type' => AdjustmentInterface::INCIDENT_ADJUSTMENT]);
+
+        $deliveryAdjustment = new Adjustment();
+        $deliveryAdjustment->setType(AdjustmentInterface::DELIVERY_ADJUSTMENT);
+        $deliveryAdjustment->setAmount(350);
+
+        $order = new Order();
+        $order->addAdjustment($deliveryAdjustment);
+        $order->addAdjustment($deliveryTaxAdjustment);
+        $order->addAdjustment($incidentTaxAdjustment);
+
+        $this->assertEquals(50, $order->getIncidentTaxTotal());
     }
 }

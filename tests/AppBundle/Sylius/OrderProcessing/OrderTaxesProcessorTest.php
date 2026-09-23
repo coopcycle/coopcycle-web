@@ -305,6 +305,147 @@ class OrderTaxesProcessorTest extends KernelTestCase
         $this->assertEquals(0, $adjustments->first()->getAmount());
     }
 
+    public function testOrderWithIncident()
+    {
+        $this->subjectToVat(true);
+
+        $incidentAdjustment = new Adjustment();
+        $incidentAdjustment->setType(AdjustmentInterface::INCIDENT_ADJUSTMENT);
+        $incidentAdjustment->setAmount(300);
+        $incidentAdjustment->setNeutral(false);
+
+        $order = new Order();
+        $order->addItem($this->createOrderItem(1000));
+        $order->addAdjustment($incidentAdjustment);
+
+        $this->assertEquals(1300, $order->getTotal());
+
+        $this->orderTaxesProcessor->process($order);
+
+        // The incident amount includes tax, the total does not change
+        $this->assertEquals(1300, $order->getTotal());
+
+        // Incl. tax (items) = 1000
+        // Tax total (items) = (1000 - (1000 / (1 + 0.1))) = 91
+        // Incl. tax (incident) = 300
+        // Tax total (incident) = (300 - (300 / (1 + 0.2))) = 50
+        $this->assertEquals(141, $order->getTaxTotal());
+        $this->assertEquals(91, $order->getItemsTaxTotal());
+        $this->assertEquals(50, $order->getIncidentTaxTotal());
+
+        $adjustments = $order->getAdjustments(AdjustmentInterface::TAX_ADJUSTMENT);
+        $this->assertCount(1, $adjustments);
+        $this->assertEquals(
+            ['taxable_type' => AdjustmentInterface::INCIDENT_ADJUSTMENT],
+            $adjustments->first()->getDetails()
+        );
+    }
+
+    public function testOrderWithNegativeIncident()
+    {
+        $this->subjectToVat(true);
+
+        $incidentAdjustment = new Adjustment();
+        $incidentAdjustment->setType(AdjustmentInterface::INCIDENT_ADJUSTMENT);
+        $incidentAdjustment->setAmount(-300);
+        $incidentAdjustment->setNeutral(false);
+
+        $order = new Order();
+        $order->addItem($this->createOrderItem(1000));
+        $order->addAdjustment($incidentAdjustment);
+
+        $this->orderTaxesProcessor->process($order);
+
+        $this->assertEquals(700, $order->getTotal());
+
+        // Tax total (items) = 91
+        // Tax total (incident) = (-300 - (-300 / (1 + 0.2))) = -50
+        $this->assertEquals(41, $order->getTaxTotal());
+        $this->assertEquals(-50, $order->getIncidentTaxTotal());
+    }
+
+    public function testOrderWithDeliveryAndIncident()
+    {
+        $this->subjectToVat(true);
+
+        $deliveryAdjustment = new Adjustment();
+        $deliveryAdjustment->setType(AdjustmentInterface::DELIVERY_ADJUSTMENT);
+        $deliveryAdjustment->setAmount(350);
+        $deliveryAdjustment->setNeutral(false);
+
+        $incidentAdjustment = new Adjustment();
+        $incidentAdjustment->setType(AdjustmentInterface::INCIDENT_ADJUSTMENT);
+        $incidentAdjustment->setAmount(300);
+        $incidentAdjustment->setNeutral(false);
+
+        $order = new Order();
+        $order->addItem($this->createOrderItem(1000));
+        $order->addAdjustment($deliveryAdjustment);
+        $order->addAdjustment($incidentAdjustment);
+
+        $this->orderTaxesProcessor->process($order);
+
+        // Tax total (items) = 91
+        // Tax total (delivery) = 58
+        // Tax total (incident) = 50
+        $this->assertEquals(199, $order->getTaxTotal());
+        $this->assertEquals(91, $order->getItemsTaxTotal());
+        $this->assertEquals(50, $order->getIncidentTaxTotal());
+
+        // Both tax lines have the same label, only the details tell them apart
+        $taxableTypes = array_map(
+            fn(Adjustment $adj) => $adj->getDetails()['taxable_type'],
+            $order->getAdjustments(AdjustmentInterface::TAX_ADJUSTMENT)->toArray()
+        );
+        $this->assertEqualsCanonicalizing([
+            AdjustmentInterface::DELIVERY_ADJUSTMENT,
+            AdjustmentInterface::INCIDENT_ADJUSTMENT,
+        ], $taxableTypes);
+    }
+
+    public function testOrderWithIncidentTaxNotIncludedInPrice()
+    {
+        $this->subjectToVat(true);
+
+        $gst = new TaxRate();
+        $gst->setName('GST');
+        $gst->setAmount(0.05);
+        $gst->setCalculator('default');
+        $gst->setIncludedInPrice(false);
+        $gst->setCountry('ca-bc');
+
+        $taxRateResolver = $this->createMock(TaxRateResolverInterface::class);
+        $taxRateResolver->method('resolve')->willReturn($gst);
+        $taxRateResolver->method('resolveAll')->willReturn(new ArrayCollection([$gst]));
+
+        $orderTaxesProcessor = new OrderTaxesProcessor(
+            static::$kernel->getContainer()->get('sylius.factory.adjustment'),
+            $taxRateResolver,
+            static::$kernel->getContainer()->get('sylius.tax_calculator'),
+            $this->settingsManager->reveal(),
+            $this->taxCategoryRepository->reveal(),
+            static::$kernel->getContainer()->get('translator'),
+            'ca-bc'
+        );
+
+        $incidentAdjustment = new Adjustment();
+        $incidentAdjustment->setType(AdjustmentInterface::INCIDENT_ADJUSTMENT);
+        $incidentAdjustment->setAmount(1000);
+        $incidentAdjustment->setNeutral(false);
+
+        $order = new Order();
+        $order->addItem($this->createOrderItem(1000));
+        $order->addAdjustment($incidentAdjustment);
+
+        $orderTaxesProcessor->process($order);
+
+        // The incident amount excludes tax, the tax is added on top of it
+        // Excl. tax (items + incident) = 1000 + 1000
+        // Tax total (items + incident) = (1000 * 0.05) + (1000 * 0.05) = 100
+        $this->assertEquals(2100, $order->getTotal());
+        $this->assertEquals(50, $order->getIncidentTaxTotal());
+    }
+
     /**
      * End-to-end proof that process() actually delegates to
      * ZeltyMenuVatVentilator when it's wired in, instead of only unit-testing

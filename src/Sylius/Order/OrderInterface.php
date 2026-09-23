@@ -68,6 +68,8 @@ interface OrderInterface extends
 
     public function getItemsTaxTotal(): int;
 
+    public function getIncidentTaxTotal(): int;
+
     public function getTaxTotalByRate($taxRate): int;
 
     public function getItemsTaxTotalByRate($taxRate): int;
