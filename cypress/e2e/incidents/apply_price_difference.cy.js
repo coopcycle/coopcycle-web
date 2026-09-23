@@ -74,7 +74,8 @@ describe('Incident management (role: dispatcher)', () => {
     // apply price difference
     cy.get('[data-testid="take-actions-button"]').click();
     cy.get('[data-testid="apply-price-diff-button"]').click();
-    cy.get('.ant-input-number-input').type('{selectall}15.50');
+    cy.get('[data-testid="price-diff-tax-included"]').type('{selectall}15,50');
+    cy.get('[data-testid="new-price-tax-included"]').contains('15,50 €');
     cy.get('[data-testid="submit-price-diff-button"]').click();
 
     // wait for a page to reload before proceeding
