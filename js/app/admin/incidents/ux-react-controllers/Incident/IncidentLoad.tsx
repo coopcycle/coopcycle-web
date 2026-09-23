@@ -4,6 +4,7 @@ import {
   setIncident,
   setLoaded,
   setOrder,
+  setServiceTaxRate,
   setStoreUri,
   setTransporterEnabled,
 } from '../../[id]/redux/incidentSlice';
@@ -14,6 +15,7 @@ export default function ({
   images,
   storeUri,
   transporterEnabled,
+  serviceTaxRate,
 }) {
   incident = JSON.parse(incident);
   order = JSON.parse(order);
@@ -24,6 +26,7 @@ export default function ({
   store.dispatch(setStoreUri(storeUri));
   store.dispatch(setImages(images));
   store.dispatch(setTransporterEnabled(transporterEnabled));
+  store.dispatch(setServiceTaxRate(serviceTaxRate));
   store.dispatch(setLoaded(true));
   return;
 }
