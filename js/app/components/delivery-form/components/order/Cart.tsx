@@ -50,10 +50,17 @@ function OrderItem({ index, orderItem, overridePrice }: OrderItemProps) {
   }, [orderItem]);
 
   const total = useMemo(() => {
+    // Items priced as a whole have no adjustments to sum up: an arbitrary price
+    // set by a dispatcher, or an order created before the price breakdown was
+    // introduced. Fall back to the amount stored on the item itself.
+    if (adjustments.length === 0) {
+      return orderItem.total;
+    }
+
     return adjustments.reduce((total, adjustment) => {
       return total + adjustment.amount;
     }, 0);
-  }, [adjustments]);
+  }, [adjustments, orderItem]);
 
   return (
     <li

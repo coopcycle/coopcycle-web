@@ -25,8 +25,29 @@ type Props = {
   priceCalculation?: { calculation: CalculationOutput; order?: OrderType };
 };
 
+// An item carrying no package delivery adjustment at all is priced as a whole:
+// an arbitrary price set by a dispatcher, or an order created before the price
+// breakdown was introduced. It has no breakdown to show, but it still has to be
+// displayed, as a single line using the item's own total.
+function hasNoBreakdown(item: OrderItemType) {
+  return (
+    !(item.adjustments['order_item_package_delivery_calculated']?.length > 0) &&
+    !(
+      item.adjustments['order_item_package_delivery_manual_supplement']?.length >
+      0
+    )
+  );
+}
+
 function getCalculatedOrderItems(orderItems: OrderItemType[]) {
-  const items = orderItems.map(item => {
+  const items = orderItems.filter(item => {
+    return (
+      item.adjustments['order_item_package_delivery_calculated']?.length > 0 ||
+      hasNoBreakdown(item)
+    );
+  });
+
+  return items.map(item => {
     return {
       ...item,
       adjustments: {
@@ -34,12 +55,6 @@ function getCalculatedOrderItems(orderItems: OrderItemType[]) {
         order_item_package_delivery_manual_supplement: [],
       },
     };
-  });
-
-  return items.filter(item => {
-    return (
-      item.adjustments['order_item_package_delivery_calculated']?.length > 0
-    );
   });
 }
 
@@ -63,15 +78,19 @@ function getManualSupplementsOrderItems(orderItems: OrderItemType[]) {
 }
 
 function getCalculatedAmount(orderItems: OrderItemType[]) {
-  return orderItems.reduce(
-    (total, item) =>
+  return orderItems.reduce((total, item) => {
+    const adjustments =
+      item.adjustments['order_item_package_delivery_calculated'] ?? [];
+
+    if (adjustments.length === 0) {
+      return total + item.total;
+    }
+
+    return (
       total +
-      item.adjustments['order_item_package_delivery_calculated'].reduce(
-        (total, adjustment) => total + adjustment.amount,
-        0,
-      ),
-    0,
-  );
+      adjustments.reduce((total, adjustment) => total + adjustment.amount, 0)
+    );
+  }, 0);
 }
 
 function hasCalculatedOrderItemsChanged(
