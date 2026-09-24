@@ -3,6 +3,7 @@
 namespace AppBundle\Transporter;
 
 use AppBundle\Entity\Edifact\EDIFACTMessage;
+use AppBundle\Entity\Task;
 use AppBundle\EventListener\Edifact\TransporterPodNotifier;
 use Transporter\Interface\ReportGeneratorInterface;
 use Transporter\TransporterImpl;
@@ -78,6 +79,9 @@ class ReportFromCC {
         $generator->setDocID(strval($message->getId()));
         $generator->setReference($message->getReference());
         $generator->setReceipt($message->getReference());
+        if ($message->getSubMessageType() === 'LIV|CFM') {
+            $this->attachTaskPods($message);
+        }
         if (!empty($message->getPods())) {
             $generator->setPods($message->getPods());
         }
@@ -91,6 +95,25 @@ class ReportFromCC {
         return $generator;
 
     }
+    /**
+     * Kept for the transporters that predate POD|CFM, which read the proofs off
+     * the LIV|CFM. REPORT 3.1 treats these URLs as provisional: the POD|CFM is
+     * still what closes the position.
+     *
+     * The pods are stored on the message to keep valid logs.
+     */
+    private function attachTaskPods(EDIFACTMessage $message): void
+    {
+        $pods = array_merge(
+            $message->getPods(),
+            ...$message->getTasks()->map(fn(Task $t) => $this->podNotifier->podUrls($t))->toArray()
+        );
+
+        $message->setPods(
+            array_slice(array_values(array_unique($pods)), 0, TransporterPodNotifier::MAX_PODS)
+        );
+    }
+
     /**
      * @param array<ReportGeneratorInterface> $reports
      */
