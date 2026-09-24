@@ -61,12 +61,7 @@ class TaskChangedNotifier {
             ));
             return;
         }
-        $ediMessage = new EDIFACTMessage();
-        $ediMessage->setMessageType(EDIFACTMessage::MESSAGE_TYPE_REPORT);
-        $ediMessage->setTransporter($importMessage->getTransporter());
-        $ediMessage->setDirection(EDIFACTMessage::DIRECTION_OUTBOUND);
-        $ediMessage->setReference($importMessage->getReference());
-        $ediMessage->setSubMessageType($subMessageType);
+        $ediMessage = EDIFACTMessage::createReport($importMessage, $subMessageType);
 
         $task->addEdifactMessage($ediMessage);
         $this->em->persist($ediMessage);
