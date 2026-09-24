@@ -1141,9 +1141,47 @@ class SyncTransportersCommandTest extends KernelTestCase {
 
         $commandTester->execute(['transporter' => 'DBSCHENKER']);
 
-        $reportContent = $this->readLastReport();
-        $this->assertEquals(2, substr_count($reportContent, "RSJ+MS+POD+CFM'"));
-        $this->assertEquals(10, substr_count($reportContent, ":FT'"));
+        $podEvents = array_values(array_filter(
+            explode('UNH+', $this->readLastReport()),
+            fn(string $event) => str_contains($event, "RSJ+MS+POD+CFM'")
+        ));
+        $this->assertCount(2, $podEvents);
+        $this->assertEquals(9, substr_count($podEvents[0], ":FT'"));
+        $this->assertEquals(1, substr_count($podEvents[1], ":FT'"));
+    }
+
+    /**
+     * The LIV|CFM still carries the proofs, for the transporters that read them
+     * there, and stores them on the message to keep valid logs.
+     */
+    public function testLivStillCarriesTheProofs(): void
+    {
+        $commandTester = new CommandTester($this->initCommand());
+        $dropoff = $this->startDropoff($commandTester);
+
+        $image = new TaskImage();
+        $image->setImageName('pod-1.jpg');
+        $image->setTask($dropoff);
+        $this->entityManager->persist($image);
+        $this->entityManager->flush();
+
+        $this->taskManager->markAsDone($dropoff);
+        $this->entityManager->flush();
+        $this->entityManager->clear();
+
+        $commandTester->execute(['transporter' => 'DBSCHENKER']);
+
+        $livEvents = array_values(array_filter(
+            explode('UNH+', $this->readLastReport()),
+            fn(string $event) => str_contains($event, "RSJ+MS+LIV+CFM'")
+        ));
+        $this->assertCount(1, $livEvents);
+        $this->assertStringContainsString("/media/tasks/images/pod-1.jpg:FT'", $livEvents[0]);
+
+        $this->entityManager->clear();
+        $liv = $this->entityManager->getRepository(EDIFACTMessage::class)
+            ->findOneBy(['subMessageType' => 'LIV|CFM']);
+        $this->assertCount(1, $liv->getPods());
     }
 
     /**
