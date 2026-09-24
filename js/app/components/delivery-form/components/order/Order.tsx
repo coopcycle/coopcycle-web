@@ -23,6 +23,9 @@ type Props = {
   order?: OrderType;
   initialManualSupplements?: ManualSupplementValues[];
   setPriceLoading: (loading: boolean) => void;
+  // true when the delivery can not be modified anymore
+  // (assigned to a courier, or completed)
+  isLocked?: boolean;
 };
 
 const Order = ({
@@ -31,6 +34,7 @@ const Order = ({
   order: _existingOrder,
   initialManualSupplements: existingSupplements = [],
   setPriceLoading,
+  isLocked = false,
 }: Props) => {
   const { isDispatcher } = useContext(UserContext);
 
@@ -81,7 +85,7 @@ const Order = ({
   } = useCalculatedPrice({
     storeUri: storeNodeId,
     deliveryId,
-    skip: overridePrice,
+    skip: overridePrice || isLocked,
   });
 
   const priceCalculation = useMemo(() => {

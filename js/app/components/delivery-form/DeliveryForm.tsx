@@ -745,6 +745,7 @@ const DeliveryForm = ({
                       }
                       setPriceLoading={setPriceLoading}
                       initialManualSupplements={initialManualSupplements}
+                      isLocked={isLockedForStore}
                     />
                   </div>
                 ) : null}
