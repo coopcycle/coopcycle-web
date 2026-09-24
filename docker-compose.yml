@@ -162,49 +162,47 @@ services:
       - MJML_VALIDATION_LEVEL=strict
       - MJML_MINIFY=false
 
-  minio:
-    image: quay.io/minio/minio:RELEASE.2025-04-22T22-12-26Z
-    command: server --console-address ":9001" /data
+  # https://docs.rustfs.com/en/installation/container/docker
+  # Console is available at http://localhost:9001/rustfs/console/
+  rustfs:
+    image: rustfs/rustfs:1.0.0
     ports:
       - "9000:9000"
       - "9001:9001"
     volumes:
-      - minio_data:/data
+      - rustfs_data:/data
     environment:
-      - MINIO_ACCESS_KEY=${S3_CREDENTIALS_KEY}
-      - MINIO_SECRET_KEY=${S3_CREDENTIALS_SECRET}
-      - MINIO_REGION=${S3_REGION}
+      - RUSTFS_VOLUMES=/data
+      - RUSTFS_ADDRESS=0.0.0.0:9000
+      - RUSTFS_CONSOLE_ADDRESS=0.0.0.0:9001
+      - RUSTFS_CONSOLE_ENABLE=true
+      - RUSTFS_ACCESS_KEY=${S3_CREDENTIALS_KEY}
+      - RUSTFS_SECRET_KEY=${S3_CREDENTIALS_SECRET}
     healthcheck:
-      test: ["CMD", "mc", "ready", "local"]
+      test: ["CMD", "curl", "-f", "http://localhost:9000/health"]
       interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
+    networks:
+      default:
+        # Keeps old .env files (S3_ENDPOINT=http://minio:9000)
+        # and existing ClickHouse S3Queue tables working
+        aliases:
+          - minio
 
-  # https://github.com/minio/minio/issues/4882
-  # https://docs.min.io/docs/minio-client-complete-guide#policy
-  minio_client:
-    image: quay.io/minio/mc:RELEASE.2025-04-16T18-13-26Z
+  s3_init:
+    image: amazon/aws-cli:2.17.0
     depends_on:
-      minio:
+      rustfs:
         condition: service_healthy
     environment:
-      - S3_CREDENTIALS_KEY
-      - S3_CREDENTIALS_SECRET
-      - S3_REGION
-    entrypoint: >
-      /bin/sh -c "
-      /usr/bin/mc config host add coopcycle http://minio:9000 $S3_CREDENTIALS_KEY $S3_CREDENTIALS_SECRET;
-      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/edifact/;
-      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/exports/;
-      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/;
-      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/assets/;
-      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/products/;
-      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/receipts/;
-      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/restaurants/;
-      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/stores/;
-      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/tasks/;
-      /usr/bin/mc policy set public coopcycle/images/;
-      "
+      - AWS_ACCESS_KEY_ID=${S3_CREDENTIALS_KEY}
+      - AWS_SECRET_ACCESS_KEY=${S3_CREDENTIALS_SECRET}
+      - AWS_DEFAULT_REGION=${S3_REGION}
+      - AWS_ENDPOINT_URL=http://rustfs:9000
+    volumes:
+      - ./docker/rustfs:/rustfs:ro
+    entrypoint: ["/rustfs/init.sh"]
 
   tile38:
     image: tile38/tile38
@@ -256,7 +254,7 @@ services:
       - 4000:4000
     depends_on:
       - postgres
-      - minio
+      - rustfs
       - clickhouse
     environment:
       - CUBEJS_DB_TYPE=postgres
@@ -287,7 +285,7 @@ services:
       - "8123:8123"
       - "9002:9000"
     depends_on:
-      - minio
+      - rustfs
     environment:
       # https://hub.docker.com/r/clickhouse/clickhouse-server/#how-to-create-default-database-and-user-on-starting
       - CLICKHOUSE_DB=${CLICKHOUSE_DB:-coopcycle}
@@ -369,7 +367,7 @@ volumes:
   pg_data:
   php_cache:
   php_profiles:
-  minio_data:
+  rustfs_data:
   typesense_data:
   webpack_php_cache:
   php_logs:
