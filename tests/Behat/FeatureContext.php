@@ -1394,6 +1394,15 @@ class FeatureContext implements Context, SnippetAcceptingContext
         Assert::assertCount((int) $count, $orders);
     }
 
+    #[Then('the database should contain :count task')]
+    #[Then('the database should contain :count tasks')]
+    public function theDatabaseShouldContainTasks($count): void
+    {
+        $tasks = $this->doctrine->getRepository(Task::class)->findAll();
+
+        Assert::assertCount((int) $count, $tasks);
+    }
+
     #[Then('the database should contain a payment with method :methodCode and amount :amount')]
     public function theDatabaseShouldContainAPaymentWithMethod($methodCode, $amount)
     {

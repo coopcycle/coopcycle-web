@@ -173,7 +173,10 @@ class DeliveryManager
     public function createDeliveryFromRecurrenceRule(Task\RecurrenceRule $recurrenceRule, string $startDate, bool $persist = true): ?Delivery
     {
         $store = $recurrenceRule->getStore();
-        $tasks = $this->createTasksFromRecurrenceRule($recurrenceRule, $startDate, $persist);
+        // The tasks are only persisted along with a delivery: when the rule can not
+        // make one (legacy rules, created from the dashboard), no order is created,
+        // so the tasks would be created again on each order generation.
+        $tasks = $this->createTasksFromRecurrenceRule($recurrenceRule, $startDate, false);
 
         $delivery = null;
         if (Delivery::canCreateWithTasks(...$tasks)) {
@@ -183,6 +186,9 @@ class DeliveryManager
             $this->calculateRoute($delivery);
 
             if ($persist) {
+                foreach ($tasks as $task) {
+                    $this->entityManager->persist($task);
+                }
                 $this->entityManager->persist($delivery);
             }
         }

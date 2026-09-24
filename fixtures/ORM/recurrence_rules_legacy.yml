@@ -1,0 +1,22 @@
+include:
+  - addresses.yml
+  - store_default.yml
+
+Recurr\Rule:
+  rrule_1:
+    __construct: [ 'FREQ=WEEKLY;BYDAY=MO,FR' ]
+
+AppBundle\Entity\Task\RecurrenceRule:
+  # A single task can not make a delivery, so no order comes out of this rule
+  recurrence_rule_1__legacy:
+    store: '@store_1'
+    rule: '@rrule_1'
+    template:
+      '@type': 'Task'
+      'address':
+        '@id': '/api/addresses/2'
+        'streetAddress': '18, avenue Ledru-Rollin 75012 Paris 12ème'
+      'type': 'DROPOFF'
+      'after': '12:30:00'
+      'before': '13:00:00'
+    generateOrders: true

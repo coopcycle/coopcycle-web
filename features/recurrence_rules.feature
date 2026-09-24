@@ -669,6 +669,41 @@ Feature: Task recurrence rules
       """
     Then the database should contain 0 orders
 
+  Scenario: Dont generate tasks based on a recurrence rule that can not make a delivery
+    Given the current time is "2025-04-14 9:00:00"
+    Given the fixtures files are loaded:
+      | sylius_products.yml  |
+      | sylius_taxation.yml  |
+      | payment_methods.yml  |
+      | users.yml            |
+      | recurrence_rules_legacy.yml |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    # The dashboard asks for the date on every load, so the tasks would pile up
+    When I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/recurrence_rules/generate_orders?date=2025-04-14"
+    Then the response status code should be 201
+    When I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/recurrence_rules/generate_orders?date=2025-04-14"
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context": "/api/contexts/RecurrenceRuleGeneration",
+        "@id": "/api/recurrence_rule_generations/1",
+        "@type": "RecurrenceRuleGeneration",
+        "date": "2025-04-14",
+        "status": "completed",
+        "succeeded": 0,
+        "failed": 0,
+        "attempts": 1,
+        "errors": []
+      }
+      """
+    Then the database should contain 0 orders
+    And the database should contain 0 tasks
+
 
   Scenario: Watch a generation that already ran for the date
     Given the current time is "2025-04-14 9:00:00"
