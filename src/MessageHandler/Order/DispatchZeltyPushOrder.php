@@ -9,7 +9,16 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-#[AsMessageHandler]
+/**
+ * Runs after UpdateState (priority -10), which is what flushes the order:
+ * PushOrder goes to an async transport, so the message reaches Redis the
+ * moment it is dispatched and a worker re-reads the order from the database
+ * straight away. Dispatched any earlier, the worker races the web request and
+ * sees an order whose timeline — created in memory by CalculateTimeline, two
+ * handlers before this one — has not been written yet, so the push carries no
+ * expected pickup time and Zelty schedules the order for now.
+ */
+#[AsMessageHandler(priority: -20)]
 class DispatchZeltyPushOrder
 {
     public function __construct(

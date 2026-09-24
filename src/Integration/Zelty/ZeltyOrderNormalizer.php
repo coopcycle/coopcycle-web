@@ -5,12 +5,16 @@ namespace AppBundle\Integration\Zelty;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Utils\OrderTimelineCalculator;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class ZeltyOrderNormalizer implements NormalizerInterface
 {
-    public function __construct(private readonly ?LoggerInterface $logger = null) {}
+    public function __construct(
+        private readonly OrderTimelineCalculator $timelineCalculator,
+        private readonly ?LoggerInterface $logger = null,
+    ) {}
 
     public function normalize(mixed $object, ?string $format = null, array $context = []): array
     {
@@ -28,7 +32,7 @@ class ZeltyOrderNormalizer implements NormalizerInterface
             'fulfillment_type' => 'deliver_by_partner',
             'mode'             => 'delivery',
             'source'           => 'web',
-            'due_date'         => $order->getPickupExpectedAt()?->format(\DateTime::ATOM),
+            'due_date'         => $this->dueDate($order)?->format(\DateTime::ATOM),
             'customer'         => $this->normalizeCustomer($order),
             'address'          => $this->normalizeAddress($order),
             'items'            => $items,
@@ -40,6 +44,38 @@ class ZeltyOrderNormalizer implements NormalizerInterface
         }
 
         return $payload;
+    }
+
+    /**
+     * When the order is pushed, Zelty reads due_date as the time the courier
+     * comes for the bag; leaving it out means "as soon as possible", so a
+     * missing value quietly turns a scheduled order into an immediate one.
+     *
+     * The expected pickup time lives on the order's timeline, which is not
+     * always readable here: the push runs in a worker that re-loads the order
+     * from the database, and the timeline is written by the web request that
+     * created the order. Rather than depend on that ordering, recompute it —
+     * OrderTimelineCalculator derives the time from the order's shipping time
+     * range, which is committed well before the order is pushed, and it lands
+     * on the same value the timeline holds.
+     */
+    private function dueDate(OrderInterface $order): ?\DateTimeInterface
+    {
+        $pickupExpectedAt = $order->getPickupExpectedAt();
+
+        if ($pickupExpectedAt !== null) {
+            return $pickupExpectedAt;
+        }
+
+        if ($order->getShippingTimeRange() === null) {
+            $this->logger?->warning('Zelty order has no expected pickup time: Zelty will schedule it as soon as possible', [
+                'order_id' => $order->getId(),
+            ]);
+
+            return null;
+        }
+
+        return $this->timelineCalculator->calculate($order)->getPickupExpectedAt();
     }
 
     public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool

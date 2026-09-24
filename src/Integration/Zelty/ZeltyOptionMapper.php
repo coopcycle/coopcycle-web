@@ -351,7 +351,7 @@ class ZeltyOptionMapper
             $value->setValue($zeltyValue->name);
         }
 
-        $price = $zeltyValue->price?->price ?? 0;
+        $price = $zeltyValue->price->price ?? 0;
 
         // The strategy is only ever switched *on*: a priced sibling in the same
         // group is what makes the whole option per-value priced, so one choice

@@ -2,9 +2,11 @@
 
 namespace Tests\AppBundle\Integration\Zelty;
 
+use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\OrderItem;
+use AppBundle\Entity\Sylius\OrderTimeline;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\ProductOption;
 use AppBundle\Entity\Sylius\ProductOptionValue;
@@ -12,6 +14,7 @@ use AppBundle\Entity\Sylius\ProductVariant;
 use AppBundle\Integration\Zelty\ZeltyOrderNormalizer;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Utils\OrderTimelineCalculator;
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
 
@@ -19,9 +22,12 @@ class ZeltyOrderNormalizerTest extends TestCase
 {
     private ZeltyOrderNormalizer $normalizer;
 
+    private OrderTimelineCalculator&\PHPUnit\Framework\MockObject\MockObject $timelineCalculator;
+
     protected function setUp(): void
     {
-        $this->normalizer = new ZeltyOrderNormalizer();
+        $this->timelineCalculator = $this->createMock(OrderTimelineCalculator::class);
+        $this->normalizer = new ZeltyOrderNormalizer($this->timelineCalculator);
     }
 
     public function testNormalizesBasicOrderPayload(): void
@@ -398,7 +404,95 @@ class ZeltyOrderNormalizerTest extends TestCase
                 $this->callback(fn(array $context) => $context['difference'] === 200)
             );
 
-        (new ZeltyOrderNormalizer($logger))->normalize($order);
+        (new ZeltyOrderNormalizer($this->timelineCalculator, $logger))->normalize($order);
+    }
+
+    /**
+     * due_date left out means "as soon as possible" to Zelty, so an order
+     * whose timeline isn't readable must not silently become an immediate
+     * one. The push runs in a worker that re-loads the order from the
+     * database, while the timeline is written by the web request that created
+     * the order — the worker can get there first, so the expected pickup time
+     * is recomputed from the shipping time range instead.
+     */
+    public function testDueDateIsRecomputedWhenTheTimelineIsNotReadableYet(): void
+    {
+        $order = $this->buildMinimalOrder([$this->buildPlainItem()], 1000);
+        $order->method('getShippingTimeRange')->willReturn(
+            TsRange::create(
+                new \DateTime('2026-07-01T12:00:00+02:00'),
+                new \DateTime('2026-07-01T12:10:00+02:00')
+            )
+        );
+
+        $timeline = new OrderTimeline();
+        $timeline->setPickupExpectedAt(new \DateTime('2026-07-01T11:45:00+02:00'));
+
+        $this->timelineCalculator
+            ->expects($this->once())
+            ->method('calculate')
+            ->with($order)
+            ->willReturn($timeline);
+
+        $payload = $this->normalizer->normalize($order);
+
+        $this->assertSame('2026-07-01T11:45:00+02:00', $payload['due_date']);
+    }
+
+    public function testDueDateComesFromTheOrderWhenItsTimelineIsThere(): void
+    {
+        $order = $this->createMock(OrderInterface::class);
+        $order->method('getId')->willReturn(1);
+        $order->method('getNumber')->willReturn('ABC123');
+        $order->method('getPickupExpectedAt')->willReturn(new \DateTime('2026-07-01T11:45:00+02:00'));
+        $order->method('getItems')->willReturn(new ArrayCollection([$this->buildPlainItem()]));
+        $order->method('getItemsTotal')->willReturn(1000);
+
+        $this->timelineCalculator->expects($this->never())->method('calculate');
+
+        $payload = $this->normalizer->normalize($order);
+
+        $this->assertSame('2026-07-01T11:45:00+02:00', $payload['due_date']);
+    }
+
+    /**
+     * An order with no shipping time range either — nothing left to compute
+     * the pickup time from. Zelty gets no due_date, and the reason is logged
+     * rather than passing silently for an immediate order.
+     */
+    public function testAnOrderWithNothingToComputeTheDueDateFromIsLogged(): void
+    {
+        $order = $this->buildMinimalOrder([$this->buildPlainItem()], 1000);
+        $order->method('getShippingTimeRange')->willReturn(null);
+
+        $this->timelineCalculator->expects($this->never())->method('calculate');
+
+        $logger = $this->createMock(\Psr\Log\LoggerInterface::class);
+        $logger->expects($this->once())
+            ->method('warning')
+            ->with($this->stringContains('no expected pickup time'), ['order_id' => 1]);
+
+        $payload = (new ZeltyOrderNormalizer($this->timelineCalculator, $logger))->normalize($order);
+
+        $this->assertNull($payload['due_date']);
+    }
+
+    private function buildPlainItem(int $unitPrice = 1000): OrderItem&\PHPUnit\Framework\MockObject\MockObject
+    {
+        $product = new Product();
+        $product->setMetadata(['zelty_id' => 'ZD1', 'zelty_internal_id' => '1']);
+
+        $variant = $this->createMock(ProductVariant::class);
+        $variant->method('getCode')->willReturn('ZD1_variant');
+        $variant->method('getProduct')->willReturn($product);
+        $variant->method('getOptionValues')->willReturn(new ArrayCollection());
+
+        $item = $this->createMock(OrderItem::class);
+        $item->method('getVariant')->willReturn($variant);
+        $item->method('getUnitPrice')->willReturn($unitPrice);
+        $item->method('getQuantity')->willReturn(1);
+
+        return $item;
     }
 
     private function buildMinimalOrder(array $items, int $total, ?string $notes = null, ?Customer $customer = null): OrderInterface&\PHPUnit\Framework\MockObject\MockObject
