@@ -247,6 +247,14 @@ class ZeltyOptionMapper
                 $option->addValue($value);
             }
 
+            // Re-apply on every import, not just creation: Zelty is the source
+            // of truth for whether a choice is offered, and nothing else ever
+            // re-enables a value. Without this, a value disabled by accident —
+            // DisabledProductListener switching it off along with a dish it was
+            // wrongly linked to, say — stayed disabled forever, re-import after
+            // re-import.
+            $value->setEnabled(!$zeltyValue->disabled);
+
             return $value;
         }
 

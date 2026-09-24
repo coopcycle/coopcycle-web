@@ -270,6 +270,16 @@ class ZeltyProductMapper
     /**
      * Link a single option to product if not already linked.
      *
+     * Linking the option to a dish says nothing about the option's *values*:
+     * a value's `product` means "this choice IS that dish" (a menu part's
+     * dish — see ZeltyMenuMapper), and a modifier's choices are not dishes.
+     * This used to stamp the linking dish onto every unlinked value of the
+     * option, so a shared modifier had all its choices claimed by whichever
+     * dish happened to be imported first — "Taille pizza" on restaurant 82
+     * had both its sizes pointing at the pizza "Niçoise". That link is what
+     * DisabledProductListener follows, so disabling that one dish disabled
+     * the choices for every dish sharing the option.
+     *
      * @param ProductOptionInterface|object $option The option to link
      */
     private function linkOptionToProductIfNotExists(Product $product, $option): void
@@ -291,11 +301,5 @@ class ZeltyProductMapper
         }
 
         $product->addOption($option);
-
-        foreach ($option->getValues() as $optionValue) {
-            if ($optionValue->getProduct() === null) {
-                $optionValue->setProduct($product);
-            }
-        }
     }
 }

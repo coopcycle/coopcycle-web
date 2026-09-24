@@ -243,4 +243,107 @@ class ZeltyOptionMapperTest extends TestCase
         $this->assertTrue($kept->isEnabled(), 'A value still offered by the option must stay untouched.');
         $this->assertFalse($stale->isEnabled(), 'A value no longer offered by the option must be disabled.');
     }
+
+    /**
+     * Nothing used to re-enable an existing value, so a choice switched off by
+     * accident stayed off through every later import. Restaurant 82 hit this:
+     * its pizza sizes were wrongly linked to the dish "Niçoise", and
+     * DisabledProductListener disabled them along with it. Zelty is the source
+     * of truth for whether a choice is offered, so re-importing restores it.
+     */
+    public function testReimportRestoresAValueZeltyStillOffers(): void
+    {
+        $restaurant = new LocalBusiness();
+        (new ReflectionProperty($restaurant, 'id'))->setValue($restaurant, 82);
+
+        $existingOption = new ProductOption();
+        $existingOption->setCode('ZO1234_82');
+        $existingOption->setRestaurant($restaurant);
+        $existingOption->setFallbackLocale('fr');
+        $existingOption->setCurrentLocale('fr');
+
+        $disabled = new ProductOptionValue();
+        $disabled->setCode('ZOV1_82');
+        $disabled->setZeltyId('ZOV1');
+        $disabled->setFallbackLocale('fr');
+        $disabled->setCurrentLocale('fr');
+        $disabled->setValue('Classique (31cm)');
+        $disabled->setEnabled(false);
+        $existingOption->addValue($disabled);
+
+        $optionRepository = $this->createMock(ObjectRepository::class);
+        $optionRepository->method('findOneBy')->willReturn($existingOption);
+
+        $valueRepository = $this->createMock(ObjectRepository::class);
+        $valueRepository->method('findOneBy')->willReturn($disabled);
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->method('getRepository')->willReturnCallback(
+            fn (string $class) => $class === ProductOption::class ? $optionRepository : $valueRepository
+        );
+
+        $filters = $this->createMock(FilterCollection::class);
+        $filters->method('isEnabled')->willReturn(false);
+        $em->method('getFilters')->willReturn($filters);
+
+        $zeltyOption = new ZeltyOption(
+            id: 'ZO1234',
+            name: 'Taille pizza',
+            valueIds: ['ZOV1'],
+        );
+        $zeltyValue = new ZeltyOptionValue(id: 'ZOV1', name: 'Classique (31cm)');
+
+        $mapper = new ZeltyOptionMapper($em);
+        $mapper->importOptions([$zeltyOption], [$zeltyValue], $restaurant, 'fr');
+
+        $this->assertTrue($disabled->isEnabled(), 'A choice Zelty still offers must come back on re-import.');
+    }
+
+    public function testReimportKeepsAValueZeltyItselfDisabled(): void
+    {
+        $restaurant = new LocalBusiness();
+        (new ReflectionProperty($restaurant, 'id'))->setValue($restaurant, 82);
+
+        $existingOption = new ProductOption();
+        $existingOption->setCode('ZO1234_82');
+        $existingOption->setRestaurant($restaurant);
+        $existingOption->setFallbackLocale('fr');
+        $existingOption->setCurrentLocale('fr');
+
+        $value = new ProductOptionValue();
+        $value->setCode('ZOV1_82');
+        $value->setZeltyId('ZOV1');
+        $value->setFallbackLocale('fr');
+        $value->setCurrentLocale('fr');
+        $value->setValue('Classique (31cm)');
+        $value->setEnabled(true);
+        $existingOption->addValue($value);
+
+        $optionRepository = $this->createMock(ObjectRepository::class);
+        $optionRepository->method('findOneBy')->willReturn($existingOption);
+
+        $valueRepository = $this->createMock(ObjectRepository::class);
+        $valueRepository->method('findOneBy')->willReturn($value);
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->method('getRepository')->willReturnCallback(
+            fn (string $class) => $class === ProductOption::class ? $optionRepository : $valueRepository
+        );
+
+        $filters = $this->createMock(FilterCollection::class);
+        $filters->method('isEnabled')->willReturn(false);
+        $em->method('getFilters')->willReturn($filters);
+
+        $zeltyOption = new ZeltyOption(
+            id: 'ZO1234',
+            name: 'Taille pizza',
+            valueIds: ['ZOV1'],
+        );
+        $zeltyValue = new ZeltyOptionValue(id: 'ZOV1', name: 'Classique (31cm)', disabled: true);
+
+        $mapper = new ZeltyOptionMapper($em);
+        $mapper->importOptions([$zeltyOption], [$zeltyValue], $restaurant, 'fr');
+
+        $this->assertFalse($value->isEnabled(), 'A choice disabled in Zelty must stay off.');
+    }
 }
