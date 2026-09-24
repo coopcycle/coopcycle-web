@@ -2,13 +2,11 @@
 
 namespace AppBundle\Validator\Constraints;
 
-use AppBundle\Entity\Task;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Component\HttpClient\Exception\ClientException;
 use Symfony\Component\HttpClient\Exception\ServerException;
 use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\ConstraintValidator;
 
 class SiretValidator extends ConstraintValidator
@@ -31,7 +29,14 @@ class SiretValidator extends ConstraintValidator
 
         try {
 
-            $this->inseeClient->request('GET', sprintf('siret/%s', $value));
+            // The client is lazy: request() only queues the call, and a 4xx/5xx
+            // becomes an exception when the response is read. Reading the headers
+            // is that read. Dropping the response without reading it would throw
+            // just the same — its destructor checks the status code — but only as
+            // a side effect of the object going out of scope inside this try, which
+            // is both easy to break by holding on to the response and invisible to
+            // static analysis (PHPStan reports both catches below as dead).
+            $this->inseeClient->request('GET', sprintf('siret/%s', $value))->getHeaders();
 
         } catch (ClientException $e) {
 
@@ -45,4 +50,3 @@ class SiretValidator extends ConstraintValidator
         }
     }
 }
-
