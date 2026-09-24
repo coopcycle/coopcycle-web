@@ -755,6 +755,8 @@ services:
         entity: AppBundle\Entity\Task
 
   AppBundle\EventListener\Edifact\TransporterPodNotifier:
+    arguments:
+      $baseUrl: '%router.request_context.scheme%://%router.request_context.host%'
     tags:
       -
         name: 'doctrine.orm.entity_listener'
@@ -766,6 +768,7 @@ services:
         event: 'postUpdate'
         entity: AppBundle\Entity\TaskImage
         method: 'postUpdate'
+      - { name: 'doctrine.event_listener', event: 'postFlush' }
 
   AppBundle\EventListener\JwtListener:
     tags:
