@@ -32,16 +32,21 @@ class CreateImage
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Resolved before persist(): Vich stores the file on prePersist, so
+            // a bad IRI found afterwards would leave it orphaned.
+            $incidents = [];
+            if ($request->headers->has('X-Attach-To')) {
+                $incidents = array_map(
+                    fn(string $incident): Incident => $this->iriConverter->getResourceFromIri($incident),
+                    array_filter(array_map('trim', explode(';', $request->headers->get('X-Attach-To'))))
+                );
+            }
+
             // Persisted first: Vich fills imageName on prePersist, and the
             // clones below are built from it.
             $this->entityManager->persist($incidentImage);
 
-            if ($request->headers->has('X-Attach-To')) {
-                $incidents = array_map(
-                    fn(string $incident): Incident => $this->iriConverter->getResourceFromIri($incident),
-                    explode(';', $request->headers->get('X-Attach-To'))
-                );
-
+            if (!empty($incidents)) {
                 $this->cloneAndAttach($incidents, $incidentImage);
             }
 
