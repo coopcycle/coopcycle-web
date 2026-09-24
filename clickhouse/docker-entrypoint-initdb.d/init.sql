@@ -18,7 +18,7 @@ CREATE OR REPLACE TABLE ordersQueue (
     `net_revenue` Int32,
     `billing_method` Enum('unit' = 1, 'percentage' = 2),
     `applied_billing` Enum('LASTMILE' = 1, 'FOODTECH' = 2),
-) ENGINE = S3Queue('http://minio:9000/exports/orders/instance=*/year=*/month=*/*.parquet')
+) ENGINE = S3Queue('http://rustfs:9000/exports/orders/instance=*/year=*/month=*/*.parquet')
 SETTINGS mode = 'ordered';
 
 -- MergeTree
@@ -79,7 +79,7 @@ CREATE OR REPLACE TABLE tasksQueue (
     finished Nullable(DateTime64(6)),
     courier Nullable(String),
     organization Nullable(String)
-) ENGINE = S3Queue('http://minio:9000/exports/tasks/instance=*/year=*/month=*/*.parquet')
+) ENGINE = S3Queue('http://rustfs:9000/exports/tasks/instance=*/year=*/month=*/*.parquet')
 SETTINGS mode = 'ordered';
 
 -- MergeTree
@@ -171,7 +171,7 @@ CREATE OR REPLACE TABLE tasksQueue_v2 (
     `instance` String,
     updated_at Nullable(DateTime64(6)),
     exported_at DateTime64(6)
-) ENGINE = S3Queue('http://minio:9000/exports/v2/tasks/instance=*/exported=*/*.parquet')
+) ENGINE = S3Queue('http://rustfs:9000/exports/v2/tasks/instance=*/exported=*/*.parquet')
 SETTINGS
   mode = 'unordered',
   tracked_files_limit = 500000,
@@ -242,7 +242,7 @@ CREATE OR REPLACE TABLE ordersQueue_v2 (
     `instance` String,
     updated_at Nullable(DateTime64(6)),
     exported_at DateTime64(6)
-) ENGINE = S3Queue('http://minio:9000/exports/v2/orders/instance=*/exported=*/*.parquet')
+) ENGINE = S3Queue('http://rustfs:9000/exports/v2/orders/instance=*/exported=*/*.parquet')
 SETTINGS
   mode = 'unordered',
   tracked_files_limit = 500000,

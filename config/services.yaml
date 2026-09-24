@@ -1243,8 +1243,7 @@ services:
   AppBundle\Utils\BannerNamer:
     public: true
 
-  # https://digitalist.se/blogg/using-open-source-minio-and-flysystem-s3-module-handle-drupal-files
-  # https://github.com/minio/cookbook/blob/master/docs/how-to-use-minio-as-laravel-file-storage.md
+  # use_path_style_endpoint is needed for S3-compatible servers (RustFS in dev)
   s3_client_assets:
     class: Aws\S3\S3Client
     arguments:
