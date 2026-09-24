@@ -4,7 +4,6 @@ namespace AppBundle\Integration\Zelty;
 
 use AppBundle\DataType\NumRange;
 use AppBundle\Entity\LocalBusiness;
-use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\ProductOption;
 use AppBundle\Entity\Sylius\ProductOptionValue;
 use AppBundle\Integration\Zelty\Dto\ZeltyOption;
@@ -106,15 +105,14 @@ class ZeltyOptionMapper
         ProductOption $option,
         ZeltyOption $zeltyOption,
         array $optionValueMap,
-        string $locale,
-        ?Product $product = null
+        string $locale
     ): void {
         foreach ($zeltyOption->valueIds as $valueId) {
             if (!isset($optionValueMap[$valueId])) {
                 continue;
             }
 
-            $this->importOptionValue($optionValueMap[$valueId], $option, $locale, $product);
+            $this->importOptionValue($optionValueMap[$valueId], $option, $locale);
         }
     }
 
@@ -229,7 +227,7 @@ class ZeltyOptionMapper
     /**
      * Import a single option value.
      */
-    private function importOptionValue(ZeltyOptionValue $zeltyValue, ProductOption $option, string $locale, ?Product $product = null): ProductOptionValue
+    private function importOptionValue(ZeltyOptionValue $zeltyValue, ProductOption $option, string $locale): ProductOptionValue
     {
         $valueCode = $this->generateOptionValueCode($zeltyValue->id, $option);
         $value = $this->findOptionValueByCode($valueCode);
@@ -247,18 +245,12 @@ class ZeltyOptionMapper
                 $option->addValue($value);
             }
 
-            // Re-apply on every import, not just creation: Zelty is the source
-            // of truth for whether a choice is offered, and nothing else ever
-            // re-enables a value. Without this, a value disabled by accident —
-            // DisabledProductListener switching it off along with a dish it was
-            // wrongly linked to, say — stayed disabled forever, re-import after
-            // re-import.
-            $value->setEnabled(!$zeltyValue->disabled);
+            $this->applyZeltyState($value, $zeltyValue, $option, $locale);
 
             return $value;
         }
 
-        return $this->createOptionValue($zeltyValue, $option, $locale, $valueCode, $product);
+        return $this->createOptionValue($zeltyValue, $option, $locale, $valueCode);
     }
 
     /**
@@ -318,30 +310,57 @@ class ZeltyOptionMapper
         ZeltyOptionValue $zeltyValue,
         ProductOption $option,
         string $locale,
-        string $valueCode,
-        ?Product $product = null
+        string $valueCode
     ): ProductOptionValue {
         $value = new ProductOptionValue();
         $value->setCode($valueCode);
         $value->setZeltyId($zeltyValue->id);
         $value->setZeltyInternalId($zeltyValue->internalId);
-        $value->setCurrentLocale($locale);
-        $value->setValue($zeltyValue->name);
 
-        if ($product !== null) {
-            $value->setProduct($product);
-        }
-
-        if ($zeltyValue->price && $zeltyValue->price->price > 0) {
-            $option->setStrategy(ProductOptionInterface::STRATEGY_OPTION_VALUE);
-            $value->setPrice($zeltyValue->price->price);
-        }
-
-        $value->setEnabled(!$zeltyValue->disabled);
+        $this->applyZeltyState($value, $zeltyValue, $option, $locale);
 
         $option->addValue($value);
         $this->em->persist($value);
 
         return $value;
+    }
+
+    /**
+     * Everything Zelty owns about a choice — its label, its price and whether
+     * it is offered at all — applied the same way whether the value is being
+     * created or refreshed.
+     *
+     * Applying it on *every* import is the point: these used to be written
+     * only at creation, so a choice renamed or repriced in Zelty kept its
+     * original label and price here forever, and one switched off by accident
+     * (DisabledProductListener following a wrong product link, say) could
+     * never come back on. Same convention as the option's own min/max choices
+     * and the variant prices in ZeltyProductMapper.
+     */
+    private function applyZeltyState(
+        ProductOptionValue $value,
+        ZeltyOptionValue $zeltyValue,
+        ProductOption $option,
+        string $locale
+    ): void {
+        $value->setCurrentLocale($locale);
+
+        // Guarded like the option's own name: a nameless value in the payload
+        // means "nothing to say about it", not "clear the label we have".
+        if ($zeltyValue->name) {
+            $value->setValue($zeltyValue->name);
+        }
+
+        $price = $zeltyValue->price?->price ?? 0;
+
+        // The strategy is only ever switched *on*: a priced sibling in the same
+        // group is what makes the whole option per-value priced, so one choice
+        // dropping back to zero must not take the group down with it.
+        if ($price > 0) {
+            $option->setStrategy(ProductOptionInterface::STRATEGY_OPTION_VALUE);
+        }
+
+        $value->setPrice($price);
+        $value->setEnabled(!$zeltyValue->disabled);
     }
 }

@@ -8,7 +8,9 @@ use AppBundle\Entity\Sylius\ProductOption;
 use AppBundle\Entity\Sylius\ProductOptionValue;
 use AppBundle\Integration\Zelty\Dto\ZeltyOption;
 use AppBundle\Integration\Zelty\Dto\ZeltyOptionValue;
+use AppBundle\Integration\Zelty\Dto\ZeltyPrice;
 use AppBundle\Integration\Zelty\ZeltyOptionMapper;
+use AppBundle\Sylius\Product\ProductOptionInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\FilterCollection;
 use Doctrine\Persistence\ObjectRepository;
@@ -345,5 +347,124 @@ class ZeltyOptionMapperTest extends TestCase
         $mapper->importOptions([$zeltyOption], [$zeltyValue], $restaurant, 'fr');
 
         $this->assertFalse($value->isEnabled(), 'A choice disabled in Zelty must stay off.');
+    }
+
+    /**
+     * A choice renamed or repriced in Zelty used to keep its original label
+     * and price here forever: both were written only when the value was first
+     * created.
+     */
+    public function testReimportRefreshesTheLabelAndPriceOfAnExistingValue(): void
+    {
+        $restaurant = new LocalBusiness();
+        (new ReflectionProperty($restaurant, 'id'))->setValue($restaurant, 82);
+
+        $existingOption = new ProductOption();
+        $existingOption->setCode('ZO1234_82');
+        $existingOption->setRestaurant($restaurant);
+        $existingOption->setFallbackLocale('fr');
+        $existingOption->setCurrentLocale('fr');
+
+        $value = new ProductOptionValue();
+        $value->setCode('ZOV1_82');
+        $value->setZeltyId('ZOV1');
+        $value->setFallbackLocale('fr');
+        $value->setCurrentLocale('fr');
+        $value->setValue('Classique (31cm)');
+        $value->setPrice(300);
+        $value->setEnabled(true);
+        $existingOption->addValue($value);
+
+        $optionRepository = $this->createMock(ObjectRepository::class);
+        $optionRepository->method('findOneBy')->willReturn($existingOption);
+
+        $valueRepository = $this->createMock(ObjectRepository::class);
+        $valueRepository->method('findOneBy')->willReturn($value);
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->method('getRepository')->willReturnCallback(
+            fn (string $class) => $class === ProductOption::class ? $optionRepository : $valueRepository
+        );
+
+        $filters = $this->createMock(FilterCollection::class);
+        $filters->method('isEnabled')->willReturn(false);
+        $em->method('getFilters')->willReturn($filters);
+
+        $zeltyOption = new ZeltyOption(
+            id: 'ZO1234',
+            name: 'Taille pizza',
+            valueIds: ['ZOV1'],
+        );
+        $zeltyValue = new ZeltyOptionValue(
+            id: 'ZOV1',
+            name: 'Grande (33cm)',
+            price: new ZeltyPrice(price: 350),
+        );
+
+        $mapper = new ZeltyOptionMapper($em);
+        $mapper->importOptions([$zeltyOption], [$zeltyValue], $restaurant, 'fr');
+
+        $this->assertSame('Grande (33cm)', $value->getValue());
+        $this->assertSame(350, $value->getPrice());
+        $this->assertSame(
+            ProductOptionInterface::STRATEGY_OPTION_VALUE,
+            $existingOption->getStrategy(),
+            'A priced choice must put the whole option on the per-value pricing strategy.'
+        );
+    }
+
+    public function testAChoiceLosingItsPriceDoesNotUnpriceItsSiblings(): void
+    {
+        $restaurant = new LocalBusiness();
+        (new ReflectionProperty($restaurant, 'id'))->setValue($restaurant, 82);
+
+        $existingOption = new ProductOption();
+        $existingOption->setCode('ZO1234_82');
+        $existingOption->setRestaurant($restaurant);
+        $existingOption->setFallbackLocale('fr');
+        $existingOption->setCurrentLocale('fr');
+        $existingOption->setStrategy(ProductOptionInterface::STRATEGY_OPTION_VALUE);
+
+        $value = new ProductOptionValue();
+        $value->setCode('ZOV2_82');
+        $value->setZeltyId('ZOV2');
+        $value->setFallbackLocale('fr');
+        $value->setCurrentLocale('fr');
+        $value->setValue('Petite (26 cm)');
+        $value->setPrice(300);
+        $existingOption->addValue($value);
+
+        $optionRepository = $this->createMock(ObjectRepository::class);
+        $optionRepository->method('findOneBy')->willReturn($existingOption);
+
+        $valueRepository = $this->createMock(ObjectRepository::class);
+        $valueRepository->method('findOneBy')->willReturn($value);
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->method('getRepository')->willReturnCallback(
+            fn (string $class) => $class === ProductOption::class ? $optionRepository : $valueRepository
+        );
+
+        $filters = $this->createMock(FilterCollection::class);
+        $filters->method('isEnabled')->willReturn(false);
+        $em->method('getFilters')->willReturn($filters);
+
+        $zeltyOption = new ZeltyOption(
+            id: 'ZO1234',
+            name: 'Taille pizza',
+            valueIds: ['ZOV2'],
+        );
+        // Free again in Zelty — no price block at all.
+        $zeltyValue = new ZeltyOptionValue(id: 'ZOV2', name: 'Petite (26 cm)');
+
+        $mapper = new ZeltyOptionMapper($em);
+        $mapper->importOptions([$zeltyOption], [$zeltyValue], $restaurant, 'fr');
+
+        $this->assertSame(0, $value->getPrice());
+        $this->assertSame(
+            ProductOptionInterface::STRATEGY_OPTION_VALUE,
+            $existingOption->getStrategy(),
+            'The group keeps its pricing strategy for the sake of its priced siblings.'
+        );
     }
 }
