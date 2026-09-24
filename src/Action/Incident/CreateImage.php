@@ -28,19 +28,26 @@ class CreateImage
     {
         $incidentImage = new IncidentImage();
 
-        if ($request->headers->has('X-Attach-To')) {
-            /** @var Incident $incident */
-            $incident = $this->iriConverter->getResourceFromIri($request->headers->get('X-Attach-To'));
-        }
-
         $form = $this->formFactory->create(IncidentImageType::class, $incidentImage);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Resolved before persist(): Vich stores the file on prePersist, so
+            // a bad IRI found afterwards would leave it orphaned.
+            $incidents = [];
+            if ($request->headers->has('X-Attach-To')) {
+                $incidents = array_map(
+                    fn(string $incident): Incident => $this->iriConverter->getResourceFromIri($incident),
+                    array_filter(array_map('trim', explode(';', $request->headers->get('X-Attach-To'))))
+                );
+            }
+
+            // Persisted first: Vich fills imageName on prePersist, and the
+            // clones below are built from it.
             $this->entityManager->persist($incidentImage);
 
-            if (isset($incident)) {
-                $incidentImage->setIncident($incident);
+            if (!empty($incidents)) {
+                $this->cloneAndAttach($incidents, $incidentImage);
             }
 
             $this->entityManager->flush();
@@ -48,6 +55,27 @@ class CreateImage
         }
 
         throw new ValidationException($this->validator->validate($incidentImage));
+    }
+
+    /**
+     * The uploaded image is attached to the first incident; every other one
+     * gets its own row pointing at the same file, so a single photo can back
+     * several incidents without being uploaded again.
+     *
+     * @param array<int,Incident> $incidents
+     */
+    private function cloneAndAttach(array $incidents, IncidentImage $incidentImage): void
+    {
+        $first = array_shift($incidents);
+        $incidentImage->setIncident($first);
+
+        foreach ($incidents as $incident) {
+            $otherIncidentImage = new IncidentImage();
+            $otherIncidentImage->setImageName($incidentImage->getImageName());
+            $otherIncidentImage->setIncident($incident);
+
+            $this->entityManager->persist($otherIncidentImage);
+        }
     }
 
 }

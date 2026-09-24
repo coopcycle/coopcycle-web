@@ -42,6 +42,19 @@ class EDIFACTMessage
         $this->tasks = new ArrayCollection();
     }
 
+    /**
+     * An outbound REPORT about the shipment imported by $importMessage.
+     */
+    public static function createReport(EDIFACTMessage $importMessage, string $subMessageType): EDIFACTMessage
+    {
+        return (new EDIFACTMessage())
+            ->setMessageType(self::MESSAGE_TYPE_REPORT)
+            ->setTransporter($importMessage->getTransporter())
+            ->setDirection(self::DIRECTION_OUTBOUND)
+            ->setReference($importMessage->getReference())
+            ->setSubMessageType($subMessageType);
+    }
+
     public function getId(): int
     {
         return $this->id;
