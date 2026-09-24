@@ -100,6 +100,18 @@ class ImportFromPoint {
             $this->addPackageToTask($task, $package);
         }
 
+        // The count as the transporter sent it: a type with no package mapping
+        // would otherwise only be in the logs.
+        if (!empty($point->getPackages())) {
+            $task->setMetadata('transporter_packages', array_map(
+                fn(TransporterPackage $p) => [
+                    'type' => $p->getType()->name,
+                    'quantity' => $p->getQuantity(),
+                ],
+                $point->getPackages()
+            ));
+        }
+
         return $task;
     }
 

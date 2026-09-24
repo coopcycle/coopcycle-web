@@ -933,6 +933,37 @@ class SyncTransportersCommandTest extends KernelTestCase {
             $packageQuantities[$taskPackage->getPackage()->getShortCode()] = $taskPackage->getQuantity();
         }
         $this->assertEquals(['XL' => 2, 'SM' => 3], $packageQuantities);
+
+        $this->assertEquals([
+            ['type' => 'HANDLING_UNIT', 'quantity' => 2],
+            ['type' => 'PACKAGE', 'quantity' => 3],
+        ], $dropoff->getMetadata()['transporter_packages']);
+    }
+
+    /**
+     * Without a package mapping no Package is added, but the count the
+     * transporter sent is still kept on the task.
+     */
+    public function testPackageCountIsKeptWithoutMapping(): void
+    {
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/test.edi', self::FS_MASK_DBS),
+            self::EDI_PACKAGES_SAMPLE
+        );
+
+        $commandTester = new CommandTester($this->initCommand());
+        $commandTester->execute(['transporter' => 'DBSCHENKER']);
+
+        $deliveries = $this->entityManager->getRepository(Delivery::class)->findAll();
+        /** @var Delivery $delivery */
+        $delivery = array_shift($deliveries);
+        $dropoff = $delivery->getDropoff();
+
+        $this->assertEquals(0, $dropoff->totalPackages());
+        $this->assertEquals([
+            ['type' => 'HANDLING_UNIT', 'quantity' => 2],
+            ['type' => 'PACKAGE', 'quantity' => 3],
+        ], $dropoff->getMetadata()['transporter_packages']);
     }
 
     public function testValidSyncOnePickupTask(): void
