@@ -6,6 +6,7 @@ use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskImage;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Event\PostUpdateEventArgs;
 use Psr\Log\LoggerInterface;
@@ -19,18 +20,26 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  * included) is treated as provisional and never closes the position.
  *
  * The event is emitted once the dropoff is done *and* carries a proof, whichever
- * happens last — the app uploads its images after marking the task as done, so
- * either can be the trigger. Proofs that arrive later produce a further POD|CFM
- * with only the images that have not been reported yet.
+ * happens last: the images may be uploaded before or after the task is marked
+ * as done, so either can be the trigger. Proofs that arrive later produce a
+ * further POD|CFM with only the images that have not been reported yet; the
+ * ones still unsynced are sent as one event, see ReportFromCC::generateReports().
  */
 class TransporterPodNotifier {
 
-    private const SUB_MESSAGE_TYPE = 'POD|CFM';
+    public const SUB_MESSAGE_TYPE = 'POD|CFM';
+
+    // REPORT 3.1 allows at most 9 COM segments per RSJ.
+    public const MAX_PODS = 9;
+
+    /** @var array<int,Task> */
+    private array $tasksToNotify = [];
 
     public function __construct(
         private EntityManagerInterface $em,
         private UrlGeneratorInterface $urlGenerator,
         private LoggerInterface $transporterLogger,
+        private string $baseUrl,
     ) { }
 
     // Covers CreateImage's X-Attach-To path, where the image is persisted with
@@ -43,13 +52,38 @@ class TransporterPodNotifier {
     // Covers AddImagesToTasks, which links an already uploaded image later on.
     public function postUpdate(TaskImage $image, PostUpdateEventArgs $event): void
     {
-        $this->onImageAttached($image);
+        $changeset = $event->getObjectManager()->getUnitOfWork()->getEntityChangeSet($image);
+        if (array_key_exists('task', $changeset)) {
+            $this->onImageAttached($image);
+        }
     }
 
     private function onImageAttached(TaskImage $image): void
     {
         if (!is_null($image->getTask())) {
-            $this->notify($image->getTask());
+            $this->tasksToNotify[spl_object_id($image->getTask())] = $image->getTask();
+        }
+    }
+
+    // Deferred until the whole flush is written: Doctrine fires postUpdate row
+    // by row, so notifying from there would only see the images updated so far
+    // and emit one POD|CFM per image.
+    public function postFlush(PostFlushEventArgs $event): void
+    {
+        $tasks = $this->tasksToNotify;
+        $this->tasksToNotify = [];
+
+        // The images are already committed: a failure here must not turn the
+        // courier's upload into an error.
+        foreach ($tasks as $task) {
+            try {
+                $this->notify($task);
+            } catch (\Throwable $e) {
+                $this->transporterLogger->error(
+                    sprintf('Could not schedule a POD|CFM report for task "%s": %s', $task->getId(), $e->getMessage()),
+                    ['exception' => $e]
+                );
+            }
         }
     }
 
@@ -71,16 +105,13 @@ class TransporterPodNotifier {
             return;
         }
 
-        $ediMessage = new EDIFACTMessage();
-        $ediMessage->setMessageType(EDIFACTMessage::MESSAGE_TYPE_REPORT);
-        $ediMessage->setSubMessageType(self::SUB_MESSAGE_TYPE);
-        $ediMessage->setTransporter($importMessage->getTransporter());
-        $ediMessage->setDirection(EDIFACTMessage::DIRECTION_OUTBOUND);
-        $ediMessage->setReference($importMessage->getReference());
-        $ediMessage->setPods($pods);
+        foreach (array_chunk($pods, self::MAX_PODS) as $chunk) {
+            $ediMessage = EDIFACTMessage::createReport($importMessage, self::SUB_MESSAGE_TYPE);
+            $ediMessage->setPods($chunk);
 
-        $task->addEdifactMessage($ediMessage);
-        $this->em->persist($ediMessage);
+            $task->addEdifactMessage($ediMessage);
+            $this->em->persist($ediMessage);
+        }
         $this->em->persist($task);
         $this->em->flush();
 
@@ -110,22 +141,36 @@ class TransporterPodNotifier {
             ->map(fn(string $url) => basename((string) parse_url($url, PHP_URL_PATH)))
             ->all();
 
+        return $this->podUrls($task, $reported);
+    }
+
+    /**
+     * URLs of the proofs on this task, but the ones named in $except.
+     *
+     * @param array<int,string> $except image names
+     * @return array<int,string>
+     */
+    public function podUrls(Task $task, array $except = []): array
+    {
         // Queried rather than read off $task->getImages(): CreateImage attaches
         // an image by setting the owning side only, so the task's collection
         // may not have it, and may already be initialized without it.
         /** @var array<int,TaskImage> $images */
         $images = $this->em->getRepository(TaskImage::class)->findBy(['task' => $task]);
 
-        $pending = array_filter(
-            $images,
-            fn(TaskImage $i) => !in_array($i->getImageName(), $reported, true)
-        );
+        // Unique on the name: the same file can be linked twice to one task.
+        $pending = array_unique(array_filter(
+            array_map(fn(TaskImage $i) => $i->getImageName(), $images),
+            fn(string $imageName) => !in_array($imageName, $except, true)
+        ));
 
+        // Prefixed with the canonical base URL rather than ABSOLUTE_URL: in an
+        // HTTP request the latter uses whatever host the app called us on.
         return array_values(array_map(
-            fn(TaskImage $i) => $this->urlGenerator->generate(
+            fn(string $imageName) => $this->baseUrl . $this->urlGenerator->generate(
                 'task_image_public',
-                ['path' => $i->getImageName()],
-                UrlGeneratorInterface::ABSOLUTE_URL
+                ['path' => $imageName],
+                UrlGeneratorInterface::ABSOLUTE_PATH
             ),
             $pending
         ));
