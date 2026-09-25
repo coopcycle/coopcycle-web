@@ -11,6 +11,8 @@ namespace AppBundle\Utils\SearchQuery;
  *   -key:value                -> excluded filter
  *   key:(value1 OR value2)    -> one included filter per value
  *   -key:(value1 OR value2)   -> one excluded filter per value
+ *   key:[from TO to]          -> one included filter, over a range
+ *   -key:[from TO to]         -> one excluded filter, over a range
  *   "some free text"          -> free-text term
  *   foo                       -> free-text term
  *
@@ -19,11 +21,17 @@ namespace AppBundle\Utils\SearchQuery;
  * sharing the same key/exclude - the same shape repeating a key produces
  * (e.g. "state:new state:accepted"), so getFilters($key) handles both alike.
  *
+ * A "[from TO to]" range is *one* filter instead, keeping its bounds
+ * together - see SearchQueryFilter::getRange().
+ *
  * This mirrors the JS implementation in
  * js/app/components/SearchQueryBar/queryString.js, so keep both in sync.
  */
 class SearchQueryParser
 {
+    /** Which closing bracket ends a bracketed value, by its opener. */
+    private const GROUP_CLOSERS = ['(' => ')', '[' => ']'];
+
     public function parse(?string $query): SearchQuery
     {
         $filters = [];
@@ -61,8 +69,9 @@ class SearchQueryParser
     /**
      * Splits a query string on whitespace, honoring single/double-quoted
      * substrings (which may appear anywhere within a token, e.g. `key:"a b"`),
-     * and treating a "key:(...)" value group as one token regardless of the
-     * whitespace inside it (e.g. `owner:("a" OR "b")` stays one token).
+     * and treating a bracketed value as one token regardless of the
+     * whitespace inside it - both `owner:("a" OR "b")` and `date:[a TO b]`
+     * stay one token.
      *
      * @return string[]
      */
@@ -72,6 +81,9 @@ class SearchQueryParser
         $current = '';
         $quoteChar = null;
         $groupDepth = 0;
+        // The bracket pair we're inside, so a ")" can't close a "[" and a
+        // stray "]" inside a list is just a character.
+        $groupOpen = null;
 
         $length = strlen($query);
         for ($i = 0; $i < $length; $i++) {
@@ -94,9 +106,9 @@ class SearchQueryParser
                     $current .= $char;
                     continue;
                 }
-                if ($char === '(') {
+                if ($char === $groupOpen) {
                     $groupDepth++;
-                } elseif ($char === ')') {
+                } elseif ($char === self::GROUP_CLOSERS[$groupOpen]) {
                     $groupDepth--;
                 }
                 $current .= $char;
@@ -117,8 +129,9 @@ class SearchQueryParser
                 continue;
             }
 
-            if ($char === '(' && preg_match('/^-?[a-zA-Z_][a-zA-Z0-9_]*:$/', $current)) {
+            if (isset(self::GROUP_CLOSERS[$char]) && preg_match('/^-?[a-zA-Z_][a-zA-Z0-9_]*:$/', $current)) {
                 $groupDepth = 1;
+                $groupOpen = $char;
                 $current .= $char;
                 continue;
             }

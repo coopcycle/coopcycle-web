@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Button, Checkbox, DatePicker, Input, Spin, Tag, Tooltip } from 'antd'
+import { Button, Checkbox, DatePicker, Input, Segmented, Spin, Tag, Tooltip } from 'antd'
 import dayjs from 'dayjs'
 import localeData from 'dayjs/plugin/localeData'
 import weekday from 'dayjs/plugin/weekday'
@@ -13,7 +13,9 @@ import {
   hasUnterminatedQuote,
   isBareKeyToken,
   isGroupValue,
+  isRangeValue,
   parseGroupValues,
+  parseRangeValue,
   parseLiveToken,
   parseToken,
   sanitizeQuery,
@@ -66,7 +68,10 @@ function formatGroupValues(values) {
  *                                    // shown muted under its label
  *     multi: true,                  // Sentry-style checkbox dropdown, builds
  *                                    // "key:(v1 OR v2)" - 'enum'/'async' only
- *   }, ...]                        // type: 'date' shows a date picker; no options/loadOptions needed
+ *   }, ...]                        // type: 'date' shows a day/range date picker,
+ *                                  // building "key:2026-09-25" or
+ *                                  // "key:[2026-09-25 TO 2026-09-26]";
+ *                                  // no options/loadOptions needed
  *
  * The component is uncontrolled with respect to parsing: it only ever
  * produces/consumes the raw query string, via `defaultValue` and `onSearch`.
@@ -96,6 +101,16 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
   // value - see applySuggestion()/toggleMultiValue() and the checkbox
   // suggestion rows below. Reset once the edit is committed or abandoned.
   const [multiSelection, setMultiSelection] = useState([])
+  // Which date picker a `type: 'date'` field shows: 'day' or 'range'. null
+  // means "follow the value being edited", so opening an existing
+  // "date:[a TO b]" lands on the range picker without the user asking.
+  const [dateMode, setDateMode] = useState(null)
+  // The half-finished range while picking (first end chosen, second not).
+  // RangePicker is controlled here, so without somewhere to keep the
+  // interim selection every re-render would reset it from the query string
+  // - which has no range in it yet - and the second click would just start
+  // over. onChange only fires once both ends are set, so it never would.
+  const [dateRangeDraft, setDateRangeDraft] = useState(null)
 
   // Saved searches (only used when `scope` is set) - see the class doc.
   const [savedSearches, setSavedSearches] = useState([])
@@ -107,6 +122,7 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
 
   const inputRef = useRef(null)
   const containerRef = useRef(null)
+  const datePickerRef = useRef(null)
   const httpClientRef = useRef(null)
 
   const fieldsByKey = useMemo(() => {
@@ -256,6 +272,8 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
       setCommittedTokens(finalTokens)
       setDraft('')
       setMultiSelection([])
+      setDateMode(null)
+      setDateRangeDraft(null)
       setEditingIndex(null)
     }
     onSearch(finalTokens.join(' '))
@@ -395,6 +413,35 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
     focusInput()
   }
 
+  // The bounds of the "date:[a TO b]" being edited, as the RangePicker
+  // wants them - or a same-day range for a plain "date:2026-09-25", so
+  // switching a single day over to "Range" starts from that day.
+  const editedDateRange = useMemo(() => {
+    const bounds = parseRangeValue(liveToken.value || '')
+    if (bounds && DATE_VALUE_RE.test(bounds.from) && DATE_VALUE_RE.test(bounds.to)) {
+      return [dayjs(bounds.from), dayjs(bounds.to)]
+    }
+    if (liveToken.value && DATE_VALUE_RE.test(liveToken.value)) {
+      return [dayjs(liveToken.value), dayjs(liveToken.value)]
+    }
+    return null
+  }, [liveToken.value])
+
+  const effectiveDateMode = dateMode ?? (isRangeValue(liveToken.value || '') ? 'range' : 'day')
+
+  // antd won't act on a calendar click until one of the picker's own inputs
+  // is active - with a range, until it knows which end you're setting. Left
+  // to itself the panel opens inactive (focus is still on the bar, or on
+  // the Day/Range toggle), so the first click would be spent just
+  // activating it. Hand the picker focus as soon as it's on screen.
+  useEffect(() => {
+    if (!isOpen || activeField?.type !== 'date') {
+      return undefined
+    }
+    const frame = requestAnimationFrame(() => datePickerRef.current?.focus())
+    return () => cancelAnimationFrame(frame)
+  }, [isOpen, activeField, effectiveDateMode])
+
   const applyDate = (date) => {
     if (!date) {
       return
@@ -402,6 +449,26 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
     applySuggestion({
       insert: serializeFilterToken({ key: activeField.key, value: date.format(DATE_VALUE_FORMAT), exclude: liveToken.exclude }),
     })
+    setDateMode(null)
+    setDateRangeDraft(null)
+  }
+
+  const applyDateRange = (dates) => {
+    const [from, to] = dates || []
+    if (!from || !to) {
+      return
+    }
+    applySuggestion({
+      // serializeFilterToken collapses a same-day range back to the plain
+      // "date:2026-09-25" form.
+      insert: serializeFilterToken({
+        key: activeField.key,
+        range: { from: from.format(DATE_VALUE_FORMAT), to: to.format(DATE_VALUE_FORMAT) },
+        exclude: liveToken.exclude,
+      }),
+    })
+    setDateMode(null)
+    setDateRangeDraft(null)
   }
 
   const onKeyDown = (e) => {
@@ -458,11 +525,23 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
   // (plain text) state once you click away. Suggestion rows and the date
   // picker guard against this firing on their own clicks (onMouseDown +
   // preventDefault), so this only fires for a genuine loss of focus.
-  const onDraftBlur = () => {
+  const onDraftBlur = (e) => {
+    // ...except when focus lands on something inside the bar itself - the
+    // date picker's Day/Range toggle, say. Preventing mousedown's default
+    // isn't enough there: a control that takes focus on click (or focuses
+    // itself programmatically, as antd's Segmented does) still blurs the
+    // input, and committing here would empty the draft and unmount the very
+    // panel being used.
+    if (e?.relatedTarget && containerRef.current?.contains(e.relatedTarget)) {
+      return
+    }
+
     const pending = buildPendingToken()
     commitTokens(pending ? [pending] : [])
     setDraft('')
     setMultiSelection([])
+    setDateMode(null)
+    setDateRangeDraft(null)
     setIsOpen(false)
   }
 
@@ -522,6 +601,7 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
         [t('SEARCH_QUERY_BAR_HELP_FIELDS'), 'key:value'],
         [t('SEARCH_QUERY_BAR_HELP_EXCLUDE'), '-key:value'],
         [t('SEARCH_QUERY_BAR_HELP_MULTI'), 'key:(value1 OR value2)'],
+        [t('SEARCH_QUERY_BAR_HELP_RANGE'), 'date:[2026-09-25 TO 2026-09-26]'],
         [t('SEARCH_QUERY_BAR_HELP_QUOTE'), 'key:"a value with spaces"'],
         [t('SEARCH_QUERY_BAR_HELP_EDIT'), null],
         [t('SEARCH_QUERY_BAR_HELP_SUBMIT'), null],
@@ -663,13 +743,39 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
             padding: 8,
           }}
         >
-          <DatePicker
-            open
-            format={datePickerProps.format}
-            value={liveToken.value && DATE_VALUE_RE.test(liveToken.value) ? dayjs(liveToken.value) : null}
-            onChange={applyDate}
-            getPopupContainer={(trigger) => trigger.parentElement}
+          <Segmented
+            size="small"
+            block
+            value={effectiveDateMode}
+            // Hand focus back to the draft input, so the bar keeps behaving
+            // normally (typing, blur-to-commit) after flipping the mode.
+            onChange={setDateMode}
+            options={[
+              { value: 'day', label: t('SEARCH_QUERY_BAR_DATE_DAY') },
+              { value: 'range', label: t('SEARCH_QUERY_BAR_DATE_RANGE') },
+            ]}
+            style={{ marginBottom: 8 }}
           />
+          {effectiveDateMode === 'range' ? (
+            <DatePicker.RangePicker
+              ref={datePickerRef}
+              open
+              format={datePickerProps.format}
+              value={dateRangeDraft ?? editedDateRange}
+              onCalendarChange={setDateRangeDraft}
+              onChange={applyDateRange}
+              getPopupContainer={(trigger) => trigger.parentElement}
+            />
+          ) : (
+            <DatePicker
+              ref={datePickerRef}
+              open
+              format={datePickerProps.format}
+              value={liveToken.value && DATE_VALUE_RE.test(liveToken.value) ? dayjs(liveToken.value) : null}
+              onChange={applyDate}
+              getPopupContainer={(trigger) => trigger.parentElement}
+            />
+          )}
         </div>
       )}
       {isOpen && (!activeField || activeField.type !== 'date') && (suggestions.length > 0 || isLoadingAsyncOptions) && (

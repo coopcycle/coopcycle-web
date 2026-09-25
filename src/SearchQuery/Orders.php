@@ -20,7 +20,9 @@ use Doctrine\ORM\QueryBuilder;
  * Supported keys: number, customer, date, state, owner - each optionally
  * prefixed with "-" to exclude instead of include. "owner" additionally
  * accepts several values ("owner:(A OR B)", built by the search bar's
- * checkbox dropdown - see SearchQueryParser), matching any of them.
+ * checkbox dropdown - see SearchQueryParser), matching any of them, and
+ * "date" accepts a range ("date:[2026-09-25 TO 2026-09-26]", inclusive on
+ * both ends) as well as a single day.
  *
  * Expects $qb to be a QueryBuilder over AppBundle\Entity\Sylius\Order with
  * root alias "o" (e.g. built via OrderRepository::createOptimizedQueryBuilder('o')).
@@ -59,11 +61,23 @@ class Orders implements SearchQueryInterface
 
         if ($dateFilter = $searchQuery->getFilter('date')) {
             try {
-                $date = new \DateTimeImmutable($dateFilter->value);
+                if ($bounds = $dateFilter->getRange()) {
+                    $from = new \DateTimeImmutable($bounds['from']);
+                    $to = new \DateTimeImmutable($bounds['to']);
+                    // Postgres rejects a tsrange whose lower bound is above
+                    // its upper one, so a backwards range is swapped rather
+                    // than left to blow up mid-query.
+                    if ($from > $to) {
+                        [$from, $to] = [$to, $from];
+                    }
+                } else {
+                    $from = $to = new \DateTimeImmutable($dateFilter->value);
+                }
+
                 $overlaps = 'OVERLAPS(o.shippingTimeRange, CAST(:range AS tsrange)) = TRUE';
                 $qb
                     ->andWhere($dateFilter->exclude ? "NOT ($overlaps)" : $overlaps)
-                    ->setParameter('range', sprintf('[%s, %s]', $date->format('Y-m-d 00:00:00'), $date->format('Y-m-d 23:59:59')));
+                    ->setParameter('range', sprintf('[%s, %s]', $from->format('Y-m-d 00:00:00'), $to->format('Y-m-d 23:59:59')));
             } catch (\Exception $e) {
                 // Ignore invalid date, e.g. while the user is still typing
             }

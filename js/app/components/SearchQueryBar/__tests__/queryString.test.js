@@ -4,7 +4,9 @@ import {
   hasUnterminatedQuote,
   isBareKeyToken,
   isGroupValue,
+  isRangeValue,
   parseGroupValues,
+  parseRangeValue,
   parseLiveToken,
   parseQuery,
   sanitizeQuery,
@@ -38,6 +40,20 @@ describe('tokenize', () => {
 
   it('keeps an excluded value group as a single token', () => {
     expect(tokenize('-owner:(Acme OR Bistro)')).toEqual(['-owner:(Acme OR Bistro)'])
+  })
+
+  it('keeps a "key:[from TO to]" range as a single token', () => {
+    expect(tokenize('date:[2026-09-25 TO 2026-09-26] state:new')).toEqual([
+      'date:[2026-09-25 TO 2026-09-26]', 'state:new',
+    ])
+  })
+
+  it('keeps an excluded range as a single token', () => {
+    expect(tokenize('-date:[2026-09-25 TO 2026-09-26]')).toEqual(['-date:[2026-09-25 TO 2026-09-26]'])
+  })
+
+  it('does not let one bracket type close the other', () => {
+    expect(tokenize('owner:(a] b) x')).toEqual(['owner:(a] b)', 'x'])
   })
 })
 
@@ -100,6 +116,26 @@ describe('isBareKeyToken', () => {
     expect(isBareKeyToken('foo')).toBe(false)
     expect(isBareKeyToken('-')).toBe(false)
     expect(isBareKeyToken('')).toBe(false)
+  })
+})
+
+describe('isRangeValue / parseRangeValue', () => {
+  it('recognizes and splits a range', () => {
+    expect(isRangeValue('[2026-09-25 TO 2026-09-26]')).toBe(true)
+    expect(parseRangeValue('[2026-09-25 TO 2026-09-26]')).toEqual({
+      from: '2026-09-25', to: '2026-09-26',
+    })
+  })
+
+  it('is not confused by a value list', () => {
+    expect(isRangeValue('(a OR b)')).toBe(false)
+    expect(parseRangeValue('(a OR b)')).toBeNull()
+  })
+
+  it('returns null for a plain value or a half-typed range', () => {
+    expect(parseRangeValue('2026-09-25')).toBeNull()
+    expect(parseRangeValue('[2026-09-25]')).toBeNull()
+    expect(parseRangeValue('[ TO 2026-09-26]')).toBeNull()
   })
 })
 
@@ -191,6 +227,21 @@ describe('serializeFilterToken', () => {
   it('collapses a single-item values array to a plain value', () => {
     expect(serializeFilterToken({ key: 'owner', values: ['Acme'] })).toBe('owner:Acme')
   })
+
+  it('serializes a range', () => {
+    expect(serializeFilterToken({ key: 'date', range: { from: '2026-09-25', to: '2026-09-26' } }))
+      .toBe('date:[2026-09-25 TO 2026-09-26]')
+  })
+
+  it('serializes an excluded range', () => {
+    expect(serializeFilterToken({ key: 'date', range: { from: '2026-09-25', to: '2026-09-26' }, exclude: true }))
+      .toBe('-date:[2026-09-25 TO 2026-09-26]')
+  })
+
+  it('collapses a single-day range to a plain value', () => {
+    expect(serializeFilterToken({ key: 'date', range: { from: '2026-09-25', to: '2026-09-25' } }))
+      .toBe('date:2026-09-25')
+  })
 })
 
 describe('isGroupValue', () => {
@@ -279,5 +330,10 @@ describe('canonicalizeToken', () => {
 
   it('round-trips an excluded value group, preserving the prefix', () => {
     expect(canonicalizeToken('-owner:(Acme OR Bistro)')).toBe('-owner:(Acme OR Bistro)')
+  })
+
+  it('round-trips a range, rather than quoting it as one spaced value', () => {
+    expect(canonicalizeToken('date:[2026-09-25 TO 2026-09-26]')).toBe('date:[2026-09-25 TO 2026-09-26]')
+    expect(canonicalizeToken('-date:[2026-09-25 TO 2026-09-26]')).toBe('-date:[2026-09-25 TO 2026-09-26]')
   })
 })

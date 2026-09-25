@@ -7,6 +7,8 @@
  *   -key:value                 -> excluded filter
  *   key:(value1 OR value2)     -> included filter, matching any of the values
  *   -key:(value1 OR value2)    -> excluded filter, matching any of the values
+ *   key:[from TO to]           -> included filter, matching the range
+ *   -key:[from TO to]          -> excluded filter, matching the range
  *   "some text"                -> free-text term
  *   foo                        -> free-text term
  *
@@ -27,14 +29,19 @@ const KEY_RE = /^([a-zA-Z_][a-zA-Z0-9_]*):(.+)$/
 const LIVE_KEY_RE = /^([a-zA-Z_][a-zA-Z0-9_]*):(.*)$/
 
 // Matches the token built up so far when it's exactly "key:" or "-key:",
-// right before a "(" - i.e. the start of a "key:(v1 OR v2)" value group.
+// right before a "(" or "[" - i.e. the start of a bracketed value: a
+// "key:(v1 OR v2)" list, or a "key:[a TO b]" range.
 const GROUP_OPEN_RE = /^-?[a-zA-Z_][a-zA-Z0-9_]*:$/
+
+// Which closing bracket ends a bracketed value, by its opener.
+const GROUP_CLOSERS = { '(': ')', '[': ']' }
 
 /**
  * Splits a query string on whitespace, honoring single/double-quoted
  * substrings (which may appear anywhere within a token, e.g. `key:"a b"`),
- * and treating a "key:(...)" value group as one token regardless of the
- * whitespace inside it (e.g. `owner:("a" OR "b")` stays a single token).
+ * and treating a bracketed value as one token regardless of the whitespace
+ * inside it - both `owner:("a" OR "b")` and `date:[a TO b]` stay a single
+ * token.
  * @param {string} query
  * @returns {string[]}
  */
@@ -43,6 +50,9 @@ export function tokenize(query) {
   let current = ''
   let quoteChar = null
   let groupDepth = 0
+  // The bracket pair we're inside, so a ")" can't close a "[" and a stray
+  // "]" inside a list is just a character.
+  let groupOpen = null
 
   for (let i = 0; i < query.length; i++) {
     const char = query[i]
@@ -63,9 +73,9 @@ export function tokenize(query) {
         current += char
         continue
       }
-      if (char === '(') {
+      if (char === groupOpen) {
         groupDepth += 1
-      } else if (char === ')') {
+      } else if (char === GROUP_CLOSERS[groupOpen]) {
         groupDepth -= 1
       }
       current += char
@@ -86,8 +96,9 @@ export function tokenize(query) {
       continue
     }
 
-    if (char === '(' && GROUP_OPEN_RE.test(current)) {
+    if (GROUP_CLOSERS[char] && GROUP_OPEN_RE.test(current)) {
       groupDepth = 1
+      groupOpen = char
       current += char
       continue
     }
@@ -250,15 +261,59 @@ export function parseGroupValues(value) {
   return parts.map(part => part.trim()).filter(part => part !== '')
 }
 
+// The separator inside a "[from TO to]" range - uppercase, like the "OR" of
+// a value list, and matching the Lucene/Datadog convention.
+const RANGE_SEPARATOR = ' TO '
+
 /**
- * @param {{ key: string, value?: string, values?: string[], exclude?: boolean }} filter
+ * Whether a filter value is a "[from TO to]" range.
+ * @param {string} value
+ */
+export function isRangeValue(value) {
+  return /^\[.*\]$/.test(value)
+}
+
+/**
+ * Splits a "[from TO to]" range into its bounds, or null if `value` isn't a
+ * well-formed range (e.g. a half-typed "[2026-09-25 TO").
+ * @param {string} value
+ * @returns {{ from: string, to: string } | null}
+ */
+export function parseRangeValue(value) {
+  if (!isRangeValue(value)) {
+    return null
+  }
+
+  const inner = value.slice(1, -1)
+  const at = inner.indexOf(RANGE_SEPARATOR)
+  if (at === -1) {
+    return null
+  }
+
+  const from = unquote(inner.slice(0, at).trim())
+  const to = unquote(inner.slice(at + RANGE_SEPARATOR.length).trim())
+
+  return from !== '' && to !== '' ? { from, to } : null
+}
+
+/**
+ * @param {{ key: string, value?: string, values?: string[], range?: {from: string, to: string}, exclude?: boolean }} filter
  *   Pass `values` (a multi-value field's checked options) to build a
  *   "(v1 OR v2)" group - collapsed to a plain single value automatically
  *   when there's only one. Pass `value` for a plain single-value filter.
  * @returns {string}
  */
-export function serializeFilterToken({ key, value, values, exclude = false }) {
+export function serializeFilterToken({ key, value, values, range, exclude = false }) {
   const prefix = `${exclude ? '-' : ''}${key}:`
+
+  if (range) {
+    // A range over a single point is just that value - keeps the common
+    // "one day" case readable, and round-trips as a plain filter.
+    if (range.from === range.to) {
+      return `${prefix}${quoteIfNeeded(String(range.from))}`
+    }
+    return `${prefix}[${quoteIfNeeded(String(range.from))}${RANGE_SEPARATOR}${quoteIfNeeded(String(range.to))}]`
+  }
 
   if (values && values.length > 0) {
     if (values.length === 1) {
@@ -338,10 +393,10 @@ export function sanitizeQuery(query, knownKeys) {
 export function canonicalizeToken(raw) {
   const parsed = parseToken(raw)
   if (parsed.isFilter) {
-    if (isGroupValue(parsed.value)) {
-      // Already round-trip-safe as-is - tokenize() preserves a group's
-      // inner quoting verbatim, so re-quoting the whole thing (which would
-      // treat it as one big value with spaces) would be wrong.
+    if (isGroupValue(parsed.value) || isRangeValue(parsed.value)) {
+      // Already round-trip-safe as-is - tokenize() preserves a bracketed
+      // value's inner quoting verbatim, so re-quoting the whole thing
+      // (which would treat it as one big value with spaces) would be wrong.
       return `${parsed.exclude ? '-' : ''}${parsed.key}:${parsed.value}`
     }
     return serializeFilterToken({ key: parsed.key, value: parsed.value, exclude: parsed.exclude })

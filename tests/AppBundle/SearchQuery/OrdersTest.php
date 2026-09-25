@@ -171,6 +171,56 @@ class OrdersTest extends KernelTestCase
         $this->assertCount(1, $this->search('-date:2026-09-09'));
     }
 
+    public function testDateRangeFilterMatchesWithinTheRange(): void
+    {
+        $order = $this->loadOrderFixture(); // shipped 2026-09-08
+
+        $results = $this->search('date:[2026-09-07 TO 2026-09-09]');
+
+        $this->assertCount(1, $results);
+        $this->assertSame($order->getId(), $results[0]->getId());
+    }
+
+    public function testDateRangeFilterIsInclusiveOnBothEnds(): void
+    {
+        $this->loadOrderFixture(); // shipped 2026-09-08
+
+        $this->assertCount(1, $this->search('date:[2026-09-08 TO 2026-09-10]'));
+        $this->assertCount(1, $this->search('date:[2026-09-06 TO 2026-09-08]'));
+    }
+
+    public function testDateRangeFilterExcludesOutsideTheRange(): void
+    {
+        $this->loadOrderFixture(); // shipped 2026-09-08
+
+        $this->assertCount(0, $this->search('date:[2026-09-09 TO 2026-09-11]'));
+    }
+
+    public function testBackwardsDateRangeIsReadAsWritten(): void
+    {
+        // Postgres rejects a tsrange whose lower bound is above its upper
+        // one, so the bounds are swapped rather than blowing up.
+        $this->loadOrderFixture(); // shipped 2026-09-08
+
+        $this->assertCount(1, $this->search('date:[2026-09-09 TO 2026-09-07]'));
+    }
+
+    public function testExcludedDateRangeFilter(): void
+    {
+        $this->loadOrderFixture(); // shipped 2026-09-08
+
+        $this->assertCount(0, $this->search('-date:[2026-09-07 TO 2026-09-09]'));
+        $this->assertCount(1, $this->search('-date:[2026-09-09 TO 2026-09-11]'));
+    }
+
+    public function testMalformedDateRangeIsIgnored(): void
+    {
+        $this->loadOrderFixture();
+
+        // e.g. while the user is still typing "date:[2026-09-07 TO"
+        $this->assertCount(1, $this->search('date:[2026-09-07]'));
+    }
+
     public function testInvalidDateFilterIsIgnored(): void
     {
         $this->loadOrderFixture();

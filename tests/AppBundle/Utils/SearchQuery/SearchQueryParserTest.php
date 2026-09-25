@@ -135,6 +135,51 @@ class SearchQueryParserTest extends TestCase
         $this->assertSame('Colis prompto', $filters[0]->value);
     }
 
+    public function testRangeValueIsASingleFilter()
+    {
+        $query = $this->parser->parse('date:[2026-09-25 TO 2026-09-26]');
+
+        $filters = $query->getFilters('date');
+        $this->assertCount(1, $filters);
+        $this->assertTrue($filters[0]->isRange());
+        $this->assertSame(['from' => '2026-09-25', 'to' => '2026-09-26'], $filters[0]->getRange());
+    }
+
+    public function testExcludedRangeValue()
+    {
+        $query = $this->parser->parse('-date:[2026-09-25 TO 2026-09-26]');
+
+        $filter = $query->getFilter('date');
+        $this->assertTrue($filter->exclude);
+        $this->assertSame(['from' => '2026-09-25', 'to' => '2026-09-26'], $filter->getRange());
+    }
+
+    public function testSingleValueIsNotARange()
+    {
+        $filter = $this->parser->parse('date:2026-09-25')->getFilter('date');
+
+        $this->assertFalse($filter->isRange());
+        $this->assertNull($filter->getRange());
+        $this->assertSame('2026-09-25', $filter->value);
+    }
+
+    public function testMalformedRangeIsNotARange()
+    {
+        // Left to be treated as an ordinary (here unparseable, so ignored)
+        // value rather than silently half-applied.
+        $this->assertFalse($this->parser->parse('date:[2026-09-25]')->getFilter('date')->isRange());
+        $this->assertFalse($this->parser->parse('date:[ TO 2026-09-26]')->getFilter('date')->isRange());
+    }
+
+    public function testRangeDoesNotAffectOtherTokens()
+    {
+        $query = $this->parser->parse('date:[2026-09-25 TO 2026-09-26] state:new foo');
+
+        $this->assertCount(1, $query->getFilters('date'));
+        $this->assertSame('new', $query->getFilter('state')->value);
+        $this->assertSame(['foo'], $query->getTerms());
+    }
+
     public function testGroupValueDoesNotAffectOtherTokens()
     {
         $query = $this->parser->parse('owner:(Acme OR Bistro) state:new -state:cancelled foo');
