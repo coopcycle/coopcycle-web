@@ -1,0 +1,29 @@
+{% set tab_items = [
+  {
+    title: 'adminDashboard.incidents.title'|trans,
+    icon: 'exclamation-triangle',
+    path: path('admin_incidents'),
+    active: ['admin_incidents'],
+    enabled: is_granted('ROLE_DISPATCHER'),
+  },
+  {
+    title: 'adminDashboard.failureSet.title'|trans,
+    icon: 'list-ul',
+    path: path('admin_failures_list'),
+    active: ['admin_failures_list', 'admin_deliveries_failures_failurereasonset', 'admin_deliveries_failures_failurereasonset_new'],
+    enabled: is_granted('ROLE_ADMIN'),
+  },
+]|filter(tab_item => tab_item.enabled) %}
+
+{# A single tab is a title, not a navigation #}
+{% if tab_items|length > 1 %}
+<ul class="nav nav-tabs mb-4">
+  {% for tab_item in tab_items %}
+  <li role="presentation" class="{{ app.request.attributes.get('_route') in tab_item.active ? 'active' : '' }}">
+    <a href="{{ tab_item.path }}">
+      <i class="fa fa-{{ tab_item.icon }}"></i> {{ tab_item.title }}
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}

@@ -4,6 +4,7 @@
 
 {% block breadcrumb %}
 {{ parent() }}
+<li><a href="{{ path('admin_incidents') }}">{% trans %}adminDashboard.incidents.title{% endtrans %}</a></li>
 <li><a href="{{ path('admin_failures_list') }}">{% trans %}adminDashboard.failureSet.title{% endtrans %}</a></li>
 {% endblock %}
 

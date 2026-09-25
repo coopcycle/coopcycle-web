@@ -18,6 +18,7 @@
 {% endblock %}
 
 {% block content %}
+{% include 'admin/_partials/incidents_nav.html.twig' %}
 <div {{ react_component('Incident/List') }}></div>
 {% endblock %}
 

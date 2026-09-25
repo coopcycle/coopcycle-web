@@ -648,6 +648,8 @@ admin_delivery:
         store_deliveries: admin_store_deliveries
         back: admin_deliveries
         store_new: admin_store_delivery_new
+  requirements:
+      id: '\d+'
   methods:  [ GET ]
 
 admin_store_delivery_download_images:

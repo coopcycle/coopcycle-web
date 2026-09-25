@@ -20,7 +20,7 @@
     help: 'adminDashboard.incidents.help' | trans,
     path: path('admin_incidents'),
     icon: 'exclamation-triangle',
-    active: ['admin_incidents'],
+    active: ['admin_incidents', 'admin_failures_list', 'admin_deliveries_failures_failurereasonset', 'admin_deliveries_failures_failurereasonset_new'],
     enabled: is_granted('ROLE_DISPATCHER'),
   },
   {
@@ -69,14 +69,6 @@
     path: path('admin_zones'),
     icon: 'bullseye',
     active: ['admin_zones'],
-    enabled: is_granted('ROLE_ADMIN'),
-  },
-  {
-    title: 'adminDashboard.failureSet.title' | trans,
-    help: 'adminDashboard.failureSet.help' | trans,
-    path: path('admin_failures_list'),
-    icon: 'exclamation-triangle',
-    active: ['admin_failures_list', 'admin_deliveries_failures_failurereasonset', 'admin_deliveries_failures_failurereasonset_new'],
     enabled: is_granted('ROLE_ADMIN'),
   },
   {
