@@ -7,6 +7,7 @@ import {
   parseGroupValues,
   parseLiveToken,
   parseQuery,
+  sanitizeQuery,
   serializeFilterToken,
   tokenize,
   unquote,
@@ -99,6 +100,48 @@ describe('isBareKeyToken', () => {
     expect(isBareKeyToken('foo')).toBe(false)
     expect(isBareKeyToken('-')).toBe(false)
     expect(isBareKeyToken('')).toBe(false)
+  })
+})
+
+describe('sanitizeQuery', () => {
+  const KEYS = ['date', 'state', 'owner']
+
+  it('keeps filters on a known key', () => {
+    expect(sanitizeQuery('date:2026-09-08 -state:cancelled', KEYS))
+      .toEqual(['date:2026-09-08', '-state:cancelled'])
+  })
+
+  it('drops a malformed token from a mangled URL', () => {
+    // The reported case: "?q=-state:cancelled ...:Fiducial" rendered the
+    // junk as a tag that looked like a filter but filtered nothing.
+    expect(sanitizeQuery('-state:cancelled ...:Fiducial', KEYS)).toEqual(['-state:cancelled'])
+  })
+
+  it('drops a filter on a key this bar does not offer', () => {
+    expect(sanitizeQuery('state:new nope:whatever', KEYS)).toEqual(['state:new'])
+  })
+
+  it('drops free-text terms', () => {
+    expect(sanitizeQuery('foo state:new "some text"', KEYS)).toEqual(['state:new'])
+  })
+
+  it('drops a bare "key:" with no value', () => {
+    expect(sanitizeQuery('state: owner:Acme', KEYS)).toEqual(['owner:Acme'])
+  })
+
+  it('keeps a multi-value group intact', () => {
+    expect(sanitizeQuery('owner:("Colis prompto" OR "Couture express") junk', KEYS))
+      .toEqual(['owner:("Colis prompto" OR "Couture express")'])
+  })
+
+  it('canonicalizes what it keeps', () => {
+    expect(sanitizeQuery('owner:"Colis prompto"', KEYS)).toEqual(['owner:"Colis prompto"'])
+  })
+
+  it('returns an empty array for an empty or fully invalid query', () => {
+    expect(sanitizeQuery('', KEYS)).toEqual([])
+    expect(sanitizeQuery(null, KEYS)).toEqual([])
+    expect(sanitizeQuery('...:Fiducial', KEYS)).toEqual([])
   })
 })
 

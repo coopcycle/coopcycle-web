@@ -302,6 +302,32 @@ export function hasUnterminatedQuote(str) {
 }
 
 /**
+ * Parses a query string into the canonical tokens a search bar can actually
+ * act on: those filtering on one of `knownKeys`. Anything else is dropped -
+ * free text (no consumer of this component searches on it), and filters on
+ * an unknown key.
+ *
+ * This is what keeps a hand-edited or badly pasted URL (e.g. the stray
+ * "...:Fiducial" in "?q=-state:cancelled ...:Fiducial") from showing up as
+ * a tag that looks like a filter but does nothing. Same for a saved search
+ * from before a field was renamed or removed.
+ *
+ * @param {string} query
+ * @param {string[]} knownKeys the `key` of every field the bar offers
+ * @returns {string[]} canonical tokens, safe to re-join with " "
+ */
+export function sanitizeQuery(query, knownKeys) {
+  const known = new Set(knownKeys)
+
+  return tokenize(query || '')
+    .map(canonicalizeToken)
+    .filter(raw => {
+      const parsed = parseToken(raw)
+      return parsed.isFilter && known.has(parsed.key)
+    })
+}
+
+/**
  * Re-serializes a token that came out of tokenize() (which strips quotes)
  * back into a round-trip-safe canonical form - e.g. `owner:"a value"` for a
  * filter whose value contains whitespace, or a quoted free-text term.

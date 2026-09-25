@@ -16,6 +16,7 @@ import {
   parseGroupValues,
   parseLiveToken,
   parseToken,
+  sanitizeQuery,
   serializeFilterToken,
   tokenize,
   unquote,
@@ -47,9 +48,11 @@ function formatGroupValues(values) {
 /**
  * A single search bar with a Sentry/Datadog-like query language:
  * - "key:value" filters a field, "-key:value" excludes it
- * - anything else is a free-text term, used for fuzzy search
  * - autocomplete suggests known field keys, then values for that field
  * - finished query parts are shown as removable tags, Sentry-style
+ * - an incoming query (`defaultValue`, or a saved search) is sanitized:
+ *   parts that don't filter on one of `fields` are dropped rather than
+ *   shown as a tag that does nothing - see sanitizeQuery()
  *
  * `fields` describes what can be filtered on:
  *   [{
@@ -78,7 +81,8 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
   const { t } = useTranslation()
 
   // Finished query parts (rendered as tags) and the one still being typed.
-  const [committedTokens, setCommittedTokens] = useState(() => tokenize(defaultValue).map(canonicalizeToken))
+  const [committedTokens, setCommittedTokens] = useState(
+    () => sanitizeQuery(defaultValue, fields.map(field => field.key)))
   const [draft, setDraft] = useState('')
   // Set while editing an existing tag (clicked, or popped via Backspace):
   // the index in committedTokens the draft should be reinserted at once
@@ -301,11 +305,14 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
   }
 
   const applySavedSearch = (item) => {
-    setCommittedTokens(tokenize(item.query).map(canonicalizeToken))
+    // Sanitized rather than applied verbatim: a search saved before a field
+    // was renamed or removed would otherwise reintroduce a dead filter.
+    const tokens = sanitizeQuery(item.query, Object.keys(fieldsByKey))
+    setCommittedTokens(tokens)
     setDraft('')
     setEditingIndex(null)
     setIsSavedSearchesOpen(false)
-    onSearch(item.query)
+    onSearch(tokens.join(' '))
   }
 
   const deleteSavedSearch = async (item, e) => {
