@@ -619,7 +619,7 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
         )}
         <Tooltip
           title={helpContent}
-          overlayStyle={{ maxWidth: 360 }}
+          styles={{ root: { maxWidth: 360 } }}
           // Keeps the tooltip open while the pointer travels onto it, so
           // the text stays readable long enough to actually be read.
           mouseLeaveDelay={0.2}
