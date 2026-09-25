@@ -6,6 +6,7 @@ use ApiPlatform\Metadata\IriConverterInterface;
 use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\Customer;
+use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -85,24 +86,51 @@ class OrdersAutocompleteController extends AbstractController
 
         $qb = $orderRepository->createQueryBuilder('o');
         $qb
-            ->select('o.number')
             ->andWhere('SIMILARITY(o.number, :q) > :threshold')
             ->addOrderBy('SIMILARITY(o.number, :q)', 'DESC')
             ->setParameter('q', strtolower($q))
             ->setParameter('threshold', self::SIMILARITY_THRESHOLD)
             ->setMaxResults(10);
 
-        // Order numbers are unique per order, but not enforced unique at the
-        // DB level - dedupe defensively (can't SELECT DISTINCT alongside an
-        // ORDER BY expression not in the select list).
-        $numbers = array_values(array_unique(array_column($qb->getQuery()->getResult(), 'number')));
+        $hits = [];
+        $seen = [];
 
-        $hits = array_map(fn (string $number) => [
-            'label' => $number,
-            'value' => $number,
-        ], $numbers);
+        /** @var Order $order */
+        foreach ($qb->getQuery()->getResult() as $order) {
+
+            // Order numbers are unique per order, but not enforced unique at
+            // the DB level - dedupe defensively.
+            if (isset($seen[$order->getNumber()])) {
+                continue;
+            }
+            $seen[$order->getNumber()] = true;
+
+            $hits[] = [
+                'label' => $order->getNumber(),
+                'value' => $order->getNumber(),
+                // Shown as a muted second line in the suggestion list, to
+                // tell otherwise-indistinguishable order numbers apart.
+                'date' => $order->getShippingTimeRange()?->getLower()?->format(\DateTimeInterface::ATOM),
+                'owner' => $this->resolveOwnerName($order),
+                'customer' => $order->getCustomer()?->getEmail(),
+            ];
+        }
 
         return new JsonResponse(['hits' => $hits]);
+    }
+
+    /**
+     * The order's restaurant or store, mirroring how the orders list renders
+     * its "owner" column (see _partials/order/list.html.twig) and what the
+     * "owner:" filter matches against (see AppBundle\SearchQuery\Orders).
+     */
+    private function resolveOwnerName(Order $order): ?string
+    {
+        if ($order->hasVendor() && !$order->isMultiVendor()) {
+            return $order->getVendor()?->getName();
+        }
+
+        return $order->getDelivery()?->getStore()?->getName();
     }
 
     #[Route(path: '/search-query/orders/autocomplete:customer', name: 'search_query_orders_autocomplete_customer', methods: ['GET'])]

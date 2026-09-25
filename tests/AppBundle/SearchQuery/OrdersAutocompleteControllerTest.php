@@ -2,6 +2,7 @@
 
 namespace Tests\AppBundle\SearchQuery;
 
+use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderRepository;
@@ -94,6 +95,11 @@ class OrdersAutocompleteControllerTest extends KernelTestCase
         $customer->setEmailCanonical('jane.doe@example.com');
         $order->setCustomer($customer);
 
+        $order->setShippingTimeRange(TsRange::create(
+            new \DateTime('2026-09-08 12:00:00'),
+            new \DateTime('2026-09-08 12:30:00')
+        ));
+
         $this->entityManager->persist($customer);
         $this->entityManager->persist($order);
         $this->entityManager->flush();
@@ -115,6 +121,26 @@ class OrdersAutocompleteControllerTest extends KernelTestCase
         $this->assertCount(1, $hits);
         $this->assertSame('A1', $hits[0]['label']);
         $this->assertSame('A1', $hits[0]['value']);
+    }
+
+    public function testNumberAutocompleteReturnsContextAlongsideTheNumber(): void
+    {
+        // Order numbers alone are near-meaningless in the suggestion list -
+        // each hit carries the delivery date, owner and customer so they can
+        // be told apart (rendered as a muted second line by SearchQueryBar).
+        $this->loadOrderFixture(); // store "Acme", customer jane.doe@example.com
+        $this->authenticateAs('admin_search', 'ROLE_ADMIN');
+
+        $response = $this->controller->number(
+            Request::create('/search-query/orders/autocomplete:number', 'GET', ['q' => 'A1']),
+            $this->orderRepository,
+        );
+
+        $hits = json_decode($response->getContent(), true)['hits'];
+        $this->assertCount(1, $hits);
+        $this->assertSame('Acme', $hits[0]['owner']);
+        $this->assertSame('jane.doe@example.com', $hits[0]['customer']);
+        $this->assertSame('2026-09-08', substr($hits[0]['date'], 0, 10));
     }
 
     public function testNumberAutocompleteReturnsNoMatchesForUnrelatedQuery(): void

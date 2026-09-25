@@ -59,6 +59,8 @@ function formatGroupValues(values) {
  *     type: 'enum',                 // 'enum' (static options), 'async' (loadOptions) or 'date'
  *     options: [{ label, value }],  // for type: 'enum'
  *     loadOptions: (input) => Promise<[{ label, value }]>, // for type: 'async'
+ *                                    // an option may carry a `description`,
+ *                                    // shown muted under its label
  *     multi: true,                  // Sentry-style checkbox dropdown, builds
  *                                    // "key:(v1 OR v2)" - 'enum'/'async' only
  *   }, ...]                        // type: 'date' shows a date picker; no options/loadOptions needed
@@ -187,6 +189,7 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
       type: 'value',
       key: `value:${option.value}`,
       label: option.label,
+      description: option.description,
       insert: serializeFilterToken({ key: activeField.key, value: option.value, exclude: liveToken.exclude }),
     }))
   }, [liveToken, activeField, fields, asyncOptions, multiSelection])
@@ -711,7 +714,16 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
                   <span>{suggestion.label}</span>
                 </label>
               ) : (
-                <>{suggestion.label}</>
+                <>
+                  <div>{suggestion.label}</div>
+                  {suggestion.description && (
+                    // Context that tells otherwise-alike values apart, e.g.
+                    // an order number's date/owner/customer.
+                    <div style={{ fontSize: 12, color: '#aaa', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {suggestion.description}
+                    </div>
+                  )}
+                </>
               )}
             </div>
           ))}

@@ -29,7 +29,17 @@ export default function OrderListFilters({ defaultValue = '' }) {
           return []
         }
         const hits = await fetchOrdersAutocomplete('number', input);
-        return hits.map(hit => ({ value: hit.value, label: hit.label }));
+        // An order number on its own says nothing - show what identifies the
+        // order underneath it (see OrdersAutocompleteController::number).
+        return hits.map(hit => ({
+          value: hit.value,
+          label: hit.label,
+          description: [
+            hit.date ? new Date(hit.date).toLocaleDateString() : null,
+            hit.owner,
+            hit.customer,
+          ].filter(Boolean).join(' · '),
+        }));
       },
     },
     {
