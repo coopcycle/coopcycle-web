@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Button, Checkbox, DatePicker, Input, Spin, Tag } from 'antd'
+import { Button, Checkbox, DatePicker, Input, Spin, Tag, Tooltip } from 'antd'
 import dayjs from 'dayjs'
 import localeData from 'dayjs/plugin/localeData'
 import weekday from 'dayjs/plugin/weekday'
@@ -501,6 +501,31 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
     return () => document.removeEventListener('mousedown', onClickOutside)
   }, [])
 
+  // Documents the query language behind the "?" icon. The placeholder can
+  // only carry a single example, and is hidden as soon as the bar holds a
+  // tag - which it usually does, since bars start from a default query.
+  // Examples are written generically ("key:value"), since this component
+  // backs several search bars with different fields.
+  const helpContent = (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      {[
+        [t('SEARCH_QUERY_BAR_HELP_FIELDS'), 'key:value'],
+        [t('SEARCH_QUERY_BAR_HELP_EXCLUDE'), '-key:value'],
+        [t('SEARCH_QUERY_BAR_HELP_MULTI'), 'key:(value1 OR value2)'],
+        [t('SEARCH_QUERY_BAR_HELP_QUOTE'), 'key:"a value with spaces"'],
+        [t('SEARCH_QUERY_BAR_HELP_EDIT'), null],
+        [t('SEARCH_QUERY_BAR_HELP_SUBMIT'), null],
+      ].map(([text, example]) => (
+        <div key={text}>
+          <div>{text}</div>
+          {example && (
+            <div style={{ fontFamily: 'monospace', opacity: 0.75, marginTop: 2 }}>{example}</div>
+          )}
+        </div>
+      ))}
+    </div>
+  )
+
   const draftInput = (
     <input
       ref={inputRef}
@@ -589,6 +614,22 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
             />
           </>
         )}
+        <Tooltip
+          title={helpContent}
+          overlayStyle={{ maxWidth: 360 }}
+          // Keeps the tooltip open while the pointer travels onto it, so
+          // the text stays readable long enough to actually be read.
+          mouseLeaveDelay={0.2}
+        >
+          <i
+            className="fa fa-question-circle-o"
+            role="button"
+            tabIndex={0}
+            aria-label={t('SEARCH_QUERY_BAR_HELP')}
+            style={{ color: '#aaa', cursor: 'help', fontSize: 15, marginLeft: 10 }}
+            onClick={(e) => e.stopPropagation()}
+          />
+        </Tooltip>
       </div>
       {isOpen && activeField && activeField.type === 'date' && (
         <div
