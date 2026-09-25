@@ -1,5 +1,6 @@
 import {
   canonicalizeToken,
+  hasExcludePrefix,
   hasUnterminatedQuote,
   isBareKeyToken,
   isGroupValue,
@@ -98,6 +99,26 @@ describe('isBareKeyToken', () => {
     expect(isBareKeyToken('foo')).toBe(false)
     expect(isBareKeyToken('-')).toBe(false)
     expect(isBareKeyToken('')).toBe(false)
+  })
+})
+
+describe('hasExcludePrefix', () => {
+  it('is true for a lone "-", which parseToken still reads as free text', () => {
+    // Regression: picking a field right after typing "-" used to drop it,
+    // turning the intended exclusion into a plain "contains" filter.
+    expect(hasExcludePrefix('-')).toBe(true)
+    expect(parseLiveToken('-').exclude).toBe(false)
+  })
+
+  it('is true once a key is being typed after the "-"', () => {
+    expect(hasExcludePrefix('-own')).toBe(true)
+    expect(hasExcludePrefix('-owner:Acme')).toBe(true)
+  })
+
+  it('is false without a leading "-"', () => {
+    expect(hasExcludePrefix('')).toBe(false)
+    expect(hasExcludePrefix('owner')).toBe(false)
+    expect(hasExcludePrefix('foo-bar')).toBe(false)
   })
 })
 

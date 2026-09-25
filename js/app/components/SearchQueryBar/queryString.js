@@ -156,6 +156,18 @@ export function isBareKeyToken(token) {
 }
 
 /**
+ * Whether the token currently being typed is meant to exclude, i.e. starts
+ * with "-". Unlike parseToken()'s `exclude`, this is also true for a lone
+ * "-": that isn't a real exclusion yet (it parses as a free-text term, see
+ * testLoneMinusIsATerm), but as a draft it's the start of one - so the "-"
+ * has to survive picking a field from the suggestion list.
+ * @param {string} raw
+ */
+export function hasExcludePrefix(raw) {
+  return raw.startsWith('-')
+}
+
+/**
  * @param {string} query
  * @returns {ReturnType<typeof parseToken>[]}
  */

@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next'
 import { datePickerProps } from '../../utils/antd'
 import {
   canonicalizeToken,
+  hasExcludePrefix,
   hasUnterminatedQuote,
   isBareKeyToken,
   isGroupValue,
@@ -134,6 +135,9 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
   // What to show in the dropdown: field keys, or values for the active field.
   const suggestions = useMemo(() => {
     if (!liveToken.isFilter) {
+      // Not liveToken.exclude: a draft of just "-" parses as free text, so
+      // that flag is still false - see hasExcludePrefix().
+      const exclude = hasExcludePrefix(liveToken.raw)
       const keyword = liveToken.raw.replace(/^-/, '').toLowerCase()
       return fields
         .filter(field => field.key.toLowerCase().includes(keyword))
@@ -141,7 +145,7 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
           type: 'key',
           key: `key:${field.key}`,
           label: field.label,
-          insert: `${liveToken.exclude ? '-' : ''}${field.key}:`,
+          insert: `${exclude ? '-' : ''}${field.key}:`,
         }))
     }
 
