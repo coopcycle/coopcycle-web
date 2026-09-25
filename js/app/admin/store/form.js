@@ -10,6 +10,7 @@ import TagsSelect from '../../components/TagsSelect'
 import { addressMapper } from '../../widgets/addressForm'
 import i18n from '../../i18n'
 import DeliveryZonePicker from '../../components/DeliveryZonePicker'
+import initSepaSetupWidgets from '../../widgets/sepaSetup'
 
 import '@uppy/core/css/style.min.css';
 import '@uppy/dashboard/css/style.min.css';
@@ -295,6 +296,8 @@ if (document.querySelector('[data-clipboard-target]')) {
     text: trigger => document.querySelector(trigger.getAttribute('data-clipboard-target')).value
   })
 }
+
+initSepaSetupWidgets()
 
 // Delete confirmation
 $('#store_delete').on('click', e => {

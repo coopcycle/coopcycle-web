@@ -25,12 +25,27 @@
     {% set meal_vouchers_amount = 0 %}
     {% set platform_fee = 0 %}
 
-    <nav class="d-flex justify-content-between mb-4">
-      <h3 class="m-0">{{ restaurant.name }}</h3>
-      <form method="post" class="d-inline-block mr-2">
-        <input type="hidden" name="restaurant" value="{{ restaurant.id }}" />
-        <button type="submit" class="btn btn-sm btn-success"><i class="fa fa-download"></i> {{ 'basics.export'|trans }}</button>
-      </form>
+    <nav class="d-flex justify-content-between align-items-center mb-4">
+      <h3 class="m-0">
+        {{ restaurant.name }}
+        {% set mandate_status = restaurant.sepaMandateStatus ?? 'none' %}
+        <span class="label label-{{ mandate_status == 'active' ? 'success' : (mandate_status == 'failed' ? 'danger' : 'default') }}">
+          {{ ('restaurants.meal_vouchers_transactions.sepa_mandate_status.' ~ mandate_status)|trans }}
+        </span>
+      </h3>
+      <div>
+        {% if mandate_status == 'active' %}
+        <form method="post" action="{{ path('admin_restaurants_meal_voucher_charge_sepa') }}" class="d-inline-block mr-2">
+          <input type="hidden" name="restaurant" value="{{ restaurant.id }}" />
+          <input type="hidden" name="month" value="{{ month|date('Y-m') }}" />
+          <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-bank"></i> {{ 'restaurants.meal_vouchers_transactions.charge_sepa'|trans }}</button>
+        </form>
+        {% endif %}
+        <form method="post" class="d-inline-block mr-2">
+          <input type="hidden" name="restaurant" value="{{ restaurant.id }}" />
+          <button type="submit" class="btn btn-sm btn-success"><i class="fa fa-download"></i> {{ 'basics.export'|trans }}</button>
+        </form>
+      </div>
     </nav>
     <table class="table table-condensed table-hover">
       <thead>

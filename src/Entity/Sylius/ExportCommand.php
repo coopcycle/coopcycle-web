@@ -23,6 +23,12 @@ class ExportCommand
 
     private Collection $orders;
 
+    #[Groups(["default_invoice_line_item"])]
+    private ?string $stripePaymentIntentId = null;
+
+    #[Groups(["default_invoice_line_item"])]
+    private ?string $paymentStatus = null;
+
     public function __construct(
         UserInterface $createdBy,
         string $requestId
@@ -69,5 +75,29 @@ class ExportCommand
         foreach ($orders as $order) {
             $this->orders->add(new OrderExport($order, $this));
         }
+    }
+
+    public function getStripePaymentIntentId(): ?string
+    {
+        return $this->stripePaymentIntentId;
+    }
+
+    public function setStripePaymentIntentId(?string $stripePaymentIntentId): self
+    {
+        $this->stripePaymentIntentId = $stripePaymentIntentId;
+
+        return $this;
+    }
+
+    public function getPaymentStatus(): ?string
+    {
+        return $this->paymentStatus;
+    }
+
+    public function setPaymentStatus(?string $paymentStatus): self
+    {
+        $this->paymentStatus = $paymentStatus;
+
+        return $this;
     }
 }

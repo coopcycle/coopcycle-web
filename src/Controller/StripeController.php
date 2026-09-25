@@ -3,6 +3,10 @@
 namespace AppBundle\Controller;
 
 
+use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\Model\SepaDebitablePayerInterface;
+use AppBundle\Entity\Store;
+use AppBundle\Entity\Sylius\ExportCommand;
 use AppBundle\Entity\StripeAccount;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Service\EmailManager;
@@ -28,6 +32,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * @see https://stripe.com/docs/connect/standard-accounts
@@ -155,6 +160,130 @@ class StripeController extends AbstractController
     }
 
     /**
+     * Under /dashboard rather than /admin, since a store/restaurant owner
+     * (ROLE_STORE/ROLE_RESTAURANT) must be able to set up their own SEPA
+     * mandate directly - not just an admin. Access is still enforced per
+     * object below, via the same 'edit' voter used by the store/restaurant
+     * edit forms themselves.
+     */
+    #[Route(path: '/dashboard/stores/{id}/sepa/setup', name: 'dashboard_store_sepa_setup', methods: ['POST'])]
+    public function storeSepaSetupAction(
+        int $id,
+        StripeManager $stripeManager
+    ) {
+        $store = $this->entityManager->getRepository(Store::class)->find($id);
+
+        if (null === $store) {
+            throw $this->createNotFoundException();
+        }
+
+        $this->denyAccessUnlessGranted('edit', $store);
+
+        $session = $this->createSepaSetupSession($store, $this->sepaSetupRedirectUrl('dashboard_store', $store), $stripeManager);
+
+        return new JsonResponse(['url' => $session->url]);
+    }
+
+    #[Route(path: '/dashboard/restaurants/{id}/sepa/setup', name: 'dashboard_restaurant_sepa_setup', methods: ['POST'])]
+    public function restaurantSepaSetupAction(
+        int $id,
+        StripeManager $stripeManager
+    ) {
+        $restaurant = $this->entityManager->getRepository(LocalBusiness::class)->find($id);
+
+        if (null === $restaurant) {
+            throw $this->createNotFoundException();
+        }
+
+        $this->denyAccessUnlessGranted('edit', $restaurant);
+
+        $session = $this->createSepaSetupSession($restaurant, $this->sepaSetupRedirectUrl('dashboard_restaurant', $restaurant), $stripeManager);
+
+        return new JsonResponse(['url' => $session->url]);
+    }
+
+    /**
+     * Admin-only: generates the same setup link as above, but emails it to
+     * an address of the admin's choosing instead of redirecting them to it -
+     * the admin isn't the one who should complete the Stripe form.
+     */
+    #[Route(path: '/admin/stores/{id}/sepa/setup/email', name: 'admin_store_sepa_setup_email', methods: ['POST'])]
+    public function storeSepaSetupEmailAction(
+        int $id,
+        Request $request,
+        StripeManager $stripeManager,
+        EmailManager $emailManager
+    ) {
+        $store = $this->entityManager->getRepository(Store::class)->find($id);
+
+        if (null === $store) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->sepaSetupEmailAction($store, $this->sepaSetupRedirectUrl('dashboard_store', $store), $request, $stripeManager, $emailManager);
+    }
+
+    #[Route(path: '/admin/restaurants/{id}/sepa/setup/email', name: 'admin_restaurant_sepa_setup_email', methods: ['POST'])]
+    public function restaurantSepaSetupEmailAction(
+        int $id,
+        Request $request,
+        StripeManager $stripeManager,
+        EmailManager $emailManager
+    ) {
+        $restaurant = $this->entityManager->getRepository(LocalBusiness::class)->find($id);
+
+        if (null === $restaurant) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->sepaSetupEmailAction($restaurant, $this->sepaSetupRedirectUrl('dashboard_restaurant', $restaurant), $request, $stripeManager, $emailManager);
+    }
+
+    private function sepaSetupRedirectUrl(string $routeName, SepaDebitablePayerInterface $payer): string
+    {
+        return $this->generateUrl($routeName, ['id' => $payer->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+    }
+
+    private function sepaSetupEmailAction(
+        SepaDebitablePayerInterface $payer,
+        string $redirectUrl,
+        Request $request,
+        StripeManager $stripeManager,
+        EmailManager $emailManager
+    ): JsonResponse {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $data = json_decode($request->getContent(), true) ?? [];
+        $email = $data['email'] ?? $request->request->get('email');
+
+        if (!$email || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return new JsonResponse(['error' => 'Invalid email'], 400);
+        }
+
+        $session = $this->createSepaSetupSession($payer, $redirectUrl, $stripeManager);
+
+        $message = $emailManager->createSepaSetupLinkMessage($payer, $session->url);
+        $emailManager->sendTo($message, $email);
+
+        return new JsonResponse(['ok' => true]);
+    }
+
+    private function createSepaSetupSession(SepaDebitablePayerInterface $payer, string $redirectUrl, StripeManager $stripeManager): Stripe\Checkout\Session
+    {
+        $stripeManager->setupStripeApi();
+
+        $session = $stripeManager->createSepaSetupCheckoutSession(
+            $payer,
+            $redirectUrl,
+            $redirectUrl
+        );
+
+        $this->entityManager->flush();
+
+        return $session;
+    }
+
+    /**
      * @see https://stripe.com/docs/connect/webhooks
      */
     #[Route(path: '/stripe/webhook', name: 'stripe_webhook', methods: ['POST'])]
@@ -226,6 +355,10 @@ class StripeController extends AbstractController
                 return $this->handleChargeCaptured($event, $stripeManager);
             case Stripe\Event::CHARGE_SUCCEEDED:
                 return $this->handleChargeSucceeded();
+            case Stripe\Event::CHECKOUT_SESSION_COMPLETED:
+                return $this->handleCheckoutSessionCompleted($event);
+            case Stripe\Event::MANDATE_UPDATED:
+                return $this->handleMandateUpdated($event);
         }
 
         return new Response('', 200);
@@ -246,6 +379,17 @@ class StripeController extends AbstractController
         return $qb->getQuery()->getOneOrNullResult();
     }
 
+    /**
+     * @param Stripe\PaymentIntent|string $paymentIntent
+     */
+    private function findExportCommandByPaymentIntent($paymentIntent): ?ExportCommand
+    {
+        $value = $paymentIntent instanceof Stripe\PaymentIntent ? $paymentIntent->id : $paymentIntent;
+
+        return $this->entityManager->getRepository(ExportCommand::class)
+            ->findOneBy(['stripePaymentIntentId' => $value]);
+    }
+
     private function handlePaymentIntentSucceeded(Stripe\Event $event): Response
     {
         $paymentIntent = $event->data->object;
@@ -254,11 +398,20 @@ class StripeController extends AbstractController
 
         $payment = $this->findOneByPaymentIntent($paymentIntent);
 
-        if (null === $payment) {
-            $this->logger->error(sprintf('Payment Intent "%s" not found', $paymentIntent->id));
+        if (null !== $payment) {
+            return new Response('', 200);
+        }
+
+        $exportCommand = $this->findExportCommandByPaymentIntent($paymentIntent);
+
+        if (null !== $exportCommand) {
+            $exportCommand->setPaymentStatus('succeeded');
+            $this->entityManager->flush();
 
             return new Response('', 200);
         }
+
+        $this->logger->error(sprintf('Payment Intent "%s" not found', $paymentIntent->id));
 
         return new Response('', 200);
     }
@@ -271,11 +424,84 @@ class StripeController extends AbstractController
 
         $payment = $this->findOneByPaymentIntent($paymentIntent);
 
-        if (null === $payment) {
-            $this->logger->error(sprintf('Payment Intent "%s" not found', $paymentIntent->id));
+        if (null !== $payment) {
+            return new Response('', 200);
+        }
+
+        $exportCommand = $this->findExportCommandByPaymentIntent($paymentIntent);
+
+        if (null !== $exportCommand) {
+            $exportCommand->setPaymentStatus('failed');
+            $this->entityManager->flush();
+
+            // TODO: notify the admin/store by email that the SEPA debit failed,
+            // so it can be chased up manually (no automatic retry in v1).
 
             return new Response('', 200);
         }
+
+        $this->logger->error(sprintf('Payment Intent "%s" not found', $paymentIntent->id));
+
+        return new Response('', 200);
+    }
+
+    /**
+     * A Stripe customer id is globally unique, but we don't know upfront
+     * whether it belongs to a Store or a restaurant (LocalBusiness) -
+     * both can set up a SEPA mandate.
+     */
+    private function findSepaPayerByStripeCustomerId(string $stripeCustomerId): ?SepaDebitablePayerInterface
+    {
+        return $this->entityManager->getRepository(Store::class)->findOneBy(['stripeCustomerId' => $stripeCustomerId])
+            ?? $this->entityManager->getRepository(LocalBusiness::class)->findOneBy(['stripeCustomerId' => $stripeCustomerId]);
+    }
+
+    private function findSepaPayerByMandateId(string $mandateId): ?SepaDebitablePayerInterface
+    {
+        return $this->entityManager->getRepository(Store::class)->findOneBy(['sepaMandateId' => $mandateId])
+            ?? $this->entityManager->getRepository(LocalBusiness::class)->findOneBy(['sepaMandateId' => $mandateId]);
+    }
+
+    private function handleCheckoutSessionCompleted(Stripe\Event $event): Response
+    {
+        $session = $event->data->object;
+
+        if ('setup' !== $session->mode) {
+            return new Response('', 200);
+        }
+
+        $payer = $this->findSepaPayerByStripeCustomerId($session->customer);
+
+        if (null === $payer) {
+            $this->logger->error(sprintf('No Store or restaurant with Stripe customer "%s" found', $session->customer));
+
+            return new Response('', 200);
+        }
+
+        $setupIntent = Stripe\SetupIntent::retrieve($session->setup_intent);
+
+        $payer->setSepaPaymentMethodId($setupIntent->payment_method);
+        $payer->setSepaMandateId($setupIntent->mandate);
+        $payer->setSepaMandateStatus('active');
+
+        $this->entityManager->flush();
+
+        return new Response('', 200);
+    }
+
+    private function handleMandateUpdated(Stripe\Event $event): Response
+    {
+        $mandate = $event->data->object;
+
+        $payer = $this->findSepaPayerByMandateId($mandate->id);
+
+        if (null === $payer) {
+            return new Response('', 200);
+        }
+
+        $payer->setSepaMandateStatus('active' === $mandate->status ? 'active' : 'failed');
+
+        $this->entityManager->flush();
 
         return new Response('', 200);
     }

@@ -1,0 +1,6 @@
+{% include "_partials/sepa_setup.html.twig" with {
+  payer: store,
+  setup_endpoint: path('dashboard_store_sepa_setup', { id: store.id }),
+  setup_email_endpoint: path('admin_store_sepa_setup_email', { id: store.id }),
+  modal_id: 'store-sepa-email-modal',
+} %}

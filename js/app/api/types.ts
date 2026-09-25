@@ -150,12 +150,26 @@ export type InvoiceLineItemGroupedByOrganization = {
   subTotal: number;
   tax: number;
   total: number;
+  sepaMandateStatus: 'none' | 'pending' | 'active' | 'failed' | null;
 };
 
 export type GetInvoiceLineItemsGroupedByOrganizationArgs = {
   params: string[];
   page: number;
   pageSize: number;
+};
+
+export type InvoiceLineItemSepaChargeResult = {
+  storeId: number;
+  storeName: string;
+  status: 'charged' | 'skipped_no_mandate' | 'failed';
+  amount: number;
+  paymentIntentId?: string;
+  error?: string;
+};
+
+export type ChargeSepaArgs = {
+  params: string[];
 };
 
 export type InvoiceLineItem = {
