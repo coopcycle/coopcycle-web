@@ -143,7 +143,8 @@ export type LocalBusiness = JsonLdEntity & {
 };
 
 export type InvoiceLineItemGroupedByOrganization = {
-  storeId: number;
+  // IRI of the organization: either "/api/stores/{id}" or "/api/restaurants/{id}"
+  organizationId: string;
   organizationLegalName: string;
   storeName: string;
   ordersCount: number;
@@ -161,9 +162,13 @@ export type GetInvoiceLineItemsGroupedByOrganizationArgs = {
 export type InvoiceLineItem = {
   '@id': string;
   '@type': string;
-  storeId: number;
+  // IRI of the organization: either "/api/stores/{id}" or "/api/restaurants/{id}"
+  organizationId: string;
   orderId: string;
   orderNumber: string;
+  // Order state (new/accepted/fulfilled/...), distinct from whether it has
+  // been exported/invoiced yet
+  orderState: string;
   date: string;
   description: string;
   subTotal: number;
@@ -173,6 +178,10 @@ export type InvoiceLineItem = {
     requestId: string;
     createdAt: string;
   }>;
+  // Whether CoopCycle still needs to invoice this order's organization for it
+  // (always true for stores; for restaurants, only meal-voucher-paid orders —
+  // card orders are already settled automatically via Stripe Connect)
+  needsInvoicing: boolean;
 };
 
 export type GetInvoiceLineItemsArgs = {
