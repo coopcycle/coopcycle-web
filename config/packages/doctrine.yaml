@@ -55,6 +55,7 @@ doctrine:
                 ST_GeomFromGeoJSON: Jsor\Doctrine\PostGIS\Functions\ST_GeomFromGeoJSON
                 ST_AsText: Jsor\Doctrine\PostGIS\Functions\ST_AsText
                 similarity: AppBundle\Doctrine\Functions\Similarity
+                word_similarity: AppBundle\Doctrine\Functions\WordSimilarity
                 TSRANGE: AppBundle\Doctrine\Functions\TsRange
                 OVERLAPS: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\Overlaps
                 CAST: DoctrineExtensions\Query\Mysql\Cast

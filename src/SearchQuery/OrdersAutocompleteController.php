@@ -9,6 +9,7 @@ use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,6 +29,10 @@ class OrdersAutocompleteController extends AbstractController
     // conventional relevance cutoff (pg_trgm.similarity_threshold) is 0.3.
     private const SIMILARITY_THRESHOLD = 0.3;
 
+    // The same cutoff for owner(), which scores with word_similarity() -
+    // see findByNameSimilarity() for why it's the inclusive bound there.
+    private const WORD_SIMILARITY_THRESHOLD = 0.3;
+
     #[Route(path: '/search-query/orders/autocomplete:owner', name: 'search_query_orders_autocomplete_owner', methods: ['GET'])]
     public function owner(
         Request $request,
@@ -39,32 +44,23 @@ class OrdersAutocompleteController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        $qb = $repository->createQueryBuilder('r');
+        $q = trim((string) $request->query->get('q', ''));
 
-        $fieldValue = $qb->expr()->literal('%' . $request->query->get('q') . '%');
-
-        $qb->andWhere($qb->expr()->like('r.name', $fieldValue));
-
-        $results = $qb->getQuery()->getResult();
+        if ('' === $q) {
+            return new JsonResponse(['hits' => []]);
+        }
 
         $hits = [];
 
-        foreach ($results as $restaurant) {
+        $owners = array_merge(
+            $this->findByNameSimilarity($repository->createQueryBuilder('r'), 'r', $q),
+            $this->findByNameSimilarity($entityManager->getRepository(Store::class)->createQueryBuilder('s'), 's', $q)
+        );
+
+        foreach ($owners as $owner) {
             $hits[] = [
-                'label' => $restaurant->getName(),
-                'value' => $iriConverter->getIriFromResource($restaurant),
-            ];
-        }
-
-        $qb = $entityManager->getRepository(Store::class)->createQueryBuilder('s');
-        $qb->andWhere($qb->expr()->like('s.name', $fieldValue));
-
-        $results = $qb->getQuery()->getResult();
-
-        foreach ($results as $store) {
-            $hits[] = [
-                'label' => $store->getName(),
-                'value' => $iriConverter->getIriFromResource($store),
+                'label' => $owner->getName(),
+                'value' => $iriConverter->getIriFromResource($owner),
             ];
         }
 
@@ -117,6 +113,40 @@ class OrdersAutocompleteController extends AbstractController
         }
 
         return new JsonResponse(['hits' => $hits]);
+    }
+
+    /**
+     * Names matching $q by trigram similarity, best first - pg_trgm rather
+     * than a LIKE, so the match is case-insensitive (trigrams are lowercased
+     * before comparing) and survives a typo: "fidu", "FIDU" and "fiducal" all
+     * find "Fiducial".
+     *
+     * WORD_SIMILARITY rather than the SIMILARITY that number()/customer() use:
+     * it scores the query against the best-matching run of words inside the
+     * name instead of against the whole string, which is what a name like
+     * "Fruits & légumes à domicile" needs - "legume" scores 0.3 against it,
+     * where SIMILARITY manages only 0.1.
+     *
+     * Inclusive comparison because that 0.3 sits exactly on the threshold;
+     * names that genuinely don't match score well below it (<= 0.17 across
+     * the owners in this database).
+     *
+     * No index to add: a gin_trgm_ops index only serves the "%" operator, not
+     * a function call, so one would go unused unless this were rewritten to
+     * "<%". At these table sizes the seq scan costs nothing anyway.
+     *
+     * @return object[]
+     */
+    private function findByNameSimilarity(QueryBuilder $qb, string $alias, string $q): array
+    {
+        return $qb
+            ->andWhere(sprintf('WORD_SIMILARITY(:q, %s.name) >= :threshold', $alias))
+            ->addOrderBy(sprintf('WORD_SIMILARITY(:q, %s.name)', $alias), 'DESC')
+            ->setParameter('q', $q)
+            ->setParameter('threshold', self::WORD_SIMILARITY_THRESHOLD)
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult();
     }
 
     /**

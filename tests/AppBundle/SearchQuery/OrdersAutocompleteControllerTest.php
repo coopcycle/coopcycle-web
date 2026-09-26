@@ -2,7 +2,10 @@
 
 namespace Tests\AppBundle\SearchQuery;
 
+use ApiPlatform\Metadata\IriConverterInterface;
 use AppBundle\DataType\TsRange;
+use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderRepository;
@@ -225,5 +228,110 @@ class OrdersAutocompleteControllerTest extends KernelTestCase
         );
 
         $this->assertSame([], json_decode($response->getContent(), true)['hits']);
+    }
+
+    /**
+     * @return string[] the labels of the owner hits for $q
+     */
+    private function ownerHitLabels(string $q): array
+    {
+        $response = $this->controller->owner(
+            Request::create('/search-query/orders/autocomplete:owner', 'GET', ['q' => $q]),
+            $this->entityManager,
+            self::getContainer()->get(LocalBusinessRepository::class),
+            self::getContainer()->get(IriConverterInterface::class),
+        );
+
+        return array_column(json_decode($response->getContent(), true)['hits'], 'label');
+    }
+
+    private function createRestaurant(string $name): void
+    {
+        $restaurant = new LocalBusiness();
+        $restaurant->setName($name);
+        $this->entityManager->persist($restaurant);
+        $this->entityManager->flush();
+    }
+
+    public function testOwnerAutocompleteIgnoresCase(): void
+    {
+        // The reported bug: a LIKE '%...%' meant "fidu" never found
+        // "Fiducial". SIMILARITY is case-insensitive, pg_trgm lowercasing
+        // trigrams before comparing.
+        $this->createRestaurant('Fiducial');
+        $this->authenticateAs('admin_search', 'ROLE_ADMIN');
+
+        $this->assertSame(['Fiducial'], $this->ownerHitLabels('fidu'));
+        $this->assertSame(['Fiducial'], $this->ownerHitLabels('FIDU'));
+        $this->assertSame(['Fiducial'], $this->ownerHitLabels('Fiducial'));
+    }
+
+    public function testOwnerAutocompleteToleratesTypos(): void
+    {
+        $this->createRestaurant('Fiducial');
+        $this->createRestaurant('La casserole noire gitane');
+        $this->authenticateAs('admin_search', 'ROLE_ADMIN');
+
+        $this->assertSame(['Fiducial'], $this->ownerHitLabels('fiducal'));
+        $this->assertSame(['La casserole noire gitane'], $this->ownerHitLabels('caserole'));
+    }
+
+    public function testOwnerAutocompleteMatchesOneWordOfAMultiWordName(): void
+    {
+        // Why this uses WORD_SIMILARITY and not the SIMILARITY that
+        // number()/customer() use: against the whole string, a single word of
+        // a long name scores ~0.1 and would be missed entirely.
+        $this->createRestaurant('Fruits & légumes à domicile');
+        $this->authenticateAs('admin_search', 'ROLE_ADMIN');
+
+        $this->assertSame(['Fruits & légumes à domicile'], $this->ownerHitLabels('legume'));
+        $this->assertSame(['Fruits & légumes à domicile'], $this->ownerHitLabels('domicile'));
+    }
+
+    public function testOwnerAutocompleteDoesNotMatchUnrelatedNames(): void
+    {
+        // The flip side of being forgiving - the threshold still has to keep
+        // genuinely different names out.
+        $this->createRestaurant('La casserole noire gitane');
+        $this->createRestaurant('Colis prompto');
+        $this->authenticateAs('admin_search', 'ROLE_ADMIN');
+
+        $this->assertSame(['Colis prompto'], $this->ownerHitLabels('colis'));
+        $this->assertSame([], $this->ownerHitLabels('resto'));
+    }
+
+    public function testOwnerAutocompleteMatchesStoresAsWellAsRestaurants(): void
+    {
+        $this->loadOrderFixture(); // store "Acme"
+        $this->createRestaurant('Bistro');
+        $this->authenticateAs('admin_search', 'ROLE_ADMIN');
+
+        $this->assertSame(['Acme'], $this->ownerHitLabels('acme'));
+        $this->assertSame(['Bistro'], $this->ownerHitLabels('bistr'));
+    }
+
+    public function testOwnerAutocompleteReturnsNoMatchesForUnrelatedQuery(): void
+    {
+        $this->createRestaurant('Fiducial');
+        $this->authenticateAs('admin_search', 'ROLE_ADMIN');
+
+        $this->assertSame([], $this->ownerHitLabels('totally-unrelated-string'));
+    }
+
+    public function testOwnerAutocompleteReturnsEmptyHitsForEmptyQuery(): void
+    {
+        $this->createRestaurant('Fiducial');
+        $this->authenticateAs('admin_search', 'ROLE_ADMIN');
+
+        $this->assertSame([], $this->ownerHitLabels(''));
+    }
+
+    public function testOwnerAutocompleteRequiresAdminRole(): void
+    {
+        $this->authenticateAs('regular_user_owner', 'ROLE_USER');
+
+        $this->expectException(AccessDeniedException::class);
+
+        $this->ownerHitLabels('fidu');
     }
 }
