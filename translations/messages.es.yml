@@ -1750,7 +1750,7 @@ restaurant.form.paygreen_shop_id.label: Paygreen Shop ID
 form.local_business.paygreen_account.title: Paygreen account
 order.items_total_excluding_tax: Total de productos (sin IVA)
 basics.more: Más
-adminDashboard.invoicing.title: Facturación [PREVISUALIZACIÓN]
+adminDashboard.invoicing.title: Facturación
 adminDashboard.invoicing.help: "Preparar facturas"
 adminDashboard.invoicing.line_item.order_number: "Pedido #%number%"
 form.settings.on_demand_delivery_product_name.label: "Nombre del producto"
