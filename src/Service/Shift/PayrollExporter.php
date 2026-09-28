@@ -9,9 +9,10 @@ use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
- * Monthly payroll variables per employee, for export to the coop's payroll
- * process: planned hours, actually worked hours (reported adjustments taken
- * into account, see ShiftTimeAdjustment), overtime (worked - planned) and
+ * Payroll variables per employee over a date range (typically a month, but
+ * any custom range is supported), for export to the coop's payroll process:
+ * planned hours, actually worked hours (reported adjustments taken into
+ * account, see ShiftTimeAdjustment), overtime (worked - planned) and
  * approved holiday days.
  */
 final class PayrollExporter
@@ -22,7 +23,8 @@ final class PayrollExporter
     }
 
     /**
-     * @param \DateTimeImmutable $monthStart any date in the target month
+     * @param \DateTimeImmutable $start range start, inclusive
+     * @param \DateTimeImmutable $end   range end, exclusive
      *
      * @return array<int, array{
      *     username: string,
@@ -31,12 +33,12 @@ final class PayrollExporter
      *     workedHours: float,
      *     overtimeHours: float,
      *     holidayDays: int
-     * }> one row per employee with activity that month, sorted by username
+     * }> one row per employee with activity in the range, sorted by username
      */
-    public function rows(\DateTimeImmutable $monthStart): array
+    public function rows(\DateTimeImmutable $start, \DateTimeImmutable $end): array
     {
-        $monthStart = $monthStart->modify('first day of this month')->setTime(0, 0);
-        $monthEnd = $monthStart->modify('+1 month');
+        $start = $start->setTime(0, 0);
+        $end = $end->setTime(0, 0);
 
         /** @var array<string, array{user: User, plannedHours: float, workedHours: float, overtimeHours: float, holidayDays: int}> $byUser */
         $byUser = [];
@@ -44,14 +46,14 @@ final class PayrollExporter
         $blank = ['plannedHours' => 0.0, 'workedHours' => 0.0, 'overtimeHours' => 0.0, 'holidayDays' => 0];
 
         $shifts = $this->entityManager->getRepository(Shift::class)->findOverlappingRange(
-            \DateTime::createFromImmutable($monthStart),
-            \DateTime::createFromImmutable($monthEnd)
+            \DateTime::createFromImmutable($start),
+            \DateTime::createFromImmutable($end)
         );
 
         foreach ($shifts as $shift) {
-            // A shift belongs to the month it starts in, so month totals
+            // A shift belongs to the range it starts in, so range totals
             // never double-count boundary shifts
-            if ($shift->getStartsAt() < $monthStart || $shift->getStartsAt() >= $monthEnd) {
+            if ($shift->getStartsAt() < $start || $shift->getStartsAt() >= $end) {
                 continue;
             }
 
@@ -77,9 +79,9 @@ final class PayrollExporter
         /** @var HolidayRequestRepository $holidayRepository */
         $holidayRepository = $this->entityManager->getRepository(HolidayRequest::class);
         $holidays = $holidayRepository->findOverlappingRange(
-            \DateTime::createFromImmutable($monthStart),
+            \DateTime::createFromImmutable($start),
             // endDate is inclusive, the range query compares dates
-            \DateTime::createFromImmutable($monthEnd->modify('-1 day')),
+            \DateTime::createFromImmutable($end->modify('-1 day')),
             [HolidayRequest::STATUS_APPROVED]
         );
 
@@ -89,7 +91,7 @@ final class PayrollExporter
             $username = $user->getUserIdentifier();
             $byUser[$username] ??= $blank + ['user' => $user];
 
-            $byUser[$username]['holidayDays'] += self::daysWithinMonth($holiday, $monthStart, $monthEnd);
+            $byUser[$username]['holidayDays'] += self::daysWithinRange($holiday, $start, $end);
         }
 
         ksort($byUser);
@@ -117,17 +119,17 @@ final class PayrollExporter
     }
 
     /**
-     * Number of holiday days (start & end inclusive) falling within the month.
+     * Number of holiday days (start & end inclusive) falling within the range.
      */
-    private static function daysWithinMonth(HolidayRequest $holiday, \DateTimeImmutable $monthStart, \DateTimeImmutable $monthEnd): int
+    private static function daysWithinRange(HolidayRequest $holiday, \DateTimeImmutable $start, \DateTimeImmutable $end): int
     {
         $from = max(
             new \DateTimeImmutable($holiday->getStartDate()->format('Y-m-d')),
-            $monthStart
+            $start
         );
         $to = min(
             new \DateTimeImmutable($holiday->getEndDate()->format('Y-m-d')),
-            $monthEnd->modify('-1 day')
+            $end->modify('-1 day')
         );
 
         if ($to < $from) {
