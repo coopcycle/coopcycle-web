@@ -137,5 +137,5 @@ AppBundle\Entity\Sylius\Order:
         - "@delivery_<current()>"
     __calls:
       - setNumber: [ "A<current()>" ]
-      - setState: [ 'new' ]
+      - setState: [ 'fulfilled' ]
     # The rest of initialization is done by DeliveryOrderProcessor

@@ -30,6 +30,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class InvoiceLineItemsProvider implements ProviderInterface
 {
+    private const PENDING_OPERATION = '_api_/invoice_line_items/pending_get_collection';
+
     public function __construct(
         private readonly ProductRepository $productRepository,
         private readonly ProductVariantFactory $productVariantFactory,
@@ -59,7 +61,13 @@ final class InvoiceLineItemsProvider implements ProviderInterface
             ->leftJoin('v.restaurant', 'vr')
             ->leftJoin('o.exports', 'ex');
 
-        $this->stateFilter->apply($qb, 'o', 'v');
+        // Orders still in an intermediary state are not invoiceable; the
+        // dedicated "pending" operation lists them so they can be chased up
+        if (self::PENDING_OPERATION === $operation->getName()) {
+            $this->stateFilter->applyPending($qb, 'o');
+        } else {
+            $this->stateFilter->apply($qb, 'o');
+        }
 
         $queryNameGenerator = new QueryNameGenerator();
         foreach ($this->collectionExtensions as $extension) {

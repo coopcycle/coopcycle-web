@@ -90,19 +90,19 @@ AppBundle\Entity\Sylius\Order:
         - "@delivery_active"
     __calls:
       - setNumber: [ "ACTIVE" ]
-      - setState: [ 'new' ]
+      - setState: [ 'fulfilled' ]
   order_cancelled_tasks:
     __factory:
       '@sylius.factory.order::createForDelivery':
         - "@delivery_cancelled"
     __calls:
       - setNumber: [ "CANCELLED" ]
-      - setState: [ 'new' ]
+      - setState: [ 'fulfilled' ]
   order_partially_cancelled:
     __factory:
       '@sylius.factory.order::createForDelivery':
         - "@delivery_partially_cancelled"
     __calls:
       - setNumber: [ "PARTIAL" ]
-      - setState: [ 'new' ]
+      - setState: [ 'fulfilled' ]
     # The rest of initialization is done by DeliveryOrderProcessor

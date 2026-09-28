@@ -766,6 +766,7 @@
         "ADMIN_ORDERS_TO_INVOICE_FILTER_SETTLEMENT": "Statut de facturation",
         "ADMIN_ORDERS_TO_INVOICE_SETTLEMENT_NEEDS_INVOICING": "À facturer",
         "ADMIN_ORDERS_TO_INVOICE_SETTLEMENT_SETTLED": "Réglée",
+        "ADMIN_ORDERS_TO_INVOICE_PENDING_ORDERS_WARNING": "{{ count }} commande(s) de cette période sont encore en cours (\"nouvelle\" ou \"acceptée\") et sont donc exclues de la facturation.",
         "ADMIN_ORDERS_TO_INVOICE_SETTLEMENT_ALL": "Toutes",
         "ADMIN_ORDERS_TO_INVOICE_SETTLEMENT_LABEL": "Statut de facturation",
         "ADMIN_ORDERS_TO_INVOICE_REFRESH": "Actualiser",

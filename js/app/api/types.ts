@@ -190,6 +190,10 @@ export type GetInvoiceLineItemsArgs = {
   pageSize: number;
 };
 
+export type GetPendingInvoiceLineItemsArgs = {
+  params: string[];
+};
+
 export type Customer = {
   username: string;
   email: string;

@@ -6,17 +6,17 @@ use AppBundle\Entity\Task;
 use Doctrine\ORM\QueryBuilder;
 
 /**
- * Restricts an Order query to invoiceable states, shared by
+ * Restricts an Order query to invoiceable orders, shared by
  * InvoiceLineItemsProvider and InvoiceLineItemsGroupedByOrganizationProvider.
  *
- * Foodtech (restaurant) orders are only invoiced once "fulfilled" — that's
- * the state that actually represents a completed sale. Everything else
- * (Store / on-demand-delivery orders) keeps the usual new/accepted/fulfilled
- * range, since those are invoiced for the delivery service itself regardless
- * of whether the underlying order has completed yet.
+ * Only "fulfilled" orders are invoiced — that's the state representing a
+ * completed sale, for foodtech and last mile alike. Orders left in an
+ * intermediary state ("new", "accepted") are not billable; they're surfaced
+ * separately through applyPending() so admins can chase them up rather than
+ * being silently invoiced.
  *
- * It also excludes orders whose tasks have all been cancelled. Cancelling
- * every task of a delivery is supposed to cancel the order too (see
+ * Orders whose tasks have all been cancelled are excluded either way.
+ * Cancelling every task of a delivery is supposed to cancel the order too (see
  * MessageHandler\Task\Command\CancelHandler), but several code paths have
  * historically bypassed that, leaving cancelled deliveries billable. Filtering
  * on the tasks rather than on the order state alone keeps those out.
@@ -26,31 +26,39 @@ use Doctrine\ORM\QueryBuilder;
  */
 final class InvoiceLineItemStateFilter
 {
-    private const LAST_MILE_STATES = ['new', 'accepted', 'fulfilled'];
-    private const FOODTECH_STATE = 'fulfilled';
+    private const INVOICEABLE_STATE = 'fulfilled';
+    private const PENDING_STATES = ['new', 'accepted'];
 
     /**
      * @param string $rootAlias the Order root alias
-     * @param string $vendorAlias alias of an existing `$rootAlias.vendors` left join
      */
-    public function apply(QueryBuilder $qb, string $rootAlias, string $vendorAlias): void
+    public function apply(QueryBuilder $qb, string $rootAlias): void
     {
-        // OrderVendor has a composite identifier (order, restaurant), no `id`
-        // field to check — `restaurant` is a plain required field on it, so
-        // it's non-null exactly when a vendor row is actually joined
-        $vendorRestaurant = sprintf('%s.restaurant', $vendorAlias);
+        $qb->andWhere(sprintf('%s.state = :invoiceLineItemState', $rootAlias));
+        $qb->setParameter('invoiceLineItemState', self::INVOICEABLE_STATE);
 
-        $qb->andWhere($qb->expr()->orX(
-            $qb->expr()->andX(
-                $qb->expr()->isNull($vendorRestaurant),
-                $qb->expr()->in(sprintf('%s.state', $rootAlias), ':invoiceLineItemLastMileStates')
-            ),
-            $qb->expr()->andX(
-                $qb->expr()->isNotNull($vendorRestaurant),
-                sprintf('%s.state = :invoiceLineItemFoodtechState', $rootAlias)
-            )
+        $this->excludeFullyCancelledDeliveries($qb, $rootAlias);
+    }
+
+    /**
+     * Orders that fall in the requested range but are still waiting for someone
+     * to complete the workflow, and are therefore missing from the invoice.
+     *
+     * @param string $rootAlias the Order root alias
+     */
+    public function applyPending(QueryBuilder $qb, string $rootAlias): void
+    {
+        $qb->andWhere($qb->expr()->in(
+            sprintf('%s.state', $rootAlias),
+            ':invoiceLineItemPendingStates'
         ));
+        $qb->setParameter('invoiceLineItemPendingStates', self::PENDING_STATES);
 
+        $this->excludeFullyCancelledDeliveries($qb, $rootAlias);
+    }
+
+    private function excludeFullyCancelledDeliveries(QueryBuilder $qb, string $rootAlias): void
+    {
         // Keep the order unless it has tasks and every single one is cancelled
         $qb->andWhere($qb->expr()->orX(
             sprintf(
@@ -65,8 +73,6 @@ final class InvoiceLineItemStateFilter
             )
         ));
 
-        $qb->setParameter('invoiceLineItemLastMileStates', self::LAST_MILE_STATES);
-        $qb->setParameter('invoiceLineItemFoodtechState', self::FOODTECH_STATE);
         $qb->setParameter('invoiceLineItemCancelledStatus', Task::STATUS_CANCELLED);
     }
 }

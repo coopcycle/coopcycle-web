@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import Modal from 'react-modal';
 import { useTranslation } from 'react-i18next';
-import { Checkbox, Radio } from 'antd';
+import { Alert, Checkbox, Radio } from 'antd';
 import { Moment } from 'moment';
 
 import Button from '../../../../components/core/Button';
 import { prepareParams, SettlementFilter } from '../../redux/actions';
+import { useGetPendingInvoiceLineItemsQuery } from '../../../../api/slice';
 import { dateRangeFromParams, syncDateRangeToUrl } from '../../utils/dateRangeUrl';
 import ExportModalContent from '../ExportModalContent';
 import OrganizationsTable from '../OrganizationsTable';
@@ -32,6 +33,29 @@ export default () => {
   const [isModalOpen, setModalOpen] = useState(false);
 
   const { t } = useTranslation();
+
+  // Orders left in an intermediary state are excluded from invoicing
+  // server-side; warn rather than silently under-invoicing
+  const pendingParams = useMemo(() => {
+    if (!dateRange) {
+      return null;
+    }
+
+    return prepareParams({
+      dateRange: [
+        dateRange[0].format('YYYY-MM-DD'),
+        dateRange[1].format('YYYY-MM-DD'),
+      ],
+      onlyNotInvoiced: false,
+    });
+  }, [dateRange]);
+
+  const { data: pendingData } = useGetPendingInvoiceLineItemsQuery(
+    { params: pendingParams as string[] },
+    { skip: !pendingParams },
+  );
+
+  const pendingCount = pendingData?.['hydra:totalItems'] ?? 0;
 
   const params = useMemo(() => {
     if (selectedOrganizationIds.length === 0) {
@@ -101,6 +125,16 @@ export default () => {
           </Button>
         </div>
       </div>
+      {pendingCount > 0 && (
+        <Alert
+          style={{ marginTop: '24px' }}
+          type="warning"
+          showIcon
+          message={t('ADMIN_ORDERS_TO_INVOICE_PENDING_ORDERS_WARNING', {
+            count: pendingCount,
+          })}
+        />
+      )}
       <OrganizationsTable
         dateRange={dateRange}
         onlyNotInvoiced={onlyNotInvoiced}

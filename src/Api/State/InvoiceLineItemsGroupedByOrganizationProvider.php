@@ -35,7 +35,7 @@ final class InvoiceLineItemsGroupedByOrganizationProvider implements ProviderInt
             ->leftJoin('o.vendors', 'v')
             ->leftJoin('v.restaurant', 'vr');
 
-        $this->stateFilter->apply($qb, 'o', 'v');
+        $this->stateFilter->apply($qb, 'o');
 
         $queryNameGenerator = new QueryNameGenerator();
         foreach ($this->collectionExtensions as $extension) {

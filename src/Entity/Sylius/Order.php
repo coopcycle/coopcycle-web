@@ -440,6 +440,16 @@ use Webmozart\Assert\Assert as WMAssert;
             provider: InvoiceLineItemsProvider::class
         ),
         new GetCollection(
+            uriTemplate: '/invoice_line_items/pending',
+            openapiContext: [
+                'summary' => 'Invoicing: Get the collection of orders left in an intermediary state',
+                'description' => 'Retrieves the orders matching the filter that are still "new" or "accepted", and are therefore excluded from invoicing'
+            ],
+            normalizationContext: ['groups' => ['default_invoice_line_item']],
+            security: 'is_granted(\'ROLE_ADMIN\')',
+            provider: InvoiceLineItemsProvider::class
+        ),
+        new GetCollection(
             uriTemplate: '/invoice_line_items/export',
             openapiContext: ['summary' => 'Invoicing: Get the collection of orders for export in the default format'],
             paginationEnabled: false,

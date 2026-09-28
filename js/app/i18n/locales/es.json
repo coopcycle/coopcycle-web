@@ -707,6 +707,7 @@
         "ADMIN_ORDERS_TO_INVOICE_FILTER_SETTLEMENT": "Estado de facturación",
         "ADMIN_ORDERS_TO_INVOICE_SETTLEMENT_NEEDS_INVOICING": "Por facturar",
         "ADMIN_ORDERS_TO_INVOICE_SETTLEMENT_SETTLED": "Liquidada",
+        "ADMIN_ORDERS_TO_INVOICE_PENDING_ORDERS_WARNING": "{{ count }} pedido(s) de este período siguen en curso (\"nuevo\" o \"aceptado\") y por lo tanto se excluyen de la facturación.",
         "ADMIN_ORDERS_TO_INVOICE_SETTLEMENT_ALL": "Todas",
         "ADMIN_ORDERS_TO_INVOICE_SETTLEMENT_LABEL": "Estado de facturación",
         "ADMIN_ORDERS_TO_INVOICE_REFRESH": "Actualizar",
