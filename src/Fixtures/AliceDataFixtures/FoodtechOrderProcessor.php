@@ -25,6 +25,8 @@ use Sylius\Component\Resource\Factory\FactoryInterface;
  */
 final class FoodtechOrderProcessor implements ProcessorInterface
 {
+    private const FIXTURE_ID_PREFIX = 'foodtech_order_';
+
     public function __construct(
         private readonly FactoryInterface $orderItemFactory,
         private readonly OrderItemQuantityModifierInterface $orderItemQuantityModifier,
@@ -50,6 +52,14 @@ final class FoodtechOrderProcessor implements ProcessorInterface
     public function postProcess(string $id, $object): void
     {
         if (!$object instanceof Order) {
+            return;
+        }
+
+        // This processor only exists to flesh out the orders declared in
+        // foodtech_orders.yml. It is registered globally, so without this guard
+        // it would also rewrite restaurant orders coming from every other
+        // fixture file — several of which don't load payment methods at all.
+        if (!str_starts_with($id, self::FIXTURE_ID_PREFIX)) {
             return;
         }
 
