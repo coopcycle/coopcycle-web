@@ -13,7 +13,7 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
     operations: [
         new Get(
             uriTemplate: '/invoice_line_items/{id}',
-            requirements: ['id' => '^(?!.*grouped_by_organization|.*export).*$'],
+            requirements: ['id' => '^(?!.*grouped_by_organization|.*pending|.*export).*$'],
             controller: NotFoundAction::class,
             output: false,
             // Make sure to add requirements for operations like "/invoice_line_items/grouped_by_organization" to work
