@@ -736,3 +736,37 @@ Feature: Invoicing
         }
       }
       """
+
+  Scenario: Orders whose tasks have all been cancelled are not invoiced
+    Given the fixtures files are loaded with purge:
+      | setup_default.yml |
+    Given the fixtures files are loaded:
+      | cancelled_delivery_orders.yml |
+    Given the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "GET" request to "/api/invoice_line_items"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Order",
+        "@id":"/api/invoice_line_items",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          {
+            "orderNumber":"ACTIVE",
+            "@*@":"@*@"
+          },
+          {
+            "orderNumber":"PARTIAL",
+            "@*@":"@*@"
+          }
+        ],
+        "hydra:totalItems":2,
+        "hydra:search":{
+          "@*@":"@*@"
+        }
+      }
+      """

@@ -1,0 +1,108 @@
+# Three store orders covering how cancelled tasks interact with invoicing:
+# one untouched, one with every task cancelled, one only partially cancelled.
+include:
+  - user_admin.yml
+  - address_client_1.yml
+
+AppBundle\Entity\Delivery\PricingRuleSet:
+  pricing_rule_set_1:
+    name: Default
+    rules: [ '@pricing_rule_1' ]
+
+AppBundle\Entity\Delivery\PricingRule:
+  pricing_rule_1:
+    expression: 'distance \> 0'
+    price: 499
+    position: 1
+    ruleSet: '@pricing_rule_set_1'
+
+AppBundle\Entity\Store:
+  store_1:
+    name: 'Acme'
+    address: "@address_client_1"
+    enabled: true
+    pricingRuleSet: '@pricing_rule_set_1'
+
+AppBundle\Entity\Task:
+  task_active_pickup:
+    type: 'PICKUP'
+    status: 'TODO'
+    doneAfter: <identity(new \DateTime('today 10:30:00'))>
+    doneBefore: <identity(new \DateTime('today 11:30:00'))>
+    address: "@address_client_1"
+  task_active_dropoff:
+    type: 'DROPOFF'
+    status: 'TODO'
+    doneAfter: <identity(new \DateTime('today 11:30:00'))>
+    doneBefore: <identity(new \DateTime('today 12:30:00'))>
+    address: "@address_client_1"
+
+  task_cancelled_pickup:
+    type: 'PICKUP'
+    status: 'CANCELLED'
+    doneAfter: <identity(new \DateTime('today 10:30:00'))>
+    doneBefore: <identity(new \DateTime('today 11:30:00'))>
+    address: "@address_client_1"
+  task_cancelled_dropoff:
+    type: 'DROPOFF'
+    status: 'CANCELLED'
+    doneAfter: <identity(new \DateTime('today 11:30:00'))>
+    doneBefore: <identity(new \DateTime('today 12:30:00'))>
+    address: "@address_client_1"
+
+  task_partial_pickup:
+    type: 'PICKUP'
+    status: 'TODO'
+    doneAfter: <identity(new \DateTime('today 10:30:00'))>
+    doneBefore: <identity(new \DateTime('today 11:30:00'))>
+    address: "@address_client_1"
+  task_partial_dropoff:
+    type: 'DROPOFF'
+    status: 'CANCELLED'
+    doneAfter: <identity(new \DateTime('today 11:30:00'))>
+    doneBefore: <identity(new \DateTime('today 12:30:00'))>
+    address: "@address_client_1"
+
+AppBundle\Entity\Delivery:
+  delivery_active:
+    __factory:
+      createWithTasks:
+        - '@task_active_pickup'
+        - '@task_active_dropoff'
+    store: "@store_1"
+  delivery_cancelled:
+    __factory:
+      createWithTasks:
+        - '@task_cancelled_pickup'
+        - '@task_cancelled_dropoff'
+    store: "@store_1"
+  delivery_partially_cancelled:
+    __factory:
+      createWithTasks:
+        - '@task_partial_pickup'
+        - '@task_partial_dropoff'
+    store: "@store_1"
+
+AppBundle\Entity\Sylius\Order:
+  order_active:
+    __factory:
+      '@sylius.factory.order::createForDelivery':
+        - "@delivery_active"
+    __calls:
+      - setNumber: [ "ACTIVE" ]
+      - setState: [ 'new' ]
+  order_cancelled_tasks:
+    __factory:
+      '@sylius.factory.order::createForDelivery':
+        - "@delivery_cancelled"
+    __calls:
+      - setNumber: [ "CANCELLED" ]
+      - setState: [ 'new' ]
+  order_partially_cancelled:
+    __factory:
+      '@sylius.factory.order::createForDelivery':
+        - "@delivery_partially_cancelled"
+    __calls:
+      - setNumber: [ "PARTIAL" ]
+      - setState: [ 'new' ]
+    # The rest of initialization is done by DeliveryOrderProcessor
