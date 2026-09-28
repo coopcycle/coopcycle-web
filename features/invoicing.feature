@@ -578,6 +578,9 @@ Feature: Invoicing
             "subTotal":350,
             "tax":0,
             "total":350,
+            "paid":0,
+            "unpaid":350,
+            "tip":0,
             "exports":[],
             "needsInvoicing":true
           },
@@ -616,6 +619,9 @@ Feature: Invoicing
             "subTotal":0,
             "tax":0,
             "total":0,
+            "paid":350,
+            "unpaid":0,
+            "tip":0,
             "exports":[],
             "needsInvoicing":false
           },
@@ -684,6 +690,9 @@ Feature: Invoicing
             "subTotal":0,
             "tax":0,
             "total":0,
+            "paid":350,
+            "unpaid":0,
+            "tip":0,
             "exports":[],
             "needsInvoicing":false
           },
