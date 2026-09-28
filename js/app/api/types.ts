@@ -174,6 +174,11 @@ export type InvoiceLineItem = {
   subTotal: number;
   tax: number;
   total: number;
+  // CoopCycle's cut, split by how it was collected: already received via
+  // Stripe Connect, vs. still to be invoiced to the organization
+  paid: number;
+  unpaid: number;
+  tip: number;
   exports: Array<{
     requestId: string;
     createdAt: string;

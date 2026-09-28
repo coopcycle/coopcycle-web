@@ -30,11 +30,15 @@ final class InvoiceLineItemAmountCalculator
     public function compute(Order $order, ?LocalBusiness $restaurant): InvoiceLineItemAmounts
     {
         if (null === $restaurant) {
+            // Stores are invoiced for the delivery service itself; nothing is
+            // collected automatically on CoopCycle's behalf beforehand
             return new InvoiceLineItemAmounts(
                 $order->getTotal() - $order->getTaxTotal(),
                 $order->getTaxTotal(),
                 $order->getTotal(),
-                true
+                true,
+                paid: 0,
+                unpaid: $order->getTotal()
             );
         }
 
@@ -43,13 +47,27 @@ final class InvoiceLineItemAmountCalculator
             PaymentInterface::STATE_COMPLETED
         );
 
-        if (!$hasVoucherPayment) {
-            // Already settled automatically via Stripe Connect, nothing owed
-            return new InvoiceLineItemAmounts(0, 0, 0, false);
-        }
-
         $feeTotal = $order->getFeeTotal();
 
-        return new InvoiceLineItemAmounts($feeTotal, 0, $feeTotal, true);
+        if (!$hasVoucherPayment) {
+            // Already settled automatically via Stripe Connect, nothing owed
+            return new InvoiceLineItemAmounts(
+                0,
+                0,
+                0,
+                false,
+                paid: $feeTotal,
+                unpaid: 0
+            );
+        }
+
+        return new InvoiceLineItemAmounts(
+            $feeTotal,
+            0,
+            $feeTotal,
+            true,
+            paid: 0,
+            unpaid: $feeTotal
+        );
     }
 }

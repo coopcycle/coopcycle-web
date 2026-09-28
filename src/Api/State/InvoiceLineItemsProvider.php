@@ -108,19 +108,21 @@ final class InvoiceLineItemsProvider implements ProviderInterface
 
         $invoiceLineItems = array_map(fn ($o) => $this->convertToInvoiceLineItem($o, $onDemandDeliveryProduct), $orders);
 
-        $isExportOperation =
-            '_api_/invoice_line_items/export_get_collection' === $operationName
-            || '_api_/invoice_line_items/export/odoo_get_collection' === $operationName;
+        $isDefaultExport = '_api_/invoice_line_items/export_get_collection' === $operationName;
+        $isOdooExport = '_api_/invoice_line_items/export/odoo_get_collection' === $operationName;
 
-        if ($isExportOperation) {
+        if ($isDefaultExport || $isOdooExport) {
 
-            // Orders that don't actually need invoicing (e.g. restaurant orders
-            // already settled automatically via Stripe Connect) shouldn't clutter
-            // the export, nor get wrongly marked as "already exported"
+            // The Odoo export feeds accounting entries, so orders with nothing
+            // left to invoice (restaurant orders already settled via Stripe
+            // Connect) are left out of it, and not marked as "already exported".
+            // The standard export keeps them: its "Paid" column is precisely
+            // what Stripe Connect already settled, so dropping those rows would
+            // leave that column empty.
             $exportedOrders = [];
             $exportedLineItems = [];
             foreach ($invoiceLineItems as $i => $lineItem) {
-                if ($lineItem->needsInvoicing) {
+                if ($isDefaultExport || $lineItem->needsInvoicing) {
                     $exportedOrders[] = $orders[$i];
                     $exportedLineItems[] = $lineItem;
                 }
@@ -294,6 +296,9 @@ final class InvoiceLineItemsProvider implements ProviderInterface
             $amounts->subTotal,
             $amounts->tax,
             $amounts->total,
+            $amounts->paid,
+            $amounts->unpaid,
+            $order->getAdjustmentsTotal(AdjustmentInterface::TIP_ADJUSTMENT),
             $exports,
             $amounts->needsInvoicing
         );

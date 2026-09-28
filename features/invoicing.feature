@@ -31,6 +31,9 @@ Feature: Invoicing
             "subTotal":@integer@,
             "tax":@integer@,
             "total":@integer@,
+            "paid":@integer@,
+            "unpaid":@integer@,
+            "tip":@integer@,
             "exports":[],
             "needsInvoicing":@boolean@
           },
@@ -152,6 +155,9 @@ Feature: Invoicing
             "subTotal":@integer@,
             "tax":@integer@,
             "total":@integer@,
+            "paid":@integer@,
+            "unpaid":@integer@,
+            "tip":@integer@,
             "exports":[],
             "needsInvoicing":@boolean@
           },
@@ -248,6 +254,9 @@ Feature: Invoicing
             "subTotal":@integer@,
             "tax":@integer@,
             "total":@integer@,
+            "paid":@integer@,
+            "unpaid":@integer@,
+            "tip":@integer@,
             "exports":[],
             "needsInvoicing":@boolean@
           },
@@ -456,6 +465,9 @@ Feature: Invoicing
             "subTotal":@integer@,
             "tax":@integer@,
             "total":@integer@,
+            "paid":@integer@,
+            "unpaid":@integer@,
+            "tip":@integer@,
             "exports":[],
             "needsInvoicing":@boolean@
           },

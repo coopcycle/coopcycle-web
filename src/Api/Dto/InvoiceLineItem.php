@@ -67,6 +67,20 @@ class InvoiceLineItem
     #[Groups(["default_invoice_line_item"])]
     public readonly int $total;
 
+    // CoopCycle's cut on this order, split by how it was collected: `paid` was
+    // already received automatically through Stripe Connect, `unpaid` still has
+    // to be invoiced to the organization (meal voucher orders, and last mile).
+    #[Groups(["default_invoice_line_item"])]
+    public readonly int $paid;
+
+    #[Groups(["default_invoice_line_item"])]
+    public readonly int $unpaid;
+
+    // Tips are collected on behalf of the courier/restaurant, so they are not
+    // part of what CoopCycle invoices; exported for reconciliation only.
+    #[Groups(["default_invoice_line_item"])]
+    public readonly int $tip;
+
     #[Groups(["default_invoice_line_item"])]
     public readonly array $exports;
 
@@ -93,6 +107,9 @@ class InvoiceLineItem
         int $subTotal,
         int $tax,
         int $total,
+        int $paid,
+        int $unpaid,
+        int $tip,
         array $exports,
         bool $needsInvoicing,
     )
@@ -112,6 +129,9 @@ class InvoiceLineItem
         $this->subTotal = $subTotal;
         $this->tax = $tax;
         $this->total = $total;
+        $this->paid = $paid;
+        $this->unpaid = $unpaid;
+        $this->tip = $tip;
         $this->exports = $exports;
         $this->needsInvoicing = $needsInvoicing;
     }
@@ -155,6 +175,28 @@ class InvoiceLineItem
     public function getFileExportTotal(): float
     {
         return $this->total / 100;
+    }
+
+
+    #[Groups(["export_invoice_line_item"])]
+    #[SerializedName("Paid")]
+    public function getFileExportPaid(): float
+    {
+        return $this->paid / 100;
+    }
+
+    #[Groups(["export_invoice_line_item"])]
+    #[SerializedName("Unpaid")]
+    public function getFileExportUnpaid(): float
+    {
+        return $this->unpaid / 100;
+    }
+
+    #[Groups(["export_invoice_line_item"])]
+    #[SerializedName("Tips")]
+    public function getFileExportTip(): float
+    {
+        return $this->tip / 100;
     }
 
 

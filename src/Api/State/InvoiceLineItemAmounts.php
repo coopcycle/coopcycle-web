@@ -16,6 +16,14 @@ final class InvoiceLineItemAmounts
         // true only when paid (fully or partially) by meal voucher — card payments
         // are already automatically settled via Stripe Connect.
         public readonly bool $needsInvoicing,
+        // How CoopCycle's cut on this order was collected. `paid` is what was
+        // already received automatically (Stripe Connect's application fee),
+        // `unpaid` what still has to be invoiced to the organization. Exactly
+        // one of the two is non-zero: Stripe takes no application fee at all on
+        // an order carrying a meal voucher (see StripeManager::configureCreateIntentPayload()),
+        // so there is never a partial split.
+        public readonly int $paid,
+        public readonly int $unpaid,
     )
     {
     }
