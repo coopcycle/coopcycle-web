@@ -5,6 +5,7 @@
       <generator strategy="IDENTITY"/>
     </id>
     <field name="imageName" type="string" column="image_name" length="255"/>
+    <field name="type" type="string" column="type" length="16" nullable="true" enum-type="AppBundle\Enum\TaskImageType"/>
     <field name="createdAt" type="datetime" column="created_at">
       <gedmo:timestampable on="create"/>
     </field>

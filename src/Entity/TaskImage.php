@@ -8,6 +8,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\Task\CreateImage;
+use AppBundle\Enum\TaskImageType;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -44,6 +45,9 @@ class TaskImage
 
     #[Groups(['task_image'])]
     private $imageName;
+
+    #[Groups(['task_image', 'task'])]
+    private ?TaskImageType $type = null;
 
     private $createdAt;
 
@@ -92,6 +96,18 @@ class TaskImage
     public function getImageName()
     {
         return $this->imageName;
+    }
+
+    public function getType(): ?TaskImageType
+    {
+        return $this->type;
+    }
+
+    public function setType(?TaskImageType $type)
+    {
+        $this->type = $type;
+
+        return $this;
     }
 
     public function getTask()
