@@ -48,7 +48,8 @@ use AppBundle\Api\Dto\LoopeatFormats;
 use AppBundle\Api\Dto\LoopeatReturns;
 use AppBundle\Api\Dto\EdenredCredentialsInput;
 use AppBundle\Api\Filter\OrderDateFilter;
-use AppBundle\Api\Filter\OrderStoreFilter;
+use AppBundle\Api\Filter\OrderOrganizationFilter;
+use AppBundle\Api\Filter\OrderSettlementFilter;
 use AppBundle\Api\State\CartItemProcessor;
 use AppBundle\Api\State\ConfigurePaymentProcessor;
 use AppBundle\Api\State\CreateCreditNoteProcessor;
@@ -439,6 +440,16 @@ use Webmozart\Assert\Assert as WMAssert;
             provider: InvoiceLineItemsProvider::class
         ),
         new GetCollection(
+            uriTemplate: '/invoice_line_items/pending',
+            openapiContext: [
+                'summary' => 'Invoicing: Get the collection of orders left in an intermediary state',
+                'description' => 'Retrieves the orders matching the filter that are still "new" or "accepted", and are therefore excluded from invoicing'
+            ],
+            normalizationContext: ['groups' => ['default_invoice_line_item']],
+            security: 'is_granted(\'ROLE_ADMIN\')',
+            provider: InvoiceLineItemsProvider::class
+        ),
+        new GetCollection(
             uriTemplate: '/invoice_line_items/export',
             openapiContext: ['summary' => 'Invoicing: Get the collection of orders for export in the default format'],
             paginationEnabled: false,
@@ -502,7 +513,8 @@ use Webmozart\Assert\Assert as WMAssert;
 #[ApiFilter(filterClass: OrderDateFilter::class, properties: ['date' => 'exact'])]
 #[ApiFilter(filterClass: SearchFilter::class, properties: ['state' => 'exact'])]
 #[ApiFilter(filterClass: ExistsFilter::class, properties: ['exports'])]
-#[ApiFilter(filterClass: OrderStoreFilter::class)]
+#[ApiFilter(filterClass: OrderOrganizationFilter::class)]
+#[ApiFilter(filterClass: OrderSettlementFilter::class)]
 class Order extends BaseOrder implements OrderInterface
 {
     use VytalCodeAwareTrait;

@@ -12,7 +12,9 @@ export default ({
   danger,
   link,
   block,
-  testID
+  testID,
+  // Defaulted so it stays optional for callers that don't pass it
+  disabled = false,
 }) => {
   return (
     <button
@@ -26,7 +28,7 @@ export default ({
         'btn-link': link,
         'btn-block': block,
       })}
-      disabled={loading}>
+      disabled={loading || disabled}>
       {loading ? (
         <span>
           <i className="fa fa-spinner fa-spin"></i> 

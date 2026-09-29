@@ -1672,9 +1672,10 @@ form.payment.edenred.refund_amount.help: Les remboursements partiels ne sont pas
 restaurant.meal_vouchers_transactions.emitter: Émetteur
 order.items_total_excluding_tax: Total des produits (hors TVA)
 basics.more: Plus
-adminDashboard.invoicing.title: Facturation [APERÇU]
+adminDashboard.invoicing.title: Facturation
 adminDashboard.invoicing.help: "Préparer les factures"
 adminDashboard.invoicing.line_item.order_number: "Commande #%number%"
+adminDashboard.invoicing.line_item.product.restaurant_order: "Commande restaurant"
 form.settings.on_demand_delivery_product_name.label: "Nom du produit"
 form.settings.on_demand_delivery_product_name.help: "Le nom qui apparaîtra dans le récapitulatif de commande et la facture"
 form.settings.accounting_account.label: "Code comptable"

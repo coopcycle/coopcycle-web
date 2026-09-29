@@ -5,14 +5,14 @@ import { Moment } from 'moment';
 
 import { money } from '../../../../utils/format';
 import { useLazyGetInvoiceLineItemsGroupedByOrganizationQuery } from '../../../../api/slice';
-import { prepareParams } from '../../redux/actions';
+import { prepareParams, SettlementFilter } from '../../redux/actions';
 import { usePrevious } from '../../../../dashboard/redux/utils';
 import OrdersTable from '../OrdersTable';
 import type { InvoiceLineItemGroupedByOrganization } from '../../../../api/types';
 
 type OrganizationRow = {
   rowKey: string;
-  storeId: string;
+  organizationId: string;
   name: string;
   // Raw store name, shown as muted subtext when it differs from the
   // displayed name (i.e. when a distinct legalName is set)
@@ -23,19 +23,19 @@ type OrganizationRow = {
 };
 
 type Props = {
-  ordersStates: string[];
   dateRange: Moment[] | null;
   onlyNotInvoiced: boolean;
+  settlement: SettlementFilter;
   reloadKey: number;
-  setSelectedStoreIds: (storeIds: string[]) => void;
+  setSelectedOrganizationIds: (organizationIds: string[]) => void;
 };
 
 export default function OrganizationsTable({
-  ordersStates,
   dateRange,
   onlyNotInvoiced,
+  settlement,
   reloadKey,
-  setSelectedStoreIds,
+  setSelectedOrganizationIds,
 }: Props) {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -57,10 +57,10 @@ export default function OrganizationsTable({
         dateRange[0].format('YYYY-MM-DD'),
         dateRange[1].format('YYYY-MM-DD'),
       ],
-      state: ordersStates,
       onlyNotInvoiced: onlyNotInvoiced,
+      settlement: settlement,
     });
-  }, [ordersStates, dateRange, onlyNotInvoiced]);
+  }, [dateRange, onlyNotInvoiced, settlement]);
 
   const { dataSource, total } = useMemo((): {
     dataSource: OrganizationRow[] | undefined;
@@ -73,8 +73,8 @@ export default function OrganizationsTable({
     return {
       dataSource: data['hydra:member'].map(
         (item: InvoiceLineItemGroupedByOrganization): OrganizationRow => ({
-          rowKey: item.storeId.toString(),
-          storeId: item.storeId.toString(),
+          rowKey: item.organizationId.toString(),
+          organizationId: item.organizationId.toString(),
           name: `${item.organizationLegalName} (${item.ordersCount})`,
           storeName:
             item.storeName !== item.organizationLegalName
@@ -173,10 +173,10 @@ export default function OrganizationsTable({
         expandedRowRender: (record: OrganizationRow) => {
           return (
             <OrdersTable
-              ordersStates={ordersStates}
               dateRange={dateRange}
               onlyNotInvoiced={onlyNotInvoiced}
-              storeId={record.storeId}
+              settlement={settlement}
+              organizationId={record.organizationId}
               reloadKey={reloadKey}
             />
           );
@@ -185,7 +185,7 @@ export default function OrganizationsTable({
       rowSelection={{
         type: 'checkbox',
         onChange: (_: React.Key[], selectedRows: OrganizationRow[]) => {
-          setSelectedStoreIds(selectedRows.map(row => row.storeId));
+          setSelectedOrganizationIds(selectedRows.map(row => row.organizationId));
         },
       }}
     />

@@ -2,7 +2,6 @@ import { Provider } from 'react-redux';
 import OrdersToInvoice from './components/OrdersToInvoice';
 import { TopNav } from '../../components/TopNav';
 import { useTranslation } from 'react-i18next';
-import FeaturePreviewTag from '../../components/FeaturePreviewTag';
 import { store } from './redux/store';
 
 export default () => {
@@ -11,9 +10,7 @@ export default () => {
   return (
     <Provider store={store}>
       <div>
-        <TopNav>
-          {t('ADMIN_INVOICING_TITLE')} <FeaturePreviewTag />
-        </TopNav>
+        <TopNav>{t('ADMIN_INVOICING_TITLE')}</TopNav>
         <OrdersToInvoice />
       </div>
     </Provider>

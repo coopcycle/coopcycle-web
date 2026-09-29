@@ -13,7 +13,7 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
     operations: [
         new Get(
             uriTemplate: '/invoice_line_items/{id}',
-            requirements: ['id' => '^(?!.*grouped_by_organization|.*export).*$'],
+            requirements: ['id' => '^(?!.*grouped_by_organization|.*pending|.*export).*$'],
             controller: NotFoundAction::class,
             output: false,
             // Make sure to add requirements for operations like "/invoice_line_items/grouped_by_organization" to work
@@ -30,8 +30,10 @@ class InvoiceLineItem
 
     public readonly \DateTime $invoiceDate;
 
+    // IRI of the organization to invoice: either a Store ("/api/stores/{id}")
+    // or a restaurant/LocalBusiness ("/api/restaurants/{id}")
     #[Groups(["default_invoice_line_item"])]
-    public readonly ?int $storeId;
+    public readonly ?string $organizationId;
 
     public readonly ?string $organizationLegalName;
 
@@ -48,6 +50,11 @@ class InvoiceLineItem
     #[Groups(["default_invoice_line_item"])]
     public readonly string $orderNumber;
 
+    // Order state (new/accepted/fulfilled/...), distinct from whether it has
+    // been exported/invoiced yet
+    #[Groups(["default_invoice_line_item"])]
+    public readonly string $orderState;
+
     #[Groups(["default_invoice_line_item"])]
     public readonly string $description;
 
@@ -60,42 +67,73 @@ class InvoiceLineItem
     #[Groups(["default_invoice_line_item"])]
     public readonly int $total;
 
+    // CoopCycle's cut on this order, split by how it was collected: `paid` was
+    // already received automatically through Stripe Connect, `unpaid` still has
+    // to be invoiced to the organization (meal voucher orders, and last mile).
+    #[Groups(["default_invoice_line_item"])]
+    public readonly int $paid;
+
+    #[Groups(["default_invoice_line_item"])]
+    public readonly int $unpaid;
+
+    // Tips are collected on behalf of the courier/restaurant, so they are not
+    // part of what CoopCycle invoices; exported for reconciliation only.
+    #[Groups(["default_invoice_line_item"])]
+    public readonly int $tip;
+
     #[Groups(["default_invoice_line_item"])]
     public readonly array $exports;
+
+    // Whether CoopCycle still needs to invoice this order's organization for it.
+    // Always true for Store (on-demand delivery) orders. For restaurant orders,
+    // true only when paid (fully or partially) by meal voucher — card payments
+    // are already automatically settled via Stripe Connect.
+    #[Groups(["default_invoice_line_item"])]
+    public readonly bool $needsInvoicing;
 
     public function __construct(
         string $id,
         string $invoiceId,
         \DateTime $invoiceDate,
-        ?int $storeId,
+        ?string $organizationId,
         ?string $organizationLegalName,
         string $accountCode,
         string $product,
         int $orderId,
         string $orderNumber,
+        string $orderState,
         \DateTime $date,
         string $description,
         int $subTotal,
         int $tax,
         int $total,
+        int $paid,
+        int $unpaid,
+        int $tip,
         array $exports,
+        bool $needsInvoicing,
     )
     {
         $this->id = $id;
         $this->invoiceId = $invoiceId;
         $this->invoiceDate = $invoiceDate;
-        $this->storeId = $storeId;
+        $this->organizationId = $organizationId;
         $this->organizationLegalName = $organizationLegalName;
         $this->accountCode = $accountCode;
         $this->product = $product;
         $this->orderId = $orderId;
         $this->orderNumber = $orderNumber;
+        $this->orderState = $orderState;
         $this->date = $date;
         $this->description = $description;
         $this->subTotal = $subTotal;
         $this->tax = $tax;
         $this->total = $total;
+        $this->paid = $paid;
+        $this->unpaid = $unpaid;
+        $this->tip = $tip;
         $this->exports = $exports;
+        $this->needsInvoicing = $needsInvoicing;
     }
 
     // The only reason to have separate methods
@@ -137,6 +175,28 @@ class InvoiceLineItem
     public function getFileExportTotal(): float
     {
         return $this->total / 100;
+    }
+
+
+    #[Groups(["export_invoice_line_item"])]
+    #[SerializedName("Paid")]
+    public function getFileExportPaid(): float
+    {
+        return $this->paid / 100;
+    }
+
+    #[Groups(["export_invoice_line_item"])]
+    #[SerializedName("Unpaid")]
+    public function getFileExportUnpaid(): float
+    {
+        return $this->unpaid / 100;
+    }
+
+    #[Groups(["export_invoice_line_item"])]
+    #[SerializedName("Tips")]
+    public function getFileExportTip(): float
+    {
+        return $this->tip / 100;
     }
 
 

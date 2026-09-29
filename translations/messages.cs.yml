@@ -1730,7 +1730,7 @@ admin.settings.foodtech: Food Tech
 admin.settings.package_delivery: Doručování balíčků
 basics.editing: Úpravy
 adminDashboard.incidents.docs_path: /cs/admin/Incidenty/
-adminDashboard.invoicing.title: Fakturace [NÁHLED]
+adminDashboard.invoicing.title: Fakturace
 adminDashboard.invoicing.docs_path: /cs/web/admin/dodavky/fakturace/
 adminDashboard.invoicing.help: Připravit faktury
 adminDashboard.invoicing.line_item.order_number: Objednávka č. %number%

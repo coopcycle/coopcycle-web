@@ -30,6 +30,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class InvoiceLineItemsProvider implements ProviderInterface
 {
+    private const PENDING_OPERATION = '_api_/invoice_line_items/pending_get_collection';
+
     public function __construct(
         private readonly ProductRepository $productRepository,
         private readonly ProductVariantFactory $productVariantFactory,
@@ -39,6 +41,8 @@ final class InvoiceLineItemsProvider implements ProviderInterface
         private readonly SettingsManager $settingsManager,
         private readonly TranslatorInterface $translator,
         private readonly PriceFormatter $priceFormatter,
+        private readonly InvoiceLineItemAmountCalculator $amountCalculator,
+        private readonly InvoiceLineItemStateFilter $stateFilter,
         private readonly string $locale,
         private readonly bool $packageDeliveryUiPriceBreakdownEnabled,
         private readonly iterable $collectionExtensions,
@@ -52,9 +56,18 @@ final class InvoiceLineItemsProvider implements ProviderInterface
 
         $qb = $this->entityManager->getRepository(Order::class)->createOptimizedQueryBuilder('o')
             // Additional optimization: preload relations with composite keys
-            ->addSelect('v', 'ex')
+            ->addSelect('v', 'vr', 'ex')
             ->leftJoin('o.vendors', 'v')
+            ->leftJoin('v.restaurant', 'vr')
             ->leftJoin('o.exports', 'ex');
+
+        // Orders still in an intermediary state are not invoiceable; the
+        // dedicated "pending" operation lists them so they can be chased up
+        if (self::PENDING_OPERATION === $operation->getName()) {
+            $this->stateFilter->applyPending($qb, 'o');
+        } else {
+            $this->stateFilter->apply($qb, 'o');
+        }
 
         $queryNameGenerator = new QueryNameGenerator();
         foreach ($this->collectionExtensions as $extension) {
@@ -88,31 +101,53 @@ final class InvoiceLineItemsProvider implements ProviderInterface
     {
         $orders = iterator_to_array($data);
 
-        // Mark orders as exported
-        if (
-            '_api_/invoice_line_items/export_get_collection' === $operationName
-            || '_api_/invoice_line_items/export/odoo_get_collection' === $operationName
-        ) {
-
-            $request = $this->requestStack->getCurrentRequest();
-            $requestId = $request->headers->get('X-Request-ID');
-
-            $exportCommand = new ExportCommand(
-                $this->security->getUser(),
-                $requestId,
-            );
-            $exportCommand->addOrders($orders);
-
-            $this->entityManager->persist($exportCommand);
-            $this->entityManager->flush();
-        }
-
         // Optimization: to avoid extra queries preload one-to-many relations that will be used later
         $this->preloadEntities($orders);
 
         $onDemandDeliveryProduct = $this->productRepository->findOnDemandDeliveryProduct();
 
         $invoiceLineItems = array_map(fn ($o) => $this->convertToInvoiceLineItem($o, $onDemandDeliveryProduct), $orders);
+
+        $isDefaultExport = '_api_/invoice_line_items/export_get_collection' === $operationName;
+        $isOdooExport = '_api_/invoice_line_items/export/odoo_get_collection' === $operationName;
+
+        if ($isDefaultExport || $isOdooExport) {
+
+            // The Odoo export feeds accounting entries, so orders with nothing
+            // left to invoice (restaurant orders already settled via Stripe
+            // Connect) are left out of it, and not marked as "already exported".
+            // The standard export keeps them: its "Paid" column is precisely
+            // what Stripe Connect already settled, so dropping those rows would
+            // leave that column empty.
+            $exportedOrders = [];
+            $exportedLineItems = [];
+            foreach ($invoiceLineItems as $i => $lineItem) {
+                if ($isDefaultExport || $lineItem->needsInvoicing) {
+                    $exportedOrders[] = $orders[$i];
+                    $exportedLineItems[] = $lineItem;
+                }
+            }
+
+            $request = $this->requestStack->getCurrentRequest();
+            $requestId = $request->headers->get('X-Request-ID');
+
+            // Downloading a spreadsheet is not necessarily the same as issuing
+            // the invoices: admins can opt out of recording the export, so that
+            // the orders keep showing up as "not invoiced" until the real run
+            if ($request->query->getBoolean('markAsExported', true)) {
+
+                $exportCommand = new ExportCommand(
+                    $this->security->getUser(),
+                    $requestId,
+                );
+                $exportCommand->addOrders($exportedOrders);
+
+                $this->entityManager->persist($exportCommand);
+                $this->entityManager->flush();
+            }
+
+            return $exportedLineItems;
+        }
 
         if ($data instanceof PaginatorInterface) {
             return new TraversablePaginator(
@@ -140,19 +175,35 @@ final class InvoiceLineItemsProvider implements ProviderInterface
         $preloader->preload($delivery, 'store');
         $taskCollectionItems = $preloader->preload($delivery, 'items');
         $preloader->preload($taskCollectionItems, 'task');
+
+        // Needed by InvoiceLineItemAmountCalculator to detect meal voucher payments
+        $payments = $preloader->preload($orders, 'payments');
+        $preloader->preload($payments, 'method');
     }
 
     private function convertToInvoiceLineItem(Order $order, ProductInterface $onDemandDeliveryProduct): InvoiceLineItem
     {
         $delivery = $order->getDelivery();
         $store = $delivery?->getStore();
+        $restaurant = $store ? null : $order->getRestaurant();
+
+        $organizationId = null;
+        $organizationLegalName = null;
+
+        if ($store) {
+            $organizationId = sprintf('/api/stores/%d', $store->getId());
+            $organizationLegalName = $store->getLegalName() ?? $store->getName();
+        } elseif ($restaurant) {
+            $organizationId = sprintf('/api/restaurants/%d', $restaurant->getId());
+            $organizationLegalName = $restaurant->getLegalName() ?? $restaurant->getName();
+        }
 
         $request = $this->requestStack->getCurrentRequest();
         $requestId = $request->headers->get('X-Request-ID');
 
         $invoiceId = sprintf('%s-%s',
             $requestId,
-            substr(hash('sha256', $store?->getId() ?? 0), 0, 7)
+            substr(hash('sha256', $organizationId ?? 0), 0, 7)
         );
 
         $invoiceDate = new \DateTime();
@@ -201,7 +252,22 @@ final class InvoiceLineItemsProvider implements ProviderInterface
             } else {
                 $descriptionParts = array_merge($descriptionParts, $this->legacyDescription($order, $delivery));
             }
+        } elseif ($restaurant) {
+            $product = $this->translator->trans('adminDashboard.invoicing.line_item.product.restaurant_order', [], 'messages');
+            $descriptionParts[] = $restaurant->getName();
 
+            /** @var OrderItemInterface $item */
+            foreach ($order->getItems() as $item) {
+                $productVariant = $item->getVariant();
+
+                $descriptionParts[] = sprintf('%s x%d',
+                    $productVariant->getName(),
+                    $item->getQuantity()
+                );
+            }
+        }
+
+        if (count($descriptionParts) > 0) {
             $descriptionParts[] = Carbon::instance($orderDate)->locale($this->locale)->isoFormat('L');
 
             $description = sprintf('%s (%s)',
@@ -218,22 +284,29 @@ final class InvoiceLineItemsProvider implements ProviderInterface
 
         $exports = $order->getExports()->map(fn($export) => $export->getExportCommand())->toArray();
 
+        $amounts = $this->amountCalculator->compute($order, $restaurant);
+
         return new InvoiceLineItem(
             sprintf('%s-%d', $invoiceId, $order->getId()),
             $invoiceId,
             $invoiceDate,
-            $store?->getId(),
-            $store?->getLegalName() ?? $store?->getName(),
+            $organizationId,
+            $organizationLegalName,
             $this->settingsManager->get('accounting_account') ?? '',
             $product,
             $order->getId(),
             $order->getNumber(),
+            $order->getState(),
             $orderDate,
             $description,
-            $order->getTotal() - $order->getTaxTotal(),
-            $order->getTaxTotal(),
-            $order->getTotal(),
-            $exports
+            $amounts->subTotal,
+            $amounts->tax,
+            $amounts->total,
+            $amounts->paid,
+            $amounts->unpaid,
+            $order->getAdjustmentsTotal(AdjustmentInterface::TIP_ADJUSTMENT),
+            $exports,
+            $amounts->needsInvoicing
         );
     }
 

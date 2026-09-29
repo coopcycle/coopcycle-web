@@ -2,32 +2,39 @@ import { baseQueryWithReauth } from '../../../api/baseQuery';
 import { RootState } from './store';
 import { ThunkAction, UnknownAction } from '@reduxjs/toolkit';
 
+export type SettlementFilter = 'needs_invoicing' | 'settled' | 'all';
+
 export function prepareParams({
-  store,
+  organization,
   dateRange,
-  state,
   onlyNotInvoiced,
+  settlement,
 }: {
-  store?: string[];
+  organization?: string[];
   dateRange: string[];
-  state?: string[];
   onlyNotInvoiced: boolean;
+  settlement?: SettlementFilter;
 }): string[] {
   let params = [];
 
-  if (store && store.length > 0) {
-    params.push(...store.map(storeId => `store[]=${storeId}`));
+  if (organization && organization.length > 0) {
+    params.push(
+      ...organization.map(organizationId => `organization[]=${organizationId}`),
+    );
   }
 
-  if (state && state.length > 0) {
-    params.push(...state.map(state => `state[]=${state}`));
-  }
+  // Which order states are invoiceable is a business rule enforced
+  // server-side (InvoiceLineItemStateFilter), not a client-chosen filter.
 
   params.push(`date[after]=${dateRange[0]}`);
   params.push(`date[before]=${dateRange[1]}`);
 
   if (onlyNotInvoiced) {
     params.push('exists[exports]=false');
+  }
+
+  if (settlement && settlement !== 'all') {
+    params.push(`settlement=${settlement}`);
   }
 
   return params;
@@ -73,15 +80,25 @@ function downloadFile({
   };
 }
 
+// Recording the export is the server's default; only the opt-out is sent
+function exportParams(params: string[], markAsExported: boolean): string {
+  return (markAsExported ? params : [...params, 'markAsExported=0']).join('&');
+}
+
 export function downloadStandardFile({
   params,
   filename,
+  markAsExported = true,
 }: {
   params: string[];
   filename: string;
+  markAsExported?: boolean;
 }): ThunkAction<Promise<void>, RootState, unknown, UnknownAction> {
   return downloadFile({
-    requestUrl: `api/invoice_line_items/export?${params.join('&')}`,
+    requestUrl: `api/invoice_line_items/export?${exportParams(
+      params,
+      markAsExported,
+    )}`,
     filename,
   });
 }
@@ -89,12 +106,17 @@ export function downloadStandardFile({
 export function downloadOdooFile({
   params,
   filename,
+  markAsExported = true,
 }: {
   params: string[];
   filename: string;
+  markAsExported?: boolean;
 }): ThunkAction<Promise<void>, RootState, unknown, UnknownAction> {
   return downloadFile({
-    requestUrl: `api/invoice_line_items/export/odoo?${params.join('&')}`,
+    requestUrl: `api/invoice_line_items/export/odoo?${exportParams(
+      params,
+      markAsExported,
+    )}`,
     filename,
   });
 }

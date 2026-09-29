@@ -231,7 +231,15 @@ class DeliveryProcessor implements ProcessorInterface
         }
 
         if ($this->authorizationChecker->isGranted('ROLE_DISPATCHER') && $data->status) {
-            $task->setStatus($data->status);
+            // Cancelling an existing task must go through the Cancel command,
+            // so that the linked order is cancelled as well
+            if (Task::STATUS_CANCELLED === $data->status
+                && null !== $task->getId()
+                && Task::STATUS_CANCELLED !== $task->getStatus()) {
+                $this->taskManager->cancel($task);
+            } else {
+                $task->setStatus($data->status);
+            }
         }
 
         // Legacy props

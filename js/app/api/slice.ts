@@ -4,6 +4,7 @@ import { fetchAllRecordsUsingFetchWithBQ } from './utils';
 import {
   GetInvoiceLineItemsGroupedByOrganizationArgs,
   GetInvoiceLineItemsArgs,
+  GetPendingInvoiceLineItemsArgs,
   HydraCollection,
   InvoiceLineItemGroupedByOrganization,
   InvoiceLineItem,
@@ -330,6 +331,22 @@ export const apiSlice = createApi({
           params: {
             page: args.page,
             itemsPerPage: args.pageSize,
+          },
+        };
+      },
+    }),
+
+    getPendingInvoiceLineItems: builder.query<
+      HydraCollection<InvoiceLineItem>,
+      GetPendingInvoiceLineItemsArgs
+    >({
+      query: args => {
+        return {
+          url: `api/invoice_line_items/pending?${args.params.join('&')}`,
+          // Only the count is used, so don't pay for a full page of results
+          params: {
+            page: 1,
+            itemsPerPage: 1,
           },
         };
       },
@@ -937,6 +954,7 @@ export const {
   useGetRecurrenceRuleGenerationQuery,
   useLazyGetInvoiceLineItemsGroupedByOrganizationQuery,
   useGetInvoiceLineItemsQuery,
+  useGetPendingInvoiceLineItemsQuery,
   useGetPricingRuleSetsQuery,
   useGetPricingRuleSetQuery,
   useCreatePricingRuleSetMutation,

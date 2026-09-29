@@ -1597,10 +1597,11 @@ adminDashboard.incidents.help: "Manage incidents."
 adminDashboard.incidents.docs_path: /en/admin/Incidents/
 adminDashboard.incidents.createNew: Create a new incident
 adminDashboard.incidents.incident.title: 'Incident #%id%'
-adminDashboard.invoicing.title: Invoicing [PREVIEW]
+adminDashboard.invoicing.title: Invoicing
 adminDashboard.invoicing.docs_path: /en/web/admin/deliveries/invoicing/
 adminDashboard.invoicing.help: "Prepare invoices"
 adminDashboard.invoicing.line_item.order_number: "Order #%number%"
+adminDashboard.invoicing.line_item.product.restaurant_order: "Restaurant order"
 profile.delete_my_account: "Delete my account"
 profile.type_username_to_confirm: "Type your username to confirm the account deletion"
 tags.featured: Featured
