@@ -267,6 +267,10 @@ class SyncTransportersCommand extends Command {
         /** @var EDIFACTMessageRepository $repo */
         $repo = $this->entityManager->getRepository(EDIFACTMessage::class);
 
+        if (!$this->dryRun) {
+            $this->reportFromCC->scheduleMissingPods($repo->getUnsynced($this->transporter));
+        }
+
         $unsynced = $repo->getUnsynced($this->transporter);
         if (count($unsynced) === 0) {
             $this->output->writeln("No messages to send");
@@ -275,10 +279,7 @@ class SyncTransportersCommand extends Command {
         }
 
         $this->output->writeln(sprintf("%s messages to send", count($unsynced)));
-        $reports = array_map(
-            fn(EDIFACTMessage $m) => $this->reportFromCC->generateReport($m, $opts),
-            $unsynced
-        );
+        $reports = $this->reportFromCC->generateReports($unsynced, $opts);
 
         $content = $this->reportFromCC->buildSCONTR($reports, $opts);
 

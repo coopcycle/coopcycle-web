@@ -1198,6 +1198,51 @@ Feature: Incidents
       }
       """
 
+  Scenario: Attach one image to several incidents
+    Given the fixtures files are loaded:
+      | tasks.yml           |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    Given I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/incidents" with body:
+      """
+      {
+        "description": "PACKAGE WET",
+        "failureReasonCode": "DAMAGED",
+        "task": "/api/tasks/2"
+      }
+      """
+    Then the response status code should be 201
+    Given I add "Content-Type" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/incidents" with body:
+      """
+      {
+        "description": "PACKAGE WET TOO",
+        "failureReasonCode": "DAMAGED",
+        "task": "/api/tasks/2"
+      }
+      """
+    Then the response status code should be 201
+    Given I add "Content-Type" header equal to "multipart/form-data"
+    And I add "X-Attach-To" header equal to "/api/incidents/1;/api/incidents/2"
+    And the user "bob" sends a "POST" request to "/api/incident_images" with parameters:
+      | key      | value              |
+      | file     | @beer.jpg |
+    Then the response status code should be 201
+    Given I add "Content-Type" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/incidents/1"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON node "images" should have 1 element
+    Given the user "bob" sends a "GET" request to "/api/incidents/2"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON node "images" should have 1 element
+
     Scenario: Report incident & add metadata
       Given the fixtures files are loaded:
         | tasks.yml |

@@ -216,12 +216,7 @@ class IncidentAction extends Base
             throw new \InvalidArgumentException("There is no import message linked to this task");
         }
 
-        $ediMessage = new EDIFACTMessage();
-        $ediMessage->setMessageType(EDIFACTMessage::MESSAGE_TYPE_REPORT);
-        $ediMessage->setTransporter($importEDI->getTransporter());
-        $ediMessage->setDirection(EDIFACTMessage::DIRECTION_OUTBOUND);
-        $ediMessage->setReference($importEDI->getReference());
-        $ediMessage->setSubMessageType($failureReason);
+        $ediMessage = EDIFACTMessage::createReport($importEDI, $failureReason);
         $ediMessage->setCreatedAt($createdAt);
         $ediMessage->setPods($pods);
 
