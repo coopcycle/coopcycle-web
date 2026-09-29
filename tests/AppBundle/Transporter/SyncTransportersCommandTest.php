@@ -770,7 +770,8 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->entityManager->flush();
 
         $this->assertCount(3, $pickup->getEdifactMessages());
-        $this->assertCount(2, $dropoff->getEdifactMessages());
+        // The import, LIV|CFM and the POD|CFM carrying the waybill
+        $this->assertCount(3, $dropoff->getEdifactMessages());
 
         $pickupReportEDIMessage = $pickup->getEdifactMessages()->map(function (EDIFACTMessage $message) {
             return [$message->getMessageType(), $message->getSubMessageType()];
@@ -785,7 +786,9 @@ class SyncTransportersCommandTest extends KernelTestCase {
         );
 
         /** @var EDIFACTMessage $reportEDIMessage */
-        $dropoffReportEDIMessage = $dropoff->getEdifactMessages()->last();
+        $dropoffReportEDIMessage = $dropoff->getReports()
+            ->filter(fn(EDIFACTMessage $m) => $m->getSubMessageType() === 'LIV|CFM')
+            ->first();
 
         $this->assertEquals('JOY0123456789', $dropoffReportEDIMessage->getReference());
         $this->assertEquals('DBSCHENKER', $dropoffReportEDIMessage->getTransporter());
@@ -823,14 +826,17 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->assertCount(0, $this->syncOutBMVFs->listContents('/')->toArray());
 
         $unsynced = $this->entityManager->getRepository(EDIFACTMessage::class)->getUnsynced('DBSCHENKER');
-        $this->assertCount(3, $unsynced);
+        $this->assertCount(4, $unsynced);
+
+        // The cron runs in its own process
+        $this->entityManager->clear();
 
         $commandTester->execute([
             'transporter' => 'DBSCHENKER'
         ]);
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('imported 0 tasks', $output);
-        $this->assertStringContainsString('3 messages to send', $output);
+        $this->assertStringContainsString('4 messages to send', $output);
 
 
         $this->assertCount(0, $this->syncOutBMVFs->listContents('/')->toArray());
@@ -863,11 +869,14 @@ class SyncTransportersCommandTest extends KernelTestCase {
         // After sync: reload the LIV|CFM message from DB and verify the
         // post-sync state — syncedAt/edifactFile are populated, PODs persist
         // (ReportFromCC::generateReport re-persists them).
-        $this->entityManager->refresh($dropoffReportEDIMessage);
+        $this->entityManager->clear();
+        $dropoffReportEDIMessage = $this->entityManager->getRepository(EDIFACTMessage::class)
+            ->find($dropoffReportEDIMessage->getId());
         $this->assertNotNull($dropoffReportEDIMessage->getSyncedAt());
         $this->assertNotNull($dropoffReportEDIMessage->getEdiMessage());
+        // ... with the task's proofs added at sync time
         $this->assertEquals(
-            ['https://urldetracking.com/monexpedition'],
+            ['https://urldetracking.com/monexpedition', $this->waybillUrl($dropoff)],
             $dropoffReportEDIMessage->getPods()
         );
 
@@ -916,12 +925,14 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->taskManager->markAsDone($dropoff);
         $this->entityManager->flush();
 
-        // One POD|CFM carrying both images, on top of the 3 status reports.
+        // One POD|CFM carrying the waybill, then both images, on top of the 3
+        // status reports.
         $this->entityManager->clear();
         $unsynced = $this->entityManager->getRepository(EDIFACTMessage::class)->getUnsynced('DBSCHENKER');
         $this->assertCount(4, $unsynced);
         $this->assertEquals('POD|CFM', end($unsynced)->getSubMessageType());
-        $this->assertCount(2, end($unsynced)->getPods());
+        $this->assertCount(3, end($unsynced)->getPods());
+        $this->assertEquals($this->waybillUrl($dropoff), end($unsynced)->getPods()[0]);
 
         $commandTester->execute(['transporter' => 'DBSCHENKER']);
 
@@ -1028,6 +1039,26 @@ class SyncTransportersCommandTest extends KernelTestCase {
         return $delivery->getDropoff();
     }
 
+    /**
+     * The absolute URL the notifier builds: the waybill page, or $path.
+     */
+    private function waybillUrl(Task $task, ?string $path = null): string
+    {
+        $container = self::getContainer();
+        $context = $container->get('router')->getContext();
+        $baseUrl = sprintf('%s://%s', $context->getScheme(), $context->getHost());
+
+        if (!is_null($path)) {
+            return sprintf('%s/%s', $baseUrl, $path);
+        }
+
+        return $baseUrl . $container->get('router')->generate('public_pod', [
+            '_locale' => $container->getParameter('locale'),
+            'id' => $task->getId(),
+            'token' => $container->get(ProofOfDeliveryToken::class)->generate($task),
+        ]);
+    }
+
     private function readLastReport(): string
     {
         $dir_list = $this->syncDBSchenkerFs->listContents(sprintf('from_%s', self::FS_MASK_DBS))->toArray();
@@ -1092,8 +1123,10 @@ class SyncTransportersCommandTest extends KernelTestCase {
 
         $unsynced = $this->entityManager->getRepository(EDIFACTMessage::class)->getUnsynced('DBSCHENKER');
         $pods = array_values(array_filter($unsynced, fn(EDIFACTMessage $m) => $m->getSubMessageType() === 'POD|CFM'));
-        $this->assertCount(1, $pods);
-        $this->assertCount(2, $pods[0]->getPods());
+        // The waybill when the task is done, then both images together
+        $this->assertCount(2, $pods);
+        $this->assertEquals([$this->waybillUrl($dropoff)], $pods[0]->getPods());
+        $this->assertCount(2, $pods[1]->getPods());
     }
 
     /**
@@ -1118,7 +1151,8 @@ class SyncTransportersCommandTest extends KernelTestCase {
 
         $unsynced = $this->entityManager->getRepository(EDIFACTMessage::class)->getUnsynced('DBSCHENKER');
         $this->assertEquals('POD|CFM', end($unsynced)->getSubMessageType());
-        $this->assertCount(1, end($unsynced)->getPods());
+        // The waybill and the image, once
+        $this->assertCount(2, end($unsynced)->getPods());
     }
 
     /**
@@ -1148,9 +1182,12 @@ class SyncTransportersCommandTest extends KernelTestCase {
             explode('UNH+', $this->readLastReport()),
             fn(string $event) => str_contains($event, "RSJ+MS+POD+CFM'")
         ));
-        $this->assertCount(2, $podEvents);
-        $this->assertEquals(9, substr_count($podEvents[0], ":FT'"));
-        $this->assertEquals(1, substr_count($podEvents[1], ":FT'"));
+        // The waybill and the 10 images, never more than 9 per event
+        $this->assertGreaterThan(1, count($podEvents));
+        $this->assertEquals(11, array_sum(array_map(fn(string $event) => substr_count($event, ":FT'"), $podEvents)));
+        foreach ($podEvents as $podEvent) {
+            $this->assertLessThanOrEqual(9, substr_count($podEvent, ":FT'"));
+        }
     }
 
     /**
@@ -1184,7 +1221,10 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->entityManager->clear();
         $liv = $this->entityManager->getRepository(EDIFACTMessage::class)
             ->findOneBy(['subMessageType' => 'LIV|CFM']);
-        $this->assertCount(1, $liv->getPods());
+        $this->assertEquals(
+            [$this->waybillUrl($dropoff), $this->waybillUrl($dropoff, 'media/tasks/images/pod-1.jpg')],
+            $liv->getPods()
+        );
     }
 
     /**
@@ -1223,6 +1263,45 @@ class SyncTransportersCommandTest extends KernelTestCase {
     /**
      * A photo taken on a pickup is not a proof of delivery.
      */
+    /**
+     * The waybill page is the proof: a done dropoff sends it right away, even
+     * before any image, and only once.
+     */
+    public function testDoneDropoffWithoutImagesSendsTheWaybill(): void
+    {
+        $commandTester = new CommandTester($this->initCommand());
+        $dropoff = $this->startDropoff($commandTester);
+
+        $this->taskManager->markAsDone($dropoff);
+        $this->entityManager->flush();
+        $this->entityManager->clear();
+
+        $commandTester->execute(['transporter' => 'DBSCHENKER']);
+
+        $podEvents = array_values(array_filter(
+            explode('UNH+', $this->readLastReport()),
+            fn(string $event) => str_contains($event, "RSJ+MS+POD+CFM'")
+        ));
+        $this->assertCount(1, $podEvents);
+        $this->assertEquals(1, substr_count($podEvents[0], ":FT'"));
+        $this->assertStringContainsString(
+            sprintf("/pub/pod/%d/%s:FT'", $dropoff->getId(), self::getContainer()->get(ProofOfDeliveryToken::class)->generate($dropoff)),
+            $podEvents[0]
+        );
+
+        // A photo uploaded afterwards comes alone
+        $image = new TaskImage();
+        $image->setImageName('pod-late.jpg');
+        $image->setTask($this->entityManager->getRepository(Task::class)->find($dropoff->getId()));
+        $this->entityManager->persist($image);
+        $this->entityManager->flush();
+        $this->entityManager->clear();
+
+        $unsynced = $this->entityManager->getRepository(EDIFACTMessage::class)->getUnsynced('DBSCHENKER');
+        $this->assertCount(1, $unsynced);
+        $this->assertEquals([$this->waybillUrl($dropoff, 'media/tasks/images/pod-late.jpg')], $unsynced[0]->getPods());
+    }
+
     /**
      * The waybill page re-reads what isn't stored on the task (references,
      * shipper, weight, goods) from the archived EDIFACT file.
@@ -1393,8 +1472,9 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->entityManager->persist($image);
         $this->entityManager->flush();
 
+        // The 3 status reports, and the POD|CFM carrying the waybill
         $unsynced = $this->entityManager->getRepository(EDIFACTMessage::class)->getUnsynced('DBSCHENKER');
-        $this->assertCount(3, $unsynced);
+        $this->assertCount(4, $unsynced);
 
         // ... and linked afterwards by PUT /api/tasks/images.
         $image->setTask($dropoff);
@@ -1402,7 +1482,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->entityManager->clear();
 
         $unsynced = $this->entityManager->getRepository(EDIFACTMessage::class)->getUnsynced('DBSCHENKER');
-        $this->assertCount(4, $unsynced);
+        $this->assertCount(5, $unsynced);
         $this->assertEquals('POD|CFM', end($unsynced)->getSubMessageType());
         $this->assertCount(1, end($unsynced)->getPods());
     }
@@ -1452,10 +1532,10 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->entityManager->flush();
         $this->entityManager->clear();
 
-        // Only the 3 status reports of the imported delivery.
+        // Only the reports of the imported delivery.
         $unsynced = $this->entityManager->getRepository(EDIFACTMessage::class)->getUnsynced('DBSCHENKER');
         $this->assertEquals(
-            ['AAR|CFM', 'MLV|CFM', 'LIV|CFM'],
+            ['AAR|CFM', 'MLV|CFM', 'LIV|CFM', 'POD|CFM'],
             array_map(fn(EDIFACTMessage $m) => $m->getSubMessageType(), $unsynced)
         );
     }
@@ -1696,7 +1776,8 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->entityManager->flush();
 
         $this->assertCount(3, $pickup->getEdifactMessages());
-        $this->assertCount(2, $dropoff->getEdifactMessages());
+        // The import, LIV|CFM and the POD|CFM carrying the waybill
+        $this->assertCount(3, $dropoff->getEdifactMessages());
 
         $pickupReportEDIMessage = $pickup->getEdifactMessages()->map(function (EDIFACTMessage $message) {
             return [$message->getMessageType(), $message->getSubMessageType()];
@@ -1711,7 +1792,9 @@ class SyncTransportersCommandTest extends KernelTestCase {
         );
 
         /** @var EDIFACTMessage $reportEDIMessage */
-        $dropoffReportEDIMessage = $dropoff->getEdifactMessages()->last();
+        $dropoffReportEDIMessage = $dropoff->getReports()
+            ->filter(fn(EDIFACTMessage $m) => $m->getSubMessageType() === 'LIV|CFM')
+            ->first();
 
         $this->assertEquals('JOY560000410920251001', $dropoffReportEDIMessage->getReference());
         $this->assertEquals('DBSCHENKER', $dropoffReportEDIMessage->getTransporter());
@@ -1749,14 +1832,17 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->assertCount(0, $this->syncOutBMVFs->listContents('/')->toArray());
 
         $unsynced = $this->entityManager->getRepository(EDIFACTMessage::class)->getUnsynced('DBSCHENKER');
-        $this->assertCount(3, $unsynced);
+        $this->assertCount(4, $unsynced);
+
+        // The cron runs in its own process
+        $this->entityManager->clear();
 
         $commandTester->execute([
             'transporter' => 'DBSCHENKER'
         ]);
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('imported 0 tasks', $output);
-        $this->assertStringContainsString('3 messages to send', $output);
+        $this->assertStringContainsString('4 messages to send', $output);
 
 
         $this->assertCount(0, $this->syncOutBMVFs->listContents('/')->toArray());
@@ -1789,11 +1875,14 @@ class SyncTransportersCommandTest extends KernelTestCase {
         // After sync: reload the LIV|CFM message from DB and verify the
         // post-sync state — syncedAt/edifactFile are populated, PODs persist
         // (ReportFromCC::generateReport re-persists them).
-        $this->entityManager->refresh($dropoffReportEDIMessage);
+        $this->entityManager->clear();
+        $dropoffReportEDIMessage = $this->entityManager->getRepository(EDIFACTMessage::class)
+            ->find($dropoffReportEDIMessage->getId());
         $this->assertNotNull($dropoffReportEDIMessage->getSyncedAt());
         $this->assertNotNull($dropoffReportEDIMessage->getEdiMessage());
+        // ... with the task's proofs added at sync time
         $this->assertEquals(
-            ['https://urldetracking.com/monexpedition'],
+            ['https://urldetracking.com/monexpedition', $this->waybillUrl($dropoff)],
             $dropoffReportEDIMessage->getPods()
         );
 
@@ -1862,14 +1951,15 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->entityManager->flush();
 
         $this->assertCount(3, $pickup->getEdifactMessages());
-        $this->assertCount(2, $dropoff->getEdifactMessages());
+        // The import, LIV|CFM and the POD|CFM carrying the waybill
+        $this->assertCount(3, $dropoff->getEdifactMessages());
 
         $commandTester->execute([
             'transporter' => 'BMV'
         ]);
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('imported 0 tasks', $output);
-        $this->assertStringContainsString('3 messages to send', $output);
+        $this->assertStringContainsString('4 messages to send', $output);
 
         $this->assertCount(0, $this->syncOutBMVFs->listContents('/')->toArray());
         $dir_list = $this->syncInBMVFs->listContents('/')->toArray();
@@ -1981,7 +2071,8 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->entityManager->flush();
 
         $this->assertCount(3, $pickup->getEdifactMessages());
-        $this->assertCount(2, $dropoff->getEdifactMessages());
+        // The import, LIV|CFM and the POD|CFM carrying the waybill
+        $this->assertCount(3, $dropoff->getEdifactMessages());
 
         $pickupReportEDIMessage = $pickup->getEdifactMessages()->map(function (EDIFACTMessage $message) {
             return [$message->getMessageType(), $message->getSubMessageType()];
@@ -1996,7 +2087,9 @@ class SyncTransportersCommandTest extends KernelTestCase {
         );
 
         /** @var EDIFACTMessage $reportEDIMessage */
-        $dropoffReportEDIMessage = $dropoff->getEdifactMessages()->last();
+        $dropoffReportEDIMessage = $dropoff->getReports()
+            ->filter(fn(EDIFACTMessage $m) => $m->getSubMessageType() === 'LIV|CFM')
+            ->first();
 
         $this->assertEquals('LACOURSERIETEST', $dropoffReportEDIMessage->getReference());
         $this->assertEquals('TELIAE', $dropoffReportEDIMessage->getTransporter());
@@ -2019,14 +2112,14 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->assertCount(0, $this->syncOutBMVFs->listContents('/')->toArray());
 
         $unsynced = $this->entityManager->getRepository(EDIFACTMessage::class)->getUnsynced('TELIAE');
-        $this->assertCount(3, $unsynced);
+        $this->assertCount(4, $unsynced);
 
         $commandTester->execute([
             'transporter' => 'TELIAE'
         ]);
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('imported 0 tasks', $output);
-        $this->assertStringContainsString('3 messages to send', $output);
+        $this->assertStringContainsString('4 messages to send', $output);
 
 
         $this->assertCount(0, $this->syncOutBMVFs->listContents('/')->toArray());
@@ -2381,7 +2474,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
 
         $commandTester->execute(['transporter' => 'DBSCHENKER']);
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('3 messages to send', $output);
+        $this->assertStringContainsString('4 messages to send', $output);
 
         // The default 'from_<filemask>' was NOT used
         $this->assertCount(
@@ -2445,7 +2538,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
 
         $commandTester->execute(['transporter' => 'DBSCHENKER']);
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('3 messages to send', $output);
+        $this->assertStringContainsString('4 messages to send', $output);
 
         $expectedDate = date('Ymd');
         $files = $this->syncDBSchenkerFs
@@ -2594,7 +2687,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
 
         $commandTester->execute(['transporter' => 'DBSCHENKER']);
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('3 messages to send', $output);
+        $this->assertStringContainsString('4 messages to send', $output);
 
         $expectedDate = date('Ymd');
         $files = $this->syncDBSchenkerFs
