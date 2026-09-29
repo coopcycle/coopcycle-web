@@ -1114,6 +1114,35 @@ task.receipt.message: Hereby we confirm that we have delivered your parcel at <s
 task.receipt.received_by: The parcel was received by <strong>%name%</strong>
 task.receipt.attached_images: Attached images
 task.receipt.reference: 'Reference: <strong>%ref%</strong>'
+pod.title: Waybill
+pod.completed_at: on %date%
+pod.client_file_number: Client file no.
+pod.receipt_number: Receipt no.
+pod.shipper_references: Shipper reference
+pod.consignee_orders: Consignee order no.
+pod.sender: Sender
+pod.shipper: Shipper
+pod.consignee: Consignee
+pod.delivery_instructions: Delivery instructions
+pod.handling_units: Number of UMs
+pod.packages: Number of packages
+pod.returnables: Number of returnables
+pod.gross_weight: Gross weight (kg)
+pod.volume: Volume (m³)
+pod.nature_of_goods: Nature of goods
+pod.dangerous_goods: Dangerous goods (ADR)
+pod.dangerous_goods.class: class %class%
+pod.dangerous_goods.packing_group: PG %group%
+pod.cash_on_delivery: Cash on delivery
+pod.bl_number: B/L no.
+pod.no: No
+pod.reservations: Any reservation for missing or damaged goods must be precise and confirmed within three days by registered letter with acknowledgement of receipt (art. L. 133-3 of the French Commercial Code).
+pod.signatory: 'Signatory: %name%'
+pod.signature: Signature
+pod.no_signature: No signature
+pod.photos: Photos
+pod.photo: Photo
+pod.legal: Reconstituted waybill serving as proof (art. 1366 and 1367 of the French Civil Code)
 basics.hours: '%count% hour|%count% hours'
 basics.days: '%count% day|%count% days'
 basics.weeks: '%count% week|%count% weeks'
