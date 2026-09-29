@@ -3,12 +3,15 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Task;
 use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Form\Checkout\CheckoutPayment;
 use AppBundle\Form\Checkout\CheckoutPaymentType;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Transporter\Waybill;
+use AppBundle\Utils\ProofOfDeliveryToken;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use phpcent\Client as CentrifugoClient;
@@ -161,5 +164,33 @@ class PublicController extends AbstractController
             'centrifugo_token' => $token,
             'centrifugo_channel' => $channel,
         ]);
+    }
+
+    #[Route(path: '/pod/{id}/{token}', name: 'public_pod', requirements: ['id' => '\d+'])]
+    public function proofOfDeliveryAction(int $id, string $token,
+        ProofOfDeliveryToken $proofOfDeliveryToken,
+        Waybill $waybill,
+        EntityManagerInterface $entityManager)
+    {
+        $task = $entityManager->getRepository(Task::class)->find($id);
+
+        if (is_null($task) || !$proofOfDeliveryToken->isValid($task, $token)) {
+            throw $this->createNotFoundException();
+        }
+
+        // There is no proof until the dropoff is done
+        if (!$task->isDropoff() || !$task->isDone()) {
+            throw $this->createNotFoundException();
+        }
+
+        $response = $this->render('public/pod.html.twig', [
+            'task' => $task,
+            'waybill' => $waybill->fromTask($task),
+        ]);
+
+        // Shows a name, an address and a signature
+        $response->headers->set('X-Robots-Tag', 'noindex, nofollow');
+
+        return $response;
     }
 }
