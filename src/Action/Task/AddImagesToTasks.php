@@ -68,6 +68,7 @@ class AddImagesToTasks
         foreach($images as $image) {
             $newImage = new TaskImage();
             $newImage->setImageName($image->getImageName());
+            $newImage->setType($image->getType());
 
             $this->entityManager->persist($newImage);
             $this->entityManager->flush();

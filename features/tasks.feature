@@ -3237,6 +3237,7 @@ Feature: Tasks
         "@id":@string@,
         "@type":"http://schema.org/MediaObject",
         "imageName":@string@,
+        "type":null,
         "thumbnail":@string@
       }
       """
@@ -3294,6 +3295,7 @@ Feature: Tasks
         "@id":@string@,
         "@type":"http://schema.org/MediaObject",
         "imageName":@string@,
+        "type":null,
         "thumbnail":@string@
       }
       """
@@ -3320,9 +3322,62 @@ Feature: Tasks
         "@id":@string@,
         "@type":"http://schema.org/MediaObject",
         "imageName":@string@,
+        "type":null,
         "thumbnail":@string@
       }
       """
+
+  Scenario: Upload signature with tasks in header
+    Given the fixtures files are loaded:
+      | tasks.yml           |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "multipart/form-data"
+    When I add "X-Attach-To" header equal to "/api/tasks/1;/api/tasks/2"
+    And the user "bob" sends a "POST" request to "/api/task_images" with parameters:
+      | key      | value     |
+      | file     | @beer.jpg |
+      | type     | signature |
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/TaskImage",
+        "@id":@string@,
+        "@type":"http://schema.org/MediaObject",
+        "imageName":@string@,
+        "type":"signature",
+        "thumbnail":@string@
+      }
+      """
+    Given the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456              |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    And I add "Accept" header equal to "application/ld+json"
+    When the user "admin" sends a "GET" request to "/api/tasks/2"
+    Then the response status code should be 200
+    And the JSON node "images[0].type" should be equal to "signature"
+
+  Scenario: Upload image with unknown type
+    Given the fixtures files are loaded:
+      | tasks.yml           |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "multipart/form-data"
+    And the user "bob" sends a "POST" request to "/api/task_images" with parameters:
+      | key      | value     |
+      | file     | @beer.jpg |
+      | type     | selfie    |
+    Then the response status code should be 400
 
   Scenario: Retrieve custom failure reasons
     Given the fixtures files are loaded:
