@@ -18,12 +18,23 @@ class TaskChangedNotifier {
 
     public function __invoke(Task $task, PostUpdateEventArgs $event): void
     {
-        if ($this->shouldEventBeIgnored($task)) {
-            return;
-        }
         $em = $event->getObjectManager();
         $uow = $em->getUnitOfWork();
         $changeset = $uow->getEntityChangeSet($task);
+
+        // Everything below only acts on a status transition, and the changeset
+        // is already in memory -- so test it before shouldEventBeIgnored(),
+        // which initialises the task's EDIFACT messages. That collection is
+        // lazy, so asking it first meant one query for every updated task,
+        // always returning nothing for a coop with no transporter integration.
+        if (!isset($changeset['status'])) {
+            return;
+        }
+
+        if ($this->shouldEventBeIgnored($task)) {
+            return;
+        }
+
         $this->handleChangeset($task, $changeset);
     }
 

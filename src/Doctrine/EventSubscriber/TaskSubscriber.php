@@ -15,6 +15,7 @@ use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\UnitOfWork;
 use Psr\Log\LoggerInterface;
+use ShipMonk\DoctrineEntityPreloader\EntityPreloader;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsDoctrineListener(event: Events::onFlush, priority: 32, connection: 'default')]
@@ -88,6 +89,13 @@ class TaskSubscriber
 
         foreach ($tasks as $task) {
             $this->processor->process($task, $uow->getEntityChangeSet($task));
+        }
+
+        // Task::addEvent() below scans the task's events to avoid recording a
+        // duplicate, which initialises the collection. Load them for the whole
+        // batch in one query instead of one query per task.
+        if (count($this->tasksToUpdate) > 0) {
+            (new EntityPreloader($em))->preload(array_values($this->tasksToUpdate), 'events');
         }
 
         foreach ($this->tasksToUpdate as $task) {

@@ -37,17 +37,22 @@ trait TaggableTrait
     public function setTags(array|string|callable $tags): void
     {
         if (is_callable($tags)) {
+            // A callable is the lazy loader that TaggableSubscriber::postLoad
+            // installs on every taggable entity as it is hydrated. It reads the
+            // tags, it does not change them, so it must not touch updatedAt:
+            // doing so made every entity dirty the moment it was loaded, and
+            // the next flush rewrote all of them. Moving one task on the
+            // dispatch board rewrote the courier's whole task list that way.
             $this->tagsCallable = $tags;
-        } else {
-            $this->tags = is_array($tags) ? $tags : explode(' ', $tags);
-            $this->tags = array_unique($this->tags);
-            $this->tagsCallable = null;
+
+            return;
         }
 
-        if (property_exists($this, 'updatedAt')) {
-            // Make sure to trigger a Doctrine update
-            $this->updatedAt = new \DateTime();
-        }
+        $this->tags = is_array($tags) ? $tags : explode(' ', $tags);
+        $this->tags = array_unique($this->tags);
+        $this->tagsCallable = null;
+
+        $this->touchForTagsChange();
     }
 
     public function addTags(array|string $tags): void
@@ -57,5 +62,23 @@ trait TaggableTrait
             is_array($tags) ? $tags : explode(' ', $tags)
         );
         $this->tags = array_unique($this->tags);
+
+        $this->touchForTagsChange();
+    }
+
+    /**
+     * 'tags' is not a mapped field, so an entity whose tags changed looks clean
+     * to Doctrine and TaggableSubscriber would never see it in the flush. Touch
+     * updatedAt to schedule it.
+     *
+     * Only actual changes may call this. It used to run on load as well, via
+     * setTags() being handed the lazy loader from TaggableSubscriber::postLoad,
+     * which made every taggable entity dirty the moment it was hydrated.
+     */
+    private function touchForTagsChange(): void
+    {
+        if (property_exists($this, 'updatedAt')) {
+            $this->updatedAt = new \DateTime();
+        }
     }
 }
