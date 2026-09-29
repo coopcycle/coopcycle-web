@@ -39,6 +39,42 @@ class EdifactMessageParser
      */
     public function parse(EDIFACTMessage $message): ?array
     {
+        $parsed = $this->readAndParse($message);
+        if (is_null($parsed)) {
+            return null;
+        }
+
+        [$content, $point] = $parsed;
+
+        return [
+            'reference' => $message->getReference(),
+            'transporter' => $message->getTransporter(),
+            'messageType' => $message->getMessageType(),
+            'direction' => $message->getDirection(),
+            'createdAt' => $message->getCreatedAt()?->format(\DateTimeInterface::ATOM),
+            'file' => $message->getEdiMessage(),
+            'point' => $this->pointToArray($point),
+            'raw' => $this->normalize($content),
+        ];
+    }
+
+    /**
+     * Parses the EDIFACT file backing the given message and returns the point
+     * matching the message reference.
+     *
+     * @return Point|null Null when the file is missing, cannot be parsed, or
+     *   holds no point matching the message reference.
+     */
+    public function parsePoint(EDIFACTMessage $message): ?Point
+    {
+        return $this->readAndParse($message)[1] ?? null;
+    }
+
+    /**
+     * @return array{0: string, 1: Point}|null
+     */
+    private function readAndParse(EDIFACTMessage $message): ?array
+    {
         $filename = $message->getEdiMessage();
         if (empty($filename)) {
             return null;
@@ -87,16 +123,7 @@ class EdifactMessageParser
             return null;
         }
 
-        return [
-            'reference' => $message->getReference(),
-            'transporter' => $message->getTransporter(),
-            'messageType' => $message->getMessageType(),
-            'direction' => $message->getDirection(),
-            'createdAt' => $message->getCreatedAt()?->format(\DateTimeInterface::ATOM),
-            'file' => $filename,
-            'point' => $this->pointToArray($point),
-            'raw' => $this->normalize($content),
-        ];
+        return [$content, $point];
     }
 
     /**
