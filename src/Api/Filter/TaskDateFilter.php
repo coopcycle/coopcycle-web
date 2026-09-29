@@ -22,14 +22,26 @@ final class TaskDateFilter extends AbstractFilter
             return;
         }
 
+        try {
+            $startOfDay = new \DateTime(sprintf('%s 00:00:00', $value));
+        } catch (\Exception $e) {
+            return;
+        }
+
+        $startOfNextDay = (clone $startOfDay)->modify('+1 day');
+
         $afterParameterName = $queryNameGenerator->generateParameterName('doneAfter');
         $beforeParameterName = $queryNameGenerator->generateParameterName('doneBefore');
 
+        // Match the tasks whose [doneAfter, doneBefore] window covers the requested day.
+        // Expressed as a half-open range on the raw columns instead of DATE(o.doneAfter)/
+        // DATE(o.doneBefore): wrapping the columns in a function makes the predicate
+        // non-sargable, so Postgres cannot use an index and scans the whole task table.
         $queryBuilder
-            ->andWhere(sprintf(':%s >= DATE(o.%s)', $afterParameterName, 'doneAfter'))
-            ->andWhere(sprintf(':%s <= DATE(o.%s)', $beforeParameterName, 'doneBefore'))
-            ->setParameter($afterParameterName, $value)
-            ->setParameter($beforeParameterName, $value);
+            ->andWhere(sprintf('o.%s < :%s', 'doneAfter', $afterParameterName))
+            ->andWhere(sprintf('o.%s >= :%s', 'doneBefore', $beforeParameterName))
+            ->setParameter($afterParameterName, $startOfNextDay)
+            ->setParameter($beforeParameterName, $startOfDay);
     }
 
     public function getDescription(string $resourceClass): array

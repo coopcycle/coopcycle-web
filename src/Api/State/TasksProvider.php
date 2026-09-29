@@ -79,6 +79,15 @@ final class TasksProvider implements ProviderInterface
         // Optimization when calling $delivery->getTasks()
         $taskCollectionItems = $preloader->preload($delivery, 'items');
 
+        // The tasks in the same delivery are not necessarily part of the current page,
+        // in which case they are uninitialized proxies.
+        // They are traversed for every task being serialized, to compute the aggregated
+        // packages & weight (@see AppBundle\Api\Dto\TaskMapper), so preload them as well,
+        // otherwise each one triggers its own query.
+        $siblingTasks = $preloader->preload($taskCollectionItems, 'task');
+        $siblingTaskPackages = $preloader->preload($siblingTasks, 'packages');
+        $preloader->preload($siblingTaskPackages, 'package');
+
         $order = $preloader->preload($delivery, 'order');
         $orderItems = $preloader->preload($order, 'items');
         $preloader->preload($orderItems, 'variant');

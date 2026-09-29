@@ -37,7 +37,7 @@ class TasksFunctionalTest extends ApiTestCase
         $this->entityManager = null;
     }
 
-    public function testQueryCountIsStable()
+    private function createAdminClientWithDispatchFixtures()
     {
         $userManipulator = self::getContainer()->get(UserManipulator::class);
 
@@ -61,18 +61,23 @@ class TasksFunctionalTest extends ApiTestCase
 
         $token = $jwtManager->create($user);
 
-        $client = static::createClient(defaultOptions: [
+        return static::createClient(defaultOptions: [
             'headers' => [
                 'authorization' => 'Bearer '.$token
             ]
         ]);
+    }
+
+    public function testQueryCountIsStable()
+    {
+        $client = $this->createAdminClientWithDispatchFixtures();
 
         // enable the profiler only for the next request (if you make
         // new requests, you must call this method again)
         // (it does nothing if the profiler is not available)
         $client->enableProfiler();
 
-        $response = $client->request('GET', '/api/tasks?date=2024-12-01');
+        $client->request('GET', '/api/tasks?date=2024-12-01');
 
         $this->assertResponseStatusCodeSame(200);
 
@@ -80,6 +85,37 @@ class TasksFunctionalTest extends ApiTestCase
 
         $this->assertLessThanOrEqual(
             9,
+            $profile->getCollector('db')->getQueryCount()
+        );
+    }
+
+    /**
+     * The dispatch board asks for the tasks of a day page by page, so the other
+     * tasks of a delivery are usually not on the page being serialized. They are
+     * still traversed for every task, to compute the aggregated packages and
+     * weight (@see \AppBundle\Api\Dto\TaskMapper), and used to be loaded one
+     * query at a time: 38 queries for a page of 30 tasks, against 14 once they
+     * are preloaded (@see \AppBundle\Api\State\TasksProvider).
+     *
+     * The collection is paginated only when the client asks for it
+     * (`paginationEnabled: false` on the operation), which is why the
+     * unpaginated test above never caught this: without pagination every
+     * sibling is already in the identity map.
+     */
+    public function testQueryCountIsStableWhenPaginated()
+    {
+        $client = $this->createAdminClientWithDispatchFixtures();
+
+        $client->enableProfiler();
+
+        $client->request('GET', '/api/tasks?date=2024-12-01&pagination=true&itemsPerPage=30');
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $profile = $client->getProfile();
+
+        $this->assertLessThanOrEqual(
+            16,
             $profile->getCollector('db')->getQueryCount()
         );
     }

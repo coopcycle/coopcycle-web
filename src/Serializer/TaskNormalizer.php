@@ -101,16 +101,20 @@ class TaskNormalizer implements NormalizerInterface, ContextAwareDenormalizerInt
 
         $delivery = $object->getDelivery();
 
+        // Delivery::getTasks() rebuilds an array from the items collection on every call,
+        // and both aggregates below need the same list, so compute it only once.
+        $tasksInTheSameDelivery = $delivery?->getTasks() ?? [];
+
         $packages = $this->taskMapper->getPackages(
             $object,
-            $delivery?->getTasks() ?? []
+            $tasksInTheSameDelivery
         );
 
         $data['packages'] = array_map(fn ($package) => $this->objectNormalizer->normalize($package, 'json'), $packages);
 
         $data['weight'] = $this->taskMapper->getWeight(
             $object,
-            $delivery?->getTasks() ?? []
+            $tasksInTheSameDelivery
         );
 
         // Set metadata
