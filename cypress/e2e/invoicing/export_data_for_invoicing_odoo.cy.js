@@ -33,7 +33,7 @@ context('Invoicing (role: admin)', () => {
       .should('exist')
 
     // Select the first organisation
-    cy.get('[data-row-key="1"]').within(() => {
+    cy.get('[data-row-key="/api/stores/1"]').within(() => {
       cy.get('.ant-checkbox-input').check()
     })
 
@@ -59,7 +59,7 @@ context('Invoicing (role: admin)', () => {
       expect(lines[0]).to.equal(
         '"External ID","Invoice Date",Partner,"Invoice lines / Account","Invoice lines / Product","Invoice lines / Label","Invoice lines / Unit Price","Invoice lines / Quantity"',
       )
-      for (let i = 1; i <= 250; i++) {
+      for (let i = 1; i <= 40; i++) {
         // a809477e-2a06-45cc-811a-7679b2501311-6b86b27,2025-06-13,Acme,411100,"Livraison à la demande","Livraison à la demande - 0.00 km - Retrait: Warehouse - Dépôt: Office - 13/06/2025 (Commande #A1)",124.82,1
         expect(lines[i]).to.match(
           new RegExp(

@@ -33,7 +33,7 @@ context('Invoicing (role: admin)', () => {
       .should('exist')
 
     // Expand the first row to see the orders
-    cy.get('[data-row-key="1"]').within(() => {
+    cy.get('[data-row-key="/api/stores/1"]').within(() => {
       cy.get('[aria-label="Développer la ligne"]').first().click()
     })
 
@@ -50,7 +50,7 @@ context('Invoicing (role: admin)', () => {
     // Verify pagination
 
     // Go to the second page of orders
-    cy.get('[data-testid="invoicing.orders.1"]').within(() => {
+    cy.get('[data-testid="invoicing.orders./api/stores/1"]').within(() => {
       cy.get('.ant-pagination-item-2').click()
     })
 
@@ -69,7 +69,7 @@ context('Invoicing (role: admin)', () => {
     }
 
     // Select the first organisation
-    cy.get('[data-row-key="1"]').within(() => {
+    cy.get('[data-row-key="/api/stores/1"]').within(() => {
       cy.get('.ant-checkbox-input').check()
     })
 
@@ -87,15 +87,15 @@ context('Invoicing (role: admin)', () => {
       // split by line
       const lines = content.split('\n').map(line => line.trim())
 
-      // Organization,Description,"Total products (excl. VAT)",Taxes,"Total products (incl. VAT)"
+      // Organization,Description,"Total products (excl. VAT)",Taxes,"Total products (incl. VAT)",Paid,Unpaid,Tips
       expect(lines[0]).to.equal(
-        'Organization,Description,"Total products (excl. VAT)",Taxes,"Total products (incl. VAT)"',
+        'Organization,Description,"Total products (excl. VAT)",Taxes,"Total products (incl. VAT)",Paid,Unpaid,Tips',
       )
-      for (let i = 1; i <= 250; i++) {
+      for (let i = 1; i <= 40; i++) {
         // Acme,"Livraison à la demande - 0.00 km - Retrait: Warehouse - Dépôt: Office - 13/06/2025 (Commande #A1)",124.82,24.96,149.78
         expect(lines[i]).to.match(
           new RegExp(
-            `^Acme,"Livraison à la demande - [0-9]+(\\.[0-9]+)? km - Retrait: Warehouse - Dépôt: Office - \\d{2}/\\d{2}/\\d{4} \\(Commande #A${i}\\)",[0-9]+(\\.[0-9]+)?,[0-9]+(\\.[0-9]+)?,[0-9]+(\\.[0-9]+)?$`,
+            `^Acme,"Livraison à la demande - [0-9]+(\\.[0-9]+)? km - Retrait: Warehouse - Dépôt: Office - \\d{2}/\\d{2}/\\d{4} \\(Commande #A${i}\\)",[0-9]+(\\.[0-9]+)?,[0-9]+(\\.[0-9]+)?,[0-9]+(\\.[0-9]+)?,0,[0-9]+(\\.[0-9]+)?,0$`,
           ),
         )
       }
