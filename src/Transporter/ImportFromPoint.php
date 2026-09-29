@@ -94,7 +94,7 @@ class ImportFromPoint {
             fn(Mesurement $p) => $p->getQuantity(),
             $point->getMesurements()
         ));
-        $task->setWeight($weight * 1000);
+        $task->setWeight((int) round($weight * 1000));
 
         foreach ($point->getPackages() as $package) {
             $this->addPackageToTask($task, $package);
