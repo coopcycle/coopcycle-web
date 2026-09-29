@@ -19,9 +19,7 @@ export function prepareParams({
 
   if (organization && organization.length > 0) {
     params.push(
-      ...organization.map(
-        organizationId => `organization[]=${organizationId}`,
-      ),
+      ...organization.map(organizationId => `organization[]=${organizationId}`),
     );
   }
 
@@ -82,15 +80,25 @@ function downloadFile({
   };
 }
 
+// Recording the export is the server's default; only the opt-out is sent
+function exportParams(params: string[], markAsExported: boolean): string {
+  return (markAsExported ? params : [...params, 'markAsExported=0']).join('&');
+}
+
 export function downloadStandardFile({
   params,
   filename,
+  markAsExported = true,
 }: {
   params: string[];
   filename: string;
+  markAsExported?: boolean;
 }): ThunkAction<Promise<void>, RootState, unknown, UnknownAction> {
   return downloadFile({
-    requestUrl: `api/invoice_line_items/export?${params.join('&')}`,
+    requestUrl: `api/invoice_line_items/export?${exportParams(
+      params,
+      markAsExported,
+    )}`,
     filename,
   });
 }
@@ -98,12 +106,17 @@ export function downloadStandardFile({
 export function downloadOdooFile({
   params,
   filename,
+  markAsExported = true,
 }: {
   params: string[];
   filename: string;
+  markAsExported?: boolean;
 }): ThunkAction<Promise<void>, RootState, unknown, UnknownAction> {
   return downloadFile({
-    requestUrl: `api/invoice_line_items/export/odoo?${params.join('&')}`,
+    requestUrl: `api/invoice_line_items/export/odoo?${exportParams(
+      params,
+      markAsExported,
+    )}`,
     filename,
   });
 }

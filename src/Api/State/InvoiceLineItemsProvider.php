@@ -131,14 +131,20 @@ final class InvoiceLineItemsProvider implements ProviderInterface
             $request = $this->requestStack->getCurrentRequest();
             $requestId = $request->headers->get('X-Request-ID');
 
-            $exportCommand = new ExportCommand(
-                $this->security->getUser(),
-                $requestId,
-            );
-            $exportCommand->addOrders($exportedOrders);
+            // Downloading a spreadsheet is not necessarily the same as issuing
+            // the invoices: admins can opt out of recording the export, so that
+            // the orders keep showing up as "not invoiced" until the real run
+            if ($request->query->getBoolean('markAsExported', true)) {
 
-            $this->entityManager->persist($exportCommand);
-            $this->entityManager->flush();
+                $exportCommand = new ExportCommand(
+                    $this->security->getUser(),
+                    $requestId,
+                );
+                $exportCommand->addOrders($exportedOrders);
+
+                $this->entityManager->persist($exportCommand);
+                $this->entityManager->flush();
+            }
 
             return $exportedLineItems;
         }

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Radio, RadioChangeEvent, Space } from 'antd';
+import { Checkbox, Radio, RadioChangeEvent, Space } from 'antd';
 
 import Button from '../../../components/core/Button';
 import { downloadStandardFile, downloadOdooFile } from '../redux/actions';
@@ -20,6 +20,7 @@ type Props = {
 
 export default ({ dateRange, params, setModalOpen }: Props) => {
   const [destination, setDestination] = useState(DESTINATIONS.standard);
+  const [markAsExported, setMarkAsExported] = useState(true);
 
   const dispatch = useAppDispatch();
 
@@ -42,6 +43,7 @@ export default ({ dateRange, params, setModalOpen }: Props) => {
           downloadStandardFile({
             params,
             filename,
+            markAsExported,
           }),
         );
         break;
@@ -50,6 +52,7 @@ export default ({ dateRange, params, setModalOpen }: Props) => {
           downloadOdooFile({
             params,
             filename,
+            markAsExported,
           }),
         );
         break;
@@ -81,11 +84,18 @@ export default ({ dateRange, params, setModalOpen }: Props) => {
           </Space>
         </Radio.Group>
       </main>
-      <footer className="modal-footer">
+      <footer
+        className="modal-footer d-flex align-items-center justify-content-end"
+        style={{ gap: '16px' }}>
+        <Checkbox
+          data-testid="invoicing.download.mark_as_exported"
+          checked={markAsExported}
+          onChange={e => setMarkAsExported(e.target.checked)}>
+          {t('ADMIN_ORDERS_TO_INVOICE_MARK_AS_EXPORTED')}
+        </Checkbox>
         <Button
           testID="invoicing.download.file"
           primary
-          block
           icon="download"
           onClick={() => {
             download();

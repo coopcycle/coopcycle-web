@@ -770,6 +770,7 @@
         "ADMIN_ORDERS_TO_INVOICE_SETTLEMENT_ALL": "Toutes",
         "ADMIN_ORDERS_TO_INVOICE_SETTLEMENT_LABEL": "Statut de facturation",
         "ADMIN_ORDERS_TO_INVOICE_REFRESH": "Actualiser",
+        "ADMIN_ORDERS_TO_INVOICE_MARK_AS_EXPORTED": "Marquer comme exporté",
         "ADMIN_ORDERS_TO_INVOICE_DOWNLOAD": "Télécharger",
         "ADMIN_ORDERS_TO_INVOICE_ORGANIZATION_LABEL": "Organisation (nombre de commandes)",
         "ADMIN_ORDERS_TO_INVOICE_ORDER_NUMBER_LABEL": "Commande #",

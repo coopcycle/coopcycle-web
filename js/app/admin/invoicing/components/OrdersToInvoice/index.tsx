@@ -7,7 +7,10 @@ import { Moment } from 'moment';
 import Button from '../../../../components/core/Button';
 import { prepareParams, SettlementFilter } from '../../redux/actions';
 import { useGetPendingInvoiceLineItemsQuery } from '../../../../api/slice';
-import { dateRangeFromParams, syncDateRangeToUrl } from '../../utils/dateRangeUrl';
+import {
+  dateRangeFromParams,
+  syncDateRangeToUrl,
+} from '../../utils/dateRangeUrl';
 import ExportModalContent from '../ExportModalContent';
 import OrganizationsTable from '../OrganizationsTable';
 import RangePicker from './RangePicker';
@@ -83,10 +86,7 @@ export default () => {
       <h5>{t('ADMIN_ORDERS_TO_INVOICE_TITLE')}</h5>
       <div className="d-flex" style={{ marginTop: '12px', gap: '24px' }}>
         {t('ADMIN_DASHBOARD_NAV_FILTERS')}:
-        <RangePicker
-          initialDateRange={dateRange}
-          setDateRange={setDateRange}
-        />
+        <RangePicker initialDateRange={dateRange} setDateRange={setDateRange} />
         <div className="d-flex flex-column">
           {t('ADMIN_ORDERS_TO_INVOICE_FILTER_STATUS')}
           <Checkbox
@@ -160,6 +160,9 @@ export default () => {
         isOpen={isModalOpen}
         appElement={document.getElementById('invoicing')}
         className="ReactModal__Content--no-default" // disable additional inline style from react-modal
+        // The overlay has no z-index of its own, so a checked antd Radio.Button
+        // (z-index: 1) on the page behind would paint on top of the modal
+        overlayClassName="ReactModal__Overlay ReactModal__Overlay--zIndex-1001"
         shouldCloseOnOverlayClick={true}
         shouldCloseOnEsc={true}
         style={{ content: { overflow: 'unset' } }}>

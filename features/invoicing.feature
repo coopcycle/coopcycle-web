@@ -823,3 +823,39 @@ Feature: Invoicing
         }
       }
       """
+
+  Scenario: Downloading a spreadsheet without marking the orders as exported
+    Given the fixtures files are loaded with purge:
+      | setup_default.yml |
+    Given the fixtures files are loaded:
+      | cancelled_delivery_orders.yml |
+    Given the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "GET" request to "/api/invoice_line_items/export?markAsExported=0"
+    Then the response status code should be 200
+    When I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "GET" request to "/api/invoice_line_items?exists[exports]=true"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "hydra:totalItems":0,
+        "@*@":"@*@"
+      }
+      """
+    When I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "GET" request to "/api/invoice_line_items/export"
+    Then the response status code should be 200
+    When I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "GET" request to "/api/invoice_line_items?exists[exports]=true"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "hydra:totalItems":2,
+        "@*@":"@*@"
+      }
+      """
