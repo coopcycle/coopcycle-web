@@ -146,11 +146,9 @@ export default () => {
         <Button
           testID="invoicing.download"
           primary
+          // `params` is null until at least one organization is selected
+          disabled={!params}
           onClick={() => {
-            if (!params) {
-              return;
-            }
-
             setModalOpen(true);
           }}>
           {t('ADMIN_ORDERS_TO_INVOICE_DOWNLOAD')}
