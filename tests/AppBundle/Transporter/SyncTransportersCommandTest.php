@@ -10,12 +10,14 @@ use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskImage;
+use AppBundle\Enum\TaskImageType;
 use AppBundle\Service\DeliveryOrderManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TaskManager;
 use AppBundle\Transporter\ImportFromPoint;
 use AppBundle\Transporter\ReportFromCC;
 use AppBundle\Transporter\TransporterHelpers;
+use AppBundle\Utils\ProofOfDeliveryToken;
 use Doctrine\ORM\EntityManagerInterface;
 use Fidry\AliceDataFixtures\LoaderInterface;
 use League\Flysystem\Filesystem;
@@ -26,6 +28,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Transporter\TransporterException;
 
 class SyncTransportersCommandTest extends KernelTestCase {
@@ -1220,6 +1223,63 @@ class SyncTransportersCommandTest extends KernelTestCase {
     /**
      * A photo taken on a pickup is not a proof of delivery.
      */
+    /**
+     * The waybill page re-reads what isn't stored on the task (references,
+     * shipper, weight, goods) from the archived EDIFACT file.
+     */
+    public function testWaybillPageShowsTheShipment(): void
+    {
+        $commandTester = new CommandTester($this->initCommand());
+        $dropoff = $this->startDropoff($commandTester);
+
+        // The page reads the file from the EDIFACT storage, the command was
+        // given an in-memory one.
+        $filename = $dropoff->getImportMessage()->getEdiMessage();
+        $ediMessagesFs = self::getContainer()->get('edi_messages_filesystem');
+        $ediMessagesFs->write($filename, $this->edifactFs->read($filename));
+
+        $signature = new TaskImage();
+        $signature->setImageName('signature.png');
+        $signature->setType(TaskImageType::SIGNATURE);
+        $signature->setTask($dropoff);
+        $this->entityManager->persist($signature);
+
+        $photo = new TaskImage();
+        $photo->setImageName('photo.jpg');
+        $photo->setTask($dropoff);
+        $this->entityManager->persist($photo);
+        $this->entityManager->flush();
+
+        $token = self::getContainer()->get(ProofOfDeliveryToken::class)->generate($dropoff);
+        $path = sprintf('/en/pub/pod/%d/%s', $dropoff->getId(), $token);
+
+        // No proof until the dropoff is done
+        $response = self::$kernel->handle(Request::create($path));
+        $this->assertEquals(404, $response->getStatusCode());
+
+        $this->taskManager->markAsDone($dropoff, null, 'Jane Doe');
+        $this->entityManager->flush();
+
+        $response = self::$kernel->handle(Request::create($path));
+        $this->assertEquals(200, $response->getStatusCode());
+
+        $content = $response->getContent();
+        $this->assertStringContainsString('FRSBK830689437', $content);
+        $this->assertStringContainsString('70100691', $content);
+        $this->assertStringContainsString('DB Schenker', $content);
+        $this->assertStringContainsString('HOME DEPOT', $content);
+        $this->assertStringContainsString('15.000', $content);
+        $this->assertStringContainsString('DIVERS', $content);
+        $this->assertStringContainsString('Signatory: Jane Doe', $content);
+        $this->assertMatchesRegularExpression('#<section class="signature">.*/media/tasks/images/signature\.png.*</section>#s', $content);
+        $this->assertMatchesRegularExpression('#<section class="photos">.*/media/tasks/images/photo\.jpg.*</section>#s', $content);
+
+        $response = self::$kernel->handle(Request::create(sprintf('/en/pub/pod/%d/%s', $dropoff->getId(), str_repeat('0', 64))));
+        $this->assertEquals(404, $response->getStatusCode());
+
+        $ediMessagesFs->delete($filename);
+    }
+
     public function testPickupProofIsNotReportedAsPod(): void
     {
         $this->syncDBSchenkerFs->write(
