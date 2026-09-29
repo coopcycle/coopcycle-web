@@ -4,8 +4,15 @@ namespace AppBundle\Entity\Sylius;
 
 abstract class FrozenOrderFooterItem
 {
+    const SECTION_PRODUCTS = 'products';
+    const SECTION_SERVICES = 'services';
+    const SECTION_TOTALS = 'totals';
+
     /** @var int */
     protected $id;
+
+    /** @var string */
+    protected $section = self::SECTION_TOTALS;
 
     /** @var FrozenOrder */
     protected $parent;
@@ -19,10 +26,11 @@ abstract class FrozenOrderFooterItem
     /** @var int */
     protected $position;
 
-    public function __construct($name = null, $total = 0)
+    public function __construct($name = null, $total = 0, $section = self::SECTION_TOTALS)
     {
         $this->name = $name;
         $this->total = $total;
+        $this->section = $section;
     }
 
     public function getId(): int
@@ -46,6 +54,21 @@ abstract class FrozenOrderFooterItem
     public function setParent($parent)
     {
         $this->parent = $parent;
+
+        return $this;
+    }
+
+    public function getSection(): string
+    {
+        return $this->section ?? self::SECTION_TOTALS;
+    }
+
+    /**
+     * @return self
+     */
+    public function setSection(string $section)
+    {
+        $this->section = $section;
 
         return $this;
     }

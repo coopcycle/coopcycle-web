@@ -5,6 +5,9 @@
       <generator strategy="IDENTITY"/>
     </id>
     <field name="billingAddress" type="text" column="billing_address" nullable="true"/>
+    <field name="customerName" type="string" column="customer_name" nullable="true"/>
+    <field name="customerEmail" type="string" column="customer_email" nullable="true"/>
+    <field name="customerPhone" type="string" column="customer_phone" nullable="true"/>
     <one-to-many field="lineItems" target-entity="AppBundle\Entity\Sylius\OrderReceiptLineItem" mapped-by="parent">
       <cascade>
         <cascade-all/>
