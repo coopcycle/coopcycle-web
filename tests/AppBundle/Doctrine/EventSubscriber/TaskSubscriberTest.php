@@ -2,6 +2,7 @@
 
 namespace Tests\AppBundle\Doctrine\EventSubscriber;
 
+use AppBundle\Doctrine\EntityPreloader\TaskEventsPreloader;
 use AppBundle\Doctrine\EventSubscriber\TaskSubscriber;
 use AppBundle\Doctrine\EventSubscriber\TaskSubscriber\EntityChangeSetProcessor;
 use AppBundle\Doctrine\EventSubscriber\TaskSubscriber\TaskListProvider;
@@ -107,12 +108,18 @@ class TaskSubscriberTest extends TestCase
 
         $this->geocoder = $this->prophesize(Geocoder::class);
 
+        // The real preloader needs Doctrine metadata, which the mocked entity
+        // manager cannot provide. It only warms up the tasks' events, so a
+        // double changes nothing these tests assert on.
+        $this->taskEventsPreloader = $this->prophesize(TaskEventsPreloader::class);
+
         $this->subscriber = new TaskSubscriber(
             $this->eventBus->reveal(),
             $eventStore,
             $changeSetProcessor,
             new NullLogger(),
-            $this->geocoder->reveal()
+            $this->geocoder->reveal(),
+            $this->taskEventsPreloader->reveal()
         );
     }
 

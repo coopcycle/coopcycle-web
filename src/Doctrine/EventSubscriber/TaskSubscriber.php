@@ -2,6 +2,7 @@
 
 namespace AppBundle\Doctrine\EventSubscriber;
 
+use AppBundle\Doctrine\EntityPreloader\TaskEventsPreloader;
 use AppBundle\Doctrine\EventSubscriber\TaskSubscriber\EntityChangeSetProcessor;
 use AppBundle\Domain\EventStore;
 use AppBundle\Domain\Task\Event\TaskCreated;
@@ -15,7 +16,6 @@ use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\UnitOfWork;
 use Psr\Log\LoggerInterface;
-use ShipMonk\DoctrineEntityPreloader\EntityPreloader;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsDoctrineListener(event: Events::onFlush, priority: 32, connection: 'default')]
@@ -38,6 +38,7 @@ class TaskSubscriber
         EntityChangeSetProcessor $processor,
         LoggerInterface $logger,
         private Geocoder $geocoder,
+        private TaskEventsPreloader $taskEventsPreloader,
     ) {
         $this->eventBus = $eventBus;
         $this->eventStore = $eventStore;
@@ -94,9 +95,7 @@ class TaskSubscriber
         // Task::addEvent() below scans the task's events to avoid recording a
         // duplicate, which initialises the collection. Load them for the whole
         // batch in one query instead of one query per task.
-        if (count($this->tasksToUpdate) > 0) {
-            (new EntityPreloader($em))->preload(array_values($this->tasksToUpdate), 'events');
-        }
+        $this->taskEventsPreloader->preload($this->tasksToUpdate);
 
         foreach ($this->tasksToUpdate as $task) {
             $changeset = $uow->getEntityChangeSet($task);
