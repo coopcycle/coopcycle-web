@@ -62,8 +62,8 @@ if (startEl && endEl && dateRangeWidgetEl) {
   if (startEl.value && endEl.value) {
     options = {
       defaultValue: {
-        before: startEl.value,
-        after: endEl.value
+        after: startEl.value,
+        before: endEl.value
       },
       ...options
     }

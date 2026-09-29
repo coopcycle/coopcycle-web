@@ -584,8 +584,18 @@ trait StoreTrait
 
         $page = $request->query->getInt('page', 1);
 
+        // Stable tiebreaker: several deliveries often share the same time
+        // window, and without it Postgres is free to return them in a
+        // different order for every page (rows repeated / skipped).
+        // KnpPaginator prepends its own sort, so this stays a secondary sort.
+        $qb->addOrderBy('d.id', 'DESC');
+
         $deliveries = $paginator->paginate(
-            $filters['enabled'] ? $qb : $deliveryRepository->past($qb),
+            // past() already restricts the join to the pickup task ; when
+            // filtering we have to do it explicitly, otherwise every delivery
+            // shows up once per task (duplicates across pages, inconsistent
+            // page sizes).
+            $filters['enabled'] ? $deliveryRepository->firstPickupOnly($qb) : $deliveryRepository->past($qb),
             $page,
             10,
             [

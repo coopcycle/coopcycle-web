@@ -889,6 +889,10 @@ class AdminController extends AbstractController
             }
 
             $deliveryRepository->searchWithSonic($qb, $filters['query'], $request->getLocale());
+            // Without this, a delivery is listed once per task (duplicates
+            // across pages, inconsistent page sizes). The sections below
+            // already restrict the join to the pickup task.
+            $deliveryRepository->firstPickupOnly($qb);
 
         } else {
             if ($request->query->has('section') && method_exists($deliveryRepository, $request->query->get('section'))) {
@@ -909,6 +913,11 @@ class AdminController extends AbstractController
         $qb->leftJoin(Order::class, 'o', Expr\Join::WITH, 'o.id = d.order');
         $qb->leftJoin(OrderVendor::class, 'v', Expr\Join::WITH, 'o.id = v.order');
         $qb->leftJoin(LocalBusiness::class, 'r', Expr\Join::WITH, 'v.restaurant = r.id');
+
+        // Stable tiebreaker, see the store delivery listing: deliveries sharing
+        // the same createdAt would otherwise shuffle between pages.
+        // KnpPaginator prepends its own sort, so this stays a secondary sort.
+        $qb->addOrderBy('d.id', 'DESC');
 
         $deliveries = $paginator->paginate(
             $qb,

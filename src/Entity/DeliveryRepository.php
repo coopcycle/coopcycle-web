@@ -54,15 +54,33 @@ class DeliveryRepository extends EntityRepository
             ;
     }
 
+    /**
+     * The query builder returned by createQueryBuilderWithTasks() joins *every*
+     * task of a delivery, so a delivery with a pickup & a dropoff yields 2 rows,
+     * and a multi-point delivery even more.
+     *
+     * This restricts the join to a single task: the first pickup, i.e. the one
+     * Delivery::getPickup() returns & the listings display. One row per
+     * delivery is what any paginated listing needs, otherwise deliveries show
+     * up on several pages and pages hold varying numbers of them.
+     */
+    public function firstPickupOnly(QueryBuilder $qb): QueryBuilder
+    {
+        return $qb
+            ->andWhere('t.id = (SELECT MIN(t2.id) FROM ' . Task::class . ' t2'
+                . ' JOIN ' . TaskCollectionItem::class . ' i2 WITH i2.task = t2.id'
+                . ' WHERE i2.parent = d.id AND t2.type = :pickup)')
+            ->setParameter('pickup', Task::TYPE_PICKUP)
+            ;
+    }
+
     public function today(QueryBuilder $qb): QueryBuilder
     {
         $today = Carbon::now();
 
-        return (clone $qb)
-            ->andWhere('t.type = :pickup')
+        return $this->firstPickupOnly(clone $qb)
             ->andWhere('t.doneBefore >= :after')
             ->andWhere('t.doneAfter <= :before')
-            ->setParameter('pickup', Task::TYPE_PICKUP)
             ->setParameter('after', $today->clone()->startOfDay())
             ->setParameter('before', $today->clone()->endOfDay())
             ;
@@ -72,10 +90,8 @@ class DeliveryRepository extends EntityRepository
     {
         $today = Carbon::now();
 
-        return (clone $qb)
-            ->andWhere('t.type = :pickup')
+        return $this->firstPickupOnly(clone $qb)
             ->andWhere('t.doneAfter > :endOfToday')
-            ->setParameter('pickup', Task::TYPE_PICKUP)
             ->setParameter('endOfToday', $today->clone()->endOfDay())
             ->orderBy('t.doneBefore', 'asc')
             ;
@@ -85,10 +101,8 @@ class DeliveryRepository extends EntityRepository
     {
         $today = Carbon::now();
 
-        return (clone $qb)
-            ->andWhere('t.type = :pickup')
+        return $this->firstPickupOnly(clone $qb)
             ->andWhere('t.doneBefore < :startOfToday')
-            ->setParameter('pickup', Task::TYPE_PICKUP)
             ->setParameter('startOfToday', $today->clone()->startOfDay())
             ;
     }
