@@ -1303,6 +1303,32 @@ class SyncTransportersCommandTest extends KernelTestCase {
     }
 
     /**
+     * The name typed by the courier when marking the dropoff as done is the
+     * "réceptionnaire signant le récépissé" of the LIV|CFM and POD|CFM.
+     */
+    public function testSignatoryIsSentInCta(): void
+    {
+        $commandTester = new CommandTester($this->initCommand());
+        $dropoff = $this->startDropoff($commandTester);
+
+        $this->taskManager->markAsDone($dropoff, null, 'Jane Doe');
+        $this->entityManager->flush();
+        $this->entityManager->clear();
+
+        $commandTester->execute(['transporter' => 'DBSCHENKER']);
+
+        $events = explode('UNH+', $this->readLastReport());
+        foreach (["RSJ+MS+LIV+CFM'", "RSJ+MS+POD+CFM'"] as $situation) {
+            $event = current(array_filter($events, fn(string $event) => str_contains($event, $situation)));
+            $this->assertStringContainsString("CTA+Jane Doe'", $event);
+        }
+
+        // Not on the other statuses
+        $event = current(array_filter($events, fn(string $event) => str_contains($event, "RSJ+MS+AAR+CFM'")));
+        $this->assertStringNotContainsString('CTA+', $event);
+    }
+
+    /**
      * The waybill page re-reads what isn't stored on the task (references,
      * shipper, weight, goods) from the archived EDIFACT file.
      */
