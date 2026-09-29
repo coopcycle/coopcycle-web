@@ -230,16 +230,12 @@ class DeliveryProcessor implements ProcessorInterface
             $task->setType($type);
         }
 
+        // Deliberately a plain transform: for the `tasks[]` edit path, process()
+        // snapshots the statuses beforehand and diffs them afterwards to
+        // dispatch Cancel/Restore exactly once. Cancelling here as well would
+        // record the task cancellation twice.
         if ($this->authorizationChecker->isGranted('ROLE_DISPATCHER') && $data->status) {
-            // Cancelling an existing task must go through the Cancel command,
-            // so that the linked order is cancelled as well
-            if (Task::STATUS_CANCELLED === $data->status
-                && null !== $task->getId()
-                && Task::STATUS_CANCELLED !== $task->getStatus()) {
-                $this->taskManager->cancel($task);
-            } else {
-                $task->setStatus($data->status);
-            }
+            $task->setStatus($data->status);
         }
 
         // Legacy props
