@@ -1430,12 +1430,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/coopcycle/transporter.git",
-                "reference": "968181aba6c2edc521696997383766ab43a27eb5"
+                "reference": "3240e945d66e7de4c27c9f4d391c260c0512e1da"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coopcycle/transporter/zipball/968181aba6c2edc521696997383766ab43a27eb5",
-                "reference": "968181aba6c2edc521696997383766ab43a27eb5",
+                "url": "https://api.github.com/repos/coopcycle/transporter/zipball/3240e945d66e7de4c27c9f4d391c260c0512e1da",
+                "reference": "3240e945d66e7de4c27c9f4d391c260c0512e1da",
                 "shasum": ""
             },
             "require": {
@@ -1465,7 +1465,7 @@
                 "source": "https://github.com/coopcycle/transporter/tree/master",
                 "issues": "https://github.com/coopcycle/transporter/issues"
             },
-            "time": "2026-06-16T13:58:57+00:00"
+            "time": "2026-09-29T14:40:17+00:00"
         },
         {
             "name": "craue/config-bundle",
@@ -12071,12 +12071,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/coopcycle/edifact-generator.git",
-                "reference": "f1089a7a1ca6147994492e06f498453765104aa8"
+                "reference": "6f7ddc585a93fe461ccd3f2b60c8c343a6955453"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coopcycle/edifact-generator/zipball/f1089a7a1ca6147994492e06f498453765104aa8",
-                "reference": "f1089a7a1ca6147994492e06f498453765104aa8",
+                "url": "https://api.github.com/repos/coopcycle/edifact-generator/zipball/6f7ddc585a93fe461ccd3f2b60c8c343a6955453",
+                "reference": "6f7ddc585a93fe461ccd3f2b60c8c343a6955453",
                 "shasum": ""
             },
             "require-dev": {
