@@ -82,6 +82,9 @@ class ReportFromCC {
         if ($message->getSubMessageType() === 'LIV|CFM') {
             $this->attachTaskPods($message);
         }
+        if (in_array($message->getSubMessageType(), ['LIV|CFM', TransporterPodNotifier::SUB_MESSAGE_TYPE], true)) {
+            $generator->setContactName($this->signatory($message));
+        }
         if (!empty($message->getPods())) {
             $generator->setPods($message->getPods());
         }
@@ -95,6 +98,17 @@ class ReportFromCC {
         return $generator;
 
     }
+    /**
+     * The name the courier typed when marking the dropoff as done, sent in CTA
+     * as the "réceptionnaire signant le récépissé".
+     */
+    private function signatory(EDIFACTMessage $message): ?string
+    {
+        $dropoff = $message->getTasks()->filter(fn(Task $t) => $t->isDropoff())->first();
+
+        return $dropoff ? $dropoff->getAddress()->getContactName() : null;
+    }
+
     /**
      * Kept for the transporters that predate POD|CFM, which read the proofs off
      * the LIV|CFM. REPORT 3.1 treats these URLs as provisional: the POD|CFM is
