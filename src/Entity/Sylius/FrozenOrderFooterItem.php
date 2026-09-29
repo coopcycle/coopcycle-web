@@ -11,7 +11,7 @@ abstract class FrozenOrderFooterItem
     /** @var int */
     protected $id;
 
-    /** @var string */
+    /** @var string|null Null on receipts issued before the product/service split */
     protected $section = self::SECTION_TOTALS;
 
     /** @var FrozenOrder */

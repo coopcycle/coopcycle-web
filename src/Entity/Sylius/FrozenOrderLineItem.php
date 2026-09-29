@@ -10,7 +10,7 @@ abstract class FrozenOrderLineItem
     /** @var int */
     protected $id;
 
-    /** @var string */
+    /** @var string|null Null on receipts issued before the product/service split */
     protected $type = self::TYPE_PRODUCT;
 
     /** @var FrozenOrder */
