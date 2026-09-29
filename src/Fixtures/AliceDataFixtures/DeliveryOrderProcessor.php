@@ -7,7 +7,9 @@ use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\CalculateUsingPricingRules;
 use AppBundle\Pricing\PricingManager;
 use AppBundle\Service\DeliveryManager;
+use AppBundle\Sylius\Order\OrderInterface as BaseOrderInterface;
 use Fidry\AliceDataFixtures\ProcessorInterface;
+use Sylius\Component\Order\Model\OrderInterface;
 
 final class DeliveryOrderProcessor implements ProcessorInterface
 {
@@ -65,10 +67,37 @@ final class DeliveryOrderProcessor implements ProcessorInterface
             $productVariants = [$this->pricingManager->getCustomProductVariant($delivery, $price)];
         }
 
+        // The Sylius order processors -- OrderPaymentProcessor in particular --
+        // only run while the order is still in cart/new/accepted
+        // (@see \AppBundle\Sylius\OrderProcessing\OrderPaymentProcessor).
+        // Alice runs a fixture's __calls during instantiation, so a fixture
+        // that declares a post-checkout state (the invoicing tests need
+        // 'fulfilled' orders) reaches this point already fulfilled, and would
+        // end up with no payment at all -- which no real order ever has, and
+        // which makes Order::getPaymentMethod() return an empty string.
+        //
+        // Process the order the way it was actually built, then restore the
+        // state the fixture asked for.
+        $declaredState = $order->getState();
+
+        $isProcessable = in_array($declaredState, [
+            OrderInterface::STATE_CART,
+            OrderInterface::STATE_NEW,
+            BaseOrderInterface::STATE_ACCEPTED,
+        ], true);
+
+        if (!$isProcessable) {
+            $order->setState(OrderInterface::STATE_NEW);
+        }
+
         $this->pricingManager->processDeliveryOrder(
             $order,
             $productVariants
         );
+
+        if (!$isProcessable) {
+            $order->setState($declaredState);
+        }
 
         // Changes are flushed inside FeatureContext
         // Flushing here makes tests too slow
