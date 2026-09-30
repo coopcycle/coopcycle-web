@@ -65,10 +65,16 @@ class TargetPathListener
 
         // Sent by all modern browsers, "document" means a top-level navigation,
         // while XHR/fetch requests are sent with "empty".
+        //
+        // "iframe"/"frame" are navigations too, just nested ones: the app is
+        // served inside a frame when it is embedded, and Cypress runs it in an
+        // iframe as well. Treating them as background requests dropped the
+        // target path of the very request that had just stored it, so a
+        // customer logging in from the checkout landed on the homepage.
         $dest = $request->headers->get('Sec-Fetch-Dest');
 
         if (null !== $dest) {
-            return 'document' === $dest;
+            return in_array($dest, ['document', 'iframe', 'frame'], true);
         }
 
         // Fallback for clients not sending Sec-Fetch-* headers: a browser navigation
