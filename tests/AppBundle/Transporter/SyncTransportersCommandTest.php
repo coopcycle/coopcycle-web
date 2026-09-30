@@ -1353,6 +1353,9 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $photo->setImageName('photo.jpg');
         $photo->setTask($dropoff);
         $this->entityManager->persist($photo);
+
+        // As the import leaves it when geocoding fails
+        $dropoff->getAddress()->setStreetAddress('INVALID ADDRESS');
         $this->entityManager->flush();
 
         $token = self::getContainer()->get(Waybill::class)->token($dropoff);
@@ -1373,6 +1376,8 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->assertStringContainsString('70100691', $content);
         $this->assertStringContainsString('DB Schenker', $content);
         $this->assertStringContainsString('HOME DEPOT', $content);
+        $this->assertStringContainsString('64 RUE ALEXANDRE DUMAS', $content);
+        $this->assertStringNotContainsString('INVALID ADDRESS', $content);
         $this->assertMatchesRegularExpression('#Gross weight \(kg\)</div>\s*<div>15</div>#', $content);
         $this->assertStringContainsString('DIVERS', $content);
         $this->assertStringContainsString('Signatory: Jane Doe', $content);
