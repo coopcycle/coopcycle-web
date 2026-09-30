@@ -75,7 +75,13 @@ context('Invoicing (role: admin)', () => {
 
     cy.get('[data-testid="invoicing.download"]').click()
 
-    cy.intercept('GET', '/api/invoice_line_items/export?**').as('exportData')
+    // Match on the pathname: the query string carries IRIs such as
+    // organization[]=/api/stores/1, and a URL glob cannot match the slashes
+    // inside it ('**' only spans separators as a whole path segment).
+    cy.intercept({
+      method: 'GET',
+      pathname: '/api/invoice_line_items/export',
+    }).as('exportData')
 
     // Download the file in the standard format
     cy.get('[data-testid="invoicing.download.file"]').click()
