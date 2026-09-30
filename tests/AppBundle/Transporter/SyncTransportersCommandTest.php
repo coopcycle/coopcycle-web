@@ -1373,7 +1373,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->assertStringContainsString('70100691', $content);
         $this->assertStringContainsString('DB Schenker', $content);
         $this->assertStringContainsString('HOME DEPOT', $content);
-        $this->assertStringContainsString('15.000', $content);
+        $this->assertMatchesRegularExpression('#Gross weight \(kg\)</div>\s*<div>15</div>#', $content);
         $this->assertStringContainsString('DIVERS', $content);
         $this->assertStringContainsString('Signatory: Jane Doe', $content);
         $this->assertMatchesRegularExpression('#<section class="signature">.*/media/tasks/images/signature\.png.*</section>#s', $content);
