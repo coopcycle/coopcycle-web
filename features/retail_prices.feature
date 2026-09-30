@@ -1197,7 +1197,7 @@ Feature: Retail prices
         "@context":"/api/contexts/Error",
         "@type":"hydra:Error",
         "hydra:title":"An error occurred",
-        "hydra:description":"task.timeSlot.invalid",
+        "hydra:description":"La tranche horaire sélectionnée n'est pas valide. Merci d'en choisir une autre.",
         "trace":@array@
       }
       """
