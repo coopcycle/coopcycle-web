@@ -68,6 +68,7 @@ class Waybill
             'shipper_references' => $this->documentNumbers($point, DocumentType::SHIPPER_REFERENCE),
             'consignee_orders' => $this->documentNumbers($point, DocumentType::CONSIGNEE_ORDER),
             'shipper' => $this->shipper($point),
+            'consignee_address' => $this->consigneeAddress($task, $point),
             'handling_units' => $this->packageCount($point, ProductType::HANDLING_UNIT),
             'packages' => $this->packageCount($point, ProductType::PACKAGE),
             'returnables' => $this->packageCount($point, ProductType::CONSIGNED_EQUIPMENT),
@@ -154,6 +155,22 @@ class Waybill
             'label' => $nads[0]->getAddressLabel(),
             'address' => $nads[0]->getAddress(),
         ];
+    }
+
+    /**
+     * The import falls back to "INVALID ADDRESS" when geocoding fails: the
+     * address as the transporter sent it is still better than that.
+     */
+    private function consigneeAddress(Task $task, ?Point $point): ?string
+    {
+        $streetAddress = $task->getAddress()->getStreetAddress();
+        if ($streetAddress !== 'INVALID ADDRESS' || is_null($point)) {
+            return $streetAddress;
+        }
+
+        $nads = $point->getNamesAndAddresses(NameAndAddressType::RECIPIENT);
+
+        return empty($nads) ? $streetAddress : $nads[0]->getAddress();
     }
 
     private function packageCount(?Point $point, ProductType $type): ?int
