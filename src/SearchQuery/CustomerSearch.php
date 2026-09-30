@@ -73,4 +73,30 @@ final class CustomerSearch
 
         return strlen($digits) >= self::PHONE_MIN_DIGITS ? $digits : null;
     }
+
+    /**
+     * The GIN trigram indexes that make the above expressions cheap, as
+     * "<name> => <definition>" - created by Version20260930090000, and by
+     * OrdersAutocompleteControllerTest, whose test database is built from
+     * the schema rather than by running migrations.
+     *
+     * These spell in raw SQL what fullNameExpr() and phoneDigitsExpr() spell
+     * in DQL. The two forms are necessarily different strings - DQL's CONCAT
+     * becomes "||", its TRIM becomes "TRIM(BOTH FROM ...)" - but they have to
+     * stay the same *expression*, because Postgres matches an expression
+     * index to a query by comparing parsed expressions. If they drift apart
+     * the index is silently ignored and only the query plan shows it, which
+     * is why there is a test asserting the plan.
+     */
+    public static function indexDefinitions(): array
+    {
+        return [
+            'idx_customer_email_trgm' =>
+                'sylius_customer USING gin (email_canonical gin_trgm_ops)',
+            'idx_customer_full_name_trgm' =>
+                "sylius_customer USING gin ((TRIM(COALESCE(first_name, '') || ' ' || COALESCE(last_name, ''))) gin_trgm_ops)",
+            'idx_customer_phone_digits_trgm' =>
+                "sylius_customer USING gin ((REGEXP_REPLACE(COALESCE(phone_number, ''), '[^0-9]', '', 'g')) gin_trgm_ops)",
+        ];
+    }
 }

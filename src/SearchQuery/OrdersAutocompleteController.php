@@ -172,14 +172,18 @@ class OrdersAutocompleteController extends AbstractController
      *
      * Email and name are matched fuzzily (pg_trgm), so a half-remembered
      * spelling still finds the customer:
-     *  - email with SIMILARITY(), scoring against the whole string, which is
-     *    what an email is: one token, typed (nearly) in full;
-     *  - name with WORD_SIMILARITY() against "firstName lastName", so typing
-     *    just one of the two still scores 1 - see findByNameSimilarity() for
-     *    the same reasoning applied to owner names.
+     *  - email against the whole string, which is what an email is: one
+     *    token, typed (nearly) in full;
+     *  - name against the best-matching word of "firstName lastName", so
+     *    typing just one of the two still scores 1 - see
+     *    findByNameSimilarity() for the same reasoning applied to owners.
      *
      * Phone numbers are matched exactly instead - see
      * CustomerSearch::phoneNeedle() for why.
+     *
+     * This runs on every keystroke, so it is written to be answerable from
+     * an index throughout - see the comments on the query below and on
+     * withTrigramThresholds().
      */
     #[Route(path: '/search-query/orders/autocomplete:customer', name: 'search_query_orders_autocomplete_customer', methods: ['GET'])]
     public function customer(Request $request, EntityManagerInterface $entityManager): JsonResponse
@@ -194,37 +198,17 @@ class OrdersAutocompleteController extends AbstractController
             return new JsonResponse(['hits' => []]);
         }
 
-        $qb = $entityManager->getRepository(Customer::class)->createQueryBuilder('c');
+        $qb = $this->customerQueryBuilder($entityManager, $q);
 
-        // A phone number scores 1 (an exact match, ranked above any fuzzy
-        // one) or nothing at all. GREATEST ignores NULLs, so a customer with
-        // no name still gets scored on their email.
-        $scoreParts = [
-            'SIMILARITY(c.emailCanonical, :q)',
-            sprintf('WORD_SIMILARITY(:q, %s)', CustomerSearch::fullNameExpr('c')),
-        ];
-
-        if (null !== $phoneNeedle = CustomerSearch::phoneNeedle($q)) {
-            $scoreParts[] = sprintf(
-                'CASE WHEN %s LIKE :phone THEN 1 ELSE 0 END',
-                CustomerSearch::phoneDigitsExpr('c')
-            );
-            $qb->setParameter('phone', '%' . $phoneNeedle . '%');
-        }
-
-        $score = sprintf('GREATEST(%s)', implode(', ', $scoreParts));
-
-        $qb
-            ->andWhere(sprintf('%s >= :threshold', $score))
-            ->addOrderBy($score, 'DESC')
-            ->setParameter('q', strtolower($q))
-            ->setParameter('threshold', self::WORD_SIMILARITY_THRESHOLD)
-            ->setMaxResults(10);
+        $results = $this->withTrigramThresholds(
+            $entityManager,
+            fn () => $qb->getQuery()->getResult()
+        );
 
         $hits = [];
 
         /** @var Customer $customer */
-        foreach ($qb->getQuery()->getResult() as $customer) {
+        foreach ($results as $customer) {
             $fullName = trim($customer->getFullName());
             $hits[] = [
                 'label' => '' !== $fullName ? sprintf('%s (%s)', $fullName, $customer->getEmail()) : $customer->getEmail(),
@@ -236,5 +220,94 @@ class OrdersAutocompleteController extends AbstractController
         }
 
         return new JsonResponse(['hits' => $hits]);
+    }
+
+    /**
+     * The query behind customer(), kept apart so a test can get at the SQL
+     * it generates: the two expression indexes only apply if Postgres sees
+     * the very same expression here as in their definition, and nothing
+     * about a silent mismatch is visible in the results - only in the plan.
+     */
+    private function customerQueryBuilder(EntityManagerInterface $entityManager, string $q): QueryBuilder
+    {
+        $qb = $entityManager->getRepository(Customer::class)->createQueryBuilder('c');
+
+        $fullNameExpr = CustomerSearch::fullNameExpr('c');
+
+        // Two expressions over the same fields, doing different jobs.
+        //
+        // $conditions decides what matches, written with pg_trgm's operators
+        // because only those can be answered from the GIN indexes added in
+        // Version20260930090000 - the equivalent "similarity(...) >= 0.3"
+        // would be a sequential scan scoring every customer in the table.
+        //
+        // $scoreParts then ranks what matched, and there the plain functions
+        // are fine: they only run on the handful of rows the indexes
+        // returned, and unlike the operators they yield the score itself.
+        $conditions = [
+            'TRGM_SIMILAR(c.emailCanonical, :q) = TRUE',
+            sprintf('TRGM_WORD_SIMILAR(:q, %s) = TRUE', $fullNameExpr),
+        ];
+        $scoreParts = [
+            'SIMILARITY(c.emailCanonical, :q)',
+            sprintf('WORD_SIMILARITY(:q, %s)', $fullNameExpr),
+        ];
+
+        if (null !== $phoneNeedle = CustomerSearch::phoneNeedle($q)) {
+            $phoneMatch = sprintf('%s LIKE :phone', CustomerSearch::phoneDigitsExpr('c'));
+            $conditions[] = $phoneMatch;
+            // Ranked above any fuzzy match: the number either is the
+            // customer's or it isn't.
+            $scoreParts[] = sprintf('CASE WHEN %s THEN 1 ELSE 0 END', $phoneMatch);
+            $qb->setParameter('phone', '%' . $phoneNeedle . '%');
+        }
+
+        $qb
+            ->andWhere($qb->expr()->orX(...$conditions))
+            // GREATEST ignores NULLs, so a customer with no name is still
+            // ranked on their email.
+            ->addOrderBy(sprintf('GREATEST(%s)', implode(', ', $scoreParts)), 'DESC')
+            ->setParameter('q', strtolower($q))
+            ->setMaxResults(10);
+
+        return $qb;
+    }
+
+    /**
+     * Runs $callback with pg_trgm's two match thresholds pinned to the
+     * cutoffs this class means, for the length of one transaction.
+     *
+     * The "%" and "<%" operators take their cutoff from a run-time setting
+     * rather than from the query, and pg_trgm.word_similarity_threshold
+     * defaults to 0.6 - twice what WORD_SIMILARITY_THRESHOLD says. Left
+     * alone it wouldn't fail, it would just quietly return fewer customers
+     * than the code claims to match, so it is set rather than assumed.
+     * similarity_threshold does default to the 0.3 we want, but is set too
+     * rather than inherited from whatever the server happens to be
+     * configured with.
+     *
+     * SET LOCAL (set_config's third argument) rather than SET: the
+     * connection is pooled and outlives the request, and leaking a changed
+     * threshold into whatever runs next on it would be a nasty thing to
+     * debug. That's also why this needs a transaction to scope it to.
+     *
+     * Both operators are inclusive of their threshold, so this matches
+     * exactly what the ">= threshold" form used to.
+     */
+    private function withTrigramThresholds(EntityManagerInterface $entityManager, callable $callback): mixed
+    {
+        $connection = $entityManager->getConnection();
+
+        return $connection->transactional(function () use ($connection, $callback) {
+            $connection->executeStatement(
+                'SELECT set_config(?, ?, TRUE), set_config(?, ?, TRUE)',
+                [
+                    'pg_trgm.similarity_threshold', (string) self::SIMILARITY_THRESHOLD,
+                    'pg_trgm.word_similarity_threshold', (string) self::WORD_SIMILARITY_THRESHOLD,
+                ]
+            );
+
+            return $callback();
+        });
     }
 }

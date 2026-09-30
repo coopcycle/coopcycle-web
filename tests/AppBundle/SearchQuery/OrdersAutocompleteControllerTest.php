@@ -10,6 +10,7 @@ use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Fixtures\DatabasePurger;
+use AppBundle\SearchQuery\CustomerSearch;
 use AppBundle\SearchQuery\OrdersAutocompleteController;
 use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
@@ -348,6 +349,58 @@ class OrdersAutocompleteControllerTest extends KernelTestCase
 
         $hits = json_decode($response->getContent(), true)['hits'];
         $this->assertSame('+33612345678', $hits[0]['telephone']);
+    }
+
+    /**
+     * The two expression indexes from Version20260930090000 only get used if
+     * Postgres sees the identical expression in the query - and a mismatch
+     * changes nothing about the results, only about how long they take, so
+     * no other test here would notice. Hence asserting the plan.
+     *
+     * enable_seqscan is disabled because the test database holds a handful
+     * of customers, where a sequential scan is genuinely the cheaper plan;
+     * turning it off makes Postgres show whether it *can* use the indexes,
+     * which is the question. Parameters are all text, so substituting one
+     * literal for every placeholder gives a representative query.
+     */
+    public function testCustomerAutocompleteQueryCanUseTheTrigramIndexes(): void
+    {
+        $this->loadOrderFixture();
+
+        $connection = $this->entityManager->getConnection();
+
+        // The test database is built from the schema, so the migration's
+        // indexes aren't there - create them from the same definitions it
+        // uses. Not CONCURRENTLY: that is for not locking a live table.
+        foreach (CustomerSearch::indexDefinitions() as $name => $definition) {
+            $connection->executeStatement(sprintf(
+                'CREATE INDEX IF NOT EXISTS %s ON %s', $name, $definition
+            ));
+        }
+
+        $builder = new \ReflectionMethod($this->controller, 'customerQueryBuilder');
+        $builder->setAccessible(true);
+        $qb = $builder->invoke($this->controller, $this->entityManager, '0612345678');
+
+        // Every parameter in this query is text, so one literal stands in
+        // for all of them; the wildcards matter, as it's a LIKE that has to
+        // reach the phone index.
+        $sql = str_replace('?', "'%612345678%'", $qb->getQuery()->getSQL());
+
+        // The fixture holds a handful of customers, where a sequential scan
+        // genuinely is the cheaper plan - disabling it asks Postgres whether
+        // it *can* use the indexes, which is the actual question.
+        $connection->executeStatement('SET enable_seqscan = off');
+
+        try {
+            $plan = implode("\n", $connection->fetchFirstColumn('EXPLAIN ' . $sql));
+        } finally {
+            $connection->executeStatement('RESET enable_seqscan');
+        }
+
+        foreach (array_keys(CustomerSearch::indexDefinitions()) as $name) {
+            $this->assertStringContainsString($name, $plan, "Query cannot use $name:\n$plan");
+        }
     }
 
     public function testCustomerAutocompleteReturnsEmptyHitsForEmptyQuery(): void

@@ -56,6 +56,8 @@ doctrine:
                 ST_AsText: Jsor\Doctrine\PostGIS\Functions\ST_AsText
                 similarity: AppBundle\Doctrine\Functions\Similarity
                 word_similarity: AppBundle\Doctrine\Functions\WordSimilarity
+                TRGM_SIMILAR: AppBundle\Doctrine\Functions\TrgmSimilar
+                TRGM_WORD_SIMILAR: AppBundle\Doctrine\Functions\TrgmWordSimilar
                 GREATEST: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\Greatest
                 REGEXP_REPLACE: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\RegexpReplace
                 TSRANGE: AppBundle\Doctrine\Functions\TsRange
