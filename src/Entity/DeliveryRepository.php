@@ -106,10 +106,20 @@ class DeliveryRepository extends EntityRepository
             ->setParameter('startOfToday', $today->clone()->startOfDay())
             ;
     }
-    public function createdAtRange(QueryBuilder $qb, \DateTimeInterface $start, \DateTimeInterface $end): QueryBuilder
+    /**
+     * Filters on the date the delivery happens, *not* on the date it was
+     * created: the listings display & sort t.doneBefore (see today(), past() &
+     * upcoming()), so filtering on d.createdAt made deliveries scheduled
+     * outside the selected range show up.
+     *
+     * Callers are expected to have restricted the join to a single task
+     * (firstPickupOnly()), otherwise a delivery matches as soon as any of its
+     * tasks falls in the range, and is listed once per matching task.
+     */
+    public function dateRange(QueryBuilder $qb, \DateTimeInterface $start, \DateTimeInterface $end): QueryBuilder
     {
         return $qb
-            ->andWhere('d.createdAt BETWEEN :start AND :end')
+            ->andWhere('t.doneBefore BETWEEN :start AND :end')
             ->setParameter('start', $start)
             ->setParameter('end', $end)
             ;

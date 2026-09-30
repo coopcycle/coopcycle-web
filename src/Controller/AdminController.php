@@ -876,6 +876,8 @@ class AdminController extends AbstractController
             'range' => null,
         ];
 
+        $range = $this->getDeliveryDateRange($request);
+
         if ($request->query->get('q')) {
 
             $filters['query'] = $request->query->get('q');
@@ -894,6 +896,11 @@ class AdminController extends AbstractController
             // already restrict the join to the pickup task.
             $deliveryRepository->firstPickupOnly($qb);
 
+        } elseif (null !== $range) {
+            // The sections constrain t.doneBefore themselves, which would
+            // contradict an explicit range ("today" + a range in the past
+            // yields nothing). An explicit range wins over the section.
+            $deliveryRepository->firstPickupOnly($qb);
         } else {
             if ($request->query->has('section') && method_exists($deliveryRepository, $request->query->get('section'))) {
                 $qb = call_user_func([ $deliveryRepository, $request->query->get('section') ], $qb);
@@ -902,10 +909,10 @@ class AdminController extends AbstractController
             }
         }
 
-        if ($range = $this->getDeliveryDateRange($request)) {
+        if (null !== $range) {
             $filters['range'] = $range;
 
-            $deliveryRepository->createdAtRange($qb, $range[0], $range[1]);
+            $deliveryRepository->dateRange($qb, $range[0], $range[1]);
         }
 
         // Allow filtering by store & restaurant with KnpPaginator

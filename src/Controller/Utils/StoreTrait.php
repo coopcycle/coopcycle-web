@@ -579,7 +579,7 @@ trait StoreTrait
             $filters['enabled'] = true;
             $filters['range'] = $range;
 
-            $deliveryRepository->createdAtRange($qb, $range[0], $range[1]);
+            $deliveryRepository->dateRange($qb, $range[0], $range[1]);
         }
 
         $page = $request->query->getInt('page', 1);
