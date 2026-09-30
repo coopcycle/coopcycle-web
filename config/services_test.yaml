@@ -57,6 +57,12 @@ services:
           $baseUrl: '%router.request_context.scheme%://%router.request_context.host%'
           $appName: '%env(COOPCYCLE_APP_NAME)%'
 
+    # The transporters of the tests don't come from TRANSPORTERS_CONFIG
+    AppBundle\Transporter\Waybill:
+        arguments:
+          $secret: '%secret%'
+          $transportersConfig: { DBSCHENKER: { waybill: true } }
+
     AppBundle\Doctrine\EventSubscriber\MockDateSubscriber: ~
 
     app.map_center:

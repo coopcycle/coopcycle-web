@@ -1051,6 +1051,7 @@ services:
   AppBundle\Transporter\Waybill:
     arguments:
       $secret: '%secret%'
+      $transportersConfig: '%transporters_config%'
 
   AppBundle\Action\Register:
     public: true

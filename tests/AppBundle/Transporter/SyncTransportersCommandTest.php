@@ -2012,15 +2012,15 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->entityManager->flush();
 
         $this->assertCount(3, $pickup->getEdifactMessages());
-        // The import, LIV|CFM and the POD|CFM carrying the waybill
-        $this->assertCount(3, $dropoff->getEdifactMessages());
+        // The import and LIV|CFM: BMV didn't enable the waybill
+        $this->assertCount(2, $dropoff->getEdifactMessages());
 
         $commandTester->execute([
             'transporter' => 'BMV'
         ]);
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('imported 0 tasks', $output);
-        $this->assertStringContainsString('4 messages to send', $output);
+        $this->assertStringContainsString('3 messages to send', $output);
 
         $this->assertCount(0, $this->syncOutBMVFs->listContents('/')->toArray());
         $dir_list = $this->syncInBMVFs->listContents('/')->toArray();
@@ -2132,8 +2132,8 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->entityManager->flush();
 
         $this->assertCount(3, $pickup->getEdifactMessages());
-        // The import, LIV|CFM and the POD|CFM carrying the waybill
-        $this->assertCount(3, $dropoff->getEdifactMessages());
+        // The import and LIV|CFM: TELIAE didn't enable the waybill
+        $this->assertCount(2, $dropoff->getEdifactMessages());
 
         $pickupReportEDIMessage = $pickup->getEdifactMessages()->map(function (EDIFACTMessage $message) {
             return [$message->getMessageType(), $message->getSubMessageType()];
@@ -2173,14 +2173,14 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->assertCount(0, $this->syncOutBMVFs->listContents('/')->toArray());
 
         $unsynced = $this->entityManager->getRepository(EDIFACTMessage::class)->getUnsynced('TELIAE');
-        $this->assertCount(4, $unsynced);
+        $this->assertCount(3, $unsynced);
 
         $commandTester->execute([
             'transporter' => 'TELIAE'
         ]);
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('imported 0 tasks', $output);
-        $this->assertStringContainsString('4 messages to send', $output);
+        $this->assertStringContainsString('3 messages to send', $output);
 
 
         $this->assertCount(0, $this->syncOutBMVFs->listContents('/')->toArray());
@@ -2188,6 +2188,11 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->assertCount(1, $dir_list);
         $unsynced = $this->entityManager->getRepository(EDIFACTMessage::class)->getUnsynced('TELIAE');
         $this->assertCount(0, $unsynced);
+
+        // Nor is the page served
+        $token = self::getContainer()->get(Waybill::class)->token($dropoff);
+        $response = self::$kernel->handle(Request::create(sprintf('/en/pub/pod/%d/%s', $dropoff->getId(), $token)));
+        $this->assertEquals(404, $response->getStatusCode());
     }
 
     public function testScontrTaskWithoutDadFallsBackToToday(): void

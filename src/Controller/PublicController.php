@@ -177,7 +177,7 @@ class PublicController extends AbstractController
         }
 
         // There is no proof until the dropoff is done
-        if (!$task->isDropoff() || !$task->isDone()) {
+        if (!$task->isDropoff() || !$task->isDone() || !$waybill->isEnabled($task)) {
             throw $this->createNotFoundException();
         }
 
@@ -186,7 +186,6 @@ class PublicController extends AbstractController
             'waybill' => $waybill->fromTask($task),
         ]);
 
-        // Shows a name, an address and a signature
         $response->headers->set('X-Robots-Tag', 'noindex, nofollow');
 
         return $response;
