@@ -5,7 +5,7 @@ namespace AppBundle\EventListener\Edifact;
 use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskImage;
-use AppBundle\Utils\ProofOfDeliveryToken;
+use AppBundle\Transporter\Waybill;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Event\PostPersistEventArgs;
@@ -41,7 +41,7 @@ class TransporterPodNotifier {
         private EntityManagerInterface $em,
         private UrlGeneratorInterface $urlGenerator,
         private LoggerInterface $transporterLogger,
-        private ProofOfDeliveryToken $proofOfDeliveryToken,
+        private Waybill $waybill,
         private string $baseUrl,
         private string $locale,
     ) { }
@@ -186,7 +186,7 @@ class TransporterPodNotifier {
             return $urls;
         }
 
-        $token = $this->proofOfDeliveryToken->generate($task);
+        $token = $this->waybill->token($task);
         if (!in_array($token, $except, true)) {
             array_unshift($urls, $this->baseUrl . $this->urlGenerator->generate(
                 'public_pod',

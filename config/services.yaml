@@ -1048,9 +1048,7 @@ services:
   AppBundle\Transporter\EdifactMessageParser:
     arguments:
       $edifactFs: '@edi_messages_filesystem'
-  AppBundle\Transporter\Waybill: ~
-
-  AppBundle\Utils\ProofOfDeliveryToken:
+  AppBundle\Transporter\Waybill:
     arguments:
       $secret: '%secret%'
 

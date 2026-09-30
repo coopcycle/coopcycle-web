@@ -26,8 +26,21 @@ use Transporter\Enum\TransporterName;
  */
 class Waybill
 {
-    public function __construct(private EdifactMessageParser $edifactMessageParser)
+    public function __construct(
+        private EdifactMessageParser $edifactMessageParser,
+        private string $secret,
+    )
     {
+    }
+
+    /**
+     * Signs the page URL: it is sent to transporters and shows a name, an
+     * address and a signature, so the task id alone (or a hashid) is not
+     * enough.
+     */
+    public function token(Task $task): string
+    {
+        return hash_hmac('sha256', sprintf('pod:%d', $task->getId()), $this->secret);
     }
 
     /**
