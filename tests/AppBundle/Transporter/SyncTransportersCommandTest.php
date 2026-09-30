@@ -1385,6 +1385,36 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $ediMessagesFs->delete($filename);
     }
 
+    /**
+     * Apps that don't send the image type upload the signature first.
+     */
+    public function testWaybillPageTakesTheFirstUntypedImageAsSignature(): void
+    {
+        $commandTester = new CommandTester($this->initCommand());
+        $dropoff = $this->startDropoff($commandTester);
+
+        foreach (['first.png', 'second.jpg'] as $imageName) {
+            $image = new TaskImage();
+            $image->setImageName($imageName);
+            $image->setTask($dropoff);
+            $this->entityManager->persist($image);
+            $this->entityManager->flush();
+        }
+
+        $this->taskManager->markAsDone($dropoff);
+        $this->entityManager->flush();
+        $this->entityManager->clear();
+
+        $token = self::getContainer()->get(Waybill::class)->token($dropoff);
+        $response = self::$kernel->handle(Request::create(sprintf('/en/pub/pod/%d/%s', $dropoff->getId(), $token)));
+        $this->assertEquals(200, $response->getStatusCode());
+
+        $content = $response->getContent();
+        $this->assertMatchesRegularExpression('#<section class="signature">((?!</section>).)*/media/tasks/images/first\.png#s', $content);
+        $this->assertMatchesRegularExpression('#<section class="photos">((?!</section>).)*/media/tasks/images/second\.jpg#s', $content);
+        $this->assertEquals(1, substr_count($content, '/media/tasks/images/first.png'));
+    }
+
     public function testPickupProofIsNotReportedAsPod(): void
     {
         $this->syncDBSchenkerFs->write(
