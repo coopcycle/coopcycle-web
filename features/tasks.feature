@@ -3364,6 +3364,24 @@ Feature: Tasks
     Then the response status code should be 200
     And the JSON node "images[0].type" should be equal to "signature"
 
+  Scenario: Upload signature with type in header
+    Given the fixtures files are loaded:
+      | tasks.yml           |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "multipart/form-data"
+    When I add "X-Attach-To" header equal to "/api/tasks/1"
+    When I add "X-Pod-Type" header equal to "signature"
+    And the user "bob" sends a "POST" request to "/api/task_images" with parameters:
+      | key      | value     |
+      | file     | @beer.jpg |
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON node "type" should be equal to "signature"
+
   Scenario: Upload image with unknown type
     Given the fixtures files are loaded:
       | tasks.yml           |
