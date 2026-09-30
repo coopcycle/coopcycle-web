@@ -1044,7 +1044,7 @@ task.receipt.message: Par la présente, nous confirmons que nous avons bien livr
 task.receipt.received_by: Le colis a été reçu par <strong>%name%</strong>
 task.receipt.attached_images: Images jointes
 task.receipt.reference: 'Référence : <strong>%ref%</strong>'
-pod.title: Lettre de voiture
+pod.title: Feuille de route
 pod.completed_at: du %date%
 pod.client_file_number: N° de dossier client
 pod.receipt_number: N° de récépissé
@@ -1072,7 +1072,7 @@ pod.signature: Signature
 pod.no_signature: Pas de signature
 pod.photos: Photos
 pod.photo: Photo
-pod.legal: Lettre de voiture reconstituée valant preuve (art. 1366 et 1367 du Code civil)
+pod.legal: Feuille de route reconstituée valant preuve (art. 1366 et 1367 du Code civil)
 basics.hours: '%count% heure|%count% heures'
 basics.days: '%count% jour|%count% jours'
 basics.weeks: '%count% semaine|%count% semaines'
