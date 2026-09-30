@@ -30,8 +30,8 @@ class CreateImage
 
         $taskImage->setFile($uploadedFile);
 
-        // Optional, older apps don't send it
-        $type = $request->request->get('type');
+        // Optional, older apps don't send it. As a header too, like X-Attach-To
+        $type = $request->request->get('type') ?: $request->headers->get('X-Pod-Type');
         if (!empty($type)) {
             $imageType = TaskImageType::tryFrom($type);
             if (is_null($imageType)) {
