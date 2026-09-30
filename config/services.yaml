@@ -153,6 +153,8 @@ services:
 
   AppBundle\SearchQuery\:
     resource: '../src/SearchQuery/*'
+    # A static helper shared by the services here, not a service itself.
+    exclude: '../src/SearchQuery/CustomerSearch.php'
     tags: ['controller.service_arguments']
 
   # AppBundle\Api\DataTransformer\:

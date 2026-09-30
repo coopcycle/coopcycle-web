@@ -96,6 +96,8 @@ class OrdersAutocompleteControllerTest extends KernelTestCase
         $customer->setLastName('Doe');
         $customer->setEmail('jane.doe@example.com');
         $customer->setEmailCanonical('jane.doe@example.com');
+        // Stored the way the app stores numbers everywhere: E.164.
+        $customer->setPhoneNumber('+33612345678');
         $order->setCustomer($customer);
 
         $order->setShippingTimeRange(TsRange::create(
@@ -228,6 +230,141 @@ class OrdersAutocompleteControllerTest extends KernelTestCase
         );
 
         $this->assertSame([], json_decode($response->getContent(), true)['hits']);
+    }
+
+    private function createCustomer(string $email, ?string $firstName, ?string $lastName, ?string $phoneNumber = null): void
+    {
+        $customer = new Customer();
+        $customer->setEmail($email);
+        $customer->setEmailCanonical($email);
+        $customer->setFirstName($firstName);
+        $customer->setLastName($lastName);
+        $customer->setPhoneNumber($phoneNumber);
+
+        $this->entityManager->persist($customer);
+        $this->entityManager->flush();
+    }
+
+    /**
+     * @return string[] the values (emails) of the customer hits for $q
+     */
+    private function customerHitValues(string $q): array
+    {
+        $response = $this->controller->customer(
+            Request::create('/search-query/orders/autocomplete:customer', 'GET', ['q' => $q]),
+            $this->entityManager,
+        );
+
+        return array_column(json_decode($response->getContent(), true)['hits'], 'value');
+    }
+
+    public function testCustomerAutocompleteMatchesOnFullName(): void
+    {
+        $this->loadOrderFixture(); // Jane Doe <jane.doe@example.com>
+        $this->authenticateAs('admin_search', 'ROLE_ADMIN');
+
+        // Either half of the name on its own, or both - the reason this
+        // scores with WORD_SIMILARITY and not SIMILARITY, which would give
+        // "doe" against "Jane Doe" only 0.28 and miss it.
+        $this->assertSame(['jane.doe@example.com'], $this->customerHitValues('Jane'));
+        $this->assertSame(['jane.doe@example.com'], $this->customerHitValues('doe'));
+        $this->assertSame(['jane.doe@example.com'], $this->customerHitValues('jane doe'));
+    }
+
+    public function testCustomerAutocompleteToleratesTyposInTheName(): void
+    {
+        $this->loadOrderFixture();
+        $this->authenticateAs('admin_search', 'ROLE_ADMIN');
+
+        $this->assertSame(['jane.doe@example.com'], $this->customerHitValues('jann'));
+    }
+
+    public function testCustomerAutocompleteMatchesACustomerWithOnlyOneHalfOfAName(): void
+    {
+        // CONCAT over a NULL gives NULL in Postgres, so without the COALESCE
+        // in CustomerSearch::fullNameExpr() this customer would never match.
+        $this->loadOrderFixture();
+        $this->createCustomer('mononym@example.com', 'Prince', null);
+        $this->authenticateAs('admin_search', 'ROLE_ADMIN');
+
+        $this->assertSame(['mononym@example.com'], $this->customerHitValues('Prince'));
+    }
+
+    public function testCustomerAutocompleteMatchesAPhoneNumberTypedInLocalFormat(): void
+    {
+        // Stored as "+33612345678"; an admin reads it off an order in any of
+        // these forms. None of them is the stored string.
+        $this->loadOrderFixture();
+        $this->authenticateAs('admin_search', 'ROLE_ADMIN');
+
+        $this->assertSame(['jane.doe@example.com'], $this->customerHitValues('0612345678'));
+        $this->assertSame(['jane.doe@example.com'], $this->customerHitValues('06 12 34 56 78'));
+        $this->assertSame(['jane.doe@example.com'], $this->customerHitValues('+33 6 12 34 56 78'));
+        $this->assertSame(['jane.doe@example.com'], $this->customerHitValues('+33612345678'));
+        // Half-typed, as the suggestion list is being built keystroke by
+        // keystroke.
+        $this->assertSame(['jane.doe@example.com'], $this->customerHitValues('061234'));
+    }
+
+    public function testCustomerAutocompleteDoesNotFuzzyMatchPhoneNumbers(): void
+    {
+        // One digit off is a different subscriber, not a typo to forgive.
+        $this->loadOrderFixture();
+        $this->authenticateAs('admin_search', 'ROLE_ADMIN');
+
+        $this->assertSame([], $this->customerHitValues('0612345679'));
+    }
+
+    public function testCustomerAutocompleteIgnoresTooShortPhoneNumbers(): void
+    {
+        // "06" is in every French mobile number - matching on it would just
+        // return the table.
+        $this->loadOrderFixture();
+        $this->authenticateAs('admin_search', 'ROLE_ADMIN');
+
+        $this->assertSame([], $this->customerHitValues('06'));
+    }
+
+    public function testCustomerAutocompleteRanksAPhoneNumberMatchFirst(): void
+    {
+        // An exact phone match scores 1, above anything fuzzy.
+        $this->loadOrderFixture(); // Jane Doe, +33612345678
+        $this->createCustomer('0612345678@example.com', 'Look', 'Alike');
+        $this->authenticateAs('admin_search', 'ROLE_ADMIN');
+
+        $values = $this->customerHitValues('0612345678');
+        $this->assertSame('jane.doe@example.com', $values[0]);
+    }
+
+    public function testCustomerAutocompleteReportsThePhoneNumberOfAHit(): void
+    {
+        $this->loadOrderFixture();
+        $this->authenticateAs('admin_search', 'ROLE_ADMIN');
+
+        $response = $this->controller->customer(
+            Request::create('/search-query/orders/autocomplete:customer', 'GET', ['q' => '0612345678']),
+            $this->entityManager,
+        );
+
+        $hits = json_decode($response->getContent(), true)['hits'];
+        $this->assertSame('+33612345678', $hits[0]['telephone']);
+    }
+
+    public function testCustomerAutocompleteReturnsEmptyHitsForEmptyQuery(): void
+    {
+        $this->loadOrderFixture();
+        $this->authenticateAs('admin_search', 'ROLE_ADMIN');
+
+        $this->assertSame([], $this->customerHitValues(''));
+    }
+
+    public function testCustomerAutocompleteRequiresAdminRole(): void
+    {
+        $this->authenticateAs('regular_user_customer', 'ROLE_USER');
+
+        $this->expectException(AccessDeniedException::class);
+
+        $this->customerHitValues('jane');
     }
 
     /**

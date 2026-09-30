@@ -46,12 +46,22 @@ export default function OrderListFilters({ defaultValue = '' }) {
       key: 'customer',
       label: t('ORDER_LIST_CUSTOMER'),
       type: 'async',
+      // Matches on email, full name or phone number - the first two
+      // fuzzily, the last one exactly.
       loadOptions: async (input) => {
         if (!input) {
           return []
         }
         const hits = await fetchOrdersAutocomplete('customer', input);
-        return hits.map(hit => ({ value: hit.value, label: hit.label }));
+        // A hit may have been found by phone number rather than by the
+        // name/email its label shows - surface the number underneath, so
+        // it's clear why the customer is in the list (see
+        // OrdersAutocompleteController::customer).
+        return hits.map(hit => ({
+          value: hit.value,
+          label: hit.label,
+          description: hit.telephone,
+        }));
       },
     },
     {

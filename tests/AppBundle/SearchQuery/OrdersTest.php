@@ -70,6 +70,7 @@ class OrdersTest extends KernelTestCase
         $customer->setLastName('Doe');
         $customer->setEmail('jane.doe@example.com');
         $customer->setEmailCanonical('jane.doe@example.com');
+        $customer->setPhoneNumber('+33612345678');
         $order->setCustomer($customer);
 
         $order->setShippingTimeRange(TsRange::create(
@@ -134,13 +135,33 @@ class OrdersTest extends KernelTestCase
     {
         $order = $this->loadOrderFixture();
 
-        foreach (['jane.doe@example.com', 'jane', 'doe'] as $needle) {
+        // Whole name included: the fields are matched as one concatenated
+        // "Jane Doe", not one column at a time.
+        foreach (['jane.doe@example.com', 'jane', 'doe', 'Jane Doe'] as $needle) {
             $results = $this->search('customer:' . $needle);
             $this->assertCount(1, $results, "Expected a match for customer:$needle");
             $this->assertSame($order->getId(), $results[0]->getId());
         }
 
         $this->assertCount(0, $this->search('customer:nobody'));
+    }
+
+    public function testCustomerFilterMatchesPhoneNumberInAnyFormat(): void
+    {
+        // Stored as E.164 ("+33612345678") but typed however the admin has
+        // it written down - see CustomerSearch::phoneNeedle().
+        $order = $this->loadOrderFixture();
+
+        // The spaced form has to be quoted, or the query language splits it
+        // into several tokens - same as any other value with a space in it.
+        foreach (['0612345678', '"06 12 34 56 78"', '+33612345678', '612345678'] as $needle) {
+            $results = $this->search('customer:' . $needle);
+            $this->assertCount(1, $results, "Expected a match for customer:$needle");
+            $this->assertSame($order->getId(), $results[0]->getId());
+        }
+
+        // Not fuzzy: one digit off is someone else.
+        $this->assertCount(0, $this->search('customer:0612345679'));
     }
 
     public function testExcludedCustomerFilter(): void

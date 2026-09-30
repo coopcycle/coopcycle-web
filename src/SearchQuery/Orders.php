@@ -22,7 +22,8 @@ use Doctrine\ORM\QueryBuilder;
  * accepts several values ("owner:(A OR B)", built by the search bar's
  * checkbox dropdown - see SearchQueryParser), matching any of them, and
  * "date" accepts a range ("date:[2026-09-25 TO 2026-09-26]", inclusive on
- * both ends) as well as a single day.
+ * both ends) as well as a single day. "customer" matches on email, full
+ * name or phone number.
  *
  * Expects $qb to be a QueryBuilder over AppBundle\Entity\Sylius\Order with
  * root alias "o" (e.g. built via OrderRepository::createOptimizedQueryBuilder('o')).
@@ -47,16 +48,36 @@ class Orders implements SearchQueryInterface
         }
 
         if ($customerFilter = $searchQuery->getFilter('customer')) {
-            $needle = '%' . strtolower($customerFilter->value) . '%';
+            // The value normally comes from the autocomplete, where it is
+            // always an email - but it can equally be free text the admin
+            // typed, so the same fields that autocomplete searches are
+            // matched here: email, name and phone number (see
+            // OrdersAutocompleteController::customer and CustomerSearch).
+            //
+            // A substring match rather than that endpoint's fuzzy one: the
+            // suggestion list can afford to be forgiving because the admin
+            // then picks from it, whereas a filter silently widened to
+            // "customers with a vaguely similar name" is just wrong results.
             $match = $qb->expr()->orX(
                 $qb->expr()->like('LOWER(customer.emailCanonical)', ':customer_needle'),
-                $qb->expr()->like('LOWER(customer.firstName)', ':customer_needle'),
-                $qb->expr()->like('LOWER(customer.lastName)', ':customer_needle'),
+                $qb->expr()->like(
+                    sprintf('LOWER(%s)', CustomerSearch::fullNameExpr('customer')),
+                    ':customer_needle'
+                ),
             );
+            $qb->setParameter('customer_needle', '%' . strtolower($customerFilter->value) . '%');
+
+            if (null !== $phoneNeedle = CustomerSearch::phoneNeedle($customerFilter->value)) {
+                $match->add($qb->expr()->like(
+                    CustomerSearch::phoneDigitsExpr('customer'),
+                    ':customer_phone_needle'
+                ));
+                $qb->setParameter('customer_phone_needle', '%' . $phoneNeedle . '%');
+            }
+
             $qb
                 ->leftJoin(Customer::class, 'customer', Expr\Join::WITH, 'o.customer = customer.id')
-                ->andWhere($customerFilter->exclude ? $qb->expr()->not($match) : $match)
-                ->setParameter('customer_needle', $needle);
+                ->andWhere($customerFilter->exclude ? $qb->expr()->not($match) : $match);
         }
 
         if ($dateFilter = $searchQuery->getFilter('date')) {

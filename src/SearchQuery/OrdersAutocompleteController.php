@@ -29,8 +29,10 @@ class OrdersAutocompleteController extends AbstractController
     // conventional relevance cutoff (pg_trgm.similarity_threshold) is 0.3.
     private const SIMILARITY_THRESHOLD = 0.3;
 
-    // The same cutoff for owner(), which scores with word_similarity() -
-    // see findByNameSimilarity() for why it's the inclusive bound there.
+    // The same cutoff for the actions scoring with word_similarity() -
+    // owner() and customer(). See findByNameSimilarity() for why it's the
+    // inclusive bound there; customer() is inclusive for the same reason,
+    // one word of a multi-word name landing exactly on 0.3.
     private const WORD_SIMILARITY_THRESHOLD = 0.3;
 
     #[Route(path: '/search-query/orders/autocomplete:owner', name: 'search_query_orders_autocomplete_owner', methods: ['GET'])]
@@ -163,6 +165,22 @@ class OrdersAutocompleteController extends AbstractController
         return $order->getDelivery()?->getStore()?->getName();
     }
 
+    /**
+     * A customer is looked up by whatever the admin has at hand - an email,
+     * a name, or a phone number read off an order - so all three are
+     * searched at once, the best match first.
+     *
+     * Email and name are matched fuzzily (pg_trgm), so a half-remembered
+     * spelling still finds the customer:
+     *  - email with SIMILARITY(), scoring against the whole string, which is
+     *    what an email is: one token, typed (nearly) in full;
+     *  - name with WORD_SIMILARITY() against "firstName lastName", so typing
+     *    just one of the two still scores 1 - see findByNameSimilarity() for
+     *    the same reasoning applied to owner names.
+     *
+     * Phone numbers are matched exactly instead - see
+     * CustomerSearch::phoneNeedle() for why.
+     */
     #[Route(path: '/search-query/orders/autocomplete:customer', name: 'search_query_orders_autocomplete_customer', methods: ['GET'])]
     public function customer(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
@@ -177,23 +195,43 @@ class OrdersAutocompleteController extends AbstractController
         }
 
         $qb = $entityManager->getRepository(Customer::class)->createQueryBuilder('c');
-        $qb
-            ->andWhere('SIMILARITY(c.emailCanonical, :q) > :threshold')
-            ->addOrderBy('SIMILARITY(c.emailCanonical, :q)', 'DESC')
-            ->setParameter('q', strtolower($q))
-            ->setParameter('threshold', self::SIMILARITY_THRESHOLD)
-            ->setMaxResults(10);
 
-        $results = $qb->getQuery()->getResult();
+        // A phone number scores 1 (an exact match, ranked above any fuzzy
+        // one) or nothing at all. GREATEST ignores NULLs, so a customer with
+        // no name still gets scored on their email.
+        $scoreParts = [
+            'SIMILARITY(c.emailCanonical, :q)',
+            sprintf('WORD_SIMILARITY(:q, %s)', CustomerSearch::fullNameExpr('c')),
+        ];
+
+        if (null !== $phoneNeedle = CustomerSearch::phoneNeedle($q)) {
+            $scoreParts[] = sprintf(
+                'CASE WHEN %s LIKE :phone THEN 1 ELSE 0 END',
+                CustomerSearch::phoneDigitsExpr('c')
+            );
+            $qb->setParameter('phone', '%' . $phoneNeedle . '%');
+        }
+
+        $score = sprintf('GREATEST(%s)', implode(', ', $scoreParts));
+
+        $qb
+            ->andWhere(sprintf('%s >= :threshold', $score))
+            ->addOrderBy($score, 'DESC')
+            ->setParameter('q', strtolower($q))
+            ->setParameter('threshold', self::WORD_SIMILARITY_THRESHOLD)
+            ->setMaxResults(10);
 
         $hits = [];
 
         /** @var Customer $customer */
-        foreach ($results as $customer) {
+        foreach ($qb->getQuery()->getResult() as $customer) {
             $fullName = trim($customer->getFullName());
             $hits[] = [
                 'label' => '' !== $fullName ? sprintf('%s (%s)', $fullName, $customer->getEmail()) : $customer->getEmail(),
                 'value' => $customer->getEmail(),
+                // Shown as a muted second line, so a hit found by phone
+                // number shows the number that matched.
+                'telephone' => $customer->getPhoneNumber(),
             ];
         }
 
