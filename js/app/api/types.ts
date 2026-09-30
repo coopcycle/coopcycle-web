@@ -370,6 +370,7 @@ export type Delivery = JsonLdEntity & {
   order?: PackageDeliveryOrderMinimal;
   trackingUrl?: string;
   hasEdifactImport?: boolean;
+  waybillUrl?: string | null;
 };
 
 export type EDIFACTMessage = {
