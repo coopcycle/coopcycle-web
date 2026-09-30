@@ -1391,6 +1391,37 @@ class SyncTransportersCommandTest extends KernelTestCase {
     }
 
     /**
+     * The delivery form links to the waybill, once there is one.
+     */
+    public function testDeliveryFormLinksToTheWaybill(): void
+    {
+        $commandTester = new CommandTester($this->initCommand());
+        $dropoff = $this->startDropoff($commandTester);
+
+        // As in the request rendering the form
+        self::getContainer()->get('router')->getContext()->setParameter('_locale', 'en');
+
+        $serializer = self::getContainer()->get('serializer');
+        $context = ['groups' => ['delivery', 'address', 'barcode', 'delivery_edifact']];
+
+        $data = $serializer->normalize($dropoff->getDelivery(), 'jsonld', $context);
+        $this->assertNull($data['waybillUrl']);
+
+        $this->taskManager->markAsDone($dropoff);
+        $this->entityManager->flush();
+
+        $data = $serializer->normalize($dropoff->getDelivery(), 'jsonld', $context);
+        $this->assertStringEndsWith(
+            sprintf('/pub/pod/%d/%s', $dropoff->getId(), self::getContainer()->get(Waybill::class)->token($dropoff)),
+            $data['waybillUrl']
+        );
+
+        // Not in the API
+        $data = $serializer->normalize($dropoff->getDelivery(), 'jsonld', ['groups' => ['delivery']]);
+        $this->assertArrayNotHasKey('waybillUrl', $data);
+    }
+
+    /**
      * Apps that don't send the image type upload the signature first.
      */
     public function testWaybillPageTakesTheFirstUntypedImageAsSignature(): void
