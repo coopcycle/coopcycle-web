@@ -11,7 +11,6 @@ use AppBundle\Service\OrderManager;
 use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Transporter\Waybill;
-use AppBundle\Utils\ProofOfDeliveryToken;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use phpcent\Client as CentrifugoClient;
@@ -168,13 +167,12 @@ class PublicController extends AbstractController
 
     #[Route(path: '/pod/{id}/{token}', name: 'public_pod', requirements: ['id' => '\d+'])]
     public function proofOfDeliveryAction(int $id, string $token,
-        ProofOfDeliveryToken $proofOfDeliveryToken,
         Waybill $waybill,
         EntityManagerInterface $entityManager)
     {
         $task = $entityManager->getRepository(Task::class)->find($id);
 
-        if (is_null($task) || !$proofOfDeliveryToken->isValid($task, $token)) {
+        if (is_null($task) || !hash_equals($waybill->token($task), $token)) {
             throw $this->createNotFoundException();
         }
 

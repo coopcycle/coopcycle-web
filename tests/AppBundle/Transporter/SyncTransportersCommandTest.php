@@ -17,7 +17,7 @@ use AppBundle\Service\TaskManager;
 use AppBundle\Transporter\ImportFromPoint;
 use AppBundle\Transporter\ReportFromCC;
 use AppBundle\Transporter\TransporterHelpers;
-use AppBundle\Utils\ProofOfDeliveryToken;
+use AppBundle\Transporter\Waybill;
 use Doctrine\ORM\EntityManagerInterface;
 use Fidry\AliceDataFixtures\LoaderInterface;
 use League\Flysystem\Filesystem;
@@ -1055,7 +1055,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
         return $baseUrl . $container->get('router')->generate('public_pod', [
             '_locale' => $container->getParameter('locale'),
             'id' => $task->getId(),
-            'token' => $container->get(ProofOfDeliveryToken::class)->generate($task),
+            'token' => $container->get(Waybill::class)->token($task),
         ]);
     }
 
@@ -1285,7 +1285,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->assertCount(1, $podEvents);
         $this->assertEquals(1, substr_count($podEvents[0], ":FT'"));
         $this->assertStringContainsString(
-            sprintf("/pub/pod/%d/%s:FT'", $dropoff->getId(), self::getContainer()->get(ProofOfDeliveryToken::class)->generate($dropoff)),
+            sprintf("/pub/pod/%d/%s:FT'", $dropoff->getId(), self::getContainer()->get(Waybill::class)->token($dropoff)),
             $podEvents[0]
         );
 
@@ -1355,7 +1355,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->entityManager->persist($photo);
         $this->entityManager->flush();
 
-        $token = self::getContainer()->get(ProofOfDeliveryToken::class)->generate($dropoff);
+        $token = self::getContainer()->get(Waybill::class)->token($dropoff);
         $path = sprintf('/en/pub/pod/%d/%s', $dropoff->getId(), $token);
 
         // No proof until the dropoff is done
