@@ -29,8 +29,22 @@ class Waybill
     public function __construct(
         private EdifactMessageParser $edifactMessageParser,
         private string $secret,
+        private array $transportersConfig = [],
     )
     {
+    }
+
+    /**
+     * Opt-in per transporter, with `"waybill": true` in TRANSPORTERS_CONFIG.
+     */
+    public function isEnabled(Task $task): bool
+    {
+        $importMessage = $task->getImportMessage();
+        if (is_null($importMessage)) {
+            return false;
+        }
+
+        return $this->transportersConfig[$importMessage->getTransporter()]['waybill'] ?? false;
     }
 
     /**
