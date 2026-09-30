@@ -37,10 +37,13 @@ class Waybill
      * Signs the page URL: it is sent to transporters and shows a name, an
      * address and a signature, so the task id alone (or a hashid) is not
      * enough.
+     *
+     * Same short hash as BarcodeUtils::getToken(), which can't be called from
+     * here: it is only initialized on kernel.request, not in the sync cron.
      */
     public function token(Task $task): string
     {
-        return hash_hmac('sha256', sprintf('pod:%d', $task->getId()), $this->secret);
+        return hash('xxh3', sprintf('%spod:%d', $this->secret, $task->getId()));
     }
 
     /**
