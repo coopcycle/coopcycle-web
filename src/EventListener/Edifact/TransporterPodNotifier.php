@@ -20,7 +20,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  * receipt image is available: a COM URL carried on any other status (LIV|CFM
  * included) is treated as provisional and never closes the position.
  *
- * For the transporters that enabled the waybill (see Waybill::isEnabled()),
+ * For the transporters that enabled the waybill (see Waybill::isAvailable()),
  * the event is emitted as soon as the dropoff is done: its first URL is the
  * waybill page, the "récépissé numérisé" the FT qualifier stands for, and the
  * page shows the images whenever they are uploaded. The images are sent too:
@@ -183,7 +183,7 @@ class TransporterPodNotifier {
         ));
 
         // The page answers 404 until then
-        if (!$task->isDropoff() || !$task->isDone() || !$this->waybill->isEnabled($task)) {
+        if (!$this->waybill->isAvailable($task)) {
             return $urls;
         }
 
