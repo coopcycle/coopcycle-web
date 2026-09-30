@@ -35,10 +35,15 @@ class Waybill
     }
 
     /**
-     * Opt-in per transporter, with `"waybill": true` in TRANSPORTERS_CONFIG.
+     * There is no proof until the dropoff is done, and the waybill is opt-in
+     * per transporter, with `"waybill": true` in TRANSPORTERS_CONFIG.
      */
-    public function isEnabled(Task $task): bool
+    public function isAvailable(Task $task): bool
     {
+        if (!$task->isDropoff() || !$task->isDone()) {
+            return false;
+        }
+
         $importMessage = $task->getImportMessage();
         if (is_null($importMessage)) {
             return false;

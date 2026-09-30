@@ -176,8 +176,7 @@ class PublicController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        // There is no proof until the dropoff is done
-        if (!$task->isDropoff() || !$task->isDone() || !$waybill->isEnabled($task)) {
+        if (!$waybill->isAvailable($task)) {
             throw $this->createNotFoundException();
         }
 
