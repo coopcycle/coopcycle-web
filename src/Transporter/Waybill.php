@@ -58,7 +58,7 @@ class Waybill
             $point = $this->edifactMessageParser->parsePoint($importMessage);
         }
 
-        $images = $task->getImages()->toArray();
+        [$signatures, $photos] = $this->splitImages($task->getImages()->toArray());
 
         return [
             'sender' => is_null($importMessage) ? null : $this->transporterName($importMessage->getTransporter()),
@@ -76,11 +76,36 @@ class Waybill
             'volume' => $this->measurement($point, QuantityType::CONSIGNMENT_VOLUME),
             'nature_of_goods' => $this->natureOfGoods($point),
             'dangerous_goods' => $this->dangerousGoods($point),
-            'signatures' => array_values(array_filter($images,
-                fn(TaskImage $image) => $image->getType() === TaskImageType::SIGNATURE)),
-            'photos' => array_values(array_filter($images,
-                fn(TaskImage $image) => $image->getType() !== TaskImageType::SIGNATURE)),
+            'signatures' => $signatures,
+            'photos' => $photos,
         ];
+    }
+
+    /**
+     * Apps that don't send the image type upload the signature first: without
+     * a typed signature, the first untyped image is taken as the signature.
+     *
+     * @param array<TaskImage> $images
+     * @return array{0: array<TaskImage>, 1: array<TaskImage>}
+     */
+    private function splitImages(array $images): array
+    {
+        // The collection has no order, the upload order is the id's
+        usort($images, fn(TaskImage $a, TaskImage $b) => $a->getId() <=> $b->getId());
+
+        $signatures = array_values(array_filter($images,
+            fn(TaskImage $image) => $image->getType() === TaskImageType::SIGNATURE));
+
+        if (empty($signatures)) {
+            $untyped = array_values(array_filter($images, fn(TaskImage $image) => is_null($image->getType())));
+            if (!empty($untyped)) {
+                $signatures = [$untyped[0]];
+            }
+        }
+
+        $photos = array_values(array_filter($images, fn(TaskImage $image) => !in_array($image, $signatures, true)));
+
+        return [$signatures, $photos];
     }
 
     private function transporterName(string $transporter): string
