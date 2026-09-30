@@ -10,7 +10,10 @@ module.exports = defineConfig({
 
   env: {
     ...env,
-    COMMAND_PREFIX: 'docker compose exec -T php',
+    // Run as www-data, the user PHP-FPM serves requests as. As root, any log
+    // file a fixture command creates is owned by root, and PHP-FPM can then no
+    // longer append to it -- every subsequent page returns a 500.
+    COMMAND_PREFIX: 'docker compose exec -u www-data -T php',
     coverage: false,
   },
 
