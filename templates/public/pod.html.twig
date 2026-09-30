@@ -113,11 +113,11 @@
           </div>
           <div class="cell">
             <div class="label">{{ 'pod.gross_weight'|trans }}</div>
-            <div>{{ waybill.gross_weight is not null ? waybill.gross_weight|format_number({min_fraction_digit: 3, max_fraction_digit: 3}, locale=app.request.locale) : '--' }}</div>
+            <div>{{ waybill.gross_weight is not null ? waybill.gross_weight|format_number({max_fraction_digit: 3}, locale=app.request.locale) : '--' }}</div>
           </div>
           <div class="cell">
             <div class="label">{{ 'pod.volume'|trans }}</div>
-            <div>{{ waybill.volume is not null ? waybill.volume|format_number({min_fraction_digit: 3, max_fraction_digit: 3}, locale=app.request.locale) : '--' }}</div>
+            <div>{{ waybill.volume is not null ? waybill.volume|format_number({max_fraction_digit: 3}, locale=app.request.locale) : '--' }}</div>
           </div>
         </section>
 
@@ -157,15 +157,11 @@
       <p class="notice">{{ 'pod.reservations'|trans }}</p>
 
       <section class="signature">
-        {% if task.address.contactName is not empty %}
-        <div class="label">{% trans with { '%name%': task.address.contactName } %}pod.signatory{% endtrans %}</div>
-        {% endif %}
+        <div class="label">{% trans with { '%name%': task.address.contactName ?: '--' } %}pod.signatory{% endtrans %}</div>
         {% for image in waybill.signatures %}
         <img src="{{ path('task_image_public', { path: image.imageName }) }}" alt="{{ 'pod.signature'|trans }}">
         {% else %}
-        {% if task.address.contactName is empty %}
         <div>{{ 'pod.no_signature'|trans }}</div>
-        {% endif %}
         {% endfor %}
       </section>
 
