@@ -1976,3 +1976,4 @@ hr.holidaysHistory.from: From
 hr.holidaysHistory.to: To
 hr.holidaysHistory.status: Status
 hr.holidaysHistory.comment: Comment
+delivery.time_slot.invalid: 'The selected time slot is not valid. Please choose another one.'

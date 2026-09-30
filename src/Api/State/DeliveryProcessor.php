@@ -32,6 +32,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DeliveryProcessor implements ProcessorInterface
 {
@@ -49,7 +50,8 @@ class DeliveryProcessor implements ProcessorInterface
         private readonly DeliveryManager $deliveryManager,
         private readonly TaskManager $taskManager,
         private readonly TimeSlotManager $timeSlotManager,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
+        private readonly TranslatorInterface $translator
     )
     {
     }
@@ -300,7 +302,7 @@ class DeliveryProcessor implements ProcessorInterface
                     'timeSlot' => $timeSlot->getId(),
                     'range' => $range,
                 ]);
-                throw new InvalidArgumentException('task.timeSlot.invalid');
+                throw new InvalidArgumentException($this->translator->trans('delivery.time_slot.invalid'));
             }
         }
 
