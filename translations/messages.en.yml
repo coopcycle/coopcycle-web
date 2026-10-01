@@ -2014,6 +2014,7 @@ profile.referrals.invite.submit: Send invitation(s)
 profile.referrals.invite.cancel: Cancel
 profile.referrals.invite.sent: "%count% invitation(s) sent!"
 profile.referrals.invite.invalid: "%count% email address(es) were invalid and were not sent."
+profile.referrals.invite.already_registered: "%count% email address(es) already have an account and were not invited."
 rfm.thresholds.rfm_r_score4_max_days: Score 4 — max days since last order
 rfm.thresholds.rfm_r_score3_max_days: Score 3 — max days since last order
 rfm.thresholds.rfm_r_score2_max_days: Score 2 — max days since last order

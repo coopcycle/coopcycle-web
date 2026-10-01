@@ -476,6 +476,7 @@ class ProfileController extends AbstractController
         Request $request,
         EmailManager $emailManager,
         ReferralProgramStatus $referralProgramStatus,
+        UserManagerInterface $userManager,
         TranslatorInterface $translator)
     {
         if (!$referralProgramStatus->isActive()) {
@@ -498,11 +499,16 @@ class ProfileController extends AbstractController
 
         $validEmails = [];
         $invalidCount = 0;
+        $alreadyRegisteredCount = 0;
         foreach (array_slice(array_unique($rawEmails), 0, $maxInvitesPerSubmission) as $email) {
-            if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                $validEmails[] = $email;
-            } else {
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $invalidCount++;
+            } elseif (null !== $userManager->findUserByEmail($email)) {
+                // Already has an account -- nothing to invite them to, and
+                // sending them a "join us" email would just be confusing.
+                $alreadyRegisteredCount++;
+            } else {
+                $validEmails[] = $email;
             }
         }
 
@@ -525,6 +531,11 @@ class ProfileController extends AbstractController
         if ($invalidCount > 0) {
             $this->addFlash('error', $translator->trans('profile.referrals.invite.invalid', [
                 '%count%' => $invalidCount,
+            ]));
+        }
+        if ($alreadyRegisteredCount > 0) {
+            $this->addFlash('error', $translator->trans('profile.referrals.invite.already_registered', [
+                '%count%' => $alreadyRegisteredCount,
             ]));
         }
 
