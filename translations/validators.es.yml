@@ -22,6 +22,7 @@ order.shippedAt.notEmpty: El horario de entrega no puede ser vacío
 order.items.containsDisabledProduct: El pedido contiene un producto desactivado
 
 delivery.price.error.priceCalculation: El precio de la entrega no pudo ser calculado.
+delivery.import.error.interrupted: La importación se interrumpió, no se importó ninguna entrega. Por favor, vuelva a importar el archivo.
 
 delivery.tasks.unexpectedCount: Una entrega tiene que tener dos tareas.
 delivery.tasks.pickupAfterDropoff: La fecha de presentación debe ser posterior a la
