@@ -13,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * Admin-editable fields for one tier. Name/position are fixed identifiers
@@ -65,6 +66,31 @@ class ReferralLevelType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => ReferralLevel::class,
+            'constraints' => [new Assert\Callback([$this, 'validateRewardConfiguration'])],
         ]);
+    }
+
+    /**
+     * Sylius' Fixed/PercentageDiscountPromotionActionCommand both gate on
+     * isset($configuration[...]), which silently treats a null amount as "no
+     * value" rather than raising an error -- without this, an incompletely
+     * configured level mints coupons that redeem for no discount at all, with
+     * nothing to show for it until a customer notices.
+     */
+    public function validateRewardConfiguration(ReferralLevel $level, ExecutionContextInterface $context): void
+    {
+        if (FixedDiscountPromotionActionCommand::TYPE === $level->getRewardType() && null === $level->getRewardAmount()) {
+            $context->buildViolation('referral.level.field.rewardAmount.required_for_fixed')
+                ->setTranslationDomain('messages')
+                ->atPath('rewardAmount')
+                ->addViolation();
+        }
+
+        if (PercentageDiscountPromotionActionCommand::TYPE === $level->getRewardType() && null === $level->getRewardPercentage()) {
+            $context->buildViolation('referral.level.field.rewardPercentage.required_for_percentage')
+                ->setTranslationDomain('messages')
+                ->atPath('rewardPercentage')
+                ->addViolation();
+        }
     }
 }
