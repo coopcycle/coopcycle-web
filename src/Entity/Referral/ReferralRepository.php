@@ -4,6 +4,7 @@ namespace AppBundle\Entity\Referral;
 
 use AppBundle\Entity\Sylius\Customer;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 
 class ReferralRepository extends EntityRepository
 {
@@ -51,5 +52,75 @@ class ReferralRepository extends EntityRepository
             ->setParameter('threshold', $threshold)
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * @return array<string,int> Count of referrals per status, zero-filled
+     *                            for statuses with no rows.
+     */
+    public function getStatusCounts(): array
+    {
+        $rows = $this->createQueryBuilder('r')
+            ->select('r.status AS status, COUNT(r.id) AS count')
+            ->groupBy('r.status')
+            ->getQuery()
+            ->getResult();
+
+        $counts = [
+            Referral::STATUS_PENDING => 0,
+            Referral::STATUS_COMPLETED => 0,
+            Referral::STATUS_EXPIRED => 0,
+        ];
+
+        foreach ($rows as $row) {
+            $counts[$row['status']] = (int) $row['count'];
+        }
+
+        return $counts;
+    }
+
+    /**
+     * Distinct referrers with at least one completed referral, for
+     * computing the admin dashboard's breakdown by level.
+     *
+     * @return Customer[]
+     */
+    public function findReferrersWithCompletedReferral(): array
+    {
+        $referrals = $this->createQueryBuilder('r')
+            ->addSelect('referrer')
+            ->join('r.referrer', 'referrer')
+            ->andWhere('r.status = :status')
+            ->setParameter('status', Referral::STATUS_COMPLETED)
+            ->getQuery()
+            ->getResult();
+
+        $referrers = [];
+        foreach ($referrals as $referral) {
+            $referrers[$referral->getReferrer()->getId()] = $referral->getReferrer();
+        }
+
+        return array_values($referrers);
+    }
+
+    /**
+     * For the admin referral list, newest first, with referrer/referred
+     * eagerly fetched to avoid N+1 lookups in the template.
+     */
+    public function createListQueryBuilder(?string $status): QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('r')
+            ->addSelect('referrer', 'referred')
+            ->join('r.referrer', 'referrer')
+            ->join('r.referred', 'referred')
+            ->orderBy('r.createdAt', 'DESC');
+
+        if (null !== $status) {
+            $qb
+                ->andWhere('r.status = :status')
+                ->setParameter('status', $status);
+        }
+
+        return $qb;
     }
 }

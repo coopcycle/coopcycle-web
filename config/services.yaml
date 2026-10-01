@@ -360,6 +360,10 @@ services:
       $rfmEnabled:      '%env(bool:RFM_ENABLED)%'
       $settingsManager: '@AppBundle\Service\SettingsManager'
 
+  AppBundle\Controller\Admin\ReferralProgramController:
+    arguments:
+      $referralProgramEnabled: '%env(bool:REFERRAL_PROGRAM_ENABLED)%'
+
   AppBundle\MessageHandler\Referral\OnCheckoutSucceeded:
     arguments:
       $referralProgramEnabled: '%env(bool:REFERRAL_PROGRAM_ENABLED)%'

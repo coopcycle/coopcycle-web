@@ -58,6 +58,8 @@ class SettingsManager
 
     private static $integer = [
         'new_shop_days',
+        'referral_welcome_reward_amount',
+        'referral_welcome_coupon_validity_days',
     ];
 
     private $cache = [];

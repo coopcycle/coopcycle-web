@@ -1933,6 +1933,39 @@ rfm.thresholds.frequency: Frequency (F)
 rfm.thresholds.saved: RFM thresholds saved successfully.
 rfm.thresholds.error.r_order: Recency thresholds must be in ascending order (Score 4 < Score 3 < Score 2).
 rfm.thresholds.error.f_order: Frequency thresholds must be in ascending order (Score 2 < Score 3 < Score 4).
+referral.title: Referral Program
+referral.stats.total: Total referrals
+referral.stats.pending: Pending
+referral.stats.completed: Completed
+referral.stats.expired: Expired
+referral.stats.conversion_rate: Conversion rate
+referral.levels.configure: Configure levels
+referral.levels.saved: Referral levels saved successfully.
+referral.level.field.minReferralCount: Minimum successful referrals
+referral.level.field.rewardType: Reward type
+referral.level.field.rewardAmount: Reward amount (cents)
+referral.level.field.rewardPercentage: Reward percentage
+referral.level.field.couponValidityDays: Coupon validity (days)
+referral.level.field.usageLimit: Coupon usage limit
+referral.reward_type.fixed: Fixed amount
+referral.reward_type.percentage: Percentage
+referral.welcome_settings.configure: Configure welcome coupon
+referral.welcome_settings.saved: Welcome coupon settings saved successfully.
+referral.welcome_settings.field.rewardType: Reward type
+referral.welcome_settings.field.rewardAmount: Reward amount (cents)
+referral.welcome_settings.field.rewardPercentage: Reward percentage
+referral.welcome_settings.field.couponValidityDays: Coupon validity (days)
+referral.column.referrer: Referrer
+referral.column.referred: Referred customer
+referral.column.status: Status
+referral.column.created_at: Created
+referral.column.completed_at: Completed
+referral.status.pending: Pending
+referral.status.completed: Completed
+referral.status.expired: Expired
+referral.clear_filter: Clear filter
+referral.filter.all: All
+referral.no_referrals: No referrals yet.
 rfm.thresholds.rfm_r_score4_max_days: Score 4 — max days since last order
 rfm.thresholds.rfm_r_score3_max_days: Score 3 — max days since last order
 rfm.thresholds.rfm_r_score2_max_days: Score 2 — max days since last order

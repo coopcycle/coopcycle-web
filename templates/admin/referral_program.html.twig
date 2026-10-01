@@ -1,0 +1,144 @@
+{% extends "admin.html.twig" %}
+
+{% block prepare_title %}
+  {{ add_title_prefix('referral.title'|trans) }}
+{% endblock %}
+
+{% block breadcrumb %}
+<li><a href="{{ path('admin_referral_program') }}">{% trans %}referral.title{% endtrans %}</a></li>
+{% endblock %}
+
+{% block content %}
+
+<div class="row" style="margin-bottom:16px;">
+  <div class="col-md-3">
+    <div class="panel panel-default">
+      <div class="panel-body text-center">
+        <h3 style="margin:0;">{{ status_counts.pending + status_counts.completed + status_counts.expired }}</h3>
+        <p class="text-muted" style="margin:0;">{% trans %}referral.stats.total{% endtrans %}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="panel panel-default">
+      <div class="panel-body text-center">
+        <h3 style="margin:0;">{{ status_counts.pending }}</h3>
+        <p class="text-muted" style="margin:0;">{% trans %}referral.stats.pending{% endtrans %}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="panel panel-default">
+      <div class="panel-body text-center">
+        <h3 style="margin:0;">{{ status_counts.completed }}</h3>
+        <p class="text-muted" style="margin:0;">{% trans %}referral.stats.completed{% endtrans %}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="panel panel-default">
+      <div class="panel-body text-center">
+        <h3 style="margin:0;">{{ conversion_rate is not null ? (conversion_rate * 100)|number_format(0) ~ '%' : 'N/A' }}</h3>
+        <p class="text-muted" style="margin:0;">{% trans %}referral.stats.conversion_rate{% endtrans %}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if level_breakdown is not empty %}
+<div class="row" style="margin-bottom:16px;">
+  {% for name, count in level_breakdown %}
+  <div class="col-md-{{ 12 // level_breakdown|length }}">
+    <div class="panel panel-info">
+      <div class="panel-body text-center">
+        <h4 style="margin:0;">{{ count }}</h4>
+        <p class="text-muted" style="margin:0;">{{ ('referral.level.' ~ name)|trans({}, 'emails') }}</p>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% form_theme levels_form 'bootstrap_3_layout.html.twig' %}
+<div class="panel panel-default">
+  <div class="panel-heading" style="cursor:pointer;" data-toggle="collapse" data-target="#referral-levels-panel">
+    <i class="fa fa-sliders"></i> {% trans %}referral.levels.configure{% endtrans %}
+    <span class="pull-right"><i class="fa fa-chevron-down"></i></span>
+  </div>
+  <div id="referral-levels-panel" class="panel-collapse collapse">
+    <div class="panel-body">
+      {{ form_start(levels_form) }}
+      <div class="row">
+        {% for level in levels %}
+        <div class="col-md-{{ 12 // levels|length }}">
+          <h5>{{ ('referral.level.' ~ level.name)|trans({}, 'emails') }}</h5>
+          {{ form_widget(levels_form['level_' ~ level.id]) }}
+        </div>
+        {% endfor %}
+      </div>
+      <button type="submit" class="btn btn-primary">{% trans %}basics.save{% endtrans %}</button>
+      {{ form_end(levels_form) }}
+    </div>
+  </div>
+</div>
+
+{% form_theme welcome_settings_form 'bootstrap_3_layout.html.twig' %}
+<div class="panel panel-default">
+  <div class="panel-heading" style="cursor:pointer;" data-toggle="collapse" data-target="#referral-welcome-settings-panel">
+    <i class="fa fa-gift"></i> {% trans %}referral.welcome_settings.configure{% endtrans %}
+    <span class="pull-right"><i class="fa fa-chevron-down"></i></span>
+  </div>
+  <div id="referral-welcome-settings-panel" class="panel-collapse collapse">
+    <div class="panel-body">
+      {{ form(welcome_settings_form) }}
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+  <div class="btn-group">
+    <a href="{{ path('admin_referral_program') }}" class="btn btn-sm {{ active_status is null ? 'btn-primary' : 'btn-default' }}">{% trans %}referral.filter.all{% endtrans %}</a>
+    <a href="{{ path('admin_referral_program', { status: 'pending' }) }}" class="btn btn-sm {{ active_status == 'pending' ? 'btn-primary' : 'btn-default' }}">{% trans %}referral.status.pending{% endtrans %}</a>
+    <a href="{{ path('admin_referral_program', { status: 'completed' }) }}" class="btn btn-sm {{ active_status == 'completed' ? 'btn-primary' : 'btn-default' }}">{% trans %}referral.status.completed{% endtrans %}</a>
+    <a href="{{ path('admin_referral_program', { status: 'expired' }) }}" class="btn btn-sm {{ active_status == 'expired' ? 'btn-primary' : 'btn-default' }}">{% trans %}referral.status.expired{% endtrans %}</a>
+  </div>
+</div>
+
+{% if referrals.totalItemCount > 0 %}
+<table class="table">
+  <thead>
+    <tr>
+      <th>{% trans %}referral.column.referrer{% endtrans %}</th>
+      <th>{% trans %}referral.column.referred{% endtrans %}</th>
+      <th>{% trans %}referral.column.status{% endtrans %}</th>
+      <th class="text-right">{% trans %}referral.column.created_at{% endtrans %}</th>
+      <th class="text-right">{% trans %}referral.column.completed_at{% endtrans %}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for referral in referrals %}
+    <tr>
+      <td><span class="text-monospace">{{ referral.referrer.email }}</span></td>
+      <td><span class="text-monospace">{{ referral.referred.email }}</span></td>
+      <td>
+        <span class="label label-{{ referral.status == 'completed' ? 'success' : (referral.status == 'expired' ? 'default' : 'info') }}">
+          {{ ('referral.status.' ~ referral.status)|trans }}
+        </span>
+      </td>
+      <td class="text-right">{{ referral.createdAt|ago }}</td>
+      <td class="text-right">{{ referral.completedAt ? referral.completedAt|ago : '-' }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<nav class="text-center">
+  {{ knp_pagination_render(referrals) }}
+</nav>
+{% else %}
+<div class="alert alert-info">{% trans %}referral.no_referrals{% endtrans %}</div>
+{% endif %}
+
+{% endblock %}
