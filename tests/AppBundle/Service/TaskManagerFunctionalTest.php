@@ -176,4 +176,31 @@ class TaskManagerFunctionalTest extends KernelTestCase
         // Assert that price has been recalculated
         $this->assertEquals(400, $order->getTotal());
     }
+
+    function testCancelAllTasksOfADeliveryAtOnce()
+    {
+        // SETUP
+        $entities = $this->fixturesLoader->load([
+            __DIR__.'/../../../fixtures/ORM/setup_default.yml',
+            __DIR__.'/../../../fixtures/ORM/store_basic.yml',
+            __DIR__.'/../../../fixtures/ORM/package_delivery_order.yml',
+        ], $_SERVER, [], PurgeMode::createDeleteMode());
+
+        /** @var Order $order */
+        $order = $entities['order_1'];
+
+        $this->assertEquals(OrderInterface::STATE_NEW, $order->getState());
+
+        // Cancel the pickup and the dropoff together
+        $this->taskManager->cancelTasks([$entities['task_1'], $entities['task_2']], recalculatePrice: true);
+        $this->entityManager->flush();
+
+        $this->assertEquals(Task::STATUS_CANCELLED, $entities['task_1']->getStatus());
+        $this->assertEquals(Task::STATUS_CANCELLED, $entities['task_2']->getStatus());
+
+        // Assert that linked order is cancelled, only once
+        $this->assertEquals(OrderInterface::STATE_CANCELLED, $order->getState());
+        $cancelledEvents = $order->getEvents()->filter(fn($event) => $event->getType() === 'order:cancelled');
+        $this->assertCount(1, $cancelledEvents);
+    }
 }
