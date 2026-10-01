@@ -10,6 +10,10 @@ use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Edenred\Authentication as EdenredAuthentication;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Referral\Referral;
+use AppBundle\Entity\Referral\ReferralRepository;
+use AppBundle\Service\Referral\ReferralCodeGenerator;
+use AppBundle\Service\Referral\ReferralLevelResolver;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task;
@@ -399,6 +403,70 @@ class ProfileController extends AbstractController
             'cent_usr' => $user->getUsername(),
             'cent_tok' => $centrifugoClient->generateConnectionToken($user->getUsername(), (time() + 3600)),
         ]);
+    }
+
+    #[Route(path: '/profile/referrals', name: 'profile_referrals')]
+    public function referralsAction(
+        Request $request,
+        PaginatorInterface $paginator,
+        ReferralRepository $referralRepository,
+        ReferralLevelResolver $referralLevelResolver,
+        ReferralCodeGenerator $referralCodeGenerator)
+    {
+        if (!$this->getParameter('referral_program_enabled')) {
+            throw $this->createNotFoundException();
+        }
+
+        $customer = $this->getUser()->getCustomer();
+
+        // Pre-existing accounts from before this feature shipped don't have
+        // a code yet -- generate one on first visit instead of requiring a
+        // separate backfill before the page is usable.
+        if (null === $customer->getReferralCode()) {
+            $referralCodeGenerator->generateFor($customer);
+            $this->entityManager->flush();
+        }
+
+        $level = $referralLevelResolver->resolve($customer->getSuccessfulReferralCount());
+        $nextLevel = $referralLevelResolver->resolveNext($customer->getSuccessfulReferralCount());
+
+        $history = array_map(function (Referral $referral) {
+            return [
+                'referred_first_name' => $referral->getReferred()->getFirstName(),
+                'referred_masked_email' => $this->maskEmail($referral->getReferred()->getEmail()),
+                'status' => $referral->getStatus(),
+                'created_at' => $referral->getCreatedAt(),
+                'completed_at' => $referral->getCompletedAt(),
+            ];
+        }, $referralRepository->findByReferrer($customer));
+
+        $referrals = $paginator->paginate(
+            $history,
+            $request->query->getInt('page', 1),
+            self::ITEMS_PER_PAGE
+        );
+
+        return $this->render('profile/referrals.html.twig', $this->auth([
+            'referral_code' => $customer->getReferralCode(),
+            'referral_link' => $this->generateUrl('nucleos_profile_registration_register', [
+                'ref' => $customer->getReferralCode(),
+            ], UrlGeneratorInterface::ABSOLUTE_URL),
+            'level' => $level,
+            'next_level' => $nextLevel,
+            'successful_referral_count' => $customer->getSuccessfulReferralCount(),
+            'referrals' => $referrals,
+        ]));
+    }
+
+    private function maskEmail(string $email): string
+    {
+        [$localPart, $domain] = array_pad(explode('@', $email, 2), 2, '');
+
+        $maskedLocalPart = mb_strlen($localPart) > 1
+            ? mb_substr($localPart, 0, 1) . str_repeat('*', mb_strlen($localPart) - 1)
+            : $localPart;
+
+        return sprintf('%s@%s', $maskedLocalPart, $domain);
     }
 
     #[Route(path: '/profile/notifications', name: 'profile_notifications')]

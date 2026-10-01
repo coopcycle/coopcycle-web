@@ -29,4 +29,22 @@ class ReferralLevelResolver
 
         return null;
     }
+
+    /**
+     * The next tier above the current count, for "X referrals to go"
+     * progress display -- null once the referrer has reached the top level.
+     */
+    public function resolveNext(int $successfulReferralCount): ?ReferralLevel
+    {
+        $levels = $this->entityManager->getRepository(ReferralLevel::class)
+            ->findBy([], ['minReferralCount' => 'ASC']);
+
+        foreach ($levels as $level) {
+            if ($level->getMinReferralCount() > $successfulReferralCount) {
+                return $level;
+            }
+        }
+
+        return null;
+    }
 }

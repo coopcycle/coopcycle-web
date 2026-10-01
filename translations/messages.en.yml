@@ -304,6 +304,7 @@ profile.myTracking: My tracking
 profile.myShifts: My shifts
 profile.myOrders: My orders
 profile.myAddresses: My addresses
+profile.myReferrals: My referrals
 profile.myPersonalInfo: My personal information
 profile.payment: Payment
 profile.task.noTasks: No tasks scheduled
@@ -1966,6 +1967,15 @@ referral.status.expired: Expired
 referral.clear_filter: Clear filter
 referral.filter.all: All
 referral.no_referrals: No referrals yet.
+profile.referrals.share.title: Invite friends
+profile.referrals.share.label: Your referral link
+profile.referrals.share.copy: Copy link
+profile.referrals.share.copied: Copied!
+profile.referrals.no_level_yet: Refer a friend to earn your first reward
+profile.referrals.successful_count: "%count% successful referral(s)"
+profile.referrals.next_level: "%count% more to reach %level%"
+profile.referrals.column.friend: Friend
+profile.referrals.none_yet: You haven't referred anyone yet.
 rfm.thresholds.rfm_r_score4_max_days: Score 4 — max days since last order
 rfm.thresholds.rfm_r_score3_max_days: Score 3 — max days since last order
 rfm.thresholds.rfm_r_score2_max_days: Score 2 — max days since last order
