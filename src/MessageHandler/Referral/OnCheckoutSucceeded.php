@@ -6,6 +6,7 @@ use AppBundle\Domain\Order\Event\CheckoutSucceeded;
 use AppBundle\Entity\Referral\ReferralRepository;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\OrderRepository;
+use AppBundle\Service\EmailManager;
 use AppBundle\Service\Referral\ReferralLevelResolver;
 use AppBundle\Service\Referral\ReferralRewardCouponFactory;
 use Doctrine\ORM\EntityManagerInterface;
@@ -26,7 +27,8 @@ class OnCheckoutSucceeded
         private readonly OrderRepository $orderRepository,
         private readonly ReferralLevelResolver $referralLevelResolver,
         private readonly ReferralRewardCouponFactory $referralRewardCouponFactory,
-        private readonly EntityManagerInterface $entityManager)
+        private readonly EntityManagerInterface $entityManager,
+        private readonly EmailManager $emailManager)
     {
     }
 
@@ -62,6 +64,7 @@ class OnCheckoutSucceeded
         }
 
         $referrer = $referral->getReferrer();
+        $previousLevel = $this->referralLevelResolver->resolve($referrer->getSuccessfulReferralCount());
 
         $referral->markAsCompleted($order);
         $referrer->incrementSuccessfulReferralCount();
@@ -75,5 +78,19 @@ class OnCheckoutSucceeded
         }
 
         $this->entityManager->flush();
+
+        if (null !== $level) {
+            $this->emailManager->sendTo(
+                $this->emailManager->createReferralCompletedMessageForReferrer($referral),
+                $referrer->getEmail()
+            );
+
+            if ($level !== $previousLevel) {
+                $this->emailManager->sendTo(
+                    $this->emailManager->createReferralLevelUpMessage($referrer, $level),
+                    $referrer->getEmail()
+                );
+            }
+        }
     }
 }

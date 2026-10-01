@@ -1,0 +1,7 @@
+{% extends 'emails/layout.mjml.twig' %}
+
+{% block content %}
+  <mj-text align="left" line-height="20px">
+    {{ 'referral.level_up.body'|trans({'{{level_name}}': level_name}, 'emails')|raw }}
+  </mj-text>
+{% endblock %}

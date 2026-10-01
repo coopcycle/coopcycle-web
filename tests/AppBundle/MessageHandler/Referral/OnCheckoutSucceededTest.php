@@ -9,6 +9,7 @@ use AppBundle\Entity\Referral\ReferralRepository;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\MessageHandler\Referral\OnCheckoutSucceeded;
+use AppBundle\Service\EmailManager;
 use AppBundle\Service\Referral\ReferralLevelResolver;
 use AppBundle\Service\Referral\ReferralRewardCouponFactory;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -27,6 +28,7 @@ class OnCheckoutSucceededTest extends TestCase
     private $referralLevelResolver;
     private $referralRewardCouponFactory;
     private $entityManager;
+    private $emailManager;
 
     protected function setUp(): void
     {
@@ -35,6 +37,7 @@ class OnCheckoutSucceededTest extends TestCase
         $this->referralLevelResolver = $this->prophesize(ReferralLevelResolver::class);
         $this->referralRewardCouponFactory = $this->prophesize(ReferralRewardCouponFactory::class);
         $this->entityManager = $this->prophesize(EntityManagerInterface::class);
+        $this->emailManager = $this->prophesize(EmailManager::class);
     }
 
     private function createHandler(bool $enabled = true): OnCheckoutSucceeded
@@ -45,7 +48,8 @@ class OnCheckoutSucceededTest extends TestCase
             $this->orderRepository->reveal(),
             $this->referralLevelResolver->reveal(),
             $this->referralRewardCouponFactory->reveal(),
-            $this->entityManager->reveal()
+            $this->entityManager->reveal(),
+            $this->emailManager->reveal()
         );
     }
 
@@ -103,6 +107,7 @@ class OnCheckoutSucceededTest extends TestCase
     public function testCompletesReferralAndMintsRewardCouponOnFirstOrder(): void
     {
         $referrer = new Customer();
+        $referrer->setEmail('referrer@example.com');
         $customer = new Customer();
 
         $referral = new Referral();
@@ -118,9 +123,18 @@ class OnCheckoutSucceededTest extends TestCase
 
         $this->referralRepository->findPendingByReferredCustomer($customer)->willReturn($referral);
         $this->orderRepository->countPaidOrdersByCustomer($customer)->willReturn(1);
+        $this->referralLevelResolver->resolve(0)->willReturn(null);
         $this->referralLevelResolver->resolve(1)->willReturn($level);
         $this->referralRewardCouponFactory->createReferrerRewardCoupon($referrer, $level)->willReturn($coupon);
         $this->entityManager->flush()->shouldBeCalledOnce();
+
+        $rewardMessage = (new \Symfony\Component\Mime\Email())->subject('reward');
+        $this->emailManager->createReferralCompletedMessageForReferrer($referral)->willReturn($rewardMessage);
+        $this->emailManager->sendTo($rewardMessage, 'referrer@example.com')->shouldBeCalledOnce();
+
+        $levelUpMessage = (new \Symfony\Component\Mime\Email())->subject('level up');
+        $this->emailManager->createReferralLevelUpMessage($referrer, $level)->willReturn($levelUpMessage);
+        $this->emailManager->sendTo($levelUpMessage, 'referrer@example.com')->shouldBeCalledOnce();
 
         $handler = $this->createHandler();
         $handler(new CheckoutSucceeded($orderReveal));
@@ -145,9 +159,11 @@ class OnCheckoutSucceededTest extends TestCase
 
         $this->referralRepository->findPendingByReferredCustomer($customer)->willReturn($referral);
         $this->orderRepository->countPaidOrdersByCustomer($customer)->willReturn(1);
+        $this->referralLevelResolver->resolve(0)->willReturn(null);
         $this->referralLevelResolver->resolve(1)->willReturn(null);
 
         $this->referralRewardCouponFactory->createReferrerRewardCoupon(Argument::cetera())->shouldNotBeCalled();
+        $this->emailManager->sendTo(Argument::cetera())->shouldNotBeCalled();
         $this->entityManager->flush()->shouldBeCalledOnce();
 
         $handler = $this->createHandler();

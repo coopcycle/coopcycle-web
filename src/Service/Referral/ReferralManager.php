@@ -6,6 +6,7 @@ use AppBundle\Entity\Referral\Referral;
 use AppBundle\Entity\Referral\ReferralRepository;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\User;
+use AppBundle\Service\EmailManager;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -25,6 +26,7 @@ class ReferralManager
         private readonly ReferralCodeGenerator $referralCodeGenerator,
         private readonly ReferralRewardCouponFactory $referralRewardCouponFactory,
         private readonly EntityManagerInterface $entityManager,
+        private readonly EmailManager $emailManager,
         private readonly LoggerInterface $logger)
     {
     }
@@ -87,6 +89,13 @@ class ReferralManager
                 'Referral for customer #%d already exists, ignoring duplicate',
                 $referred->getId()
             ));
+
+            return;
         }
+
+        $this->emailManager->sendTo(
+            $this->emailManager->createReferralWelcomeMessage($referral),
+            $referred->getEmail()
+        );
     }
 }
