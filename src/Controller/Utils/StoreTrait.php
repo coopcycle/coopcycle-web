@@ -702,7 +702,7 @@ trait StoreTrait
         // then be unreadable, so only the days with orders are kept.
         $withEmptyDays = $periodStart->diffInDays($periodEnd) < self::DELIVERY_METRICS_MAX_ROWS;
 
-        foreach (CarbonPeriod::create($periodStart, $periodEnd) as $day) {
+        foreach (CarbonPeriod::create($periodStart, $periodEnd)->toArray() as $day) {
 
             $metrics = $days[$day->format('Y-m-d')] ?? $empty;
 
