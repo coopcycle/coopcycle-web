@@ -207,6 +207,7 @@
         "CROPPIE_CANCEL": "Cancelar",
         "DROPZONE_DEFAULT_MESSAGE": "Deja los archivos aquí",
         "ADMIN_DASHBOARD_CANCEL_TASKS_MULTI": "Cancelar {{count}} tarea(s)",
+        "ADMIN_DASHBOARD_CANCEL_TASKS_FAILED": "No se pudo cancelar {{count}} tarea(s): {{errors}}",
         "ADMIN_DASHBOARD_SEARCH_PLACEHOLDER": "ID, dirección…",
         "ADMIN_DASHBOARD_COURIER_SELECT_PLACEHOLDER": "Selecciona un mensajero·a…",
         "ADMIN_DASHBOARD_COURIERS_SELECT_PLACEHOLDER": "Selecciona un mensajero·as…",
