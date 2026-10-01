@@ -896,6 +896,12 @@ stores.deliveries.bookmarks.empty_message: Bookmark orders on the Delivery page 
 stores.deliveries.bookmarks.remove: Remove from saved orders
 stores.deliveries.bookmarks.confirm: 'Do you confirm the deletion of %number% from saved orders?'
 stores.deliveries.bookmarks.error: Could not delete the bookmark
+stores.metrics.orders: Orders
+stores.metrics.yesterday: Yesterday
+stores.metrics.last_days: 'Last %count% days'
+stores.metrics.breakdown: Day by day
+stores.metrics.day: Day
+stores.metrics.total: Total
 stores.orders: Orders
 stores.addresses: Addresses
 stores.recurrence_rules: Recurrence rules

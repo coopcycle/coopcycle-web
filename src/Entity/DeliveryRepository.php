@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Sylius\Order\AdjustmentInterface;
+use AppBundle\Sylius\Order\OrderInterface;
 use Carbon\Carbon;
 use DateTimeInterface;
 use Doctrine\ORM\EntityRepository;
@@ -123,6 +125,86 @@ class DeliveryRepository extends EntityRepository
             ->setParameter('start', $start)
             ->setParameter('end', $end)
             ;
+    }
+
+    /**
+     * Per-day number of orders & amount billed for a store, for the "instant
+     * accounting" panel of the deliveries page (how many orders today, how much
+     * is being charged).
+     *
+     * Days are those of the first pickup's doneBefore, i.e. the day the delivery
+     * is scheduled for, which is also what the listings display, sort & filter
+     * on (see today(), past(), upcoming() & dateRange()).
+     *
+     * Cancelled orders (and carts, which are never completed) are left out
+     * entirely, deliveries without an order are counted but bill nothing.
+     *
+     * @return array<string, array{orders: int, total: int, taxTotal: int}>
+     *         keyed by day, in the Y-m-d format
+     */
+    public function getDailyMetrics(Store|int $store, DateTimeInterface $from, DateTimeInterface $to): array
+    {
+        $days = [];
+
+        $rows = $this->dailyMetricsQueryBuilder($store, $from, $to)
+            ->select('DATE(t.doneBefore) AS day')
+            ->addSelect('COUNT(DISTINCT d.id) AS orders')
+            ->addSelect('COALESCE(SUM(o.total), 0) AS total')
+            ->getQuery()
+            ->getArrayResult();
+
+        foreach ($rows as $row) {
+            $days[$row['day']] = [
+                'orders' => (int) $row['orders'],
+                'total' => (int) $row['total'],
+                'taxTotal' => 0,
+            ];
+        }
+
+        // The tax total is not stored on the order, it is the sum of its "tax"
+        // adjustments, which live both on the order itself and on its items
+        // (see Order::getTaxTotal()). They are to-many associations, so they
+        // can't be summed in the query above without multiplying its rows.
+        foreach (['o.adjustments' => null, 'oi.adjustments' => 'o.items'] as $association => $itemsJoin) {
+
+            $qb = $this->dailyMetricsQueryBuilder($store, $from, $to)
+                ->select('DATE(t.doneBefore) AS day')
+                ->addSelect('COALESCE(SUM(a.amount), 0) AS taxTotal')
+                ->setParameter('tax', AdjustmentInterface::TAX_ADJUSTMENT);
+
+            if (null !== $itemsJoin) {
+                $qb->join($itemsJoin, 'oi');
+            }
+
+            $qb->join($association, 'a', Expr\Join::WITH, 'a.type = :tax');
+
+            foreach ($qb->getQuery()->getArrayResult() as $row) {
+                if (isset($days[$row['day']])) {
+                    $days[$row['day']]['taxTotal'] += (int) $row['taxTotal'];
+                }
+            }
+        }
+
+        return $days;
+    }
+
+    private function dailyMetricsQueryBuilder(Store|int $store, DateTimeInterface $from, DateTimeInterface $to): QueryBuilder
+    {
+        // A delivery has several tasks ; without firstPickupOnly(), it would be
+        // counted (and billed) once per task.
+        return $this->firstPickupOnly($this->createQueryBuilderWithTasks())
+            ->leftJoin('d.order', 'o')
+            ->andWhere('d.store = :store')
+            ->andWhere('t.doneBefore BETWEEN :from AND :to')
+            ->andWhere('(o.state IS NULL OR o.state NOT IN (:excludedStates))')
+            ->groupBy('day')
+            ->setParameter('store', $store)
+            ->setParameter('from', $from)
+            ->setParameter('to', $to)
+            ->setParameter('excludedStates', [
+                OrderInterface::STATE_CART,
+                OrderInterface::STATE_CANCELLED,
+            ]);
     }
 
     /**

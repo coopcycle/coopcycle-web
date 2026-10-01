@@ -32,6 +32,7 @@ use AppBundle\Service\DeliveryOrderManager;
 use AppBundle\Service\InvitationManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
@@ -69,6 +70,18 @@ trait StoreTrait
      * lists of the store deliveries page.
      */
     private const DELIVERY_SUMMARY_LIST_LIMIT = 100;
+
+    /**
+     * Length, in days, of the period covered by the metrics panel of the store
+     * deliveries page, when no date range is selected.
+     */
+    private const DELIVERY_METRICS_DAYS = 7;
+
+    /**
+     * Above that many days, the per-day breakdown only lists the days having at
+     * least one order.
+     */
+    private const DELIVERY_METRICS_MAX_ROWS = 31;
 
     #[HideSoftDeleted]
     public function storeListAction(Request $request, PaginatorInterface $paginator, JWTTokenManagerInterface $jwtManager)
@@ -639,6 +652,7 @@ trait StoreTrait
             'store' => $store,
             'deliveries' => $deliveries,
             'filters' => $filters,
+            'metrics' => $this->getStoreMetrics($deliveryRepository, $store, $filters['range']),
             'show_summary_lists' => $showSummaryLists,
             'today' => $today,
             'today_truncated' => $todayTruncated,
@@ -650,6 +664,69 @@ trait StoreTrait
             'store_route' => $routes['store'],
             'delivery_import_form' => $deliveryImportForm->createView(),
         ]));
+    }
+
+    /**
+     * Number of orders & amount billed, for today, for yesterday, and day by day
+     * over a period: the selected date range when the listing is filtered,
+     * otherwise the last DELIVERY_METRICS_DAYS days.
+     *
+     * @param array{0: ?\DateTimeInterface, 1: ?\DateTimeInterface} $range
+     */
+    private function getStoreMetrics(DeliveryRepository $deliveryRepository, Store $store, array $range): array
+    {
+        $today = Carbon::now()->startOfDay();
+        $yesterday = $today->clone()->subDay();
+
+        if ($range[0] && $range[1]) {
+            $periodStart = Carbon::instance($range[0])->startOfDay();
+            $periodEnd = Carbon::instance($range[1])->endOfDay();
+        } else {
+            $periodStart = $today->clone()->subDays(self::DELIVERY_METRICS_DAYS - 1);
+            $periodEnd = $today->clone()->endOfDay();
+        }
+
+        // Today & yesterday are shown whatever the period is, so the query has
+        // to cover both, and the period is sliced out of its result.
+        $days = $deliveryRepository->getDailyMetrics(
+            $store,
+            min($periodStart, $yesterday),
+            max($periodEnd, $today->clone()->endOfDay())
+        );
+
+        $empty = ['orders' => 0, 'total' => 0, 'taxTotal' => 0];
+
+        $period = ['orders' => 0, 'total' => 0, 'taxTotal' => 0, 'days' => []];
+
+        // A date range can span months or years ; listing every single day would
+        // then be unreadable, so only the days with orders are kept.
+        $withEmptyDays = $periodStart->diffInDays($periodEnd) < self::DELIVERY_METRICS_MAX_ROWS;
+
+        foreach (CarbonPeriod::create($periodStart, $periodEnd) as $day) {
+
+            $metrics = $days[$day->format('Y-m-d')] ?? $empty;
+
+            $period['orders'] += $metrics['orders'];
+            $period['total'] += $metrics['total'];
+            $period['taxTotal'] += $metrics['taxTotal'];
+
+            if ($metrics['orders'] > 0 || $withEmptyDays) {
+                $period['days'][] = $metrics + ['date' => $day->clone()];
+            }
+        }
+
+        // Most recent first, like the listing below it.
+        $period['days'] = array_reverse($period['days']);
+
+        return [
+            'today' => $days[$today->format('Y-m-d')] ?? $empty,
+            'yesterday' => $days[$yesterday->format('Y-m-d')] ?? $empty,
+            'period' => $period,
+            'period_start' => $periodStart,
+            'period_end' => $periodEnd,
+            'period_is_filtered' => $range[0] && $range[1],
+            'period_days' => self::DELIVERY_METRICS_DAYS,
+        ];
     }
 
     /**

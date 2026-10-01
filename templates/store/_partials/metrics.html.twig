@@ -1,0 +1,73 @@
+{# Number of orders & amount billed, for "instant accounting" (see the controller) #}
+{% set period_label = metrics.period_is_filtered
+  ? metrics.period_start|format_date('short') ~ ' – ' ~ metrics.period_end|format_date('short')
+  : 'stores.metrics.last_days'|trans({ '%count%': metrics.period_days }) %}
+
+<div class="row" data-testid="store__metrics">
+  {% for card in [
+    { key: 'today',     label: 'basics.today'|trans,                 metrics: metrics.today },
+    { key: 'yesterday', label: 'stores.metrics.yesterday'|trans,     metrics: metrics.yesterday },
+    { key: 'period',    label: period_label,                         metrics: metrics.period }
+  ] %}
+  <div class="col-sm-4">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <strong>{{ card.label }}</strong>
+      </div>
+      <div class="panel-body" data-testid="store__metrics__{{ card.key }}">
+        <div class="d-flex justify-content-between align-items-baseline">
+          <span class="text-muted">{{ 'stores.metrics.orders'|trans }}</span>
+          <span class="h3 m-0 text-monospace" data-testid="orders">{{ card.metrics.orders }}</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-baseline mt-2">
+          <span class="text-muted">{% trans %}order.total_including_tax{% endtrans %}</span>
+          <span class="h4 m-0 text-monospace" data-testid="total">{{ card.metrics.total|price_format }}</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-baseline">
+          <span class="text-muted"><small>{% trans %}order.total_excluding_tax{% endtrans %}</small></span>
+          <span class="text-monospace"><small>{{ (card.metrics.total - card.metrics.taxTotal)|price_format }}</small></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% if metrics.period.days|length > 0 %}
+<div class="panel panel-default">
+  <div class="panel-heading" style="cursor: pointer;" data-toggle="collapse" data-target="#store-metrics-breakdown">
+    <i class="fa fa-bar-chart"></i>&nbsp;{{ 'stores.metrics.breakdown'|trans }}
+    <small class="text-muted">({{ period_label }})</small>
+  </div>
+  <div id="store-metrics-breakdown" class="panel-collapse collapse">
+    <table class="table table-condensed m-0">
+      <thead>
+        <tr>
+          <th>{{ 'stores.metrics.day'|trans }}</th>
+          <th class="text-right">{{ 'stores.metrics.orders'|trans }}</th>
+          <th class="text-right">{% trans %}order.total_excluding_tax{% endtrans %}</th>
+          <th class="text-right">{% trans %}order.total_including_tax{% endtrans %}</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for day in metrics.period.days %}
+        <tr{% if day.orders == 0 %} class="text-muted"{% endif %}>
+          <td>{{ day.date|format_date(pattern='EEE d MMM y') }}</td>
+          <td class="text-right text-monospace">{{ day.orders }}</td>
+          <td class="text-right text-monospace">{{ (day.total - day.taxTotal)|price_format }}</td>
+          <td class="text-right text-monospace">{{ day.total|price_format }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr>
+          <th>{{ 'stores.metrics.total'|trans }}</th>
+          <th class="text-right text-monospace">{{ metrics.period.orders }}</th>
+          <th class="text-right text-monospace">{{ (metrics.period.total - metrics.period.taxTotal)|price_format }}</th>
+          <th class="text-right text-monospace">{{ metrics.period.total|price_format }}</th>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>
+{% endif %}
