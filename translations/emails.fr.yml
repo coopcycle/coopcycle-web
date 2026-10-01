@@ -71,6 +71,12 @@ referral.level_up.body: |
 referral.level.bronze: Bronze
 referral.level.silver: Argent
 referral.level.gold: Or
+referral.invitation.subject: "{{referrer_name}} vous invite à nous rejoindre !"
+referral.invitation.body: |
+  Bonjour,
+  <br>
+  {{referrer_name}} pense que ceci pourrait vous plaire. Inscrivez-vous via le lien ci-dessous pour bénéficier d'une réduction de bienvenue sur votre première commande.
+referral.invitation.cta: S'inscrire
 admin.pledge.subject: Une nouvelle suggestion a été envoyée !
 admin.pledge.body: |
   Bonjour,

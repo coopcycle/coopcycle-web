@@ -21,11 +21,44 @@
     <i class="fa fa-link"></i>
     <input type="text" value="{{ referral_link }}" readonly>
   </label>
-  <button id="referral-copy-button" type="button" class="btn btn-primary mt-3" data-toggle="copy" data-clipboard-text="{{ referral_link }}">
-    <i class="fa fa-copy mr-2"></i>
-    {{ 'profile.referrals.share.copy'|trans }}
-  </button>
+  <div class="flex flex-wrap gap-3 mt-3">
+    <button id="referral-copy-button" type="button" class="btn btn-primary" data-toggle="copy" data-clipboard-text="{{ referral_link }}">
+      <i class="fa fa-copy mr-2"></i>
+      {{ 'profile.referrals.share.copy'|trans }}
+    </button>
+    <button type="button" class="btn btn-outline btn-primary" onclick="document.getElementById('referral-invite-modal').showModal();">
+      <i class="fa fa-envelope mr-2"></i>
+      {{ 'profile.referrals.invite.button'|trans({'%brand_name%': coopcycle_setting('brand_name')}) }}
+    </button>
+  </div>
 </div>
+
+<dialog id="referral-invite-modal" class="modal">
+  <div class="modal-box">
+    <form id="referral-invite-form" method="post" action="{{ path('profile_referrals_invite') }}">
+      <h3 class="text-lg font-bold mb-2">{{ 'profile.referrals.invite.modal_title'|trans({'%brand_name%': coopcycle_setting('brand_name')}) }}</h3>
+      <p class="text-gray-500 mb-3">{{ 'profile.referrals.invite.modal_help'|trans }}</p>
+      <textarea
+        name="emails"
+        class="textarea w-full"
+        rows="4"
+        placeholder="{{ 'profile.referrals.invite.placeholder'|trans }}"
+      ></textarea>
+      <input type="hidden" name="_token" value="{{ csrf_token('profile_referrals_invite') }}">
+      <div class="modal-action">
+        <button type="button" class="btn" onclick="document.getElementById('referral-invite-modal').close();">
+          {{ 'profile.referrals.invite.cancel'|trans }}
+        </button>
+        <button type="submit" class="btn btn-primary">
+          {{ 'profile.referrals.invite.submit'|trans }}
+        </button>
+      </div>
+    </form>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
 
 {% if levels is not empty %}
 <div class="mb-8">

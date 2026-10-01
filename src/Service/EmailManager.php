@@ -434,6 +434,19 @@ class EmailManager
         return $this->createHtmlMessageWithReplyTo($subject, $body);
     }
 
+    public function createReferralInvitationMessage(Customer $referrer, string $referralLink)
+    {
+        $subject = $this->translator->trans('referral.invitation.subject', [
+            '{{referrer_name}}' => $referrer->getFullName(),
+        ], 'emails');
+        $body = $this->mjml->render($this->templating->render('emails/referral/invitation.mjml.twig', [
+            'referrer_name' => $referrer->getFullName(),
+            'referral_link' => $referralLink,
+        ]));
+
+        return $this->createHtmlMessageWithReplyTo($subject, $body);
+    }
+
     private function createExpiringAuthorizationReminderMessage(OrderInterface $order, $isAdmin = false)
     {
         $subject = $this->translator->trans('order.expiring_authorization.subject', ['{{order_number}}' => $order->getNumber()], 'emails');

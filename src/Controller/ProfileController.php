@@ -26,6 +26,7 @@ use AppBundle\Form\OrderType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\TaskCompleteType;
 use AppBundle\Service\DeliveryManager;
+use AppBundle\Service\EmailManager;
 use AppBundle\Service\TopBarNotifications;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\TaskManager;
@@ -468,6 +469,66 @@ class ProfileController extends AbstractController
             'successful_referral_count' => $successfulReferralCount,
             'referrals' => $referrals,
         ]));
+    }
+
+    #[Route(path: '/profile/referrals/invite', name: 'profile_referrals_invite', methods: ['POST'])]
+    public function referralsInviteAction(
+        Request $request,
+        EmailManager $emailManager,
+        ReferralProgramStatus $referralProgramStatus,
+        TranslatorInterface $translator)
+    {
+        if (!$referralProgramStatus->isActive()) {
+            throw $this->createNotFoundException();
+        }
+
+        if (!$this->isCsrfTokenValid('profile_referrals_invite', $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $customer = $this->getUser()->getCustomer();
+
+        // Accept emails separated by commas, whitespace and/or newlines, so
+        // both a comma-separated input and a one-per-line textarea work.
+        $rawEmails = preg_split('/[\s,]+/', (string) $request->request->get('emails', ''), -1, PREG_SPLIT_NO_EMPTY);
+
+        // Capped so this can't be used to bulk-spam arbitrary addresses from
+        // a single submission.
+        $maxInvitesPerSubmission = 10;
+
+        $validEmails = [];
+        $invalidCount = 0;
+        foreach (array_slice(array_unique($rawEmails), 0, $maxInvitesPerSubmission) as $email) {
+            if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $validEmails[] = $email;
+            } else {
+                $invalidCount++;
+            }
+        }
+
+        $referralLink = $this->generateUrl('nucleos_profile_registration_register', [
+            'ref' => $customer->getReferralCode(),
+        ], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        foreach ($validEmails as $email) {
+            $emailManager->sendTo(
+                $emailManager->createReferralInvitationMessage($customer, $referralLink),
+                $email
+            );
+        }
+
+        if (count($validEmails) > 0) {
+            $this->addFlash('notice', $translator->trans('profile.referrals.invite.sent', [
+                '%count%' => count($validEmails),
+            ]));
+        }
+        if ($invalidCount > 0) {
+            $this->addFlash('error', $translator->trans('profile.referrals.invite.invalid', [
+                '%count%' => $invalidCount,
+            ]));
+        }
+
+        return $this->redirectToRoute('profile_referrals');
     }
 
     private function maskEmail(string $email): string
