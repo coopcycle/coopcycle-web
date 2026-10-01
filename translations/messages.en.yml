@@ -1253,6 +1253,9 @@ form:
       label: Contact person for the restaurant
     b2b:
       label: Would you like to propose special offers for companies?
+  registration:
+    referralCode:
+      label: Referral code (optional)
 refund.list.amount: Refunded amount
 refund.list.liable_party: Liable party
 refund.list.comments: Comments

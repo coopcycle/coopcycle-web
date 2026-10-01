@@ -56,7 +56,7 @@ class ReferralManager
             return;
         }
 
-        if ($referrer->getId() === $referred->getId()) {
+        if ($referrer === $referred) {
             $this->entityManager->flush();
 
             return;
