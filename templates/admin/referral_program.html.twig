@@ -11,6 +11,27 @@
 
 {% block content %}
 
+{% form_theme active_form 'bootstrap_3_layout.html.twig' %}
+<div class="panel panel-default" style="margin-bottom:16px;">
+  <div class="panel-body">
+    {{ form_start(active_form, { attr: { id: 'referral-program-active-form' } }) }}
+      <div class="checkbox" style="margin:0;">
+        <label>
+          {{ form_widget(active_form.active, { attr: { onchange: 'this.form.submit()' } }) }}
+          <strong>{% trans %}referral.program.active_label{% endtrans %}</strong>
+        </label>
+      </div>
+      <p class="text-muted" style="margin:4px 0 0;">{% trans %}referral.program.active_help{% endtrans %}</p>
+    {{ form_end(active_form) }}
+  </div>
+</div>
+
+{% if not is_active %}
+<div class="alert alert-warning" role="alert">
+  <i class="fa fa-exclamation-triangle"></i> {% trans %}referral.program.inactive_warning{% endtrans %}
+</div>
+{% endif %}
+
 <div class="row" style="margin-bottom:16px;">
   <div class="col-md-3">
     <div class="panel panel-default">

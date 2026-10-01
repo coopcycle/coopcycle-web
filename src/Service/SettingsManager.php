@@ -56,6 +56,7 @@ class SettingsManager
         'sms_enabled',
         'subject_to_vat',
         'guest_checkout_enabled',
+        'referral_program_active',
     ];
 
     private static $integer = [

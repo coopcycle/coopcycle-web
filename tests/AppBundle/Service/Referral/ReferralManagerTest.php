@@ -9,6 +9,7 @@ use AppBundle\Entity\User;
 use AppBundle\Service\EmailManager;
 use AppBundle\Service\Referral\ReferralCodeGenerator;
 use AppBundle\Service\Referral\ReferralManager;
+use AppBundle\Service\Referral\ReferralProgramStatus;
 use AppBundle\Service\Referral\ReferralRewardCouponFactory;
 use AppBundle\Sylius\Promotion\PromotionCouponInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -28,6 +29,7 @@ class ReferralManagerTest extends TestCase
     private $referralRewardCouponFactory;
     private $entityManager;
     private $emailManager;
+    private $referralProgramStatus;
     private $logger;
     private $manager;
 
@@ -39,6 +41,8 @@ class ReferralManagerTest extends TestCase
         $this->referralRewardCouponFactory = $this->prophesize(ReferralRewardCouponFactory::class);
         $this->entityManager = $this->prophesize(EntityManagerInterface::class);
         $this->emailManager = $this->prophesize(EmailManager::class);
+        $this->referralProgramStatus = $this->prophesize(ReferralProgramStatus::class);
+        $this->referralProgramStatus->isActive()->willReturn(true);
         $this->logger = $this->prophesize(LoggerInterface::class);
 
         $this->manager = new ReferralManager(
@@ -48,6 +52,7 @@ class ReferralManagerTest extends TestCase
             $this->referralRewardCouponFactory->reveal(),
             $this->entityManager->reveal(),
             $this->emailManager->reveal(),
+            $this->referralProgramStatus->reveal(),
             $this->logger->reveal()
         );
     }
@@ -59,6 +64,18 @@ class ReferralManagerTest extends TestCase
         $user->setCustomer($customer);
 
         return [$user, $customer];
+    }
+
+    public function testDoesNothingAtAllWhenProgramIsNotActive(): void
+    {
+        [$user, $customer] = $this->buildUserWithCustomer();
+
+        $this->referralProgramStatus->isActive()->willReturn(false);
+
+        $this->referralCodeGenerator->generateFor(Argument::any())->shouldNotBeCalled();
+        $this->entityManager->flush()->shouldNotBeCalled();
+
+        $this->manager->registerPendingReferral($user, 'abc123');
     }
 
     public function testGeneratesOwnCodeAndDoesNothingElseWhenNoCodeGiven(): void

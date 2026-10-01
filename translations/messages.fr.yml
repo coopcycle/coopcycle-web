@@ -1970,6 +1970,11 @@ delivery.time_slot.invalid: "La tranche horaire sélectionnée n'est pas valide.
 form.product_option_value.delete.confirm: "Cette valeur ne sera plus disponible, mais elle restera visible sur les commandes précédentes. Voulez-vous continuer ?"
 promotion_rule.is_first_order: Première commande
 referral.title: Programme de parrainage
+referral.program.active_label: Le programme de parrainage est actif
+referral.program.active_help: "Tant que ceci est désactivé, les clients ne peuvent ni voir, ni rejoindre, ni gagner quoi que ce soit via le programme de parrainage, même si la fonctionnalité elle-même est activée."
+referral.program.inactive_warning: "Le programme de parrainage est actuellement inactif. Les clients n'y ont pas accès et aucune récompense ne sera accordée tant que vous ne l'aurez pas activé ci-dessus."
+referral.program.activated: Programme de parrainage activé.
+referral.program.deactivated: Programme de parrainage désactivé.
 referral.stats.total: Parrainages totaux
 referral.stats.pending: En attente
 referral.stats.completed: Terminés

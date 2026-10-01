@@ -365,9 +365,9 @@ services:
     arguments:
       $referralProgramEnabled: '%env(bool:REFERRAL_PROGRAM_ENABLED)%'
 
-  AppBundle\MessageHandler\Referral\OnCheckoutSucceeded:
+  AppBundle\Service\Referral\ReferralProgramStatus:
     arguments:
-      $referralProgramEnabled: '%env(bool:REFERRAL_PROGRAM_ENABLED)%'
+      $envEnabled: '%env(bool:REFERRAL_PROGRAM_ENABLED)%'
 
   AppBundle\Controller\AssetsController:
     arguments:

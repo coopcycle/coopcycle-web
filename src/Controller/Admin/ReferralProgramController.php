@@ -12,6 +12,8 @@ use AppBundle\Sylius\Promotion\Action\FixedDiscountPromotionActionCommand;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -36,6 +38,31 @@ class ReferralProgramController extends AbstractController
         }
 
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        // Independent of $referralProgramEnabled (the env-var gate controlling
+        // whether this whole dashboard exists): this is the runtime on/off
+        // switch customers' and checkout's code paths actually check, via
+        // ReferralProgramStatus::isActive(). Defaults to off even when the
+        // env var is on, so turning the env var on alone can never put a
+        // live, unconfigured program in front of customers.
+        $activeForm = $this->container->get('form.factory')->createNamedBuilder(
+            'referral_program_active_form',
+            FormType::class,
+            ['active' => $this->settingsManager->getBoolean('referral_program_active')],
+            ['data_class' => null]
+        )
+            ->add('active', CheckboxType::class, ['required' => false, 'label' => false])
+            ->getForm();
+        $activeForm->handleRequest($request);
+
+        if ($activeForm->isSubmitted()) {
+            $active = (bool) $activeForm->get('active')->getData();
+            $this->settingsManager->set('referral_program_active', $active ? '1' : '0');
+            $this->settingsManager->flush();
+            $this->addFlash('notice', $active ? 'referral.program.activated' : 'referral.program.deactivated');
+
+            return $this->redirectToRoute('admin_referral_program');
+        }
 
         $levels = $this->entityManager->getRepository(ReferralLevel::class)->findBy([], ['position' => 'ASC']);
 
@@ -101,6 +128,8 @@ class ReferralProgramController extends AbstractController
         );
 
         return $this->render('admin/referral_program.html.twig', [
+            'active_form' => $activeForm,
+            'is_active' => $this->settingsManager->getBoolean('referral_program_active'),
             'levels' => $levels,
             'levels_form' => $levelsForm,
             'welcome_settings_form' => $welcomeSettingsForm,
