@@ -53,6 +53,24 @@ admin.send_invitation.body: |
   <br>
   Ceci est une invitation à l'espace CoopCycle, pour finaliser la création de votre compte veuillez cliquer sur lien suivant.
 admin.send_invitation.create_password: Créer mon mot de passe
+referral.welcome.subject: Une réduction sur votre première commande !
+referral.welcome.body: |
+  Bonjour,
+  <br>
+  Un ami vous a invité à nous rejoindre. Utilisez le code ci-dessous sur votre première commande pour bénéficier d'une réduction.
+referral.reward_earned.subject: Vous avez gagné une récompense de parrainage !
+referral.reward_earned.body: |
+  Bonjour,
+  <br>
+  Un ami que vous avez parrainé vient de passer sa première commande. Voici votre récompense.
+referral.level_up.subject: Vous avez atteint un nouveau niveau de parrainage !
+referral.level_up.body: |
+  Bonjour,
+  <br>
+  Grâce à vos parrainages, vous avez atteint le niveau {{level_name}}.
+referral.level.bronze: Bronze
+referral.level.silver: Argent
+referral.level.gold: Or
 admin.pledge.subject: Une nouvelle suggestion a été envoyée !
 admin.pledge.body: |
   Bonjour,
