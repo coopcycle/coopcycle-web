@@ -1937,6 +1937,8 @@ referral.level.field.rewardAmount: Montant de la récompense
 referral.level.field.rewardAmount.help: Montant de la réduction. Utilisé uniquement lorsque le type de récompense est « Montant fixe ».
 referral.level.field.rewardPercentage: Pourcentage de la récompense
 referral.level.field.rewardPercentage.help: Pourcentage de la réduction. Utilisé uniquement lorsque le type de récompense est « Pourcentage ».
+referral.level.field.rewardAmount.required_for_fixed: Obligatoire lorsque le type de récompense est « Montant fixe ».
+referral.level.field.rewardPercentage.required_for_percentage: Obligatoire lorsque le type de récompense est « Pourcentage ».
 referral.level.field.couponValidityDays: Validité du coupon (jours)
 referral.level.field.couponValidityDays.help: Nombre de jours pendant lesquels le coupon de récompense reste valide après son émission.
 referral.level.field.usageLimit: Limite d'utilisation du coupon
@@ -1953,6 +1955,8 @@ referral.welcome_settings.field.rewardAmount: Montant de la récompense
 referral.welcome_settings.field.rewardAmount.help: Montant de la réduction. Utilisé uniquement lorsque le type de récompense est « Montant fixe ».
 referral.welcome_settings.field.rewardPercentage: Pourcentage de la récompense
 referral.welcome_settings.field.rewardPercentage.help: Pourcentage de la réduction. Utilisé uniquement lorsque le type de récompense est « Pourcentage ».
+referral.welcome_settings.field.rewardAmount.required_for_fixed: Obligatoire lorsque le type de récompense est « Montant fixe ».
+referral.welcome_settings.field.rewardPercentage.required_for_percentage: Obligatoire lorsque le type de récompense est « Pourcentage ».
 referral.welcome_settings.field.couponValidityDays: Validité du coupon (jours)
 referral.welcome_settings.field.couponValidityDays.help: Nombre de jours pendant lesquels le coupon de bienvenue reste valide ; il ne peut être utilisé que sur la première commande du client parrainé.
 referral.welcome_settings.field.pendingTtlDays: Expiration des parrainages en attente (jours)

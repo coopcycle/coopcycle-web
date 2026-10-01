@@ -77,4 +77,29 @@ class ReferralRewardCouponFactoryTest extends TestCase
 
         self::assertTrue($coupon->isInternal());
     }
+
+    /**
+     * Regression test: when the welcome coupon settings are unconfigured
+     * (SettingsManager::get() returns null for everything, as it does until
+     * an admin saves the form at least once), the promotion action's amount
+     * must never be left as a literal null. Fixed/PercentageDiscountPromotionActionCommand::execute()
+     * both gate on isset($configuration[...]), which PHP treats as false for
+     * a key explicitly set to null -- so a null amount doesn't fail loudly,
+     * it silently turns the coupon into a no-op discount.
+     */
+    public function testReferredWelcomeCouponNeverHasANullAmountConfigured(): void
+    {
+        $referred = new Customer();
+        $referred->setFullName('referred');
+
+        $coupon = $this->createFactory()->createReferredWelcomeCoupon($referred);
+
+        $actions = $coupon->getPromotion()->getActions();
+        self::assertCount(1, $actions);
+
+        $configuration = $actions->first()->getConfiguration();
+        self::assertArrayHasKey('amount', $configuration);
+        self::assertNotNull($configuration['amount']);
+        self::assertTrue(isset($configuration['amount']));
+    }
 }

@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * Global config for the referred customer's "welcome" coupon -- plain
@@ -60,6 +61,31 @@ class ReferralWelcomeSettingsType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => null,
+            'constraints' => [new Assert\Callback([$this, 'validateRewardConfiguration'])],
         ]);
+    }
+
+    /**
+     * Same rationale as ReferralLevelType::validateRewardConfiguration(): an
+     * unconfigured amount/percentage would otherwise mint welcome coupons
+     * that silently redeem for no discount.
+     */
+    public function validateRewardConfiguration(array $data, ExecutionContextInterface $context): void
+    {
+        $rewardType = $data['referral_welcome_reward_type'] ?? null;
+
+        if (FixedDiscountPromotionActionCommand::TYPE === $rewardType && null === ($data['referral_welcome_reward_amount'] ?? null)) {
+            $context->buildViolation('referral.welcome_settings.field.rewardAmount.required_for_fixed')
+                ->setTranslationDomain('messages')
+                ->atPath('referral_welcome_reward_amount')
+                ->addViolation();
+        }
+
+        if (PercentageDiscountPromotionActionCommand::TYPE === $rewardType && null === ($data['referral_welcome_reward_percentage'] ?? null)) {
+            $context->buildViolation('referral.welcome_settings.field.rewardPercentage.required_for_percentage')
+                ->setTranslationDomain('messages')
+                ->atPath('referral_welcome_reward_percentage')
+                ->addViolation();
+        }
     }
 }

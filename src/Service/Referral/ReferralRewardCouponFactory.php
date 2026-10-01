@@ -83,10 +83,15 @@ class ReferralRewardCouponFactory
 
         $promotionAction = new PromotionAction();
         $promotionAction->setType($rewardType);
+        // Fixed/PercentageDiscountPromotionActionCommand::execute() both gate
+        // on isset($configuration[...]), which is false for an array key set
+        // to null -- so an unconfigured amount/percentage wouldn't fail loudly,
+        // it would silently turn the coupon into a no-op discount. Default to
+        // 0 rather than ever write a null in here.
         $promotionAction->setConfiguration(
             PercentageDiscountPromotionActionCommand::TYPE === $rewardType
-                ? ['percentage' => $percentage]
-                : ['amount' => $amount]
+                ? ['percentage' => $percentage ?? 0.0]
+                : ['amount' => $amount ?? 0]
         );
         $promotion->addAction($promotionAction);
 
