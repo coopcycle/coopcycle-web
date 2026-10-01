@@ -122,7 +122,10 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
         ]);
         $productVariant->setTaxCategory($taxCategory);
 
-        $productVariant->setPosition(1);
+        // Do NOT set a position: the variant is appended at the end.
+        // There is one variant per delivery order, all on the same product,
+        // so inserting at a given position makes Gedmo\Sortable shift the position
+        // of all the variants ever created, locking them (and causing deadlocks).
 
         return $productVariant;
     }
