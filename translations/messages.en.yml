@@ -1934,6 +1934,7 @@ rfm.thresholds.frequency: Frequency (F)
 rfm.thresholds.saved: RFM thresholds saved successfully.
 rfm.thresholds.error.r_order: Recency thresholds must be in ascending order (Score 4 < Score 3 < Score 2).
 rfm.thresholds.error.f_order: Frequency thresholds must be in ascending order (Score 2 < Score 3 < Score 4).
+promotion_rule.is_first_order: Is first order
 referral.title: Referral Program
 referral.stats.total: Total referrals
 referral.stats.pending: Pending

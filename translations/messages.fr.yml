@@ -1917,3 +1917,4 @@ hr.holidaysHistory.to: Au
 hr.holidaysHistory.status: Statut
 hr.holidaysHistory.comment: Commentaire
 delivery.time_slot.invalid: "La tranche horaire sélectionnée n'est pas valide. Merci d'en choisir une autre."
+promotion_rule.is_first_order: Première commande

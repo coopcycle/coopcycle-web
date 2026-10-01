@@ -598,7 +598,7 @@ services:
     tags:
       - name: sylius.promotion_rule_checker
         type: is_first_order
-        label: 'Is first order'
+        label: 'promotion_rule.is_first_order'
         form_type: AppBundle\Form\Sylius\Promotion\Rule\IsFirstOrderConfigurationType
 
   AppBundle\Sylius\Product\ProductOptionValueFactory:
