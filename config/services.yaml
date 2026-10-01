@@ -676,6 +676,8 @@ services:
   Symfony\Component\ExpressionLanguage\ExpressionLanguage: '@AppBundle\ExpressionLanguage\ExpressionLanguage'
 
   AppBundle\EventListener\RegistrationListener:
+    arguments:
+      $confirmationEnabled: '%nucleos_profile.registration.confirmation.enabled%'
     tags:
       - { name: kernel.event_subscriber }
 
