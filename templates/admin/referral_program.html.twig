@@ -1,4 +1,5 @@
 {% extends "admin.html.twig" %}
+{% import '_partials/referral/_level_icon.html.twig' as referral_icons %}
 
 {% block prepare_title %}
   {{ add_title_prefix('referral.title'|trans) }}
@@ -52,7 +53,7 @@
     <div class="panel panel-info">
       <div class="panel-body text-center">
         <h4 style="margin:0;">{{ count }}</h4>
-        <p class="text-muted" style="margin:0;">{{ ('referral.level.' ~ name)|trans({}, 'emails') }}</p>
+        <p class="text-muted" style="margin:0;">{{ referral_icons.icon(name) }} {{ ('referral.level.' ~ name)|trans({}, 'emails') }}</p>
       </div>
     </div>
   </div>
@@ -68,11 +69,15 @@
   </div>
   <div id="referral-levels-panel" class="panel-collapse collapse">
     <div class="panel-body">
+      <div class="alert alert-info" role="alert">
+        <h4><i class="fa fa-info-circle"></i> {% trans %}referral.levels.info.title{% endtrans %}</h4>
+        <p style="margin:0;">{% trans %}referral.levels.info.body{% endtrans %}</p>
+      </div>
       {{ form_start(levels_form) }}
       <div class="row">
         {% for level in levels %}
         <div class="col-md-{{ 12 // levels|length }}">
-          <h5>{{ ('referral.level.' ~ level.name)|trans({}, 'emails') }}</h5>
+          <h5>{{ referral_icons.icon(level.name) }} {{ ('referral.level.' ~ level.name)|trans({}, 'emails') }}</h5>
           {{ form_widget(levels_form['level_' ~ level.id]) }}
         </div>
         {% endfor %}
@@ -91,6 +96,10 @@
   </div>
   <div id="referral-welcome-settings-panel" class="panel-collapse collapse">
     <div class="panel-body">
+      <div class="alert alert-info" role="alert">
+        <h4><i class="fa fa-info-circle"></i> {% trans %}referral.welcome_settings.info.title{% endtrans %}</h4>
+        <p style="margin:0;">{% trans %}referral.welcome_settings.info.body{% endtrans %}</p>
+      </div>
       {{ form(welcome_settings_form) }}
     </div>
   </div>

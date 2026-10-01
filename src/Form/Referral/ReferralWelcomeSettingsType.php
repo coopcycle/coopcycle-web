@@ -25,6 +25,7 @@ class ReferralWelcomeSettingsType extends AbstractType
         $builder
             ->add('referral_welcome_reward_type', ChoiceType::class, [
                 'label' => 'referral.welcome_settings.field.rewardType',
+                'help' => 'referral.welcome_settings.field.rewardType.help',
                 'choices' => [
                     'referral.reward_type.fixed' => FixedDiscountPromotionActionCommand::TYPE,
                     'referral.reward_type.percentage' => PercentageDiscountPromotionActionCommand::TYPE,
@@ -32,20 +33,24 @@ class ReferralWelcomeSettingsType extends AbstractType
             ])
             ->add('referral_welcome_reward_amount', IntegerType::class, [
                 'label' => 'referral.welcome_settings.field.rewardAmount',
+                'help' => 'referral.welcome_settings.field.rewardAmount.help',
                 'required' => false,
                 'constraints' => [new Assert\PositiveOrZero()],
             ])
             ->add('referral_welcome_reward_percentage', NumberType::class, [
                 'label' => 'referral.welcome_settings.field.rewardPercentage',
+                'help' => 'referral.welcome_settings.field.rewardPercentage.help',
                 'required' => false,
                 'constraints' => [new Assert\Range(min: 0, max: 100)],
             ])
             ->add('referral_welcome_coupon_validity_days', IntegerType::class, [
                 'label' => 'referral.welcome_settings.field.couponValidityDays',
+                'help' => 'referral.welcome_settings.field.couponValidityDays.help',
                 'constraints' => [new Assert\Positive()],
             ])
             ->add('referral_pending_ttl_days', IntegerType::class, [
                 'label' => 'referral.welcome_settings.field.pendingTtlDays',
+                'help' => 'referral.welcome_settings.field.pendingTtlDays.help',
                 'constraints' => [new Assert\Positive()],
             ]);
     }
