@@ -9,6 +9,10 @@
 <li><a href="{{ path('admin_referral_program') }}">{% trans %}referral.title{% endtrans %}</a></li>
 {% endblock %}
 
+{% block styles %}
+  {{ encore_entry_link_tags('admin-referral-program') }}
+{% endblock %}
+
 {% block content %}
 
 {% form_theme active_form 'bootstrap_3_layout.html.twig' %}
@@ -17,7 +21,7 @@
     {{ form_start(active_form, { attr: { id: 'referral-program-active-form' } }) }}
       <div class="checkbox" style="margin:0;">
         <label>
-          {{ form_widget(active_form.active, { attr: { onchange: 'this.form.submit()' } }) }}
+          {{ form_widget(active_form.active) }}
           <strong>{% trans %}referral.program.active_label{% endtrans %}</strong>
         </label>
       </div>
@@ -174,6 +178,7 @@
 {% endblock %}
 
 {% block scripts %}
+  {{ encore_entry_script_tags('admin-referral-program') }}
 <script>
   (function () {
     // Toggles the sibling "amount" / "percentage" field based on the
