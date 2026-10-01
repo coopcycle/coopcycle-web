@@ -583,6 +583,15 @@ services:
         label: 'sylius.form.promotion_rule.item_total'
         form_type: AppBundle\Form\Sylius\Promotion\Rule\IsItemsTotalAboveConfigurationType
 
+  AppBundle\Sylius\Promotion\Checker\Rule\IsFirstOrderRuleChecker:
+    arguments:
+      - '@sylius.repository.order'
+    tags:
+      - name: sylius.promotion_rule_checker
+        type: is_first_order
+        label: 'Is first order'
+        form_type: AppBundle\Form\Sylius\Promotion\Rule\IsFirstOrderConfigurationType
+
   AppBundle\Sylius\Product\ProductOptionValueFactory:
     decorates: sylius.factory.product_option_value
     public: false
