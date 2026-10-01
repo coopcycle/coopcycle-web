@@ -11,6 +11,7 @@ use AppBundle\Edenred\Authentication as EdenredAuthentication;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Referral\Referral;
+use AppBundle\Entity\Referral\ReferralLevel;
 use AppBundle\Entity\Referral\ReferralRepository;
 use AppBundle\Service\Referral\ReferralCodeGenerator;
 use AppBundle\Service\Referral\ReferralLevelResolver;
@@ -427,8 +428,15 @@ class ProfileController extends AbstractController
             $this->entityManager->flush();
         }
 
-        $level = $referralLevelResolver->resolve($customer->getSuccessfulReferralCount());
-        $nextLevel = $referralLevelResolver->resolveNext($customer->getSuccessfulReferralCount());
+        $successfulReferralCount = $customer->getSuccessfulReferralCount();
+
+        $level = $referralLevelResolver->resolve($successfulReferralCount);
+        $nextLevel = $referralLevelResolver->resolveNext($successfulReferralCount);
+        // What the *next* successful referral would earn -- distinct from
+        // $level, which is null until the first threshold is actually met.
+        $upcomingLevel = $referralLevelResolver->resolve($successfulReferralCount + 1);
+
+        $levels = $this->entityManager->getRepository(ReferralLevel::class)->findBy([], ['minReferralCount' => 'ASC']);
 
         $history = array_map(function (Referral $referral) {
             return [
@@ -453,7 +461,9 @@ class ProfileController extends AbstractController
             ], UrlGeneratorInterface::ABSOLUTE_URL),
             'level' => $level,
             'next_level' => $nextLevel,
-            'successful_referral_count' => $customer->getSuccessfulReferralCount(),
+            'upcoming_level' => $upcomingLevel,
+            'levels' => $levels,
+            'successful_referral_count' => $successfulReferralCount,
             'referrals' => $referrals,
         ]));
     }

@@ -2,46 +2,68 @@
 
 {% block content %}
 
-<div class="form rounded-bottom" style="margin-bottom:24px;">
-  <h5>{% trans %}profile.referrals.share.title{% endtrans %}</h5>
-  <div class="form-group">
-    <label class="control-label">{% trans %}profile.referrals.share.label{% endtrans %}</label>
-    <div class="input-group" data-toggle="copy" data-clipboard-text="{{ referral_link }}">
-      <span class="input-group-addon bg-primary"><i class="fa fa-link fa-rotate-90 text-white"></i></span>
-      <input type="text" class="form-control" value="{{ referral_link }}" readonly>
-    </div>
-    <div class="d-flex justify-content-end mt-3">
-      <button id="referral-copy-button" type="button" class="btn btn-primary" data-toggle="copy" data-clipboard-text="{{ referral_link }}">
-        <i class="fa fa-copy mr-2"></i>
-        {% trans %}profile.referrals.share.copy{% endtrans %}
-      </button>
-    </div>
-  </div>
+<div class="mb-8">
+  <h2 class="text-xl font-semibold mb-2">{{ 'profile.referrals.share.title'|trans }}</h2>
+  <p class="mb-4 text-gray-500">
+    {% if upcoming_level %}
+      {% if upcoming_level.rewardType == 'order_percentage_discount' %}
+        {{ 'profile.referrals.intro.percentage'|trans({'%brand_name%': coopcycle_setting('brand_name'), '%percent%': upcoming_level.rewardPercentage}) }}
+      {% else %}
+        {{ 'profile.referrals.intro.fixed'|trans({'%brand_name%': coopcycle_setting('brand_name'), '%amount%': upcoming_level.rewardAmount|price_format}) }}
+      {% endif %}
+    {% else %}
+      {{ 'profile.referrals.intro.generic'|trans({'%brand_name%': coopcycle_setting('brand_name')}) }}
+    {% endif %}
+  </p>
+
+  <label class="input w-full" data-toggle="copy" data-clipboard-text="{{ referral_link }}">
+    <i class="fa fa-link"></i>
+    <input type="text" value="{{ referral_link }}" readonly>
+  </label>
+  <button id="referral-copy-button" type="button" class="btn btn-primary mt-3" data-toggle="copy" data-clipboard-text="{{ referral_link }}">
+    <i class="fa fa-copy mr-2"></i>
+    {{ 'profile.referrals.share.copy'|trans }}
+  </button>
 </div>
 
-<div class="panel panel-default" style="margin-bottom:24px;">
-  <div class="panel-body">
-    <div style="display:flex;justify-content:space-between;align-items:center;">
-      <div>
-        <h4 style="margin:0;">
-          {% if level %}
-            {{ ('referral.level.' ~ level.name)|trans({}, 'emails') }}
-          {% else %}
-            {% trans %}profile.referrals.no_level_yet{% endtrans %}
-          {% endif %}
-        </h4>
-        <p class="text-muted" style="margin:0;">
-          {% trans with { '%count%': successful_referral_count } %}profile.referrals.successful_count{% endtrans %}
-        </p>
+{% if levels is not empty %}
+<div class="mb-8">
+  <h2 class="text-lg font-semibold mb-3">{{ 'profile.referrals.levels.title'|trans }}</h2>
+
+  {% set progress_max = next_level ? next_level.minReferralCount : levels|last.minReferralCount %}
+  <progress class="progress progress-primary w-full mb-2" value="{{ successful_referral_count }}" max="{{ progress_max }}"></progress>
+
+  <p class="text-gray-500 mb-4">
+    {% trans with { '%count%': successful_referral_count } %}profile.referrals.successful_count{% endtrans %}
+    {% if next_level %}
+      &mdash; {% trans with { '%count%': next_level.minReferralCount - successful_referral_count, '%level%': ('referral.level.' ~ next_level.name)|trans({}, 'emails') } %}profile.referrals.next_level{% endtrans %}
+    {% endif %}
+  </p>
+
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    {% for lvl in levels %}
+    <div class="border rounded-lg p-4 {{ level and lvl.id == level.id ? 'border-primary' : 'border-gray-200' }}">
+      <div class="flex items-center justify-between mb-1">
+        <span class="font-semibold">{{ ('referral.level.' ~ lvl.name)|trans({}, 'emails') }}</span>
+        {% if level and lvl.id == level.id %}
+          <span class="badge badge-primary badge-sm">{{ 'profile.referrals.levels.current'|trans }}</span>
+        {% endif %}
       </div>
-      {% if next_level %}
-      <p class="text-muted text-right" style="margin:0;">
-        {% trans with { '%count%': next_level.minReferralCount - successful_referral_count, '%level%': ('referral.level.' ~ next_level.name)|trans({}, 'emails') } %}profile.referrals.next_level{% endtrans %}
+      <p class="text-sm text-gray-500 mb-1">
+        {% trans with { '%count%': lvl.minReferralCount } %}profile.referrals.levels.threshold{% endtrans %}
       </p>
-      {% endif %}
+      <p class="text-sm">
+        {% if lvl.rewardType == 'order_percentage_discount' %}
+          {% trans with { '%percent%': lvl.rewardPercentage } %}profile.referrals.levels.reward_percentage{% endtrans %}
+        {% else %}
+          {% trans with { '%amount%': lvl.rewardAmount|price_format } %}profile.referrals.levels.reward_fixed{% endtrans %}
+        {% endif %}
+      </p>
     </div>
+    {% endfor %}
   </div>
 </div>
+{% endif %}
 
 {% if referrals.totalItemCount > 0 %}
 <table class="table">
@@ -57,10 +79,10 @@
     <tr>
       <td>
         {{ referral.referred_first_name }}
-        <span class="text-muted">{{ referral.referred_masked_email }}</span>
+        <span class="text-gray-500">{{ referral.referred_masked_email }}</span>
       </td>
       <td>
-        <span class="label label-{{ referral.status == 'completed' ? 'success' : (referral.status == 'expired' ? 'default' : 'info') }}">
+        <span class="badge {{ referral.status == 'completed' ? 'badge-success' : (referral.status == 'expired' ? 'badge-neutral' : 'badge-info') }}">
           {{ ('referral.status.' ~ referral.status)|trans }}
         </span>
       </td>
