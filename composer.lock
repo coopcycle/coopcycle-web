@@ -12071,12 +12071,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/coopcycle/edifact-generator.git",
-                "reference": "6f7ddc585a93fe461ccd3f2b60c8c343a6955453"
+                "reference": "200309345024989d3ac5239ab4f1848ca58b22af"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coopcycle/edifact-generator/zipball/6f7ddc585a93fe461ccd3f2b60c8c343a6955453",
-                "reference": "6f7ddc585a93fe461ccd3f2b60c8c343a6955453",
+                "url": "https://api.github.com/repos/coopcycle/edifact-generator/zipball/200309345024989d3ac5239ab4f1848ca58b22af",
+                "reference": "200309345024989d3ac5239ab4f1848ca58b22af",
                 "shasum": ""
             },
             "require-dev": {
