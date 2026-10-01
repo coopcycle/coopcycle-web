@@ -411,6 +411,7 @@ task.form.finish: Finish task
 task.form.details: Task details
 task.form.finish.DONE.info: The task was successfully completed
 task.form.finish.FAIL.info: The task could not be completed
+task.cancel.order_not_cancellable: "The order %number% cannot be cancelled"
 task.status.done: Success
 task.status.failed: Failure
 task.status.todo: To do

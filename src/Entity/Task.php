@@ -26,6 +26,7 @@ use AppBundle\Action\Task\Restore as TaskRestore;
 use AppBundle\Action\Task\Start as TaskStart;
 use AppBundle\Action\Task\RemoveFromGroup;
 use AppBundle\Action\Task\BulkMarkAsDone as TaskBulkMarkAsDone;
+use AppBundle\Action\Task\BulkCancel as TaskBulkCancel;
 use AppBundle\Action\Task\Context as TaskContext;
 use AppBundle\Action\Task\DeliveryFormData as TaskDeliveryFormData;
 use AppBundle\Action\Task\AppendToComment as TaskAppendToComment;
@@ -307,6 +308,28 @@ use Symfony\Component\Validator\Constraints as Assert;
                 ]
             ],
             security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_COURIER\')',
+            write: false
+        ),
+        new Put(
+            uriTemplate: '/tasks/cancel',
+            controller: TaskBulkCancel::class,
+            openapiContext: [
+                'summary' => 'Cancel multiple Tasks at once',
+                'parameters' => [
+                    [
+                        'in' => 'body',
+                        'name' => 'N/A',
+                        'schema' => [
+                            'type' => 'object',
+                            'properties' => [
+                                'tasks' => ['type' => 'array']
+                            ]
+                        ],
+                        'style' => 'form'
+                    ]
+                ]
+            ],
+            security: 'is_granted(\'ROLE_DISPATCHER\')',
             write: false
         ),
         new Put(
