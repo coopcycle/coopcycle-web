@@ -60,6 +60,7 @@ class SettingsManager
         'new_shop_days',
         'referral_welcome_reward_amount',
         'referral_welcome_coupon_validity_days',
+        'referral_pending_ttl_days',
     ];
 
     private $cache = [];

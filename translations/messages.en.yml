@@ -1956,6 +1956,7 @@ referral.welcome_settings.field.rewardType: Reward type
 referral.welcome_settings.field.rewardAmount: Reward amount (cents)
 referral.welcome_settings.field.rewardPercentage: Reward percentage
 referral.welcome_settings.field.couponValidityDays: Coupon validity (days)
+referral.welcome_settings.field.pendingTtlDays: Pending referral expiry (days)
 referral.column.referrer: Referrer
 referral.column.referred: Referred customer
 referral.column.status: Status
