@@ -2006,6 +2006,14 @@ profile.referrals.levels.reward_fixed: "%amount% reward"
 profile.referrals.levels.reward_percentage: "%percent%% discount"
 profile.referrals.column.friend: Friend
 profile.referrals.none_yet: You haven't referred anyone yet.
+profile.referrals.invite.button: "Invite a friend to join %brand_name%"
+profile.referrals.invite.modal_title: "Invite a friend to join %brand_name%"
+profile.referrals.invite.modal_help: Enter one or more email addresses, separated by commas or new lines.
+profile.referrals.invite.placeholder: "friend@example.com"
+profile.referrals.invite.submit: Send invitation(s)
+profile.referrals.invite.cancel: Cancel
+profile.referrals.invite.sent: "%count% invitation(s) sent!"
+profile.referrals.invite.invalid: "%count% email address(es) were invalid and were not sent."
 rfm.thresholds.rfm_r_score4_max_days: Score 4 — max days since last order
 rfm.thresholds.rfm_r_score3_max_days: Score 3 — max days since last order
 rfm.thresholds.rfm_r_score2_max_days: Score 2 — max days since last order

@@ -75,4 +75,70 @@ class ProfileControllerReferralsTest extends WebTestCase
         $linkInput = $crawler->filter('input[readonly]');
         self::assertStringContainsString($refreshedCustomer->getReferralCode(), $linkInput->attr('value'));
     }
+
+    public function testInvitingFriendsSendsValidEmailsAndReportsInvalidOnes(): void
+    {
+        $client = self::createClient();
+
+        $settingsManager = self::getContainer()->get(SettingsManager::class);
+        $settingsManager->set('referral_program_active', '1');
+        $settingsManager->flush();
+
+        $userManager = self::getContainer()->get(UserManager::class);
+
+        $user = $userManager->createUser();
+        $this->customerUsername = 'referral_test_customer_' . uniqid();
+        $user->setUsername($this->customerUsername);
+        $user->setEmail($this->customerUsername . '@example.com');
+        $user->setPlainPassword('irrelevant');
+        $user->setRoles(['ROLE_USER']);
+        $user->setEnabled(true);
+        $userManager->updateUser($user);
+
+        $client->loginUser($user, 'web');
+
+        $crawler = $client->request('GET', '/profile/referrals');
+        $token = $crawler->filter('#referral-invite-form input[name="_token"]')->attr('value');
+
+        $client->request('POST', '/profile/referrals/invite', [
+            'emails' => "friend@example.com, not-an-email\nanother.friend@example.com",
+            '_token' => $token,
+        ]);
+
+        self::assertResponseRedirects('/profile/referrals');
+
+        $crawler = $client->followRedirect();
+
+        self::assertSelectorTextContains('.flash-messages', '2 invitation(s) envoyée(s)');
+        self::assertSelectorTextContains('.flash-messages', "1 adresse(s) e-mail invalide(s) n'ont pas été envoyée(s)");
+    }
+
+    public function testInvitingFriendsRejectsInvalidCsrfToken(): void
+    {
+        $client = self::createClient();
+
+        $settingsManager = self::getContainer()->get(SettingsManager::class);
+        $settingsManager->set('referral_program_active', '1');
+        $settingsManager->flush();
+
+        $userManager = self::getContainer()->get(UserManager::class);
+
+        $user = $userManager->createUser();
+        $this->customerUsername = 'referral_test_customer_' . uniqid();
+        $user->setUsername($this->customerUsername);
+        $user->setEmail($this->customerUsername . '@example.com');
+        $user->setPlainPassword('irrelevant');
+        $user->setRoles(['ROLE_USER']);
+        $user->setEnabled(true);
+        $userManager->updateUser($user);
+
+        $client->loginUser($user, 'web');
+
+        $client->request('POST', '/profile/referrals/invite', [
+            'emails' => 'friend@example.com',
+            '_token' => 'invalid-token',
+        ]);
+
+        self::assertResponseStatusCodeSame(403);
+    }
 }

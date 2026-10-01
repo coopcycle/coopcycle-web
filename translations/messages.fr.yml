@@ -1993,3 +1993,11 @@ profile.referrals.levels.reward_fixed: "Récompense de %amount%"
 profile.referrals.levels.reward_percentage: "Réduction de %percent%%"
 profile.referrals.column.friend: Ami
 profile.referrals.none_yet: Vous n'avez parrainé personne pour le moment.
+profile.referrals.invite.button: "Inviter un ami à rejoindre %brand_name%"
+profile.referrals.invite.modal_title: "Inviter un ami à rejoindre %brand_name%"
+profile.referrals.invite.modal_help: Saisissez une ou plusieurs adresses e-mail, séparées par des virgules ou des sauts de ligne.
+profile.referrals.invite.placeholder: "ami@example.com"
+profile.referrals.invite.submit: Envoyer l'invitation / les invitations
+profile.referrals.invite.cancel: Annuler
+profile.referrals.invite.sent: "%count% invitation(s) envoyée(s) !"
+profile.referrals.invite.invalid: "%count% adresse(s) e-mail invalide(s) n'ont pas été envoyée(s)."
