@@ -68,6 +68,9 @@ class EmailManagerReferralTest extends KernelTestCase
         $message = $this->emailManager->createReferralLevelUpMessage(new Customer(), $level);
 
         $this->assertNotEmpty($message->getSubject());
-        $this->assertStringContainsString('Gold', $message->getHtmlBody());
+        // The app under test runs with COOPCYCLE_LOCALE=fr; "Or" alone is too
+        // common a substring in HTML/CSS boilerplate (border, color, ...) to
+        // assert on safely, so match the translated sentence fragment instead.
+        $this->assertStringContainsString('niveau Or', $message->getHtmlBody());
     }
 }

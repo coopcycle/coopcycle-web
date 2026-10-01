@@ -55,7 +55,8 @@ class ProfileControllerReferralsTest extends WebTestCase
         $crawler = $client->request('GET', '/profile/referrals');
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('body', 'Invite friends');
+        // The app under test runs with COOPCYCLE_LOCALE=fr.
+        self::assertSelectorTextContains('body', 'Inviter des amis');
 
         $entityManager = self::getContainer()->get(EntityManagerInterface::class);
         $refreshedCustomer = $entityManager->getRepository(User::class)

@@ -74,7 +74,8 @@ class ReferralProgramControllerTest extends WebTestCase
         $client->request('GET', '/admin/referral-program');
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('body', 'Referral Program');
+        // The app under test runs with COOPCYCLE_LOCALE=fr.
+        self::assertSelectorTextContains('body', 'Programme de parrainage');
     }
 
     public function testSubmittingWelcomeSettingsFormPersistsValues(): void
