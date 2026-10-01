@@ -759,6 +759,7 @@ task.form.finish: Terminar tarea
 task.form.details: Detalles de la tarea
 task.form.finish.DONE.info: La tarea se completó con éxito
 task.form.finish.FAIL.info: La tarea no se pudo completar
+task.cancel.order_not_cancellable: "El pedido %number% no se puede cancelar"
 form.store_type.time_slot.label: Franja horaria
 form.store_type.package_set.label: Paquete conjunto
 form.delivery.package.label: Paquete
