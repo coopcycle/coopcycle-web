@@ -43,6 +43,10 @@ class ReferralWelcomeSettingsType extends AbstractType
             ->add('referral_welcome_coupon_validity_days', IntegerType::class, [
                 'label' => 'referral.welcome_settings.field.couponValidityDays',
                 'constraints' => [new Assert\Positive()],
+            ])
+            ->add('referral_pending_ttl_days', IntegerType::class, [
+                'label' => 'referral.welcome_settings.field.pendingTtlDays',
+                'constraints' => [new Assert\Positive()],
             ]);
     }
 

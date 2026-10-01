@@ -61,6 +61,7 @@ class ReferralProgramController extends AbstractController
             'referral_welcome_reward_amount' => $this->settingsManager->get('referral_welcome_reward_amount'),
             'referral_welcome_reward_percentage' => $this->settingsManager->get('referral_welcome_reward_percentage'),
             'referral_welcome_coupon_validity_days' => (int) ($this->settingsManager->get('referral_welcome_coupon_validity_days') ?: 30),
+            'referral_pending_ttl_days' => (int) ($this->settingsManager->get('referral_pending_ttl_days') ?: 30),
         ]);
         $welcomeSettingsForm->handleRequest($request);
 
