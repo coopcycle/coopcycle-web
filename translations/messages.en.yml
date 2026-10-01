@@ -1254,9 +1254,6 @@ form:
       label: Contact person for the restaurant
     b2b:
       label: Would you like to propose special offers for companies?
-  registration:
-    referralCode:
-      label: Referral code (optional)
 refund.list.amount: Refunded amount
 refund.list.liable_party: Liable party
 refund.list.comments: Comments
@@ -1973,9 +1970,16 @@ profile.referrals.share.title: Invite friends
 profile.referrals.share.label: Your referral link
 profile.referrals.share.copy: Copy link
 profile.referrals.share.copied: Copied!
-profile.referrals.no_level_yet: Refer a friend to earn your first reward
+profile.referrals.intro.fixed: "Invite your friends to join %brand_name%! Once a friend you invited places their first order, you'll earn %amount%."
+profile.referrals.intro.percentage: "Invite your friends to join %brand_name%! Once a friend you invited places their first order, you'll earn a %percent%% discount."
+profile.referrals.intro.generic: "Invite your friends to join %brand_name%, and get rewarded once they place their first order!"
 profile.referrals.successful_count: "%count% successful referral(s)"
 profile.referrals.next_level: "%count% more to reach %level%"
+profile.referrals.levels.title: Levels
+profile.referrals.levels.current: Current
+profile.referrals.levels.threshold: "From %count% successful referral(s)"
+profile.referrals.levels.reward_fixed: "%amount% reward"
+profile.referrals.levels.reward_percentage: "%percent%% discount"
 profile.referrals.column.friend: Friend
 profile.referrals.none_yet: You haven't referred anyone yet.
 rfm.thresholds.rfm_r_score4_max_days: Score 4 — max days since last order

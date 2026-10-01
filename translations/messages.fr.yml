@@ -1957,8 +1957,15 @@ profile.referrals.share.title: Inviter des amis
 profile.referrals.share.label: Votre lien de parrainage
 profile.referrals.share.copy: Copier le lien
 profile.referrals.share.copied: Copié !
-profile.referrals.no_level_yet: Parrainez un ami pour gagner votre première récompense
+profile.referrals.intro.fixed: "Invitez vos amis à rejoindre %brand_name% ! Dès qu'un ami que vous avez invité passe sa première commande, vous gagnez %amount%."
+profile.referrals.intro.percentage: "Invitez vos amis à rejoindre %brand_name% ! Dès qu'un ami que vous avez invité passe sa première commande, vous gagnez une réduction de %percent%%."
+profile.referrals.intro.generic: "Invitez vos amis à rejoindre %brand_name% et soyez récompensé dès leur première commande !"
 profile.referrals.successful_count: "%count% parrainage(s) réussi(s)"
 profile.referrals.next_level: "Plus que %count% pour atteindre %level%"
+profile.referrals.levels.title: Niveaux
+profile.referrals.levels.current: Actuel
+profile.referrals.levels.threshold: "À partir de %count% parrainage(s) réussi(s)"
+profile.referrals.levels.reward_fixed: "Récompense de %amount%"
+profile.referrals.levels.reward_percentage: "Réduction de %percent%%"
 profile.referrals.column.friend: Ami
 profile.referrals.none_yet: Vous n'avez parrainé personne pour le moment.

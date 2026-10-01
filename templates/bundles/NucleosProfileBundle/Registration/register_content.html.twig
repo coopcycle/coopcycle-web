@@ -25,7 +25,9 @@
       {{ form_row(form[optin]) }}
     {% endfor %}
 
-    {# TODO Add other fields #}
+    {% if form.referralCode is defined %}
+      {{ form_row(form.referralCode) }}
+    {% endif %}
 
     {{ form_widget(form.save, { attr: { class: 'btn btn-block btn-lg btn-primary' } }) }}
     <div class="text-xs text-base-content/60 mt-2">
