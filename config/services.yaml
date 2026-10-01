@@ -360,6 +360,10 @@ services:
       $rfmEnabled:      '%env(bool:RFM_ENABLED)%'
       $settingsManager: '@AppBundle\Service\SettingsManager'
 
+  AppBundle\MessageHandler\Referral\OnCheckoutSucceeded:
+    arguments:
+      $referralProgramEnabled: '%env(bool:REFERRAL_PROGRAM_ENABLED)%'
+
   AppBundle\Controller\AssetsController:
     arguments:
       $taskImagesFilesystem: '@task_images_filesystem'
@@ -834,6 +838,11 @@ services:
     arguments:
       - AppBundle\Entity\Sylius\Order
     calls: [[setDeliveryRepository, ['@AppBundle\Entity\DeliveryRepository']]]
+
+  AppBundle\Entity\Referral\ReferralRepository:
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\Referral\Referral
 
   sylius.repository.order:
     alias: AppBundle\Entity\Sylius\OrderRepository
