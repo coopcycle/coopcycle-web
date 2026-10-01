@@ -2002,11 +2002,13 @@ class AdminController extends AbstractController
 
         $ongoingQb = $repository->createQueryBuilder('c')
             ->andWhere('c.expiresAt IS NULL OR c.expiresAt > :now')
+            ->andWhere('c.internal = false')
             ->setParameter('now', $now)
             ->orderBy('c.id', 'DESC');
 
         $pastQb = $repository->createQueryBuilder('c')
             ->andWhere('c.expiresAt IS NOT NULL AND c.expiresAt <= :now')
+            ->andWhere('c.internal = false')
             ->setParameter('now', $now)
             ->orderBy('c.id', 'DESC');
 
@@ -2134,6 +2136,12 @@ class AdminController extends AbstractController
 
         $promotionCoupon = $this->promotionCouponRepository->findOneByCode($code);
         $promotionRepository->find($id);
+
+        // Minted programmatically for a specific customer (e.g. by the
+        // referral program) -- not meant to be hand-edited by an admin.
+        if (null !== $promotionCoupon && $promotionCoupon->isInternal()) {
+            throw $this->createNotFoundException();
+        }
 
         $form = $this->createForm(PromotionCouponType::class, $promotionCoupon);
 

@@ -110,6 +110,9 @@ class ReferralRewardCouponFactory
         $promotionCoupon->setPerCustomerUsageLimit(1);
         $promotionCoupon->setUsageLimit($usageLimit);
         $promotionCoupon->setExpiresAt(new \DateTime(sprintf('+%d days', $validityDays)));
+        // Minted programmatically for a specific customer -- keep it out of
+        // /admin/promotions and non-editable there, see PromotionCoupon::$internal.
+        $promotionCoupon->setInternal(true);
 
         $promotion->addCoupon($promotionCoupon);
 
