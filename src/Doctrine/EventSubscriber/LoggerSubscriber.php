@@ -44,13 +44,16 @@ class LoggerSubscriber
         $em = $args->getObjectManager();
         $uow = $em->getUnitOfWork();
 
-        $this->log($uow, 'insertions', $this->entityInsertions);
-        $this->log($uow, 'updates', $this->entityUpdates);
-        $this->log($uow, 'deletions', $this->entityDeletions);
+        [$insertions, $updates, $deletions] = [$this->entityInsertions, $this->entityUpdates, $this->entityDeletions];
 
+        // Reset before logging, so that an exception can't keep the entities around for the next flush
         $this->entityInsertions = [];
         $this->entityUpdates = [];
         $this->entityDeletions = [];
+
+        $this->log($uow, 'insertions', $insertions);
+        $this->log($uow, 'updates', $updates);
+        $this->log($uow, 'deletions', $deletions);
     }
 
     /**
@@ -58,6 +61,10 @@ class LoggerSubscriber
      */
     private function log(UnitOfWork $uow, string $action, array $list): void
     {
+        // When a flush fails, postFlush is not called, and the entities collected in onFlush
+        // are kept until the next flush. They were rolled back, so they can't be found anymore.
+        $list = array_filter($list, fn(EntityItem $entity) => $entity->hasDatabaseIdentifier($uow));
+
         if (count($list) === 0) {
             return;
         }
@@ -106,6 +113,15 @@ class EntityItem
     function getClassName(): string
     {
         return (new ReflectionClass($this->entity))->getShortName();
+    }
+
+    function hasDatabaseIdentifier(UnitOfWork $unitOfWork): bool
+    {
+        if (count($this->initialIdentifier) !== 0) {
+            return true;
+        }
+
+        return $unitOfWork->isInIdentityMap($this->entity);
     }
 
     function getDatabaseIdentifier($unitOfWork): array
