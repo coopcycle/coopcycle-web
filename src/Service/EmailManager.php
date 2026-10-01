@@ -6,7 +6,10 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\BusinessAccount;
 use AppBundle\Entity\Invitation;
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\Referral\Referral;
+use AppBundle\Entity\Referral\ReferralLevel;
 use AppBundle\Entity\Restaurant\Pledge;
+use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Task;
 use AppBundle\LoopEat\Context as LoopeatContext;
 use AppBundle\LoopEat\ContextInitializer as LoopeatContextInitializer;
@@ -394,6 +397,38 @@ class EmailManager
             'user' => $invitation->getUser(),
             'invitation' => $invitation,
             'account' => $account,
+        ]));
+
+        return $this->createHtmlMessageWithReplyTo($subject, $body);
+    }
+
+    public function createReferralWelcomeMessage(Referral $referral)
+    {
+        $subject = $this->translator->trans('referral.welcome.subject', [], 'emails');
+        $body = $this->mjml->render($this->templating->render('emails/referral/welcome.mjml.twig', [
+            'coupon_code' => $referral->getReferredWelcomeCoupon()?->getCode(),
+        ]));
+
+        return $this->createHtmlMessageWithReplyTo($subject, $body);
+    }
+
+    public function createReferralCompletedMessageForReferrer(Referral $referral)
+    {
+        $subject = $this->translator->trans('referral.reward_earned.subject', [], 'emails');
+        $body = $this->mjml->render($this->templating->render('emails/referral/reward_earned.mjml.twig', [
+            'coupon_code' => $referral->getReferrerRewardCoupon()?->getCode(),
+        ]));
+
+        return $this->createHtmlMessageWithReplyTo($subject, $body);
+    }
+
+    public function createReferralLevelUpMessage(Customer $referrer, ReferralLevel $newLevel)
+    {
+        $levelName = $this->translator->trans(sprintf('referral.level.%s', $newLevel->getName()), [], 'emails');
+
+        $subject = $this->translator->trans('referral.level_up.subject', [], 'emails');
+        $body = $this->mjml->render($this->templating->render('emails/referral/level_up.mjml.twig', [
+            'level_name' => $levelName,
         ]));
 
         return $this->createHtmlMessageWithReplyTo($subject, $body);

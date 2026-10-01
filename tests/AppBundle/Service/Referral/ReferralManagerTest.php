@@ -6,6 +6,7 @@ use AppBundle\Entity\Referral\Referral;
 use AppBundle\Entity\Referral\ReferralRepository;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\User;
+use AppBundle\Service\EmailManager;
 use AppBundle\Service\Referral\ReferralCodeGenerator;
 use AppBundle\Service\Referral\ReferralManager;
 use AppBundle\Service\Referral\ReferralRewardCouponFactory;
@@ -26,6 +27,7 @@ class ReferralManagerTest extends TestCase
     private $referralCodeGenerator;
     private $referralRewardCouponFactory;
     private $entityManager;
+    private $emailManager;
     private $logger;
     private $manager;
 
@@ -36,6 +38,7 @@ class ReferralManagerTest extends TestCase
         $this->referralCodeGenerator = $this->prophesize(ReferralCodeGenerator::class);
         $this->referralRewardCouponFactory = $this->prophesize(ReferralRewardCouponFactory::class);
         $this->entityManager = $this->prophesize(EntityManagerInterface::class);
+        $this->emailManager = $this->prophesize(EmailManager::class);
         $this->logger = $this->prophesize(LoggerInterface::class);
 
         $this->manager = new ReferralManager(
@@ -44,6 +47,7 @@ class ReferralManagerTest extends TestCase
             $this->referralCodeGenerator->reveal(),
             $this->referralRewardCouponFactory->reveal(),
             $this->entityManager->reveal(),
+            $this->emailManager->reveal(),
             $this->logger->reveal()
         );
     }
@@ -65,6 +69,7 @@ class ReferralManagerTest extends TestCase
         $this->referralRepository->findPendingByReferredCustomer($customer)->shouldNotBeCalled();
         $this->entityManager->persist(Argument::type(Referral::class))->shouldNotBeCalled();
         $this->entityManager->flush()->shouldBeCalledOnce();
+        $this->emailManager->sendTo(Argument::cetera())->shouldNotBeCalled();
 
         $this->manager->registerPendingReferral($user, null);
     }
@@ -114,6 +119,10 @@ class ReferralManagerTest extends TestCase
             })
             ->shouldBeCalledOnce();
         $this->entityManager->flush()->shouldBeCalledOnce();
+
+        $welcomeMessage = new \Symfony\Component\Mime\Email();
+        $this->emailManager->createReferralWelcomeMessage(Argument::type(Referral::class))->willReturn($welcomeMessage);
+        $this->emailManager->sendTo($welcomeMessage, $referred->getEmail())->shouldBeCalledOnce();
 
         $this->manager->registerPendingReferral($user, 'abc123');
 
