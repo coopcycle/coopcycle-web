@@ -56,7 +56,7 @@ export default class TimeRange {
   static getDayPart(text) {
     const matches = text.match(/(Mo|Tu|We|Th|Fr|Sa|Su)+-?(Mo|Tu|We|Th|Fr|Sa|Su)?/gi)
 
-    return matches.join(',')
+    return (matches || []).join(',')
   }
 
   static parse(text) {
@@ -89,7 +89,7 @@ export default class TimeRange {
     let end = ''
 
     const hours = text.match(/([0-9]{2}:[0-9]{2})-([0-9]{2}:[0-9]{2})/gi)
-    if (hours.length === 1) {
+    if (hours && hours.length === 1) {
       [ start, end ] = hours[0].split('-')
     }
 
