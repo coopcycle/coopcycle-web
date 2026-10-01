@@ -4,8 +4,14 @@ namespace AppBundle\Entity\Sylius;
 
 abstract class FrozenOrderLineItem
 {
+    const TYPE_PRODUCT = 'product';
+    const TYPE_SERVICE = 'service';
+
     /** @var int */
     protected $id;
+
+    /** @var string|null Null on receipts issued before the product/service split */
+    protected $type = self::TYPE_PRODUCT;
 
     /** @var FrozenOrder */
     protected $parent;
@@ -52,6 +58,21 @@ abstract class FrozenOrderLineItem
     public function setParent($parent)
     {
         $this->parent = $parent;
+
+        return $this;
+    }
+
+    public function getType(): string
+    {
+        return $this->type ?? self::TYPE_PRODUCT;
+    }
+
+    /**
+     * @return self
+     */
+    public function setType(string $type)
+    {
+        $this->type = $type;
 
         return $this;
     }

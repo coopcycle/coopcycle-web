@@ -1023,12 +1023,17 @@ receipt.line_item.unit_price: Prix unitaire
 receipt.line_item.quantity: Quantité
 receipt.line_item.tax_total: TVA
 receipt.line_item.total: Total
-receipt.footer_item.total_products: Total produits
+receipt.footer_item.total_products: 'Total produits TTC'
+receipt.footer_item.total_services: 'Total services TTC'
 receipt.footer_item.total_excl_tax: Total HT
 receipt.footer_item.total_incl_tax: Total TTC
 receipt.total: Total TTC
 receipt.billing_details: Commande payée par %payment_method% le %date%
 receipt.emitter_details: Commande au restaurant <strong>%restaurant_name%</strong>
+receipt.customer.name: 'Nom :'
+receipt.customer.email: 'Mail :'
+receipt.customer.phone: 'Num tel :'
+receipt.customer.payment_method: 'Moyen de paiement :'
 profile.loopeat.connect: Connecter mon compte %name%
 profile.loopeat.connected: Compte %name% connecté
 profile.loopeat.disconnect: Déconnecter mon compte %name%
