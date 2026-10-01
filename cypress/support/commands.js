@@ -51,7 +51,18 @@ Cypress.Commands.add('setEnvVar', (key, value) => {
 })
 
 Cypress.Commands.add('removeEnvVar', (key) => {
-  cy.terminal(`sed -i '/${key}=/{d}' .env.test`)
+  // Rewrite the file from the host, like setEnvVar does. .env.test is tracked in
+  // git, so it belongs to whoever checked out the repo, and `sed -i` inside the
+  // container (which runs as www-data) can't create its temp file next to it.
+  cy.readFile('.env.test').then(content => {
+    cy.writeFile(
+      '.env.test',
+      content
+        .split('\n')
+        .filter(line => !line.includes(`${key}=`))
+        .join('\n'),
+    )
+  })
 })
 
 Cypress.Commands.add('urlmatch', (pattern, type='match', from='pathname') => {

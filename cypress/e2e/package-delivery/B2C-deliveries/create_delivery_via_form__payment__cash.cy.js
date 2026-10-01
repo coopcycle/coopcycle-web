@@ -1,10 +1,10 @@
 context('Delivery via form (payment options: Stripe or Cash)', () => {
   beforeEach(() => {
     cy.loadFixtures('stores_legacy.yml')
-    cy.terminal('echo CASH_ON_DELIVERY_ENABLED=1 >> .env.test')
+    cy.setEnvVar('CASH_ON_DELIVERY_ENABLED', '1')
   })
   afterEach(() => {
-    cy.terminal(`sed -i '/CASH_ON_DELIVERY_ENABLED=1/d' .env.test`)
+    cy.removeEnvVar('CASH_ON_DELIVERY_ENABLED')
   })
 
   it('should create a delivery with cash payment', () => {
