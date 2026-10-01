@@ -27,12 +27,17 @@ class ReferralManager
         private readonly ReferralRewardCouponFactory $referralRewardCouponFactory,
         private readonly EntityManagerInterface $entityManager,
         private readonly EmailManager $emailManager,
+        private readonly ReferralProgramStatus $referralProgramStatus,
         private readonly LoggerInterface $logger)
     {
     }
 
     public function registerPendingReferral(User $newUser, ?string $referralCode): void
     {
+        if (!$this->referralProgramStatus->isActive()) {
+            return;
+        }
+
         $referred = $newUser->getCustomer();
 
         if (null === $referred) {

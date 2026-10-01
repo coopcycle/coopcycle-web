@@ -15,6 +15,7 @@ use AppBundle\Entity\Referral\ReferralLevel;
 use AppBundle\Entity\Referral\ReferralRepository;
 use AppBundle\Service\Referral\ReferralCodeGenerator;
 use AppBundle\Service\Referral\ReferralLevelResolver;
+use AppBundle\Service\Referral\ReferralProgramStatus;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task;
@@ -412,9 +413,10 @@ class ProfileController extends AbstractController
         PaginatorInterface $paginator,
         ReferralRepository $referralRepository,
         ReferralLevelResolver $referralLevelResolver,
-        ReferralCodeGenerator $referralCodeGenerator)
+        ReferralCodeGenerator $referralCodeGenerator,
+        ReferralProgramStatus $referralProgramStatus)
     {
-        if (!$this->getParameter('referral_program_enabled')) {
+        if (!$referralProgramStatus->isActive()) {
             throw $this->createNotFoundException();
         }
 

@@ -4,6 +4,7 @@ namespace Tests\AppBundle\Controller;
 
 use AppBundle\Entity\User;
 use AppBundle\Security\UserManager;
+use AppBundle\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
@@ -36,6 +37,12 @@ class ProfileControllerReferralsTest extends WebTestCase
     public function testPageGeneratesReferralCodeOnFirstVisitAndShowsLink(): void
     {
         $client = self::createClient();
+
+        // The runtime on/off switch defaults to off regardless of the env
+        // var, so it must be turned on explicitly for this page to be reachable.
+        $settingsManager = self::getContainer()->get(SettingsManager::class);
+        $settingsManager->set('referral_program_active', '1');
+        $settingsManager->flush();
 
         $userManager = self::getContainer()->get(UserManager::class);
 

@@ -44,7 +44,7 @@
             <span>{% trans %}profile.myAddresses{% endtrans %}</span>
           </a>
         </li>
-        {% if referral_program_enabled %}
+        {% if referral_program_active() %}
         <li
           class="{{ app.request.attributes.get('_route') == 'profile_referrals' ? 'active' : '' }}">
           <a href="{{ path('profile_referrals') }}">

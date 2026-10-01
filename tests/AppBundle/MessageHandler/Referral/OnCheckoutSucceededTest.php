@@ -11,6 +11,7 @@ use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\MessageHandler\Referral\OnCheckoutSucceeded;
 use AppBundle\Service\EmailManager;
 use AppBundle\Service\Referral\ReferralLevelResolver;
+use AppBundle\Service\Referral\ReferralProgramStatus;
 use AppBundle\Service\Referral\ReferralRewardCouponFactory;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Promotion\PromotionCouponInterface;
@@ -40,10 +41,13 @@ class OnCheckoutSucceededTest extends TestCase
         $this->emailManager = $this->prophesize(EmailManager::class);
     }
 
-    private function createHandler(bool $enabled = true): OnCheckoutSucceeded
+    private function createHandler(bool $active = true): OnCheckoutSucceeded
     {
+        $referralProgramStatus = $this->prophesize(ReferralProgramStatus::class);
+        $referralProgramStatus->isActive()->willReturn($active);
+
         return new OnCheckoutSucceeded(
-            $enabled,
+            $referralProgramStatus->reveal(),
             $this->referralRepository->reveal(),
             $this->orderRepository->reveal(),
             $this->referralLevelResolver->reveal(),

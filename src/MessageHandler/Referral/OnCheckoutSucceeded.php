@@ -8,6 +8,7 @@ use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Service\EmailManager;
 use AppBundle\Service\Referral\ReferralLevelResolver;
+use AppBundle\Service\Referral\ReferralProgramStatus;
 use AppBundle\Service\Referral\ReferralRewardCouponFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -22,7 +23,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 class OnCheckoutSucceeded
 {
     public function __construct(
-        private readonly bool $referralProgramEnabled,
+        private readonly ReferralProgramStatus $referralProgramStatus,
         private readonly ReferralRepository $referralRepository,
         private readonly OrderRepository $orderRepository,
         private readonly ReferralLevelResolver $referralLevelResolver,
@@ -34,7 +35,7 @@ class OnCheckoutSucceeded
 
     public function __invoke(CheckoutSucceeded $event): void
     {
-        if (!$this->referralProgramEnabled) {
+        if (!$this->referralProgramStatus->isActive()) {
             return;
         }
 
