@@ -2,6 +2,7 @@
 
 namespace AppBundle\Form\Referral;
 
+use AppBundle\Form\Type\MoneyType;
 use AppBundle\Sylius\Promotion\Action\FixedDiscountPromotionActionCommand;
 use AppBundle\Sylius\Promotion\Action\PercentageDiscountPromotionActionCommand;
 use Symfony\Component\Form\AbstractType;
@@ -31,7 +32,7 @@ class ReferralWelcomeSettingsType extends AbstractType
                     'referral.reward_type.percentage' => PercentageDiscountPromotionActionCommand::TYPE,
                 ],
             ])
-            ->add('referral_welcome_reward_amount', IntegerType::class, [
+            ->add('referral_welcome_reward_amount', MoneyType::class, [
                 'label' => 'referral.welcome_settings.field.rewardAmount',
                 'help' => 'referral.welcome_settings.field.rewardAmount.help',
                 'required' => false,

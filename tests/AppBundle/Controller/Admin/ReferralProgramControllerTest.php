@@ -86,7 +86,9 @@ class ReferralProgramControllerTest extends WebTestCase
 
         $form = $crawler->filter('form[name="referral_welcome_settings"]')->form();
         $form['referral_welcome_settings[referral_welcome_reward_type]'] = 'order_fixed_discount';
-        $form['referral_welcome_settings[referral_welcome_reward_amount]'] = '777';
+        // MoneyType (divisor: 100), parsed in the app's fr locale (comma
+        // decimal separator) -- entering "7,77" submits as 777 cents.
+        $form['referral_welcome_settings[referral_welcome_reward_amount]'] = '7,77';
         $form['referral_welcome_settings[referral_welcome_coupon_validity_days]'] = '45';
 
         $client->submit($form);

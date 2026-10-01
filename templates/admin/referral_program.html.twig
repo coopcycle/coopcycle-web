@@ -151,3 +151,53 @@
 {% endif %}
 
 {% endblock %}
+
+{% block scripts %}
+<script>
+  (function () {
+    // Toggles the sibling "amount" / "percentage" field based on the
+    // reward type <select>, for both the per-level forms (camelCase field
+    // names: ..._rewardType/_rewardAmount/_rewardPercentage) and the global
+    // welcome coupon form (snake_case: ..._reward_type/_reward_amount/_reward_percentage).
+    function fieldGroup(id) {
+      var el = document.getElementById(id);
+      return el ? el.closest('.form-group') : null;
+    }
+
+    function toggle(select) {
+      var id = select.id;
+      var base, amountSuffix, percentageSuffix;
+
+      if (id.endsWith('rewardType')) {
+        base = id.slice(0, -('rewardType'.length));
+        amountSuffix = 'rewardAmount';
+        percentageSuffix = 'rewardPercentage';
+      } else if (id.endsWith('reward_type')) {
+        base = id.slice(0, -('reward_type'.length));
+        amountSuffix = 'reward_amount';
+        percentageSuffix = 'reward_percentage';
+      } else {
+        return;
+      }
+
+      var isPercentage = select.value === 'order_percentage_discount';
+      var amountGroup = fieldGroup(base + amountSuffix);
+      var percentageGroup = fieldGroup(base + percentageSuffix);
+
+      if (amountGroup) {
+        amountGroup.style.display = isPercentage ? 'none' : '';
+      }
+      if (percentageGroup) {
+        percentageGroup.style.display = isPercentage ? '' : 'none';
+      }
+    }
+
+    document.querySelectorAll('select[id$="rewardType"], select[id$="reward_type"]').forEach(function (select) {
+      toggle(select);
+      select.addEventListener('change', function () {
+        toggle(select);
+      });
+    });
+  })();
+</script>
+{% endblock %}

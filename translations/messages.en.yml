@@ -1946,8 +1946,8 @@ referral.level.field.minReferralCount: Minimum successful referrals
 referral.level.field.minReferralCount.help: Number of successful referrals (friends who placed a paid first order) needed to reach this level.
 referral.level.field.rewardType: Reward type
 referral.level.field.rewardType.help: Whether the referrer's reward is a fixed amount or a percentage discount.
-referral.level.field.rewardAmount: Reward amount (cents)
-referral.level.field.rewardAmount.help: Discount amount in cents. Only used when the reward type is "Fixed amount".
+referral.level.field.rewardAmount: Reward amount
+referral.level.field.rewardAmount.help: Discount amount. Only used when the reward type is "Fixed amount".
 referral.level.field.rewardPercentage: Reward percentage
 referral.level.field.rewardPercentage.help: Discount percentage. Only used when the reward type is "Percentage".
 referral.level.field.couponValidityDays: Coupon validity (days)
@@ -1962,8 +1962,8 @@ referral.welcome_settings.info.title: What is the welcome coupon?
 referral.welcome_settings.info.body: When someone signs up using a friend's referral link, they immediately receive this coupon, valid on their first order only. It's a single global configuration, separate from the levels above, which apply to the referrer's own reward.
 referral.welcome_settings.field.rewardType: Reward type
 referral.welcome_settings.field.rewardType.help: Whether the referred customer's welcome discount is a fixed amount or a percentage.
-referral.welcome_settings.field.rewardAmount: Reward amount (cents)
-referral.welcome_settings.field.rewardAmount.help: Discount amount in cents. Only used when the reward type is "Fixed amount".
+referral.welcome_settings.field.rewardAmount: Reward amount
+referral.welcome_settings.field.rewardAmount.help: Discount amount. Only used when the reward type is "Fixed amount".
 referral.welcome_settings.field.rewardPercentage: Reward percentage
 referral.welcome_settings.field.rewardPercentage.help: Discount percentage. Only used when the reward type is "Percentage".
 referral.welcome_settings.field.couponValidityDays: Coupon validity (days)
