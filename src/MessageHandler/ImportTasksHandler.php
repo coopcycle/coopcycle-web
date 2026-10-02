@@ -76,7 +76,7 @@ class ImportTasksHandler
 
             $this->logger->error(sprintf('Error importing file %s, "%s"', $message->getFilename(), $e->getMessage()));
 
-            $this->liveUpdates->toAdmins('task_import:failure', [
+            $this->liveUpdates->toDispatchers('task_import:failure', [
                 'token' => $message->getToken(),
                 'message' => $e->getMessage(),
             ]);
@@ -119,7 +119,7 @@ class ImportTasksHandler
 
             $this->logger->error(sprintf('Error importing file %s, "%s"', $message->getFilename(), $e->getMessage()));
 
-            $this->liveUpdates->toAdmins('task_import:failure', [
+            $this->liveUpdates->toDispatchers('task_import:failure', [
                 'token' => $message->getToken(),
                 'message' => $e->getMessage(),
             ]);
@@ -130,7 +130,7 @@ class ImportTasksHandler
         }
 
         $this->logger->info(sprintf('Finished importing file %s', $message->getFilename()));
-        $this->liveUpdates->toAdmins('task_import:success', [
+        $this->liveUpdates->toDispatchers('task_import:success', [
             'token' => $message->getToken()
         ]);
         $this->updateQueueStatus($message, 'completed');

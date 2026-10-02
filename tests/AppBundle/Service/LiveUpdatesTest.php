@@ -96,7 +96,7 @@ class LiveUpdatesTest extends TestCase
         $this->liveUpdates->toRoles($roles, $message);
     }
 
-    public function testToAdmins(): void
+    public function testToDispatchers(): void
     {
         $message = 'Test message';
         $adminUsers = [
@@ -104,7 +104,7 @@ class LiveUpdatesTest extends TestCase
             $this->createUser()
         ];
 
-        $this->userManagerMock->findUsersByRoles(['ROLE_ADMIN'])
+        $this->userManagerMock->findUsersByRoles(LiveUpdates::DISPATCH_ROLES)
             ->willReturn($adminUsers)
             ->shouldBeCalledOnce();
 
@@ -125,10 +125,10 @@ class LiveUpdatesTest extends TestCase
             ->willReturn(false) // just test message is send via Centrifugo
             ->shouldBeCalled();
 
-        $this->liveUpdates->toAdmins($message);
+        $this->liveUpdates->toDispatchers($message);
     }
 
-    public function testToUserAndAdmins_userNotAdmin(): void
+    public function testToUserAndDispatchers_userNotAdmin(): void
     {
         $message = 'Test message';
         $user = $this->createUser();
@@ -138,7 +138,7 @@ class LiveUpdatesTest extends TestCase
         ];
         $allUsers = array_merge([$user], $adminUsers);
 
-        $this->userManagerMock->findUsersByRoles(['ROLE_ADMIN'])
+        $this->userManagerMock->findUsersByRoles(LiveUpdates::DISPATCH_ROLES)
             ->willReturn($adminUsers)
             ->shouldBeCalledOnce();
 
@@ -159,10 +159,10 @@ class LiveUpdatesTest extends TestCase
             ->willReturn(false) // just test message is send via Centrifugo
             ->shouldBeCalled();
 
-        $this->liveUpdates->toUserAndAdmins($user, $message);
+        $this->liveUpdates->toUserAndDispatchers($user, $message);
     }
 
-    public function testToUserAndAdmins_userIsAdmin(): void
+    public function testToUserAndDispatchers_userIsAdmin(): void
     {
         $message = 'Test message';
         $adminUsers = [
@@ -172,7 +172,7 @@ class LiveUpdatesTest extends TestCase
         ];
         $allUsers = $adminUsers;
 
-        $this->userManagerMock->findUsersByRoles(['ROLE_ADMIN'])
+        $this->userManagerMock->findUsersByRoles(LiveUpdates::DISPATCH_ROLES)
             ->willReturn($adminUsers)
             ->shouldBeCalledOnce();
 
@@ -193,7 +193,7 @@ class LiveUpdatesTest extends TestCase
             ->willReturn(false) // just test message is send via Centrifugo
             ->shouldBeCalled();
 
-        $this->liveUpdates->toUserAndAdmins($allUsers[0], $message);
+        $this->liveUpdates->toUserAndDispatchers($allUsers[0], $message);
     }
 
     public function testToUserAndRoles_userDontHaveRole(): void
@@ -265,5 +265,40 @@ class LiveUpdatesTest extends TestCase
             ->shouldBeCalled();
 
         $this->liveUpdates->toUserAndRoles($allUsers[0], $roles, $message);
+    }
+
+    /**
+     * Regression test: a user holding ROLE_DISPATCHER but not ROLE_ADMIN used to
+     * be left out of order, tour and import events, because those publishers
+     * targeted ROLE_ADMIN alone. Their dispatch board went silently stale --
+     * nothing errored, the event was simply never addressed to their channel,
+     * so a page reload did not help and no telemetry showed a failure.
+     *
+     * @see https://github.com/coopcycle/coopcycle-web/issues/5361
+     */
+    public function testDispatchersReceiveEventsBroadcastToDispatchers(): void
+    {
+        $this->assertContains(
+            'ROLE_DISPATCHER',
+            LiveUpdates::DISPATCH_ROLES,
+            'Events rendered by the dispatch board must reach dispatchers, not only admins.'
+        );
+
+        $dispatcher = $this->createUser();
+
+        $this->userManagerMock->findUsersByRoles(LiveUpdates::DISPATCH_ROLES)
+            ->willReturn([$dispatcher])
+            ->shouldBeCalledOnce();
+
+        $this->notificationPreferencesMock->isEventEnabled(Argument::any())
+            ->willReturn(false)
+            ->shouldBeCalled();
+
+        $this->centrifugoClientMock->broadcast(
+            [sprintf('%s_events#%s', $this->namespace, $dispatcher->getUserIdentifier())],
+            ['event' => ['name' => 'Test message', 'data' => []]]
+        )->shouldBeCalledOnce();
+
+        $this->liveUpdates->toDispatchers('Test message');
     }
 }

@@ -12,7 +12,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 #[AsMessageHandler]
 class PublishLiveUpdateHandler
 {
-    private array $roles = ['ROLE_ADMIN', 'ROLE_DISPATCHER'];
+    private array $roles = LiveUpdates::DISPATCH_ROLES;
 
     public function __construct(
         private LiveUpdates $liveUpdates,

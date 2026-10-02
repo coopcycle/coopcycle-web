@@ -97,7 +97,7 @@ class PublishLiveUpdateTest extends TestCase
         $admin = $this->prophesize(UserInterface::class);
         $admin->getUserIdentifier()->willReturn('admin');
 
-        $this->userManager->findUsersByRoles(['ROLE_ADMIN'])->willReturn([$admin]);
+        $this->userManager->findUsersByRoles(LiveUpdates::DISPATCH_ROLES)->willReturn([$admin]);
 
         $this->translator->trans(Argument::type('string'), Argument::type('array'))->willReturn('Lorem ipsum');
 

@@ -31,10 +31,10 @@ class PublishLiveUpdate
             $this->liveUpdates->toUsers([$user], $event);
         } else if ($event instanceof TaskListUpdatedv2) {
             $user = $event->getTaskList()->getCourier(); // Not used in the rider part of the app yet
-            $this->liveUpdates->toUserAndRoles($user, ['ROLE_ADMIN', 'ROLE_DISPATCHER'], $event);
+            $this->liveUpdates->toUserAndDispatchers($user, $event);
         } else {
             // Can be safely broadcasted both to admins and dispatchers
-            $this->liveUpdates->toRoles(['ROLE_ADMIN', 'ROLE_DISPATCHER'], $event);
+            $this->liveUpdates->toDispatchers($event);
         }
     }
 }

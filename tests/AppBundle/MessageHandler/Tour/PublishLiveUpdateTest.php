@@ -35,7 +35,7 @@ class PublishLiveUpdateTest extends TestCase
         foreach ($tourEvents as $eventClass) {
             $event = $this->prophesize($eventClass);
 
-            $this->liveUpdates->toAdmins(
+            $this->liveUpdates->toDispatchers(
                 $event->reveal()
             )->shouldBeCalledOnce();
 

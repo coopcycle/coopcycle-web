@@ -20,6 +20,14 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LiveUpdates
 {
+    /**
+     * Roles that render the dispatch board, and therefore need every event the
+     * board displays. Keep this as the single source of truth: publishing an
+     * event to a narrower set makes the board go silently stale for the roles
+     * left out, with no error anywhere.
+     */
+    public const DISPATCH_ROLES = ['ROLE_ADMIN', 'ROLE_DISPATCHER'];
+
     public function __construct(
         private Security $security,
         private UserManager $userManager,
@@ -33,14 +41,14 @@ class LiveUpdates
     {
     }
 
-    public function toAdmins($message, array $data = [])
+    public function toDispatchers($message, array $data = [])
     {
-        $this->toRoles(['ROLE_ADMIN'], $message, $data);
+        $this->toRoles(self::DISPATCH_ROLES, $message, $data);
     }
 
-    public function toUserAndAdmins(UserInterface $user, $message, array $data = [])
+    public function toUserAndDispatchers(UserInterface $user, $message, array $data = [])
     {
-        $this->toUserAndRoles($user, ['ROLE_ADMIN'], $message, $data);
+        $this->toUserAndRoles($user, self::DISPATCH_ROLES, $message, $data);
     }
 
     public function toOrderWatchers(OrderInterface $order, $message, array $data = [])
