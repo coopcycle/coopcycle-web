@@ -5,6 +5,7 @@ namespace AppBundle\EventListener\Edifact;
 use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskImage;
+use AppBundle\Transporter\Waybill;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Event\PostPersistEventArgs;
@@ -19,11 +20,13 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  * receipt image is available: a COM URL carried on any other status (LIV|CFM
  * included) is treated as provisional and never closes the position.
  *
- * The event is emitted once the dropoff is done *and* carries a proof, whichever
- * happens last: the images may be uploaded before or after the task is marked
- * as done, so either can be the trigger. Proofs that arrive later produce a
- * further POD|CFM with only the images that have not been reported yet; the
- * ones still unsynced are sent as one event, see ReportFromCC::generateReports().
+ * For the transporters that enabled the waybill (see Waybill::isAvailable()),
+ * the event is emitted as soon as the dropoff is done: its first URL is the
+ * waybill page, the "récépissé numérisé" the FT qualifier stands for, and the
+ * page shows the images whenever they are uploaded. The images are sent too:
+ * those that arrive later produce a further POD|CFM with only what has not
+ * been reported yet; the ones still unsynced are sent as one event, see
+ * ReportFromCC::generateReports().
  */
 class TransporterPodNotifier {
 
@@ -39,7 +42,9 @@ class TransporterPodNotifier {
         private EntityManagerInterface $em,
         private UrlGeneratorInterface $urlGenerator,
         private LoggerInterface $transporterLogger,
+        private Waybill $waybill,
         private string $baseUrl,
+        private string $locale,
     ) { }
 
     // Covers CreateImage's X-Attach-To path, where the image is persisted with
@@ -127,9 +132,10 @@ class TransporterPodNotifier {
     /**
      * URLs of the proofs on this task that no POD|CFM has reported yet.
      *
-     * The comparison is made on the image name rather than on the stored URL:
-     * the URL is built from router.request_context.*, so a change of host or
-     * scheme would make every past proof look unreported and send it again.
+     * The comparison is made on the last path segment (the image name, or the
+     * waybill token) rather than on the stored URL: the URL is built from
+     * router.request_context.*, so a change of host or scheme would make every
+     * past proof look unreported and send it again.
      *
      * @return array<int,string>
      */
@@ -145,9 +151,10 @@ class TransporterPodNotifier {
     }
 
     /**
-     * URLs of the proofs on this task, but the ones named in $except.
+     * URLs of the proofs on this task, but the ones named in $except: the
+     * waybill page first once the dropoff is done, then the images.
      *
-     * @param array<int,string> $except image names
+     * @param array<int,string> $except image names or waybill token
      * @return array<int,string>
      */
     public function podUrls(Task $task, array $except = []): array
@@ -166,7 +173,7 @@ class TransporterPodNotifier {
 
         // Prefixed with the canonical base URL rather than ABSOLUTE_URL: in an
         // HTTP request the latter uses whatever host the app called us on.
-        return array_values(array_map(
+        $urls = array_values(array_map(
             fn(string $imageName) => $this->baseUrl . $this->urlGenerator->generate(
                 'task_image_public',
                 ['path' => $imageName],
@@ -174,5 +181,21 @@ class TransporterPodNotifier {
             ),
             $pending
         ));
+
+        // The page answers 404 until then
+        if (!$this->waybill->isAvailable($task)) {
+            return $urls;
+        }
+
+        $token = $this->waybill->token($task);
+        if (!in_array($token, $except, true)) {
+            array_unshift($urls, $this->baseUrl . $this->urlGenerator->generate(
+                'public_pod',
+                ['_locale' => $this->locale, 'id' => $task->getId(), 'token' => $token],
+                UrlGeneratorInterface::ABSOLUTE_PATH
+            ));
+        }
+
+        return $urls;
     }
 }

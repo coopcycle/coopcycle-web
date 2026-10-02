@@ -16,6 +16,7 @@ use AppBundle\Service\Geocoder;
 use AppBundle\Service\TagManager;
 use AppBundle\Service\Tile38Helper;
 use AppBundle\Spreadsheet\ParseMetadataTrait;
+use AppBundle\Transporter\Waybill;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Doctrine\Persistence\ManagerRegistry;
@@ -41,6 +42,7 @@ class DeliveryNormalizer implements NormalizerInterface, ContextAwareDenormalize
         private readonly Tile38Helper $tile38Helper,
         private readonly TagManager $tagManager,
         private readonly LoggerInterface $logger,
+        private readonly Waybill $waybill,
     )
     {
     }
@@ -71,6 +73,17 @@ class DeliveryNormalizer implements NormalizerInterface, ContextAwareDenormalize
         $data['trackingUrl'] = $this->urlGenerator->generate('public_delivery', [
             'hashid' => $this->hashids8->encode($object->getId())
         ], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        // Next to the EDIFACT data, in the delivery form
+        if (in_array('delivery_edifact', $context['groups'] ?? [], true)) {
+            $dropoff = $object->getDropoff();
+            $data['waybillUrl'] = !is_null($dropoff) && $this->waybill->isAvailable($dropoff)
+                ? $this->urlGenerator->generate('public_pod', [
+                    'id' => $dropoff->getId(),
+                    'token' => $this->waybill->token($dropoff),
+                ], UrlGeneratorInterface::ABSOLUTE_URL)
+                : null;
+        }
 
         if (!$object->isCompleted()) {
 
