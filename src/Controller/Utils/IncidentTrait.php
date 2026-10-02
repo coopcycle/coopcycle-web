@@ -7,6 +7,8 @@ use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\Incident\IncidentImage;
 use Doctrine\ORM\EntityManagerInterface;
 use Liip\ImagineBundle\Service\FilterService;
+use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
+use Sylius\Component\Payment\PaymentTransitions;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
@@ -21,7 +23,9 @@ trait IncidentTrait {
         ]));
     }
 
-    public function incidentAction($id, Request $request, EntityManagerInterface $entityManager) {
+    public function incidentAction($id, Request $request,
+        EntityManagerInterface $entityManager,
+        StateMachineFactoryInterface $stateMachineFactory) {
         /** @var ?Incident $incident */
         $incident = $entityManager->getRepository(Incident::class)->find($id);
 
@@ -38,6 +42,18 @@ trait IncidentTrait {
 
         $order = $delivery?->getOrder();
 
+        // An order can be refunded if at least one of its payments was actually captured.
+        // Orders invoiced later (i.e B2B last mile) have payments stuck in state "new".
+        $isRefundable = false;
+        if (null !== $order) {
+            foreach ($order->getPayments() as $payment) {
+                if ($stateMachineFactory->get($payment, PaymentTransitions::GRAPH)->can(PaymentTransitions::TRANSITION_REFUND)) {
+                    $isRefundable = true;
+                    break;
+                }
+            }
+        }
+
         return $this->render($request->attributes->get('template'), $this->auth([
             'incident' => $incident,
             'delivery' => $delivery,
@@ -45,6 +61,7 @@ trait IncidentTrait {
             'store' => $delivery?->getStore(),
             'transporterEnabled' => $transporterEnabled,
             'isLastmile' => $isLastmile,
+            'isRefundable' => $isRefundable,
         ]));
     }
 }
