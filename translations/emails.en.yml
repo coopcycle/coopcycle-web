@@ -45,6 +45,30 @@ admin.send_invitation.body: |
   <br>
   This is an invitation to the CoopCycle space, to finalize the creation of your account please click on the following link.
 admin.send_invitation.create_password: Create my password
+referral.welcome.subject: A discount on your first order!
+referral.welcome.body: |
+  Hello,
+  <br>
+  A friend invited you to join us. Use the code below on your first order to get a discount.
+referral.reward_earned.subject: You've earned a referral reward!
+referral.reward_earned.body: |
+  Hello,
+  <br>
+  A friend you referred just placed their first order. Here's your reward.
+referral.level_up.subject: You've reached a new referral level!
+referral.level_up.body: |
+  Hello,
+  <br>
+  Thanks to your referrals, you've reached the {{level_name}} level.
+referral.level.bronze: Bronze
+referral.level.silver: Silver
+referral.level.gold: Gold
+referral.invitation.subject: "{{referrer_name}} invited you to join us!"
+referral.invitation.body: |
+  Hello,
+  <br>
+  {{referrer_name}} thinks you'd like it here. Sign up using the link below to get a welcome discount on your first order.
+referral.invitation.cta: Sign up
 admin.pledge.body: |
   Hello,
   <br>

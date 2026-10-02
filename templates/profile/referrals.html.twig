@@ -1,0 +1,157 @@
+{% extends "profile.html.twig" %}
+{% import '_partials/referral/_level_icon.html.twig' as referral_icons %}
+
+{% block content %}
+
+<div class="mb-8">
+  <h2 class="text-xl font-semibold mb-2">{{ 'profile.referrals.share.title'|trans }}</h2>
+  <p class="mb-4 text-gray-500">
+    {% if upcoming_level %}
+      {% if upcoming_level.rewardType == 'order_percentage_discount' %}
+        {{ 'profile.referrals.intro.percentage'|trans({'%brand_name%': coopcycle_setting('brand_name'), '%percent%': upcoming_level.rewardPercentage}) }}
+      {% else %}
+        {{ 'profile.referrals.intro.fixed'|trans({'%brand_name%': coopcycle_setting('brand_name'), '%amount%': upcoming_level.rewardAmount|price_format}) }}
+      {% endif %}
+    {% else %}
+      {{ 'profile.referrals.intro.generic'|trans({'%brand_name%': coopcycle_setting('brand_name')}) }}
+    {% endif %}
+  </p>
+
+  <label class="input w-full" data-toggle="copy" data-clipboard-text="{{ referral_link }}">
+    <i class="fa fa-link"></i>
+    <input type="text" value="{{ referral_link }}" readonly>
+  </label>
+  <div class="flex flex-wrap gap-3 mt-3">
+    <button id="referral-copy-button" type="button" class="btn btn-primary" data-toggle="copy" data-clipboard-text="{{ referral_link }}">
+      <i class="fa fa-copy mr-2"></i>
+      {{ 'profile.referrals.share.copy'|trans }}
+    </button>
+    <button type="button" class="btn btn-outline btn-primary" onclick="document.getElementById('referral-invite-modal').showModal();">
+      <i class="fa fa-envelope mr-2"></i>
+      {{ 'profile.referrals.invite.button'|trans({'%brand_name%': coopcycle_setting('brand_name')}) }}
+    </button>
+  </div>
+</div>
+
+<dialog id="referral-invite-modal" class="modal">
+  <div class="modal-box">
+    <form id="referral-invite-form" method="post" action="{{ path('profile_referrals_invite') }}">
+      <h3 class="text-lg font-bold mb-2">{{ 'profile.referrals.invite.modal_title'|trans({'%brand_name%': coopcycle_setting('brand_name')}) }}</h3>
+      <p class="text-gray-500 mb-3">{{ 'profile.referrals.invite.modal_help'|trans }}</p>
+      <textarea
+        name="emails"
+        class="textarea w-full"
+        rows="4"
+        placeholder="{{ 'profile.referrals.invite.placeholder'|trans }}"
+      ></textarea>
+      <input type="hidden" name="_token" value="{{ csrf_token('profile_referrals_invite') }}">
+      <div class="modal-action">
+        <button type="button" class="btn" onclick="document.getElementById('referral-invite-modal').close();">
+          {{ 'profile.referrals.invite.cancel'|trans }}
+        </button>
+        <button type="submit" class="btn btn-primary">
+          {{ 'profile.referrals.invite.submit'|trans }}
+        </button>
+      </div>
+    </form>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+
+{% if levels is not empty %}
+<div class="mb-8">
+  <h2 class="text-lg font-semibold mb-3">{{ 'profile.referrals.levels.title'|trans }}</h2>
+
+  {% set progress_max = next_level ? next_level.minReferralCount : levels|last.minReferralCount %}
+  <progress class="progress progress-primary w-full mb-2" value="{{ successful_referral_count }}" max="{{ progress_max }}"></progress>
+
+  <p class="text-gray-500 mb-4">
+    {% trans with { '%count%': successful_referral_count } %}profile.referrals.successful_count{% endtrans %}
+    {% if next_level %}
+      &mdash; {% trans with { '%count%': next_level.minReferralCount - successful_referral_count, '%level%': ('referral.level.' ~ next_level.name)|trans({}, 'emails') } %}profile.referrals.next_level{% endtrans %}
+    {% endif %}
+  </p>
+
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    {% for lvl in levels %}
+    <div class="border rounded-lg p-4 {{ level and lvl.id == level.id ? 'border-primary' : 'border-gray-200' }}">
+      <div class="flex items-center justify-between mb-1">
+        <span class="font-semibold">{{ referral_icons.icon(lvl.name) }} {{ ('referral.level.' ~ lvl.name)|trans({}, 'emails') }}</span>
+        {% if level and lvl.id == level.id %}
+          <span class="badge badge-primary badge-sm">{{ 'profile.referrals.levels.current'|trans }}</span>
+        {% endif %}
+      </div>
+      <p class="text-sm text-gray-500 mb-1">
+        {% trans with { '%count%': lvl.minReferralCount } %}profile.referrals.levels.threshold{% endtrans %}
+      </p>
+      <p class="text-sm">
+        {% if lvl.rewardType == 'order_percentage_discount' %}
+          {% trans with { '%percent%': lvl.rewardPercentage } %}profile.referrals.levels.reward_percentage{% endtrans %}
+        {% else %}
+          {% trans with { '%amount%': lvl.rewardAmount|price_format } %}profile.referrals.levels.reward_fixed{% endtrans %}
+        {% endif %}
+      </p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+{% if referrals.totalItemCount > 0 %}
+<table class="table">
+  <thead>
+    <tr>
+      <th>{% trans %}profile.referrals.column.friend{% endtrans %}</th>
+      <th>{% trans %}referral.column.status{% endtrans %}</th>
+      <th class="text-right">{% trans %}referral.column.created_at{% endtrans %}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for referral in referrals %}
+    <tr>
+      <td>
+        {{ referral.referred_first_name }}
+        <span class="text-gray-500">{{ referral.referred_masked_email }}</span>
+      </td>
+      <td>
+        <span class="badge {{ referral.status == 'completed' ? 'badge-success' : (referral.status == 'expired' ? 'badge-neutral' : 'badge-info') }}">
+          {{ ('referral.status.' ~ referral.status)|trans }}
+        </span>
+      </td>
+      <td class="text-right">{{ referral.created_at|ago }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<nav class="text-center">
+  {{ knp_pagination_render(referrals) }}
+</nav>
+{% else %}
+<div class="alert alert-info">{% trans %}profile.referrals.none_yet{% endtrans %}</div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+  {{ encore_entry_script_tags('common') }}
+
+  <script>
+    const referralClipboard = new ClipboardJS('[data-toggle="copy"]');
+
+    referralClipboard.on('success', function(e) {
+      var el = document.getElementById('referral-copy-button');
+      var iconClass = el.childNodes[1].className;
+      var text = el.childNodes[2].nodeValue;
+
+      el.childNodes[1].className = 'fa fa-check mr-2';
+      el.childNodes[2].nodeValue = "{{ 'profile.referrals.share.copied'|trans }}";
+
+      setTimeout(function () {
+        el.childNodes[1].className = iconClass;
+        el.childNodes[2].nodeValue = text;
+      }, 1000);
+    });
+  </script>
+{% endblock %}

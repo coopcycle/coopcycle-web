@@ -10,6 +10,12 @@ use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Edenred\Authentication as EdenredAuthentication;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Referral\Referral;
+use AppBundle\Entity\Referral\ReferralLevel;
+use AppBundle\Entity\Referral\ReferralRepository;
+use AppBundle\Service\Referral\ReferralCodeGenerator;
+use AppBundle\Service\Referral\ReferralLevelResolver;
+use AppBundle\Service\Referral\ReferralProgramStatus;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task;
@@ -20,6 +26,7 @@ use AppBundle\Form\OrderType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\TaskCompleteType;
 use AppBundle\Service\DeliveryManager;
+use AppBundle\Service\EmailManager;
 use AppBundle\Service\TopBarNotifications;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\TaskManager;
@@ -399,6 +406,151 @@ class ProfileController extends AbstractController
             'cent_usr' => $user->getUsername(),
             'cent_tok' => $centrifugoClient->generateConnectionToken($user->getUsername(), (time() + 3600)),
         ]);
+    }
+
+    #[Route(path: '/profile/referrals', name: 'profile_referrals')]
+    public function referralsAction(
+        Request $request,
+        PaginatorInterface $paginator,
+        ReferralRepository $referralRepository,
+        ReferralLevelResolver $referralLevelResolver,
+        ReferralCodeGenerator $referralCodeGenerator,
+        ReferralProgramStatus $referralProgramStatus)
+    {
+        if (!$referralProgramStatus->isActive()) {
+            throw $this->createNotFoundException();
+        }
+
+        $customer = $this->getUser()->getCustomer();
+
+        // Pre-existing accounts from before this feature shipped don't have
+        // a code yet -- generate one on first visit instead of requiring a
+        // separate backfill before the page is usable.
+        if (null === $customer->getReferralCode()) {
+            $referralCodeGenerator->generateFor($customer);
+            $this->entityManager->flush();
+        }
+
+        $successfulReferralCount = $customer->getSuccessfulReferralCount();
+
+        $level = $referralLevelResolver->resolve($successfulReferralCount);
+        $nextLevel = $referralLevelResolver->resolveNext($successfulReferralCount);
+        // What the *next* successful referral would earn -- distinct from
+        // $level, which is null until the first threshold is actually met.
+        $upcomingLevel = $referralLevelResolver->resolve($successfulReferralCount + 1);
+
+        $levels = $this->entityManager->getRepository(ReferralLevel::class)->findBy([], ['minReferralCount' => 'ASC']);
+
+        $history = array_map(function (Referral $referral) {
+            return [
+                'referred_first_name' => $referral->getReferred()->getFirstName(),
+                'referred_masked_email' => $this->maskEmail($referral->getReferred()->getEmail()),
+                'status' => $referral->getStatus(),
+                'created_at' => $referral->getCreatedAt(),
+                'completed_at' => $referral->getCompletedAt(),
+            ];
+        }, $referralRepository->findByReferrer($customer));
+
+        $referrals = $paginator->paginate(
+            $history,
+            $request->query->getInt('page', 1),
+            self::ITEMS_PER_PAGE
+        );
+
+        return $this->render('profile/referrals.html.twig', $this->auth([
+            'referral_code' => $customer->getReferralCode(),
+            'referral_link' => $this->generateUrl('nucleos_profile_registration_register', [
+                'ref' => $customer->getReferralCode(),
+            ], UrlGeneratorInterface::ABSOLUTE_URL),
+            'level' => $level,
+            'next_level' => $nextLevel,
+            'upcoming_level' => $upcomingLevel,
+            'levels' => $levels,
+            'successful_referral_count' => $successfulReferralCount,
+            'referrals' => $referrals,
+        ]));
+    }
+
+    #[Route(path: '/profile/referrals/invite', name: 'profile_referrals_invite', methods: ['POST'])]
+    public function referralsInviteAction(
+        Request $request,
+        EmailManager $emailManager,
+        ReferralProgramStatus $referralProgramStatus,
+        UserManagerInterface $userManager,
+        TranslatorInterface $translator)
+    {
+        if (!$referralProgramStatus->isActive()) {
+            throw $this->createNotFoundException();
+        }
+
+        if (!$this->isCsrfTokenValid('profile_referrals_invite', $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $customer = $this->getUser()->getCustomer();
+
+        // Accept emails separated by commas, whitespace and/or newlines, so
+        // both a comma-separated input and a one-per-line textarea work.
+        $rawEmails = preg_split('/[\s,]+/', (string) $request->request->get('emails', ''), -1, PREG_SPLIT_NO_EMPTY);
+
+        // Capped so this can't be used to bulk-spam arbitrary addresses from
+        // a single submission.
+        $maxInvitesPerSubmission = 10;
+
+        $validEmails = [];
+        $invalidCount = 0;
+        $alreadyRegisteredCount = 0;
+        foreach (array_slice(array_unique($rawEmails), 0, $maxInvitesPerSubmission) as $email) {
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $invalidCount++;
+            } elseif (null !== $userManager->findUserByEmail($email)) {
+                // Already has an account -- nothing to invite them to, and
+                // sending them a "join us" email would just be confusing.
+                $alreadyRegisteredCount++;
+            } else {
+                $validEmails[] = $email;
+            }
+        }
+
+        $referralLink = $this->generateUrl('nucleos_profile_registration_register', [
+            'ref' => $customer->getReferralCode(),
+        ], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        foreach ($validEmails as $email) {
+            $emailManager->sendTo(
+                $emailManager->createReferralInvitationMessage($customer, $referralLink),
+                $email
+            );
+        }
+
+        if (count($validEmails) > 0) {
+            $this->addFlash('notice', $translator->trans('profile.referrals.invite.sent', [
+                '%count%' => count($validEmails),
+            ]));
+        }
+        if ($invalidCount > 0) {
+            $this->addFlash('error', $translator->trans('profile.referrals.invite.invalid', [
+                '%count%' => $invalidCount,
+            ]));
+        }
+        if ($alreadyRegisteredCount > 0) {
+            $this->addFlash('error', $translator->trans('profile.referrals.invite.already_registered', [
+                '%count%' => $alreadyRegisteredCount,
+            ]));
+        }
+
+        return $this->redirectToRoute('profile_referrals');
+    }
+
+    private function maskEmail(string $email): string
+    {
+        [$localPart, $domain] = array_pad(explode('@', $email, 2), 2, '');
+
+        $maskedLocalPart = mb_strlen($localPart) > 1
+            ? mb_substr($localPart, 0, 1) . str_repeat('*', mb_strlen($localPart) - 1)
+            : $localPart;
+
+        return sprintf('%s@%s', $maskedLocalPart, $domain);
     }
 
     #[Route(path: '/profile/notifications', name: 'profile_notifications')]

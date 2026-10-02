@@ -236,6 +236,30 @@ class OrderRepository extends BaseOrderRepository
         ;
     }
 
+    /**
+     * Counts a customer's paid orders, excluding cart/cancelled ones and,
+     * optionally, one order in particular -- used by the referral program's
+     * "first order" rule checker, which evaluates eligibility on the very
+     * order it must exclude from the count.
+     */
+    public function countPaidOrdersByCustomer(CustomerInterface $customer, ?OrderInterface $excluding = null): int
+    {
+        $qb = $this->createQueryBuilder('o')
+            ->select('COUNT(o.id)')
+            ->andWhere('o.customer = :customer')
+            ->andWhere('o.state NOT IN (:states)')
+            ->setParameter('customer', $customer)
+            ->setParameter('states', [OrderInterface::STATE_CART, OrderInterface::STATE_CANCELLED]);
+
+        if (null !== $excluding) {
+            $qb
+                ->andWhere('o.id != :excludedOrderId')
+                ->setParameter('excludedOrderId', $excluding->getId());
+        }
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
     public function findOneByTask(Task $task): ?OrderInterface
     {
         $qb = $this->createQueryBuilder('o');

@@ -257,6 +257,7 @@ profile.myTracking: Mes itinéraires
 profile.myShifts: Mes créneaux
 profile.myOrders: Mes commandes
 profile.myAddresses: Mes adresses
+profile.myReferrals: Mes parrainages
 profile.myPersonalInfo: Mes données personnelles
 profile.payment: Paiement
 profile.task.noTasks: Aucune tâche programmée
@@ -1922,3 +1923,87 @@ hr.holidaysHistory.to: Au
 hr.holidaysHistory.status: Statut
 hr.holidaysHistory.comment: Commentaire
 delivery.time_slot.invalid: "La tranche horaire sélectionnée n'est pas valide. Merci d'en choisir une autre."
+promotion_rule.is_first_order: Première commande
+referral.title: Programme de parrainage
+referral.program.active_label: Le programme de parrainage est actif
+referral.program.active_help: "Tant que ceci est désactivé, les clients ne peuvent ni voir, ni rejoindre, ni gagner quoi que ce soit via le programme de parrainage, même si la fonctionnalité elle-même est activée."
+referral.program.inactive_warning: "Le programme de parrainage est actuellement inactif. Les clients n'y ont pas accès et aucune récompense ne sera accordée tant que vous ne l'aurez pas activé ci-dessus."
+referral.program.activated: Programme de parrainage activé.
+referral.program.deactivated: Programme de parrainage désactivé.
+referral.stats.total: Parrainages totaux
+referral.stats.pending: En attente
+referral.stats.completed: Terminés
+referral.stats.expired: Expirés
+referral.stats.conversion_rate: Taux de conversion
+referral.levels.configure: Configurer les niveaux
+referral.levels.saved: Niveaux de parrainage enregistrés avec succès.
+referral.levels.info.title: Comment fonctionnent les niveaux de parrainage ?
+referral.levels.info.body: "À mesure qu'un parrain accumule des parrainages réussis (des amis ayant passé une première commande payée), il progresse automatiquement à travers ces niveaux. Chaque niveau a son propre montant ou pourcentage de récompense, sa période de validité de coupon et sa limite d'utilisation, appliqués au coupon que le parrain gagne pour chaque parrainage réussi à ce niveau."
+referral.level.field.minReferralCount: Parrainages réussis minimum
+referral.level.field.minReferralCount.help: Nombre de parrainages réussis (amis ayant passé une première commande payée) nécessaires pour atteindre ce niveau.
+referral.level.field.rewardType: Type de récompense
+referral.level.field.rewardType.help: Indique si la récompense du parrain est un montant fixe ou une réduction en pourcentage.
+referral.level.field.rewardAmount: Montant de la récompense
+referral.level.field.rewardAmount.help: Montant de la réduction. Utilisé uniquement lorsque le type de récompense est « Montant fixe ».
+referral.level.field.rewardPercentage: Pourcentage de la récompense
+referral.level.field.rewardPercentage.help: Pourcentage de la réduction. Utilisé uniquement lorsque le type de récompense est « Pourcentage ».
+referral.level.field.rewardAmount.required_for_fixed: Obligatoire lorsque le type de récompense est « Montant fixe ».
+referral.level.field.rewardPercentage.required_for_percentage: Obligatoire lorsque le type de récompense est « Pourcentage ».
+referral.level.field.couponValidityDays: Validité du coupon (jours)
+referral.level.field.couponValidityDays.help: Nombre de jours pendant lesquels le coupon de récompense reste valide après son émission.
+referral.level.field.usageLimit: Limite d'utilisation du coupon
+referral.level.field.usageLimit.help: Nombre de fois où le coupon généré peut être utilisé (généralement 1).
+referral.reward_type.fixed: Montant fixe
+referral.reward_type.percentage: Pourcentage
+referral.welcome_settings.configure: Configurer le coupon de bienvenue
+referral.welcome_settings.saved: Paramètres du coupon de bienvenue enregistrés avec succès.
+referral.welcome_settings.info.title: Qu'est-ce que le coupon de bienvenue ?
+referral.welcome_settings.info.body: "Lorsqu'une personne s'inscrit via le lien de parrainage d'un ami, elle reçoit immédiatement ce coupon, valable uniquement sur sa première commande. Il s'agit d'une configuration globale unique, distincte des niveaux ci-dessus qui s'appliquent à la récompense du parrain lui-même."
+referral.welcome_settings.field.rewardType: Type de récompense
+referral.welcome_settings.field.rewardType.help: Indique si la réduction de bienvenue du client parrainé est un montant fixe ou un pourcentage.
+referral.welcome_settings.field.rewardAmount: Montant de la récompense
+referral.welcome_settings.field.rewardAmount.help: Montant de la réduction. Utilisé uniquement lorsque le type de récompense est « Montant fixe ».
+referral.welcome_settings.field.rewardPercentage: Pourcentage de la récompense
+referral.welcome_settings.field.rewardPercentage.help: Pourcentage de la réduction. Utilisé uniquement lorsque le type de récompense est « Pourcentage ».
+referral.welcome_settings.field.rewardAmount.required_for_fixed: Obligatoire lorsque le type de récompense est « Montant fixe ».
+referral.welcome_settings.field.rewardPercentage.required_for_percentage: Obligatoire lorsque le type de récompense est « Pourcentage ».
+referral.welcome_settings.field.couponValidityDays: Validité du coupon (jours)
+referral.welcome_settings.field.couponValidityDays.help: Nombre de jours pendant lesquels le coupon de bienvenue reste valide ; il ne peut être utilisé que sur la première commande du client parrainé.
+referral.welcome_settings.field.pendingTtlDays: Expiration des parrainages en attente (jours)
+referral.welcome_settings.field.pendingTtlDays.help: Nombre de jours pendant lesquels un parrainage peut rester en attente avant d'être marqué comme expiré si le client parrainé ne passe jamais de commande.
+referral.column.referrer: Parrain
+referral.column.referred: Client parrainé
+referral.column.status: Statut
+referral.column.created_at: Créé le
+referral.column.completed_at: Terminé le
+referral.status.pending: En attente
+referral.status.completed: Terminé
+referral.status.expired: Expiré
+referral.clear_filter: Effacer le filtre
+referral.filter.all: Tous
+referral.no_referrals: Aucun parrainage pour le moment.
+profile.referrals.share.title: Inviter des amis
+profile.referrals.share.label: Votre lien de parrainage
+profile.referrals.share.copy: Copier le lien
+profile.referrals.share.copied: Copié !
+profile.referrals.intro.fixed: "Invitez vos amis à rejoindre %brand_name% ! Dès qu'un ami que vous avez invité passe sa première commande, vous gagnez %amount%."
+profile.referrals.intro.percentage: "Invitez vos amis à rejoindre %brand_name% ! Dès qu'un ami que vous avez invité passe sa première commande, vous gagnez une réduction de %percent%%."
+profile.referrals.intro.generic: "Invitez vos amis à rejoindre %brand_name% et soyez récompensé dès leur première commande !"
+profile.referrals.successful_count: "%count% parrainage(s) réussi(s)"
+profile.referrals.next_level: "Plus que %count% pour atteindre %level%"
+profile.referrals.levels.title: Niveaux
+profile.referrals.levels.current: Actuel
+profile.referrals.levels.threshold: "À partir de %count% parrainage(s) réussi(s)"
+profile.referrals.levels.reward_fixed: "Récompense de %amount%"
+profile.referrals.levels.reward_percentage: "Réduction de %percent%%"
+profile.referrals.column.friend: Ami
+profile.referrals.none_yet: Vous n'avez parrainé personne pour le moment.
+profile.referrals.invite.button: "Inviter un ami à rejoindre %brand_name%"
+profile.referrals.invite.modal_title: "Inviter un ami à rejoindre %brand_name%"
+profile.referrals.invite.modal_help: Saisissez une ou plusieurs adresses e-mail, séparées par des virgules ou des sauts de ligne.
+profile.referrals.invite.placeholder: "ami@example.com"
+profile.referrals.invite.submit: Envoyer l'invitation / les invitations
+profile.referrals.invite.cancel: Annuler
+profile.referrals.invite.sent: "%count% invitation(s) envoyée(s) !"
+profile.referrals.invite.invalid: "%count% adresse(s) e-mail invalide(s) n'ont pas été envoyée(s)."
+profile.referrals.invite.already_registered: "%count% adresse(s) e-mail possède(nt) déjà un compte et n'ont pas été invitée(s)."

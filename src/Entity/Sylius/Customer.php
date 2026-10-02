@@ -77,6 +77,10 @@ class Customer extends BaseCustomer implements TaggableInterface, CustomerInterf
 
     protected ?PaygreenCustomerDetails $paygreenDetails = null;
 
+    protected ?string $referralCode = null;
+
+    protected int $successfulReferralCount = 0;
+
     public function __construct()
     {
         parent::__construct();
@@ -351,5 +355,25 @@ class Customer extends BaseCustomer implements TaggableInterface, CustomerInterf
     public function hasPaygreenBuyerId(): bool
     {
         return null !== $this->getPaygreenBuyerId();
+    }
+
+    public function getReferralCode(): ?string
+    {
+        return $this->referralCode;
+    }
+
+    public function setReferralCode(?string $referralCode): void
+    {
+        $this->referralCode = $referralCode;
+    }
+
+    public function getSuccessfulReferralCount(): int
+    {
+        return $this->successfulReferralCount;
+    }
+
+    public function incrementSuccessfulReferralCount(): void
+    {
+        $this->successfulReferralCount++;
     }
 }

@@ -54,10 +54,14 @@ class SettingsManager
         'sms_enabled',
         'subject_to_vat',
         'guest_checkout_enabled',
+        'referral_program_active',
     ];
 
     private static $integer = [
         'new_shop_days',
+        'referral_welcome_reward_amount',
+        'referral_welcome_coupon_validity_days',
+        'referral_pending_ttl_days',
     ];
 
     private $cache = [];

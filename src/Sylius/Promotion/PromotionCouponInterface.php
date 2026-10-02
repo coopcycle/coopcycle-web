@@ -13,4 +13,8 @@ interface PromotionCouponInterface extends BasePromotionCouponInterface
     public function setFeatured($featured = true): void;
 
     public function isFeatured(): bool;
+
+    public function isInternal(): bool;
+
+    public function setInternal(bool $internal): void;
 }
