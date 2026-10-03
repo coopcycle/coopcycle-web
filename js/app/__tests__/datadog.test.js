@@ -21,16 +21,15 @@ describe('datadog', () => {
     return { logs, rum }
   }
 
-  it('uses the instance name as service and env', () => {
+  it('uses the instance name as env', () => {
     document.body.innerHTML = `<div id="datadog"
       data-client-token="pub123"
       data-application-id="app123"
-      data-service="libelubike"
       data-env="libelubike"></div>`
 
     const { logs, rum } = load()
 
-    const expected = expect.objectContaining({ service: 'libelubike', env: 'libelubike' })
+    const expected = expect.objectContaining({ service: 'frontend', env: 'libelubike' })
     expect(logs.init).toHaveBeenCalledWith(expected)
     expect(rum.init).toHaveBeenCalledWith(expected)
   })

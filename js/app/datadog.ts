@@ -13,12 +13,16 @@ const botPattern =
 const regex = new RegExp(botPattern, 'i')
 const isBot = regex.test(navigator.userAgent)
 
+// Like the backend logs (service:symfony), the service is the application,
+// while the env is the instance.
+// https://docs.datadoghq.com/getting_started/tagging/unified_service_tagging/
+const service = 'frontend'
+
 if (clientToken) {
   datadogLogs.init({
     clientToken: clientToken,
     site: 'datadoghq.com',
-    service: el.dataset.service,
-    // Same as the backend logs, where the instance name is the env
+    service,
     env: el.dataset.env,
     forwardErrorsToLogs: true,
     // Only tracked sessions send logs; from 0 to 100
@@ -30,7 +34,7 @@ if (clientToken) {
     applicationId: el.dataset.applicationId,
     clientToken: clientToken,
     site: 'datadoghq.com',
-    service: el.dataset.service,
+    service,
     env: el.dataset.env,
     // Specify a version number to identify the deployed version of your application in Datadog
     // version: '1.0.0',
