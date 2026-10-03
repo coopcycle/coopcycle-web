@@ -1,5 +1,8 @@
 {% if app.environment == "prod" %}
-  <div id="sentry" data-dsn="{{ sentry_public_dsn }}"></div>
+  <div id="sentry"
+       data-dsn="{{ sentry_public_dsn }}"
+       data-app-name="{{ instance_name }}"
+  ></div>
   {{ encore_entry_script_tags('sentry') }}
 {% endif %}
 
@@ -8,6 +11,7 @@
        data-client-token="{{ datadog_client_token }}"
        data-application-id="{{ datadog_application_id }}"
        data-service="{{ instance_name }}"
+       data-env="{{ instance_name }}"
   ></div>
 {% endif %}
 
