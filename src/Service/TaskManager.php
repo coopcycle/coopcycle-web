@@ -36,6 +36,14 @@ class TaskManager
         $this->commandBus->dispatch(new Cancel([$task], $recalculatePrice));
     }
 
+    /**
+     * @param Task[] $tasks
+     */
+    public function cancelTasks(array $tasks, bool $recalculatePrice = false): void
+    {
+        $this->commandBus->dispatch(new Cancel($tasks, $recalculatePrice));
+    }
+
     public function deleteGroup(TaskGroup $taskGroup)
     {
         $this->commandBus->dispatch(new DeleteGroup($taskGroup));

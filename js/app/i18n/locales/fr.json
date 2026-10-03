@@ -128,6 +128,7 @@
         "ADMIN_DASHBOARD_SETTINGS_POLYLINE": "Affichage des trajets",
         "ADMIN_DASHBOARD_SETTINGS_POLYLINE_AS_THE_CROW_FLIES": "À vol d'oiseau",
         "ADMIN_DASHBOARD_CANCEL_TASKS_MULTI": "Annuler {{count}} tâche(s)",
+        "ADMIN_DASHBOARD_CANCEL_TASKS_FAILED": "{{count}} tâche(s) n'ont pas pu être annulée(s) : {{errors}}",
         "ADMIN_DASHBOARD_NO_ACTION_AVAILABLE": "Aucune action disponible",
         "ADMIN_DASHBOARD_MOVE_TO_TOP": "Déplacer au début",
         "ADMIN_DASHBOARD_MOVE_TO_BOTTOM": "Déplacer à la fin",

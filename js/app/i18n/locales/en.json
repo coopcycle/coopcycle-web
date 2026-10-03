@@ -159,6 +159,7 @@
         "ADMIN_DASHBOARD_SETTINGS_POLYLINE": "Route display",
         "ADMIN_DASHBOARD_SETTINGS_POLYLINE_AS_THE_CROW_FLIES": "As the crow flies",
         "ADMIN_DASHBOARD_CANCEL_TASKS_MULTI": "Cancel {{count}} task(s)",
+        "ADMIN_DASHBOARD_CANCEL_TASKS_FAILED": "{{count}} task(s) could not be cancelled: {{errors}}",
         "ADMIN_DASHBOARD_NO_ACTION_AVAILABLE": "No action available",
         "ADMIN_DASHBOARD_MOVE_TO_TOP": "Move to top",
         "ADMIN_DASHBOARD_MOVE_TO_BOTTOM": "Move to bottom",

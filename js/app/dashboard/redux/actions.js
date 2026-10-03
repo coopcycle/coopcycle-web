@@ -964,27 +964,32 @@ export function cancelTasks(tasks) {
 
     dispatch(createTaskRequest())
 
-    const httpClient = createClient(dispatch)
-
-    const responses = []
-
     try {
-      for (const task of tasks) {
-        const response = await httpClient.request({
-          method: 'put',
-          url: `${task['@id']}/cancel`,
-          data: {},
-          headers: {
-            'Authorization': `Bearer ${jwt}`,
-            'Accept': 'application/ld+json',
-            'Content-Type': 'application/ld+json'
-          }
-        })
-        responses.push(response)
-      }
+      // A single request, so that the tasks of the same delivery are cancelled together,
+      // and the tasks that can't be cancelled don't prevent the others to be
+      const response = await createClient(dispatch).request({
+        method: 'put',
+        url: '/api/tasks/cancel',
+        data: { tasks: tasks.map(t => t['@id']) },
+        headers: {
+          'Authorization': `Bearer ${jwt}`,
+          'Accept': 'application/ld+json',
+          'Content-Type': 'application/ld+json'
+        }
+      })
 
       dispatch(createTaskSuccess())
-      responses.forEach(response => dispatch(updateTask(response.data)))
+      response.data.success.forEach(task => dispatch(updateTask(task)))
+
+      const failed = Object.values(response.data.failed)
+      if (failed.length > 0) {
+        toast.warn(i18next.t('ADMIN_DASHBOARD_CANCEL_TASKS_FAILED', {
+          count: failed.length,
+          errors: _.uniq(failed).join(', '),
+          // Rendered as text by React, which already escapes it
+          interpolation: { escapeValue: false },
+        }))
+      }
     } catch (error) {
       dispatch(cancelTaskFailure(error))
     }

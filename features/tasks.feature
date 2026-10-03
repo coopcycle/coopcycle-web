@@ -3661,6 +3661,79 @@ Feature: Tasks
     And the database entity "AppBundle\Entity\Sylius\Order" should have a property "state" with value "accepted"
     # Base: 499, manual supplement: 200
 
+  Scenario: Cancel multiple tasks at once - orders are cancelled when all their tasks are, others are reported
+    Given the fixtures files are loaded:
+      | bulk_cancel_tasks.yml |
+    And the user "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" has role "ROLE_DISPATCHER"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/tasks/cancel" with body:
+      """
+      {
+        "tasks": [
+          "/api/tasks/1",
+          "/api/tasks/2",
+          "/api/tasks/3",
+          "/api/tasks/4"
+        ]
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "success": [
+          {
+            "@id":"/api/tasks/1",
+            "@type":"Task",
+            "id":1,
+            "status":"CANCELLED",
+            "@*@":"@*@"
+          },
+          {
+            "@id":"/api/tasks/2",
+            "@type":"Task",
+            "id":2,
+            "status":"CANCELLED",
+            "@*@":"@*@"
+          }
+        ],
+        "failed": {
+          "/api/tasks/3": "@string@.contains('A2')",
+          "/api/tasks/4": "@string@.contains('A2')"
+        }
+      }
+      """
+    And the database entity "AppBundle\Entity\Sylius\Order" should have a property "state" with value "cancelled"
+    And the database entity "AppBundle\Entity\Sylius\Order" should have a property "state" with value "cart"
+    And the database entity "AppBundle\Entity\Task" should have a property "status" with value "TODO"
+
+  Scenario: Cancel multiple tasks at once requires the dispatcher role
+    Given the fixtures files are loaded:
+      | bulk_cancel_tasks.yml |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/tasks/cancel" with body:
+      """
+      {
+        "tasks": [
+          "/api/tasks/1"
+        ]
+      }
+      """
+    Then the response status code should be 403
+
   Scenario: Get delivery form data for a task
       Given the fixtures files are loaded with purge:
         | setup_default.yml |
