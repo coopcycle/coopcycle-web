@@ -564,7 +564,8 @@ export type TaskPayload = {
   saveInStoreAddresses?: boolean;
   packages: InputPackage[];
   weight: number;
-  tags: Tag[];
+  // Slugs
+  tags: string[];
   metadata: Record<string, unknown>;
 };
 
