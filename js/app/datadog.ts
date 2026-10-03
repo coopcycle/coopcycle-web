@@ -18,6 +18,8 @@ if (clientToken) {
     clientToken: clientToken,
     site: 'datadoghq.com',
     service: el.dataset.service,
+    // Same as the backend logs, where the instance name is the env
+    env: el.dataset.env,
     forwardErrorsToLogs: true,
     // Only tracked sessions send logs; from 0 to 100
     sessionSampleRate: isBot ? 0 : 100,
@@ -29,6 +31,7 @@ if (clientToken) {
     clientToken: clientToken,
     site: 'datadoghq.com',
     service: el.dataset.service,
+    env: el.dataset.env,
     // Specify a version number to identify the deployed version of your application in Datadog
     // version: '1.0.0',
     // 'Browser RUM' session sample rate; from 0 to 100
