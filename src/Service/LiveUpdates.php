@@ -6,11 +6,11 @@ use AppBundle\Domain\HumanReadableEventInterface;
 use AppBundle\Domain\NamedMessage;
 use AppBundle\Domain\SerializableEventInterface;
 use AppBundle\Domain\SilentEventInterface;
+use AppBundle\Message\PublishToCentrifugo;
 use AppBundle\Message\TopBarNotification;
 use AppBundle\Security\UserManager;
 use AppBundle\Service\NotificationPreferences;
 use AppBundle\Sylius\Order\OrderInterface;
-use phpcent\Client as CentrifugoClient;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -33,7 +33,6 @@ class LiveUpdates
         private UserManager $userManager,
         private SerializerInterface $serializer,
         private TranslatorInterface $translator,
-        private CentrifugoClient $centrifugoClient,
         private MessageBusInterface $messageBus,
         private NotificationPreferences $notificationPreferences,
         private LoggerInterface $realTimeMessageLogger,
@@ -71,12 +70,7 @@ class LiveUpdates
             $channel,
             $this->describeSubject($data)));
 
-        $result = $this->centrifugoClient->publish(
-            $channel,
-            ['event' => $payload]
-        );
-
-        $this->logPublicationError($result, $payload['name'], [$channel]);
+        $this->publish([$channel], $payload);
     }
 
     /**
@@ -144,13 +138,7 @@ class LiveUpdates
                 return $user->getUserIdentifier();
             }, $users))));
 
-        // We use broadcast to reduce the number of HTTP requests
-        $result = $this->centrifugoClient->broadcast(
-            $centrifugoChannels,
-            ['event' => $payload]
-        );
-
-        $this->logPublicationError($result, $payload['name'], $centrifugoChannels);
+        $this->publish($centrifugoChannels, $payload);
 
         $this->createNotification($users, $message);
     }
@@ -218,34 +206,47 @@ class LiveUpdates
             $channel,
             $user instanceof UserInterface ? $user->getUserIdentifier() : $user));
 
-        $result = $this->centrifugoClient->publish($channel, ['event' => $payload]);
-
-        $this->logPublicationError($result, $payload['name'], [$channel]);
+        $this->publish([$channel], $payload);
     }
 
     /**
-     * Centrifugo answers 200 with an `error` object in the body when it refuses a
-     * publication, and phpcent only throws on a non-200. A refused publication is
-     * therefore indistinguishable from a delivered one unless the response is
-     * inspected, and the event just never reaches the dispatch board.
+     * Hands a fully-resolved update to the transport.
      *
-     * @param mixed $result As returned by publish()/broadcast()
+     * The payload is serialized here, in the request, from the entity that is
+     * still in memory -- so what goes out is the state the event is about. The
+     * actual Centrifugo call is deferred to a worker, which keeps the HTTP
+     * round-trip (one call for up to N channels) out of the request without
+     * giving anyone the chance to re-read, and therefore mis-read, the entity.
+     *
      * @param string[] $channels
      */
-    private function logPublicationError($result, string $eventName, array $channels): void
+    private function publish(array $channels, array $payload): void
     {
-        $error = is_array($result) ? ($result['error'] ?? null) : null;
-
-        if (null === $error) {
+        if (empty($channels)) {
             return;
         }
 
-        $this->realTimeMessageLogger->error(sprintf(
-            "Centrifugo refused event '%s' on %d channel(s): %s",
-            $eventName,
-            count($channels),
-            json_encode($error)
-        ));
+        $payload['version'] = $this->versionOf($payload['data'] ?? []);
+
+        $this->messageBus->dispatch(new PublishToCentrifugo($channels, $payload));
+    }
+
+    /**
+     * The version the payload represents, so a consumer can tell a newer update
+     * from an older one. Events are delivered asynchronously and therefore not
+     * necessarily in the order they happened; without this a client has no way
+     * to know that the update it just received is older than what it already
+     * has, which is how a stale payload silently wins.
+     */
+    private function versionOf(array $data): ?string
+    {
+        foreach (['task', 'order', 'tour', 'task_list'] as $key) {
+            if (isset($data[$key]['updatedAt'])) {
+                return $data[$key]['updatedAt'];
+            }
+        }
+
+        return null;
     }
 
     /**

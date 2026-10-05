@@ -11,11 +11,8 @@ use AppBundle\Fixtures\DatabasePurger;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
-use AppBundle\Domain\Task\Event\TaskDone;
-use AppBundle\Message\Task\PublishLiveUpdate as PublishLiveUpdateMessage;
-use AppBundle\MessageHandler\Task\PublishLiveUpdateHandler;
+use AppBundle\Message\PublishToCentrifugo;
 use Nucleos\UserBundle\Util\UserManipulator;
-use Symfony\Component\Messenger\Exception\RecoverableMessageHandlingException;
 
 /**
  * A task completion has to carry its own state to the dispatch board.
@@ -169,50 +166,83 @@ class TaskDoneLiveUpdateFunctionalTest extends ApiTestCase
     }
 
     /**
-     * The message carries a task id, not a task, and it is queued from the domain
-     * event -- which is dispatched before the request has flushed. So the worker
-     * can read a version of the task that predates the completion, and publishing
-     * it sends a `task:done` carrying `status=TODO`: the dispatch board then shows
-     * a task as still to do, minutes after the courier completed it.
+     * The payload now has to be right by construction, not by retry.
      *
-     * Observed on lcr on 2026-10-05: task#141178 published `task:done` with
-     * `status=TODO` and an `updatedAt` 22 minutes behind.
+     * The live update used to carry a task *id*, which a worker read back before
+     * publishing; that read could land before the completion was written, which
+     * put `task:done` payloads carrying `status=TODO` on the wire (observed on
+     * lcr, task#141178, with an `updatedAt` 22 minutes behind).
+     *
+     * The event is serialized in the request now, from the entity in memory, so
+     * this asserts what actually goes out: the completed state, plus a version a
+     * consumer can order updates by.
      */
-    public function testAStaleReadIsRetriedRatherThanPublishedAsDone()
+    public function testTheCompletionPayloadCarriesTheCompletedState()
     {
+        $jwtManager = self::getContainer()->get(JWTTokenManagerInterface::class);
+
         [ , $courier ] = $this->bootstrapUsers();
 
-        // Never completed: this is what the worker sees when it wins the race
-        // against the commit.
         $task = $this->createTaskAssignedTo($courier);
+        $taskId = $task->getId();
 
-        $this->assertSame(Task::STATUS_TODO, $task->getStatus());
+        $this->entityManager->clear();
 
-        $handler = self::getContainer()->get(PublishLiveUpdateHandler::class);
+        $client = static::createClient(defaultOptions: [
+            'headers' => ['authorization' => 'Bearer '.$jwtManager->create($courier)],
+        ]);
 
-        $this->expectException(RecoverableMessageHandlingException::class);
+        // createClient() reboots the kernel, so the transport has to come from
+        // the container the request will actually run in.
+        $transport = self::getContainer()->get('messenger.transport.async');
+        $this->drain($transport);
 
-        $handler(new PublishLiveUpdateMessage($task->getId(), TaskDone::class));
+        $client->request('PUT', sprintf('/api/tasks/%d/done', $taskId), [
+            'json' => ['notes' => ''],
+        ]);
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $published = [];
+        foreach ($this->drain($transport) as $envelope) {
+            $message = $envelope->getMessage();
+
+            if ($message instanceof PublishToCentrifugo) {
+                $published[] = $message;
+            }
+        }
+
+        $done = array_values(array_filter(
+            $published,
+            fn (PublishToCentrifugo $m) => 'task:done' === ($m->event['name'] ?? null)
+        ));
+
+        $this->assertNotEmpty($done, 'completing a task must publish a task:done live update');
+
+        $event = $done[0]->event;
+
+        $this->assertSame(Task::STATUS_DONE, $event['data']['task']['status'],
+            'the payload must carry the completed state, not whatever a later read finds');
+
+        $this->assertNotNull($event['version'],
+            'the payload must carry a version so a consumer can discard an older update');
+
+        $this->assertNotEmpty($done[0]->channels,
+            'the channels must be resolved before the message is queued');
     }
 
     /**
-     * The guard must only reject a genuinely stale read -- once the completion is
-     * visible, the event publishes as before.
+     * @return object[] the envelopes waiting on the transport
      */
-    public function testACommittedCompletionIsPublished()
+    private function drain($transport): array
     {
-        [ , $courier ] = $this->bootstrapUsers();
+        $envelopes = [];
 
-        $task = $this->createTaskAssignedTo($courier);
+        foreach ($transport->get() as $envelope) {
+            $envelopes[] = $envelope;
+            $transport->ack($envelope);
+        }
 
-        $task->setStatus(Task::STATUS_DONE);
-        $this->entityManager->flush();
-
-        $handler = self::getContainer()->get(PublishLiveUpdateHandler::class);
-
-        $handler(new PublishLiveUpdateMessage($task->getId(), TaskDone::class));
-
-        $this->assertSame(Task::STATUS_DONE, $task->getStatus(),
-            'a committed completion must publish without being retried');
+        return $envelopes;
     }
 }
