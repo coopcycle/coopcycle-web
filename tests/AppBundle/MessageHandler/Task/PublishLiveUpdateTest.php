@@ -62,6 +62,9 @@ class PublishLiveUpdateTest extends TestCase
     public function testNonUpdatedTaskEventsPublishToRoles(string $eventClass): void
     {
         $task = $this->prophesize(Task::class);
+        // The handler refuses to publish an event the task does not reflect yet,
+        // so the double has to be in the state the event is about.
+        $task->getStatus()->willReturn(self::SETTLED_STATUS[$eventClass] ?? null);
         $this->taskRepository->find(1)->willReturn($task->reveal());
 
         $this->liveUpdates
@@ -70,6 +73,16 @@ class PublishLiveUpdateTest extends TestCase
 
         ($this->handler)(new PublishLiveUpdateMessage(1, $eventClass));
     }
+
+    /**
+     * Mirrors PublishLiveUpdateHandler::SETTLED_STATUS.
+     */
+    private const SETTLED_STATUS = [
+        TaskDone::class => Task::STATUS_DONE,
+        TaskFailed::class => Task::STATUS_FAILED,
+        TaskStarted::class => Task::STATUS_DOING,
+        TaskCancelled::class => Task::STATUS_CANCELLED,
+    ];
 
     public function nonUpdatedTaskEventClassProvider(): array
     {

@@ -11,7 +11,11 @@ use AppBundle\Fixtures\DatabasePurger;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
+use AppBundle\Domain\Task\Event\TaskDone;
+use AppBundle\Message\Task\PublishLiveUpdate as PublishLiveUpdateMessage;
+use AppBundle\MessageHandler\Task\PublishLiveUpdateHandler;
 use Nucleos\UserBundle\Util\UserManipulator;
+use Symfony\Component\Messenger\Exception\RecoverableMessageHandlingException;
 
 /**
  * A task completion has to carry its own state to the dispatch board.
@@ -165,73 +169,50 @@ class TaskDoneLiveUpdateFunctionalTest extends ApiTestCase
     }
 
     /**
-     * The live update is dispatched from inside onFlush, before the transaction
-     * commits, and the handler does not carry the task: it re-reads it by id in
-     * the worker (`PublishLiveUpdateHandler::__invoke`). messenger.yaml declares
-     * no `dispatch_after_current_bus`, so the message reaches the transport
-     * while the row the worker will read is still uncommitted.
+     * The message carries a task id, not a task, and it is queued from the domain
+     * event -- which is dispatched before the request has flushed. So the worker
+     * can read a version of the task that predates the completion, and publishing
+     * it sends a `task:done` carrying `status=TODO`: the dispatch board then shows
+     * a task as still to do, minutes after the courier completed it.
      *
-     * Rolling the transaction back makes that visible without depending on any
-     * timing: if the message is on the transport after a rollback, it was
-     * published for a state that never existed.
+     * Observed on lcr on 2026-10-05: task#141178 published `task:done` with
+     * `status=TODO` and an `updatedAt` 22 minutes behind.
      */
-    public function testLiveUpdateIsQueuedBeforeTheTransactionCommits()
+    public function testAStaleReadIsRetriedRatherThanPublishedAsDone()
+    {
+        [ , $courier ] = $this->bootstrapUsers();
+
+        // Never completed: this is what the worker sees when it wins the race
+        // against the commit.
+        $task = $this->createTaskAssignedTo($courier);
+
+        $this->assertSame(Task::STATUS_TODO, $task->getStatus());
+
+        $handler = self::getContainer()->get(PublishLiveUpdateHandler::class);
+
+        $this->expectException(RecoverableMessageHandlingException::class);
+
+        $handler(new PublishLiveUpdateMessage($task->getId(), TaskDone::class));
+    }
+
+    /**
+     * The guard must only reject a genuinely stale read -- once the completion is
+     * visible, the event publishes as before.
+     */
+    public function testACommittedCompletionIsPublished()
     {
         [ , $courier ] = $this->bootstrapUsers();
 
         $task = $this->createTaskAssignedTo($courier);
 
-        $transport = self::getContainer()->get('messenger.transport.async');
-
-        // Start from a quiet transport: assigning the task above already
-        // produced live updates of its own.
-        $this->drain($transport);
-
-        $taskManager = self::getContainer()->get(\AppBundle\Service\TaskManager::class);
-
-        $connection = $this->entityManager->getConnection();
-        $connection->beginTransaction();
-
-        // The real completion path, as the API controller drives it.
-        $taskManager->markAsDone($task, null, null, false);
+        $task->setStatus(Task::STATUS_DONE);
         $this->entityManager->flush();
 
-        $queuedBeforeCommit = $this->drain($transport);
+        $handler = self::getContainer()->get(PublishLiveUpdateHandler::class);
 
-        $connection->commit();
+        $handler(new PublishLiveUpdateMessage($task->getId(), TaskDone::class));
 
-        $queuedAfterCommit = $this->drain($transport);
-
-        // Guards the assertion below against passing for the wrong reason: if
-        // the completion produced no live update at all, "nothing queued before
-        // commit" would be meaningless.
-        $this->assertNotEmpty(
-            array_merge($queuedBeforeCommit, $queuedAfterCommit),
-            'completing a task must produce a live update somewhere in the flow'
-        );
-
-        $this->assertEmpty($queuedBeforeCommit,
-            sprintf(
-                'A live update reached the transport before the transaction committed. '
-                .'PublishLiveUpdateHandler re-reads the task by id in the worker, so it '
-                .'can serialize pre-commit state and publish a task:done still carrying '
-                .'the old status (%d message(s) queued early).',
-                count($queuedBeforeCommit)
-            ));
-    }
-
-    /**
-     * @return object[] the envelopes waiting on the transport
-     */
-    private function drain($transport): array
-    {
-        $envelopes = [];
-
-        foreach ($transport->get() as $envelope) {
-            $envelopes[] = $envelope;
-            $transport->ack($envelope);
-        }
-
-        return $envelopes;
+        $this->assertSame(Task::STATUS_DONE, $task->getStatus(),
+            'a committed completion must publish without being retried');
     }
 }
