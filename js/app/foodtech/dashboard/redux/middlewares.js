@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import { Howl } from 'howler'
-import Centrifuge from 'centrifuge'
+import { createCentrifuge, subscribe } from '../../../centrifugo/client'
 
 import {
   orderCreated,
@@ -30,12 +30,10 @@ export const socketIO = ({ dispatch, getState }) => {
 
     const { token, namespace, username } = getState().centrifugo
 
-    const protocol = window.location.protocol === 'https:' ? 'wss': 'ws'
+    centrifuge = createCentrifuge(token)
 
-    centrifuge = new Centrifuge(`${protocol}://${window.location.host}/centrifugo/connection/websocket`)
-    centrifuge.setToken(token)
-    centrifuge.subscribe(`${namespace}_events#${username}`, message => {
-      const { event } = message.data
+    subscribe(centrifuge, `${namespace}_events#${username}`, data => {
+      const { event } = data
 
       switch (event.name) {
         case 'order:created':

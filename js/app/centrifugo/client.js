@@ -1,0 +1,118 @@
+import { Centrifuge } from 'centrifuge'
+
+/**
+ * Our Centrifugo server still runs with `use_client_protocol_v1_by_default`, a
+ * compatibility shim kept for clients on centrifuge-js v2 -- the mobile app is
+ * still one of them. A modern SDK speaks protocol v2 and has to say so, or the
+ * server assumes v1 and the connection fails.
+ *
+ * @see https://centrifugal.dev/docs/getting-started/migration_v4
+ */
+const CONNECTION_URL_PARAMS = 'cf_protocol_version=v2'
+
+function connectionUrl() {
+  const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws'
+
+  return `${protocol}://${window.location.host}/centrifugo/connection/websocket?${CONNECTION_URL_PARAMS}`
+}
+
+/**
+ * Asks the backend for a fresh connection token.
+ *
+ * Connection tokens last an hour. When one is about to expire the SDK calls
+ * this; returning a token keeps the connection, throwing drops it. Returning
+ * nothing silently would leave the client connected with a dead token until the
+ * server closes it, which is the kind of failure nobody notices until a
+ * dispatch board has been stale for ten minutes.
+ */
+async function refreshToken() {
+  const response = await fetch('/centrifuge/refresh', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+  })
+
+  if (!response.ok) {
+    throw new Error(`Could not refresh the Centrifugo token (${response.status})`)
+  }
+
+  const { token } = await response.json()
+
+  return token
+}
+
+/**
+ * A Centrifugo client, connected and ready to take subscriptions.
+ *
+ * @param {string} token Connection token rendered into the page
+ * @param {Object} options
+ * @param {boolean} options.refresh Whether to renew the token when it expires.
+ *   Pass false on pages served to someone without a session -- the order
+ *   tracking page hands an anonymous visitor a short-lived token scoped to one
+ *   order, and there is nobody for `/centrifuge/refresh` to issue a new one to.
+ *   The connection is then simply dropped when the token runs out.
+ * @param {function} options.onConnected Called once the connection is live
+ * @param {function} options.onDisconnected Called when it drops
+ */
+export function createCentrifuge(token, { refresh = true, onConnected, onDisconnected } = {}) {
+  const centrifuge = new Centrifuge(connectionUrl(), {
+    token,
+    ...(refresh ? { getToken: refreshToken } : {}),
+  })
+
+  if (onConnected) {
+    centrifuge.on('connected', onConnected)
+  }
+
+  if (onDisconnected) {
+    centrifuge.on('disconnected', onDisconnected)
+  }
+
+  return centrifuge
+}
+
+/**
+ * Asks the backend for a token authorising this connection on this channel.
+ */
+async function subscriptionToken({ channel, client }) {
+  const response = await fetch('/centrifuge/subscription-token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ channel, client }),
+  })
+
+  if (!response.ok) {
+    throw new Error(`Not allowed to subscribe to ${channel} (${response.status})`)
+  }
+
+  const { token } = await response.json()
+
+  return token
+}
+
+/**
+ * Subscribes to a channel and hands each publication's payload to `onMessage`.
+ *
+ * In centrifuge-js v2 a subscription was created and subscribed in one call, and
+ * the callback received the whole message. From v3 on a subscription is an
+ * object with its own lifecycle, and the payload arrives as `ctx.data` -- so
+ * this exists to keep that detail in one place rather than in seven.
+ *
+ * @param {Object} options
+ * @param {boolean} options.needsToken Whether the channel requires a
+ *   subscription token. Centrifugo authorises a connection on its own
+ *   user-limited channels (`..._events#<username>`) from the connection token,
+ *   but refuses anything shared with "permission denied" unless a token is
+ *   presented -- the tracking channel being the one that matters here.
+ * @returns {Object} the subscription, so callers can unsubscribe
+ */
+export function subscribe(centrifuge, channel, onMessage, { needsToken = false } = {}) {
+  const subscription = centrifuge.newSubscription(
+    channel,
+    needsToken ? { getToken: subscriptionToken } : {},
+  )
+
+  subscription.on('publication', ctx => onMessage(ctx.data))
+  subscription.subscribe()
+
+  return subscription
+}
