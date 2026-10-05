@@ -301,4 +301,56 @@ class LiveUpdatesTest extends TestCase
 
         $this->liveUpdates->toDispatchers('Test message');
     }
+
+    /**
+     * Centrifugo answers 200 with an `error` object when it refuses a publication,
+     * and phpcent only throws on a non-200 -- so without inspecting the body a
+     * refused event is indistinguishable from a delivered one, and simply never
+     * reaches the dispatch board.
+     */
+    public function testRefusedPublicationIsLoggedAsAnError(): void
+    {
+        $user = $this->createUser();
+
+        $this->userManagerMock->findUsersByRoles(LiveUpdates::DISPATCH_ROLES)
+            ->willReturn([$user])
+            ->shouldBeCalledOnce();
+
+        $this->notificationPreferencesMock->isEventEnabled(Argument::any())
+            ->willReturn(false)
+            ->shouldBeCalled();
+
+        $this->centrifugoClientMock->broadcast(Argument::cetera())
+            ->willReturn(['error' => ['code' => 102, 'message' => 'unknown channel']])
+            ->shouldBeCalledOnce();
+
+        $this->realTimeMessageLoggerMock->info(Argument::cetera())->shouldBeCalled();
+        $this->realTimeMessageLoggerMock
+            ->error(Argument::containingString('Centrifugo refused event'))
+            ->shouldBeCalledOnce();
+
+        $this->liveUpdates->toDispatchers('Test message');
+    }
+
+    public function testDeliveredPublicationIsNotLoggedAsAnError(): void
+    {
+        $user = $this->createUser();
+
+        $this->userManagerMock->findUsersByRoles(LiveUpdates::DISPATCH_ROLES)
+            ->willReturn([$user])
+            ->shouldBeCalledOnce();
+
+        $this->notificationPreferencesMock->isEventEnabled(Argument::any())
+            ->willReturn(false)
+            ->shouldBeCalled();
+
+        $this->centrifugoClientMock->broadcast(Argument::cetera())
+            ->willReturn(['result' => []])
+            ->shouldBeCalledOnce();
+
+        $this->realTimeMessageLoggerMock->info(Argument::cetera())->shouldBeCalled();
+        $this->realTimeMessageLoggerMock->error(Argument::cetera())->shouldNotBeCalled();
+
+        $this->liveUpdates->toDispatchers('Test message');
+    }
 }

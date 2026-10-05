@@ -66,14 +66,17 @@ class LiveUpdates
 
         $channel = $this->getOrderChannelName($order);
 
-        $this->realTimeMessageLogger->info(sprintf("Publishing event '%s' on channel %s",
+        $this->realTimeMessageLogger->info(sprintf("Publishing event '%s' on channel %s [%s]",
             $payload['name'],
-            $channel));
+            $channel,
+            $this->describeSubject($data)));
 
-        $this->centrifugoClient->publish(
+        $result = $this->centrifugoClient->publish(
             $channel,
             ['event' => $payload]
         );
+
+        $this->logPublicationError($result, $payload['name'], [$channel]);
     }
 
     /**
@@ -133,18 +136,21 @@ class LiveUpdates
             return $this->getEventsChannelName($user);
         }, $users);
 
-        $this->realTimeMessageLogger->info(sprintf("Broadcasting event '%s' on channels %s for users %s",
+        $this->realTimeMessageLogger->info(sprintf("Broadcasting event '%s' [%s] on channels %s for users %s",
             $payload['name'],
+            $this->describeSubject($data),
             implode(', ', $centrifugoChannels),
             implode(', ', array_map(function (UserInterface $user) {
                 return $user->getUserIdentifier();
             }, $users))));
 
         // We use broadcast to reduce the number of HTTP requests
-        $this->centrifugoClient->broadcast(
+        $result = $this->centrifugoClient->broadcast(
             $centrifugoChannels,
             ['event' => $payload]
         );
+
+        $this->logPublicationError($result, $payload['name'], $centrifugoChannels);
 
         $this->createNotification($users, $message);
     }
@@ -212,7 +218,63 @@ class LiveUpdates
             $channel,
             $user instanceof UserInterface ? $user->getUserIdentifier() : $user));
 
-        $this->centrifugoClient->publish($channel, ['event' => $payload]);
+        $result = $this->centrifugoClient->publish($channel, ['event' => $payload]);
+
+        $this->logPublicationError($result, $payload['name'], [$channel]);
+    }
+
+    /**
+     * Centrifugo answers 200 with an `error` object in the body when it refuses a
+     * publication, and phpcent only throws on a non-200. A refused publication is
+     * therefore indistinguishable from a delivered one unless the response is
+     * inspected, and the event just never reaches the dispatch board.
+     *
+     * @param mixed $result As returned by publish()/broadcast()
+     * @param string[] $channels
+     */
+    private function logPublicationError($result, string $eventName, array $channels): void
+    {
+        $error = is_array($result) ? ($result['error'] ?? null) : null;
+
+        if (null === $error) {
+            return;
+        }
+
+        $this->realTimeMessageLogger->error(sprintf(
+            "Centrifugo refused event '%s' on %d channel(s): %s",
+            $eventName,
+            count($channels),
+            json_encode($error)
+        ));
+    }
+
+    /**
+     * A compact description of what the payload actually carries, appended to the
+     * publication log. Without it the log only proves that *an* event was sent, not
+     * that it held the state the dispatcher was waiting for -- a `task:done` still
+     * carrying `status=TODO` looks identical to a correct one.
+     */
+    private function describeSubject(array $data): string
+    {
+        foreach (['task', 'order', 'tour', 'task_list'] as $key) {
+            if (!isset($data[$key]) || !is_array($data[$key])) {
+                continue;
+            }
+
+            $subject = $data[$key];
+
+            $parts = array_filter([
+                $key . '#' . ($subject['id'] ?? $subject['@id'] ?? '?'),
+                isset($subject['status']) ? 'status=' . $subject['status'] : null,
+                isset($subject['state']) ? 'state=' . $subject['state'] : null,
+                isset($subject['date']) ? 'date=' . $subject['date'] : null,
+                isset($subject['updatedAt']) ? 'updatedAt=' . $subject['updatedAt'] : null,
+            ]);
+
+            return implode(' ', $parts);
+        }
+
+        return '-';
     }
 
     private function shouldNotifyEvent(string $messageName)

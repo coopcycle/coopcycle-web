@@ -1,0 +1,49 @@
+# Datadog Agent configuration for Centrifugo.
+#
+# Drop this at /etc/datadog-agent/conf.d/centrifugo.d/conf.yaml on the host
+# running Centrifugo, then restart the agent.
+#
+# Centrifugo already exposes Prometheus metrics in production
+# (CENTRIFUGO_PROMETHEUS=true), so no change is needed on the Centrifugo side
+# for the metrics half. The logs half needs CENTRIFUGO_LOG_LEVEL and either a
+# log file or container stdout -- see README.md.
+
+init_config:
+
+instances:
+  - openmetrics_endpoint: http://localhost:8000/metrics
+    namespace: centrifugo
+    # Tagged so the realtime layer can be correlated with the Symfony logs,
+    # which carry service:symfony + env:<tenant>.
+    tags:
+      - service:centrifugo
+    metrics:
+      # Connections and subscriptions: a healthy board holds one connection per
+      # open tab. A climbing connect/disconnect rate with a flat client count
+      # means clients are reconnecting in a loop.
+      - centrifugo_node_num_clients: num_clients
+      - centrifugo_node_num_users: num_users
+      - centrifugo_node_num_channels: num_channels
+      - centrifugo_node_num_subscriptions: num_subscriptions
+      - centrifugo_client_num_connect: num_connect
+      - centrifugo_client_num_subscribe: num_subscribe
+      # Why clients went away. `expired` here is the signal that connection
+      # tokens are dying before the client refreshes them.
+      - centrifugo_client_num_disconnect: num_disconnect
+      # Publications accepted from the API vs delivered to transports. A gap
+      # between the two means events are being dropped inside Centrifugo
+      # rather than never published.
+      - centrifugo_node_messages_sent_count: messages_sent
+      - centrifugo_node_messages_received_count: messages_received
+      - centrifugo_transport_messages_sent: transport_messages_sent
+      - centrifugo_transport_messages_received: transport_messages_received
+      # API latency and errors, per method (publish/broadcast/subscribe).
+      - centrifugo_api_command_duration_seconds: api_command_duration
+      - centrifugo_client_num_reply_errors: num_reply_errors
+      - centrifugo_node_num_recover: num_recover
+
+logs:
+  - type: file
+    path: /var/log/centrifugo/centrifugo.log
+    service: centrifugo
+    source: centrifugo
