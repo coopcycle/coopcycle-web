@@ -13,11 +13,8 @@ use AppBundle\Domain\Task\Event\TaskUnassigned;
 use AppBundle\Domain\Task\Event\TaskUpdated;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\User;
-use AppBundle\Message\Task\PublishLiveUpdate as PublishLiveUpdateMessage;
-use AppBundle\MessageHandler\Task\PublishLiveUpdateHandler;
+use AppBundle\MessageHandler\Task\PublishLiveUpdate;
 use AppBundle\Service\LiveUpdates;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -26,65 +23,16 @@ class PublishLiveUpdateTest extends TestCase
 {
     use ProphecyTrait;
 
+    private PublishLiveUpdate $handler;
     private $liveUpdates;
-    private $entityManager;
-    private $taskRepository;
-    private PublishLiveUpdateHandler $handler;
 
     public function setUp(): void
     {
         $this->liveUpdates = $this->prophesize(LiveUpdates::class);
-        $this->taskRepository = $this->prophesize(EntityRepository::class);
-        $this->entityManager = $this->prophesize(EntityManagerInterface::class);
-        $this->entityManager
-            ->getRepository(Task::class)
-            ->willReturn($this->taskRepository->reveal());
-
-        $this->handler = new PublishLiveUpdateHandler(
-            $this->liveUpdates->reveal(),
-            $this->entityManager->reveal(),
-        );
+        $this->handler = new PublishLiveUpdate($this->liveUpdates->reveal());
     }
 
-    public function testTaskNotFoundReturnsEarly(): void
-    {
-        $this->taskRepository->find(99)->willReturn(null);
-
-        $this->liveUpdates->toRoles(Argument::any(), Argument::any())->shouldNotBeCalled();
-        $this->liveUpdates->toUserAndRoles(Argument::any(), Argument::any(), Argument::any())->shouldNotBeCalled();
-
-        ($this->handler)(new PublishLiveUpdateMessage(99, TaskDone::class));
-    }
-
-    /**
-     * @dataProvider nonUpdatedTaskEventClassProvider
-     */
-    public function testNonUpdatedTaskEventsPublishToRoles(string $eventClass): void
-    {
-        $task = $this->prophesize(Task::class);
-        // The handler refuses to publish an event the task does not reflect yet,
-        // so the double has to be in the state the event is about.
-        $task->getStatus()->willReturn(self::SETTLED_STATUS[$eventClass] ?? null);
-        $this->taskRepository->find(1)->willReturn($task->reveal());
-
-        $this->liveUpdates
-            ->toRoles(['ROLE_ADMIN', 'ROLE_DISPATCHER'], Argument::type($eventClass))
-            ->shouldBeCalledOnce();
-
-        ($this->handler)(new PublishLiveUpdateMessage(1, $eventClass));
-    }
-
-    /**
-     * Mirrors PublishLiveUpdateHandler::SETTLED_STATUS.
-     */
-    private const SETTLED_STATUS = [
-        TaskDone::class => Task::STATUS_DONE,
-        TaskFailed::class => Task::STATUS_FAILED,
-        TaskStarted::class => Task::STATUS_DOING,
-        TaskCancelled::class => Task::STATUS_CANCELLED,
-    ];
-
-    public function nonUpdatedTaskEventClassProvider(): array
+    public function taskEventClassProvider(): array
     {
         return [
             [TaskAssigned::class],
@@ -98,40 +46,56 @@ class PublishLiveUpdateTest extends TestCase
         ];
     }
 
-    public function testTaskUpdatedWithCourierPublishesToUserAndRoles(): void
+    /**
+     * The handler receives the event, which already holds the task -- there is no
+     * second read of the entity, so the payload cannot describe an older state
+     * than the one the event is about.
+     *
+     * @dataProvider taskEventClassProvider
+     */
+    public function testTaskEventsGoToDispatchers(string $eventClass): void
+    {
+        $event = $this->prophesize($eventClass);
+
+        $this->liveUpdates->toDispatchers($event->reveal())->shouldBeCalledOnce();
+        $this->liveUpdates->toUserAndDispatchers(Argument::cetera())->shouldNotBeCalled();
+
+        ($this->handler)($event->reveal());
+    }
+
+    /**
+     * A task update also reaches the courier it is assigned to, so the rider app
+     * sees changes to its own task without holding a dispatcher role.
+     */
+    public function testTaskUpdatedAlsoGoesToTheAssignedCourier(): void
     {
         $courier = $this->prophesize(User::class);
+
         $task = $this->prophesize(Task::class);
         $task->getAssignedCourier()->willReturn($courier->reveal());
 
-        $this->taskRepository->find(1)->willReturn($task->reveal());
+        $event = $this->prophesize(TaskUpdated::class);
+        $event->getTask()->willReturn($task->reveal());
 
         $this->liveUpdates
-            ->toUserAndRoles(
-                $courier->reveal(),
-                ['ROLE_ADMIN', 'ROLE_DISPATCHER'],
-                Argument::type(TaskUpdated::class)
-            )
+            ->toUserAndDispatchers($courier->reveal(), $event->reveal())
             ->shouldBeCalledOnce();
+        $this->liveUpdates->toDispatchers(Argument::cetera())->shouldNotBeCalled();
 
-        $this->liveUpdates->toRoles(Argument::any(), Argument::any())->shouldNotBeCalled();
-
-        ($this->handler)(new PublishLiveUpdateMessage(1, TaskUpdated::class));
+        ($this->handler)($event->reveal());
     }
 
-    public function testTaskUpdatedWithoutCourierPublishesToRoles(): void
+    public function testTaskUpdatedWithNoCourierGoesToDispatchersOnly(): void
     {
         $task = $this->prophesize(Task::class);
         $task->getAssignedCourier()->willReturn(null);
 
-        $this->taskRepository->find(1)->willReturn($task->reveal());
+        $event = $this->prophesize(TaskUpdated::class);
+        $event->getTask()->willReturn($task->reveal());
 
-        $this->liveUpdates
-            ->toRoles(['ROLE_ADMIN', 'ROLE_DISPATCHER'], Argument::type(TaskUpdated::class))
-            ->shouldBeCalledOnce();
+        $this->liveUpdates->toDispatchers($event->reveal())->shouldBeCalledOnce();
+        $this->liveUpdates->toUserAndDispatchers(Argument::cetera())->shouldNotBeCalled();
 
-        $this->liveUpdates->toUserAndRoles(Argument::any(), Argument::any(), Argument::any())->shouldNotBeCalled();
-
-        ($this->handler)(new PublishLiveUpdateMessage(1, TaskUpdated::class));
+        ($this->handler)($event->reveal());
     }
 }

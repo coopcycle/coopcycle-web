@@ -803,10 +803,39 @@ export function removeTask(task) {
   return { type: REMOVE_TASK, task }
 }
 
+/**
+ * Whether `incoming` describes an older state of the task than what we already
+ * hold, and should therefore be ignored.
+ *
+ * Live updates each carry the state as of their own event, and they are
+ * delivered by a pool of workers — so two updates to the same task can arrive in
+ * the order they were published, or not. Applying an older one would silently
+ * undo a newer one: a `task:assigned` landing after a `task:done` puts the task
+ * back to "to do" on the board with nothing to show for it.
+ *
+ * Equal timestamps apply: `updatedAt` has second granularity, so two genuinely
+ * different events can share one, and skipping those would lose updates.
+ */
+function isOutdated(incoming, current) {
+  if (!current || !incoming?.updatedAt || !current.updatedAt) {
+    return false
+  }
+
+  return moment(incoming.updatedAt).isBefore(current.updatedAt)
+}
+
 export function updateTask(task) {
   return function(dispatch, getState) {
-    let date = selectSelectedDate(getState())
-    const timezone = selectTimezone(getState())
+    const state = getState()
+
+    if (isOutdated(task, selectTaskById(state, task['@id']))) {
+      // eslint-disable-next-line no-console
+      console.debug(`Discarding outdated update for task ${task['@id']}`)
+      return
+    }
+
+    let date = selectSelectedDate(state)
+    const timezone = selectTimezone(state)
 
     if (isInDateRange(task, date, timezone)) {
       dispatch(_updateTask(task))
