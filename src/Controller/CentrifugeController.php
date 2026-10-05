@@ -45,7 +45,9 @@ class CentrifugeController extends AbstractController
     #[Route(path: '/centrifuge/subscription-token', name: 'centrifuge_subscription_token', methods: ['POST'])]
     public function subscriptionTokenAction(Request $request, CentrifugoClient $centrifugoClient)
     {
-        $data = json_decode($request->getContent(), true) ?? [];
+        // An empty or malformed body throws a JsonException, which Symfony turns
+        // into a 400 on its own.
+        $data = $request->toArray();
 
         $channel = $data['channel'] ?? null;
         $client = $data['client'] ?? null;
