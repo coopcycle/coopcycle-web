@@ -47,7 +47,7 @@ const TaxExcludedPriceInput = ({
         }
       />
       {taxRate > 0 ? (
-        <small className="text-muted">
+        <small className="text-muted ml-2">
           {t('PRICING_PRICE_TAX_INCLUDED', {
             amount: `${(value / 100).toFixed(2)} ${getCurrencySymbol()}`,
           })}
