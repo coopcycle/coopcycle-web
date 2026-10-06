@@ -1237,6 +1237,16 @@ services:
       $decorated: '@api_platform.doctrine.orm.state.persist_processor'
     tags: ['api_platform.state_processor']
 
+  AppBundle\Api\State\PricingMatrixProcessor:
+    arguments:
+      $decorated: '@api_platform.doctrine.orm.state.persist_processor'
+    tags: ['api_platform.state_processor']
+
+  AppBundle\Api\State\PricingMatrixRemoveProcessor:
+    arguments:
+      $decorated: '@api_platform.doctrine.orm.state.remove_processor'
+    tags: ['api_platform.state_processor']
+
   AppBundle\Api\State\UrbantzWebhookProcessor:
     arguments:
       $country: "%country_iso%"

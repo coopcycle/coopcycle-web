@@ -2,10 +2,22 @@
 
 namespace AppBundle\Entity\Delivery;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use AppBundle\Api\State\PricingMatrixProcessor;
+use AppBundle\Api\State\PricingMatrixRemoveProcessor;
 use AppBundle\Pricing\Matrix\MatrixAxis;
 use AppBundle\Pricing\Matrix\MatrixAxisEntry;
+use AppBundle\Validator\Constraints\PricingMatrix as AssertPricingMatrix;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * A grid of prices: one variable per axis, one price per cell.
@@ -14,23 +26,55 @@ use Doctrine\Common\Collections\Collection;
  * over ordinary pricing rules: PricingMatrixRuleGenerator turns each cell into a rule
  * of the rule set, and those rules are what gets evaluated.
  */
+#[ApiResource(
+    operations: [
+        new Get(
+            normalizationContext: ['groups' => ['pricing_matrix:read']],
+        ),
+        new GetCollection(
+            normalizationContext: ['groups' => ['pricing_matrix:read']],
+        ),
+        new Post(
+            normalizationContext: ['groups' => ['pricing_matrix:read']],
+            denormalizationContext: ['groups' => ['pricing_matrix:write']],
+            processor: PricingMatrixProcessor::class,
+        ),
+        new Put(
+            normalizationContext: ['groups' => ['pricing_matrix:read']],
+            denormalizationContext: ['groups' => ['pricing_matrix:write']],
+            processor: PricingMatrixProcessor::class,
+        ),
+        new Delete(
+            processor: PricingMatrixRemoveProcessor::class,
+        ),
+    ],
+    security: "is_granted('ROLE_ADMIN')"
+)]
+#[AssertPricingMatrix]
 class PricingMatrix
 {
     /**
      * @var int
      */
+    #[Groups(['pricing_matrix:read'])]
     protected $id;
 
+    #[Groups(['pricing_matrix:read', 'pricing_matrix:write'])]
+    #[Assert\NotNull]
     protected ?PricingRuleSet $ruleSet = null;
 
+    #[Groups(['pricing_matrix:read', 'pricing_matrix:write'])]
     protected ?string $name = null;
 
+    #[Groups(['pricing_matrix:read', 'pricing_matrix:write'])]
+    #[Assert\Choice(choices: [PricingRule::TARGET_DELIVERY, PricingRule::TARGET_TASK])]
     protected string $target = PricingRule::TARGET_TASK;
 
     /**
      * For a per-point matrix: restricts the matrix to pickups or to dropoffs.
      * Null means it applies to every point.
      */
+    #[Groups(['pricing_matrix:read', 'pricing_matrix:write'])]
     protected ?string $taskType = null;
 
     protected array $rowAxis = [];
@@ -108,6 +152,38 @@ class PricingMatrix
         return $this;
     }
 
+    /**
+     * The axes are exposed as the raw arrays they are stored as: MatrixAxis is the
+     * typed view used by the generator, not a serialization format.
+     */
+    #[Groups(['pricing_matrix:read', 'pricing_matrix:write'])]
+    #[SerializedName('rowAxis')]
+    public function getRowAxisArray(): array
+    {
+        return $this->rowAxis;
+    }
+
+    public function setRowAxisArray(array $rowAxis): self
+    {
+        $this->rowAxis = $rowAxis;
+
+        return $this;
+    }
+
+    #[Groups(['pricing_matrix:read', 'pricing_matrix:write'])]
+    #[SerializedName('columnAxis')]
+    public function getColumnAxisArray(): array
+    {
+        return $this->columnAxis;
+    }
+
+    public function setColumnAxisArray(array $columnAxis): self
+    {
+        $this->columnAxis = $columnAxis;
+
+        return $this;
+    }
+
     public function getRowAxis(): MatrixAxis
     {
         return MatrixAxis::fromArray($this->rowAxis);
@@ -135,6 +211,7 @@ class PricingMatrix
     /**
      * @return array<string, int>
      */
+    #[Groups(['pricing_matrix:read', 'pricing_matrix:write'])]
     public function getCells(): array
     {
         return $this->cells;

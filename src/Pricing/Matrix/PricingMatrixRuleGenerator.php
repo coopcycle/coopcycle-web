@@ -29,6 +29,10 @@ class PricingMatrixRuleGenerator
             throw new \LogicException('A pricing matrix must belong to a rule set before its rules can be generated');
         }
 
+        // A matrix created through the API only has the owning side set, and reorder()
+        // walks the rule set's matrices to lay the cells out
+        $ruleSet->addMatrix($matrix);
+
         $rowAxis = $matrix->getRowAxis();
         $columnAxis = $matrix->getColumnAxis();
 
