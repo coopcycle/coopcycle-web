@@ -1320,7 +1320,8 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $events = explode('UNH+', $this->readLastReport());
         foreach (["RSJ+MS+LIV+CFM'", "RSJ+MS+POD+CFM'"] as $situation) {
             $event = current(array_filter($events, fn(string $event) => str_contains($event, $situation)));
-            $this->assertStringContainsString("CTA+Jane Doe'", $event);
+            // INOVERT puts the name in 3412, after an empty 3139 and 3413
+            $this->assertStringContainsString("CTA++:Jane Doe'", $event);
         }
 
         // Not on the other statuses
