@@ -276,6 +276,57 @@ class PricingMatrixFunctionalTest extends ApiTestCase
         $this->assertResponseStatusCodeSame(400);
     }
 
+    public function testAddingAHandWrittenRuleBesideAGrid()
+    {
+        $client = $this->createAdminClient();
+
+        $client->request('POST', '/api/pricing_matrices', [
+            'headers' => ['Content-Type' => 'application/ld+json'],
+            'json' => $this->matrixPayload(),
+        ]);
+
+        $generated = $this->freshRuleSet()->getRules()->toArray();
+        $this->assertCount(2, $generated);
+
+        $rules = array_map(fn(PricingRule $rule) => [
+            '@id' => '/api/pricing_rules/'.$rule->getId(),
+            'target' => $rule->getTarget(),
+            'expression' => $rule->getExpression(),
+            'price' => $rule->getPrice(),
+            'position' => $rule->getPosition(),
+        ], $generated);
+
+        // The ProductOption of a pricing type is created on demand, and creating it
+        // flushes in the middle of the save — which is when this used to blow up
+        $this->entityManager->getConnection()->executeStatement(
+            "DELETE FROM sylius_product_option WHERE code = 'CPCCL-ODDLVR-RANGE'"
+        );
+        // Drop what the earlier request left in memory, or the option looks present
+        $this->entityManager->clear();
+
+        // Sent ahead of the grid, so that reordering has to move it: the position it
+        // is saved with is not the one the payload carried
+        array_unshift($rules, [
+            'target' => PricingRule::TARGET_DELIVERY,
+            'expression' => 'distance > 2500',
+            'price' => 'price_range(distance, 100, 1000, 2500)',
+            'position' => 0,
+            'name' => 'Bonus + 2.5 km',
+        ]);
+
+        $client->request('PUT', '/api/pricing_rule_sets/'.$this->ruleSetId, [
+            'headers' => ['Content-Type' => 'application/ld+json'],
+            'json' => [
+                'name' => 'Matrix rule set',
+                'strategy' => 'map',
+                'rules' => $rules,
+            ],
+        ]);
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertCount(3, $this->freshRuleSet()->getRules());
+    }
+
     public function testEditingAGeneratedRuleThroughTheRuleSetIsRefused()
     {
         $client = $this->createAdminClient();

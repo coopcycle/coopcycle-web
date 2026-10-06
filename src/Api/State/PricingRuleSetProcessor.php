@@ -29,15 +29,21 @@ class PricingRuleSetProcessor implements ProcessorInterface
         array $context = []
     ) {
         if ($data instanceof PricingRuleSet) {
+            // Matrix rules stay ahead of the hand-written ones, whatever order was sent.
+            //
+            // This runs before anything computes a change set. Doctrine snapshots an
+            // entity the first time its change set is computed, and a rule queued for
+            // insertion is then written from that change set alone: moving it
+            // afterwards leaves a change set holding nothing but its new position, and
+            // the INSERT goes out with one value for eight columns.
+            $this->pricingMatrixRuleGenerator->reorder($data);
+
             // Rules generated from a matrix are rewritten whenever that matrix is saved,
             // so an edit made through this endpoint would silently disappear
             $violations = $this->generatedRuleGuard->findViolations($data);
             if (count($violations) > 0) {
                 throw new ValidationException($violations);
             }
-
-            // Matrix rules stay ahead of the hand-written ones, whatever order was sent
-            $this->pricingMatrixRuleGenerator->reorder($data);
 
             // Handle ProductOption creation/update for each rule before processing
             $this->processRulesChanges($data);
