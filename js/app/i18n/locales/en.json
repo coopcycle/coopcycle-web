@@ -483,6 +483,8 @@
             "FOR_EVERY": "for every",
             "PER": "charged",
             "PER_DELIVERY": "once",
+            "PER_VOLUME_UNIT": "per volume unit",
+            "PER_VOLUME_UNIT_DELIVERY": "per volume unit (whole delivery)",
             "ABOVE": "above",
             "TYPE_FIXED": "Fixed price incl. VAT",
             "TYPE_PERCENTAGE": "Percentage",

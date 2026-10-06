@@ -354,6 +354,8 @@
             "FOR_EVERY": "par tranche de",
             "PER": "facturé",
             "PER_DELIVERY": "une fois",
+            "PER_VOLUME_UNIT": "par unité de volume",
+            "PER_VOLUME_UNIT_DELIVERY": "par unité de volume (toute la livraison)",
             "ABOVE": "à partir de",
             "TYPE_FIXED": "Prix TTC fixe",
             "TYPE_PERCENTAGE": "Pourcentage",

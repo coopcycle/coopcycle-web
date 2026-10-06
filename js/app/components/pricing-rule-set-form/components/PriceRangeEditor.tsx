@@ -226,7 +226,7 @@ export default ({ isManualSupplement, defaultValue, onChange }: Props) => {
           <span className="mx-2">{t('PRICE_RANGE_EDITOR.PER')}</span>
           <select
             data-testid="rule-price-range-multiplier"
-            className="form-control d-inline-block align-top"
+            className="form-control d-inline-block"
             style={{ width: '220px' }}
             value={multiplier ?? ''}
             onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -234,10 +234,10 @@ export default ({ isManualSupplement, defaultValue, onChange }: Props) => {
             }}>
             <option value="">{t('PRICE_RANGE_EDITOR.PER_DELIVERY')}</option>
             <option value="packages.totalVolumeUnits()">
-              {t('RULE_PICKER_LINE_VOLUME_UNITS_TARGET_TASK')}
+              {t('PRICE_RANGE_EDITOR.PER_VOLUME_UNIT')}
             </option>
             <option value="delivery.packages.totalVolumeUnits()">
-              {t('RULE_PICKER_LINE_VOLUME_UNITS_DELIVERY')}
+              {t('PRICE_RANGE_EDITOR.PER_VOLUME_UNIT_DELIVERY')}
             </option>
           </select>
         </label>
