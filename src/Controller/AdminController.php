@@ -1193,7 +1193,14 @@ class AdminController extends AbstractController
                 $this->translator->trans('global.changesSaved')
             );
 
-            return $this->redirectToRoute('admin_deliveries_pricing_ruleset', ['id' => $ruleSet->getId()]);
+            $parameters = ['id' => $ruleSet->getId()];
+
+            // Saving from the classic form should not land on the other one
+            if ($this->wantsLegacyPricingForm($request)) {
+                $parameters['ui'] = 'legacy';
+            }
+
+            return $this->redirectToRoute('admin_deliveries_pricing_ruleset', $parameters);
         }
 
         return $this->render(
@@ -1209,6 +1216,14 @@ class AdminController extends AbstractController
     public function newPricingRuleSetAction(Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        if (!$this->wantsLegacyPricingForm($request)) {
+            return $this->render('admin/pricing_rule_set_beta.html.twig', $this->auth([
+                'isNew' => true,
+                'ruleSetId' => null,
+            ]));
+        }
+
         $ruleSet = new Delivery\PricingRuleSet();
 
         return $this->renderPricingRuleSetForm($ruleSet, $request);
@@ -1221,6 +1236,18 @@ class AdminController extends AbstractController
         $ruleSet = $this->entityManager
             ->getRepository(Delivery\PricingRuleSet::class)
             ->find($id);
+
+        if (!$ruleSet) {
+            throw $this->createNotFoundException('Pricing rule set not found');
+        }
+
+        if (!$this->wantsLegacyPricingForm($request)) {
+            return $this->render('admin/pricing_rule_set_beta.html.twig', $this->auth([
+                'isNew' => false,
+                'ruleSetId' => $id,
+                'ruleSet' => $ruleSet,
+            ]));
+        }
 
         return $this->renderPricingRuleSetForm($ruleSet, $request);
     }
@@ -1238,35 +1265,33 @@ class AdminController extends AbstractController
         return $this->renderPricingRuleSetForm($duplicated, $request);
     }
 
+    /**
+     * The form this used to serve is now the one the canonical route renders, and
+     * the links people saved still work.
+     */
     #[Route(path: '/admin/deliveries/pricing/beta/new', name: 'admin_deliveries_pricing_ruleset_beta_new')]
-    public function newPricingRuleSetBetaAction(Request $request)
+    public function newPricingRuleSetBetaAction()
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        return $this->render('admin/pricing_rule_set_beta.html.twig', $this->auth([
-            'isNew' => true,
-            'ruleSetId' => null,
-        ]));
+        return $this->redirectToRoute('admin_deliveries_pricing_ruleset_new');
     }
 
     #[Route(path: '/admin/deliveries/pricing/beta/{id}', name: 'admin_deliveries_pricing_ruleset_beta')]
-    public function pricingRuleSetBetaAction($id, Request $request)
+    public function pricingRuleSetBetaAction($id)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $ruleSet = $this->entityManager
-            ->getRepository(Delivery\PricingRuleSet::class)
-            ->find($id);
+        return $this->redirectToRoute('admin_deliveries_pricing_ruleset', ['id' => $id]);
+    }
 
-        if (!$ruleSet) {
-            throw $this->createNotFoundException('Pricing rule set not found');
-        }
-
-        return $this->render('admin/pricing_rule_set_beta.html.twig', $this->auth([
-            'isNew' => false,
-            'ruleSetId' => $id,
-            'ruleSet' => $ruleSet,
-        ]));
+    /**
+     * The form that was the beta is now the default. The one it replaced stays
+     * reachable, for as long as it is still needed, behind ?ui=legacy.
+     */
+    private function wantsLegacyPricingForm(Request $request): bool
+    {
+        return 'legacy' === $request->query->get('ui');
     }
 
     private function renderFailureReasonSetForm(Delivery\FailureReasonSet $failureReasonSet, Request $request)

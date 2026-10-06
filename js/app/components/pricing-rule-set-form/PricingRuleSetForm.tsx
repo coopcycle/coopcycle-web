@@ -243,7 +243,7 @@ const PricingRuleSetForm = ({
         const result = await createPricingRuleSet(payload).unwrap();
         message.success(t('SAVE_SUCCESS'));
         // Redirect to edit mode
-        window.location.href = `/admin/deliveries/pricing/beta/${result.id}`;
+        window.location.href = `/admin/deliveries/pricing/${result.id}`;
       } else {
         await updatePricingRuleSet({
           id: ruleSetId,
