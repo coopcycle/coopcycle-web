@@ -29,6 +29,16 @@ type Props = {
 
 const isNew = (matrix: PricingMatrix): boolean => !matrix.id;
 
+/*
+  A matrix that applies to every point stores no task type at all. "Every point" is
+  a choice of its own in the select rather than an empty state, and antd refuses a
+  null option value, so it travels under a sentinel and becomes null again on the way
+  back into the matrix.
+*/
+const TASK_TYPE_ALL = 'ALL';
+
+type TaskTypeChoice = typeof TASK_TYPE_ALL | 'PICKUP' | 'DROPOFF';
+
 const PricingMatrixEditor = ({
   matrix,
   ruleSetUri,
@@ -167,10 +177,15 @@ const PricingMatrixEditor = ({
         {draft.target === 'TASK' ? (
           <Select
             style={{ minWidth: 200 }}
-            value={draft.taskType ?? null}
-            onChange={taskType => setDraft({ ...draft, taskType })}
+            value={draft.taskType ?? TASK_TYPE_ALL}
+            onChange={(choice: TaskTypeChoice) =>
+              setDraft({
+                ...draft,
+                taskType: choice === TASK_TYPE_ALL ? null : choice,
+              })
+            }
             options={[
-              { label: t('PRICING_MATRIX_TASK_TYPE_ALL'), value: null },
+              { label: t('PRICING_MATRIX_TASK_TYPE_ALL'), value: TASK_TYPE_ALL },
               { label: t('PRICING_MATRIX_TASK_TYPE_PICKUP'), value: 'PICKUP' },
               { label: t('PRICING_MATRIX_TASK_TYPE_DROPOFF'), value: 'DROPOFF' },
             ]}
