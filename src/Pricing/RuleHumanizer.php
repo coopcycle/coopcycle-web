@@ -242,6 +242,14 @@ class RuleHumanizer
             // Simple property access like 'distance' or 'weight'
             $attributeName = $node->nodes['left']->attributes['name'];
 
+        } elseif (self::isDeliveryPackagesTotalVolumeUnits($node->nodes['left'])) {
+            // Handle the nested method call 'delivery.packages.totalVolumeUnits()'
+            return $this->humanizePackagesTotalVolumeUnits(
+                $node->attributes['operator'],
+                $node->nodes['right'],
+                'pricing.rule.humanizer.delivery_packages_volume_units'
+            );
+
         } elseif (isset($node->nodes['left']->nodes['node']->attributes['name']) &&
                   isset($node->nodes['left']->nodes['attribute']->attributes['value'])) {
             // Handle object property access like task.type, order.itemsTotal (GetAttrNode)
@@ -321,7 +329,27 @@ class RuleHumanizer
         ]);
     }
 
-    private function humanizePackagesTotalVolumeUnits(string $operator, BinaryNode|ConstantNode $value): string
+    /**
+     * Matches the AST of 'delivery.packages.totalVolumeUnits()', i.e. a method call
+     * whose object is itself a property access, unlike 'packages.totalVolumeUnits()'
+     * where the object is a plain name.
+     */
+    private static function isDeliveryPackagesTotalVolumeUnits($node): bool
+    {
+        return $node instanceof GetAttrNode
+            && ($node->attributes['type'] ?? null) === GetAttrNode::METHOD_CALL
+            && ($node->nodes['attribute']->attributes['value'] ?? null) === 'totalVolumeUnits'
+            && isset($node->nodes['node'])
+            && $node->nodes['node'] instanceof GetAttrNode
+            && ($node->nodes['node']->nodes['node']->attributes['name'] ?? null) === 'delivery'
+            && ($node->nodes['node']->nodes['attribute']->attributes['value'] ?? null) === 'packages';
+    }
+
+    private function humanizePackagesTotalVolumeUnits(
+        string $operator,
+        BinaryNode|ConstantNode $value,
+        string $transKey = 'pricing.rule.humanizer.packages_volume_units'
+    ): string
     {
         if ('in' === $operator) {
             $translatedOperator = $this->translator->trans('pricing.rule.humanizer.between', [
@@ -335,7 +363,7 @@ class RuleHumanizer
         }
 
         // Use trim() to remove extra space at then because of empty %value%
-        return trim($this->translator->trans('pricing.rule.humanizer.packages_volume_units', [
+        return trim($this->translator->trans($transKey, [
             '%operator%' => $translatedOperator,
             '%value%' => $translatedValue,
         ]));

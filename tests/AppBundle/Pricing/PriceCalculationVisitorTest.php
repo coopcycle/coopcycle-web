@@ -1132,6 +1132,102 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $this->assertEquals(200, $output->getPrice());
     }
 
+    public function testApplyDeliveryPackagesTotalVolumeUnitsOnEachTaskWithTaskTarget()
+    {
+        // Unlike packages.totalVolumeUnits(), which only sees the packages of the task
+        // being evaluated, delivery.packages.totalVolumeUnits() sees the whole delivery,
+        // so it matches on the pickup too even though packages are attached to dropoffs.
+        $rule1 = new PricingRule();
+        $rule1->setExpression('delivery.packages.totalVolumeUnits() > 9');
+        $rule1->setPrice(100);
+        $rule1->setTarget(PricingRule::TARGET_TASK);
+        $rule1->setPosition(0);
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([
+            $rule1,
+        ]));
+
+        $package = new Package();
+        $package->setName('XXL');
+        $package->setMaxVolumeUnits(10);
+
+        $pickup = $this->createPickupTask();
+
+        $dropoff1 = $this->createDropoffTask();
+        $dropoff1->addPackageWithQuantity($package, 1);
+
+        $dropoff2 = $this->createDropoffTask();
+        $dropoff2->addPackageWithQuantity($package, 2);
+
+        $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
+
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        // 3 points x 100, the pickup included
+        $this->assertEquals(300, $output->getPrice());
+    }
+
+    public function testApplyDeliveryPackagesTotalVolumeUnitsOnPickupOnly()
+    {
+        $rule1 = new PricingRule();
+        $rule1->setExpression('task.type == "PICKUP" and delivery.packages.totalVolumeUnits() in 1..3');
+        $rule1->setPrice(100);
+        $rule1->setTarget(PricingRule::TARGET_TASK);
+        $rule1->setPosition(0);
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([
+            $rule1,
+        ]));
+
+        $package = new Package();
+        $package->setName('Small');
+        $package->setMaxVolumeUnits(1);
+
+        $pickup = $this->createPickupTask();
+
+        $dropoff = $this->createDropoffTask();
+        $dropoff->addPackageWithQuantity($package, 3);
+
+        $delivery = Delivery::createWithTasks(...[$pickup, $dropoff]);
+
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        // The same rule with packages.totalVolumeUnits() would not match at all,
+        // the pickup carrying no package of its own
+        $this->assertEquals(100, $output->getPrice());
+    }
+
+    public function testApplyDeliveryPackagesTotalVolumeUnitsWithDeliveryTarget()
+    {
+        $rule1 = new PricingRule();
+        $rule1->setExpression('delivery.packages.totalVolumeUnits() > 2');
+        $rule1->setPrice(100);
+        $rule1->setTarget(PricingRule::TARGET_DELIVERY);
+        $rule1->setPosition(0);
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([
+            $rule1,
+        ]));
+
+        $package = new Package();
+        $package->setName('Small');
+        $package->setMaxVolumeUnits(1);
+
+        $pickup = $this->createPickupTask();
+
+        $dropoff = $this->createDropoffTask();
+        $dropoff->addPackageWithQuantity($package, 3);
+
+        $delivery = Delivery::createWithTasks(...[$pickup, $dropoff]);
+
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(100, $output->getPrice());
+    }
+
     public function testMultiPointGetPriceWithPricePerPackage()
     {
         $rule1 = new PricingRule();

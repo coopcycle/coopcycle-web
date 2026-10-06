@@ -398,6 +398,7 @@
         "RULE_PICKER_LINE_TIME_SLOT": "Créneau horaire",
         "RULE_PICKER_LINE_VOLUME_UNITS_TARGET_DELIVERY": "Unités de volume (total)",
         "RULE_PICKER_LINE_VOLUME_UNITS_TARGET_TASK": "Unités de volume",
+        "RULE_PICKER_LINE_VOLUME_UNITS_DELIVERY": "Unités de volume (toute la livraison)",
         "RULE_PICKER_LINE_WEIGHT_TARGET_DELIVERY": "Poids (kg) (total)",
         "RULE_PICKER_LINE_WEIGHT_TARGET_TASK": "Poids (kg)",
         "RULE_TARGET_DELIVERY": "Appliquer une fois par commande si :",

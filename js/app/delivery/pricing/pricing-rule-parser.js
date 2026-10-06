@@ -96,6 +96,30 @@ export default expression => {
   return lines.map(token => parseToken(token))
 }
 
+/*
+  Matches the AST of `packages.totalVolumeUnits()` (whose object is a plain name) and
+  of `delivery.packages.totalVolumeUnits()` (whose object is itself a property access),
+  and returns the matching rule picker type, or null for anything else.
+*/
+const volumeUnitsAttribute = node => {
+  if (node?.nodes?.attribute?.attributes?.value !== 'totalVolumeUnits') {
+    return null
+  }
+
+  const object = node.nodes.node
+
+  if (object?.attributes?.name === 'packages') {
+    return 'packages.totalVolumeUnits()'
+  }
+
+  if (object?.nodes?.node?.attributes?.name === 'delivery'
+    && object?.nodes?.attribute?.attributes?.value === 'packages') {
+    return 'delivery.packages.totalVolumeUnits()'
+  }
+
+  return null
+}
+
 const traverseNode = (node, accumulator) => {
   if (node.attributes.operator === 'and') {
     traverseNode(node.nodes.left, accumulator)
@@ -186,10 +210,12 @@ const traverseNode = (node, accumulator) => {
           operator: node.attributes.operator,
           right:    $right,
         })
-      } else if (node.nodes.left.nodes?.node?.attributes?.name === 'packages' && node.nodes.left.nodes?.attribute?.attributes?.value === 'totalVolumeUnits') {
+      } else if (volumeUnitsAttribute(node.nodes.left)) {
+        const left = volumeUnitsAttribute(node.nodes.left)
+
         if (node.attributes.operator === 'in') {
           accumulator.push({
-            left:     'packages.totalVolumeUnits()',
+            left,
             operator: node.attributes.operator,
             right:    [
               node.nodes.right.nodes.left.attributes.value,
@@ -198,7 +224,7 @@ const traverseNode = (node, accumulator) => {
           })
         } else {
           accumulator.push({
-            left:     'packages.totalVolumeUnits()',
+            left,
             operator: node.attributes.operator,
             right:    node.nodes.right.attributes.value,
           })

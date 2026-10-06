@@ -43,6 +43,7 @@ const typeToOperators = {
   packages: ['containsAtLeastOne'],
   'order.itemsTotal': ['==', '<', '>', 'in'],
   'packages.totalVolumeUnits()': ['<', '>', 'in'],
+  'delivery.packages.totalVolumeUnits()': ['<', '>', 'in'],
   "time_range_length(pickup, 'hours')": ['<', '>', 'in'],
   "time_range_length(dropoff, 'hours')": ['<', '>', 'in'],
   'task.type': ['=='],
@@ -72,7 +73,7 @@ const formatValue = (value: string, type: string): number | string => {
 const getStepForType = (type: string): string => {
   // As it returns float, it will never work when comparing to floats
   // https://github.com/coopcycle/coopcycle-web/issues/5002
-  if (type === 'packages.totalVolumeUnits()') {
+  if (type === 'packages.totalVolumeUnits()' || type === 'delivery.packages.totalVolumeUnits()') {
     return '1';
   }
 

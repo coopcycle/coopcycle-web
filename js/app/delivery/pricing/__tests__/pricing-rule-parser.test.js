@@ -16,6 +16,8 @@ import withOrderItemsTotal from './with-order-items-total.json'
 import withOrderItemsTotalRange from './with-order-items-total-range.json'
 import withTotalVolumeUnits from './with-packages-total-volume-units.json'
 import withTotalVolumeUnitsRange from './with-packages-total-volume-units-range.json'
+import withDeliveryTotalVolumeUnits from './with-delivery-packages-total-volume-units.json'
+import withDeliveryTotalVolumeUnitsRange from './with-delivery-packages-total-volume-units-range.json'
 import withTimeRangeLength from './with-time-range-length.json'
 import withDropoffTimeRangeLength from './with-time-range-length-dropoff.json'
 import withDropoffTimeRangeLengthWithRange from './with-time-range-length-dropoff-in.json'
@@ -309,6 +311,28 @@ describe('Pricing rule parser (AST)', function() {
     expect(result).toEqual(
       [
         { left: 'packages.totalVolumeUnits()', operator: 'in', right: [1, 5] }
+      ]
+    )
+  })
+
+  it('should parse AST with delivery total volume units', function() {
+
+    const result = parseAST(withDeliveryTotalVolumeUnits)
+
+    expect(result).toEqual(
+      [
+        { left: 'delivery.packages.totalVolumeUnits()', operator: '>', right: 3 }
+      ]
+    )
+  })
+
+  it('should parse AST with delivery total volume units (range)', function() {
+
+    const result = parseAST(withDeliveryTotalVolumeUnitsRange)
+
+    expect(result).toEqual(
+      [
+        { left: 'delivery.packages.totalVolumeUnits()', operator: 'in', right: [1, 5] }
       ]
     )
   })
