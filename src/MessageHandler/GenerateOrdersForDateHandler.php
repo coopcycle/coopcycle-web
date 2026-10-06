@@ -21,6 +21,11 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 #[AsMessageHandler]
 class GenerateOrdersForDateHandler
 {
+    /**
+     * The first run plus Messenger's 3 retries.
+     */
+    private const MAX_ATTEMPTS = 4;
+
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly RecurrenceRuleGenerationRepository $generationRepository,
@@ -36,6 +41,24 @@ class GenerateOrdersForDateHandler
         $date = $message->getDate();
 
         $generation = $this->loadGeneration($date);
+
+        // Messenger only counts retries for exceptions. A worker that dies (out
+        // of memory, killed) never acknowledges the message, which is delivered
+        // again and again, and each delivery can create orders. A run still
+        // "started" when picked up again is one that died, so stop there.
+        if (RecurrenceRuleGeneration::STATUS_STARTED === $generation->getStatus()
+            && $generation->getAttempts() >= self::MAX_ATTEMPTS) {
+            $generation->abort(sprintf('The worker crashed %d times in a row', $generation->getAttempts()));
+            $this->entityManager->flush();
+
+            $this->logger->error(
+                sprintf('Gave up generating recurring orders after %d attempts', $generation->getAttempts()),
+                ['date' => $date]
+            );
+
+            return;
+        }
+
         $generation->start();
         $this->entityManager->flush();
 
