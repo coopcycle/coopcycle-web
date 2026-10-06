@@ -16,6 +16,7 @@ use AppBundle\Api\State\PricingRuleSetProcessor;
 use AppBundle\Api\State\ValidationAwareRemoveProcessor;
 use AppBundle\Validator\Constraints\PricingRuleSetDelete as AssertCanDelete;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -73,9 +74,37 @@ class PricingRuleSet
     #[Groups(['pricing_rule_set:read', 'pricing_rule_set:write'])]
     protected array $options = [];
 
+    protected $matrices;
+
     public function __construct()
     {
         $this->rules = new ArrayCollection();
+        $this->matrices = new ArrayCollection();
+    }
+
+    /**
+     * @return Collection<int, PricingMatrix>
+     */
+    public function getMatrices()
+    {
+        return $this->matrices;
+    }
+
+    public function addMatrix(PricingMatrix $matrix)
+    {
+        if (!$this->matrices->contains($matrix)) {
+            $matrix->setRuleSet($this);
+            $this->matrices->add($matrix);
+        }
+
+        return $this;
+    }
+
+    public function removeMatrix(PricingMatrix $matrix)
+    {
+        $this->matrices->removeElement($matrix);
+
+        return $this;
     }
 
     /**

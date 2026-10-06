@@ -69,6 +69,18 @@ class PricingRule
     #[Groups(['original_rules', 'pricing_deliveries', 'pricing_rule_set:read', 'pricing_rule_set:write'])]
     protected $position;
 
+    /**
+     * Set when this rule was generated from a cell of a pricing matrix. Such a rule is
+     * owned by the matrix: it is read-only, and PricingMatrixRuleGenerator matches it
+     * back to its cell by (matrixRowKey, matrixColumnKey) when the matrix is saved again.
+     */
+    #[Groups(['pricing_rule_set:read'])]
+    protected ?PricingMatrix $matrix = null;
+
+    protected ?string $matrixRowKey = null;
+
+    protected ?string $matrixColumnKey = null;
+
     protected $ruleSet;
 
     /**
@@ -238,5 +250,44 @@ class PricingRule
     public function isManualSupplement()
     {
         return $this->getExpression() === 'false';
+    }
+
+    public function getMatrix(): ?PricingMatrix
+    {
+        return $this->matrix;
+    }
+
+    public function setMatrix(?PricingMatrix $matrix): self
+    {
+        $this->matrix = $matrix;
+
+        return $this;
+    }
+
+    public function getMatrixRowKey(): ?string
+    {
+        return $this->matrixRowKey;
+    }
+
+    public function getMatrixColumnKey(): ?string
+    {
+        return $this->matrixColumnKey;
+    }
+
+    public function setMatrixCell(PricingMatrix $matrix, string $rowKey, string $columnKey): self
+    {
+        $this->matrix = $matrix;
+        $this->matrixRowKey = $rowKey;
+        $this->matrixColumnKey = $columnKey;
+
+        return $this;
+    }
+
+    /**
+     * Generated rules are owned by their matrix and cannot be edited on their own.
+     */
+    public function isGenerated(): bool
+    {
+        return null !== $this->matrix;
     }
 }

@@ -5,6 +5,7 @@ namespace Tests\AppBundle\Pricing;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRule;
+use AppBundle\Entity\Delivery\PricingMatrix;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Task;
@@ -19,6 +20,9 @@ use AppBundle\ExpressionLanguage\PriceRangeExpressionLanguageProvider;
 use AppBundle\ExpressionLanguage\TaskExpressionLanguageVisitor;
 use AppBundle\ExpressionLanguage\ZoneExpressionLanguageProvider;
 use AppBundle\Fixtures\DatabasePurger;
+use AppBundle\Pricing\Matrix\MatrixAxis;
+use AppBundle\Pricing\Matrix\MatrixAxisEntry;
+use AppBundle\Pricing\Matrix\PricingMatrixRuleGenerator;
 use AppBundle\Pricing\OnDemandDeliveryProductProcessor;
 use AppBundle\Pricing\PriceCalculationVisitor;
 use AppBundle\Pricing\PriceExpressionParser;
@@ -1226,6 +1230,63 @@ class PriceCalculationVisitorTest extends KernelTestCase
 
         $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
         $this->assertEquals(100, $output->getPrice());
+    }
+
+    public function testApplyRulesGeneratedFromAPricingMatrix()
+    {
+        // A per-point grid: rows count the packages of the whole delivery (so that the
+        // pickup, which carries none of its own, is priced too), columns the weight of
+        // the point being evaluated.
+        $matrix = new PricingMatrix();
+        $matrix->setTarget(PricingRule::TARGET_TASK);
+
+        $matrix->setRowAxis(new MatrixAxis(
+            variable: MatrixAxis::VARIABLE_DELIVERY_VOLUME_UNITS,
+            entries: [
+                new MatrixAxisEntry(key: 'r_s', label: 'S', min: 1, max: 1),
+                new MatrixAxisEntry(key: 'r_m', label: 'M', min: 2, max: 3),
+            ],
+        ));
+
+        $matrix->setColumnAxis(new MatrixAxis(
+            variable: MatrixAxis::VARIABLE_WEIGHT,
+            entries: [
+                new MatrixAxisEntry(key: 'c_light', label: 'light', max: 5000),
+                new MatrixAxisEntry(key: 'c_heavy', label: 'heavy', min: 5001),
+            ],
+        ));
+
+        $matrix->setCells([
+            'r_s:c_light' => 100,
+            'r_s:c_heavy' => 200,
+            'r_m:c_light' => 300,
+            'r_m:c_heavy' => 400,
+        ]);
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->addMatrix($matrix);
+
+        (new PricingMatrixRuleGenerator())->generate($matrix);
+
+        $package = new Package();
+        $package->setName('Small');
+        $package->setMaxVolumeUnits(1);
+
+        $pickup = $this->createPickupTask();
+        $pickup->setWeight(1000);
+
+        $dropoff = $this->createDropoffTask();
+        $dropoff->setWeight(8000);
+        $dropoff->addPackageWithQuantity($package, 3);
+
+        $delivery = Delivery::createWithTasks(...[$pickup, $dropoff]);
+
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+
+        // 3 packages puts both points on the 'M' row:
+        // the pickup is light (300), the dropoff is heavy (400)
+        $this->assertEquals(700, $output->getPrice());
     }
 
     public function testMultiPointGetPriceWithPricePerPackage()

@@ -16,6 +16,13 @@
         <join-column name="rule_set_id" referenced-column-name="id" nullable="false"/>
       </join-columns>
     </many-to-one>
+    <field name="matrixRowKey" type="string" column="matrix_row_key" nullable="true"/>
+    <field name="matrixColumnKey" type="string" column="matrix_column_key" nullable="true"/>
+    <many-to-one field="matrix" target-entity="AppBundle\Entity\Delivery\PricingMatrix" inversed-by="rules">
+      <join-columns>
+        <join-column name="matrix_id" referenced-column-name="id" nullable="true" on-delete="CASCADE"/>
+      </join-columns>
+    </many-to-one>
     <one-to-many field="productOptionValues" target-entity="AppBundle\Entity\Sylius\ProductOptionValue" mapped-by="pricingRule">
       <cascade>
         <cascade-persist/>
