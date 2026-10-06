@@ -62,10 +62,16 @@ const PricingMatrixEditor = ({
 
   const warnings = useMemo(
     () => [
-      ...findAxisWarnings(draft.rowAxis, t),
-      ...findAxisWarnings(draft.columnAxis, t),
+      ...findAxisWarnings(draft.rowAxis, 'row', t),
+      ...findAxisWarnings(draft.columnAxis, 'column', t),
     ],
     [draft.rowAxis, draft.columnAxis, t],
+  );
+
+  // The rows and columns a warning is about, so the grid can point at them
+  const warnedKeys = useMemo(
+    () => new Set(warnings.flatMap(warning => warning.entryKeys)),
+    [warnings],
   );
 
   const setAxis = (which: 'rowAxis' | 'columnAxis', axis: MatrixAxis) => {
@@ -200,6 +206,7 @@ const PricingMatrixEditor = ({
         onRowAxisChange={axis => setAxis('rowAxis', axis)}
         onColumnAxisChange={axis => setAxis('columnAxis', axis)}
         onCellChange={setCell}
+        warnedKeys={warnedKeys}
       />
 
       {warnings.length > 0 ? (

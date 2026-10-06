@@ -192,6 +192,12 @@
     padding: 6px;
   }
 
+  /* The row or column a warning is about, so it can be found without reading it */
+  &__header--warning {
+    background: rgba(250, 173, 20, 0.14);
+    box-shadow: inset 0 0 0 1px rgba(250, 173, 20, 0.55);
+  }
+
   &__header-fields > * + * {
     margin-top: 4px;
   }

@@ -5,8 +5,10 @@ import {
   toStoredBound,
 } from '../axis';
 
-// The warnings are what the admin reads, so assert on the kind, not the wording
-const t = key => key;
+// The warnings are what the admin reads, so assert on the kind and on which rows
+// they point at, not on the wording
+const t = (key, values) =>
+  values ? `${key}:${JSON.stringify(values)}` : key;
 
 const numericAxis = entries => ({
   variable: 'delivery.packages.totalVolumeUnits()',
@@ -55,6 +57,7 @@ describe('matrix axis helpers', () => {
           { key: 'b', label: 'M', min: 2, max: 3 },
           { key: 'c', label: 'L', min: 4, max: null },
         ]),
+        'row',
         t,
       );
 
@@ -67,6 +70,7 @@ describe('matrix axis helpers', () => {
           { key: 'a', label: 'S', min: 1, max: 1 },
           { key: 'b', label: 'L', min: 4, max: 6 },
         ]),
+        'row',
         t,
       );
 
@@ -79,6 +83,7 @@ describe('matrix axis helpers', () => {
           { key: 'a', label: 'S', min: 1, max: 3 },
           { key: 'b', label: 'M', min: 3, max: 6 },
         ]),
+        'row',
         t,
       );
 
@@ -88,6 +93,7 @@ describe('matrix axis helpers', () => {
     it('reports entries that have no bound yet', () => {
       const warnings = findAxisWarnings(
         numericAxis([{ key: 'a', label: 'S' }]),
+        'row',
         t,
       );
 
@@ -100,10 +106,62 @@ describe('matrix axis helpers', () => {
           { key: 'b', label: 'M', min: 2, max: 3 },
           { key: 'a', label: 'S', min: 1, max: 1 },
         ]),
+        'row',
         t,
       );
 
       expect(warnings).toEqual([]);
+    });
+  });
+
+  describe('what a warning points at', () => {
+    it('names rows by their position, never by their key', () => {
+      const warnings = findAxisWarnings(
+        numericAxis([
+          { key: '9fd0a1e2-uuid', label: 'S', min: 1, max: 3 },
+          { key: '2b7c4d5f-uuid', label: 'M', min: 2, max: 6 },
+        ]),
+        'row',
+        t,
+      );
+
+      expect(warnings).toHaveLength(1);
+      expect(warnings[0].message).not.toContain('uuid');
+      expect(warnings[0].message).toContain('PRICING_MATRIX_WARNING_OVERLAP');
+      expect(warnings[0].message).toContain('PRICING_MATRIX_ROW_POSITION');
+    });
+
+    it('carries the keys of both offending rows', () => {
+      const warnings = findAxisWarnings(
+        numericAxis([
+          { key: 'a', label: 'S', min: 1, max: 3 },
+          { key: 'b', label: 'M', min: 2, max: 6 },
+        ]),
+        'row',
+        t,
+      );
+
+      expect(warnings[0].entryKeys).toEqual(['a', 'b']);
+    });
+
+    it('carries the key of the row that has no range', () => {
+      const warnings = findAxisWarnings(
+        numericAxis([{ key: 'lonely', label: 'S' }]),
+        'row',
+        t,
+      );
+
+      expect(warnings[0].entryKeys).toEqual(['lonely']);
+    });
+
+    it('names columns as columns', () => {
+      const warnings = findAxisWarnings(
+        zoneAxis([{ key: 'a' }]),
+        'column',
+        t,
+      );
+
+      expect(warnings[0].message).toContain('PRICING_MATRIX_COLUMN_POSITION');
     });
   });
 
@@ -114,6 +172,7 @@ describe('matrix axis helpers', () => {
           { key: 'a', value: 'Z1' },
           { key: 'b', value: 'Z2' },
         ]),
+        'column',
         t,
       );
 
@@ -126,6 +185,7 @@ describe('matrix axis helpers', () => {
           { key: 'a', value: 'Z1' },
           { key: 'b', value: 'Z1' },
         ]),
+        'column',
         t,
       );
 
@@ -133,7 +193,7 @@ describe('matrix axis helpers', () => {
     });
 
     it('reports entries that have no value yet', () => {
-      const warnings = findAxisWarnings(zoneAxis([{ key: 'a' }]), t);
+      const warnings = findAxisWarnings(zoneAxis([{ key: 'a' }]), 'column', t);
 
       expect(warnings.map(warning => warning.type)).toEqual(['incomplete']);
     });

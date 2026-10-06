@@ -26,6 +26,7 @@ type Props = {
   onRowAxisChange: (axis: MatrixAxis) => void;
   onColumnAxisChange: (axis: MatrixAxis) => void;
   onCellChange: (rowKey: string, columnKey: string, euros: number | null) => void;
+  warnedKeys: Set<string>;
 };
 
 /*
@@ -41,6 +42,7 @@ const PricingMatrixGrid = ({
   onRowAxisChange,
   onColumnAxisChange,
   onCellChange,
+  warnedKeys,
 }: Props) => {
   const { t } = useTranslation();
 
@@ -102,6 +104,11 @@ const PricingMatrixGrid = ({
       ...(variable === 'zone' ? { addressSource: 'task' as const } : {}),
     });
   };
+
+  const headerClassName = (entry: MatrixAxisEntry) =>
+    warnedKeys.has(entry.key)
+      ? 'pricing-matrix__header pricing-matrix__header--warning'
+      : 'pricing-matrix__header';
 
   const valueOptions = (axis: MatrixAxis) =>
     axis.variable === 'zone'
@@ -242,7 +249,7 @@ const PricingMatrixGrid = ({
               )}
             </th>
             {columnAxis.entries.map((column, index) => (
-              <th key={column.key} className="pricing-matrix__header">
+              <th key={column.key} className={headerClassName(column)}>
                 {removeButton(
                   columnAxis,
                   onColumnAxisChange,
@@ -267,7 +274,7 @@ const PricingMatrixGrid = ({
         <tbody>
           {rowAxis.entries.map((row, index) => (
             <tr key={row.key}>
-              <th className="pricing-matrix__header">
+              <th className={headerClassName(row)}>
                 {removeButton(
                   rowAxis,
                   onRowAxisChange,

@@ -64,12 +64,38 @@ export const toStoredBound = (
     ? null
     : Math.round(value * factorFor(variable));
 
-export const entryLabel = (entry: MatrixAxisEntry): string =>
-  entry.label && entry.label.trim() !== '' ? entry.label : entry.key;
+export type AxisKind = 'row' | 'column';
+
+type Translate = (key: string, values?: Record<string, unknown>) => string;
+
+/*
+  A row or a column is named by where it sits, not by its key: the key is a uuid,
+  which means nothing to whoever is reading the warning. The label is appended when
+  there is one, since the grid may not be filled in yet.
+*/
+const describeEntry = (
+  entry: MatrixAxisEntry,
+  index: number,
+  kind: AxisKind,
+  t: Translate,
+): string => {
+  const position = t(
+    kind === 'row'
+      ? 'PRICING_MATRIX_ROW_POSITION'
+      : 'PRICING_MATRIX_COLUMN_POSITION',
+    { index: index + 1 },
+  );
+
+  return entry.label && entry.label.trim() !== ''
+    ? t('PRICING_MATRIX_ENTRY_LABELLED', { position, label: entry.label.trim() })
+    : position;
+};
 
 export type AxisWarning = {
   type: 'gap' | 'overlap' | 'duplicate' | 'incomplete';
   message: string;
+  // The rows or columns the warning is about, so the grid can point at them
+  entryKeys: string[];
 };
 
 /*
@@ -82,51 +108,62 @@ export type AxisWarning = {
 */
 export const findAxisWarnings = (
   axis: MatrixAxis,
-  t: (key: string, values?: Record<string, unknown>) => string,
+  kind: AxisKind,
+  t: Translate,
 ): AxisWarning[] => {
   const warnings: AxisWarning[] = [];
 
   if (isNumeric(axis.variable)) {
-    const bounded = axis.entries.filter(
-      entry =>
-        (entry.min !== null && entry.min !== undefined) ||
-        (entry.max !== null && entry.max !== undefined),
-    );
+    const bounded: {
+      entry: MatrixAxisEntry;
+      index: number;
+      min: number;
+      max: number;
+    }[] = [];
 
-    if (bounded.length !== axis.entries.length) {
-      warnings.push({
-        type: 'incomplete',
-        message: t('PRICING_MATRIX_WARNING_ENTRY_WITHOUT_BOUND'),
-      });
-    }
+    axis.entries.forEach((entry, index) => {
+      const hasMin = entry.min !== null && entry.min !== undefined;
+      const hasMax = entry.max !== null && entry.max !== undefined;
 
-    const ranges = bounded
-      .map(entry => ({
+      if (!hasMin && !hasMax) {
+        warnings.push({
+          type: 'incomplete',
+          message: t('PRICING_MATRIX_WARNING_ENTRY_WITHOUT_BOUND', {
+            entry: describeEntry(entry, index, kind, t),
+          }),
+          entryKeys: [entry.key],
+        });
+        return;
+      }
+
+      bounded.push({
         entry,
+        index,
         min: entry.min ?? Number.NEGATIVE_INFINITY,
         max: entry.max ?? Number.POSITIVE_INFINITY,
-      }))
-      .sort((a, b) => a.min - b.min);
+      });
+    });
+
+    const ranges = [...bounded].sort((a, b) => a.min - b.min);
 
     for (let i = 1; i < ranges.length; i++) {
       const previous = ranges[i - 1];
       const current = ranges[i];
 
+      const first = describeEntry(previous.entry, previous.index, kind, t);
+      const second = describeEntry(current.entry, current.index, kind, t);
+
       if (current.min <= previous.max) {
         warnings.push({
           type: 'overlap',
-          message: t('PRICING_MATRIX_WARNING_OVERLAP', {
-            first: entryLabel(previous.entry),
-            second: entryLabel(current.entry),
-          }),
+          message: t('PRICING_MATRIX_WARNING_OVERLAP', { first, second }),
+          entryKeys: [previous.entry.key, current.entry.key],
         });
       } else if (current.min > previous.max + 1) {
         warnings.push({
           type: 'gap',
-          message: t('PRICING_MATRIX_WARNING_GAP', {
-            first: entryLabel(previous.entry),
-            second: entryLabel(current.entry),
-          }),
+          message: t('PRICING_MATRIX_WARNING_GAP', { first, second }),
+          entryKeys: [previous.entry.key, current.entry.key],
         });
       }
     }
@@ -136,27 +173,35 @@ export const findAxisWarnings = (
 
   // Zones can overlap geographically, which no check here can see: only an entry
   // used twice is certain. The rest is the admin's call.
-  const seen = new Map<string, MatrixAxisEntry>();
+  const seen = new Map<string, { entry: MatrixAxisEntry; index: number }>();
 
-  axis.entries.forEach(entry => {
+  axis.entries.forEach((entry, index) => {
     if (!entry.value) {
       warnings.push({
         type: 'incomplete',
-        message: t('PRICING_MATRIX_WARNING_ENTRY_WITHOUT_VALUE'),
+        message: t('PRICING_MATRIX_WARNING_ENTRY_WITHOUT_VALUE', {
+          entry: describeEntry(entry, index, kind, t),
+        }),
+        entryKeys: [entry.key],
       });
       return;
     }
 
-    if (seen.has(entry.value)) {
+    const previous = seen.get(entry.value);
+
+    if (previous) {
       warnings.push({
         type: 'duplicate',
         message: t('PRICING_MATRIX_WARNING_DUPLICATE', {
-          value: entry.value,
+          first: describeEntry(previous.entry, previous.index, kind, t),
+          second: describeEntry(entry, index, kind, t),
         }),
+        entryKeys: [previous.entry.key, entry.key],
       });
+      return;
     }
 
-    seen.set(entry.value, entry);
+    seen.set(entry.value, { entry, index });
   });
 
   return warnings;
