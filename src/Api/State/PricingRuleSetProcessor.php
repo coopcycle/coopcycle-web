@@ -4,7 +4,10 @@ namespace AppBundle\Api\State;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
+use ApiPlatform\Validator\Exception\ValidationException;
 use AppBundle\Entity\Delivery\PricingRuleSet;
+use AppBundle\Pricing\Matrix\GeneratedRuleGuard;
+use AppBundle\Pricing\Matrix\PricingMatrixRuleGenerator;
 use AppBundle\Service\PricingRuleSetManager;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -14,6 +17,8 @@ class PricingRuleSetProcessor implements ProcessorInterface
         private readonly ProcessorInterface $decorated,
         private readonly EntityManagerInterface $entityManager,
         private readonly PricingRuleSetManager $pricingRuleSetManager,
+        private readonly GeneratedRuleGuard $generatedRuleGuard,
+        private readonly PricingMatrixRuleGenerator $pricingMatrixRuleGenerator,
     ) {
     }
 
@@ -23,8 +28,18 @@ class PricingRuleSetProcessor implements ProcessorInterface
         array $uriVariables = [],
         array $context = []
     ) {
-        // Handle ProductOption creation/update for each rule before processing
         if ($data instanceof PricingRuleSet) {
+            // Rules generated from a matrix are rewritten whenever that matrix is saved,
+            // so an edit made through this endpoint would silently disappear
+            $violations = $this->generatedRuleGuard->findViolations($data);
+            if (count($violations) > 0) {
+                throw new ValidationException($violations);
+            }
+
+            // Matrix rules stay ahead of the hand-written ones, whatever order was sent
+            $this->pricingMatrixRuleGenerator->reorder($data);
+
+            // Handle ProductOption creation/update for each rule before processing
             $this->processRulesChanges($data);
         }
 

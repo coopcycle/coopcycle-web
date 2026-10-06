@@ -234,6 +234,48 @@ class PricingMatrixRuleGeneratorTest extends TestCase
         );
     }
 
+    public function testReorderLeavesAMatrixLessRuleSetAlone()
+    {
+        $ruleSet = new PricingRuleSet();
+
+        $first = new PricingRule();
+        $first->setExpression('distance > 1000');
+        $first->setPosition(7);
+        $ruleSet->addRule($first);
+
+        $second = new PricingRule();
+        $second->setExpression('distance > 2000');
+        $second->setPosition(3);
+        $ruleSet->addRule($second);
+
+        $this->generator->reorder($ruleSet);
+
+        $this->assertEquals(7, $first->getPosition());
+        $this->assertEquals(3, $second->getPosition());
+    }
+
+    public function testHandWrittenRulesKeepTheirRelativeOrderAfterTheMatrix()
+    {
+        $matrix = $this->createMatrix();
+        $ruleSet = $matrix->getRuleSet();
+
+        $later = new PricingRule();
+        $later->setExpression('distance > 2000');
+        $later->setPosition(9);
+        $ruleSet->addRule($later);
+
+        $sooner = new PricingRule();
+        $sooner->setExpression('distance > 1000');
+        $sooner->setPosition(2);
+        $ruleSet->addRule($sooner);
+
+        $this->generator->generate($matrix);
+
+        // 6 cells first, then the hand-written rules in the order their positions implied
+        $this->assertEquals(6, $sooner->getPosition());
+        $this->assertEquals(7, $later->getPosition());
+    }
+
     public function testClearRemovesOnlyTheMatrixRules()
     {
         $matrix = $this->createMatrix();

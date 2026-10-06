@@ -160,8 +160,14 @@ class PricingMatrixRuleGenerator
      * applied in rule order, and a percentage multiplies the subtotal of the rules
      * before it.
      */
-    private function reorder(PricingRuleSet $ruleSet): void
+    public function reorder(PricingRuleSet $ruleSet): void
     {
+        // Without a matrix there is no block to keep ahead of the others, and renumbering
+        // would override the positions the client sent
+        if ($ruleSet->getMatrices()->isEmpty()) {
+            return;
+        }
+
         $ordered = [];
 
         foreach ($ruleSet->getMatrices() as $matrix) {
@@ -180,11 +186,21 @@ class PricingMatrixRuleGenerator
             }
         }
 
+        // Hand-written rules keep their relative order, which is what the client sent
+        // as positions rather than the order the collection happens to be in
+        $others = [];
         foreach ($ruleSet->getRules() as $rule) {
             if (!$rule->isGenerated()) {
-                $ordered[] = $rule;
+                $others[] = $rule;
             }
         }
+
+        usort(
+            $others,
+            fn(PricingRule $a, PricingRule $b) => ($a->getPosition() ?? PHP_INT_MAX) <=> ($b->getPosition() ?? PHP_INT_MAX)
+        );
+
+        $ordered = array_merge($ordered, $others);
 
         $position = 0;
         foreach ($ordered as $rule) {
