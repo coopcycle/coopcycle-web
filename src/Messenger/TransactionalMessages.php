@@ -54,11 +54,22 @@ class TransactionalMessages
 
         try {
             $result = $callback();
-            $held = $this->held;
-        } finally {
+        } catch (\Throwable $e) {
             // Rolled back: the messages are dropped along with the rows they are about
             $this->held = null;
+
+            throw $e;
         }
+
+        $this->release();
+
+        return $result;
+    }
+
+    private function release(): void
+    {
+        $held = $this->held ?? [];
+        $this->held = null;
 
         foreach ($held as [$envelope, $stack]) {
             try {
@@ -72,8 +83,6 @@ class TransactionalMessages
                 );
             }
         }
-
-        return $result;
     }
 
     public function isHolding(): bool
