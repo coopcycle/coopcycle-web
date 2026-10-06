@@ -272,7 +272,7 @@
             "PER_PACKAGE_DEL_DISCOUNT": "Odstranit slevu",
             "PER_PACKAGE_ADD_DISCOUNT": "Přidat slevu",
             "PER_PACKAGE_STARTING": "počínaje od",
-            "PER_PACKAGE": "za balení",
+            "PER_PACKAGE": "za balení"
         },
         "ADMIN_DASHBOARD_DELETE_GROUP_CONFIRM": "Opravdu chcete odstranit všechny úkoly v této skupině?",
         "CASH_ON_DELIVERY_DISCLAIMER": "Budete platit na dobírku. Připravte si prosím přesnou částku a ujistěte se, že jste dosažitelní.",
