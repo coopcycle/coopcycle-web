@@ -221,26 +221,50 @@ export default ({ isManualSupplement, defaultValue, onChange }: Props) => {
           </span>
         ) : null}
       </label>
-      {!isManualSupplement ? (
-        <label>
-          <span className="mx-2">{t('PRICE_RANGE_EDITOR.PER')}</span>
-          <select
-            data-testid="rule-price-range-multiplier"
-            className="form-control d-inline-block"
-            style={{ width: '220px' }}
-            value={multiplier ?? ''}
-            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-              setMultiplier((e.target.value as Multiplier) || null);
-            }}>
-            <option value="">{t('PRICE_RANGE_EDITOR.PER_DELIVERY')}</option>
-            <option value="packages.totalVolumeUnits()">
-              {t('PRICE_RANGE_EDITOR.PER_VOLUME_UNIT')}
-            </option>
-            <option value="delivery.packages.totalVolumeUnits()">
-              {t('PRICE_RANGE_EDITOR.PER_VOLUME_UNIT_DELIVERY')}
-            </option>
-          </select>
-        </label>
+      {/*
+        On a row of its own, and only once asked for: without it the range is
+        charged once, which is what most rules want and what every rule stored
+        before the multiplier existed does.
+      */}
+      {!isManualSupplement && multiplier ? (
+        <div className="mt-2">
+          <label className="mr-2">
+            <span className="mr-2">{t('PRICE_RANGE_EDITOR.MULTIPLIER')}</span>
+            <select
+              data-testid="rule-price-range-multiplier"
+              className="form-control d-inline-block"
+              style={{ width: '260px' }}
+              value={multiplier}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                setMultiplier(e.target.value as Multiplier);
+              }}>
+              <option value="packages.totalVolumeUnits()">
+                {t('PRICE_RANGE_EDITOR.PER_VOLUME_UNIT')}
+              </option>
+              <option value="delivery.packages.totalVolumeUnits()">
+                {t('PRICE_RANGE_EDITOR.PER_VOLUME_UNIT_DELIVERY')}
+              </option>
+            </select>
+          </label>
+          <button
+            type="button"
+            className="btn btn-xs btn-default"
+            onClick={() => setMultiplier(null)}>
+            <i className="fa fa-times mr-1"></i>
+            <span>{t('PRICE_RANGE_EDITOR.DEL_MULTIPLIER')}</span>
+          </button>
+        </div>
+      ) : null}
+      {!isManualSupplement && !multiplier ? (
+        <div className="mt-2">
+          <button
+            type="button"
+            className="btn btn-xs btn-default"
+            onClick={() => setMultiplier('packages.totalVolumeUnits()')}>
+            <i className="fa fa-plus mr-1"></i>
+            <span>{t('PRICE_RANGE_EDITOR.ADD_MULTIPLIER')}</span>
+          </button>
+        </div>
       ) : null}
     </div>
   );

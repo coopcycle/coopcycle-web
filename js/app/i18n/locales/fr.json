@@ -352,8 +352,9 @@
         "PAYMENT_FORM_NOT_SUPPORTED": "Nous nʼacceptons pas (encore !) les cartes Titre Restaurant, veuillez utiliser une carte bleue classique ou une carte Swile.",
         "PRICE_RANGE_EDITOR": {
             "FOR_EVERY": "par tranche de",
-            "PER": "facturé",
-            "PER_DELIVERY": "une fois",
+            "MULTIPLIER": "Multiplicateur",
+            "ADD_MULTIPLIER": "Ajouter un multiplicateur",
+            "DEL_MULTIPLIER": "Supprimer le multiplicateur",
             "PER_VOLUME_UNIT": "par unité de volume",
             "PER_VOLUME_UNIT_DELIVERY": "par unité de volume (toute la livraison)",
             "ABOVE": "à partir de",
