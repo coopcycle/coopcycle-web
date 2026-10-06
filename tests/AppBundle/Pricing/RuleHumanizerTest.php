@@ -93,6 +93,30 @@ class RuleHumanizerTest extends KernelTestCase
         );
     }
 
+    public function testPriceRangePerVolumeUnit()
+    {
+        $rule = new PricingRule();
+        $rule->setExpression('distance > 2500');
+        $rule->setPrice('price_range(distance, 50, 1000, 2500, packages.totalVolumeUnits())');
+
+        $this->assertStringContainsString(
+            'par unité de volume',
+            $this->humanizer->humanize($rule)
+        );
+    }
+
+    public function testPriceRangeWithoutMultiplierIsUnchanged()
+    {
+        $rule = new PricingRule();
+        $rule->setExpression('distance > 2500');
+        $rule->setPrice('price_range(distance, 50, 1000, 2500)');
+
+        $this->assertStringNotContainsString(
+            'unité de volume',
+            $this->humanizer->humanize($rule)
+        );
+    }
+
     public function testPricePerPackage()
     {
         $rule = new PricingRule();

@@ -274,12 +274,14 @@ export class PercentagePrice extends Price {
 }
 
 export class PriceRange extends Price {
-  constructor(attribute, price, step, threshold) {
+  constructor(attribute, price, step, threshold, multiplier = null) {
     super()
     this.attribute = attribute
     this.price = price
     this.step = step
     this.threshold = threshold
+    // Charged once per unit of this variable, null when charged once
+    this.multiplier = multiplier
   }
 }
 
@@ -315,13 +317,13 @@ const parsePriceNode = (node, expression) => {
 
     const args = node.nodes.arguments.nodes
 
-    const attribute = (args[0].nodes?.node?.attributes.name === 'packages' && args[0].nodes?.attribute?.attributes.value === 'totalVolumeUnits')
-      ? 'packages.totalVolumeUnits()' : args[0].attributes.name
+    const attribute = volumeUnitsAttribute(args[0]) ?? args[0].attributes.name
     const price     = args[1].attributes.value
     const step      = args[2].attributes.value
     const threshold = args[3].attributes.value
+    const multiplier = args[4] ? volumeUnitsAttribute(args[4]) : null
 
-    return new PriceRange(attribute, price, step, threshold)
+    return new PriceRange(attribute, price, step, threshold, multiplier)
   }
 
   if (node.attributes.operator && node.attributes.operator === '*'

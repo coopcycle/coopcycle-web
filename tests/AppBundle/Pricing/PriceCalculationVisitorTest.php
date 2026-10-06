@@ -1289,6 +1289,119 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $this->assertEquals(700, $output->getPrice());
     }
 
+    public function testPriceRangePerVolumeUnit()
+    {
+        // "0.50 € per started km beyond 2.5 km, per package", as one rule rather
+        // than one rule per package count
+        $rule = new PricingRule();
+        $rule->setExpression('distance > 2500');
+        $rule->setPrice('price_range(distance, 50, 1000, 2500, packages.totalVolumeUnits())');
+        $rule->setTarget(PricingRule::TARGET_DELIVERY);
+        $rule->setPosition(0);
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([$rule]));
+
+        $package = new Package();
+        $package->setName('Carton');
+        $package->setMaxVolumeUnits(1);
+
+        $pickup = $this->createPickupTask();
+        $dropoff = $this->createDropoffTask();
+        $dropoff->addPackageWithQuantity($package, 2);
+
+        $delivery = Delivery::createWithTasks(...[$pickup, $dropoff]);
+        $delivery->setDistance(4500);
+
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+
+        // 2 packages x 2 started km beyond 2.5 km x 0.50 EUR
+        $this->assertEquals(200, $output->getPrice());
+    }
+
+    public function testPriceRangeWithoutMultiplierIsUnchanged()
+    {
+        $rule = new PricingRule();
+        $rule->setExpression('distance > 2500');
+        $rule->setPrice('price_range(distance, 50, 1000, 2500)');
+        $rule->setTarget(PricingRule::TARGET_DELIVERY);
+        $rule->setPosition(0);
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([$rule]));
+
+        $package = new Package();
+        $package->setName('Carton');
+        $package->setMaxVolumeUnits(1);
+
+        $pickup = $this->createPickupTask();
+        $dropoff = $this->createDropoffTask();
+        $dropoff->addPackageWithQuantity($package, 2);
+
+        $delivery = Delivery::createWithTasks(...[$pickup, $dropoff]);
+        $delivery->setDistance(4500);
+
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+
+        // Charged once, whatever the delivery carries
+        $this->assertEquals(100, $output->getPrice());
+    }
+
+    public function testPriceRangePerVolumeUnitChargesNothingWithoutPackages()
+    {
+        $rule = new PricingRule();
+        $rule->setExpression('distance > 2500');
+        $rule->setPrice('price_range(distance, 50, 1000, 2500, packages.totalVolumeUnits())');
+        $rule->setTarget(PricingRule::TARGET_DELIVERY);
+        $rule->setPosition(0);
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([$rule]));
+
+        $delivery = Delivery::createWithTasks(
+            ...[$this->createPickupTask(), $this->createDropoffTask()]
+        );
+        $delivery->setDistance(4500);
+
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+
+        $this->assertNull($output->getPrice());
+    }
+
+    public function testPriceRangePerVolumeUnitOnEachPoint()
+    {
+        // A per-point rule reads the packages of the whole delivery through the
+        // delivery-wide twin, the pickup carrying none of its own
+        $rule = new PricingRule();
+        $rule->setExpression('task.type == "PICKUP"');
+        $rule->setPrice('price_range(distance, 50, 1000, 2500, delivery.packages.totalVolumeUnits())');
+        $rule->setTarget(PricingRule::TARGET_TASK);
+        $rule->setPosition(0);
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([$rule]));
+
+        $package = new Package();
+        $package->setName('Carton');
+        $package->setMaxVolumeUnits(1);
+
+        $pickup = $this->createPickupTask();
+        $dropoff = $this->createDropoffTask();
+        $dropoff->addPackageWithQuantity($package, 2);
+
+        $delivery = Delivery::createWithTasks(...[$pickup, $dropoff]);
+        $delivery->setDistance(4500);
+
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+
+        // A point scope has no distance of its own, so nothing is charged
+        $this->assertNull($output->getPrice());
+    }
+
     public function testMultiPointGetPriceWithPricePerPackage()
     {
         $rule1 = new PricingRule();

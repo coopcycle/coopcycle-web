@@ -82,11 +82,21 @@ const formatValueForUi = (value: number, unit: Unit): number => {
   return value;
 };
 
+/*
+  The multiplier charges the range once per unit of something else: with the volume
+  units of the delivery, "0.50 € per km beyond 2.5 km, per package" is a single rule
+  rather than one rule per package count.
+*/
+export type Multiplier =
+  | 'packages.totalVolumeUnits()'
+  | 'delivery.packages.totalVolumeUnits()';
+
 export type PriceRangeValue = {
   attribute: Attribute;
   price: number;
   step: number;
   threshold: number;
+  multiplier?: Multiplier | null;
 };
 
 type Props = {
@@ -109,6 +119,9 @@ export default ({ isManualSupplement, defaultValue, onChange }: Props) => {
     defaultValue.step || (isManualSupplement ? 1 : 1000),
   );
   const [threshold, setThreshold] = useState(defaultValue.threshold || 0);
+  const [multiplier, setMultiplier] = useState<Multiplier | null>(
+    defaultValue.multiplier ?? null,
+  );
 
   const initialLoad = useRef(true);
 
@@ -119,11 +132,12 @@ export default ({ isManualSupplement, defaultValue, onChange }: Props) => {
         price: price,
         step,
         threshold,
+        multiplier,
       });
     } else {
       initialLoad.current = false;
     }
-  }, [price, threshold, attribute, step, onChange]);
+  }, [price, threshold, attribute, step, multiplier, onChange]);
 
   return (
     <div data-testid="price_rule_price_range_editor">
@@ -207,6 +221,27 @@ export default ({ isManualSupplement, defaultValue, onChange }: Props) => {
           </span>
         ) : null}
       </label>
+      {!isManualSupplement ? (
+        <label>
+          <span className="mx-2">{t('PRICE_RANGE_EDITOR.PER')}</span>
+          <select
+            data-testid="rule-price-range-multiplier"
+            className="form-control d-inline-block align-top"
+            style={{ width: '220px' }}
+            value={multiplier ?? ''}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+              setMultiplier((e.target.value as Multiplier) || null);
+            }}>
+            <option value="">{t('PRICE_RANGE_EDITOR.PER_DELIVERY')}</option>
+            <option value="packages.totalVolumeUnits()">
+              {t('RULE_PICKER_LINE_VOLUME_UNITS_TARGET_TASK')}
+            </option>
+            <option value="delivery.packages.totalVolumeUnits()">
+              {t('RULE_PICKER_LINE_VOLUME_UNITS_DELIVERY')}
+            </option>
+          </select>
+        </label>
+      ) : null}
     </div>
   );
 };

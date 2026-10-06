@@ -1793,6 +1793,8 @@ pricing.rule.humanizer.delivery_packages_volume_units: total volume of the deliv
 pricing.rule.humanizer.packages_contains_at_least_one: packages %package_name%
 pricing.rule.humanizer.price_range: '%unit_price% per %step%'
 pricing.rule.humanizer.price_range_with_threshold: 'above %threshold% - %unit_price% per %step%'
+pricing.rule.humanizer.price_range_per: '%price_range%, per %multiplier%'
+pricing.rule.humanizer.multiplier.volume_units: volume unit
 pricing.rule.humanizer.price_per_package: '%unit_price% per %package_name%'
 adminDashboard.promotions.ongoing: Ongoing promotions (%count%)
 adminDashboard.promotions.past: Past promotions (%count%)

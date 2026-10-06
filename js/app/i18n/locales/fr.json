@@ -352,6 +352,8 @@
         "PAYMENT_FORM_NOT_SUPPORTED": "Nous nʼacceptons pas (encore !) les cartes Titre Restaurant, veuillez utiliser une carte bleue classique ou une carte Swile.",
         "PRICE_RANGE_EDITOR": {
             "FOR_EVERY": "par tranche de",
+            "PER": "facturé",
+            "PER_DELIVERY": "une fois",
             "ABOVE": "à partir de",
             "TYPE_FIXED": "Prix TTC fixe",
             "TYPE_PERCENTAGE": "Pourcentage",

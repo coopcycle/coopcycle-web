@@ -135,6 +135,20 @@ class RuleHumanizer
      * adjectival in English ("pickup address"), prepositional in French
      * ("adresse du retrait").
      */
+    /**
+     * What a price range is charged per unit of. Only the package counts can be
+     * picked, and both read the same way to whoever is looking at the price.
+     */
+    private function translateMultiplier(string $multiplier): string
+    {
+        return match ($multiplier) {
+            'packages.totalVolumeUnits()',
+            'delivery.packages.totalVolumeUnits()' =>
+                $this->translator->trans('pricing.rule.humanizer.multiplier.volume_units'),
+            default => $multiplier,
+        };
+    }
+
     private function translateAddressSource(string $addressSource): string
     {
         return $this->translator->trans(
@@ -447,22 +461,36 @@ class RuleHumanizer
 
     private function humanizePriceRangeExpression(PriceRangeExpression $priceExpression, string $rawPriceExpression): string
     {
-        if (in_array($priceExpression->attribute, ['distance', 'weight', 'packages.totalVolumeUnits()'])) {
-            if ($priceExpression->threshold === 0) {
-                return $this->translator->trans('pricing.rule.humanizer.price_range', [
-                    '%unit_price%' => $this->priceFormatter->formatWithSymbol($priceExpression->price),
-                    '%step%' => $this->formatValue($priceExpression->step, $priceExpression->attribute),
-                ]);
-            } else {
-                return $this->translator->trans('pricing.rule.humanizer.price_range_with_threshold', [
-                    '%unit_price%' => $this->priceFormatter->formatWithSymbol($priceExpression->price),
-                    '%step%' => $this->formatValue($priceExpression->step, $priceExpression->attribute),
-                    '%threshold%' => $this->formatValue($priceExpression->threshold, $priceExpression->attribute),
-                ]);
-            }
-        } else {
+        if (!in_array($priceExpression->attribute, ['distance', 'weight', 'packages.totalVolumeUnits()'])) {
             return $rawPriceExpression;
         }
+
+        $parameters = [
+            '%unit_price%' => $this->priceFormatter->formatWithSymbol($priceExpression->price),
+            '%step%' => $this->formatValue($priceExpression->step, $priceExpression->attribute),
+        ];
+
+        if ($priceExpression->threshold === 0) {
+            $humanized = $this->translator->trans('pricing.rule.humanizer.price_range', $parameters);
+        } else {
+            $parameters['%threshold%'] =
+                $this->formatValue($priceExpression->threshold, $priceExpression->attribute);
+
+            $humanized = $this->translator->trans(
+                'pricing.rule.humanizer.price_range_with_threshold',
+                $parameters
+            );
+        }
+
+        // Charged once per unit of something else, rather than once
+        if (null !== $priceExpression->multiplier) {
+            $humanized = $this->translator->trans('pricing.rule.humanizer.price_range_per', [
+                '%price_range%' => $humanized,
+                '%multiplier%' => $this->translateMultiplier($priceExpression->multiplier),
+            ]);
+        }
+
+        return $humanized;
     }
 
     private function humanizePricePerPackageExpression(PricePerPackageExpression $priceExpression, string $rawPriceExpression): string

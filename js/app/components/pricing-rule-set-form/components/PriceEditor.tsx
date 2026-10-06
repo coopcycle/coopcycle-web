@@ -32,9 +32,11 @@ export default function PriceEditor({
         <PriceRangeEditor
           isManualSupplement={isManualSupplement}
           defaultValue={defaultValue}
-          onChange={({ attribute, price, step, threshold }) => {
+          onChange={({ attribute, price, step, threshold, multiplier }) => {
             onChange(
-              `price_range(${attribute}, ${price}, ${step}, ${threshold})`,
+              multiplier
+                ? `price_range(${attribute}, ${price}, ${step}, ${threshold}, ${multiplier})`
+                : `price_range(${attribute}, ${price}, ${step}, ${threshold})`,
             );
           }}
         />

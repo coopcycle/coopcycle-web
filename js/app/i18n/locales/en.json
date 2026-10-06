@@ -481,6 +481,8 @@
         "PAYMENT_FORM_NOT_SUPPORTED": "We do not (yet!) accept Ticket Restaurant cards, please use a classic credit card.",
         "PRICE_RANGE_EDITOR": {
             "FOR_EVERY": "for every",
+            "PER": "charged",
+            "PER_DELIVERY": "once",
             "ABOVE": "above",
             "TYPE_FIXED": "Fixed price incl. VAT",
             "TYPE_PERCENTAGE": "Percentage",
