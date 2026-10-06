@@ -74,6 +74,7 @@ class PricingRuleSet
     #[Groups(['pricing_rule_set:read', 'pricing_rule_set:write'])]
     protected array $options = [];
 
+    #[Groups(['pricing_rule_set:read'])]
     protected $matrices;
 
     public function __construct()

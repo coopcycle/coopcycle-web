@@ -433,6 +433,47 @@ export type PricingRule = JsonLdEntity & {
   expressionAst: object;
   price: string;
   priceAst: object;
+  // Set when the rule was generated from a cell of a pricing matrix,
+  // which makes it read-only: it is rewritten whenever the matrix is saved
+  matrix?: Uri | null;
+};
+
+export type MatrixAxisVariable =
+  | 'packages.totalVolumeUnits()'
+  | 'delivery.packages.totalVolumeUnits()'
+  | 'weight'
+  | 'distance'
+  | 'order.itemsTotal'
+  | 'zone'
+  | 'time_slot';
+
+export type MatrixAddressSource = 'pickup' | 'dropoff' | 'task';
+
+export type MatrixAxisEntry = {
+  key: string;
+  label?: string;
+  // Numeric axes, inclusive bounds, either one null for an open-ended entry
+  min?: number | null;
+  max?: number | null;
+  // Enumerated axes: the zone name, the time slot IRI, ...
+  value?: string | null;
+};
+
+export type MatrixAxis = {
+  variable: MatrixAxisVariable;
+  entries: MatrixAxisEntry[];
+  addressSource?: MatrixAddressSource;
+};
+
+export type PricingMatrix = JsonLdEntity & {
+  id: number;
+  name?: string | null;
+  target: 'DELIVERY' | 'TASK';
+  taskType?: 'PICKUP' | 'DROPOFF' | null;
+  rowAxis: MatrixAxis;
+  columnAxis: MatrixAxis;
+  // Prices in cents, keyed by "<rowKey>:<columnKey>"
+  cells: Record<string, number>;
 };
 
 export type PricingRuleSet = JsonLdEntity & {
@@ -441,6 +482,7 @@ export type PricingRuleSet = JsonLdEntity & {
   strategy: string;
   // options: Record<string, any>
   rules: PricingRule[];
+  matrices: PricingMatrix[];
 };
 
 export type OptimizationGain = {

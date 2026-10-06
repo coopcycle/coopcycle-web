@@ -56,17 +56,17 @@ class PricingMatrix
     /**
      * @var int
      */
-    #[Groups(['pricing_matrix:read'])]
+    #[Groups(['pricing_matrix:read', 'pricing_rule_set:read'])]
     protected $id;
 
     #[Groups(['pricing_matrix:read', 'pricing_matrix:write'])]
     #[Assert\NotNull]
     protected ?PricingRuleSet $ruleSet = null;
 
-    #[Groups(['pricing_matrix:read', 'pricing_matrix:write'])]
+    #[Groups(['pricing_matrix:read', 'pricing_matrix:write', 'pricing_rule_set:read'])]
     protected ?string $name = null;
 
-    #[Groups(['pricing_matrix:read', 'pricing_matrix:write'])]
+    #[Groups(['pricing_matrix:read', 'pricing_matrix:write', 'pricing_rule_set:read'])]
     #[Assert\Choice(choices: [PricingRule::TARGET_DELIVERY, PricingRule::TARGET_TASK])]
     protected string $target = PricingRule::TARGET_TASK;
 
@@ -74,7 +74,7 @@ class PricingMatrix
      * For a per-point matrix: restricts the matrix to pickups or to dropoffs.
      * Null means it applies to every point.
      */
-    #[Groups(['pricing_matrix:read', 'pricing_matrix:write'])]
+    #[Groups(['pricing_matrix:read', 'pricing_matrix:write', 'pricing_rule_set:read'])]
     protected ?string $taskType = null;
 
     protected array $rowAxis = [];
@@ -156,7 +156,7 @@ class PricingMatrix
      * The axes are exposed as the raw arrays they are stored as: MatrixAxis is the
      * typed view used by the generator, not a serialization format.
      */
-    #[Groups(['pricing_matrix:read', 'pricing_matrix:write'])]
+    #[Groups(['pricing_matrix:read', 'pricing_matrix:write', 'pricing_rule_set:read'])]
     #[SerializedName('rowAxis')]
     public function getRowAxisArray(): array
     {
@@ -170,7 +170,7 @@ class PricingMatrix
         return $this;
     }
 
-    #[Groups(['pricing_matrix:read', 'pricing_matrix:write'])]
+    #[Groups(['pricing_matrix:read', 'pricing_matrix:write', 'pricing_rule_set:read'])]
     #[SerializedName('columnAxis')]
     public function getColumnAxisArray(): array
     {
@@ -211,7 +211,7 @@ class PricingMatrix
     /**
      * @return array<string, int>
      */
-    #[Groups(['pricing_matrix:read', 'pricing_matrix:write'])]
+    #[Groups(['pricing_matrix:read', 'pricing_matrix:write', 'pricing_rule_set:read'])]
     public function getCells(): array
     {
         return $this->cells;

@@ -19,6 +19,7 @@ import {
   OrderValidation,
   Store,
   Address,
+  PricingMatrix,
   PricingRuleSet,
   Delivery,
   RecurrenceRule,
@@ -383,6 +384,32 @@ export const apiSlice = createApi({
       invalidatesTags: (result, error, { id }) => [
         { type: 'PricingRuleSet', id },
       ],
+    }),
+    createPricingMatrix: builder.mutation<PricingMatrix, Partial<PricingMatrix>>({
+      query: matrix => ({
+        url: 'api/pricing_matrices',
+        method: 'POST',
+        body: matrix,
+      }),
+      invalidatesTags: ['PricingRuleSet'],
+    }),
+    updatePricingMatrix: builder.mutation<
+      PricingMatrix,
+      { id: number } & Partial<PricingMatrix>
+    >({
+      query: ({ id, ...patch }) => ({
+        url: `api/pricing_matrices/${id}`,
+        method: 'PUT',
+        body: patch,
+      }),
+      invalidatesTags: ['PricingRuleSet'],
+    }),
+    deletePricingMatrix: builder.mutation<void, number>({
+      query: id => ({
+        url: `api/pricing_matrices/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['PricingRuleSet'],
     }),
     deletePricingRuleSet: builder.mutation<void, number>({
       query: id => ({
@@ -960,6 +987,9 @@ export const {
   useCreatePricingRuleSetMutation,
   useUpdatePricingRuleSetMutation,
   useDeletePricingRuleSetMutation,
+  useCreatePricingMatrixMutation,
+  useUpdatePricingMatrixMutation,
+  useDeletePricingMatrixMutation,
   useIncidentActionMutation,
   useGetUserQuery,
   useGetTaskEventsQuery,

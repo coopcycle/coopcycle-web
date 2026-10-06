@@ -22,6 +22,7 @@ import { VALIDATION_ERRORS } from './components/PricingRule';
 import ShowApplications from '../Applications';
 import LegacyPricingRulesWarning from './components/LegacyPricingRulesWarning';
 import PricingRuleSection from './components/PricingRuleSection';
+import PricingMatrixSection from './matrix/PricingMatrixSection';
 
 import './pricing-rule-set-form.scss';
 import HelpIcon from '../HelpIcon';
@@ -54,34 +55,47 @@ const PricingRuleSetForm = ({
     },
   );
 
+  // Rules generated from a matrix are owned by it: they are edited in the matrix
+  // section, not here, but they are still sent back on save — leaving one out of
+  // the payload would delete it, which the API refuses
+  const generatedRules = useMemo(() => {
+    return rules.filter(rule => Boolean(rule.matrix));
+  }, [rules]);
+
+  const editableRules = useMemo(() => {
+    return rules.filter(rule => !rule.matrix);
+  }, [rules]);
+
   // Rules by target type
   const legacyRules = useMemo(() => {
-    return rules.filter(rule => rule.target === 'LEGACY_TARGET_DYNAMIC');
-  }, [rules]);
+    return editableRules.filter(
+      rule => rule.target === 'LEGACY_TARGET_DYNAMIC',
+    );
+  }, [editableRules]);
 
   const taskRules = useMemo(() => {
-    return rules.filter(
+    return editableRules.filter(
       rule => rule.target === 'TASK' && !isManualSupplement(rule),
     );
-  }, [rules]);
+  }, [editableRules]);
 
   const deliveryRules = useMemo(() => {
-    return rules.filter(
+    return editableRules.filter(
       rule => rule.target === 'DELIVERY' && !isManualSupplement(rule),
     );
-  }, [rules]);
+  }, [editableRules]);
 
   const taskManualSupplementRules = useMemo(() => {
-    return rules.filter(
+    return editableRules.filter(
       rule => rule.target === 'TASK' && isManualSupplement(rule),
     );
-  }, [rules]);
+  }, [editableRules]);
 
   const deliveryManualSupplementRules = useMemo(() => {
-    return rules.filter(
+    return editableRules.filter(
       rule => rule.target === 'DELIVERY' && isManualSupplement(rule),
     );
-  }, [rules]);
+  }, [editableRules]);
 
   // Ordered rules list
   const orderedRules = useMemo(() => {
@@ -91,6 +105,8 @@ const PricingRuleSetForm = ({
       ...taskManualSupplementRules,
       ...deliveryRules,
       ...deliveryManualSupplementRules,
+      // The server puts the matrix rules back in front of the others
+      ...generatedRules,
     ];
   }, [
     legacyRules,
@@ -98,6 +114,7 @@ const PricingRuleSetForm = ({
     deliveryRules,
     taskManualSupplementRules,
     deliveryManualSupplementRules,
+    generatedRules,
   ]);
 
   const {
@@ -123,7 +140,18 @@ const PricingRuleSetForm = ({
           strategy: ruleSet.strategy || 'find',
           options: Array.isArray(ruleSet.options) ? ruleSet.options : [],
         });
-        setRules(ruleSet.rules);
+        setRules(previous => {
+          if (previous.length === 0) {
+            return ruleSet.rules;
+          }
+
+          // A matrix save refetches the rule set: take its generated rules, but
+          // do not throw away edits in progress on the hand-written ones
+          return [
+            ...previous.filter(rule => !rule.matrix),
+            ...ruleSet.rules.filter(rule => Boolean(rule.matrix)),
+          ];
+        });
       } catch (error) {
         console.error('Error initializing form:', error);
         // Set default values if there's an error
@@ -372,6 +400,25 @@ const PricingRuleSetForm = ({
         <Divider />
 
         <Form.Item
+          label={
+            <>
+              {t('PRICING_MATRIX_SECTION_TITLE')}
+              <HelpIcon
+                className="ml-1"
+                tooltipText={t('PRICING_MATRIX_HELP')}
+              />
+            </>
+          }>
+          <PricingMatrixSection
+            matrices={ruleSet?.matrices ?? []}
+            ruleSetUri={ruleSetUri}
+            onSaved={() => undefined}
+          />
+        </Form.Item>
+
+        <Divider />
+
+        <Form.Item
           className="pricing-rule-set"
           label={
             <>
@@ -388,6 +435,17 @@ const PricingRuleSetForm = ({
               <Alert
                 message={t('FORM_PRICING_RULE_SET_NO_RULE_FOUND')}
                 type="warning"
+                className="mb-2"
+              />
+            )}
+
+            {generatedRules.length > 0 && (
+              <Alert
+                message={t('PRICING_MATRIX_GENERATED_RULES_NOTICE', {
+                  count: generatedRules.length,
+                })}
+                type="info"
+                showIcon
                 className="mb-2"
               />
             )}
