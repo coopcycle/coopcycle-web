@@ -226,7 +226,10 @@ class LiveUpdates
             return;
         }
 
-        $payload['version'] = $this->versionOf($payload['data'] ?? []);
+        // Not every payload describes an entity: 'notifications:count' carries a
+        // bare number, which has no version.
+        $data = $payload['data'] ?? null;
+        $payload['version'] = is_array($data) ? $this->versionOf($data) : null;
 
         $this->messageBus->dispatch(new PublishToCentrifugo($channels, $payload));
     }
