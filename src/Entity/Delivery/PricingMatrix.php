@@ -54,7 +54,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 class PricingMatrix
 {
     /**
-     * @var int
+     * Null until the matrix has been persisted.
+     *
+     * @var int|null
      */
     #[Groups(['pricing_matrix:read', 'pricing_rule_set:read'])]
     protected $id;

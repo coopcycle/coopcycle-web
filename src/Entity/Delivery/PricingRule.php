@@ -37,7 +37,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 class PricingRule
 {
     /**
-     * @var int
+     * Null until the rule has been persisted.
+     *
+     * @var int|null
      */
     #[Groups(['pricing_rule_set:read'])]
     protected $id;
@@ -103,7 +105,7 @@ class PricingRule
     /**
      * Gets id.
      *
-     * @return int
+     * @return int|null
      */
     public function getId()
     {
