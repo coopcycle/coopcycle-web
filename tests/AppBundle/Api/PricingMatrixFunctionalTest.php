@@ -136,6 +136,48 @@ class PricingMatrixFunctionalTest extends ApiTestCase
         }
     }
 
+    public function testALabelledCellIsNamedAfterItsRowAndColumn()
+    {
+        $client = $this->createAdminClient();
+
+        $client->request('POST', '/api/pricing_matrices', [
+            'headers' => ['Content-Type' => 'application/ld+json'],
+            'json' => $this->matrixPayload(),
+        ]);
+
+        $this->assertEquals('S - Z1', $this->freshRuleSet()->getRules()->first()->getName());
+    }
+
+    public function testAnUnlabelledCellIsLeftNameless()
+    {
+        // Left nameless rather than named after nothing: the rule is then described
+        // by its expression wherever it is shown
+        $client = $this->createAdminClient();
+
+        $payload = $this->matrixPayload();
+        $payload['rowAxis']['entries'] = [
+            ['key' => 'r_s', 'label' => '', 'min' => 1, 'max' => 1],
+            ['key' => 'r_m', 'label' => '', 'min' => 2, 'max' => 3],
+        ];
+        $payload['columnAxis']['entries'] = [
+            ['key' => 'c_z1', 'label' => '', 'value' => 'Z1'],
+        ];
+
+        $client->request('POST', '/api/pricing_matrices', [
+            'headers' => ['Content-Type' => 'application/ld+json'],
+            'json' => $payload,
+        ]);
+
+        $this->assertResponseStatusCodeSame(201);
+
+        $name = $this->freshRuleSet()->getRules()->first()->getName();
+
+        $this->assertTrue(
+            null === $name || '' === trim($name),
+            sprintf('Expected no name, got "%s"', $name)
+        );
+    }
+
     public function testUpdatingACellUpdatesItsRuleInPlace()
     {
         $client = $this->createAdminClient();

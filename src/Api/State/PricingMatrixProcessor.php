@@ -53,7 +53,14 @@ class PricingMatrixProcessor implements ProcessorInterface
             if (null !== $rule->getId()) {
                 $changeSet = $unitOfWork->getEntityChangeSet($rule);
 
-                if ($name === $rule->getName() && !isset($changeSet['price'])) {
+                // A nameless cell is stored as an empty value, so compare it as the
+                // absence of a name rather than recreating it on every save
+                $currentName = $rule->getName();
+                $currentName = (null !== $currentName && '' !== trim($currentName))
+                    ? trim($currentName)
+                    : null;
+
+                if ($name === $currentName && !isset($changeSet['price'])) {
                     continue;
                 }
             }

@@ -111,6 +111,79 @@ class PricingMatrixRuleGeneratorTest extends TestCase
         }
     }
 
+    public function testAnUnlabelledCellIsLeftNameless()
+    {
+        // A grid is often priced before it is labelled. Naming the rule after two
+        // empty labels gave every cell the name "-", which is what the customer
+        // then saw on the order line.
+        $matrix = $this->createMatrix();
+
+        $rowAxis = $matrix->getRowAxis();
+        $matrix->setRowAxis(new MatrixAxis(
+            variable: $rowAxis->variable,
+            entries: [new MatrixAxisEntry(key: 'r_s', label: '', min: 1, max: 1)],
+        ));
+
+        $columnAxis = $matrix->getColumnAxis();
+        $matrix->setColumnAxis(new MatrixAxis(
+            variable: $columnAxis->variable,
+            entries: [new MatrixAxisEntry(key: 'c_z1', label: '   ', value: 'Z1')],
+            addressSource: $columnAxis->addressSource,
+        ));
+
+        $this->generator->generate($matrix);
+
+        $this->assertNull($matrix->getRuleSet()->getRules()->first()->getNameInput());
+    }
+
+    public function testACellNamedOnOneAxisOnlyKeepsThatLabel()
+    {
+        $matrix = $this->createMatrix();
+
+        $columnAxis = $matrix->getColumnAxis();
+        $matrix->setColumnAxis(new MatrixAxis(
+            variable: $columnAxis->variable,
+            entries: [new MatrixAxisEntry(key: 'c_z1', label: '', value: 'Z1')],
+            addressSource: $columnAxis->addressSource,
+        ));
+
+        $this->generator->generate($matrix);
+
+        $this->assertEquals('S', $matrix->getRuleSet()->getRules()->first()->getNameInput());
+    }
+
+    public function testRemovingALabelClearsTheNameItHad()
+    {
+        $matrix = $this->createMatrix();
+        $this->generator->generate($matrix);
+
+        $rule = $matrix->getRuleSet()->getRules()->first();
+        $this->assertEquals('S - Z1', $rule->getNameInput());
+
+        $rowAxis = $matrix->getRowAxis();
+        $matrix->setRowAxis(new MatrixAxis(
+            variable: $rowAxis->variable,
+            entries: [
+                new MatrixAxisEntry(key: 'r_s', label: '', min: 1, max: 1),
+                ...array_slice($rowAxis->entries, 1),
+            ],
+        ));
+
+        $columnAxis = $matrix->getColumnAxis();
+        $matrix->setColumnAxis(new MatrixAxis(
+            variable: $columnAxis->variable,
+            entries: [
+                new MatrixAxisEntry(key: 'c_z1', label: '', value: 'Z1'),
+                ...array_slice($columnAxis->entries, 1),
+            ],
+            addressSource: $columnAxis->addressSource,
+        ));
+
+        $this->generator->generate($matrix);
+
+        $this->assertNull($rule->getNameInput());
+    }
+
     public function testEmptyCellGeneratesNoRule()
     {
         $matrix = $this->createMatrix();

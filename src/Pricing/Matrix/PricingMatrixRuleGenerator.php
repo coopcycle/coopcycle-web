@@ -67,10 +67,8 @@ class PricingMatrixRuleGenerator
                 $rule->setExpression($this->expressionFor($matrix, $rowAxis, $row, $columnAxis, $column));
                 $rule->setPrice((string) $price);
 
-                $name = $this->nameFor($row, $column);
-                if (null !== $name) {
-                    $rule->setNameInput($name);
-                }
+                // Always set it, so dropping a label clears the name it had
+                $rule->setNameInput($this->nameFor($row, $column));
 
                 $kept[$key] = $rule;
             }
@@ -148,14 +146,28 @@ class PricingMatrixRuleGenerator
         return sprintf('task.type == "%s"', $matrix->getTaskType());
     }
 
+    /**
+     * The customer-facing name of a cell, built from the labels of its row and its
+     * column. A grid is often priced before it is labelled, and an unlabelled cell
+     * is left nameless rather than named after nothing: a rule with no name of its
+     * own is then described by its expression, the same as a hand-written one
+     * (@see OnDemandDeliveryProductProcessor, PricingRuleNormalizer).
+     */
     private function nameFor(MatrixAxisEntry $row, MatrixAxisEntry $column): ?string
     {
-        if (null === $row->label || null === $column->label) {
-            // Let the rule be named after its expression, as a hand-written one would be
+        $labels = array_values(array_filter(
+            array_map(
+                fn(?string $label) => null === $label ? '' : trim($label),
+                [$row->label, $column->label]
+            ),
+            fn(string $label) => '' !== $label
+        ));
+
+        if (0 === count($labels)) {
             return null;
         }
 
-        return sprintf('%s - %s', $row->label, $column->label);
+        return implode(' - ', $labels);
     }
 
     /**
