@@ -64,7 +64,7 @@ context(
         cy.get('[data-testid="condition-operator-select"]').select('>')
         cy.get('[data-testid="condition-number-input"]').type('{selectall}3')
 
-        cy.antdSelect('[data-testid="rule-price-type"]', 'Prix TTC par tranches')
+        cy.antdSelect('[data-testid="rule-price-type"]', 'Prix par tranches')
         cy.get('[data-testid="rule-price-range-price"]').clear()
         cy.get('[data-testid="rule-price-range-price"]').type('3')
         cy.get('[data-testid="rule-price-range-step"]').clear()
@@ -108,7 +108,7 @@ context(
       }).should('be.visible')
       cy.get('[data-testid="pricing-rule-set-rule-4"]').within(() => {
         cy.get('[data-testid="rule-name"]').type('Waiting time')
-        cy.antdSelect('[data-testid="rule-price-type"]', 'Prix TTC par tranches')
+        cy.antdSelect('[data-testid="rule-price-type"]', 'Prix par tranches')
         cy.get('[data-testid="rule-price-range-price"]').type('{selectall}0.1')
       })
 

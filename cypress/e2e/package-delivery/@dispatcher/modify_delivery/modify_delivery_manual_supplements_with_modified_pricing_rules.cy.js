@@ -51,6 +51,7 @@ context('Delivery (role: dispatcher)', () => {
 
     cy.get('[data-testid="pricing-rule-set-rule-1"]').within(() => {
       // Modify price
+      // Prices are entered without VAT, so this is 9.60 € once taxed
       cy.get('[data-testid="rule-price-range-price"]').type('{selectall}8');
     });
 
@@ -105,7 +106,7 @@ context('Delivery (role: dispatcher)', () => {
     });
 
     // Verify total price updates
-    cy.get('[data-testid="tax-included"]').contains('36,99 €');
+    cy.get('[data-testid="tax-included"]').contains('43,39 €');
 
     // Save changes
     cy.get('button[type="submit"]').click();
@@ -119,12 +120,12 @@ context('Delivery (role: dispatcher)', () => {
           'contain',
           '4 × Waiting time supplement',
         );
-        cy.get('[data-testid="price"]').should('contain', '€32.00');
+        cy.get('[data-testid="price"]').should('contain', '€38.40');
       });
     });
 
     cy.get('[data-testid="order-total-including-tax"]')
       .find('[data-testid="value"]')
-      .contains('€36.99');
+      .contains('€43.39');
   });
 });
