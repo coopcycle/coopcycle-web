@@ -210,12 +210,19 @@
     opacity: 0.45;
   }
 
-  /* Always visible: it is the only way to drop a row or a column */
+  /*
+    The remove button gets a row of its own rather than being laid over the label:
+    overlapping a text field made it unclickable behind antd's own positioning, and
+    put a delete one stray click away from the end of the label.
+  */
+  &__header-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    min-height: 20px;
+  }
+
   &__remove {
-    position: absolute;
-    top: 0;
-    right: 0;
-    opacity: 0.45;
+    opacity: 0.55;
     transition: opacity 0.2s;
   }
 

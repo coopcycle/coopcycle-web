@@ -169,17 +169,19 @@ const PricingMatrixGrid = ({
     index: number,
     label: string,
   ) => (
-    <Tooltip title={label}>
-      <Button
-        className="pricing-matrix__remove"
-        type="text"
-        size="small"
-        danger
-        aria-label={label}
-        icon={<CloseOutlined />}
-        onClick={() => removeEntry(axis, onChange, index)}
-      />
-    </Tooltip>
+    <div className="pricing-matrix__header-toolbar">
+      <Tooltip title={label}>
+        <Button
+          className="pricing-matrix__remove"
+          type="text"
+          size="small"
+          danger
+          aria-label={label}
+          icon={<CloseOutlined />}
+          onClick={() => removeEntry(axis, onChange, index)}
+        />
+      </Tooltip>
+    </div>
   );
 
   const variableSelect = (
