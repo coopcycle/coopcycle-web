@@ -90,6 +90,7 @@ use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\EmailManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\PackageSetManager;
+use AppBundle\Service\PriceHelper;
 use AppBundle\Service\PricingRuleSetManager;
 use AppBundle\Service\RfmSegmentCalculator;
 use AppBundle\Service\SettingsManager;
@@ -1213,7 +1214,7 @@ class AdminController extends AbstractController
     }
 
     #[Route(path: '/admin/deliveries/pricing/new', name: 'admin_deliveries_pricing_ruleset_new')]
-    public function newPricingRuleSetAction(Request $request)
+    public function newPricingRuleSetAction(Request $request, PriceHelper $priceHelper)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -1221,6 +1222,7 @@ class AdminController extends AbstractController
             return $this->render('admin/pricing_rule_set_beta.html.twig', $this->auth([
                 'isNew' => true,
                 'ruleSetId' => null,
+                'taxRate' => $priceHelper->getTaxRateAmount(),
             ]));
         }
 
@@ -1230,7 +1232,7 @@ class AdminController extends AbstractController
     }
 
     #[Route(path: '/admin/deliveries/pricing/{id}', name: 'admin_deliveries_pricing_ruleset')]
-    public function pricingRuleSetAction($id, Request $request)
+    public function pricingRuleSetAction($id, Request $request, PriceHelper $priceHelper)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $ruleSet = $this->entityManager
@@ -1246,6 +1248,7 @@ class AdminController extends AbstractController
                 'isNew' => false,
                 'ruleSetId' => $id,
                 'ruleSet' => $ruleSet,
+                'taxRate' => $priceHelper->getTaxRateAmount(),
             ]));
         }
 

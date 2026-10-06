@@ -23,6 +23,7 @@ import ShowApplications from '../Applications';
 import LegacyPricingRulesWarning from './components/LegacyPricingRulesWarning';
 import PricingRuleSection from './components/PricingRuleSection';
 import PricingMatrixSection from './matrix/PricingMatrixSection';
+import { TaxRateContext } from './price';
 
 import './pricing-rule-set-form.scss';
 import HelpIcon from '../HelpIcon';
@@ -39,12 +40,15 @@ type Props = {
   ruleSetId: number | null;
   ruleSetUri: Uri | null;
   isNew?: boolean;
+  /** The rate deliveries are taxed at, as a fraction: 0.2 for 20% */
+  taxRate?: number;
 };
 
 const PricingRuleSetForm = ({
   ruleSetId,
   ruleSetUri,
   isNew = false,
+  taxRate = 0,
 }: Props) => {
   const { t } = useTranslation();
   const [form] = Form.useForm();
@@ -346,222 +350,226 @@ const PricingRuleSetForm = ({
   }
 
   return (
-    <div style={{ maxWidth: 1200, margin: '0 auto', padding: '24px' }}>
-      {!isNew && (
-        <div className="mb-4">
-          <ShowApplications
-            objectId={ruleSetId}
-            fetchUrl="_api_/pricing_rule_sets/{id}/applications_get"
-          />
-        </div>
-      )}
+    <TaxRateContext.Provider value={taxRate}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '24px' }}>
+        {!isNew && (
+          <div className="mb-4">
+            <ShowApplications
+              objectId={ruleSetId}
+              fetchUrl="_api_/pricing_rule_sets/{id}/applications_get"
+            />
+          </div>
+        )}
 
-      <Form
-        data-testid="pricing-rule-set-form"
-        form={form}
-        layout="vertical"
-        onFinish={handleSubmit}
-        initialValues={{
-          strategy: 'find',
-          options: [],
-        }}>
-        <Form.Item
-          name="name"
-          label={t('FORM_PRICING_RULE_SET_NAME_LABEL')}
-          rules={[{ required: true, message: t('FORM_REQUIRED') }]}>
-          <Input />
-        </Form.Item>
+        <Form
+          data-testid="pricing-rule-set-form"
+          form={form}
+          layout="vertical"
+          onFinish={handleSubmit}
+          initialValues={{
+            strategy: 'find',
+            options: [],
+          }}>
+          <Form.Item
+            name="name"
+            label={t('FORM_PRICING_RULE_SET_NAME_LABEL')}
+            rules={[{ required: true, message: t('FORM_REQUIRED') }]}>
+            <Input />
+          </Form.Item>
 
-        <Form.Item
-          name="strategy"
-          label={
-            <>
-              {t('PRICING_PRICING_RULE_SET_STRATEGY_LABEL')}
-              <HelpIcon
-                className="ml-1"
-                tooltipText={t('FORM_PRICING_RULE_SET_STRATEGY_HELP')}
-                docsPath="/en/admin/pricing_method_of_calculation"
-              />
-            </>
-          }
-          rules={[{ required: true }]}>
-          <Radio.Group>
-            <Space direction="vertical">
-              <Radio value="find">
-                {t('PRICING_PRICING_RULE_SET_STRATEGY_FIND_LABEL')}
-              </Radio>
-              <Radio value="map">
-                {t('PRICING_PRICING_RULE_SET_STRATEGY_MAP_LABEL')}
-              </Radio>
-            </Space>
-          </Radio.Group>
-        </Form.Item>
-
-        <Divider />
-
-        <Form.Item
-          label={
-            <>
-              {t('PRICING_MATRIX_SECTION_TITLE')}
-              <HelpIcon
-                className="ml-1"
-                tooltipText={t('PRICING_MATRIX_HELP')}
-              />
-            </>
-          }>
-          <PricingMatrixSection
-            matrices={ruleSet?.matrices ?? []}
-            ruleSetUri={ruleSetUri}
-            onSaved={() => undefined}
-          />
-        </Form.Item>
-
-        <Divider />
-
-        <Form.Item
-          className="pricing-rule-set"
-          label={
-            <>
-              {t('FORM_PRICING_RULE_SET_RULES_LABEL')}
-              <HelpIcon
-                className="ml-1"
-                tooltipText={t('PRICING_PRICING_RULE_HELP')}
-                docsPath="/en/admin/pricing_rule/"
-              />
-            </>
-          }>
-          <>
-            {orderedRules.length === 0 && (
-              <Alert
-                message={t('FORM_PRICING_RULE_SET_NO_RULE_FOUND')}
-                type="warning"
-                className="mb-2"
-              />
-            )}
-
-            {generatedRules.length > 0 && (
-              <Alert
-                message={t('PRICING_MATRIX_GENERATED_RULES_NOTICE', {
-                  count: generatedRules.length,
-                })}
-                type="info"
-                showIcon
-                className="mb-2"
-              />
-            )}
-
-            {legacyRules.length > 0 ? (
-              <Collapse
-                defaultActiveKey={['legacy']}
-                items={[
-                  {
-                    key: 'legacy',
-                    label: t('RULE_LEGACY_TARGET_DYNAMIC_TITLE'),
-                    children: (
-                      <div>
-                        <Form.Item className="m-0">
-                          <LegacyPricingRulesWarning
-                            migrateToTarget={ruleTarget => {
-                              setRules(
-                                rules.map(rule => ({
-                                  ...rule,
-                                  target: ruleTarget,
-                                })),
-                              );
-                            }}
-                          />
-                        </Form.Item>
-                        <PricingRuleSection
-                          target="LEGACY_TARGET_DYNAMIC"
-                          rules={legacyRules}
-                          helpMessage={t('RULE_LEGACY_TARGET_DYNAMIC_HELP')}
-                          addRuleButtonLabel={t('PRICING_ADD_RULE_LEGACY')}
-                          getGlobalIndexById={getGlobalIndexById}
-                          updateRule={updateRule}
-                          removeRule={removeRule}
-                          moveRuleWithinTarget={moveRuleWithinTarget}
-                          ruleValidationErrors={ruleValidationErrors}
-                          onAddRule={addRule}
-                        />
-                      </div>
-                    ),
-                  },
-                ]}
-              />
-            ) : (
-              <Space
-                direction="vertical"
-                size="large"
-                style={{ display: 'flex' }}>
-                <Collapse
-                  defaultActiveKey={['task']}
-                  items={[
-                    {
-                      key: 'task',
-                      label: t('RULE_TARGET_TASK_TITLE'),
-                      children: (
-                        <PricingRuleSection
-                          target="TASK"
-                          rules={taskRules}
-                          helpMessage={t('RULE_TARGET_TASK_HELP')}
-                          addRuleButtonLabel={t('PRICING_ADD_RULE_PER_TASK')}
-                          getGlobalIndexById={getGlobalIndexById}
-                          updateRule={updateRule}
-                          removeRule={removeRule}
-                          moveRuleWithinTarget={moveRuleWithinTarget}
-                          ruleValidationErrors={ruleValidationErrors}
-                          onAddRule={addRule}
-                          // Task manual supplements are not supported yet
-                          // manualSupplementRules={taskManualSupplementRules}
-                          manualSupplementRules={undefined}
-                        />
-                      ),
-                    },
-                  ]}
+          <Form.Item
+            name="strategy"
+            label={
+              <>
+                {t('PRICING_PRICING_RULE_SET_STRATEGY_LABEL')}
+                <HelpIcon
+                  className="ml-1"
+                  tooltipText={t('FORM_PRICING_RULE_SET_STRATEGY_HELP')}
+                  docsPath="/en/admin/pricing_method_of_calculation"
                 />
-                <Collapse
-                  defaultActiveKey={['delivery']}
-                  items={[
-                    {
-                      key: 'delivery',
-                      label: t('RULE_TARGET_DELIVERY_TITLE'),
-                      children: (
-                        <PricingRuleSection
-                          target="DELIVERY"
-                          rules={deliveryRules}
-                          helpMessage={t('RULE_TARGET_DELIVERY_HELP')}
-                          addRuleButtonLabel={t('PRICING_ADD_RULE')}
-                          getGlobalIndexById={getGlobalIndexById}
-                          updateRule={updateRule}
-                          removeRule={removeRule}
-                          moveRuleWithinTarget={moveRuleWithinTarget}
-                          ruleValidationErrors={ruleValidationErrors}
-                          onAddRule={addRule}
-                          manualSupplementRules={deliveryManualSupplementRules}
-                        />
-                      ),
-                    },
-                  ]}
-                />
+              </>
+            }
+            rules={[{ required: true }]}>
+            <Radio.Group>
+              <Space direction="vertical">
+                <Radio value="find">
+                  {t('PRICING_PRICING_RULE_SET_STRATEGY_FIND_LABEL')}
+                </Radio>
+                <Radio value="map">
+                  {t('PRICING_PRICING_RULE_SET_STRATEGY_MAP_LABEL')}
+                </Radio>
               </Space>
-            )}
-          </>
-        </Form.Item>
+            </Radio.Group>
+          </Form.Item>
 
-        <Divider className="mt-5" />
+          <Divider />
 
-        <Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            size="large"
-            block
-            loading={isCreating || isUpdating}>
-            {t('SAVE_BUTTON')}
-          </Button>
-        </Form.Item>
-      </Form>
-    </div>
+          <Form.Item
+            label={
+              <>
+                {t('PRICING_MATRIX_SECTION_TITLE')}
+                <HelpIcon
+                  className="ml-1"
+                  tooltipText={t('PRICING_MATRIX_HELP')}
+                />
+              </>
+            }>
+            <PricingMatrixSection
+              matrices={ruleSet?.matrices ?? []}
+              ruleSetUri={ruleSetUri}
+              onSaved={() => undefined}
+            />
+          </Form.Item>
+
+          <Divider />
+
+          <Form.Item
+            className="pricing-rule-set"
+            label={
+              <>
+                {t('FORM_PRICING_RULE_SET_RULES_LABEL')}
+                <HelpIcon
+                  className="ml-1"
+                  tooltipText={t('PRICING_PRICING_RULE_HELP')}
+                  docsPath="/en/admin/pricing_rule/"
+                />
+              </>
+            }>
+            <>
+              {orderedRules.length === 0 && (
+                <Alert
+                  message={t('FORM_PRICING_RULE_SET_NO_RULE_FOUND')}
+                  type="warning"
+                  className="mb-2"
+                />
+              )}
+
+              {generatedRules.length > 0 && (
+                <Alert
+                  message={t('PRICING_MATRIX_GENERATED_RULES_NOTICE', {
+                    count: generatedRules.length,
+                  })}
+                  type="info"
+                  showIcon
+                  className="mb-2"
+                />
+              )}
+
+              {legacyRules.length > 0 ? (
+                <Collapse
+                  defaultActiveKey={['legacy']}
+                  items={[
+                    {
+                      key: 'legacy',
+                      label: t('RULE_LEGACY_TARGET_DYNAMIC_TITLE'),
+                      children: (
+                        <div>
+                          <Form.Item className="m-0">
+                            <LegacyPricingRulesWarning
+                              migrateToTarget={ruleTarget => {
+                                setRules(
+                                  rules.map(rule => ({
+                                    ...rule,
+                                    target: ruleTarget,
+                                  })),
+                                );
+                              }}
+                            />
+                          </Form.Item>
+                          <PricingRuleSection
+                            target="LEGACY_TARGET_DYNAMIC"
+                            rules={legacyRules}
+                            helpMessage={t('RULE_LEGACY_TARGET_DYNAMIC_HELP')}
+                            addRuleButtonLabel={t('PRICING_ADD_RULE_LEGACY')}
+                            getGlobalIndexById={getGlobalIndexById}
+                            updateRule={updateRule}
+                            removeRule={removeRule}
+                            moveRuleWithinTarget={moveRuleWithinTarget}
+                            ruleValidationErrors={ruleValidationErrors}
+                            onAddRule={addRule}
+                          />
+                        </div>
+                      ),
+                    },
+                  ]}
+                />
+              ) : (
+                <Space
+                  direction="vertical"
+                  size="large"
+                  style={{ display: 'flex' }}>
+                  <Collapse
+                    defaultActiveKey={['task']}
+                    items={[
+                      {
+                        key: 'task',
+                        label: t('RULE_TARGET_TASK_TITLE'),
+                        children: (
+                          <PricingRuleSection
+                            target="TASK"
+                            rules={taskRules}
+                            helpMessage={t('RULE_TARGET_TASK_HELP')}
+                            addRuleButtonLabel={t('PRICING_ADD_RULE_PER_TASK')}
+                            getGlobalIndexById={getGlobalIndexById}
+                            updateRule={updateRule}
+                            removeRule={removeRule}
+                            moveRuleWithinTarget={moveRuleWithinTarget}
+                            ruleValidationErrors={ruleValidationErrors}
+                            onAddRule={addRule}
+                            // Task manual supplements are not supported yet
+                            // manualSupplementRules={taskManualSupplementRules}
+                            manualSupplementRules={undefined}
+                          />
+                        ),
+                      },
+                    ]}
+                  />
+                  <Collapse
+                    defaultActiveKey={['delivery']}
+                    items={[
+                      {
+                        key: 'delivery',
+                        label: t('RULE_TARGET_DELIVERY_TITLE'),
+                        children: (
+                          <PricingRuleSection
+                            target="DELIVERY"
+                            rules={deliveryRules}
+                            helpMessage={t('RULE_TARGET_DELIVERY_HELP')}
+                            addRuleButtonLabel={t('PRICING_ADD_RULE')}
+                            getGlobalIndexById={getGlobalIndexById}
+                            updateRule={updateRule}
+                            removeRule={removeRule}
+                            moveRuleWithinTarget={moveRuleWithinTarget}
+                            ruleValidationErrors={ruleValidationErrors}
+                            onAddRule={addRule}
+                            manualSupplementRules={
+                              deliveryManualSupplementRules
+                            }
+                          />
+                        ),
+                      },
+                    ]}
+                  />
+                </Space>
+              )}
+            </>
+          </Form.Item>
+
+          <Divider className="mt-5" />
+
+          <Form.Item>
+            <Button
+              type="primary"
+              htmlType="submit"
+              size="large"
+              block
+              loading={isCreating || isUpdating}>
+              {t('SAVE_BUTTON')}
+            </Button>
+          </Form.Item>
+        </Form>
+      </div>
+    </TaxRateContext.Provider>
   );
 };
 

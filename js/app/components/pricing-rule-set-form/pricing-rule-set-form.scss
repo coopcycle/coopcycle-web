@@ -50,6 +50,13 @@
     }
   }
 
+  // A number input that shows a suffix is wrapped by antd, and the dashed border
+  // then lands on the inner element, drawing a box inside the box
+  .ant-input-number-affix-wrapper .ant-input-number {
+    border: none !important;
+    background-color: transparent !important;
+  }
+
   // Keep existing form-control styles for legacy components
   .form-control {
     background-color: transparent;

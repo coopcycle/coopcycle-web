@@ -10,6 +10,7 @@ import {
   MatrixAxisVariable,
 } from '../../../api/types';
 import { useGetTimeSlotsQuery, useGetZonesQuery } from '../../../api/slice';
+import { toTaxExcluded, toTaxIncluded, useTaxRate } from '../price';
 import {
   AXIS_VARIABLES,
   VARIABLE_LABEL_KEYS,
@@ -25,7 +26,11 @@ type Props = {
   cells: Record<string, number>;
   onRowAxisChange: (axis: MatrixAxis) => void;
   onColumnAxisChange: (axis: MatrixAxis) => void;
-  onCellChange: (rowKey: string, columnKey: string, euros: number | null) => void;
+  onCellChange: (
+    rowKey: string,
+    columnKey: string,
+    euros: number | null,
+  ) => void;
   warnedKeys: Set<string>;
 };
 
@@ -45,6 +50,7 @@ const PricingMatrixGrid = ({
   warnedKeys,
 }: Props) => {
   const { t } = useTranslation();
+  const taxRate = useTaxRate();
 
   const needsZones =
     rowAxis.variable === 'zone' || columnAxis.variable === 'zone';
@@ -70,10 +76,7 @@ const PricingMatrixGrid = ({
     });
   };
 
-  const addEntry = (
-    axis: MatrixAxis,
-    onChange: (axis: MatrixAxis) => void,
-  ) => {
+  const addEntry = (axis: MatrixAxis, onChange: (axis: MatrixAxis) => void) => {
     onChange({
       ...axis,
       entries: [...axis.entries, { key: uuidv4(), label: '' }],
@@ -214,6 +217,11 @@ const PricingMatrixGrid = ({
 
   return (
     <div className="pricing-matrix__scroll">
+      {taxRate > 0 ? (
+        <small className="text-muted">
+          {t('PRICING_MATRIX_PRICES_TAX_EXCLUDED')}
+        </small>
+      ) : null}
       <table className="pricing-matrix" data-testid="pricing-matrix-grid">
         <thead>
           <tr>
@@ -285,6 +293,11 @@ const PricingMatrixGrid = ({
               </th>
               {columnAxis.entries.map(column => (
                 <td key={column.key} className="pricing-matrix__cell">
+                  {/*
+                    Cells are entered without tax and stored with it, like every
+                    other price in a rule. A hint under each one would be noise on
+                    a grid, so the legend above says it once.
+                  */}
                   <InputNumber
                     min={0}
                     step={0.5}
@@ -293,11 +306,23 @@ const PricingMatrixGrid = ({
                     style={{ width: '100%' }}
                     value={
                       cells[cellKey(row.key, column.key)] !== undefined
-                        ? cells[cellKey(row.key, column.key)] / 100
+                        ? toTaxExcluded(
+                            cells[cellKey(row.key, column.key)],
+                            taxRate,
+                          ) / 100
                         : null
                     }
                     onChange={value =>
-                      onCellChange(row.key, column.key, value as number)
+                      onCellChange(
+                        row.key,
+                        column.key,
+                        value === null || Number.isNaN(value as number)
+                          ? null
+                          : toTaxIncluded(
+                              Math.round((value as number) * 100),
+                              taxRate,
+                            ) / 100,
+                      )
                     }
                   />
                 </td>

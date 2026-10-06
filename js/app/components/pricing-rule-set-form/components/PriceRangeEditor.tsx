@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { getCurrencySymbol } from '../../../i18n';
 import { useTranslation } from 'react-i18next';
+
+import TaxExcludedPriceInput from './TaxExcludedPriceInput';
 
 type Attribute =
   | 'distance'
@@ -141,21 +142,14 @@ export default ({ isManualSupplement, defaultValue, onChange }: Props) => {
 
   return (
     <div data-testid="price_rule_price_range_editor">
-      <label className="mr-2">
-        <input
-          data-testid="rule-price-range-price"
-          type="number"
-          size={4}
-          defaultValue={price / 100}
-          min="0"
-          step=".001"
-          className="form-control d-inline-block no-number-input-arrow"
-          style={{ width: '80px' }}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setPrice(parseFloat(e.target.value) * 100);
-          }}
+      <label className="mr-2 align-top">
+        <TaxExcludedPriceInput
+          testId="rule-price-range-price"
+          value={price}
+          step={0.1}
+          style={{ width: '150px' }}
+          onChange={setPrice}
         />
-        <span className="ml-2">{getCurrencySymbol()}</span>
       </label>
       <label>
         <span className="mx-2">{t('PRICE_RANGE_EDITOR.FOR_EVERY')}</span>

@@ -1,13 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import {
-  Alert,
-  Button,
-  Input,
-  Popconfirm,
-  Select,
-  Space,
-  message,
-} from 'antd';
+import { Alert, Button, Input, Popconfirm, Select, Space, message } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import { MatrixAxis, PricingMatrix, Uri } from '../../../api/types';
@@ -191,9 +183,15 @@ const PricingMatrixEditor = ({
               })
             }
             options={[
-              { label: t('PRICING_MATRIX_TASK_TYPE_ALL'), value: TASK_TYPE_ALL },
+              {
+                label: t('PRICING_MATRIX_TASK_TYPE_ALL'),
+                value: TASK_TYPE_ALL,
+              },
               { label: t('PRICING_MATRIX_TASK_TYPE_PICKUP'), value: 'PICKUP' },
-              { label: t('PRICING_MATRIX_TASK_TYPE_DROPOFF'), value: 'DROPOFF' },
+              {
+                label: t('PRICING_MATRIX_TASK_TYPE_DROPOFF'),
+                value: 'DROPOFF',
+              },
             ]}
           />
         ) : null}
