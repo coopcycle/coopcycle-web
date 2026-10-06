@@ -186,8 +186,9 @@ const PricingMatrixGrid = ({
     axis: MatrixAxis,
     onChange: (axis: MatrixAxis) => void,
     label: string,
+    className: string,
   ) => (
-    <div className="pricing-matrix__axis-variable">
+    <div className={className}>
       <span className="pricing-matrix__axis-label">{label}</span>
       <Select
         size="small"
@@ -208,15 +209,34 @@ const PricingMatrixGrid = ({
         <thead>
           <tr>
             <th className="pricing-matrix__corner">
-              {variableSelect(
-                rowAxis,
-                onRowAxisChange,
-                t('PRICING_MATRIX_ROW_AXIS'),
-              )}
+              {/*
+                Split the way the grid reads: the columns run off to the right, the
+                rows run down the left, so each sits on its own side of the diagonal
+              */}
+              <svg
+                className="pricing-matrix__corner-diagonal"
+                viewBox="0 0 100 100"
+                preserveAspectRatio="none"
+                aria-hidden="true">
+                <line
+                  x1="0"
+                  y1="0"
+                  x2="100"
+                  y2="100"
+                  vectorEffect="non-scaling-stroke"
+                />
+              </svg>
               {variableSelect(
                 columnAxis,
                 onColumnAxisChange,
                 t('PRICING_MATRIX_COLUMN_AXIS'),
+                'pricing-matrix__corner-columns',
+              )}
+              {variableSelect(
+                rowAxis,
+                onRowAxisChange,
+                t('PRICING_MATRIX_ROW_AXIS'),
+                'pricing-matrix__corner-rows',
               )}
             </th>
             {columnAxis.entries.map((column, index) => (

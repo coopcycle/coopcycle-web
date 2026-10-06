@@ -137,12 +137,44 @@
     vertical-align: top;
   }
 
+  /*
+    The corner says what each axis is, laid out the way the grid reads: columns
+    along the top, rows down the left, separated by the diagonal.
+  */
   &__corner {
-    min-width: 220px;
+    position: relative;
+    min-width: 320px;
+    padding: 6px;
   }
 
-  &__axis-variable {
-    margin-bottom: 4px;
+  &__corner-diagonal {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+
+    line {
+      stroke: rgba(0, 0, 0, 0.15);
+      stroke-width: 1;
+    }
+  }
+
+  &__corner-columns,
+  &__corner-rows {
+    position: relative;
+    width: 70%;
+  }
+
+  &__corner-columns {
+    margin-left: auto;
+    margin-bottom: 14px;
+    text-align: right;
+  }
+
+  &__corner-rows {
+    margin-right: auto;
+    text-align: left;
   }
 
   &__axis-label {
