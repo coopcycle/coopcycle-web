@@ -122,3 +122,99 @@
     }
   }
 }
+
+/* Price grid editor: rows and columns are edited in their own headers */
+.pricing-matrix__scroll {
+  overflow-x: auto;
+}
+
+.pricing-matrix {
+  border-collapse: separate;
+  border-spacing: 4px;
+
+  th,
+  td {
+    vertical-align: top;
+  }
+
+  &__corner {
+    min-width: 220px;
+  }
+
+  &__axis-variable {
+    margin-bottom: 4px;
+  }
+
+  &__axis-label {
+    display: block;
+    font-size: 11px;
+    font-weight: normal;
+    opacity: 0.65;
+  }
+
+  &__header {
+    position: relative;
+    min-width: 170px;
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 4px;
+    padding: 6px;
+  }
+
+  &__header-fields > * + * {
+    margin-top: 4px;
+  }
+
+  &__bounds {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    .ant-input-number {
+      width: 100%;
+    }
+  }
+
+  &__bounds-arrow {
+    opacity: 0.45;
+  }
+
+  /* Always visible: it is the only way to drop a row or a column */
+  &__remove {
+    position: absolute;
+    top: 0;
+    right: 0;
+    opacity: 0.45;
+    transition: opacity 0.2s;
+  }
+
+  &__header:hover &__remove,
+  &__remove:focus-visible {
+    opacity: 1;
+  }
+
+  &__cell {
+    min-width: 120px;
+  }
+
+  &__add {
+    vertical-align: middle;
+    text-align: center;
+  }
+}
+
+/* Size preview in the grid wizard */
+.pricing-matrix__preview {
+  border-collapse: separate;
+  border-spacing: 3px;
+
+  td {
+    width: 34px;
+    height: 22px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 3px;
+  }
+
+  &-header {
+    background: rgba(0, 0, 0, 0.06);
+  }
+}

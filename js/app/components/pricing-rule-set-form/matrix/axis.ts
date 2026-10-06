@@ -164,3 +164,13 @@ export const findAxisWarnings = (
 
 export const cellKey = (rowKey: string, columnKey: string): string =>
   `${rowKey}:${columnKey}`;
+
+/*
+  Entries start out blank: the wizard asks how many rows and columns the grid has,
+  and they are labelled and bounded directly in the grid afterwards.
+*/
+export const createEntries = (
+  count: number,
+  makeKey: () => string,
+): MatrixAxisEntry[] =>
+  Array.from({ length: count }, () => ({ key: makeKey(), label: '' }));

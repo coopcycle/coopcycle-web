@@ -3,11 +3,9 @@ import {
   Alert,
   Button,
   Input,
-  InputNumber,
   Popconfirm,
   Select,
   Space,
-  Table,
   message,
 } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -18,8 +16,9 @@ import {
   useDeletePricingMatrixMutation,
   useUpdatePricingMatrixMutation,
 } from '../../../api/slice';
-import AxisEditor from './AxisEditor';
-import { cellKey, entryLabel, findAxisWarnings } from './axis';
+import PricingMatrixGrid from './PricingMatrixGrid';
+import PricingMatrixWizard from './PricingMatrixWizard';
+import { cellKey, findAxisWarnings } from './axis';
 
 type Props = {
   matrix: PricingMatrix;
@@ -39,6 +38,11 @@ const PricingMatrixEditor = ({
   const { t } = useTranslation();
   const [draft, setDraft] = useState<PricingMatrix>(matrix);
 
+  // A new grid is drawn by the wizard first; an existing one opens on the grid
+  const [inWizard, setInWizard] = useState(
+    isNew(matrix) && matrix.rowAxis.entries.length === 0,
+  );
+
   const [createMatrix, { isLoading: isCreating }] =
     useCreatePricingMatrixMutation();
   const [updateMatrix, { isLoading: isUpdating }] =
@@ -55,7 +59,8 @@ const PricingMatrixEditor = ({
   );
 
   const setAxis = (which: 'rowAxis' | 'columnAxis', axis: MatrixAxis) => {
-    // Dropping an entry leaves its cells pointing at nothing, which the API refuses
+    // Removing a row or a column leaves its cells pointing at nothing, which the
+    // API refuses, so they go with it
     const next = { ...draft, [which]: axis };
     const rowKeys = next.rowAxis.entries.map(entry => entry.key);
     const columnKeys = next.columnAxis.entries.map(entry => entry.key);
@@ -123,43 +128,17 @@ const PricingMatrixEditor = ({
     }
   };
 
-  const gridColumns = [
-    {
-      title: '',
-      key: 'rowHeader',
-      fixed: 'left' as const,
-      render: (_: unknown, row: { key: string; label: string }) => (
-        <strong>{row.label}</strong>
-      ),
-    },
-    ...draft.columnAxis.entries.map(column => ({
-      title: entryLabel(column),
-      key: column.key,
-      render: (_: unknown, row: { key: string }) => (
-        <InputNumber
-          min={0}
-          step={0.5}
-          precision={2}
-          addonAfter="€"
-          style={{ width: 130 }}
-          value={
-            draft.cells[cellKey(row.key, column.key)] !== undefined
-              ? draft.cells[cellKey(row.key, column.key)] / 100
-              : null
-          }
-          onChange={value => setCell(row.key, column.key, value as number)}
-        />
-      ),
-    })),
-  ];
-
-  const gridRows = draft.rowAxis.entries.map(row => ({
-    key: row.key,
-    label: entryLabel(row),
-  }));
-
-  const canEditGrid =
-    draft.rowAxis.entries.length > 0 && draft.columnAxis.entries.length > 0;
+  if (inWizard) {
+    return (
+      <PricingMatrixWizard
+        onDone={(rowAxis, columnAxis) => {
+          setDraft({ ...draft, rowAxis, columnAxis, cells: {} });
+          setInWizard(false);
+        }}
+        onCancel={onCancelNew}
+      />
+    );
+  }
 
   return (
     <div>
@@ -199,21 +178,18 @@ const PricingMatrixEditor = ({
         ) : null}
       </Space>
 
-      <AxisEditor
-        title={t('PRICING_MATRIX_ROW_AXIS')}
-        axis={draft.rowAxis}
-        onChange={axis => setAxis('rowAxis', axis)}
-      />
-
-      <AxisEditor
-        title={t('PRICING_MATRIX_COLUMN_AXIS')}
-        axis={draft.columnAxis}
-        onChange={axis => setAxis('columnAxis', axis)}
+      <PricingMatrixGrid
+        rowAxis={draft.rowAxis}
+        columnAxis={draft.columnAxis}
+        cells={draft.cells}
+        onRowAxisChange={axis => setAxis('rowAxis', axis)}
+        onColumnAxisChange={axis => setAxis('columnAxis', axis)}
+        onCellChange={setCell}
       />
 
       {warnings.length > 0 ? (
         <Alert
-          className="mb-3"
+          className="mt-3"
           type="warning"
           showIcon
           message={t('PRICING_MATRIX_WARNINGS_TITLE')}
@@ -227,29 +203,14 @@ const PricingMatrixEditor = ({
         />
       ) : null}
 
-      {canEditGrid ? (
-        <Table
-          className="mb-3"
-          size="small"
-          dataSource={gridRows}
-          columns={gridColumns}
-          pagination={false}
-          scroll={{ x: true }}
-        />
-      ) : (
-        <Alert
-          className="mb-3"
-          type="info"
-          showIcon
-          message={t('PRICING_MATRIX_NEEDS_BOTH_AXES')}
-        />
-      )}
-
-      <Space>
+      <Space className="mt-3">
         <Button
           type="primary"
           loading={isCreating || isUpdating}
-          disabled={!canEditGrid}
+          disabled={
+            draft.rowAxis.entries.length === 0 ||
+            draft.columnAxis.entries.length === 0
+          }
           onClick={save}>
           {t('SAVE_BUTTON')}
         </Button>
