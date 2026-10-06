@@ -1697,8 +1697,11 @@ pricing.variant.pickup_point: Point de retrait
 pricing.variant.dropoff_point: Point de dépôt
 pricing.variant.order_supplement: Supplément de commande
 pricing.rule.humanizer.inside_zone: dans
-pricing.rule.humanizer.outside_zone: hors
-pricing.rule.humanizer.address_zone_format: 'adresse %task_type% %direction% zone "%zone_name%"'
+pricing.rule.humanizer.outside_zone: 'hors de'
+pricing.rule.humanizer.address_zone_format: 'adresse %task_type% %direction% la zone "%zone_name%"'
+pricing.rule.humanizer.address_source.task: 'de la tâche'
+pricing.rule.humanizer.address_source.pickup: 'du retrait'
+pricing.rule.humanizer.address_source.dropoff: 'du dépôt'
 pricing.rule.humanizer.between: entre %left% et %right%
 pricing.rule.humanizer.less_than: moins de %value%
 pricing.rule.humanizer.more_than: plus de %value%

@@ -120,10 +120,26 @@ class RuleHumanizer
             : $this->translator->trans('pricing.rule.humanizer.outside_zone');
 
         return $this->translator->trans('pricing.rule.humanizer.address_zone_format', [
-            '%task_type%' => $taskType,
+            '%task_type%' => $this->translateAddressSource($taskType),
             '%direction%' => $direction,
             '%zone_name%' => $zoneName,
         ]);
+    }
+
+    /**
+     * Which address the zone is tested against. The expression names it after the
+     * variable it reads — 'task', 'pickup' or 'dropoff' — which is not something to
+     * put in front of whoever is reading the price.
+     *
+     * Each locale words this to fit its own address_zone_format: the fragment is
+     * adjectival in English ("pickup address"), prepositional in French
+     * ("adresse du retrait").
+     */
+    private function translateAddressSource(string $addressSource): string
+    {
+        return $this->translator->trans(
+            sprintf('pricing.rule.humanizer.address_source.%s', strtolower($addressSource))
+        );
     }
 
     private function humanizeTimeRangeLengthFunction(FunctionNode $node): string

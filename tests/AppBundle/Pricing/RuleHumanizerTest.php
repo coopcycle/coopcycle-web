@@ -67,7 +67,7 @@ class RuleHumanizerTest extends KernelTestCase
         $rule->setExpression('in_zone(dropoff.address, "south")');
         $rule->setPrice('100');
 
-        $this->assertEquals('Adresse dropoff dans zone "south" - €1.00', $this->humanizer->humanize($rule));
+        $this->assertEquals('Adresse du dépôt dans la zone "south" - €1.00', $this->humanizer->humanize($rule));
     }
 
     public function testInZoneOutZone()
@@ -76,7 +76,21 @@ class RuleHumanizerTest extends KernelTestCase
         $rule->setExpression('in_zone(pickup.address, "south") and out_zone(dropoff.address, "north") and weight > 5000');
         $rule->setPrice('100');
 
-        $this->assertEquals('Adresse pickup dans zone "south", adresse dropoff hors zone "north", plus de 5.00 kg - €1.00', $this->humanizer->humanize($rule));
+        $this->assertEquals('Adresse du retrait dans la zone "south", adresse du dépôt hors de la zone "north", plus de 5.00 kg - €1.00', $this->humanizer->humanize($rule));
+    }
+
+    public function testInZoneOfTheTaskItself()
+    {
+        // A grid applied to every point reads the address of whichever point is
+        // being priced, and used to name it after the variable: "adresse task"
+        $rule = new PricingRule();
+        $rule->setExpression('in_zone(task.address, "south")');
+        $rule->setPrice('100');
+
+        $this->assertEquals(
+            'Adresse de la tâche dans la zone "south" - €1.00',
+            $this->humanizer->humanize($rule)
+        );
     }
 
     public function testPricePerPackage()

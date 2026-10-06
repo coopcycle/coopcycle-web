@@ -1761,8 +1761,11 @@ pricing.variant.pickup_point: Punto de recogida
 pricing.variant.dropoff_point: Punto de entrega
 pricing.variant.order_supplement: Suplemento de pedido
 pricing.rule.humanizer.inside_zone: dentro
-pricing.rule.humanizer.outside_zone: fuera
-pricing.rule.humanizer.address_zone_format: 'dirección %task_type% %direction% zona "%zone_name%"'
+pricing.rule.humanizer.outside_zone: 'fuera de'
+pricing.rule.humanizer.address_zone_format: 'dirección %task_type% %direction% la zona "%zone_name%"'
+pricing.rule.humanizer.address_source.task: 'del punto'
+pricing.rule.humanizer.address_source.pickup: 'de la recogida'
+pricing.rule.humanizer.address_source.dropoff: 'de la entrega'
 pricing.rule.humanizer.between: entre %left% y %right%
 pricing.rule.humanizer.less_than: menos de %value%
 pricing.rule.humanizer.more_than: más de %value%
