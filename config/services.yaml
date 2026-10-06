@@ -759,6 +759,7 @@ services:
   AppBundle\EventListener\Edifact\TransporterPodNotifier:
     arguments:
       $baseUrl: '%router.request_context.scheme%://%router.request_context.host%'
+      $locale: '%locale%'
     tags:
       -
         name: 'doctrine.orm.entity_listener'
@@ -1049,6 +1050,10 @@ services:
   AppBundle\Transporter\EdifactMessageParser:
     arguments:
       $edifactFs: '@edi_messages_filesystem'
+  AppBundle\Transporter\Waybill:
+    arguments:
+      $secret: '%secret%'
+      $transportersConfig: '%transporters_config%'
 
   AppBundle\Action\Register:
     public: true

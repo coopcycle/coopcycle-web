@@ -1044,6 +1044,35 @@ task.receipt.message: Par la présente, nous confirmons que nous avons bien livr
 task.receipt.received_by: Le colis a été reçu par <strong>%name%</strong>
 task.receipt.attached_images: Images jointes
 task.receipt.reference: 'Référence : <strong>%ref%</strong>'
+pod.title: Feuille de route
+pod.completed_at: du %date%
+pod.client_file_number: N° de dossier client
+pod.receipt_number: N° de récépissé
+pod.shipper_references: Référence expéditeur
+pod.consignee_orders: N° de commande destinataire
+pod.sender: Donneur d'ordre
+pod.shipper: Expéditeur
+pod.consignee: Destinataire
+pod.delivery_instructions: Instructions de livraison
+pod.handling_units: Nombre d'UM
+pod.packages: Nombre de colis
+pod.returnables: Nombre de consignés
+pod.gross_weight: Poids brut (kg)
+pod.volume: Volume (m³)
+pod.nature_of_goods: Nature de la marchandise
+pod.dangerous_goods: Marchandises dangereuses (ADR)
+pod.dangerous_goods.class: classe %class%
+pod.dangerous_goods.packing_group: GE %group%
+pod.cash_on_delivery: Contre-remboursement
+pod.bl_number: N° de B/L
+pod.no: Non
+pod.reservations: Toute réserve pour perte ou avarie doit être précise et confirmée dans les trois jours par lettre recommandée avec accusé de réception (art. L. 133-3 du Code de commerce).
+pod.signatory: 'Signataire : %name%'
+pod.signature: Signature
+pod.no_signature: Pas de signature
+pod.photos: Photos
+pod.photo: Photo
+pod.legal: Feuille de route reconstituée valant preuve (art. 1366 et 1367 du Code civil)
 basics.hours: '%count% heure|%count% heures'
 basics.days: '%count% jour|%count% jours'
 basics.weeks: '%count% semaine|%count% semaines'
