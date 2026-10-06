@@ -728,6 +728,17 @@ const DeliveryForm = ({
                         />
                       </div>
                     ) : null}
+                    {isDispatcher && delivery?.waybillUrl ? (
+                      <div className="mt-2">
+                        <a
+                          target="_blank"
+                          rel="noreferrer"
+                          href={delivery.waybillUrl}>
+                          {t('DELIVERY_FORM_VIEW_WAYBILL')}
+                        </a>{' '}
+                        <i className="fa fa-external-link"></i>
+                      </div>
+                    ) : null}
                   </div>
                 )}
 
