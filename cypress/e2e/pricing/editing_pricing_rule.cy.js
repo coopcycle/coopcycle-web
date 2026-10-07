@@ -33,7 +33,7 @@ context(
             ],
             price: {
               type: 'fixed',
-              value: '4.99',
+              value: '4.16',
             },
           },
         ],
@@ -111,7 +111,7 @@ context(
             ],
             price: {
               type: 'fixed',
-              value: '4.99',
+              value: '4.16',
             },
           },
         ],

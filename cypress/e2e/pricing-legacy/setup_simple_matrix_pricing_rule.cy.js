@@ -77,7 +77,7 @@ context('Setup simple matrix pricing (role: admin, classic form)', () => {
     cy.get('.btn-block').click()
 
     // Pricing rule page
-    cy.urlmatch(/\/admin\/deliveries\/pricing\/[0-9]+\?ui=legacy$/)
+    cy.urlmatch(/\/admin\/deliveries\/pricing\/[0-9]+\?ui=legacy$/, 'match', 'href')
 
     cy.get('.alert-success', { timeout: 10000 })
       .should('contain', 'Changements sauvegardés')
