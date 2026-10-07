@@ -85,6 +85,7 @@ function convertDateInRecurrenceRulePayload(value) {
 function convertValuesToRecurrenceRulePayload(values) {
   let data = {
     rule: values.rrule,
+    pricingRuleSet: values.order?.pricingRuleSet ?? null,
     template: {
       '@type': 'hydra:Collection',
       'hydra:member': structuredClone(values.tasks).map(task => {

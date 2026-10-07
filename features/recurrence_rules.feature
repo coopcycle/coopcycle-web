@@ -45,6 +45,7 @@ Feature: Task recurrence rules
           "before":"12:00"
         },
         "arbitraryPriceTemplate": null,
+        "pricingRuleSet": null,
         "isCancelled":false,
         "paused":false
       }
@@ -122,6 +123,7 @@ Feature: Task recurrence rules
           ]
         },
         "arbitraryPriceTemplate": null,
+        "pricingRuleSet": null,
         "isCancelled":false,
         "paused":false
       }
@@ -206,6 +208,7 @@ Feature: Task recurrence rules
           "variantName":"Test product",
           "variantPrice":7200
         },
+        "pricingRuleSet": null,
         "isCancelled":false,
         "paused":false
       }
@@ -254,6 +257,7 @@ Feature: Task recurrence rules
           "before":"12:30"
         },
         "arbitraryPriceTemplate": null,
+        "pricingRuleSet": null,
         "isCancelled":false,
         "paused":false
       }
@@ -330,6 +334,7 @@ Feature: Task recurrence rules
         "orgName":"Acme",
         "name":null,
         "arbitraryPriceTemplate": null,
+        "pricingRuleSet": null,
         "isCancelled":false,
         "paused":false
       }
@@ -797,3 +802,29 @@ Feature: Task recurrence rules
       }
       """
     Then the database should contain 1 order
+
+  Scenario: Update the pricing rule set of a recurrence rule
+    Given the fixtures files are loaded:
+      | users.yml            |
+      | addresses.yml        |
+      | recurrence_rules.yml |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/recurrence_rules/1" with body:
+      """
+      {
+        "pricingRuleSet": "/api/pricing_rule_sets/6"
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@id":"/api/recurrence_rules/1",
+        "pricingRuleSet": "/api/pricing_rule_sets/6",
+        "@*@": "@*@"
+      }
+      """

@@ -13,6 +13,7 @@ import { useDeliveryFormFormikContext } from '../../hooks/useDeliveryFormFormikC
 import { useCalculatedPrice } from '../../hooks/useCalculatedPrice';
 import { useOrderManualSupplements } from '../../hooks/useOrderManualSupplements';
 import { OverridePrice } from './OverridePrice';
+import { PricingRuleSetSelect } from './PricingRuleSetSelect';
 import { OrderOnCheckout } from './OrderOnCheckout';
 import { OrderEditing } from './OrderEditing';
 import { UserContext } from '../../../../UserContext';
@@ -75,6 +76,7 @@ const Order = ({
     isLoading: orderManualSupplementsIsLoading,
   } = useOrderManualSupplements({
     storeUri: storeNodeId,
+    pricingRuleSetUri: values.order?.pricingRuleSet,
     enabled: isDispatcher,
   });
 
@@ -160,6 +162,9 @@ const Order = ({
           {isDispatcher && (
             <div>
               <Divider size="middle" />
+              {!overridePrice && (
+                <PricingRuleSetSelect storeNodeId={storeNodeId} />
+              )}
               <OverridePrice
                 overridePrice={overridePrice}
                 setOverridePrice={setOverridePrice}

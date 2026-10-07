@@ -353,8 +353,14 @@ export const apiSlice = createApi({
       },
     }),
 
-    getPricingRuleSets: builder.query<HydraCollection<PricingRuleSet>, void>({
-      query: () => 'api/pricing_rule_sets',
+    getPricingRuleSets: builder.query<PricingRuleSet[], void>({
+      queryFn: async (args, queryApi, extraOptions, baseQuery) => {
+        return await fetchAllRecordsUsingFetchWithBQ<PricingRuleSet>(
+          baseQuery,
+          'api/pricing_rule_sets',
+          100,
+        );
+      },
       providesTags: ['PricingRuleSet'],
     }),
     getPricingRuleSet: builder.query<PricingRuleSet, Uri>({

@@ -6,6 +6,8 @@ namespace Tests\AppBundle\Service;
 
 use AppBundle\Action\Incident\CreateIncident;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Delivery\PricingRuleSet;
+use AppBundle\Entity\Sylius\CalculateUsingPricingRules;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\ProductRepository;
@@ -78,10 +80,11 @@ class DeliveryOrderManagerTest extends TestCase
         );
     }
 
-    private function createRecurrenceRule(): RecurrenceRule
+    private function createRecurrenceRule(?PricingRuleSet $pricingRuleSet = null): RecurrenceRule
     {
         $recurrenceRule = $this->prophesize(RecurrenceRule::class);
         $recurrenceRule->getArbitraryPriceTemplate()->willReturn(null);
+        $recurrenceRule->getPricingRuleSet()->willReturn($pricingRuleSet);
 
         return $recurrenceRule->reveal();
     }
@@ -113,6 +116,25 @@ class DeliveryOrderManagerTest extends TestCase
 
         $this->assertSame($order, $result);
         $this->assertSame($recurrenceRule, $order->getSubscription());
+    }
+
+    public function testOrderIsPricedWithTheRuleSetChosenOnItsRule()
+    {
+        $pricingRuleSet = new PricingRuleSet();
+
+        $recurrenceRule = $this->createRecurrenceRule($pricingRuleSet);
+        $order = $this->expectDeliveryAndOrder($recurrenceRule);
+
+        $this->pricingManager
+            ->getProductVariantsWithPricingStrategy(
+                Argument::type(Delivery::class),
+                Argument::that(fn ($strategy) => $strategy instanceof CalculateUsingPricingRules
+                    && $strategy->pricingRuleSet === $pricingRuleSet)
+            )
+            ->willReturn([$this->prophesize(ProductVariantInterface::class)->reveal()])
+            ->shouldBeCalled();
+
+        $this->deliveryOrderManager->createOrderFromRecurrenceRule($recurrenceRule, '2026-10-06');
     }
 
     public function testOrderIsLinkedToItsRuleWhenFirstWritten()

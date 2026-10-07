@@ -9,6 +9,7 @@ use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\PriceInterface;
+use AppBundle\Entity\Sylius\PricingRulesBasedPrice;
 use AppBundle\Entity\Sylius\UpdateManualSupplements;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
 use AppBundle\Entity\Sylius\PricingStrategy;
@@ -133,7 +134,7 @@ class PricingManager
         }
 
         if ($pricingStrategy instanceof UsePricingRules) {
-            $pricingRuleSet = $store->getPricingRuleSet();
+            $pricingRuleSet = $this->resolvePricingRuleSet($delivery, $pricingStrategy->pricingRuleSet);
 
             // if no Pricing Rules are defined, the default rule is to set the price to 0
             if (null === $pricingRuleSet) {
@@ -169,6 +170,30 @@ class PricingManager
 
             return [];
         }
+    }
+
+    /**
+     * The pricing rule set used to calculate the price of a delivery, by order of precedence:
+     * 1. the one chosen by a dispatcher
+     * 2. the one the existing order was priced with, so that a recalculation
+     *    (an edit, a task cancellation, ...) keeps a rule set chosen previously
+     * 3. the one of the store
+     */
+    public function resolvePricingRuleSet(Delivery $delivery, ?PricingRuleSet $chosenPricingRuleSet = null): ?PricingRuleSet
+    {
+        if (!is_null($chosenPricingRuleSet)) {
+            return $chosenPricingRuleSet;
+        }
+
+        $order = $delivery->getOrder();
+        if (!is_null($order) && !$order->getItems()->isEmpty()) {
+            $price = $order->getDeliveryPrice();
+            if ($price instanceof PricingRulesBasedPrice && !is_null($price->getPricingRuleSet())) {
+                return $price->getPricingRuleSet();
+            }
+        }
+
+        return $delivery->getStore()?->getPricingRuleSet();
     }
 
     /**
@@ -349,6 +374,10 @@ class PricingManager
         } else {
             $recurrenceRule->setArbitraryPriceTemplate(null);
         }
+
+        $recurrenceRule->setPricingRuleSet(
+            $pricingStrategy instanceof UsePricingRules ? $pricingStrategy->pricingRuleSet : null
+        );
 
         $recurrenceRule->setTemplate($template);
     }

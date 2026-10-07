@@ -103,7 +103,11 @@ class CalculateRetailPriceProcessor implements TaxableInterface, ProcessorInterf
             $store = $this->storeExtractor->extractStore();
         }
 
-        $pricingRuleSet = $store?->getPricingRuleSet();
+        $chosenPricingRuleSet = $this->authorizationChecker->isGranted('ROLE_DISPATCHER') ? $data->order?->pricingRuleSet : null;
+
+        // The store may come from the token, when it is not set on the delivery
+        $pricingRuleSet = $this->pricingManager->resolvePricingRuleSet($delivery, $chosenPricingRuleSet)
+            ?? $store?->getPricingRuleSet();
 
         if (null === $pricingRuleSet) {
             $message = $this->translator->trans('delivery.price.error.noPricingRuleSet', domain: 'validators');

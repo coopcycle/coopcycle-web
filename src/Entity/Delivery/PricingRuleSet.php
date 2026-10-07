@@ -48,6 +48,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
         ),
         new GetCollection(
             normalizationContext: ['groups' => ['pricing_rule_set:read']],
+            // Dispatchers can choose a rule set to price a delivery
+            security: "is_granted('ROLE_DISPATCHER')"
         ),
     ],
     security: "is_granted('ROLE_ADMIN')"

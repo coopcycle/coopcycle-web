@@ -448,7 +448,8 @@ trait StoreTrait
             $tempDelivery,
             null,
             $arbitraryPrice,
-            false
+            false,
+            pricingRuleSet: $recurrenceRule->getPricingRuleSet()
         );
 
         return $this->render('store/recurrence_rules/form.html.twig', $this->auth([

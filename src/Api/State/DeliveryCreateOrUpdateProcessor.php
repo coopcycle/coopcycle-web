@@ -10,6 +10,7 @@ use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Domain\Order\Event\OrderPriceUpdated;
 use AppBundle\Entity\Delivery;
 use AppBundle\Message\DeliveryUpdated;
+use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\UpdateManualSupplements;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
@@ -97,12 +98,20 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
             );
         }
 
-        $onCreatePricingStrategy = new CalculateUsingPricingRules();
+        /** @var PricingRuleSet|null $pricingRuleSet */
+        $pricingRuleSet = null;
+        if ($this->authorizationCheckerInterface->isGranted(
+                'ROLE_DISPATCHER'
+            ) && $data instanceof DeliveryInputDto) {
+            $pricingRuleSet = $data->order?->pricingRuleSet;
+        }
+
+        $onCreatePricingStrategy = new CalculateUsingPricingRules(pricingRuleSet: $pricingRuleSet);
 
         if (!is_null($arbitraryPrice)) {
             $onCreatePricingStrategy = new UseArbitraryPrice($arbitraryPrice);
         } elseif (!is_null($manualSupplements)) {
-            $onCreatePricingStrategy = new CalculateUsingPricingRules($manualSupplements);
+            $onCreatePricingStrategy = new CalculateUsingPricingRules($manualSupplements, $pricingRuleSet);
         }
 
         $isCreateOrderMode = is_null($delivery->getId());
@@ -196,7 +205,7 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                 } elseif ($data instanceof DeliveryInputDto && $data->order?->recalculatePrice) {
                     $productVariants = $this->pricingManager->getProductVariantsWithPricingStrategy(
                         $delivery,
-                        new CalculateUsingPricingRules($manualSupplements)
+                        new CalculateUsingPricingRules($manualSupplements, $pricingRuleSet)
                     );
                     $this->pricingManager->processDeliveryOrder($order, $productVariants);
                 } elseif (!is_null($manualSupplements) && $this->hasManualSupplementsChanged($manualSupplements, $order)) {
@@ -207,7 +216,7 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
 
                     $productVariants = $this->pricingManager->getProductVariantsWithPricingStrategy(
                         $delivery,
-                        new UpdateManualSupplements($manualSupplements, $existingProductVariants),
+                        new UpdateManualSupplements($manualSupplements, $existingProductVariants, $pricingRuleSet),
                     );
 
                     $this->pricingManager->processDeliveryOrder($order, $productVariants);

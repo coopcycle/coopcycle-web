@@ -41,7 +41,8 @@ class ManualSupplementsValidator extends ConstraintValidator
             return; // Cannot validate without a store
         }
 
-        $pricingRuleSet = $store->getPricingRuleSet();
+        // Supplements come from the rule set chosen by a dispatcher, if any
+        $pricingRuleSet = $value->pricingRuleSet ?? $store->getPricingRuleSet();
         if (null === $pricingRuleSet) {
             // If store has no pricing rule set, no manual supplements are allowed
             $this->context

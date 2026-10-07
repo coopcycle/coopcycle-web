@@ -169,7 +169,9 @@ class DeliveryOrderManager
                 )
             );
         } else {
-            $pricingStrategy = new CalculateUsingPricingRules();
+            $pricingStrategy = new CalculateUsingPricingRules(
+                pricingRuleSet: $recurrenceRule->getPricingRuleSet()
+            );
         }
 
         $order = $this->createOrder($delivery, [

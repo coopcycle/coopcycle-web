@@ -22,6 +22,10 @@ AppBundle\Entity\Delivery\PricingRuleSet:
   pricing_rule_set_impossible:
     name: Default
     rules: ['@pricing_rule_impossible']
+  # Not linked to any store, can be chosen by a dispatcher
+  pricing_rule_set_flat:
+    name: Flat
+    rules: ['@pricing_rule_flat']
 
 AppBundle\Entity\Delivery\PricingRule:
   pricing_rule_1:
@@ -49,6 +53,11 @@ AppBundle\Entity\Delivery\PricingRule:
     price: 499
     position: 1
     ruleSet: '@pricing_rule_set_impossible'
+  pricing_rule_flat:
+    expression: 'distance \> 0'
+    price: 1500
+    position: 1
+    ruleSet: '@pricing_rule_set_flat'
 
 AppBundle\Entity\Address:
   address_1:

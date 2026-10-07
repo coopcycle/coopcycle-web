@@ -568,6 +568,8 @@ export type OrderPayload = {
   };
   recalculatePrice?: boolean;
   isSavedOrder?: boolean;
+  // A rule set chosen by a dispatcher, null to use the store's one
+  pricingRuleSet?: Uri | null;
 };
 
 export type AddressPayload = {
@@ -631,6 +633,7 @@ export type PutRecurrenceRuleRequest = {
   template?: DeliveryTemplate;
   store?: Uri;
   generateOrders?: boolean;
+  pricingRuleSet?: Uri | null;
 };
 
 export type CreatePricingRuleSetRequest = {
