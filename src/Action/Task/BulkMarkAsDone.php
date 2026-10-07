@@ -11,10 +11,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
-use AppBundle\Message\CalculateTaskDistance;
-use Symfony\Component\Messenger\Envelope;
-use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
 
 
 
@@ -31,7 +27,6 @@ class BulkMarkAsDone extends Base
         IriConverterInterface $iriConverter,
         EntityManagerInterface $entityManager,
         NormalizerInterface $normalizerInterface,
-        private MessageBusInterface $eventBus,
     )
     {
         parent::__construct($taskManager);
@@ -79,7 +74,7 @@ class BulkMarkAsDone extends Base
 
             foreach($tasksObjs as $task) {
                 try {
-                    $tasksResults[] = $this->done($task, $request, calculateCO2: false);
+                    $tasksResults[] = $this->done($task, $request);
                 } catch(BadRequestHttpException $e) {
                     $tasksFailed[$this->iriConverter->getIriFromResource($task)] = $e->getMessage();
                 }
@@ -92,14 +87,6 @@ class BulkMarkAsDone extends Base
             throw $e;
         }
 
-
-        //TODO: Check if BulkMarkAsDone can be called on different TaskList.
-        if (count($tasksObjs) > 0) {
-        $task = $tasksObjs[0];
-            $this->eventBus->dispatch(
-                (new Envelope(new CalculateTaskDistance($task->getId())))->with(new DispatchAfterCurrentBusStamp())
-            );
-        }
 
         return new JsonResponse([
             'success' => $this->normalizerInterface->normalize($tasksResults, 'jsonld', ['groups' => ['task', 'delivery', 'address']]),

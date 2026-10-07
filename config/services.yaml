@@ -1354,8 +1354,6 @@ services:
 
   AppBundle\MessageHandler\ImportTasksHandler: ~
 
-  AppBundle\MessageHandler\CalculateTaskDistanceHandler: ~
-
   AppBundle\MessageHandler\CalculateRouteHandler:
     tags:
       - { name: monolog.logger, channel: coopcycle.logistics }
