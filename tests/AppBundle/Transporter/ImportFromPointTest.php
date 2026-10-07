@@ -118,7 +118,9 @@ class ImportFromPointTest extends TestCase
         // Reported once
         $this->import->reportAddressIssue($task);
 
-        $this->assertEquals('INVALID ADDRESS', $task->getAddress()->getStreetAddress());
+        // Kept, the dispatcher checks it from the incident
+        $this->assertEquals('7 Rue des Fontaines, 75019 Paris', $task->getAddress()->getStreetAddress());
+        $this->assertEquals(new GeoCoordinates(48.88, 2.38), $task->getAddress()->getGeo());
         $this->assertEmpty($task->getTags());
 
         $incident = $reported->incident;
@@ -129,7 +131,7 @@ class ImportFromPointTest extends TestCase
         $this->assertEquals('transporter.address_review.out_of_range', $incident->getDescription());
         $this->assertEquals([[
             'transporter_address' => '7 RUE DES FONTAINES LORIENT 56100',
-            'rejected_address' => '7 Rue des Fontaines, 75019 Paris',
+            'geocoded_address' => '7 Rue des Fontaines, 75019 Paris',
         ]], $incident->getMetadata());
     }
 

@@ -243,19 +243,21 @@ class ImportFromPoint {
 
         $issue = null;
         if (is_null($address)) {
-            $issue = $this->addressIssue('not_found', $nad);
-        } elseif (!$this->isInRange($this->defaultCoordinates, $address->getGeo())) {
-            $issue = $this->addressIssue('out_of_range', $nad, $address->getStreetAddress());
-        }
-
-        if (!is_null($issue)) {
             $this->transporterLogger->warning(sprintf(
-                'Address %s is not in default range or geocoding failed. Fallback to default coordinates',
+                'Geocoding failed for address %s. Fallback to default coordinates',
                 $nad->getAddress()
             ));
+            $issue = $this->addressIssue('not_found', $nad);
             $address = new Address();
             $address->setGeo($this->defaultCoordinates);
             $address->setStreetAddress('INVALID ADDRESS');
+        } elseif (!$this->isInRange($this->defaultCoordinates, $address->getGeo())) {
+            // Kept: it may be right, the dispatcher checks it from the incident
+            $this->transporterLogger->warning(sprintf(
+                'Address %s is not in default range',
+                $nad->getAddress()
+            ));
+            $issue = $this->addressIssue('out_of_range', $nad, $address->getStreetAddress());
         }
         $address->setCompany($nad->getAddressLabel());
         $address->setName($nad->getAddressLabel());
@@ -265,14 +267,14 @@ class ImportFromPoint {
     }
 
     /**
-     * @param string|null $found The rejected geocoding result
+     * @param string|null $found The geocoded address
      * @return array{0:string,1:array<string,string>}
      */
     private function addressIssue(string $reason, NameAndAddress $nad, ?string $found = null): array
     {
         $metadata = ['transporter_address' => $nad->getAddress()];
         if (!is_null($found)) {
-            $metadata['rejected_address'] = $found;
+            $metadata['geocoded_address'] = $found;
         }
 
         return [
