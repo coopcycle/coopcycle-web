@@ -8,7 +8,6 @@ use AppBundle\Exception\PreviousTaskNotCompletedException;
 use AppBundle\Exception\TaskAlreadyCompletedException;
 use AppBundle\Exception\TaskCancelledException;
 use AppBundle\Integration\Standtrack\StandtrackClient;
-use AppBundle\Message\CalculateTaskDistance;
 use AppBundle\Message\Task\Command\MarkAsDone;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -74,15 +73,6 @@ class MarkAsDoneHandler
         $contactName = $command->getContactName();
         if (!empty($contactName)) {
             $task->getAddress()->setContactName($contactName);
-        }
-
-        // Avoid race condition
-        // This message may emit a "task:updated" event *BEFORE* the task status has changed
-        // TODO Move this to a handler listening to TaskDone event?
-        if ($command->getCalculateCO2()) {
-            $this->eventBus->dispatch(
-                (new Envelope(new CalculateTaskDistance($task->getId())))->with(new DispatchAfterCurrentBusStamp())
-            );
         }
     }
 }

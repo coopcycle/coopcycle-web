@@ -84,7 +84,6 @@ framework:
             'AppBundle\Message\IndexDeliveries': async
             'AppBundle\Message\WoopitDocumentWebhook': async
             'AppBundle\Message\ImportDeliveries': async
-            'AppBundle\Message\CalculateTaskDistance': async
             'AppBundle\Message\CopyProducts': async
             'AppBundle\Message\GenerateOrdersForDate': async
             'AppBundle\Message\Order\ProcessOrderAfterTaskCancellation': async
