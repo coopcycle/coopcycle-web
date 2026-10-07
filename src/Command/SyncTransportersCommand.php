@@ -10,6 +10,8 @@ use AppBundle\Entity\Edifact\EDIFACTMessageRepository;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\CalculateUsingPricingRules;
+use AppBundle\Entity\Task;
+use AppBundle\Messenger\TransactionalMessages;
 use AppBundle\Service\DeliveryOrderManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Transporter\ImportFromPoint;
@@ -20,6 +22,7 @@ use ApiPlatform\Exception\InvalidArgumentException;
 use ApiPlatform\Exception\ItemNotFoundException;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemException;
@@ -54,6 +57,9 @@ class SyncTransportersCommand extends Command {
 
     private TransporterImpl $impl;
 
+    /** @var array<string,string> */
+    private array $packageMapping = [];
+
     private ?string $companyLegalName;
     private ?string $companyLegalID;
 
@@ -71,6 +77,8 @@ class SyncTransportersCommand extends Command {
         private Filesystem $edifactFs,
         private DeliveryOrderManager $deliveryOrderManager,
         private IriConverterInterface $iriConverter,
+        private TransactionalMessages $transactionalMessages,
+        private ManagerRegistry $doctrine,
     )
     { parent::__construct(); }
 
@@ -175,8 +183,9 @@ class SyncTransportersCommand extends Command {
             }
             $config = $config[$this->transporter];
 
+            $this->packageMapping = $config['package_mapping'] ?? [];
             $this->importFromPoint->setPackageMapping(
-                $this->resolvePackageMapping($config['package_mapping'] ?? [])
+                $this->resolvePackageMapping($this->packageMapping)
             );
 
             if (isset($config['sync']['uri'])) {
@@ -326,10 +335,11 @@ class SyncTransportersCommand extends Command {
                 );
 
                 // Most failures (parse, geocoding, validation) happen before any
-                // DB flush and leave the EntityManager usable, so we just move on
-                // to the next file. A failure *during* a flush, however, closes
-                // the EntityManager and it cannot be reused; in that case stop
-                // early. Everything not yet processed stays on the remote and is
+                // DB write, and a shipment that fails while being saved is rolled
+                // back with a fresh EntityManager (see persistShipment()), so we
+                // just move on to the next file. Should the EntityManager still
+                // be closed, it cannot be reused; in that case stop early.
+                // Everything not yet processed stays on the remote and is
                 // retried next run, and dedup on reference prevents duplicates.
                 if (!$this->entityManager->isOpen()) {
                     $this->output->writeln('<error>Database session closed after a failure; stopping early. Remaining files will be retried on the next run.</error>');
@@ -475,13 +485,52 @@ class SyncTransportersCommand extends Command {
         $delivery->setExternalReference($point->getId());
 
         if (!$this->dryRun) {
-            $this->entityManager->persist($edi);
-            $this->entityManager->persist($pickup);
-            $this->entityManager->persist($dropoff);
-            $this->entityManager->persist($delivery);
-            $this->createOrderForDelivery($delivery);
-            $this->importFromPoint->reportAddressIssue($dropoff);
+            $this->persistShipment($delivery, $edi, $dropoff);
         }
+    }
+
+    /**
+     * Saves a shipment and creates its order in one transaction. Otherwise a
+     * failure creating the order leaves the delivery and its inbound EDIFACT
+     * message behind, and the retry skips the shipment as already imported.
+     * The live updates and notifications only go out once it is committed.
+     */
+    private function persistShipment(Delivery $delivery, EDIFACTMessage $edi, Task $imported): void
+    {
+        try {
+            $this->transactionalMessages->run(
+                fn() => $this->entityManager->wrapInTransaction(function () use ($delivery, $edi, $imported) {
+                    $this->entityManager->persist($edi);
+                    foreach ($delivery->getTasks() as $task) {
+                        $this->entityManager->persist($task);
+                    }
+                    $this->entityManager->persist($delivery);
+                    $this->createOrderForDelivery($delivery);
+                    $this->importFromPoint->reportAddressIssue($imported);
+                })
+            );
+        } catch (\Throwable $e) {
+            $this->resetEntityManager();
+            throw $e;
+        }
+    }
+
+    /**
+     * A rolled back transaction closes the EntityManager, and leaves what it
+     * loaded detached: load again what the next shipments are linked to.
+     */
+    private function resetEntityManager(): void
+    {
+        $this->doctrine->resetManager();
+
+        /** @var Store $store */
+        $store = $this->entityManager->find(Store::class, $this->store->getId());
+        $this->store = $store;
+        $this->HQAddress = $store->getAddress();
+
+        $this->importFromPoint->setPackageMapping(
+            $this->resolvePackageMapping($this->packageMapping)
+        );
     }
 
     private function createOrderForDelivery(Delivery $delivery): void {
@@ -518,12 +567,7 @@ class SyncTransportersCommand extends Command {
         $delivery->setExternalReference($point->getId());
 
         if (!$this->dryRun) {
-            $this->entityManager->persist($edi);
-            $this->entityManager->persist($pickup);
-            $this->entityManager->persist($dropoff);
-            $this->entityManager->persist($delivery);
-            $this->createOrderForDelivery($delivery);
-            $this->importFromPoint->reportAddressIssue($pickup);
+            $this->persistShipment($delivery, $edi, $pickup);
         }
     }
 
