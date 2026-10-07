@@ -10,9 +10,12 @@ use AppBundle\Entity\Task\RecurrenceRuleGeneration;
 use AppBundle\Entity\Task\RecurrenceRuleGenerationRepository;
 use AppBundle\Exception\GenerateOrdersException;
 use AppBundle\Message\GenerateOrdersForDate;
+use AppBundle\Messenger\TransactionalMessages;
 use AppBundle\Service\DeliveryCreatedNotifier;
 use AppBundle\Service\DeliveryOrderManager;
+use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Recurr\Transformer\ArrayTransformer;
 use Recurr\Transformer\Constraint\BetweenConstraint;
@@ -21,12 +24,19 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 #[AsMessageHandler]
 class GenerateOrdersForDateHandler
 {
+    /**
+     * The first run plus Messenger's 3 retries.
+     */
+    private const MAX_ATTEMPTS = 4;
+
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly RecurrenceRuleGenerationRepository $generationRepository,
         private readonly DeliveryOrderManager $deliveryOrderManager,
         private readonly DeliveryCreatedNotifier $deliveryCreatedNotifier,
         private readonly LoggerInterface $logger,
+        private readonly TransactionalMessages $transactionalMessages,
+        private readonly ManagerRegistry $doctrine,
     )
     {
     }
@@ -36,6 +46,24 @@ class GenerateOrdersForDateHandler
         $date = $message->getDate();
 
         $generation = $this->loadGeneration($date);
+
+        // Messenger only counts retries for exceptions. A worker that dies (out
+        // of memory, killed) never acknowledges the message, which is delivered
+        // again and again, and each delivery can create orders. A run still
+        // "started" when picked up again is one that died, so stop there.
+        if (RecurrenceRuleGeneration::STATUS_STARTED === $generation->getStatus()
+            && $generation->getAttempts() >= self::MAX_ATTEMPTS) {
+            $generation->abort(sprintf('The worker crashed %d times in a row', $generation->getAttempts()));
+            $this->entityManager->flush();
+
+            $this->logger->error(
+                sprintf('Gave up generating recurring orders after %d attempts', $generation->getAttempts()),
+                ['date' => $date]
+            );
+
+            return;
+        }
+
         $generation->start();
         $this->entityManager->flush();
 
@@ -71,26 +99,44 @@ class GenerateOrdersForDateHandler
             return;
         }
 
+        $generationId = $generation->getId();
+        $subscriptionIds = array_map(fn(Task\RecurrenceRule $subscription) => $subscription->getId(), $subscriptions);
+
         // Send a single recap notification for all the deliveries created below,
         // instead of one notification per delivery
         $this->deliveryCreatedNotifier->startBatch();
 
         try {
-            foreach ($subscriptions as $subscription) {
+            foreach ($subscriptionIds as $subscriptionId) {
+                $savepoint = $this->deliveryCreatedNotifier->savepoint();
+
                 try {
-                    $order = $this->deliveryOrderManager->createOrderFromRecurrenceRule($subscription, $date);
-                    if (!is_null($order)) {
-                        $generation->succeed();
-                    }
+                    $order = $this->createOrderInTransaction($subscriptionId, $date);
                 } catch (\Throwable $e) {
                     // One bad rule should not block the other rules for the date.
                     // Failed rules are retried with the whole message, successes
                     // are skipped on retry via filterWithoutOrdersOnDate().
-                    $generation->fail($subscription->getId(), $e->getMessage());
+                    $this->deliveryCreatedNotifier->rollbackTo($savepoint);
+
+                    // A rolled back transaction closes the entity manager, and
+                    // leaves what it loaded detached
+                    $this->doctrine->resetManager();
+                    $generation = $this->generationRepository->find($generationId);
+
+                    $generation->fail($subscriptionId, $e->getMessage());
+                    $this->entityManager->flush();
+
                     $this->logger->error(
                         sprintf('Failed to generate recurring order: %s', $e->getMessage()),
-                        ['date' => $date, 'recurrence_rule' => $subscription->getId()]
+                        ['date' => $date, 'recurrence_rule' => $subscriptionId]
                     );
+
+                    continue;
+                }
+
+                if (!is_null($order)) {
+                    $generation->succeed();
+                    $this->entityManager->flush();
                 }
             }
 
@@ -119,6 +165,24 @@ class GenerateOrdersForDateHandler
         $this->logger->info(
             sprintf('Generated %d recurring order(s)', $generation->getSucceeded()),
             ['date' => $date, 'recurrence_rules' => count($subscriptions)]
+        );
+    }
+
+    /**
+     * Each rule gets its own transaction: a worker that dies or a rule that fails
+     * halfway leaves nothing behind - no tasks, no order stuck in "cart" - and
+     * the rules done before it stay done. The live updates and notifications
+     * about the order only go out once it is committed.
+     */
+    private function createOrderInTransaction(int $subscriptionId, string $date): ?OrderInterface
+    {
+        return $this->transactionalMessages->run(
+            fn() => $this->entityManager->wrapInTransaction(function () use ($subscriptionId, $date) {
+                /** @var Task\RecurrenceRule $subscription */
+                $subscription = $this->entityManager->find(Task\RecurrenceRule::class, $subscriptionId);
+
+                return $this->deliveryOrderManager->createOrderFromRecurrenceRule($subscription, $date);
+            })
         );
     }
 

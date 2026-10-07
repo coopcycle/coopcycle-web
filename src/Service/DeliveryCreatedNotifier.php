@@ -75,6 +75,24 @@ class DeliveryCreatedNotifier
     }
 
     /**
+     * Marks the current state of the batch, to come back to it with rollbackTo()
+     * when the deliveries notified since are rolled back.
+     */
+    public function savepoint(): int
+    {
+        return count($this->batch);
+    }
+
+    /**
+     * Forgets the deliveries notified since the savepoint: their transaction was
+     * rolled back, the recap must not announce them.
+     */
+    public function rollbackTo(int $savepoint): void
+    {
+        $this->batch = array_slice($this->batch, 0, $savepoint);
+    }
+
+    /**
      * Discards the current batch without dispatching anything.
      * Used when generation fails, so a retry doesn't send
      * a recap for a partial batch on every attempt.

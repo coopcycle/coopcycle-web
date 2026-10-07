@@ -1336,6 +1336,10 @@ services:
   AppBundle\Messenger\:
     resource: '../src/Messenger/*'
 
+  AppBundle\Messenger\TransactionalMessagesMiddleware:
+    arguments:
+      $sendersLocator: '@messenger.senders_locator'
+
   AppBundle\MessageHandler\EmailHandler: ~
 
   AppBundle\MessageHandler\ImportTasksHandler: ~

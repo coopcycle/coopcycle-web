@@ -300,6 +300,25 @@ class LiveUpdatesTest extends TestCase
         $this->liveUpdates->toDispatchers('Test message');
     }
 
+    public function testPublishEventWithScalarData(): void
+    {
+        $this->messageBusMock
+            ->dispatch(Argument::that(function ($message) {
+                return $message instanceof PublishToCentrifugo
+                    && $message->channels === [sprintf('%s_events#john_doe', $this->namespace)]
+                    && $message->event['name'] === 'notifications:count'
+                    && $message->event['data'] === 3
+                    && null === $message->event['version'];
+            }))
+            ->willReturn(new Envelope(new \stdClass()))
+            ->shouldBeCalledOnce();
+
+        $this->liveUpdates->publishEvent('john_doe', [
+            'name' => 'notifications:count',
+            'data' => 3,
+        ]);
+    }
+
     /**
      * The live update is handed to the transport as an already-resolved message:
      * channels decided, payload serialized. Nothing downstream re-reads anything.

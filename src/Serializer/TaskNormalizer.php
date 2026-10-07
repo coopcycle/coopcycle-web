@@ -15,7 +15,6 @@ use Carbon\CarbonPeriod;
 use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
 use Symfony\Component\Serializer\Normalizer\ContextAwareDenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -47,9 +46,9 @@ class TaskNormalizer implements NormalizerInterface, ContextAwareDenormalizerInt
         // In our JS code, we often override the state with the entire response
         // This custom code makes sure it works like before, by tricking IriConverter
         $context['operation'] = $this->resourceMetadataFactory->create(Task::class)->getOperation();
-        // The 'operation' key is excluded from the serializer cache key because serializing an API Platform
-        // Operation object pulls in a large object graph and causes out-of-memory errors.
-        $context[AbstractObjectNormalizer::EXCLUDE_FROM_CACHE_KEY][] = 'operation';
+        // Objects in the context must stay out of the serializer cache key,
+        // or each normalization serializes the whole graph they reach.
+        $context = SerializerCacheKey::excludeObjects($context);
 
         $data = $this->normalizer->normalize($object, $format, $context);
 
