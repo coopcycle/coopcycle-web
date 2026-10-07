@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { skipToken } from '@reduxjs/toolkit/query';
 import {
   useGetPricingRuleSetQuery,
-  useGetPricingRuleSetsQuery,
+  useGetPricingRuleSetNamesQuery,
   useGetStoreQuery,
 } from '../../../../api/slice';
 import { Uri } from '../../../../api/types';
@@ -35,7 +35,7 @@ export const PricingRuleSetSelect = ({
   );
 
   const { data: storeData } = useGetStoreQuery(storeNodeId);
-  const { data: pricingRuleSets, isLoading } = useGetPricingRuleSetsQuery(
+  const { data: pricingRuleSets, isLoading } = useGetPricingRuleSetNamesQuery(
     undefined,
     { skip: !isEnabled },
   );

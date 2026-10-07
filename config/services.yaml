@@ -893,6 +893,10 @@ services:
     arguments:
       $properties: []
 
+  pricing_rule_set.property_filter:
+    parent: 'api_platform.serializer.property_filter'
+    tags: [ 'api_platform.filter' ]
+
   coopcycle.web_success_handler:
     class: AppBundle\EventListener\AuthenticationWebSuccessHandler
     arguments: ['@security.http_utils', '@router']

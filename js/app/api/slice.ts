@@ -21,6 +21,7 @@ import {
   Address,
   PricingMatrix,
   PricingRuleSet,
+  PricingRuleSetName,
   Delivery,
   RecurrenceRule,
   UpdateOrderRequest,
@@ -353,12 +354,14 @@ export const apiSlice = createApi({
       },
     }),
 
-    getPricingRuleSets: builder.query<PricingRuleSet[], void>({
+    // Only the names, without the rules, to choose a rule set
+    getPricingRuleSetNames: builder.query<PricingRuleSetName[], void>({
       queryFn: async (args, queryApi, extraOptions, baseQuery) => {
-        return await fetchAllRecordsUsingFetchWithBQ<PricingRuleSet>(
+        return await fetchAllRecordsUsingFetchWithBQ<PricingRuleSetName>(
           baseQuery,
           'api/pricing_rule_sets',
           100,
+          { 'properties[]': 'name' },
         );
       },
       providesTags: ['PricingRuleSet'],
@@ -391,7 +394,10 @@ export const apiSlice = createApi({
         { type: 'PricingRuleSet', id },
       ],
     }),
-    createPricingMatrix: builder.mutation<PricingMatrix, Partial<PricingMatrix>>({
+    createPricingMatrix: builder.mutation<
+      PricingMatrix,
+      Partial<PricingMatrix>
+    >({
       query: matrix => ({
         url: 'api/pricing_matrices',
         method: 'POST',
@@ -988,7 +994,7 @@ export const {
   useLazyGetInvoiceLineItemsGroupedByOrganizationQuery,
   useGetInvoiceLineItemsQuery,
   useGetPendingInvoiceLineItemsQuery,
-  useGetPricingRuleSetsQuery,
+  useGetPricingRuleSetNamesQuery,
   useGetPricingRuleSetQuery,
   useCreatePricingRuleSetMutation,
   useUpdatePricingRuleSetMutation,

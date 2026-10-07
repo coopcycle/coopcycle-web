@@ -486,6 +486,8 @@ export type PricingRuleSet = JsonLdEntity & {
   matrices: PricingMatrix[];
 };
 
+export type PricingRuleSetName = Pick<PricingRuleSet, '@id' | 'name'>;
+
 export type OptimizationGain = {
   distance?: number;
   duration?: number;
