@@ -42,7 +42,7 @@ context('Delivery (role: dispatcher)', () => {
       .find('[data-testid="value"]')
       .contains('€14.99');
 
-    cy.visit('/admin/deliveries/pricing/beta/1');
+    cy.visit('/admin/deliveries/pricing/1');
 
     // Wait for React components to load
     cy.get('[data-testid="pricing-rule-set-form"]', {

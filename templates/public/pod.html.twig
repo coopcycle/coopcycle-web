@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="{{ app.request.locale }}">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>{{ 'pod.title'|trans }}{% if waybill.client_file_number is not empty %} {{ waybill.client_file_number }}{% endif %}</title>
+    <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 16px; background: #fff; color: #111; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.35; }
+    .page { max-width: 800px; margin: 0 auto; }
+    header img { max-height: 60px; max-width: 200px; }
+    .waybill { margin-top: 16px; border: 1px solid #333; }
+    .waybill > * + * { border-top: 1px solid #333; }
+    .title { text-align: center; padding: 8px; }
+    .title h1 { margin: 0; font-size: 28px; }
+    .title p { margin: 0; font-size: 12px; }
+    .row { display: flex; flex-wrap: wrap; }
+    .cell { flex: 1 1 0; min-width: 140px; padding: 6px 8px; }
+    .row > .cell + .cell { border-left: 1px solid #333; }
+    .cell.wide { flex-grow: 2; }
+    .figures .cell { text-align: center; }
+    .label { font-weight: bold; }
+    .label.upper { text-transform: uppercase; }
+    dl { margin: 0; }
+    dd { margin: 0 0 4px 0; }
+    ul { margin: 0; padding-left: 18px; }
+    .notice { font-size: 13px; margin: 8px 0 24px; }
+    .signature { max-width: 320px; margin: 0 0 24px auto; border: 1px solid #ccc; padding: 8px; text-align: center; }
+    .signature img { display: block; max-width: 100%; max-height: 160px; margin: 8px auto 0; }
+    .photos { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+    .photos a { flex: 0 1 180px; }
+    .photos img { width: 100%; height: auto; border: 1px solid #ccc; }
+    h2 { font-size: 16px; }
+    footer { text-align: center; font-weight: bold; margin: 24px 0; }
+    @media (max-width: 600px) {
+      .row > .cell + .cell { border-left: none; border-top: 1px solid #333; }
+      .row > .cell { flex-basis: 100%; }
+    }
+    @media print {
+      body { padding: 0; }
+      .photos a { flex-basis: 140px; }
+    }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header>
+        <img src="{{ coopcycle_company_logo() }}" alt="{{ coopcycle_setting('brand_name') }}">
+      </header>
+
+      <main class="waybill">
+        <section class="title">
+          <h1>{{ 'pod.title'|trans }}</h1>
+          <p>{% trans with { '%date%': task.completedAt|format_datetime('medium', 'short', locale=app.request.locale) } %}pod.completed_at{% endtrans %}</p>
+        </section>
+
+        <section class="row">
+          <dl class="cell">
+            <dt class="label upper">{{ 'pod.client_file_number'|trans }}</dt>
+            <dd>{{ waybill.client_file_number ?? '--' }}</dd>
+            <dt class="label upper">{{ 'pod.receipt_number'|trans }}</dt>
+            <dd>{{ waybill.receipt_number ?? '--' }}</dd>
+            {% if waybill.shipper_references is not empty %}
+            <dt class="label upper">{{ 'pod.shipper_references'|trans }}</dt>
+            <dd>{{ waybill.shipper_references }}</dd>
+            {% endif %}
+            {% if waybill.consignee_orders is not empty %}
+            <dt class="label upper">{{ 'pod.consignee_orders'|trans }}</dt>
+            <dd>{{ waybill.consignee_orders }}</dd>
+            {% endif %}
+          </dl>
+        </section>
+
+        <section class="row">
+          <div class="cell">
+            <span class="label upper">{{ 'pod.sender'|trans }}</span>
+            <div>{{ waybill.sender ?? coopcycle_setting('brand_name') }}</div>
+          </div>
+          <div class="cell wide">
+            <span class="label upper">{{ 'pod.shipper'|trans }}</span>
+            {% if waybill.shipper is not empty %}
+            <div><strong>{{ waybill.shipper.label }}</strong></div>
+            <div>{{ waybill.shipper.address }}</div>
+            {% else %}
+            <div>--</div>
+            {% endif %}
+          </div>
+          <div class="cell wide">
+            <span class="label upper">{{ 'pod.consignee'|trans }}</span>
+            <div><strong>{{ task.address.name ?? task.address.company }}</strong></div>
+            <div>{{ waybill.consignee_address }}</div>
+          </div>
+        </section>
+
+        <section class="cell">
+          <span class="label upper">{{ 'pod.delivery_instructions'|trans }}</span>
+          {{ task.comments ?? '--' }}
+        </section>
+
+        <section class="row figures">
+          <div class="cell">
+            <div class="label">{{ 'pod.handling_units'|trans }}</div>
+            <div>{{ waybill.handling_units ?? '--' }}</div>
+          </div>
+          <div class="cell">
+            <div class="label">{{ 'pod.packages'|trans }}</div>
+            <div>{{ waybill.packages ?? '--' }}</div>
+          </div>
+          <div class="cell">
+            <div class="label">{{ 'pod.returnables'|trans }}</div>
+            <div>{{ waybill.returnables ?? '--' }}</div>
+          </div>
+          <div class="cell">
+            <div class="label">{{ 'pod.gross_weight'|trans }}</div>
+            <div>{{ waybill.gross_weight is not null ? waybill.gross_weight|format_number({max_fraction_digit: 3}, locale=app.request.locale) : '--' }}</div>
+          </div>
+          <div class="cell">
+            <div class="label">{{ 'pod.volume'|trans }}</div>
+            <div>{{ waybill.volume is not null ? waybill.volume|format_number({max_fraction_digit: 3}, locale=app.request.locale) : '--' }}</div>
+          </div>
+        </section>
+
+        <section class="row">
+          <div class="cell wide">
+            <div class="label">{{ 'pod.nature_of_goods'|trans }}</div>
+            <div>{{ waybill.nature_of_goods ?? '--' }}</div>
+            <div class="label">{{ 'pod.dangerous_goods'|trans }}</div>
+            {% if waybill.dangerous_goods is null %}
+            <div>--</div>
+            {% elseif waybill.dangerous_goods is empty %}
+            <div>{{ 'pod.no'|trans }}</div>
+            {% else %}
+            <ul>
+              {% for dg in waybill.dangerous_goods %}
+              <li>
+                {% if dg.un_number is not empty %}UN{{ dg.un_number }}{% endif %}
+                {{ dg.name }}
+                {% if dg.class is not empty %}({% trans with { '%class%': dg.class } %}pod.dangerous_goods.class{% endtrans %}{% if dg.packing_group is not empty %}, {% trans with { '%group%': dg.packing_group } %}pod.dangerous_goods.packing_group{% endtrans %}{% endif %}){% endif %}
+              </li>
+              {% endfor %}
+            </ul>
+            {% endif %}
+          </div>
+          <div class="cell">
+            <div class="label">{{ 'pod.cash_on_delivery'|trans }}</div>
+            <div>--</div>
+          </div>
+        </section>
+
+        <section class="cell">
+          <span class="label upper">{{ 'pod.bl_number'|trans }}</span>
+          {{ waybill.receipt_number ?? '--' }}
+        </section>
+      </main>
+
+      <p class="notice">{{ 'pod.reservations'|trans }}</p>
+
+      <section class="signature">
+        <div class="label">{% trans with { '%name%': task.address.contactName ?: '--' } %}pod.signatory{% endtrans %}</div>
+        {% for image in waybill.signatures %}
+        <img src="{{ path('task_image_public', { path: image.imageName }) }}" alt="{{ 'pod.signature'|trans }}">
+        {% else %}
+        <div>{{ 'pod.no_signature'|trans }}</div>
+        {% endfor %}
+      </section>
+
+      {% if waybill.photos is not empty %}
+      <h2>{{ 'pod.photos'|trans }}</h2>
+      <section class="photos">
+        {% for image in waybill.photos %}
+        <a href="{{ path('task_image_public', { path: image.imageName }) }}" target="_blank" rel="noopener">
+          <img src="{{ path('task_image_public', { path: image.imageName }) }}" alt="{{ 'pod.photo'|trans }} {{ loop.index }}" loading="lazy">
+        </a>
+        {% endfor %}
+      </section>
+      {% endif %}
+
+      <footer>{{ 'pod.legal'|trans }}</footer>
+    </div>
+  </body>
+</html>

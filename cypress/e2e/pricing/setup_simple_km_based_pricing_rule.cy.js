@@ -1,58 +1,195 @@
-context('Setup simple km-based pricing (role: admin)', () => {
-  beforeEach(() => {
-    cy.loadFixturesWithSetup('user_admin.yml')
-    cy.login('admin', '12345678')
-  })
+context(
+  'Setup simple km-based pricing rule (role: admin)',
+  () => {
+    beforeEach(() => {
+      cy.loadFixturesWithSetup('user_admin.yml')
+      cy.login('admin', '12345678')
+    })
 
-  it('creates simple km-based pricing rule', function () {
-    cy.visit('/admin/deliveries/pricing')
+    it('creates simple km-based pricing rule using React interface', function () {
+      cy.visit('/admin/deliveries/pricing')
 
-    // List of all pricing rule sets
-    cy.get('[data-testid="pricing_rule_sets_add"]').click()
+      // List of all pricing rule sets
+      cy.urlmatch(/\/admin\/deliveries\/pricing$/)
+      cy.get('[data-testid="pricing_rule_sets_add"]').click()
 
-    // New pricing rule set page
-    cy.urlmatch(/\/admin\/deliveries\/pricing\/new$/)
-    cy.get('#pricing_rule_set_name').type('Old school')
+      // New pricing rule set page
+      cy.urlmatch(/\/admin\/deliveries\/pricing\/new$/)
 
-    // Select strategy: All the matching rules
-    cy.get('#pricing_rule_set_strategy > :nth-child(2) > .required').click()
-    cy.get('#pricing_rule_set_strategy_1').check()
+      // Wait for React components to load
+      cy.get('[data-testid="pricing-rule-set-form"]', {
+        timeout: 10000,
+      }).should('be.visible')
 
-    // Rule: distance > 0; price = 5
-    cy.get('[data-testid="pricing_rule_set_add_rule_target_delivery"]').click()
-    cy.get('[data-testid="pricing-rule-0"]')
-      .within(()=> {
-        cy.get('[data-testid="rule-picker-add-condition"]').click()
-        cy.get('tr > :nth-child(1) > .form-control').select('distance')
-        cy.get('[width="20%"] > .form-control').select('>')
-        cy.get('#pricing_rule_set_rules_0_price').type('5')
+      // Fill in the name field
+      cy.get('input[id*="name"]').type('Old school Beta')
+
+      // Select strategy: All the matching rules (map strategy)
+      cy.get('input[value="map"]').check()
+
+      // Add first delivery rule: distance > 0; price = 5
+      cy.get(
+        '[data-testid="pricing-rule-set-add-rule-target-delivery"]',
+      ).click()
+
+      // Wait for the rule to be added and form to be visible
+      cy.get('[data-testid="pricing-rule-set-rule-0"]', {
+        timeout: 5000,
+      }).should('be.visible')
+
+      cy.get('[data-testid="pricing-rule-set-rule-0"]').within(() => {
+        cy.get('[data-testid="rule-add-condition"]').click()
+        cy.get('[data-testid="condition-type-select"]').select('distance')
+        cy.get('[data-testid="condition-operator-select"]').select('>')
+        cy.get('[data-testid="condition-number-input"]').type('{selectall}0')
+
+        // Set price
+        cy.get('[data-testid="rule-fixed-price-input"]').type('{selectall}5')
       })
 
-    // Rule: distance > 3; price = 3 per 2km above 1km
-    cy.get('[data-testid="pricing_rule_set_add_rule_target_delivery"]').click()
-    cy.get('[data-testid="pricing-rule-1"]')
-      .within(()=> {
-        cy.get('[data-testid="rule-picker-add-condition"]').click()
-        cy.get('tr > :nth-child(1) > .form-control').select('distance')
-        cy.get('[width="20%"] > .form-control').select('>')
-        cy.get('[width="25%"] > .form-control').type('3')
+      // Add second delivery rule: distance > 3; price = 3 per 2km above 1km
+      cy.get(
+        '[data-testid="pricing-rule-set-add-rule-target-delivery"]',
+      ).click()
 
-        cy.get('[data-testid="pricing_rule_price_type_choice"]',).select('range')
-        cy.get('.mr-2 > .form-control').type('3')
-        cy.get('[data-testid="price_rule_price_range_editor"] > :nth-child(2) > input.form-control',).type('2')
-        cy.get('[data-testid="price_rule_price_range_editor"] > :nth-child(3) > .form-control',).type('1')
+      cy.get('[data-testid="pricing-rule-set-rule-1"]', {
+        timeout: 5000,
+      }).should('be.visible')
 
+      cy.get('[data-testid="pricing-rule-set-rule-1"]').within(() => {
+        cy.get('[data-testid="rule-name"]').clear()
+        cy.get('[data-testid="rule-name"]').type('€3 per 2km')
+        cy.get('[data-testid="rule-add-condition"]').click()
+        cy.get('[data-testid="condition-type-select"]').select('distance')
+        cy.get('[data-testid="condition-operator-select"]').select('>')
+        cy.get('[data-testid="condition-number-input"]').type('{selectall}3')
+
+        cy.antdSelect('[data-testid="rule-price-type"]', 'Prix par tranches')
+        cy.get('[data-testid="rule-price-range-price"]').clear()
+        cy.get('[data-testid="rule-price-range-price"]').type('3')
+        cy.get('[data-testid="rule-price-range-step"]').clear()
+        cy.get('[data-testid="rule-price-range-step"]').type('2')
+        cy.get('[data-testid="rule-price-range-threshold"]').clear()
+        cy.get('[data-testid="rule-price-range-threshold"]').type('1')
       })
 
-    // Save button
-    cy.intercept('/admin/deliveries/pricing/*').as('submit')
-    cy.get('.btn-block').click()
-    cy.wait('@submit', { timeout: 10000 })
+      // Add manual supplement: "Return documents" with fixed price 5 eur
+      cy.get(
+        '[data-testid="pricing-rule-set-add-supplement-target-delivery"]',
+      ).click()
+      cy.get('[data-testid="pricing-rule-set-rule-2"]', {
+        timeout: 5000,
+      }).should('be.visible')
 
-    // Pricing rule page
-    cy.urlmatch(/\/admin\/deliveries\/pricing\/[0-9]+$/)
+      cy.get('[data-testid="pricing-rule-set-rule-2"]').within(() => {
+        cy.get('[data-testid="rule-name"]').type('Return documents')
+        cy.get('[data-testid="rule-fixed-price-input"]').type('{selectall}5')
+      })
 
-    cy.get('.alert-success', { timeout: 10000 })
-      .should('contain', 'Changements sauvegardés')
-  })
-})
+      // Add manual supplement: "Signature required" with 10% surcharge
+      cy.get(
+        '[data-testid="pricing-rule-set-add-supplement-target-delivery"]',
+      ).click()
+      cy.get('[data-testid="pricing-rule-set-rule-3"]', {
+        timeout: 5000,
+      }).should('be.visible')
+      cy.get('[data-testid="pricing-rule-set-rule-3"]').within(() => {
+        cy.get('[data-testid="rule-name"]').type('Signature required')
+        cy.antdSelect('[data-testid="rule-price-type"]', 'Pourcentage')
+        cy.get('[data-testid="rule-percentage-input"]').type('{selectall}10')
+      })
+
+      // Add manual supplement: "Waiting time" with price 10 cents per minute
+      cy.get(
+        '[data-testid="pricing-rule-set-add-supplement-target-delivery"]',
+      ).click()
+      cy.get('[data-testid="pricing-rule-set-rule-4"]', {
+        timeout: 5000,
+      }).should('be.visible')
+      cy.get('[data-testid="pricing-rule-set-rule-4"]').within(() => {
+        cy.get('[data-testid="rule-name"]').type('Waiting time')
+        cy.antdSelect('[data-testid="rule-price-type"]', 'Prix par tranches')
+        cy.get('[data-testid="rule-price-range-price"]').type('{selectall}0.1')
+      })
+
+      // Save
+      cy.intercept('POST', '/api/pricing_rule_sets').as('postPricingRuleSet')
+      cy.get('button[type="submit"]').click()
+      cy.wait('@postPricingRuleSet', { timeout: 10000 })
+
+      // Should redirect to edit page
+      cy.urlmatch(/\/admin\/deliveries\/pricing\/[0-9]+$/)
+
+      // Verify saved data
+      cy.validatePricingRuleSet({
+        name: 'Old school Beta',
+        strategy: 'map',
+        deliveryRules: [
+          {
+            index: 0,
+            conditions: [
+              {
+                type: 'distance',
+                operator: '>',
+                value: '0',
+              },
+            ],
+            price: {
+              type: 'fixed',
+              value: '5.00',
+            },
+          },
+          {
+            index: 1,
+            name: '€3 per 2km',
+            conditions: [
+              {
+                type: 'distance',
+                operator: '>',
+                value: '3',
+              },
+            ],
+            price: {
+              type: 'range',
+              range: {
+                price: '3.00',
+                step: '2',
+                threshold: '1',
+              },
+            },
+          },
+        ],
+        deliveryManualSupplements: [
+          {
+            index: 2,
+            name: 'Return documents',
+            price: {
+              type: 'fixed',
+              value: '5.00',
+            },
+          },
+          {
+            index: 3,
+            name: 'Signature required',
+            price: {
+              type: 'percentage',
+              percentage: '10',
+            },
+          },
+          {
+            index: 4,
+            name: 'Waiting time',
+            price: {
+              type: 'range',
+              range: {
+                price: '0.10',
+                step: '1',
+                threshold: '0',
+              },
+            },
+          },
+        ],
+      })
+    })
+  },
+)

@@ -67,7 +67,7 @@ class RuleHumanizerTest extends KernelTestCase
         $rule->setExpression('in_zone(dropoff.address, "south")');
         $rule->setPrice('100');
 
-        $this->assertEquals('Adresse dropoff dans zone "south" - €1.00', $this->humanizer->humanize($rule));
+        $this->assertEquals('Adresse du dépôt dans la zone "south" - €1.00', $this->humanizer->humanize($rule));
     }
 
     public function testInZoneOutZone()
@@ -76,7 +76,45 @@ class RuleHumanizerTest extends KernelTestCase
         $rule->setExpression('in_zone(pickup.address, "south") and out_zone(dropoff.address, "north") and weight > 5000');
         $rule->setPrice('100');
 
-        $this->assertEquals('Adresse pickup dans zone "south", adresse dropoff hors zone "north", plus de 5.00 kg - €1.00', $this->humanizer->humanize($rule));
+        $this->assertEquals('Adresse du retrait dans la zone "south", adresse du dépôt hors de la zone "north", plus de 5.00 kg - €1.00', $this->humanizer->humanize($rule));
+    }
+
+    public function testInZoneOfTheTaskItself()
+    {
+        // A grid applied to every point reads the address of whichever point is
+        // being priced, and used to name it after the variable: "adresse task"
+        $rule = new PricingRule();
+        $rule->setExpression('in_zone(task.address, "south")');
+        $rule->setPrice('100');
+
+        $this->assertEquals(
+            'Adresse de la tâche dans la zone "south" - €1.00',
+            $this->humanizer->humanize($rule)
+        );
+    }
+
+    public function testPriceRangePerVolumeUnit()
+    {
+        $rule = new PricingRule();
+        $rule->setExpression('distance > 2500');
+        $rule->setPrice('price_range(distance, 50, 1000, 2500, packages.totalVolumeUnits())');
+
+        $this->assertStringContainsString(
+            'par unité de volume',
+            $this->humanizer->humanize($rule)
+        );
+    }
+
+    public function testPriceRangeWithoutMultiplierIsUnchanged()
+    {
+        $rule = new PricingRule();
+        $rule->setExpression('distance > 2500');
+        $rule->setPrice('price_range(distance, 50, 1000, 2500)');
+
+        $this->assertStringNotContainsString(
+            'unité de volume',
+            $this->humanizer->humanize($rule)
+        );
     }
 
     public function testPricePerPackage()
@@ -207,6 +245,24 @@ class RuleHumanizerTest extends KernelTestCase
         $rule->setPrice('100');
 
         $this->assertEquals('Volume du colis entre 1 vu et 5 vu - €1.00', $this->humanizer->humanize($rule));
+    }
+
+    public function testDeliveryPackagesTotalVolumeUnits()
+    {
+        $rule = new PricingRule();
+        $rule->setExpression('delivery.packages.totalVolumeUnits() < 5');
+        $rule->setPrice('100');
+
+        $this->assertEquals('Volume total de la livraison moins de 5 - €1.00', $this->humanizer->humanize($rule));
+    }
+
+    public function testDeliveryPackagesTotalVolumeUnitsRange()
+    {
+        $rule = new PricingRule();
+        $rule->setExpression('delivery.packages.totalVolumeUnits() in 1..5');
+        $rule->setPrice('100');
+
+        $this->assertEquals('Volume total de la livraison entre 1 vu et 5 vu - €1.00', $this->humanizer->humanize($rule));
     }
 
     public function testAnd()

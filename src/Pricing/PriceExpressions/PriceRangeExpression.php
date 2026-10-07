@@ -8,7 +8,11 @@ class PriceRangeExpression extends PriceExpression
         public readonly string $attribute,
         public readonly int $price,
         public readonly int $step,
-        public readonly int $threshold
+        public readonly int $threshold,
+        /**
+         * The variable the range is charged per unit of, null when it is charged once.
+         */
+        public readonly ?string $multiplier = null
     ) {
     }
 }

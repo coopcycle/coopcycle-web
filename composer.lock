@@ -1430,12 +1430,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/coopcycle/transporter.git",
-                "reference": "968181aba6c2edc521696997383766ab43a27eb5"
+                "reference": "f0d5997b437702f06b0237daf84fea97ebcbc0da"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coopcycle/transporter/zipball/968181aba6c2edc521696997383766ab43a27eb5",
-                "reference": "968181aba6c2edc521696997383766ab43a27eb5",
+                "url": "https://api.github.com/repos/coopcycle/transporter/zipball/f0d5997b437702f06b0237daf84fea97ebcbc0da",
+                "reference": "f0d5997b437702f06b0237daf84fea97ebcbc0da",
                 "shasum": ""
             },
             "require": {
@@ -1465,7 +1465,7 @@
                 "source": "https://github.com/coopcycle/transporter/tree/master",
                 "issues": "https://github.com/coopcycle/transporter/issues"
             },
-            "time": "2026-06-16T13:58:57+00:00"
+            "time": "2026-10-07T11:07:22+00:00"
         },
         {
             "name": "craue/config-bundle",
@@ -12071,12 +12071,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/coopcycle/edifact-generator.git",
-                "reference": "f1089a7a1ca6147994492e06f498453765104aa8"
+                "reference": "d28d83032e38ddaa7e8be546be2c8262c6e7732f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coopcycle/edifact-generator/zipball/f1089a7a1ca6147994492e06f498453765104aa8",
-                "reference": "f1089a7a1ca6147994492e06f498453765104aa8",
+                "url": "https://api.github.com/repos/coopcycle/edifact-generator/zipball/d28d83032e38ddaa7e8be546be2c8262c6e7732f",
+                "reference": "d28d83032e38ddaa7e8be546be2c8262c6e7732f",
                 "shasum": ""
             },
             "require-dev": {
@@ -12116,7 +12116,7 @@
             "support": {
                 "source": "https://github.com/coopcycle/edifact-generator/tree/master"
             },
-            "time": "2025-07-30T05:08:43+00:00"
+            "time": "2026-10-06T12:24:54+00:00"
         },
         {
             "name": "php-edifact/edifact-mapping",
@@ -12124,12 +12124,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/coopcycle/edifact-mapping.git",
-                "reference": "66e3425cec77b7be4c93c43bf9bd21dcfb39c8f1"
+                "reference": "9cbd3210bc137a87e22e3eb1d944932ebfda8782"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coopcycle/edifact-mapping/zipball/66e3425cec77b7be4c93c43bf9bd21dcfb39c8f1",
-                "reference": "66e3425cec77b7be4c93c43bf9bd21dcfb39c8f1",
+                "url": "https://api.github.com/repos/coopcycle/edifact-mapping/zipball/9cbd3210bc137a87e22e3eb1d944932ebfda8782",
+                "reference": "9cbd3210bc137a87e22e3eb1d944932ebfda8782",
                 "shasum": ""
             },
             "default-branch": true,
@@ -12154,7 +12154,7 @@
             "support": {
                 "source": "https://github.com/coopcycle/edifact-mapping/tree/master"
             },
-            "time": "2026-05-21T12:08:29+00:00"
+            "time": "2026-10-07T11:03:06+00:00"
         },
         {
             "name": "php-http/client-common",
@@ -30448,17 +30448,17 @@
     ],
     "minimum-stability": "dev",
     "stability-flags": {
-        "drupal/core-vendor-hardening": 20,
-        "shahonseven/php-color-hash": 20,
+        "behatch/contexts": 20,
         "coopcycle/transporter": 20,
+        "drupal/core-vendor-hardening": 20,
         "islesurlasorguetourisme/daisyui-form-bundle": 20,
-        "behatch/contexts": 20
+        "shahonseven/php-color-hash": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": ">=8.2"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "platform-dev": {},
+    "plugin-api-version": "2.9.0"
 }

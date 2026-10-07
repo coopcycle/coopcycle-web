@@ -2,14 +2,16 @@
 
 namespace AppBundle\Transporter;
 
+use AppBundle\Action\Incident\CreateIncident;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Edifact\EDIFACTMessage;
+use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\Package;
-use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
 use AppBundle\Service\Geocoder;
 use Psr\Log\LoggerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Transporter\DTO\CommunicationMean;
 use Transporter\DTO\Mesurement;
 use Transporter\DTO\NameAndAddress;
@@ -33,12 +35,23 @@ class ImportFromPoint {
      */
     private array $packageMapping = [];
 
+    /**
+     * Address problems found by import(), reported as incidents
+     * by reportAddressIssue() once the task is persisted.
+     *
+     * @var \WeakMap<Task,array{0:string,1:array<string,string>}>
+     */
+    private \WeakMap $addressIssues;
+
     public function __construct(
         private Geocoder $geocoder,
         private PhoneNumberUtil $phoneUtil,
-        private LoggerInterface $transporterLogger
+        private LoggerInterface $transporterLogger,
+        private CreateIncident $createIncident,
+        private TranslatorInterface $translator
     ) {
         $this->defaultCoordinates = new GeoCoordinates(0,0);
+        $this->addressIssues = new \WeakMap();
     }
 
 
@@ -57,7 +70,7 @@ class ImportFromPoint {
             throw new TransporterException($message);
         }
         $nad = array_shift($nad);
-        $address = $this->addressFromNAD($nad);
+        [$address, $addressIssue] = $this->addressFromNAD($nad);
 
         $imported_from = sprintf(
             "%s\n%s\n\n%s\n",
@@ -85,16 +98,15 @@ class ImportFromPoint {
             $task->addEdifactMessage($edi);
         }
 
-        if ($address->getGeo()->isEqualTo($this->defaultCoordinates)) {
-            $task->setTags(Tag::ADDRESS_NEED_REVIEW_TAG);
-            //TODO: Trigger a incident.
+        if (null !== $addressIssue) {
+            $this->addressIssues[$task] = $addressIssue;
         }
 
         $weight = array_sum(array_map(
             fn(Mesurement $p) => $p->getQuantity(),
             $point->getMesurements()
         ));
-        $task->setWeight($weight * 1000);
+        $task->setWeight((int) round($weight * 1000));
 
         foreach ($point->getPackages() as $package) {
             $this->addPackageToTask($task, $package);
@@ -180,9 +192,43 @@ class ImportFromPoint {
         );
     }
 
+    /**
+     * Reports the address problem found while importing $task, if any.
+     * Must be called once $task is persisted.
+     *
+     * TODO: Close the incident once the task address is fixed. Do it in a
+     * handler reacting to a task address change event (if there is one),
+     * not in TaskSubscriber::onFlush. For now the dispatcher closes it.
+     */
+    public function reportAddressIssue(Task $task): void
+    {
+        if (!isset($this->addressIssues[$task])) {
+            return;
+        }
+
+        [$description, $metadata] = $this->addressIssues[$task];
+        unset($this->addressIssues[$task]);
+
+        $incident = new Incident();
+        $incident->setTask($task);
+        $incident->setFailureReasonCode('ADDRESS_REVIEW_NEEDED');
+        $incident->setPriority(Incident::PRIORITY_HIGH);
+        $incident->setTitle($this->translator->trans('transporter.address_review.title', [
+            '%address%' => $metadata['transporter_address'],
+        ]));
+        $incident->setDescription($description);
+        $incident->setMetadata([$metadata]);
+
+        ($this->createIncident)($incident, null);
+    }
+
+    /**
+     * @return array{0:Address,1:array{0:string,1:array<string,string>}|null}
+     *   The address, and why it needs a review: a description and metadata
+     */
     private function addressFromNAD(
         NameAndAddress $nad
-    ): Address
+    ): array
     {
         $address = null;
         try {
@@ -195,23 +241,49 @@ class ImportFromPoint {
             ));
         }
 
-        if (
-            is_null($address) ||
-            !$this->isInRange($this->defaultCoordinates, $address->getGeo())
-        ) {
+        $issue = null;
+        if (is_null($address)) {
             $this->transporterLogger->warning(sprintf(
-                'Address %s is not in default range or geocoding failed. Fallback to default coordinates',
+                'Geocoding failed for address %s. Fallback to default coordinates',
                 $nad->getAddress()
             ));
+            $issue = $this->addressIssue('not_found', $nad);
             $address = new Address();
             $address->setGeo($this->defaultCoordinates);
             $address->setStreetAddress('INVALID ADDRESS');
+        } elseif (!$this->isInRange($this->defaultCoordinates, $address->getGeo())) {
+            // Kept: it may be right, the dispatcher checks it from the incident
+            $this->transporterLogger->warning(sprintf(
+                'Address %s is not in default range',
+                $nad->getAddress()
+            ));
+            $issue = $this->addressIssue('out_of_range', $nad, $address->getStreetAddress());
         }
         $address->setCompany($nad->getAddressLabel());
         $address->setName($nad->getAddressLabel());
         $address->setContactName($nad->getContactName());
         $address->setTelephone($this->PhoneNumberFromPhone($nad->getCommunicationMeans()));
-        return $address;
+        return [$address, $issue];
+    }
+
+    /**
+     * @param string|null $found The geocoded address
+     * @return array{0:string,1:array<string,string>}
+     */
+    private function addressIssue(string $reason, NameAndAddress $nad, ?string $found = null): array
+    {
+        $metadata = ['transporter_address' => $nad->getAddress()];
+        if (!is_null($found)) {
+            $metadata['geocoded_address'] = $found;
+        }
+
+        return [
+            $this->translator->trans(sprintf('transporter.address_review.%s', $reason), [
+                '%address%' => $nad->getAddress(),
+                '%found%' => $found,
+            ]),
+            $metadata,
+        ];
     }
 
     /**

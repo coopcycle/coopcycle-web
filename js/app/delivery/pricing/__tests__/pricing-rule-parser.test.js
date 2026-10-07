@@ -16,6 +16,8 @@ import withOrderItemsTotal from './with-order-items-total.json'
 import withOrderItemsTotalRange from './with-order-items-total-range.json'
 import withTotalVolumeUnits from './with-packages-total-volume-units.json'
 import withTotalVolumeUnitsRange from './with-packages-total-volume-units-range.json'
+import withDeliveryTotalVolumeUnits from './with-delivery-packages-total-volume-units.json'
+import withDeliveryTotalVolumeUnitsRange from './with-delivery-packages-total-volume-units-range.json'
 import withTimeRangeLength from './with-time-range-length.json'
 import withDropoffTimeRangeLength from './with-time-range-length-dropoff.json'
 import withDropoffTimeRangeLengthWithRange from './with-time-range-length-dropoff-in.json'
@@ -27,6 +29,8 @@ import priceRange from './price-range.json'
 import rawPriceFormula from './raw-price-formula.json'
 import pricePerPackageFormula from './price-per-package.json'
 import pricePerPackageFunctionFormula from './price-per-package-function.json'
+import priceRangePerVolumeUnits from './price-range-per-volume-units.json'
+import priceRangePerDeliveryVolumeUnits from './price-range-per-delivery-volume-units.json'
 import priceRangeWithTotalVolumeUnits from './price-range-with-total-volume-units.json'
 
 describe('Pricing rule parser', function() {
@@ -313,6 +317,28 @@ describe('Pricing rule parser (AST)', function() {
     )
   })
 
+  it('should parse AST with delivery total volume units', function() {
+
+    const result = parseAST(withDeliveryTotalVolumeUnits)
+
+    expect(result).toEqual(
+      [
+        { left: 'delivery.packages.totalVolumeUnits()', operator: '>', right: 3 }
+      ]
+    )
+  })
+
+  it('should parse AST with delivery total volume units (range)', function() {
+
+    const result = parseAST(withDeliveryTotalVolumeUnitsRange)
+
+    expect(result).toEqual(
+      [
+        { left: 'delivery.packages.totalVolumeUnits()', operator: 'in', right: [1, 5] }
+      ]
+    )
+  })
+
   it('should parse AST with pickup time range length', function() {
 
     const result = parseAST(withTimeRangeLength)
@@ -390,6 +416,37 @@ describe('Pricing rule price parser (AST)', function() {
     expect(result.price).toBe(100);
     expect(result.step).toBe(1);
     expect(result.threshold).toBe(0);
+  })
+
+  it('should parse a price range charged per volume unit', function() {
+
+    const result = parsePriceAST(
+      priceRangePerVolumeUnits,
+      'price_range(distance, 50, 1000, 2500, packages.totalVolumeUnits())'
+    )
+
+    expect(result.attribute).toBe('distance')
+    expect(result.price).toBe(50)
+    expect(result.step).toBe(1000)
+    expect(result.threshold).toBe(2500)
+    expect(result.multiplier).toBe('packages.totalVolumeUnits()')
+  })
+
+  it('should parse a price range charged per volume unit of the whole delivery', function() {
+
+    const result = parsePriceAST(
+      priceRangePerDeliveryVolumeUnits,
+      'price_range(distance, 50, 1000, 2500, delivery.packages.totalVolumeUnits())'
+    )
+
+    expect(result.multiplier).toBe('delivery.packages.totalVolumeUnits()')
+  })
+
+  it('should leave the multiplier null when a price range has none', function() {
+
+    const result = parsePriceAST(priceRange, 'price_range(distance, 100, 1000, 0)')
+
+    expect(result.multiplier).toBeNull()
   })
 
   it('should parse price per package', function() {

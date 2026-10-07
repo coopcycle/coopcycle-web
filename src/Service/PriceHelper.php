@@ -6,6 +6,7 @@ use AppBundle\Service\SettingsManager;
 use Sylius\Component\Currency\Context\CurrencyContextInterface;
 use Sylius\Component\Taxation\Calculator\CalculatorInterface;
 use Sylius\Component\Taxation\Model\TaxableInterface;
+use Sylius\Component\Taxation\Model\TaxRateInterface;
 use Sylius\Component\Taxation\Model\TaxCategoryInterface;
 use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
 use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
@@ -32,7 +33,19 @@ final class PriceHelper implements TaxableInterface
         return $this->taxCategory;
     }
 
-    public function fromTaxIncludedAmount(int $taxIncludedAmount)
+    /**
+     * The rate a delivery is taxed at, as a fraction: 0.2 for 20%, 0.0 where the
+     * cooperative is not subject to VAT. Pricing rules store their prices with tax
+     * included, so this is what turns one into the other.
+     */
+    public function getTaxRateAmount(): float
+    {
+        $taxRate = $this->resolveTaxRate();
+
+        return null !== $taxRate ? $taxRate->getAmount() : 0.0;
+    }
+
+    private function resolveTaxRate(): ?TaxRateInterface
     {
         $subjectToVat = $this->settingsManager->get('subject_to_vat');
 
@@ -42,7 +55,12 @@ final class PriceHelper implements TaxableInterface
             ])
         );
 
-        $taxRate   = $this->taxRateResolver->resolve($this, ['country' => strtolower($this->state)]);
+        return $this->taxRateResolver->resolve($this, ['country' => strtolower($this->state)]);
+    }
+
+    public function fromTaxIncludedAmount(int $taxIncludedAmount)
+    {
+        $taxRate   = $this->resolveTaxRate();
         $taxAmount = (int) $this->calculator->calculate($taxIncludedAmount, $taxRate);
 
         return [

@@ -1044,6 +1044,35 @@ task.receipt.message: Par la présente, nous confirmons que nous avons bien livr
 task.receipt.received_by: Le colis a été reçu par <strong>%name%</strong>
 task.receipt.attached_images: Images jointes
 task.receipt.reference: 'Référence : <strong>%ref%</strong>'
+pod.title: Feuille de route
+pod.completed_at: du %date%
+pod.client_file_number: N° de dossier client
+pod.receipt_number: N° de récépissé
+pod.shipper_references: Référence expéditeur
+pod.consignee_orders: N° de commande destinataire
+pod.sender: Donneur d'ordre
+pod.shipper: Expéditeur
+pod.consignee: Destinataire
+pod.delivery_instructions: Instructions de livraison
+pod.handling_units: Nombre d'UM
+pod.packages: Nombre de colis
+pod.returnables: Nombre de consignés
+pod.gross_weight: Poids brut (kg)
+pod.volume: Volume (m³)
+pod.nature_of_goods: Nature de la marchandise
+pod.dangerous_goods: Marchandises dangereuses (ADR)
+pod.dangerous_goods.class: classe %class%
+pod.dangerous_goods.packing_group: GE %group%
+pod.cash_on_delivery: Contre-remboursement
+pod.bl_number: N° de B/L
+pod.no: Non
+pod.reservations: Toute réserve pour perte ou avarie doit être précise et confirmée dans les trois jours par lettre recommandée avec accusé de réception (art. L. 133-3 du Code de commerce).
+pod.signatory: 'Signataire : %name%'
+pod.signature: Signature
+pod.no_signature: Pas de signature
+pod.photos: Photos
+pod.photo: Photo
+pod.legal: Feuille de route reconstituée valant preuve (art. 1366 et 1367 du Code civil)
 basics.hours: '%count% heure|%count% heures'
 basics.days: '%count% jour|%count% jours'
 basics.weeks: '%count% semaine|%count% semaines'
@@ -1567,6 +1596,9 @@ incident.reason.REFUND_NEEDED: Remboursement nécessaire
 incident.reason.ADDRESS_REVIEW_NEEDED: Adresse à vérifier
 incident.reason.STORE_UNAVAILABLE: Commerce indisponible
 incident.reason.DELIVERY_DELAYS: Retards de livraison
+transporter.address_review.title: "Adresse à vérifier : %address%"
+transporter.address_review.not_found: "Aucun résultat pour l'adresse « %address% » envoyée par le transporteur."
+transporter.address_review.out_of_range: "L'adresse « %address% » a été localisée à « %found% », en dehors de la zone de l'instance."
 basics.select_all: "Tout sélectionner"
 basics.delete_selected: "Supprimer la sélection"
 delivery.table.heading.owner: "Propriétaire"
@@ -1697,8 +1729,11 @@ pricing.variant.pickup_point: Point de retrait
 pricing.variant.dropoff_point: Point de dépôt
 pricing.variant.order_supplement: Supplément de commande
 pricing.rule.humanizer.inside_zone: dans
-pricing.rule.humanizer.outside_zone: hors
-pricing.rule.humanizer.address_zone_format: 'adresse %task_type% %direction% zone "%zone_name%"'
+pricing.rule.humanizer.outside_zone: 'hors de'
+pricing.rule.humanizer.address_zone_format: 'adresse %task_type% %direction% la zone "%zone_name%"'
+pricing.rule.humanizer.address_source.task: 'de la tâche'
+pricing.rule.humanizer.address_source.pickup: 'du retrait'
+pricing.rule.humanizer.address_source.dropoff: 'du dépôt'
 pricing.rule.humanizer.between: entre %left% et %right%
 pricing.rule.humanizer.less_than: moins de %value%
 pricing.rule.humanizer.more_than: plus de %value%
@@ -1709,9 +1744,12 @@ pricing.rule.humanizer.time_range_length: 'créneau horaire de %task_type% %oper
 pricing.rule.humanizer.diff: 'délai de préavis pour %task_type% %operator% %value%'
 pricing.rule.humanizer.order_items_total: 'total du panier %operator% %value%'
 pricing.rule.humanizer.packages_volume_units: 'volume du colis %operator% %value%'
+pricing.rule.humanizer.delivery_packages_volume_units: 'volume total de la livraison %operator% %value%'
 pricing.rule.humanizer.packages_contains_at_least_one: 'colis %package_name%'
 pricing.rule.humanizer.price_range: '%unit_price% par %step%'
 pricing.rule.humanizer.price_range_with_threshold: 'au-dessus de %threshold% - %unit_price% par %step%'
+pricing.rule.humanizer.price_range_per: '%price_range%, par %multiplier%'
+pricing.rule.humanizer.multiplier.volume_units: 'unité de volume'
 pricing.rule.humanizer.price_per_package: '%unit_price% par %package_name%'
 adminDashboard.promotions.ongoing: Promotions actives (%count%)
 adminDashboard.promotions.past: Promotions passées (%count%)

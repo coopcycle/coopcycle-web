@@ -120,10 +120,40 @@ class RuleHumanizer
             : $this->translator->trans('pricing.rule.humanizer.outside_zone');
 
         return $this->translator->trans('pricing.rule.humanizer.address_zone_format', [
-            '%task_type%' => $taskType,
+            '%task_type%' => $this->translateAddressSource($taskType),
             '%direction%' => $direction,
             '%zone_name%' => $zoneName,
         ]);
+    }
+
+    /**
+     * Which address the zone is tested against. The expression names it after the
+     * variable it reads — 'task', 'pickup' or 'dropoff' — which is not something to
+     * put in front of whoever is reading the price.
+     *
+     * Each locale words this to fit its own address_zone_format: the fragment is
+     * adjectival in English ("pickup address"), prepositional in French
+     * ("adresse du retrait").
+     */
+    /**
+     * What a price range is charged per unit of. Only the package counts can be
+     * picked, and both read the same way to whoever is looking at the price.
+     */
+    private function translateMultiplier(string $multiplier): string
+    {
+        return match ($multiplier) {
+            'packages.totalVolumeUnits()',
+            'delivery.packages.totalVolumeUnits()' =>
+                $this->translator->trans('pricing.rule.humanizer.multiplier.volume_units'),
+            default => $multiplier,
+        };
+    }
+
+    private function translateAddressSource(string $addressSource): string
+    {
+        return $this->translator->trans(
+            sprintf('pricing.rule.humanizer.address_source.%s', strtolower($addressSource))
+        );
     }
 
     private function humanizeTimeRangeLengthFunction(FunctionNode $node): string
@@ -242,6 +272,14 @@ class RuleHumanizer
             // Simple property access like 'distance' or 'weight'
             $attributeName = $node->nodes['left']->attributes['name'];
 
+        } elseif (self::isDeliveryPackagesTotalVolumeUnits($node->nodes['left'])) {
+            // Handle the nested method call 'delivery.packages.totalVolumeUnits()'
+            return $this->humanizePackagesTotalVolumeUnits(
+                $node->attributes['operator'],
+                $node->nodes['right'],
+                'pricing.rule.humanizer.delivery_packages_volume_units'
+            );
+
         } elseif (isset($node->nodes['left']->nodes['node']->attributes['name']) &&
                   isset($node->nodes['left']->nodes['attribute']->attributes['value'])) {
             // Handle object property access like task.type, order.itemsTotal (GetAttrNode)
@@ -321,7 +359,27 @@ class RuleHumanizer
         ]);
     }
 
-    private function humanizePackagesTotalVolumeUnits(string $operator, BinaryNode|ConstantNode $value): string
+    /**
+     * Matches the AST of 'delivery.packages.totalVolumeUnits()', i.e. a method call
+     * whose object is itself a property access, unlike 'packages.totalVolumeUnits()'
+     * where the object is a plain name.
+     */
+    private static function isDeliveryPackagesTotalVolumeUnits($node): bool
+    {
+        return $node instanceof GetAttrNode
+            && ($node->attributes['type'] ?? null) === GetAttrNode::METHOD_CALL
+            && ($node->nodes['attribute']->attributes['value'] ?? null) === 'totalVolumeUnits'
+            && isset($node->nodes['node'])
+            && $node->nodes['node'] instanceof GetAttrNode
+            && ($node->nodes['node']->nodes['node']->attributes['name'] ?? null) === 'delivery'
+            && ($node->nodes['node']->nodes['attribute']->attributes['value'] ?? null) === 'packages';
+    }
+
+    private function humanizePackagesTotalVolumeUnits(
+        string $operator,
+        BinaryNode|ConstantNode $value,
+        string $transKey = 'pricing.rule.humanizer.packages_volume_units'
+    ): string
     {
         if ('in' === $operator) {
             $translatedOperator = $this->translator->trans('pricing.rule.humanizer.between', [
@@ -335,7 +393,7 @@ class RuleHumanizer
         }
 
         // Use trim() to remove extra space at then because of empty %value%
-        return trim($this->translator->trans('pricing.rule.humanizer.packages_volume_units', [
+        return trim($this->translator->trans($transKey, [
             '%operator%' => $translatedOperator,
             '%value%' => $translatedValue,
         ]));
@@ -403,22 +461,36 @@ class RuleHumanizer
 
     private function humanizePriceRangeExpression(PriceRangeExpression $priceExpression, string $rawPriceExpression): string
     {
-        if (in_array($priceExpression->attribute, ['distance', 'weight', 'packages.totalVolumeUnits()'])) {
-            if ($priceExpression->threshold === 0) {
-                return $this->translator->trans('pricing.rule.humanizer.price_range', [
-                    '%unit_price%' => $this->priceFormatter->formatWithSymbol($priceExpression->price),
-                    '%step%' => $this->formatValue($priceExpression->step, $priceExpression->attribute),
-                ]);
-            } else {
-                return $this->translator->trans('pricing.rule.humanizer.price_range_with_threshold', [
-                    '%unit_price%' => $this->priceFormatter->formatWithSymbol($priceExpression->price),
-                    '%step%' => $this->formatValue($priceExpression->step, $priceExpression->attribute),
-                    '%threshold%' => $this->formatValue($priceExpression->threshold, $priceExpression->attribute),
-                ]);
-            }
-        } else {
+        if (!in_array($priceExpression->attribute, ['distance', 'weight', 'packages.totalVolumeUnits()'])) {
             return $rawPriceExpression;
         }
+
+        $parameters = [
+            '%unit_price%' => $this->priceFormatter->formatWithSymbol($priceExpression->price),
+            '%step%' => $this->formatValue($priceExpression->step, $priceExpression->attribute),
+        ];
+
+        if ($priceExpression->threshold === 0) {
+            $humanized = $this->translator->trans('pricing.rule.humanizer.price_range', $parameters);
+        } else {
+            $parameters['%threshold%'] =
+                $this->formatValue($priceExpression->threshold, $priceExpression->attribute);
+
+            $humanized = $this->translator->trans(
+                'pricing.rule.humanizer.price_range_with_threshold',
+                $parameters
+            );
+        }
+
+        // Charged once per unit of something else, rather than once
+        if (null !== $priceExpression->multiplier) {
+            $humanized = $this->translator->trans('pricing.rule.humanizer.price_range_per', [
+                '%price_range%' => $humanized,
+                '%multiplier%' => $this->translateMultiplier($priceExpression->multiplier),
+            ]);
+        }
+
+        return $humanized;
     }
 
     private function humanizePricePerPackageExpression(PricePerPackageExpression $priceExpression, string $rawPriceExpression): string

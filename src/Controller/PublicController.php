@@ -3,12 +3,14 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Task;
 use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Form\Checkout\CheckoutPayment;
 use AppBundle\Form\Checkout\CheckoutPaymentType;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Transporter\Waybill;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use phpcent\Client as CentrifugoClient;
@@ -161,5 +163,30 @@ class PublicController extends AbstractController
             'centrifugo_token' => $token,
             'centrifugo_channel' => $channel,
         ]);
+    }
+
+    #[Route(path: '/pod/{id}/{token}', name: 'public_pod', requirements: ['id' => '\d+'])]
+    public function proofOfDeliveryAction(int $id, string $token,
+        Waybill $waybill,
+        EntityManagerInterface $entityManager)
+    {
+        $task = $entityManager->getRepository(Task::class)->find($id);
+
+        if (is_null($task) || !hash_equals($waybill->token($task), $token)) {
+            throw $this->createNotFoundException();
+        }
+
+        if (!$waybill->isAvailable($task)) {
+            throw $this->createNotFoundException();
+        }
+
+        $response = $this->render('public/pod.html.twig', [
+            'task' => $task,
+            'waybill' => $waybill->fromTask($task),
+        ]);
+
+        $response->headers->set('X-Robots-Tag', 'noindex, nofollow');
+
+        return $response;
     }
 }

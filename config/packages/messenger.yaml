@@ -7,6 +7,9 @@ framework:
                 # https://symfony.com/doc/current/messenger.html#middleware-for-doctrine
                 middleware:
                     # service ids that implement Symfony\Component\Messenger\Middleware\MiddlewareInterface
+                    # Holds the messages bound for a transport until the
+                    # transaction they are about commits; must come first
+                    - 'AppBundle\Messenger\TransactionalMessagesMiddleware'
                     - 'AppBundle\Messenger\MockDateMiddleware'
                     - 'AppBundle\Messenger\RequestContextMiddleware'
                     # each time a message is handled, the Doctrine connection
@@ -23,6 +26,9 @@ framework:
                 # https://symfony.com/doc/current/messenger.html#middleware-for-doctrine
                 middleware:
                     # service ids that implement Symfony\Component\Messenger\Middleware\MiddlewareInterface
+                    # Holds the messages bound for a transport until the
+                    # transaction they are about commits; must come first
+                    - 'AppBundle\Messenger\TransactionalMessagesMiddleware'
                     - 'AppBundle\Messenger\RenderEmailMiddleware'
                     - 'AppBundle\Messenger\RequestContextMiddleware'
                     - 'AppBundle\Messenger\EventStoreMiddleware'
@@ -78,7 +84,6 @@ framework:
             'AppBundle\Message\IndexDeliveries': async
             'AppBundle\Message\WoopitDocumentWebhook': async
             'AppBundle\Message\ImportDeliveries': async
-            'AppBundle\Message\CalculateTaskDistance': async
             'AppBundle\Message\CopyProducts': async
             'AppBundle\Message\GenerateOrdersForDate': async
             'AppBundle\Message\Order\ProcessOrderAfterTaskCancellation': async

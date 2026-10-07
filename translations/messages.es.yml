@@ -1761,8 +1761,11 @@ pricing.variant.pickup_point: Punto de recogida
 pricing.variant.dropoff_point: Punto de entrega
 pricing.variant.order_supplement: Suplemento de pedido
 pricing.rule.humanizer.inside_zone: dentro
-pricing.rule.humanizer.outside_zone: fuera
-pricing.rule.humanizer.address_zone_format: 'dirección %task_type% %direction% zona "%zone_name%"'
+pricing.rule.humanizer.outside_zone: 'fuera de'
+pricing.rule.humanizer.address_zone_format: 'dirección %task_type% %direction% la zona "%zone_name%"'
+pricing.rule.humanizer.address_source.task: 'del punto'
+pricing.rule.humanizer.address_source.pickup: 'de la recogida'
+pricing.rule.humanizer.address_source.dropoff: 'de la entrega'
 pricing.rule.humanizer.between: entre %left% y %right%
 pricing.rule.humanizer.less_than: menos de %value%
 pricing.rule.humanizer.more_than: más de %value%
@@ -1776,6 +1779,8 @@ pricing.rule.humanizer.packages_volume_units: 'volumen del paquete %operator% %v
 pricing.rule.humanizer.packages_contains_at_least_one: 'paquetes %package_name%'
 pricing.rule.humanizer.price_range: '%unit_price% por %step%'
 pricing.rule.humanizer.price_range_with_threshold: 'por encima de %threshold% - %unit_price% por %step%'
+pricing.rule.humanizer.price_range_per: '%price_range%, por %multiplier%'
+pricing.rule.humanizer.multiplier.volume_units: 'unidad de volumen'
 pricing.rule.humanizer.price_per_package: '%unit_price% por %package_name%'
 promotions.human_readable.action: "%discount_amount% de descuento"
 promotions.human_readable.delivery_action: "%discount_amount% de descuento en la entrega"

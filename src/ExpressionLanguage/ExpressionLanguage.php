@@ -31,6 +31,7 @@ class ExpressionLanguage extends BaseExpressionLanguage
                 'pickup',
                 'dropoff',
                 'packages',
+                'delivery',
                 'order',
                 'task',
                 'time_slot',

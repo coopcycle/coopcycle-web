@@ -1,5 +1,5 @@
 context(
-  'Pricing rules: removal functionality (role: admin) - Beta Version',
+  'Pricing rules: removal functionality (role: admin)',
   () => {
     beforeEach(() => {
       cy.loadFixturesWithSetup(['user_admin.yml', 'packages.yml'])
@@ -7,7 +7,7 @@ context(
     })
 
     it('tests rule removal functionality', function () {
-      cy.visit('/admin/deliveries/pricing/beta/new')
+      cy.visit('/admin/deliveries/pricing/new')
 
       // Wait for React components to load
       cy.get('[data-testid="pricing-rule-set-form"]', {

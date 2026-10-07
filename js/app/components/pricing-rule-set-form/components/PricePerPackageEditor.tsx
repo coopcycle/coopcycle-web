@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { getCurrencySymbol } from '../../../i18n';
 import { useTranslation } from 'react-i18next';
+
+import TaxExcludedPriceInput from './TaxExcludedPriceInput';
 import { useGetPackagesQuery } from '../../../api/slice';
 import PickerIsLoading from './RulePickerLine/PickerIsLoading';
 import PickerIsError from './RulePickerLine/PickerIsError';
@@ -32,7 +33,9 @@ export default ({ defaultValue, onChange }: Props) => {
   const { t } = useTranslation();
 
   const [unitPrice, setUnitPrice] = useState(defaultValue.unitPrice || 0);
-  const [packageName, setPackageName] = useState(undefined as string | undefined);
+  const [packageName, setPackageName] = useState(
+    undefined as string | undefined,
+  );
   const [offset, setOffset] = useState(defaultValue.offset || 0);
   const [discountPrice, setDiscountPrice] = useState(
     defaultValue.discountPrice || 0,
@@ -63,25 +66,20 @@ export default ({ defaultValue, onChange }: Props) => {
     <div data-testid="price_rule_price_per_package_editor">
       <div className="d-flex align-items-center">
         <label className="mr-2">
-          <input
-            type="number"
-            defaultValue={unitPrice / 100}
-            size="4"
-            min="0"
-            step=".001"
-            className="form-control d-inline-block"
-            style={{ width: '80px' }}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              setUnitPrice(parseFloat(e.target.value) * 100);
+          <TaxExcludedPriceInput
+            value={unitPrice}
+            step={0.1}
+            style={{ width: '150px' }}
+            onChange={value => {
+              setUnitPrice(value);
               onChange({
                 packageName,
-                unitPrice: parseFloat(e.target.value) * 100,
+                unitPrice: value,
                 offset,
                 discountPrice,
               });
             }}
           />
-          <span className="ml-2">{getCurrencySymbol()}</span>
         </label>
         <label className="mr-2">
           <span className="mx-2">{t('PRICE_RANGE_EDITOR.PER_PACKAGE')}</span>
@@ -106,25 +104,20 @@ export default ({ defaultValue, onChange }: Props) => {
       {withDiscount && (
         <div>
           <label className="mr-2">
-            <input
-              type="number"
-              defaultValue={discountPrice / 100}
-              size="4"
-              min="0"
-              step=".1"
-              className="form-control d-inline-block"
-              style={{ width: '80px' }}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setDiscountPrice(parseFloat(e.target.value) * 100);
+            <TaxExcludedPriceInput
+              value={discountPrice}
+              step={0.1}
+              style={{ width: '150px' }}
+              onChange={value => {
+                setDiscountPrice(value);
                 onChange({
                   packageName,
                   unitPrice,
                   offset,
-                  discountPrice: parseFloat(e.target.value) * 100,
+                  discountPrice: value,
                 });
               }}
             />
-            <span className="ml-2">{getCurrencySymbol()}</span>
           </label>
           <label className="mr-2">
             <span className="mx-2">

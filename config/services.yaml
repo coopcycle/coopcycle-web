@@ -759,6 +759,7 @@ services:
   AppBundle\EventListener\Edifact\TransporterPodNotifier:
     arguments:
       $baseUrl: '%router.request_context.scheme%://%router.request_context.host%'
+      $locale: '%locale%'
     tags:
       -
         name: 'doctrine.orm.entity_listener'
@@ -1049,6 +1050,10 @@ services:
   AppBundle\Transporter\EdifactMessageParser:
     arguments:
       $edifactFs: '@edi_messages_filesystem'
+  AppBundle\Transporter\Waybill:
+    arguments:
+      $secret: '%secret%'
+      $transportersConfig: '%transporters_config%'
 
   AppBundle\Action\Register:
     public: true
@@ -1237,6 +1242,16 @@ services:
       $decorated: '@api_platform.doctrine.orm.state.persist_processor'
     tags: ['api_platform.state_processor']
 
+  AppBundle\Api\State\PricingMatrixProcessor:
+    arguments:
+      $decorated: '@api_platform.doctrine.orm.state.persist_processor'
+    tags: ['api_platform.state_processor']
+
+  AppBundle\Api\State\PricingMatrixRemoveProcessor:
+    arguments:
+      $decorated: '@api_platform.doctrine.orm.state.remove_processor'
+    tags: ['api_platform.state_processor']
+
   AppBundle\Api\State\UrbantzWebhookProcessor:
     arguments:
       $country: "%country_iso%"
@@ -1331,11 +1346,13 @@ services:
   AppBundle\Messenger\:
     resource: '../src/Messenger/*'
 
+  AppBundle\Messenger\TransactionalMessagesMiddleware:
+    arguments:
+      $sendersLocator: '@messenger.senders_locator'
+
   AppBundle\MessageHandler\EmailHandler: ~
 
   AppBundle\MessageHandler\ImportTasksHandler: ~
-
-  AppBundle\MessageHandler\CalculateTaskDistanceHandler: ~
 
   AppBundle\MessageHandler\CalculateRouteHandler:
     tags:

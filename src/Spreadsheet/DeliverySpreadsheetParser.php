@@ -67,6 +67,8 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 }
             }
 
+            // TODO: Report an ADDRESS_REVIEW_NEEDED incident instead of the deprecated tag,
+            // as AppBundle\Transporter\ImportFromPoint does (here and for the dropoff below).
             if ($pickupAddress && $pickupAddress->getGeo()->isEqualTo($this->defaultCoordinates)) {
                 $delivery->getPickup()->addTags(Tag::ADDRESS_NEED_REVIEW_TAG);
                 //TODO: Trigger a incident.

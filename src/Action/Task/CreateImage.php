@@ -5,9 +5,10 @@ namespace AppBundle\Action\Task;
 use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskImage;
-use AppBundle\Form\TaskImageType;
+use AppBundle\Enum\TaskImageType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use ApiPlatform\Validator\ValidatorInterface;
 
 /**
@@ -28,6 +29,16 @@ class CreateImage
         $taskImage = new TaskImage();
 
         $taskImage->setFile($uploadedFile);
+
+        // Optional, older apps don't send it. As a header too, like X-Attach-To
+        $type = $request->request->get('type') ?: $request->headers->get('X-Pod-Type');
+        if (!empty($type)) {
+            $imageType = TaskImageType::tryFrom($type);
+            if (is_null($imageType)) {
+                throw new BadRequestHttpException(sprintf('Unknown image type "%s"', $type));
+            }
+            $taskImage->setType($imageType);
+        }
 
         $this->validator->validate($taskImage, ['groups' => ['task_image_create']]);
 
@@ -58,6 +69,7 @@ class CreateImage
 
             $otherTaskImage = new TaskImage();
             $otherTaskImage->setImageName($taskImage->getImageName());
+            $otherTaskImage->setType($taskImage->getType());
             $otherTaskImage->setTask($task);
 
             $task->incrementImageCount();

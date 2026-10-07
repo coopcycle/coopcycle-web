@@ -11,7 +11,6 @@ class MarkAsDone
         private Task $task,
         private $notes = null,
         private $contactName = null,
-        private bool $calculateCO2 = true
     )
     { }
 
@@ -28,10 +27,5 @@ class MarkAsDone
     public function getContactName(): ?string
     {
         return $this->contactName;
-    }
-
-    public function getCalculateCO2(): bool
-    {
-        return $this->calculateCO2;
     }
 }
