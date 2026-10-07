@@ -4,6 +4,7 @@ namespace AppBundle\Service\Referral;
 
 use AppBundle\Entity\Referral\ReferralLevel;
 use AppBundle\Entity\Sylius\Customer;
+use AppBundle\Sylius\Promotion\Action\DeliveryPercentageDiscountPromotionActionCommand;
 use AppBundle\Sylius\Promotion\Action\FixedDiscountPromotionActionCommand;
 use AppBundle\Sylius\Promotion\Action\PercentageDiscountPromotionActionCommand;
 use AppBundle\Sylius\Promotion\Checker\Rule\IsCustomerRuleChecker;
@@ -56,7 +57,7 @@ class ReferralRewardCouponFactory
         return $this->createCoupon(
             name: sprintf('Referral welcome - %s', $referred->getUsername()),
             customer: $referred,
-            rewardType: $this->settingsManager->get('referral_welcome_reward_type') ?: FixedDiscountPromotionActionCommand::TYPE,
+            rewardType: $this->settingsManager->get('referral_welcome_reward_type') ?: DeliveryPercentageDiscountPromotionActionCommand::TYPE,
             amount: null !== ($amount = $this->settingsManager->get('referral_welcome_reward_amount')) ? (int) $amount : null,
             percentage: null !== ($percentage = $this->settingsManager->get('referral_welcome_reward_percentage')) ? (float) $percentage : null,
             validityDays: (int) ($this->settingsManager->get('referral_welcome_coupon_validity_days') ?: 30),
@@ -88,11 +89,13 @@ class ReferralRewardCouponFactory
         // to null -- so an unconfigured amount/percentage wouldn't fail loudly,
         // it would silently turn the coupon into a no-op discount. Default to
         // 0 rather than ever write a null in here.
-        $promotionAction->setConfiguration(
-            PercentageDiscountPromotionActionCommand::TYPE === $rewardType
-                ? ['percentage' => $percentage ?? 0.0]
-                : ['amount' => $amount ?? 0]
-        );
+        $promotionAction->setConfiguration(match ($rewardType) {
+            // Free delivery is always a full 100% off -- there's no
+            // admin-configurable amount/percentage for this reward type.
+            DeliveryPercentageDiscountPromotionActionCommand::TYPE => ['percentage' => 1.0],
+            PercentageDiscountPromotionActionCommand::TYPE => ['percentage' => $percentage ?? 0.0],
+            default => ['amount' => $amount ?? 0],
+        });
         $promotion->addAction($promotionAction);
 
         // Scope redemption to the specific customer, on top of the coupon's
@@ -112,7 +115,14 @@ class ReferralRewardCouponFactory
 
         $promotionCoupon = $this->promotionCouponFactory->createForPromotion($promotion);
         $promotionCoupon->setCode($this->generateUniqueCode());
-        $promotionCoupon->setPerCustomerUsageLimit(1);
+        // Each coupon is already scoped to this one customer via the
+        // IsCustomerRule above, so the per-customer and global limits are
+        // the same number here -- this is what actually lets a level's
+        // usageLimit grant more than a single use (e.g. several free
+        // deliveries for a higher tier); it was previously hardcoded to 1,
+        // silently capping every level at one use regardless of its
+        // configured usageLimit.
+        $promotionCoupon->setPerCustomerUsageLimit($usageLimit);
         $promotionCoupon->setUsageLimit($usageLimit);
         $promotionCoupon->setExpiresAt(new \DateTime(sprintf('+%d days', $validityDays)));
         // Minted programmatically for a specific customer -- keep it out of

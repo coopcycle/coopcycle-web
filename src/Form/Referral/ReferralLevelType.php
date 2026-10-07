@@ -4,6 +4,7 @@ namespace AppBundle\Form\Referral;
 
 use AppBundle\Entity\Referral\ReferralLevel;
 use AppBundle\Form\Type\MoneyType;
+use AppBundle\Sylius\Promotion\Action\DeliveryPercentageDiscountPromotionActionCommand;
 use AppBundle\Sylius\Promotion\Action\FixedDiscountPromotionActionCommand;
 use AppBundle\Sylius\Promotion\Action\PercentageDiscountPromotionActionCommand;
 use Symfony\Component\Form\AbstractType;
@@ -33,6 +34,7 @@ class ReferralLevelType extends AbstractType
                 'label' => 'referral.level.field.rewardType',
                 'help' => 'referral.level.field.rewardType.help',
                 'choices' => [
+                    'referral.reward_type.free_delivery' => DeliveryPercentageDiscountPromotionActionCommand::TYPE,
                     'referral.reward_type.fixed' => FixedDiscountPromotionActionCommand::TYPE,
                     'referral.reward_type.percentage' => PercentageDiscountPromotionActionCommand::TYPE,
                 ],

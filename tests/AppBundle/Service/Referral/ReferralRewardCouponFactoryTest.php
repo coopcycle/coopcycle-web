@@ -8,6 +8,7 @@ use AppBundle\Entity\Sylius\Promotion;
 use AppBundle\Entity\Sylius\PromotionCoupon;
 use AppBundle\Service\Referral\ReferralRewardCouponFactory;
 use AppBundle\Service\SettingsManager;
+use AppBundle\Sylius\Promotion\Action\DeliveryPercentageDiscountPromotionActionCommand;
 use AppBundle\Sylius\Promotion\Action\FixedDiscountPromotionActionCommand;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
@@ -22,7 +23,7 @@ class ReferralRewardCouponFactoryTest extends TestCase
 {
     use ProphecyTrait;
 
-    private function createFactory(): ReferralRewardCouponFactory
+    private function createFactory(array $settings = []): ReferralRewardCouponFactory
     {
         $promotionFactory = $this->prophesize(FactoryInterface::class);
         $promotionFactory->createNew()->will(fn () => new Promotion());
@@ -39,7 +40,7 @@ class ReferralRewardCouponFactoryTest extends TestCase
         $entityManager = $this->prophesize(EntityManagerInterface::class);
 
         $settingsManager = $this->prophesize(SettingsManager::class);
-        $settingsManager->get(Argument::any())->willReturn(null);
+        $settingsManager->get(Argument::any())->will(fn ($args) => $settings[$args[0]] ?? null);
 
         return new ReferralRewardCouponFactory(
             $promotionFactory->reveal(),
@@ -79,15 +80,13 @@ class ReferralRewardCouponFactoryTest extends TestCase
     }
 
     /**
-     * Regression test: when the welcome coupon settings are unconfigured
+     * When the welcome coupon settings are completely unconfigured
      * (SettingsManager::get() returns null for everything, as it does until
-     * an admin saves the form at least once), the promotion action's amount
-     * must never be left as a literal null. Fixed/PercentageDiscountPromotionActionCommand::execute()
-     * both gate on isset($configuration[...]), which PHP treats as false for
-     * a key explicitly set to null -- so a null amount doesn't fail loudly,
-     * it silently turns the coupon into a no-op discount.
+     * an admin saves the form at least once), the reward type falls back to
+     * free delivery -- a 100% delivery discount that's never null, unlike a
+     * fixed/percentage amount would be.
      */
-    public function testReferredWelcomeCouponNeverHasANullAmountConfigured(): void
+    public function testReferredWelcomeCouponDefaultsToFreeDeliveryWhenUnconfigured(): void
     {
         $referred = new Customer();
         $referred->setFullName('referred');
@@ -96,10 +95,58 @@ class ReferralRewardCouponFactoryTest extends TestCase
 
         $actions = $coupon->getPromotion()->getActions();
         self::assertCount(1, $actions);
+        self::assertSame(DeliveryPercentageDiscountPromotionActionCommand::TYPE, $actions->first()->getType());
+
+        $configuration = $actions->first()->getConfiguration();
+        self::assertSame(1.0, $configuration['percentage']);
+    }
+
+    /**
+     * Regression test: if an admin explicitly configures the welcome coupon
+     * as a fixed discount but leaves the amount itself unset, the promotion
+     * action's amount must never be left as a literal null.
+     * Fixed/PercentageDiscountPromotionActionCommand::execute() both gate on
+     * isset($configuration[...]), which PHP treats as false for a key
+     * explicitly set to null -- so a null amount doesn't fail loudly, it
+     * silently turns the coupon into a no-op discount.
+     */
+    public function testReferredWelcomeCouponNeverHasANullAmountConfiguredForFixedDiscount(): void
+    {
+        $referred = new Customer();
+        $referred->setFullName('referred');
+
+        $coupon = $this->createFactory(['referral_welcome_reward_type' => FixedDiscountPromotionActionCommand::TYPE])
+            ->createReferredWelcomeCoupon($referred);
+
+        $actions = $coupon->getPromotion()->getActions();
+        self::assertCount(1, $actions);
 
         $configuration = $actions->first()->getConfiguration();
         self::assertArrayHasKey('amount', $configuration);
         self::assertNotNull($configuration['amount']);
         self::assertTrue(isset($configuration['amount']));
+    }
+
+    public function testReferrerRewardCouponUsageLimitMatchesLevelForFreeDelivery(): void
+    {
+        $referrer = new Customer();
+        $referrer->setFullName('referrer');
+
+        $level = new ReferralLevel();
+        $level->setMinReferralCount(15);
+        $level->setRewardType(DeliveryPercentageDiscountPromotionActionCommand::TYPE);
+        $level->setCouponValidityDays(30);
+        $level->setUsageLimit(5);
+
+        $coupon = $this->createFactory()->createReferrerRewardCoupon($referrer, $level);
+
+        $actions = $coupon->getPromotion()->getActions();
+        self::assertSame(['percentage' => 1.0], $actions->first()->getConfiguration());
+
+        // The coupon is already scoped to this one customer via the
+        // IsCustomerRule, so the per-customer limit must match the level's
+        // usageLimit for a higher tier to actually grant more than one use.
+        self::assertSame(5, $coupon->getUsageLimit());
+        self::assertSame(5, $coupon->getPerCustomerUsageLimit());
     }
 }
