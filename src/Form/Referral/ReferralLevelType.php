@@ -32,7 +32,6 @@ class ReferralLevelType extends AbstractType
             ])
             ->add('rewardType', ChoiceType::class, [
                 'label' => 'referral.level.field.rewardType',
-                'help' => 'referral.level.field.rewardType.help',
                 'choices' => [
                     'referral.reward_type.free_delivery' => DeliveryPercentageDiscountPromotionActionCommand::TYPE,
                     'referral.reward_type.fixed' => FixedDiscountPromotionActionCommand::TYPE,

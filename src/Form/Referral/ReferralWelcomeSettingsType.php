@@ -28,7 +28,6 @@ class ReferralWelcomeSettingsType extends AbstractType
         $builder
             ->add('referral_welcome_reward_type', ChoiceType::class, [
                 'label' => 'referral.welcome_settings.field.rewardType',
-                'help' => 'referral.welcome_settings.field.rewardType.help',
                 'choices' => [
                     'referral.reward_type.free_delivery' => DeliveryPercentageDiscountPromotionActionCommand::TYPE,
                     'referral.reward_type.fixed' => FixedDiscountPromotionActionCommand::TYPE,

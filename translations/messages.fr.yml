@@ -1977,7 +1977,6 @@ referral.levels.info.body: "À mesure qu'un parrain accumule des parrainages ré
 referral.level.field.minReferralCount: Parrainages réussis minimum
 referral.level.field.minReferralCount.help: Nombre de parrainages réussis (amis ayant passé une première commande payée) nécessaires pour atteindre ce niveau.
 referral.level.field.rewardType: Type de récompense
-referral.level.field.rewardType.help: Indique si la récompense du parrain est un montant fixe ou une réduction en pourcentage.
 referral.level.field.rewardAmount: Montant de la récompense
 referral.level.field.rewardAmount.help: Montant de la réduction. Utilisé uniquement lorsque le type de récompense est « Montant fixe ».
 referral.level.field.rewardPercentage: Pourcentage de la récompense
@@ -1996,7 +1995,6 @@ referral.welcome_settings.saved: Paramètres du coupon de bienvenue enregistrés
 referral.welcome_settings.info.title: Qu'est-ce que le coupon de bienvenue ?
 referral.welcome_settings.info.body: "Lorsqu'une personne s'inscrit via le lien de parrainage d'un ami, elle reçoit immédiatement ce coupon, valable uniquement sur sa première commande. Il s'agit d'une configuration globale unique, distincte des niveaux ci-dessus qui s'appliquent à la récompense du parrain lui-même."
 referral.welcome_settings.field.rewardType: Type de récompense
-referral.welcome_settings.field.rewardType.help: Indique si la réduction de bienvenue du client parrainé est un montant fixe ou un pourcentage.
 referral.welcome_settings.field.rewardAmount: Montant de la récompense
 referral.welcome_settings.field.rewardAmount.help: Montant de la réduction. Utilisé uniquement lorsque le type de récompense est « Montant fixe ».
 referral.welcome_settings.field.rewardPercentage: Pourcentage de la récompense
