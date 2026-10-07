@@ -1596,6 +1596,9 @@ incident.reason.REFUND_NEEDED: Remboursement nécessaire
 incident.reason.ADDRESS_REVIEW_NEEDED: Adresse à vérifier
 incident.reason.STORE_UNAVAILABLE: Commerce indisponible
 incident.reason.DELIVERY_DELAYS: Retards de livraison
+transporter.address_review.title: "Adresse à vérifier : %address%"
+transporter.address_review.not_found: "Aucun résultat pour l'adresse « %address% » envoyée par le transporteur."
+transporter.address_review.out_of_range: "L'adresse « %address% » a été localisée à « %found% », en dehors de la zone de l'instance."
 basics.select_all: "Tout sélectionner"
 basics.delete_selected: "Supprimer la sélection"
 delivery.table.heading.owner: "Propriétaire"

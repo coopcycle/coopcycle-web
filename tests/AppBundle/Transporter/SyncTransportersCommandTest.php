@@ -7,6 +7,7 @@ use AppBundle\Command\SyncTransportersCommand;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Edifact\EDIFACTMessage;
+use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskImage;
@@ -531,7 +532,14 @@ class SyncTransportersCommandTest extends KernelTestCase {
             'JOHN DOE ZIMP COMPANY',
             $dropoff->getAddress()->getCompany()
         );
-        $this->assertContains('review-needed', $dropoff->getTags());
+        $incidents = $this->entityManager->getRepository(Incident::class)->findBy(['task' => $dropoff]);
+        $this->assertCount(1, $incidents);
+        $this->assertEquals('ADDRESS_REVIEW_NEEDED', $incidents[0]->getFailureReasonCode());
+        $this->assertEquals(Incident::PRIORITY_HIGH, $incidents[0]->getPriority());
+        $this->assertEquals(
+            [['transporter_address' => 'INVALID ADDRESS VOID CITY 00']],
+            $incidents[0]->getMetadata()
+        );
 
         $this->assertEquals(15000, $delivery->getWeight());
 

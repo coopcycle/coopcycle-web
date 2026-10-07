@@ -480,6 +480,7 @@ class SyncTransportersCommand extends Command {
             $this->entityManager->persist($dropoff);
             $this->entityManager->persist($delivery);
             $this->createOrderForDelivery($delivery);
+            $this->importFromPoint->reportAddressIssue($dropoff);
         }
     }
 
@@ -522,6 +523,7 @@ class SyncTransportersCommand extends Command {
             $this->entityManager->persist($dropoff);
             $this->entityManager->persist($delivery);
             $this->createOrderForDelivery($delivery);
+            $this->importFromPoint->reportAddressIssue($pickup);
         }
     }
 

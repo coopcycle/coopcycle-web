@@ -954,6 +954,9 @@ incident.reason.REFUND_NEEDED: Refund needed
 incident.reason.ADDRESS_REVIEW_NEEDED: Address needs review
 incident.reason.STORE_UNAVAILABLE: Store unavailable
 incident.reason.DELIVERY_DELAYS: Delivery delays
+transporter.address_review.title: "Address to review: %address%"
+transporter.address_review.not_found: "No result for the address \"%address%\" sent by the transporter."
+transporter.address_review.out_of_range: "The address \"%address%\" was located at \"%found%\", outside of the instance area."
 activity.order.restored: "Order #order/%aggregate_id% has been restored"
 embed.delivery.summary: "You have requested a delivery on <strong>%dropoff_date%</strong>\
   \ at the following address: <strong>%dropoff_address%</strong> <br> We calculated\
