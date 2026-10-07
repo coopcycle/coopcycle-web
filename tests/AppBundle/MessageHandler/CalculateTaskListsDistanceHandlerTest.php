@@ -10,16 +10,32 @@ use AppBundle\MessageHandler\CalculateTaskListsDistanceHandler;
 use AppBundle\Service\RoutingInterface;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManagerInterface;
+use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
+/**
+ * The routing service is stubbed on purpose.
+ *
+ * What this handler decides is *which leg belongs to which task*. Routing
+ * against the real OSRM would make the expected numbers depend on the map
+ * extract and OSRM version shipped in each environment -- which is how the
+ * previous version of this test came to assert distances that do not appear
+ * anywhere in the route it actually computes.
+ *
+ * Legs are therefore 1000, 2000, 3000... in order, so the leg a task was given
+ * can be read straight off the number.
+ */
 class CalculateTaskListsDistanceHandlerTest extends KernelTestCase
 {
     use ProphecyTrait;
 
+    private const CO2_PER_KM = 10; // the fixture vehicle
+
     private $entityManager;
     private $fixturesLoader;
+    private $routing;
     private $handler;
 
     public function setUp(): void
@@ -31,9 +47,21 @@ class CalculateTaskListsDistanceHandlerTest extends KernelTestCase
         $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
         $this->fixturesLoader = self::getContainer()->get('fidry_alice_data_fixtures.loader.doctrine');
 
+        $this->routing = $this->prophesize(RoutingInterface::class);
+        $this->routing->route(Argument::cetera())->will(function ($coordinates) {
+            $legs = [];
+
+            // A route over N points has N-1 legs.
+            for ($i = 1; $i < count($coordinates); $i++) {
+                $legs[] = ['distance' => $i * 1000];
+            }
+
+            return ['routes' => [['legs' => $legs]]];
+        });
+
         $this->handler = new CalculateTaskListsDistanceHandler(
             $this->entityManager,
-            self::getContainer()->get(RoutingInterface::class),
+            $this->routing->reveal(),
             self::getContainer()->get(LoggerInterface::class)
         );
 
@@ -57,14 +85,24 @@ class CalculateTaskListsDistanceHandlerTest extends KernelTestCase
         return $this->entityManager->getRepository(TaskList::class)->findAll()[0];
     }
 
+    private function withVehicle(TaskList $taskList): TaskList
+    {
+        $taskList->setVehicle($this->entityManager->getRepository(Vehicle::class)->findAll()[0]);
+
+        $this->entityManager->persist($taskList);
+        $this->entityManager->flush();
+
+        return $taskList;
+    }
+
     private function sweep(TaskList $taskList): void
     {
         ($this->handler)(new CalculateTaskListsDistance($taskList->getDate()->format('Y-m-d')));
     }
 
     /**
-     * The handler writes straight to the table, so the entities held here are
-     * unaware of it until they are reloaded.
+     * The handler writes straight to the table, so entities held here are unaware
+     * of it until reloaded.
      */
     private function reload(int $taskId): Task
     {
@@ -74,38 +112,32 @@ class CalculateTaskListsDistanceHandlerTest extends KernelTestCase
     }
 
     /**
-     * The fixture's route, as returned by the routing service, has these legs:
-     *
-     *   warehouse->43  43->44  44->45  45->46  46->47  47->48  48->49  49->warehouse
-     *        4190         898    2750    2803    4346    5245       0            0
-     *
-     * The last one is the return to the warehouse: no task arrives there, so it
-     * is dropped. Each remaining leg belongs to the task it arrives at. (48->49
-     * really is zero: the fixture puts those two at the same address.)
-     *
-     * @return int[] expected distance per task, in list order
+     * @return int[] task ids, in list order
      */
-    private function expectedWithWarehouse(): array
+    private function taskIds(TaskList $taskList): array
     {
-        return [4190, 898, 2750, 2803, 4346, 5245, 0];
+        return array_map(fn (Task $t) => $t->getId(), $taskList->getTasks());
     }
 
-    public function testEveryTaskOfTheListGetsTheLegThatArrivesAtIt()
+    /**
+     * With a warehouse the route is warehouse -> each task -> warehouse, so leg N
+     * arrives at task N. The final leg is the return to the warehouse and belongs
+     * to no task.
+     *
+     * The fixture list holds 7 tasks, some inside tours and some not, and all of
+     * them are covered in a single pass -- where the per-completion job only ever
+     * wrote the one task it was dispatched for.
+     */
+    public function testEveryTaskGetsTheLegThatArrivesAtIt()
     {
-        $taskList = $this->loadTaskList();
+        $taskList = $this->withVehicle($this->loadTaskList());
+        $ids = $this->taskIds($taskList);
 
-        $taskList->setVehicle($this->entityManager->getRepository(Vehicle::class)->findAll()[0]);
-        $this->entityManager->persist($taskList);
-        $this->entityManager->flush();
-
-        // Tasks inside a tour and tasks outside one, all in one pass. The
-        // per-completion job only ever wrote the single task it was dispatched
-        // for, so a bulk completion left most of the list at zero.
-        $ids = array_map(fn ($t) => $t->getId(), $taskList->getTasks());
+        $this->assertCount(7, $ids, 'fixture shape changed');
 
         $this->sweep($taskList);
 
-        foreach ($this->expectedWithWarehouse() as $index => $expected) {
+        foreach ([1000, 2000, 3000, 4000, 5000, 6000, 7000] as $index => $expected) {
             $this->assertEquals(
                 $expected,
                 $this->reload($ids[$index])->getTraveledDistanceMeter(),
@@ -114,31 +146,28 @@ class CalculateTaskListsDistanceHandlerTest extends KernelTestCase
         }
     }
 
-    public function testEmissionsAreDerivedFromTheVehicle()
+    public function testEmissionsAreTheVehicleRateOverTheDistance()
     {
-        $taskList = $this->loadTaskList();
-
-        $taskList->setVehicle($this->entityManager->getRepository(Vehicle::class)->findAll()[0]);
-        $this->entityManager->persist($taskList);
-        $this->entityManager->flush();
-
-        $firstId = $taskList->getTasks()[0]->getId();
+        $taskList = $this->withVehicle($this->loadTaskList());
+        $ids = $this->taskIds($taskList);
 
         $this->sweep($taskList);
 
-        $this->assertEquals(41, $this->reload($firstId)->getEmittedCo2());
+        // first task: 1000m
+        $this->assertEquals(self::CO2_PER_KM * 1, $this->reload($ids[0])->getEmittedCo2());
+        // fifth task: 5000m
+        $this->assertEquals(self::CO2_PER_KM * 5, $this->reload($ids[4])->getEmittedCo2());
     }
 
     /**
-     * With no vehicle there is no warehouse, so the route starts at the first
-     * task: nothing travels to it, and there is no vehicle to attribute
-     * emissions to either.
+     * Without a vehicle there is no warehouse, so the route starts at the first
+     * task: nothing travels to it, and there is no vehicle to attribute emissions
+     * to. Leg N then arrives at task N+1.
      */
     public function testWithoutAVehicleTheFirstTaskHasNoDistanceAndNothingEmits()
     {
         $taskList = $this->loadTaskList();
-
-        $ids = array_map(fn ($t) => $t->getId(), $taskList->getTasks());
+        $ids = $this->taskIds($taskList);
 
         $this->sweep($taskList);
 
@@ -146,11 +175,13 @@ class CalculateTaskListsDistanceHandlerTest extends KernelTestCase
         $this->assertEquals(0, $first->getTraveledDistanceMeter());
         $this->assertEquals(0, $first->getEmittedCo2());
 
-        // Every later task still gets the leg arriving at it, shifted by one
-        // because the route no longer starts at the warehouse.
-        $later = $this->reload($ids[4]);
-        $this->assertEquals(4346, $later->getTraveledDistanceMeter());
-        $this->assertEquals(0, $later->getEmittedCo2(), 'no vehicle, no emissions');
+        foreach ([1000, 2000, 3000, 4000, 5000, 6000] as $index => $expected) {
+            $task = $this->reload($ids[$index + 1]);
+
+            $this->assertEquals($expected, $task->getTraveledDistanceMeter(),
+                sprintf('task at position %d', $index + 1));
+            $this->assertEquals(0, $task->getEmittedCo2(), 'no vehicle, no emissions');
+        }
     }
 
     /**
@@ -164,20 +195,16 @@ class CalculateTaskListsDistanceHandlerTest extends KernelTestCase
      */
     public function testDoesNotTouchUpdatedAt()
     {
-        $taskList = $this->loadTaskList();
+        $taskList = $this->withVehicle($this->loadTaskList());
+        $taskId = $this->taskIds($taskList)[0];
 
-        $taskList->setVehicle($this->entityManager->getRepository(Vehicle::class)->findAll()[0]);
-        $this->entityManager->persist($taskList);
-        $this->entityManager->flush();
-
-        $taskId = $taskList->getTasks()[0]->getId();
         $before = $this->reload($taskId)->getUpdatedAt();
 
         $this->sweep($taskList);
 
         $task = $this->reload($taskId);
 
-        $this->assertEquals(4190, $task->getTraveledDistanceMeter(),
+        $this->assertEquals(1000, $task->getTraveledDistanceMeter(),
             'the distance must still have been written');
 
         $this->assertEquals(
