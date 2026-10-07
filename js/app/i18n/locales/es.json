@@ -693,6 +693,8 @@
         "DELIVERY_FORM_PRICING_RULE_SET": "Tarifas",
         "DELIVERY_FORM_PRICING_RULE_SET_STORE_DEFAULT": "{{name}} (predeterminada de la tienda)",
         "DELIVERY_FORM_USE_ANOTHER_PRICING_RULE_SET": "Usar otras tarifas",
+        "DELIVERY_FORM_ADJUST_PRICE": "Ajustar el precio",
+        "DELIVERY_FORM_OPTIONS": "Opciones",
         "DELIVERY_FORM_PRODUCT_NAME": "Nombre del producto",
         "DELIVERY_FORM_NAME_INSTRUCTION": "El nombre que aparecerá en el resumen del pedido y la factura",
         "DELIVERY_FORM_VAT_PRICE": "Precio con IVA incluido",

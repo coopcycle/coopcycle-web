@@ -864,6 +864,8 @@
         "DELIVERY_FORM_PRICING_RULE_SET": "Pricing",
         "DELIVERY_FORM_PRICING_RULE_SET_STORE_DEFAULT": "{{name}} (store default)",
         "DELIVERY_FORM_USE_ANOTHER_PRICING_RULE_SET": "Use another pricing",
+        "DELIVERY_FORM_ADJUST_PRICE": "Adjust the price",
+        "DELIVERY_FORM_OPTIONS": "Options",
         "DELIVERY_FORM_PRODUCT_NAME": "Product name",
         "DELIVERY_FORM_NAME_INSTRUCTION": "The name that will appear in the order summary and invoice",
         "DELIVERY_FORM_VAT_PRICE": "Price including VAT",

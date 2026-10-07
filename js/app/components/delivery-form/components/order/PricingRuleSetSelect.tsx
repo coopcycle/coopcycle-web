@@ -15,10 +15,15 @@ import { selectMode } from '../../redux/formSlice';
 
 type Props = {
   storeNodeId: Uri;
+  // When the price is set manually, the rule set does not apply
+  disabled?: boolean;
 };
 
 // Lets a dispatcher price a delivery with another rule set than the store's one
-export const PricingRuleSetSelect = ({ storeNodeId }: Props) => {
+export const PricingRuleSetSelect = ({
+  storeNodeId,
+  disabled = false,
+}: Props) => {
   const { t } = useTranslation();
 
   const mode = useSelector(selectMode);
@@ -86,11 +91,12 @@ export const PricingRuleSetSelect = ({ storeNodeId }: Props) => {
   };
 
   return (
-    <div className="mb-3">
+    <div>
       <Checkbox
         name="delivery.use_another_pricing_rule_set"
         data-testid="pricing-rule-set-checkbox"
         checked={isEnabled}
+        disabled={disabled}
         onChange={(e: CheckboxChangeEvent) => {
           e.stopPropagation();
           setIsEnabled(e.target.checked);
@@ -101,18 +107,20 @@ export const PricingRuleSetSelect = ({ storeNodeId }: Props) => {
         }}>
         {t('DELIVERY_FORM_USE_ANOTHER_PRICING_RULE_SET')}
       </Checkbox>
-      <Select
-        aria-label={t('DELIVERY_FORM_PRICING_RULE_SET')}
-        data-testid="pricing-rule-set-select"
-        className="w-100 mt-2"
-        disabled={!isEnabled}
-        showSearch
-        optionFilterProp="label"
-        loading={isLoading}
-        options={options}
-        value={values.order.pricingRuleSet ?? storePricingRuleSet}
-        onChange={(value: Uri) => changePricingRuleSet(value)}
-      />
+      <div className="price-adjustments__content mt-1">
+        <Select
+          aria-label={t('DELIVERY_FORM_PRICING_RULE_SET')}
+          data-testid="pricing-rule-set-select"
+          className="w-100"
+          disabled={disabled || !isEnabled}
+          showSearch
+          optionFilterProp="label"
+          loading={isLoading}
+          options={options}
+          value={values.order.pricingRuleSet ?? storePricingRuleSet}
+          onChange={(value: Uri) => changePricingRuleSet(value)}
+        />
+      </div>
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { Divider, Spin } from 'antd';
+import { Spin } from 'antd';
 import { useSelector } from 'react-redux';
 
 import {
@@ -12,8 +12,8 @@ import { selectMode } from '../../redux/formSlice';
 import { useDeliveryFormFormikContext } from '../../hooks/useDeliveryFormFormikContext';
 import { useCalculatedPrice } from '../../hooks/useCalculatedPrice';
 import { useOrderManualSupplements } from '../../hooks/useOrderManualSupplements';
-import { OverridePrice } from './OverridePrice';
-import { PricingRuleSetSelect } from './PricingRuleSetSelect';
+import { PriceAdjustments } from './PriceAdjustments';
+import { PaymentMethod } from './PaymentMethod';
 import { OrderOnCheckout } from './OrderOnCheckout';
 import { OrderEditing } from './OrderEditing';
 import { UserContext } from '../../../../UserContext';
@@ -138,7 +138,6 @@ const Order = ({
       <div>
         {modeIn(mode, [Mode.DELIVERY_CREATE, Mode.RECURRENCE_RULE_UPDATE]) ? (
           <OrderOnCheckout
-            storeNodeId={storeNodeId}
             orderManualSupplements={orderManualSupplements}
             overridePrice={overridePrice}
             newOrder={newOrder}
@@ -158,20 +157,19 @@ const Order = ({
           />
         ) : null}
 
-        <div>
-          {isDispatcher && (
-            <div>
-              <Divider size="middle" />
-              {!overridePrice && (
-                <PricingRuleSetSelect storeNodeId={storeNodeId} />
-              )}
-              <OverridePrice
-                overridePrice={overridePrice}
-                setOverridePrice={setOverridePrice}
-              />
-            </div>
-          )}
-        </div>
+        {isDispatcher && (
+          <div className="mt-3">
+            <PriceAdjustments
+              storeNodeId={storeNodeId}
+              overridePrice={overridePrice}
+              setOverridePrice={setOverridePrice}
+            />
+          </div>
+        )}
+
+        {modeIn(mode, [Mode.DELIVERY_CREATE, Mode.RECURRENCE_RULE_UPDATE]) ? (
+          <PaymentMethod storeNodeId={storeNodeId} />
+        ) : null}
       </div>
     </Spin>
   );

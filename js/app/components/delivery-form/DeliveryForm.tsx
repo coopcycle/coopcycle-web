@@ -26,6 +26,7 @@ import {
 import { RecurrenceRules } from './components/recurrence/RecurrenceRules';
 import useSubmit from './hooks/useSubmit';
 import Order from './components/order/Order';
+import BlockLabel from './components/BlockLabel';
 import SuggestionModal from './SuggestionModal';
 import DeliveryResume from './DeliveryResume';
 import ShopifyOrderAlert, {
@@ -225,6 +226,11 @@ const DeliveryForm = ({
   const { t } = useTranslation();
 
   const { logger } = useDatadog();
+
+  const canSaveOrder =
+    modeIn(mode, [Mode.DELIVERY_CREATE, Mode.DELIVERY_UPDATE]) && isDispatcher;
+  const canAddReverse =
+    mode === Mode.DELIVERY_CREATE && isDispatcher && isReverseDeliveryEnabled;
 
   // Store owners can modify a delivery until it has been assigned to a courier
   const isLockedForStore =
@@ -777,38 +783,40 @@ const DeliveryForm = ({
                   </div>
                 ) : null}
 
-                {modeIn(mode, [Mode.DELIVERY_CREATE, Mode.DELIVERY_UPDATE]) &&
-                isDispatcher ? (
-                  <div
-                    className="border-top py-3"
-                    data-testid="saved_order__container">
-                    <Checkbox
-                      name="delivery.saved_order"
-                      checked={values.order.isSavedOrder}
-                      onChange={e => {
-                        e.stopPropagation();
-                        setFieldValue('order.isSavedOrder', e.target.checked);
-                      }}>
-                      {t('DELIVERY_FORM_SAVED_ORDER')}
-                    </Checkbox>
-                  </div>
-                ) : null}
-
-                {mode === Mode.DELIVERY_CREATE &&
-                isDispatcher &&
-                isReverseDeliveryEnabled ? (
+                {canSaveOrder || canAddReverse ? (
                   <div className="border-top py-3">
-                    <Checkbox
-                      name="delivery.add_reverse"
-                      onChange={e => {
-                        e.stopPropagation();
-                        setFieldValue('addReverse', e.target.checked);
-                      }}>
-                      {t('DELIVERY_FORM_ADD_REVERSE')}
-                    </Checkbox>
-                    <Tooltip title={t('DELIVERY_FORM_ADD_REVERSE_HELP')}>
-                      <InfoCircleOutlined />
-                    </Tooltip>
+                    <BlockLabel label={t('DELIVERY_FORM_OPTIONS')} />
+                    {canSaveOrder ? (
+                      <div data-testid="saved_order__container">
+                        <Checkbox
+                          name="delivery.saved_order"
+                          checked={values.order.isSavedOrder}
+                          onChange={e => {
+                            e.stopPropagation();
+                            setFieldValue(
+                              'order.isSavedOrder',
+                              e.target.checked,
+                            );
+                          }}>
+                          {t('DELIVERY_FORM_SAVED_ORDER')}
+                        </Checkbox>
+                      </div>
+                    ) : null}
+                    {canAddReverse ? (
+                      <div className="mt-2">
+                        <Checkbox
+                          name="delivery.add_reverse"
+                          onChange={e => {
+                            e.stopPropagation();
+                            setFieldValue('addReverse', e.target.checked);
+                          }}>
+                          {t('DELIVERY_FORM_ADD_REVERSE')}
+                        </Checkbox>
+                        <Tooltip title={t('DELIVERY_FORM_ADD_REVERSE_HELP')}>
+                          <InfoCircleOutlined />
+                        </Tooltip>
+                      </div>
+                    ) : null}
                   </div>
                 ) : null}
 

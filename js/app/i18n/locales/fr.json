@@ -814,6 +814,8 @@
         "DELIVERY_FORM_PRICING_RULE_SET" : "Tarification",
         "DELIVERY_FORM_PRICING_RULE_SET_STORE_DEFAULT" : "{{name}} (par défaut du magasin)",
         "DELIVERY_FORM_USE_ANOTHER_PRICING_RULE_SET" : "Utiliser une autre tarification",
+        "DELIVERY_FORM_ADJUST_PRICE" : "Ajuster le prix",
+        "DELIVERY_FORM_OPTIONS" : "Options",
         "DELIVERY_FORM_PRODUCT_NAME" : "Nom du produit",
         "DELIVERY_FORM_NAME_INSTRUCTION" : "Le nom qui apparaîtra dans le résumé de la commande et la facture",
         "DELIVERY_FORM_VAT_PRICE" : "Prix TTC",

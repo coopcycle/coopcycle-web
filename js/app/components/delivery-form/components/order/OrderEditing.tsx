@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { Collapse, Divider, Radio } from 'antd';
+import { Collapse, Radio } from 'antd';
 import { useTranslation } from 'react-i18next';
 import FlagsContext from '../../FlagsContext';
 import Cart from './Cart';
@@ -33,8 +33,8 @@ function hasNoBreakdown(item: OrderItemType) {
   return (
     !(item.adjustments['order_item_package_delivery_calculated']?.length > 0) &&
     !(
-      item.adjustments['order_item_package_delivery_manual_supplement']?.length >
-      0
+      item.adjustments['order_item_package_delivery_manual_supplement']
+        ?.length > 0
     )
   );
 }
@@ -318,8 +318,7 @@ export const OrderEditing = ({
         )}
 
       {isDispatcher && !overridePrice && orderManualSupplements.length > 0 && (
-        <div>
-          <Divider size="middle" />
+        <div className="mt-3">
           <ManualSupplements rules={orderManualSupplementsWithQuantity} />
         </div>
       )}
