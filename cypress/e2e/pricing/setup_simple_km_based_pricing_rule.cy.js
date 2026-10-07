@@ -152,7 +152,7 @@ context(
             price: {
               type: 'range',
               range: {
-                price: '3',
+                price: '3.00',
                 step: '2',
                 threshold: '1',
               },
@@ -182,7 +182,7 @@ context(
             price: {
               type: 'range',
               range: {
-                price: '0.1',
+                price: '0.10',
                 step: '1',
                 threshold: '0',
               },

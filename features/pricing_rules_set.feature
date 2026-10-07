@@ -141,6 +141,7 @@ Feature: Pricing rules set
         "name": "No Names Pricing Set",
         "strategy": "find",
         "options": [],
+        "matrices": [],
         "rules": [
           {
             "@id": "@string@",
@@ -152,7 +153,8 @@ Feature: Pricing rules set
             "position": 1,
             "name": "",
             "expressionAst": "@*@",
-            "priceAst": "@*@"
+            "priceAst": "@*@",
+            "matrix": "@null@"
           }
         ]
       }
@@ -201,6 +203,7 @@ Feature: Pricing rules set
         "name": "Test Pricing Set",
         "strategy": "find",
         "options": [],
+        "matrices": [],
         "rules": [
           {
             "@id": "@string@",
@@ -212,7 +215,8 @@ Feature: Pricing rules set
             "position": 1,
             "name": "Base Delivery Fee",
             "expressionAst": "@*@",
-            "priceAst": "@*@"
+            "priceAst": "@*@",
+            "matrix": "@null@"
           },
           {
             "@id": "@string@",
@@ -224,7 +228,8 @@ Feature: Pricing rules set
             "position": 2,
             "name": "Heavy Package Surcharge",
             "expressionAst": "@*@",
-            "priceAst": "@*@"
+            "priceAst": "@*@",
+            "matrix": "@null@"
           }
         ]
       }
@@ -272,6 +277,7 @@ Feature: Pricing rules set
         "name": "Mixed Pricing Set",
         "strategy": "find",
         "options": [],
+        "matrices": [],
         "rules": [
           {
             "@id": "@string@",
@@ -283,7 +289,8 @@ Feature: Pricing rules set
             "position": 1,
             "name": "Named Rule",
             "expressionAst": "@*@",
-            "priceAst": "@*@"
+            "priceAst": "@*@",
+            "matrix": "@null@"
           },
           {
             "@id": "@string@",
@@ -295,7 +302,8 @@ Feature: Pricing rules set
             "position": 2,
             "name": "",
             "expressionAst": "@*@",
-            "priceAst": "@*@"
+            "priceAst": "@*@",
+            "matrix": "@null@"
           }
         ]
       }
@@ -344,6 +352,7 @@ Feature: Pricing rules set
         "name": "Empty Name Test",
         "strategy": "find",
         "options": [],
+        "matrices": [],
         "rules": [
           {
             "@id": "@string@",
@@ -355,7 +364,8 @@ Feature: Pricing rules set
             "position": 1,
             "name": "",
             "expressionAst": "@*@",
-            "priceAst": "@*@"
+            "priceAst": "@*@",
+            "matrix": "@null@"
           },
           {
             "@id": "@string@",
@@ -367,7 +377,8 @@ Feature: Pricing rules set
             "position": 2,
             "name": "",
             "expressionAst": "@*@",
-            "priceAst": "@*@"
+            "priceAst": "@*@",
+            "matrix": "@null@"
           }
         ]
       }
@@ -412,6 +423,7 @@ Feature: Pricing rules set
         "name": "Updated Set with ProductOptions",
         "strategy": "find",
         "options": [],
+        "matrices": [],
         "rules": [
           {
             "@id": "/api/pricing_rules/1",
@@ -423,7 +435,8 @@ Feature: Pricing rules set
             "position": 1,
             "name": "Updated Existing Option Name",
             "expressionAst": "@*@",
-            "priceAst": "@*@"
+            "priceAst": "@*@",
+            "matrix": "@null@"
           }
         ]
       }
@@ -481,6 +494,7 @@ Feature: Pricing rules set
         "name": "Updated Set with ProductOptions",
         "strategy": "find",
         "options": [],
+        "matrices": [],
         "rules": [
           {
             "@id": "/api/pricing_rules/1",
@@ -492,7 +506,8 @@ Feature: Pricing rules set
             "position": 1,
             "name": "Updated Existing Option Name",
             "expressionAst": "@*@",
-            "priceAst": "@*@"
+            "priceAst": "@*@",
+            "matrix": "@null@"
           },
           {
             "@id": "/api/pricing_rules/2",
@@ -504,7 +519,8 @@ Feature: Pricing rules set
             "position": 2,
             "name": "New Option for Second Rule",
             "expressionAst": "@*@",
-            "priceAst": "@*@"
+            "priceAst": "@*@",
+            "matrix": "@null@"
           },
           {
             "@id": "/api/pricing_rules/3",
@@ -516,7 +532,8 @@ Feature: Pricing rules set
             "position": 3,
             "name": "New Rule",
             "expressionAst": "@*@",
-            "priceAst": "@*@"
+            "priceAst": "@*@",
+            "matrix": "@null@"
           }
         ]
       }
@@ -568,6 +585,7 @@ Feature: Pricing rules set
         "name": "Updated Set with ProductOptions",
         "strategy": "find",
         "options": [],
+        "matrices": [],
         "rules": [
           {
             "@id": "/api/pricing_rules/1",
@@ -579,7 +597,8 @@ Feature: Pricing rules set
             "position": 1,
             "name": "Updated Existing Option Name",
             "expressionAst": "@*@",
-            "priceAst": "@*@"
+            "priceAst": "@*@",
+            "matrix": "@null@"
           },
           {
             "@id": "/api/pricing_rules/2",
@@ -591,7 +610,8 @@ Feature: Pricing rules set
             "position": 2,
             "name": "New Option for Second Rule",
             "expressionAst": "@*@",
-            "priceAst": "@*@"
+            "priceAst": "@*@",
+            "matrix": "@null@"
           }
         ]
       }

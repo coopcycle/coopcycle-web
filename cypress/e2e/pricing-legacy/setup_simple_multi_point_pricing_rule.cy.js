@@ -36,12 +36,12 @@ context('Setup simple multi-point pricing (role: admin, classic form)', () => {
       })
 
     // Save button
-    cy.intercept('POST', '/admin/deliveries/pricing/new').as('submit')
+    cy.intercept('POST', '/admin/deliveries/pricing/new*').as('submit')
     cy.get('.btn-block').click()
     cy.wait('@submit', { timeout: 10000 })
 
     // Pricing rule page
-    cy.urlmatch(/\/admin\/deliveries\/pricing\/[0-9]+\?ui=legacy$/)
+    cy.urlmatch(/\/admin\/deliveries\/pricing\/[0-9]+\?ui=legacy$/, 'match', 'href')
 
     cy.get('.alert-success', { timeout: 10000 })
       .should('contain', 'Changements sauvegardés')

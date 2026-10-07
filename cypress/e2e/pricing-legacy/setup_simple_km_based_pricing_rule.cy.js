@@ -44,7 +44,7 @@ context('Setup simple km-based pricing (role: admin, classic form)', () => {
     cy.wait('@submit', { timeout: 10000 })
 
     // Pricing rule page
-    cy.urlmatch(/\/admin\/deliveries\/pricing\/[0-9]+\?ui=legacy$/)
+    cy.urlmatch(/\/admin\/deliveries\/pricing\/[0-9]+\?ui=legacy$/, 'match', 'href')
 
     cy.get('.alert-success', { timeout: 10000 })
       .should('contain', 'Changements sauvegardés')
