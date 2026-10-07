@@ -10,6 +10,7 @@ use AppBundle\Service\Referral\ReferralRewardCouponFactory;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Promotion\Action\DeliveryPercentageDiscountPromotionActionCommand;
 use AppBundle\Sylius\Promotion\Action\FixedDiscountPromotionActionCommand;
+use AppBundle\Sylius\Promotion\Action\PercentageDiscountPromotionActionCommand;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -125,6 +126,57 @@ class ReferralRewardCouponFactoryTest extends TestCase
         self::assertArrayHasKey('amount', $configuration);
         self::assertNotNull($configuration['amount']);
         self::assertTrue(isset($configuration['amount']));
+    }
+
+    /**
+     * Unlike free delivery (which the platform absorbs itself), a
+     * fixed/percentage discount eats into the order total the restaurant is
+     * paid on -- decrase_platform_fee (sic) tells OrderFeeProcessor to make
+     * the coop absorb most of that cost instead of the restaurant.
+     */
+    public function testFixedAndPercentageRewardsDecreasePlatformFee(): void
+    {
+        $referrer = new Customer();
+        $referrer->setFullName('referrer');
+
+        $fixedLevel = new ReferralLevel();
+        $fixedLevel->setMinReferralCount(1);
+        $fixedLevel->setRewardType(FixedDiscountPromotionActionCommand::TYPE);
+        $fixedLevel->setRewardAmount(500);
+        $fixedLevel->setCouponValidityDays(30);
+        $fixedLevel->setUsageLimit(1);
+
+        $fixedCoupon = $this->createFactory()->createReferrerRewardCoupon($referrer, $fixedLevel);
+        $fixedConfiguration = $fixedCoupon->getPromotion()->getActions()->first()->getConfiguration();
+        self::assertTrue($fixedConfiguration['decrase_platform_fee']);
+
+        $percentageLevel = new ReferralLevel();
+        $percentageLevel->setMinReferralCount(15);
+        $percentageLevel->setRewardType(PercentageDiscountPromotionActionCommand::TYPE);
+        $percentageLevel->setRewardPercentage(15);
+        $percentageLevel->setCouponValidityDays(30);
+        $percentageLevel->setUsageLimit(1);
+
+        $percentageCoupon = $this->createFactory()->createReferrerRewardCoupon($referrer, $percentageLevel);
+        $percentageConfiguration = $percentageCoupon->getPromotion()->getActions()->first()->getConfiguration();
+        self::assertTrue($percentageConfiguration['decrase_platform_fee']);
+    }
+
+    public function testFreeDeliveryRewardHasNoDecreasePlatformFeeKey(): void
+    {
+        $referrer = new Customer();
+        $referrer->setFullName('referrer');
+
+        $level = new ReferralLevel();
+        $level->setMinReferralCount(1);
+        $level->setRewardType(DeliveryPercentageDiscountPromotionActionCommand::TYPE);
+        $level->setCouponValidityDays(30);
+        $level->setUsageLimit(1);
+
+        $coupon = $this->createFactory()->createReferrerRewardCoupon($referrer, $level);
+        $configuration = $coupon->getPromotion()->getActions()->first()->getConfiguration();
+
+        self::assertArrayNotHasKey('decrase_platform_fee', $configuration);
     }
 
     public function testReferrerRewardCouponUsageLimitMatchesLevelForFreeDelivery(): void
