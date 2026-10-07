@@ -19,11 +19,9 @@
 <div class="panel panel-default" style="margin-bottom:16px;">
   <div class="panel-body">
     {{ form_start(active_form, { attr: { id: 'referral-program-active-form' } }) }}
-      <div class="checkbox" style="margin:0;">
-        <label>
-          {{ form_widget(active_form.active) }}
-          <strong>{% trans %}referral.program.active_label{% endtrans %}</strong>
-        </label>
+      <div class="d-flex align-items-center" style="gap:8px;">
+        {{ form_widget(active_form.active) }}
+        <strong>{% trans %}referral.program.active_label{% endtrans %}</strong>
       </div>
       <p class="text-muted" style="margin:4px 0 0;">{% trans %}referral.program.active_help{% endtrans %}</p>
     {{ form_end(active_form) }}
