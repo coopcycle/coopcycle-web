@@ -10,6 +10,17 @@
   text-align: center;
   margin-bottom: 10mm;
 }
+.receipt-customer {
+  text-align: right;
+  margin-top: 5mm;
+}
+.receipt-section-total th {
+  padding-top: 2mm;
+}
+.receipt-grand-total th,
+.receipt-grand-total td {
+  padding-top: 4mm;
+}
 </style>
 {% endblock %}
 
@@ -17,9 +28,23 @@
 <ul style="text-align: right;">
   <li><strong>{{ coopcycle_setting('brand_name') }}</strong></li>
   <li>{{ receipt.issuedAt|format_datetime('short', 'short', locale=locale) }}</li>
-  {% if receipt.billingAddress is not empty %}
-  <li>{{ receipt.billingAddress|nl2br }}</li>
+</ul>
+<ul class="receipt-customer">
+  {% set customer_name = receipt.billingAddress is not empty ? receipt.billingAddress : receipt.customerName %}
+  {% if customer_name is not empty %}
+  <li><strong>{{ 'receipt.customer.name'|trans }}</strong> {{ customer_name|nl2br }}</li>
   {% endif %}
+  {% if receipt.customerEmail is not empty %}
+  <li><strong>{{ 'receipt.customer.email'|trans }}</strong> {{ receipt.customerEmail }}</li>
+  {% endif %}
+  {% if receipt.customerPhone is not empty %}
+  <li><strong>{{ 'receipt.customer.phone'|trans }}</strong> {{ receipt.customerPhone }}</li>
+  {% endif %}
+  {% for payment in payments %}
+    {% if payment.method.name is not empty %}
+    <li><strong>{{ 'receipt.customer.payment_method'|trans }}</strong> {{ payment.method.name }}</li>
+    {% endif %}
+  {% endfor %}
 </ul>
 {% endblock %}
 
@@ -51,6 +76,33 @@
   {% endif %}
 </div>
 
+{% macro line_item_row(item) %}
+  <tr>
+    <td>
+      <span>{{ item.name }}</span>
+      {% if item.description is not empty %}
+      <br>
+      <span style="color: #999;">
+        {{ item.description|nl2br }}
+      </span>
+      {% endif %}
+    </td>
+    <td style="text-align: right; vertical-align: top;">{{ item.unitPrice|price_format }}</td>
+    <td style="text-align: right; vertical-align: top;">{{ item.quantity }}</td>
+    <td style="text-align: right; vertical-align: top;">{{ item.taxTotal|price_format }}</td>
+    <td style="text-align: right; vertical-align: top;">{{ item.total|price_format }}</td>
+  </tr>
+{% endmacro %}
+
+{% macro footer_row(item, class) %}
+  <tr class="{{ class }}">
+    <th colspan="4" style="text-align: right;"><strong>{{ item.name }}</strong></th>
+    <td style="text-align: right;"><strong>{{ item.total|price_format }}</strong></td>
+  </tr>
+{% endmacro %}
+
+{% import _self as receipt_table %}
+
 <table style="width: 100%;">
   <thead>
     <th style="text-align: left; ">{{ 'receipt.line_item.name'|trans }}</th>
@@ -60,28 +112,25 @@
     <th style="text-align: right;">{{ 'receipt.line_item.total'|trans }}</th>
   </thead>
   <tbody>
-  {% for item in receipt.lineItems %}
-    <tr>
-      <td>
-        <span>{{ item.name }}</span>
-        <br>
-        <span style="color: #999;">
-          {{ item.description|nl2br }}
-        </span>
-      </td>
-      <td style="text-align: right; vertical-align: top;">{{ item.unitPrice|price_format }}</td>
-      <td style="text-align: right; vertical-align: top;">{{ item.quantity }}</td>
-      <td style="text-align: right; vertical-align: top;">{{ item.taxTotal|price_format }}</td>
-      <td style="text-align: right; vertical-align: top;">{{ item.total|price_format }}</td>
-    </tr>
+  {% for item in receipt.getLineItemsByType('product') %}
+    {{ receipt_table.line_item_row(item) }}
+  {% endfor %}
+
+  {% for item in receipt.getFooterItemsBySection('products') %}
+    {{ receipt_table.footer_row(item, 'receipt-section-total') }}
+  {% endfor %}
+
+  {% for item in receipt.getLineItemsByType('service') %}
+    {{ receipt_table.line_item_row(item) }}
+  {% endfor %}
+
+  {% for item in receipt.getFooterItemsBySection('services') %}
+    {{ receipt_table.footer_row(item, 'receipt-section-total') }}
   {% endfor %}
   </tbody>
   <tfoot>
-    {% for item in receipt.footerItems %}
-    <tr>
-      <th colspan="4" style="text-align: right;"><strong>{{ item.name }}</strong></th>
-      <td style="text-align: right;">{{ item.total|price_format }}</td>
-    </tr>
+  {% for item in receipt.getFooterItemsBySection('totals') %}
+    {{ receipt_table.footer_row(item, loop.first or loop.last ? 'receipt-grand-total' : '') }}
   {% endfor %}
   </tfoot>
 </table>

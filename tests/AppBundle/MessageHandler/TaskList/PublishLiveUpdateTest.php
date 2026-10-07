@@ -50,8 +50,8 @@ class PublishLiveUpdateTest extends TestCase
         $taskList->getCourier()->willReturn($user->reveal());
         $event->getTaskList()->willReturn($taskList->reveal());
 
-        $this->liveUpdates->toUserAndRoles(
-            $user->reveal(), ['ROLE_ADMIN', 'ROLE_DISPATCHER'], $event->reveal()
+        $this->liveUpdates->toUserAndDispatchers(
+            $user->reveal(), $event->reveal()
         )->shouldBeCalledOnce();
 
         ($this->publishLiveUpdate)($event->reveal());

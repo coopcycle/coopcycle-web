@@ -27,5 +27,11 @@ if (el) {
     // plus for 100% of sessions with an error
     replaysSessionSampleRate: 0.1,
     replaysOnErrorSampleRate: 1.0,
+
+    // Same tag as the backend (see config/packages/sentry.yaml),
+    // to be able to filter errors by instance
+    initialScope: {
+      tags: { coopcycle_app_name: el.dataset.appName },
+    },
   })
 }

@@ -40,7 +40,7 @@ const styles = {
   },
 };
 
-export default function ({ isLastmile }) {
+export default function ({ isLastmile, isRefundable }) {
   const loaded = useSelector(selectLoaded);
   const incident = useSelector(selectIncident);
   const images = useSelector(selectImages);
@@ -144,7 +144,7 @@ export default function ({ isLastmile }) {
           {t('REFUND')}
         </Button>
       ),
-      shouldRender: !isLastmile && order && order.state !== 'cancelled',
+      shouldRender: isRefundable && order && order.state !== 'cancelled',
     },
   ]
     .filter(b => b.shouldRender)

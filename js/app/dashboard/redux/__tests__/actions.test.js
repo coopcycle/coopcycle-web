@@ -21,6 +21,9 @@ describe('updateTask', () => {
     const store = mockStore({
       logistics: {
         date: moment('2020-02-27'),
+        entities: {
+          tasks: taskAdapter.getInitialState(),
+        },
       },
       config: {
         timezone: 'UTC',
@@ -41,11 +44,111 @@ describe('updateTask', () => {
     expect(dispatch).toHaveBeenCalledWith({ type: UPDATE_TASK, task })
   })
 
+  it('should ignore an update describing an older state than the one held', () => {
+
+    const current = {
+      '@id': '/api/tasks/1',
+      'doneAfter': '2020-02-27T09:00:00',
+      'doneBefore': '2020-02-27T12:00:00',
+      'status': 'DONE',
+      'updatedAt': '2020-02-27T10:05:00+00:00',
+    }
+
+    const store = mockStore({
+      logistics: {
+        date: moment('2020-02-27'),
+        entities: {
+          tasks: taskAdapter.upsertMany(taskAdapter.getInitialState(), [current]),
+        },
+      },
+      config: {
+        timezone: 'UTC',
+      },
+    })
+
+    const dispatch = jest.fn()
+
+    // Published before the one we already applied, but delivered after it: the
+    // worker pool gives no ordering guarantee between two updates to the same
+    // task. Applying this would put the task back to TODO on the board.
+    const outdated = { ...current, status: 'TODO', updatedAt: '2020-02-27T10:00:00+00:00' }
+
+    updateTask(outdated)(dispatch, store.getState)
+
+    expect(dispatch).not.toHaveBeenCalled()
+  })
+
+  it('should apply an update describing a newer state', () => {
+
+    const current = {
+      '@id': '/api/tasks/1',
+      'doneAfter': '2020-02-27T09:00:00',
+      'doneBefore': '2020-02-27T12:00:00',
+      'status': 'TODO',
+      'updatedAt': '2020-02-27T10:00:00+00:00',
+    }
+
+    const store = mockStore({
+      logistics: {
+        date: moment('2020-02-27'),
+        entities: {
+          tasks: taskAdapter.upsertMany(taskAdapter.getInitialState(), [current]),
+        },
+      },
+      config: {
+        timezone: 'UTC',
+      },
+    })
+
+    const dispatch = jest.fn()
+
+    const newer = { ...current, status: 'DONE', updatedAt: '2020-02-27T10:05:00+00:00' }
+
+    updateTask(newer)(dispatch, store.getState)
+
+    expect(dispatch).toHaveBeenCalledWith({ type: UPDATE_TASK, task: newer })
+  })
+
+  it('should apply an update with the same timestamp', () => {
+
+    // `updatedAt` has second granularity, so two genuinely different events can
+    // share one. Skipping those would lose updates.
+    const current = {
+      '@id': '/api/tasks/1',
+      'doneAfter': '2020-02-27T09:00:00',
+      'doneBefore': '2020-02-27T12:00:00',
+      'updatedAt': '2020-02-27T10:00:00+00:00',
+    }
+
+    const store = mockStore({
+      logistics: {
+        date: moment('2020-02-27'),
+        entities: {
+          tasks: taskAdapter.upsertMany(taskAdapter.getInitialState(), [current]),
+        },
+      },
+      config: {
+        timezone: 'UTC',
+      },
+    })
+
+    const dispatch = jest.fn()
+
+    const sameInstant = { ...current, status: 'DONE' }
+
+    updateTask(sameInstant)(dispatch, store.getState)
+
+    expect(dispatch).toHaveBeenCalledWith({ type: UPDATE_TASK, task: sameInstant })
+  })
+
   it('should remove task when date is out of range (legacy props)', () => {
 
     const store = mockStore({
       logistics: {
         date: moment('2020-02-27'),
+        entities: {
+          tasks: taskAdapter.getInitialState(),
+        },
       },
       config: {
         timezone: 'UTC',

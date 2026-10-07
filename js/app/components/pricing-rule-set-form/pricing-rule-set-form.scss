@@ -50,6 +50,29 @@
     }
   }
 
+  // A number input that shows a suffix is wrapped by antd, so the dashed border
+  // goes on the wrapper: left on the inner element it draws a box inside the box
+  .ant-input-number-affix-wrapper {
+    background-color: transparent !important;
+    border: 1px dashed darken($bgcolor, 50%) !important;
+    box-shadow: none !important;
+
+    &:hover {
+      border-color: darken($bgcolor, 60%) !important;
+    }
+
+    &:focus-within,
+    &.ant-input-number-affix-wrapper-focused {
+      border-color: darken($bgcolor, 70%) !important;
+      box-shadow: none !important;
+    }
+
+    .ant-input-number {
+      border: none !important;
+      background-color: transparent !important;
+    }
+  }
+
   // Keep existing form-control styles for legacy components
   .form-control {
     background-color: transparent;
@@ -120,5 +143,146 @@
         }
       }
     }
+  }
+}
+
+/* Price grid editor: rows and columns are edited in their own headers */
+.pricing-matrix__scroll {
+  overflow-x: auto;
+}
+
+.pricing-matrix {
+  border-collapse: separate;
+  border-spacing: 4px;
+
+  th,
+  td {
+    vertical-align: top;
+  }
+
+  /*
+    The corner says what each axis is, laid out the way the grid reads: columns
+    along the top, rows down the left, separated by the diagonal.
+  */
+  &__corner {
+    position: relative;
+    min-width: 320px;
+    padding: 6px;
+  }
+
+  &__corner-diagonal {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+
+    line {
+      stroke: rgba(0, 0, 0, 0.15);
+      stroke-width: 1;
+    }
+  }
+
+  &__corner-columns,
+  &__corner-rows {
+    position: relative;
+    width: 70%;
+  }
+
+  &__corner-columns {
+    margin-left: auto;
+    margin-bottom: 14px;
+    text-align: right;
+  }
+
+  &__corner-rows {
+    margin-right: auto;
+    text-align: left;
+  }
+
+  &__axis-label {
+    display: block;
+    font-size: 11px;
+    font-weight: normal;
+    opacity: 0.65;
+  }
+
+  &__header {
+    position: relative;
+    min-width: 170px;
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 4px;
+    padding: 6px;
+  }
+
+  /* The row or column a warning is about, so it can be found without reading it */
+  &__header--warning {
+    background: rgba(250, 173, 20, 0.14);
+    box-shadow: inset 0 0 0 1px rgba(250, 173, 20, 0.55);
+  }
+
+  &__header-fields > * + * {
+    margin-top: 4px;
+  }
+
+  &__bounds {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    .ant-input-number {
+      width: 100%;
+    }
+  }
+
+  &__bounds-arrow {
+    opacity: 0.45;
+  }
+
+  /*
+    The remove button gets a row of its own rather than being laid over the label:
+    overlapping a text field made it unclickable behind antd's own positioning, and
+    put a delete one stray click away from the end of the label.
+  */
+  &__header-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    min-height: 20px;
+  }
+
+  &__remove {
+    opacity: 0.55;
+    transition: opacity 0.2s;
+  }
+
+  &__header:hover &__remove,
+  &__remove:focus-visible {
+    opacity: 1;
+  }
+
+  &__cell {
+    min-width: 120px;
+  }
+
+  &__add {
+    vertical-align: middle;
+    text-align: center;
+  }
+}
+
+/* Size preview in the grid wizard */
+.pricing-matrix__preview {
+  border-collapse: separate;
+  border-spacing: 3px;
+
+  td {
+    width: 34px;
+    height: 22px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 3px;
+  }
+
+  &-header {
+    background: rgba(0, 0, 0, 0.06);
   }
 }

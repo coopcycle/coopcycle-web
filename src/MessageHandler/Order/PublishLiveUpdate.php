@@ -35,9 +35,9 @@ class PublishLiveUpdate
         $this->liveUpdates->toOrderWatchers($order, $event);
 
         if ($customer->hasUser() && $event instanceof FrontendEvent) {
-            $this->liveUpdates->toUserAndAdmins($customer->getUser(), $event);
+            $this->liveUpdates->toUserAndDispatchers($customer->getUser(), $event);
         } else {
-            $this->liveUpdates->toAdmins($event);
+            $this->liveUpdates->toDispatchers($event);
         }
 
         // No need to continue if the order has no vendor

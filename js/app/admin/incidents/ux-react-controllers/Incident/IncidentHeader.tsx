@@ -60,7 +60,7 @@ function _statusBtn(status) {
   }
 }
 
-export default connectWithRedux(function ({ isLastmile }) {
+export default connectWithRedux(function ({ isLastmile, isRefundable }) {
   const dispatch = useAppDispatch();
   const loaded = useSelector(selectLoaded);
   const incident = useSelector(selectIncident);
@@ -82,7 +82,7 @@ export default connectWithRedux(function ({ isLastmile }) {
       title={incident.title}
       extra={[
         <Flex key="actions" gap="middle">
-          <ActionBox isLastmile={isLastmile} />
+          <ActionBox isLastmile={isLastmile} isRefundable={isRefundable} />
           <Dropdown.Button
             key="close"
             onClick={() => {

@@ -203,6 +203,7 @@ const CreateNewOrderButton = () => {
       routes={{
         store_new: 'admin_store_delivery_new',
       }}
+      openInNewTab
       buttonComponent={
         <Button type="text" icon={<PlusOutlined />}>
           {t('CREATE_NEW_ORDER')}

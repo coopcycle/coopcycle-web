@@ -1,5 +1,5 @@
 context(
-  'Pricing rules: empty sections display (role: admin) - Beta Version',
+  'Pricing rules: empty sections display (role: admin)',
   () => {
     beforeEach(() => {
       cy.loadFixturesWithSetup(['user_admin.yml', 'packages.yml'])
@@ -7,7 +7,7 @@ context(
     })
 
     it('tests empty sections display', function () {
-      cy.visit('/admin/deliveries/pricing/beta/new')
+      cy.visit('/admin/deliveries/pricing/new')
 
       // Wait for React components to load
       cy.get('[data-testid="pricing-rule-set-form"]', {

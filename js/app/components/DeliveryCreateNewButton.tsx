@@ -12,6 +12,7 @@ type Props = {
     store_new: string
   }
   buttonComponent?: React.ReactNode
+  openInNewTab?: boolean
 }
 
 export default function DeliveryCreateNewButton({
@@ -19,6 +20,7 @@ export default function DeliveryCreateNewButton({
   routes,
   isNavbar,
   buttonComponent,
+  openInNewTab = false,
 }: Props) {
   const { t } = useTranslation()
   const [isModalVisible, setIsModalVisible] = useState(false)
@@ -34,6 +36,12 @@ export default function DeliveryCreateNewButton({
   }
 
   const handleStoreChange = value => {
+    if (openInNewTab) {
+      window.open(value, '_blank')
+      handleCancel()
+      return
+    }
+
     setSelectedStore(value)
     window.location.href = value
   }

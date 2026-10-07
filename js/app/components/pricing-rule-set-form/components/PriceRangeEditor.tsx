@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { getCurrencySymbol } from '../../../i18n';
 import { useTranslation } from 'react-i18next';
+
+import TaxExcludedPriceInput from './TaxExcludedPriceInput';
 
 type Attribute =
   | 'distance'
@@ -82,11 +83,21 @@ const formatValueForUi = (value: number, unit: Unit): number => {
   return value;
 };
 
+/*
+  The multiplier charges the range once per unit of something else: with the volume
+  units of the delivery, "0.50 € per km beyond 2.5 km, per package" is a single rule
+  rather than one rule per package count.
+*/
+export type Multiplier =
+  | 'packages.totalVolumeUnits()'
+  | 'delivery.packages.totalVolumeUnits()';
+
 export type PriceRangeValue = {
   attribute: Attribute;
   price: number;
   step: number;
   threshold: number;
+  multiplier?: Multiplier | null;
 };
 
 type Props = {
@@ -109,6 +120,9 @@ export default ({ isManualSupplement, defaultValue, onChange }: Props) => {
     defaultValue.step || (isManualSupplement ? 1 : 1000),
   );
   const [threshold, setThreshold] = useState(defaultValue.threshold || 0);
+  const [multiplier, setMultiplier] = useState<Multiplier | null>(
+    defaultValue.multiplier ?? null,
+  );
 
   const initialLoad = useRef(true);
 
@@ -119,29 +133,23 @@ export default ({ isManualSupplement, defaultValue, onChange }: Props) => {
         price: price,
         step,
         threshold,
+        multiplier,
       });
     } else {
       initialLoad.current = false;
     }
-  }, [price, threshold, attribute, step, onChange]);
+  }, [price, threshold, attribute, step, multiplier, onChange]);
 
   return (
     <div data-testid="price_rule_price_range_editor">
-      <label className="mr-2">
-        <input
-          data-testid="rule-price-range-price"
-          type="number"
-          size={4}
-          defaultValue={price / 100}
-          min="0"
-          step=".001"
-          className="form-control d-inline-block no-number-input-arrow"
-          style={{ width: '80px' }}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setPrice(parseFloat(e.target.value) * 100);
-          }}
+      <label className="mr-2 align-top">
+        <TaxExcludedPriceInput
+          testId="rule-price-range-price"
+          value={price}
+          step={0.1}
+          style={{ width: '150px' }}
+          onChange={setPrice}
         />
-        <span className="ml-2">{getCurrencySymbol()}</span>
       </label>
       <label>
         <span className="mx-2">{t('PRICE_RANGE_EDITOR.FOR_EVERY')}</span>
@@ -207,6 +215,51 @@ export default ({ isManualSupplement, defaultValue, onChange }: Props) => {
           </span>
         ) : null}
       </label>
+      {/*
+        On a row of its own, and only once asked for: without it the range is
+        charged once, which is what most rules want and what every rule stored
+        before the multiplier existed does.
+      */}
+      {!isManualSupplement && multiplier ? (
+        <div className="mt-2">
+          <label className="mr-2">
+            <span className="mr-2">{t('PRICE_RANGE_EDITOR.MULTIPLIER')}</span>
+            <select
+              data-testid="rule-price-range-multiplier"
+              className="form-control d-inline-block"
+              style={{ width: '260px' }}
+              value={multiplier}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                setMultiplier(e.target.value as Multiplier);
+              }}>
+              <option value="packages.totalVolumeUnits()">
+                {t('PRICE_RANGE_EDITOR.PER_VOLUME_UNIT')}
+              </option>
+              <option value="delivery.packages.totalVolumeUnits()">
+                {t('PRICE_RANGE_EDITOR.PER_VOLUME_UNIT_DELIVERY')}
+              </option>
+            </select>
+          </label>
+          <button
+            type="button"
+            className="btn btn-xs btn-default"
+            onClick={() => setMultiplier(null)}>
+            <i className="fa fa-times mr-1"></i>
+            <span>{t('PRICE_RANGE_EDITOR.DEL_MULTIPLIER')}</span>
+          </button>
+        </div>
+      ) : null}
+      {!isManualSupplement && !multiplier ? (
+        <div className="mt-2">
+          <button
+            type="button"
+            className="btn btn-xs btn-default"
+            onClick={() => setMultiplier('packages.totalVolumeUnits()')}>
+            <i className="fa fa-plus mr-1"></i>
+            <span>{t('PRICE_RANGE_EDITOR.ADD_MULTIPLIER')}</span>
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 };

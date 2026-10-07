@@ -133,7 +133,7 @@ class ImportTasksCommand extends Command
 
             $this->io->error($e->getMessage());
 
-            $this->liveUpdates->toAdmins('task_import:failure', [
+            $this->liveUpdates->toDispatchers('task_import:failure', [
                 'token' => $token,
                 'message' => $e->getMessage()
             ]);
@@ -150,7 +150,7 @@ class ImportTasksCommand extends Command
 
         $this->io->success(sprintf('Finished importing file %s', $filename));
 
-        $this->liveUpdates->toAdmins('task_import:success', ['token' => $token]);
+        $this->liveUpdates->toDispatchers('task_import:success', ['token' => $token]);
 
         unlink($tempnam);
 

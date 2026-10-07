@@ -96,6 +96,30 @@ export default expression => {
   return lines.map(token => parseToken(token))
 }
 
+/*
+  Matches the AST of `packages.totalVolumeUnits()` (whose object is a plain name) and
+  of `delivery.packages.totalVolumeUnits()` (whose object is itself a property access),
+  and returns the matching rule picker type, or null for anything else.
+*/
+const volumeUnitsAttribute = node => {
+  if (node?.nodes?.attribute?.attributes?.value !== 'totalVolumeUnits') {
+    return null
+  }
+
+  const object = node.nodes.node
+
+  if (object?.attributes?.name === 'packages') {
+    return 'packages.totalVolumeUnits()'
+  }
+
+  if (object?.nodes?.node?.attributes?.name === 'delivery'
+    && object?.nodes?.attribute?.attributes?.value === 'packages') {
+    return 'delivery.packages.totalVolumeUnits()'
+  }
+
+  return null
+}
+
 const traverseNode = (node, accumulator) => {
   if (node.attributes.operator === 'and') {
     traverseNode(node.nodes.left, accumulator)
@@ -186,10 +210,12 @@ const traverseNode = (node, accumulator) => {
           operator: node.attributes.operator,
           right:    $right,
         })
-      } else if (node.nodes.left.nodes?.node?.attributes?.name === 'packages' && node.nodes.left.nodes?.attribute?.attributes?.value === 'totalVolumeUnits') {
+      } else if (volumeUnitsAttribute(node.nodes.left)) {
+        const left = volumeUnitsAttribute(node.nodes.left)
+
         if (node.attributes.operator === 'in') {
           accumulator.push({
-            left:     'packages.totalVolumeUnits()',
+            left,
             operator: node.attributes.operator,
             right:    [
               node.nodes.right.nodes.left.attributes.value,
@@ -198,7 +224,7 @@ const traverseNode = (node, accumulator) => {
           })
         } else {
           accumulator.push({
-            left:     'packages.totalVolumeUnits()',
+            left,
             operator: node.attributes.operator,
             right:    node.nodes.right.attributes.value,
           })
@@ -248,12 +274,14 @@ export class PercentagePrice extends Price {
 }
 
 export class PriceRange extends Price {
-  constructor(attribute, price, step, threshold) {
+  constructor(attribute, price, step, threshold, multiplier = null) {
     super()
     this.attribute = attribute
     this.price = price
     this.step = step
     this.threshold = threshold
+    // Charged once per unit of this variable, null when charged once
+    this.multiplier = multiplier
   }
 }
 
@@ -289,13 +317,13 @@ const parsePriceNode = (node, expression) => {
 
     const args = node.nodes.arguments.nodes
 
-    const attribute = (args[0].nodes?.node?.attributes.name === 'packages' && args[0].nodes?.attribute?.attributes.value === 'totalVolumeUnits')
-      ? 'packages.totalVolumeUnits()' : args[0].attributes.name
+    const attribute = volumeUnitsAttribute(args[0]) ?? args[0].attributes.name
     const price     = args[1].attributes.value
     const step      = args[2].attributes.value
     const threshold = args[3].attributes.value
+    const multiplier = args[4] ? volumeUnitsAttribute(args[4]) : null
 
-    return new PriceRange(attribute, price, step, threshold)
+    return new PriceRange(attribute, price, step, threshold, multiplier)
   }
 
   if (node.attributes.operator && node.attributes.operator === '*'

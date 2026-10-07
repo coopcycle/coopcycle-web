@@ -1,5 +1,5 @@
 context(
-  'Editing pricing rule using React interface (role: admin) - Beta Version',
+  'Editing pricing rule (role: admin)',
   () => {
     beforeEach(() => {
       cy.loadFixturesWithSetup([
@@ -11,7 +11,7 @@ context(
     })
 
     it('edits pricing rule using React interface', function () {
-      cy.visit('/admin/deliveries/pricing/beta/1')
+      cy.visit('/admin/deliveries/pricing/1')
 
       // Wait for React components to load
       cy.get('[data-testid="pricing-rule-set-form"]', {
@@ -71,7 +71,7 @@ context(
       cy.wait('@putPricingRuleSet', { timeout: 10000 })
 
       // Should stay on the same page
-      cy.urlmatch(/\/admin\/deliveries\/pricing\/beta\/[0-9]+$/)
+      cy.urlmatch(/\/admin\/deliveries\/pricing\/[0-9]+$/)
 
       // Reload page to verify data is persisted
       cy.reload()

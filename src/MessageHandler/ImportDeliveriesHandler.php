@@ -146,7 +146,7 @@ class ImportDeliveriesHandler
 
         $this->entityManager->flush();
 
-        $this->liveUpdates->toAdmins('delivery_import:updated', [
+        $this->liveUpdates->toDispatchers('delivery_import:updated', [
             'filename' => $queue->getFilename(),
             'status' => $status
         ]);

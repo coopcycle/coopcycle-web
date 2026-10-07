@@ -688,7 +688,7 @@ Cypress.Commands.add('validatePricingRulePrice', price => {
     case 'range':
       cy.get('[data-testid="rule-price-type"]').should(
         'contain',
-        'Prix TTC par tranches',
+        'Prix par tranches',
       )
       cy.get('[data-testid="rule-price-range-price"]').should(
         'have.value',
@@ -707,7 +707,7 @@ Cypress.Commands.add('validatePricingRulePrice', price => {
     case 'per_package':
       cy.get('[data-testid="rule-price-type"]').should(
         'contain',
-        'Prix par colis',
+        'Prix par paquet',
       )
       cy.get('[data-testid="rule-per-package-name"]').should(
         'contain',

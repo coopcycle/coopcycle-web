@@ -46,6 +46,7 @@ import {
   HydraError,
   Order as OrderType,
   ManualSupplementValues,
+  Tag,
 } from '../../api/types';
 import { useDatadog } from '../../hooks/useDatadog';
 import { UserContext } from '../../UserContext';
@@ -383,6 +384,10 @@ const DeliveryForm = ({
             ...task.address,
             formattedTelephone: getFormattedValue(task.address.telephone),
           },
+          // The server serializes tags as objects, the API expects slugs
+          tags: ((task.tags as (string | Tag)[] | undefined) ?? []).map(tag =>
+            typeof tag === 'string' ? tag : tag.slug,
+          ),
         };
       });
 
@@ -721,6 +726,17 @@ const DeliveryForm = ({
                           deliveryId={deliveryId}
                           label={t('DELIVERY_FORM_VIEW_EDIFACT_DATA')}
                         />
+                      </div>
+                    ) : null}
+                    {isDispatcher && delivery?.waybillUrl ? (
+                      <div className="mt-2">
+                        <a
+                          target="_blank"
+                          rel="noreferrer"
+                          href={delivery.waybillUrl}>
+                          {t('DELIVERY_FORM_VIEW_WAYBILL')}
+                        </a>{' '}
+                        <i className="fa fa-external-link"></i>
                       </div>
                     ) : null}
                   </div>

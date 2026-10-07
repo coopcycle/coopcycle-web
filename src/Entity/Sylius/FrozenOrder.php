@@ -78,6 +78,22 @@ abstract class FrozenOrder
         return $this->footerItems;
     }
 
+    /**
+     * @return Collection|FrozenOrderLineItem[]
+     */
+    public function getLineItemsByType(string $type): Collection
+    {
+        return $this->lineItems->filter(fn(FrozenOrderLineItem $item) => $item->getType() === $type);
+    }
+
+    /**
+     * @return Collection|FrozenOrderFooterItem[]
+     */
+    public function getFooterItemsBySection(string $section): Collection
+    {
+        return $this->footerItems->filter(fn(FrozenOrderFooterItem $item) => $item->getSection() === $section);
+    }
+
     public function addLineItem(FrozenOrderLineItem $item)
     {
         $item->setParent($this);

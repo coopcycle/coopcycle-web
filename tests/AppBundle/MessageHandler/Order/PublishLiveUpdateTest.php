@@ -5,6 +5,7 @@ namespace Tests\AppBundle\MessageHandler\Order;
 use AppBundle\Domain\Order\Event;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\User;
+use AppBundle\Message\PublishToCentrifugo;
 use AppBundle\Message\TopBarNotification;
 use AppBundle\MessageHandler\Order\PublishLiveUpdate;
 use AppBundle\Security\UserManager;
@@ -14,7 +15,6 @@ use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use phpcent\Client as CentrifugoClient;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -42,7 +42,6 @@ class PublishLiveUpdateTest extends TestCase
         $this->userManager = $this->prophesize(UserManager::class);
         $this->serializer = $this->prophesize(Serializer::class);
         $this->translator = $this->prophesize(TranslatorInterface::class);
-        $this->centrifugoClient = $this->prophesize(CentrifugoClient::class);
         $this->messageBus = $this->prophesize(MessageBusInterface::class);
         $this->notificationPreferences = $this->prophesize(NotificationPreferences::class);
 
@@ -51,12 +50,16 @@ class PublishLiveUpdateTest extends TestCase
             $this->userManager->reveal(),
             $this->serializer->reveal(),
             $this->translator->reveal(),
-            $this->centrifugoClient->reveal(),
             $this->messageBus->reveal(),
             $this->notificationPreferences->reveal(),
             new NullLogger(),
             'foo'
         );
+
+        // The live update itself is now a message like any other; these tests are
+        // about who gets notified, so just let it through.
+        $this->messageBus->dispatch(Argument::type(PublishToCentrifugo::class))
+            ->will(fn ($args) => new Envelope($args[0]));
 
         $this->handler = new PublishLiveUpdate(
             $liveUpdates
@@ -97,7 +100,7 @@ class PublishLiveUpdateTest extends TestCase
         $admin = $this->prophesize(UserInterface::class);
         $admin->getUserIdentifier()->willReturn('admin');
 
-        $this->userManager->findUsersByRoles(['ROLE_ADMIN'])->willReturn([$admin]);
+        $this->userManager->findUsersByRoles(LiveUpdates::DISPATCH_ROLES)->willReturn([$admin]);
 
         $this->translator->trans(Argument::type('string'), Argument::type('array'))->willReturn('Lorem ipsum');
 

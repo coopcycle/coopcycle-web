@@ -18,6 +18,6 @@ class PublishLiveUpdate
     
     public function __invoke(Event $event)
     {
-        $this->liveUpdates->toAdmins($event);
+        $this->liveUpdates->toDispatchers($event);
     }
 }

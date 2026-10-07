@@ -48,8 +48,7 @@ trait TaggableTrait
             return;
         }
 
-        $this->tags = is_array($tags) ? $tags : explode(' ', $tags);
-        $this->tags = array_unique($this->tags);
+        $this->tags = array_unique($this->normalizeTags($tags));
         $this->tagsCallable = null;
 
         $this->touchForTagsChange();
@@ -59,11 +58,38 @@ trait TaggableTrait
     {
         $this->tags = array_merge(
             $this->getTags(),
-            is_array($tags) ? $tags : explode(' ', $tags)
+            $this->normalizeTags($tags)
         );
         $this->tags = array_unique($this->tags);
 
         $this->touchForTagsChange();
+    }
+
+    /**
+     * Tags may be given as a space-separated string, as a list of slugs,
+     * or as a list of tags as serialized by TagManager::getTags()
+     * (i.e ['name' => ..., 'slug' => ..., 'color' => ...]),
+     * which is what clients send back when they re-submit a task they loaded.
+     *
+     * @return string[]
+     */
+    private function normalizeTags(array|string $tags): array
+    {
+        if (!is_array($tags)) {
+            $tags = explode(' ', $tags);
+        }
+
+        $slugs = [];
+        foreach ($tags as $tag) {
+            if (is_array($tag)) {
+                $tag = $tag['slug'] ?? null;
+            }
+            if (is_string($tag) && '' !== $tag) {
+                $slugs[] = $tag;
+            }
+        }
+
+        return array_values($slugs);
     }
 
     /**

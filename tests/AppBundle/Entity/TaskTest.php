@@ -288,4 +288,25 @@ class TaskTest extends TestCase
 
         $this->assertEquals(['lorem', 'ipsum'], $task->getTags());
     }
+
+    public function testSetTagsWithSerializedTags()
+    {
+        $task = new Task();
+
+        // This is the format returned by TagManager::getTags(),
+        // which clients may send back as-is
+        $task->setTags([
+            ['name' => 'Foo', 'slug' => 'foo', 'color' => '#ff0000'],
+            ['name' => 'Bar', 'slug' => 'bar', 'color' => '#00ff00'],
+            'baz',
+        ]);
+
+        $this->assertEquals(['foo', 'bar', 'baz'], $task->getTags());
+
+        $task->addTags([
+            ['name' => 'Bat', 'slug' => 'bat', 'color' => '#0000ff'],
+        ]);
+
+        $this->assertEquals(['foo', 'bar', 'baz', 'bat'], $task->getTags());
+    }
 }

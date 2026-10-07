@@ -12,6 +12,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Sylius\Component\Resource\Model\ToggleableTrait;
 use Sylius\Component\Product\Model\ProductOptionValue as BaseProductOptionValue;
+use Sylius\Component\Product\Model\ProductOptionValueTranslationInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use AppBundle\Integration\Zelty\HasZeltyMetadata;
 use Symfony\Component\Serializer\Attribute\Groups;
@@ -136,5 +137,10 @@ class ProductOptionValue extends BaseProductOptionValue implements ProductOption
     public function setDependsOn(Collection $dependsOn)
     {
         $this->dependsOn = $dependsOn;
+    }
+
+    protected function createTranslation(): ProductOptionValueTranslationInterface
+    {
+        return new ProductOptionValueTranslation();
     }
 }

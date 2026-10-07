@@ -31,12 +31,52 @@ export function styleUrl(style = DEFAULT_STYLE) {
   return STYLES[style] || style
 }
 
+// Raster basemap used when MapLibre can't run, i.e when the browser has no WebGL2.
+// https://operations.osmfoundation.org/policies/tiles/
+const RASTER_TILES_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
+const RASTER_ATTRIBUTION =
+  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+
+let webGL2Supported = null
+
+/**
+ * MapLibre GL JS v5 requires WebGL2, and throws when it can't get a context.
+ * Some machines don't provide it (e.g old Macs, where Firefox reports
+ * "GL_SHADING_LANGUAGE_VERSION: 120 < 150"), and the error took down whole pages.
+ */
+export function isWebGL2Supported() {
+  if (null === webGL2Supported) {
+    try {
+      const canvas = document.createElement('canvas')
+      const gl = canvas.getContext('webgl2')
+      webGL2Supported = Boolean(gl)
+      // Browsers cap the number of live WebGL contexts, release this one right away.
+      gl?.getExtension('WEBGL_lose_context')?.loseContext()
+    } catch (e) {
+      webGL2Supported = false
+    }
+  }
+
+  return webGL2Supported
+}
+
+function createRasterBaseMapLayer() {
+  return L.tileLayer(RASTER_TILES_URL, {
+    maxZoom: MAX_ZOOM,
+    attribution: RASTER_ATTRIBUTION,
+  })
+}
+
 /**
  * Creates the basemap layer, to be added to a Leaflet map.
  * Behaves like the L.tileLayer it replaces, so all the Leaflet plugins
  * (Geoman, markercluster, arrowheads…) keep working on top of it.
  */
 export function createBaseMapLayer(options = {}) {
+  if (!isWebGL2Supported()) {
+    return createRasterBaseMapLayer()
+  }
+
   const { style, ...rest } = options
 
   return L.maplibreGL({
@@ -88,6 +128,13 @@ function syncBackgroundColor(map, glMap) {
 
 export function addBaseMapLayer(map, options = {}) {
   const layer = createBaseMapLayer(options)
+
+  // The raster fallback has no GL map to set up.
+  if (layer instanceof L.TileLayer) {
+    layer.addTo(map)
+
+    return layer
+  }
 
   // The GL map only exists once the layer has been added, and Leaflet does not
   // necessarily add it straight away: a map with no view yet (no center/zoom,

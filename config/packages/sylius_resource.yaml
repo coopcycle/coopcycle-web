@@ -53,6 +53,9 @@ sylius_product:
         product_option_value:
             classes:
                 model: AppBundle\Entity\Sylius\ProductOptionValue
+            translation:
+                classes:
+                    model: AppBundle\Entity\Sylius\ProductOptionValueTranslation
 
 sylius_taxonomy:
     resources:

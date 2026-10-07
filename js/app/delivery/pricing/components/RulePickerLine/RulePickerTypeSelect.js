@@ -27,6 +27,7 @@ const TASK_TYPES = [
   { name: 'weight' },
   { name: 'packages' },
   { name: 'packages.totalVolumeUnits()' },
+  { name: 'delivery.packages.totalVolumeUnits()' },
   { name: 'time_slot' },
   { name: 'diff_hours(pickup)', deprecated: true },
   { name: 'diff_days(pickup)', deprecated: true },
@@ -104,6 +105,8 @@ function RulePickerType({ ruleTarget, type }) {
           default:
             return t('RULE_PICKER_LINE_VOLUME_UNITS')
         }
+      case 'delivery.packages.totalVolumeUnits()':
+        return t('RULE_PICKER_LINE_VOLUME_UNITS_DELIVERY')
       case 'task.type':
         return t('RULE_PICKER_LINE_TASK_TYPE')
       case 'distance':

@@ -81,7 +81,10 @@ class PriceExpressionParser
         $step = (int) $args[2]->attributes['value'];
         $threshold = (int) $args[3]->attributes['value'];
 
-        return new PriceRangeExpression($attribute, $price, $step, $threshold);
+        // Optional: charge the range once per unit of something else
+        $multiplier = isset($args[4]) ? $this->extractAttributeName($args[4]) : null;
+
+        return new PriceRangeExpression($attribute, $price, $step, $threshold, $multiplier);
     }
 
     /**
@@ -118,6 +121,23 @@ class PriceExpressionParser
         // Handle simple attribute names like 'distance'
         if (isset($node->attributes['name'])) {
             return $node->attributes['name'];
+        }
+
+        // Handle the nested method call delivery.packages.totalVolumeUnits(), whose
+        // object is itself a property access
+        if ($node instanceof GetAttrNode
+            && isset($node->nodes['node'])
+            && $node->nodes['node'] instanceof GetAttrNode
+            && isset($node->nodes['node']->nodes['node']->attributes['name'])
+            && isset($node->nodes['node']->nodes['attribute']->attributes['value'])
+            && isset($node->nodes['attribute']->attributes['value'])) {
+
+            return sprintf(
+                '%s.%s.%s()',
+                $node->nodes['node']->nodes['node']->attributes['name'],
+                $node->nodes['node']->nodes['attribute']->attributes['value'],
+                $node->nodes['attribute']->attributes['value']
+            );
         }
 
         // Handle method calls like packages.totalVolumeUnits()

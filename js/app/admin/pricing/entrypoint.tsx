@@ -13,6 +13,7 @@ const container = document.getElementById('pricing-rule-set-form-react');
 if (container) {
   const ruleSetId = container.dataset.ruleSetId;
   const isNew = container.dataset.isNew === 'true';
+  const taxRate = parseFloat(container.dataset.taxRate ?? '0') || 0;
 
   const buildInitialState = () => {
     return {
@@ -30,6 +31,7 @@ if (container) {
           ruleSetId={ruleSetId ? parseInt(ruleSetId) : null}
           ruleSetUri={ruleSetId ? `api/pricing_rule_sets/${ruleSetId}` : null}
           isNew={isNew}
+          taxRate={taxRate}
         />
       </Provider>
     </AppRootWithDefaults>,

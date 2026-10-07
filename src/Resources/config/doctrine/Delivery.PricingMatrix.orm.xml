@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\Delivery\PricingMatrix" table="pricing_matrix">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="name" type="string" column="name" nullable="true"/>
+    <field name="target" type="string" column="target" nullable="false"/>
+    <field name="taskType" type="string" column="task_type" nullable="true"/>
+    <field name="rowAxis" type="json" column="row_axis" nullable="false"/>
+    <field name="columnAxis" type="json" column="column_axis" nullable="false"/>
+    <field name="cells" type="json" column="cells" nullable="false"/>
+    <many-to-one field="ruleSet" target-entity="AppBundle\Entity\Delivery\PricingRuleSet" inversed-by="matrices">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+      <join-columns>
+        <join-column name="rule_set_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
+      </join-columns>
+    </many-to-one>
+    <one-to-many field="rules" target-entity="AppBundle\Entity\Delivery\PricingRule" mapped-by="matrix">
+      <order-by>
+        <order-by-field name="position" direction="ASC"/>
+      </order-by>
+    </one-to-many>
+  </entity>
+</doctrine-mapping>

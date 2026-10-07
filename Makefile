@@ -38,7 +38,7 @@ phpunit-only:
 	@clear && make phpunit ARGS="--group only"
 
 behat:
-	@docker compose exec -e APP_ENV=test php php vendor/bin/behat ${ARGS}
+	@docker compose exec -e APP_ENV=test php php -d memory_limit=512M vendor/bin/behat ${ARGS}
 
 # Add as annotation at the top of any scenario/feature:
 # @only

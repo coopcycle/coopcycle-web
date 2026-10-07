@@ -1100,12 +1100,17 @@ receipt.line_item.unit_price: Unit price
 receipt.line_item.quantity: Quantity
 receipt.line_item.tax_total: VAT
 receipt.line_item.total: Total
-receipt.footer_item.total_products: Total products
+receipt.footer_item.total_products: 'Total products (incl. VAT)'
+receipt.footer_item.total_services: 'Total services (incl. VAT)'
 receipt.footer_item.total_excl_tax: Total (excl. VAT)
 receipt.footer_item.total_incl_tax: Total (incl. VAT)
 receipt.total: Total (incl. VAT)
 receipt.billing_details: Order paid by %payment_method% on %date%
 receipt.emitter_details: Order at restaurant <strong>%restaurant_name%</strong>
+receipt.customer.name: 'Name:'
+receipt.customer.email: 'Email:'
+receipt.customer.phone: 'Phone:'
+receipt.customer.payment_method: 'Payment method:'
 delivery.import.success_message: Your file was successfully processed, %count% deliveries
   have been created
 form.delivery_import.file.label: File
@@ -1121,6 +1126,35 @@ task.receipt.message: Hereby we confirm that we have delivered your parcel at <s
 task.receipt.received_by: The parcel was received by <strong>%name%</strong>
 task.receipt.attached_images: Attached images
 task.receipt.reference: 'Reference: <strong>%ref%</strong>'
+pod.title: Waybill
+pod.completed_at: on %date%
+pod.client_file_number: Client file no.
+pod.receipt_number: Receipt no.
+pod.shipper_references: Shipper reference
+pod.consignee_orders: Consignee order no.
+pod.sender: Sender
+pod.shipper: Shipper
+pod.consignee: Consignee
+pod.delivery_instructions: Delivery instructions
+pod.handling_units: Number of UMs
+pod.packages: Number of packages
+pod.returnables: Number of returnables
+pod.gross_weight: Gross weight (kg)
+pod.volume: Volume (m³)
+pod.nature_of_goods: Nature of goods
+pod.dangerous_goods: Dangerous goods (ADR)
+pod.dangerous_goods.class: class %class%
+pod.dangerous_goods.packing_group: PG %group%
+pod.cash_on_delivery: Cash on delivery
+pod.bl_number: B/L no.
+pod.no: No
+pod.reservations: Any reservation for missing or damaged goods must be precise and confirmed within three days by registered letter with acknowledgement of receipt (art. L. 133-3 of the French Commercial Code).
+pod.signatory: 'Signatory: %name%'
+pod.signature: Signature
+pod.no_signature: No signature
+pod.photos: Photos
+pod.photo: Photo
+pod.legal: Reconstituted waybill serving as proof (art. 1366 and 1367 of the French Civil Code)
 basics.hours: '%count% hour|%count% hours'
 basics.days: '%count% day|%count% days'
 basics.weeks: '%count% week|%count% weeks'
@@ -1771,6 +1805,9 @@ pricing.variant.order_supplement: Order supplement
 pricing.rule.humanizer.inside_zone: inside
 pricing.rule.humanizer.outside_zone: outside
 pricing.rule.humanizer.address_zone_format: '%task_type% address %direction% zone "%zone_name%"'
+pricing.rule.humanizer.address_source.task: point
+pricing.rule.humanizer.address_source.pickup: pickup
+pricing.rule.humanizer.address_source.dropoff: dropoff
 pricing.rule.humanizer.between: between %left% and %right%
 pricing.rule.humanizer.less_than: less than %value%
 pricing.rule.humanizer.more_than: more than %value%
@@ -1782,9 +1819,12 @@ pricing.rule.humanizer.time_range_length: '%task_type% time window %operator% %v
 pricing.rule.humanizer.diff: '%task_type% prior notice %operator% %value%'
 pricing.rule.humanizer.order_items_total: cart total %operator% %value%
 pricing.rule.humanizer.packages_volume_units: package volume %operator% %value%
+pricing.rule.humanizer.delivery_packages_volume_units: total volume of the delivery %operator% %value%
 pricing.rule.humanizer.packages_contains_at_least_one: packages %package_name%
 pricing.rule.humanizer.price_range: '%unit_price% per %step%'
 pricing.rule.humanizer.price_range_with_threshold: 'above %threshold% - %unit_price% per %step%'
+pricing.rule.humanizer.price_range_per: '%price_range%, per %multiplier%'
+pricing.rule.humanizer.multiplier.volume_units: volume unit
 pricing.rule.humanizer.price_per_package: '%unit_price% per %package_name%'
 adminDashboard.promotions.ongoing: Ongoing promotions (%count%)
 adminDashboard.promotions.past: Past promotions (%count%)

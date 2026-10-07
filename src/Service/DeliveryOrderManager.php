@@ -49,6 +49,7 @@ class DeliveryOrderManager
             // If set to true, an exception will be thrown when a price cannot be calculated
             // If set to false, a price of 0 will be set and an incident will be created
             'throwException' => false,
+            'subscription' => null,
         ];
         $optionalArgs += $defaults;
 
@@ -83,6 +84,12 @@ class DeliveryOrderManager
 
         $order = $this->orderFactory->createForDelivery($delivery);
         $this->pricingManager->processDeliveryOrder($order, $productVariants);
+
+        // Linked before the first flush: if anything fails after it, the order
+        // is still found for its rule, and a retry does not create it again.
+        if (null !== $optionalArgs['subscription']) {
+            $order->setSubscription($optionalArgs['subscription']);
+        }
 
         if ($persist) {
             $product = $this->productRepository->findOnDemandDeliveryProduct();
@@ -171,11 +178,8 @@ class DeliveryOrderManager
             // Display an error when viewing the list of recurrence rules so an admin knows which rules need to be fixed
             // When auto-generating orders, create an incident instead
             'throwException' => $throwException,
+            'subscription' => $recurrenceRule,
         ]);
-
-        if (null !== $order) {
-            $order->setSubscription($recurrenceRule);
-        }
 
         if ($persist) {
             $this->entityManager->flush();
