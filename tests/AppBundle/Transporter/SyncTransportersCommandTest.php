@@ -7,11 +7,13 @@ use AppBundle\Command\SyncTransportersCommand;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Edifact\EDIFACTMessage;
+use AppBundle\Entity\Edifact\EDIFACTMessageRepository;
 use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskImage;
 use AppBundle\Enum\TaskImageType;
+use AppBundle\Messenger\TransactionalMessages;
 use AppBundle\Service\DeliveryOrderManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TaskManager;
@@ -23,6 +25,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Fidry\AliceDataFixtures\LoaderInterface;
 use League\Flysystem\Filesystem;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
+use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -230,7 +233,9 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs,
             $this->deliveryOrderManager,
-            self::getContainer()->get(IriConverterInterface::class)
+            self::getContainer()->get(IriConverterInterface::class),
+            self::getContainer()->get(TransactionalMessages::class),
+            self::getContainer()->get('doctrine')
         );
     }
 
@@ -272,7 +277,9 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs,
             $this->deliveryOrderManager,
-            self::getContainer()->get(IriConverterInterface::class)
+            self::getContainer()->get(IriConverterInterface::class),
+            self::getContainer()->get(TransactionalMessages::class),
+            self::getContainer()->get('doctrine')
         );
 
         $this->expectException(\Exception::class);
@@ -317,7 +324,9 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs,
             $this->deliveryOrderManager,
-            self::getContainer()->get(IriConverterInterface::class)
+            self::getContainer()->get(IriConverterInterface::class),
+            self::getContainer()->get(TransactionalMessages::class),
+            self::getContainer()->get('doctrine')
         );
 
         $this->expectException(\Exception::class);
@@ -362,7 +371,9 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs,
             $this->deliveryOrderManager,
-            self::getContainer()->get(IriConverterInterface::class)
+            self::getContainer()->get(IriConverterInterface::class),
+            self::getContainer()->get(TransactionalMessages::class),
+            self::getContainer()->get('doctrine')
         );
 
         $this->expectException(\Exception::class);
@@ -407,7 +418,9 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs,
             $this->deliveryOrderManager,
-            self::getContainer()->get(IriConverterInterface::class)
+            self::getContainer()->get(IriConverterInterface::class),
+            self::getContainer()->get(TransactionalMessages::class),
+            self::getContainer()->get('doctrine')
         );
 
         $this->expectException(\Exception::class);
@@ -448,7 +461,9 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs,
             $this->deliveryOrderManager,
-            self::getContainer()->get(IriConverterInterface::class)
+            self::getContainer()->get(IriConverterInterface::class),
+            self::getContainer()->get(TransactionalMessages::class),
+            self::getContainer()->get('doctrine')
         );
 
         $this->expectException(\Exception::class);
@@ -673,6 +688,102 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->assertStringContainsString('imported 0 tasks', $output);
         $this->assertStringContainsString('1 already-imported', $output);
         $this->assertCount(1, $this->entityManager->getRepository(Delivery::class)->findAll());
+    }
+
+    public function testFailedOrderCreationLeavesNothingAndIsRetried(): void
+    {
+        // The order of the first shipment can not be created, the second one is fine
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/a_scontr.edi', self::FS_MASK_DBS),
+            self::EDI_SAMPLE
+        );
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/b_pickup.edi', self::FS_MASK_DBS),
+            self::EDI_PICKUP_SAMPLE
+        );
+
+        // Flushes the shipment first, then throws: the rows written so far
+        // must be rolled back with it
+        $entityManager = $this->entityManager;
+        $realOrderManager = $this->deliveryOrderManager;
+        $failingOrderManager = $this->prophesize(DeliveryOrderManager::class);
+        $failingOrderManager
+            ->createOrder(Argument::cetera())
+            ->will(function (array $args) use ($entityManager, $realOrderManager) {
+                /** @var Delivery $delivery */
+                $delivery = $args[0];
+                if ($delivery->getExternalReference() === 'JOY0123456789') {
+                    $entityManager->flush();
+                    throw new \RuntimeException('column p0_.matrix_row_key does not exist');
+                }
+
+                return $realOrderManager->createOrder(...$args);
+            });
+
+        $command = new SyncTransportersCommand(
+            'test',
+            $this->entityManager,
+            $this->params->reveal(),
+            $this->settingManager->reveal(),
+            $this->logger,
+            self::getContainer()->get(ImportFromPoint::class),
+            self::getContainer()->get(ReportFromCC::class),
+            $this->edifactFs,
+            $failingOrderManager->reveal(),
+            self::getContainer()->get(IriConverterInterface::class),
+            self::getContainer()->get(TransactionalMessages::class),
+            self::getContainer()->get('doctrine')
+        );
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'transporter' => 'DBSCHENKER'
+        ]);
+
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('matrix_row_key', $output);
+        $this->assertStringContainsString('imported 1 tasks', $output);
+        $this->assertStringContainsString('1 file(s) failed', $output);
+
+        /** @var EDIFACTMessageRepository $ediRepo */
+        $ediRepo = $this->entityManager->getRepository(EDIFACTMessage::class);
+
+        // Nothing is left of the failed shipment ...
+        $this->assertFalse($ediRepo->hasInbound('JOY0123456789', 'DBSCHENKER'));
+        // ... and the next one was imported with its order
+        $this->assertTrue($ediRepo->hasInbound('JOY560000410920251001', 'DBSCHENKER'));
+        $deliveries = $this->entityManager->getRepository(Delivery::class)->findAll();
+        $this->assertCount(1, $deliveries);
+        $this->assertEquals('JOY560000410920251001', $deliveries[0]->getExternalReference());
+        $this->assertNotNull($deliveries[0]->getOrder());
+        $this->assertCount(2, $this->entityManager->getRepository(Task::class)->findAll());
+
+        // Both files are kept for the retry
+        $this->assertCount(
+            2,
+            $this->syncDBSchenkerFs->listContents(sprintf('to_%s', self::FS_MASK_DBS))->toArray()
+        );
+
+        // Second run: the failed shipment is imported, not skipped
+        $commandTester = new CommandTester($this->initCommand());
+        $commandTester->execute([
+            'transporter' => 'DBSCHENKER'
+        ]);
+
+        $commandTester->assertCommandIsSuccessful();
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('imported 1 tasks (1 already-imported, 0 file(s) failed)', $output);
+
+        $this->assertTrue($ediRepo->hasInbound('JOY0123456789', 'DBSCHENKER'));
+        $deliveries = $this->entityManager->getRepository(Delivery::class)->findAll();
+        $this->assertCount(2, $deliveries);
+        foreach ($deliveries as $delivery) {
+            $this->assertNotNull($delivery->getOrder());
+        }
+
+        $this->assertCount(
+            0,
+            $this->syncDBSchenkerFs->listContents(sprintf('to_%s', self::FS_MASK_DBS))->toArray()
+        );
     }
 
     public function testValidSyncOneTask(): void
@@ -2471,7 +2582,9 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs,
             $this->deliveryOrderManager,
-            self::getContainer()->get(IriConverterInterface::class)
+            self::getContainer()->get(IriConverterInterface::class),
+            self::getContainer()->get(TransactionalMessages::class),
+            self::getContainer()->get('doctrine')
         );
     }
 
