@@ -226,10 +226,7 @@ class LiveUpdates
             return;
         }
 
-        // Not every payload describes an entity: 'notifications:count' carries a
-        // bare number, which has no version.
-        $data = $payload['data'] ?? null;
-        $payload['version'] = is_array($data) ? $this->versionOf($data) : null;
+        $payload['version'] = $this->versionOf($payload['data'] ?? null);
 
         $this->messageBus->dispatch(new PublishToCentrifugo($channels, $payload));
     }
@@ -240,9 +237,16 @@ class LiveUpdates
      * necessarily in the order they happened; without this a client has no way
      * to know that the update it just received is older than what it already
      * has, which is how a stale payload silently wins.
+     *
+     * Not every payload carries an entity -- `notifications:count`, for one, has
+     * a plain integer as its data -- in which case there is nothing to version.
      */
-    private function versionOf(array $data): ?string
+    private function versionOf($data): ?string
     {
+        if (!is_array($data)) {
+            return null;
+        }
+
         foreach (['task', 'order', 'tour', 'task_list'] as $key) {
             if (isset($data[$key]['updatedAt'])) {
                 return $data[$key]['updatedAt'];
