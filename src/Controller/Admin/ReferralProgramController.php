@@ -8,7 +8,7 @@ use AppBundle\Form\Referral\ReferralLevelType;
 use AppBundle\Form\Referral\ReferralWelcomeSettingsType;
 use AppBundle\Service\Referral\ReferralLevelResolver;
 use AppBundle\Service\SettingsManager;
-use AppBundle\Sylius\Promotion\Action\FixedDiscountPromotionActionCommand;
+use AppBundle\Sylius\Promotion\Action\DeliveryPercentageDiscountPromotionActionCommand;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -84,7 +84,7 @@ class ReferralProgramController extends AbstractController
         }
 
         $welcomeSettingsForm = $this->createForm(ReferralWelcomeSettingsType::class, [
-            'referral_welcome_reward_type' => $this->settingsManager->get('referral_welcome_reward_type') ?: FixedDiscountPromotionActionCommand::TYPE,
+            'referral_welcome_reward_type' => $this->settingsManager->get('referral_welcome_reward_type') ?: DeliveryPercentageDiscountPromotionActionCommand::TYPE,
             'referral_welcome_reward_amount' => $this->settingsManager->get('referral_welcome_reward_amount'),
             'referral_welcome_reward_percentage' => $this->settingsManager->get('referral_welcome_reward_percentage'),
             'referral_welcome_coupon_validity_days' => (int) ($this->settingsManager->get('referral_welcome_coupon_validity_days') ?: 30),

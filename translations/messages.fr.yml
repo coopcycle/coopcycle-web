@@ -1988,6 +1988,7 @@ referral.level.field.couponValidityDays: Validité du coupon (jours)
 referral.level.field.couponValidityDays.help: Nombre de jours pendant lesquels le coupon de récompense reste valide après son émission.
 referral.level.field.usageLimit: Limite d'utilisation du coupon
 referral.level.field.usageLimit.help: Nombre de fois où le coupon généré peut être utilisé (généralement 1).
+referral.reward_type.free_delivery: Livraison gratuite
 referral.reward_type.fixed: Montant fixe
 referral.reward_type.percentage: Pourcentage
 referral.welcome_settings.configure: Configurer le coupon de bienvenue

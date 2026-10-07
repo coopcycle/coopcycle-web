@@ -204,15 +204,18 @@
         return;
       }
 
+      // Free delivery is a flat 100% off -- it has no admin-configurable
+      // amount or percentage, so both fields stay hidden for it.
+      var isFreeDelivery = select.value === 'delivery_percentage_discount';
       var isPercentage = select.value === 'order_percentage_discount';
       var amountGroup = fieldGroup(base + amountSuffix);
       var percentageGroup = fieldGroup(base + percentageSuffix);
 
       if (amountGroup) {
-        amountGroup.style.display = isPercentage ? 'none' : '';
+        amountGroup.style.display = (isFreeDelivery || isPercentage) ? 'none' : '';
       }
       if (percentageGroup) {
-        percentageGroup.style.display = isPercentage ? '' : 'none';
+        percentageGroup.style.display = (isFreeDelivery || !isPercentage) ? 'none' : '';
       }
     }
 

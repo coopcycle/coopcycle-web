@@ -4,6 +4,7 @@ namespace Tests\AppBundle\Form\Referral;
 
 use AppBundle\Entity\Referral\ReferralLevel;
 use AppBundle\Form\Referral\ReferralLevelType;
+use AppBundle\Sylius\Promotion\Action\DeliveryPercentageDiscountPromotionActionCommand;
 use AppBundle\Sylius\Promotion\Action\FixedDiscountPromotionActionCommand;
 use AppBundle\Sylius\Promotion\Action\PercentageDiscountPromotionActionCommand;
 use PHPUnit\Framework\TestCase;
@@ -48,6 +49,19 @@ class ReferralLevelTypeTest extends TestCase
         $context->buildViolation('referral.level.field.rewardAmount.required_for_fixed')
             ->willReturn($builder->reveal())
             ->shouldBeCalledOnce();
+
+        (new ReferralLevelType())->validateRewardConfiguration($level, $context->reveal());
+    }
+
+    public function testNoViolationForFreeDeliveryWithNoAmountOrPercentage(): void
+    {
+        $level = new ReferralLevel();
+        $level->setRewardType(DeliveryPercentageDiscountPromotionActionCommand::TYPE);
+        $level->setRewardAmount(null);
+        $level->setRewardPercentage(null);
+
+        $context = $this->prophesize(ExecutionContextInterface::class);
+        $context->buildViolation(\Prophecy\Argument::any())->shouldNotBeCalled();
 
         (new ReferralLevelType())->validateRewardConfiguration($level, $context->reveal());
     }

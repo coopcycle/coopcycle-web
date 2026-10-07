@@ -2,8 +2,7 @@
 
 namespace AppBundle\Entity\Referral;
 
-use AppBundle\Sylius\Promotion\Action\FixedDiscountPromotionActionCommand;
-use AppBundle\Sylius\Promotion\Action\PercentageDiscountPromotionActionCommand;
+use AppBundle\Sylius\Promotion\Action\DeliveryPercentageDiscountPromotionActionCommand;
 
 /**
  * Admin-editable tier config (Bronze/Silver/Gold by default). The referrer's
@@ -11,6 +10,10 @@ use AppBundle\Sylius\Promotion\Action\PercentageDiscountPromotionActionCommand;
  * their successful-referral count against these thresholds, see
  * AppBundle\Service\Referral\ReferralLevelResolver, so edits here never go
  * stale and never need a data migration.
+ *
+ * Free delivery is the default reward type: it's a cost the platform itself
+ * absorbs, whereas a fixed/percentage discount on the order total eats into
+ * the restaurant's revenue.
  */
 class ReferralLevel
 {
@@ -22,7 +25,7 @@ class ReferralLevel
 
     protected int $minReferralCount;
 
-    protected string $rewardType = FixedDiscountPromotionActionCommand::TYPE;
+    protected string $rewardType = DeliveryPercentageDiscountPromotionActionCommand::TYPE;
 
     protected ?int $rewardAmount = null;
 

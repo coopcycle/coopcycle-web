@@ -2001,6 +2001,7 @@ referral.level.field.couponValidityDays: Coupon validity (days)
 referral.level.field.couponValidityDays.help: Number of days the reward coupon stays valid after being issued.
 referral.level.field.usageLimit: Coupon usage limit
 referral.level.field.usageLimit.help: How many times the generated coupon can be used (usually 1).
+referral.reward_type.free_delivery: Free delivery
 referral.reward_type.fixed: Fixed amount
 referral.reward_type.percentage: Percentage
 referral.welcome_settings.configure: Configure welcome coupon
