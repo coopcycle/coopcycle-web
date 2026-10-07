@@ -56,6 +56,11 @@ class TaskExpressionLanguageVisitor
         $values['weight'] = $task->getWeight();
         $values['packages'] = new PackagesResolver($task);
 
+        // Packages are usually attached to the dropoff(s), so a rule applied to a pickup
+        // sees none of them via 'packages'. 'delivery' exposes the whole delivery,
+        // whichever point is being evaluated.
+        $values['delivery'] = DeliveryExpressionLanguageVisitor::toDeliveryObject($task->getDelivery() ?? $task);
+
         if (null !== $task->getTimeSlot()) {
             $values['time_slot'] = $this->iriConverter->getIriFromResource($task->getTimeSlot());
         } else {

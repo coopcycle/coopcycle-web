@@ -156,6 +156,18 @@ describe('lineToString', () => {
     })
   })
 
+  describe('delivery.packages.totalVolumeUnits()', () => {
+    it('should build a greater than expression', () => {
+      const result = lineToString({ left: 'delivery.packages.totalVolumeUnits()', operator: '>', right: 5 })
+      expect(result).toEqual('delivery.packages.totalVolumeUnits() > 5')
+    })
+
+    it('should build a range expression', () => {
+      const result = lineToString({ left: 'delivery.packages.totalVolumeUnits()', operator: 'in', right: [3, 8] })
+      expect(result).toEqual('delivery.packages.totalVolumeUnits() in 3..8')
+    })
+  })
+
   describe('packages.totalVolumeUnits()', () => {
     it('should handle < operator', () => {
       const result = lineToString({ left: 'packages.totalVolumeUnits()', operator: '<', right: 10 })

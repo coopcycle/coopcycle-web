@@ -17,18 +17,20 @@
 <li><a href="{{ path('admin_deliveries_pricing') }}">{% trans %}adminDashboard.pricing.title{% endtrans %}</a></li>
 <li>
   {% if isNew %}
-    {% trans %}pricing_rule_set.new{% endtrans %} (Beta)
+    {% trans %}pricing_rule_set.new{% endtrans %}
   {% else %}
-    {{ ruleSet.name }} (Beta)
+    {{ ruleSet.name }}
   {% endif %}
 </li>
 {% endblock %}
 
 {% block content %}
   {% include '_partials/legacy_new_switch_alert.html.twig' with {
-    message: 'This is the beta version of the pricing rule set form.',
+    message: 'This is the new version of the pricing rule set form.',
     button_text: 'Switch to Classic Version',
-    button_url: isNew ? path('admin_deliveries_pricing_ruleset_new') : path('admin_deliveries_pricing_ruleset', { id: ruleSetId }),
+    button_url: isNew
+      ? path('admin_deliveries_pricing_ruleset_new', { ui: 'legacy' })
+      : path('admin_deliveries_pricing_ruleset', { id: ruleSetId, ui: 'legacy' }),
     button_class: 'btn-default'
   } %}
 
@@ -36,6 +38,7 @@
     id="pricing-rule-set-form-react"
     data-rule-set-id="{{ ruleSetId }}"
     data-is-new="{{ isNew ? 'true' : 'false' }}"
+    data-tax-rate="{{ taxRate }}"
   ></div>
 {% endblock %}
 

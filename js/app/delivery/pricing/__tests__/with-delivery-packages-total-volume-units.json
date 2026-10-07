@@ -1,0 +1,62 @@
+{
+    "nodes": {
+        "nodes": {
+            "left": {
+                "nodes": {
+                    "node": {
+                        "nodes": {
+                            "node": {
+                                "nodes": [],
+                                "attributes": {
+                                    "name": "delivery"
+                                }
+                            },
+                            "attribute": {
+                                "isNullSafe": false,
+                                "nodes": [],
+                                "attributes": {
+                                    "value": "packages"
+                                }
+                            },
+                            "arguments": {
+                                "nodes": [],
+                                "attributes": []
+                            }
+                        },
+                        "attributes": {
+                            "type": 1,
+                            "is_null_coalesce": false,
+                            "is_short_circuited": false
+                        }
+                    },
+                    "attribute": {
+                        "isNullSafe": false,
+                        "nodes": [],
+                        "attributes": {
+                            "value": "totalVolumeUnits"
+                        }
+                    },
+                    "arguments": {
+                        "nodes": [],
+                        "attributes": []
+                    }
+                },
+                "attributes": {
+                    "type": 2,
+                    "is_null_coalesce": false,
+                    "is_short_circuited": false
+                }
+            },
+            "right": {
+                "isNullSafe": false,
+                "nodes": [],
+                "attributes": {
+                    "value": 3
+                }
+            }
+        },
+        "attributes": {
+            "operator": ">"
+        }
+    }
+}

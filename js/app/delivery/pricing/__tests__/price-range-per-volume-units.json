@@ -1,0 +1,67 @@
+{
+    "nodes": {
+        "nodes": {
+            "arguments": {
+                "nodes": [
+                    {
+                        "nodes": [],
+                        "attributes": {
+                            "name": "distance"
+                        }
+                    },
+                    {
+                        "isNullSafe": false,
+                        "nodes": [],
+                        "attributes": {
+                            "value": 50
+                        }
+                    },
+                    {
+                        "isNullSafe": false,
+                        "nodes": [],
+                        "attributes": {
+                            "value": 1000
+                        }
+                    },
+                    {
+                        "isNullSafe": false,
+                        "nodes": [],
+                        "attributes": {
+                            "value": 2500
+                        }
+                    },
+                    {
+                        "nodes": {
+                            "node": {
+                                "nodes": [],
+                                "attributes": {
+                                    "name": "packages"
+                                }
+                            },
+                            "attribute": {
+                                "isNullSafe": false,
+                                "nodes": [],
+                                "attributes": {
+                                    "value": "totalVolumeUnits"
+                                }
+                            },
+                            "arguments": {
+                                "nodes": [],
+                                "attributes": []
+                            }
+                        },
+                        "attributes": {
+                            "type": 2,
+                            "is_null_coalesce": false,
+                            "is_short_circuited": false
+                        }
+                    }
+                ],
+                "attributes": []
+            }
+        },
+        "attributes": {
+            "name": "price_range"
+        }
+    }
+}
