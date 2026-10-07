@@ -93,8 +93,12 @@ class ReferralRewardCouponFactory
             // Free delivery is always a full 100% off -- there's no
             // admin-configurable amount/percentage for this reward type.
             DeliveryPercentageDiscountPromotionActionCommand::TYPE => ['percentage' => 1.0],
-            PercentageDiscountPromotionActionCommand::TYPE => ['percentage' => $percentage ?? 0.0],
-            default => ['amount' => $amount ?? 0],
+            // Fixed/percentage discounts eat into the order total, which
+            // (unlike delivery) is shared with the restaurant -- decrase_platform_fee
+            // (sic, see OrderFeeProcessor::decreasePlatformFee()) makes the
+            // coop absorb most of the cost instead of the restaurant.
+            PercentageDiscountPromotionActionCommand::TYPE => ['percentage' => $percentage ?? 0.0, 'decrase_platform_fee' => true],
+            default => ['amount' => $amount ?? 0, 'decrase_platform_fee' => true],
         });
         $promotion->addAction($promotionAction);
 
