@@ -966,6 +966,7 @@ task.form.edit: Modifier la tâche %id%
 task.form.finish: Terminer la tâche
 task.form.details: Détails
 task.form.finish.DONE.info: La tâche a été terminée avec succès
+task.cancel.order_not_cancellable: "La commande %number% ne peut pas être annulée"
 form.registration.username.help: "Votre nom d'utilisateur ne peut pas dépasser 15\
   \ caractères. Un nom d'utilisateur ne peut contenir que des caractères alphanumériques\
   \ (lettres A-Z, chiffres 0-9) à l'exception du tiret bas (_)\n"
