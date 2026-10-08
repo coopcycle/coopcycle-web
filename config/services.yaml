@@ -370,15 +370,10 @@ services:
       $envEnabled: '%env(bool:REFERRAL_PROGRAM_ENABLED)%'
 
   # Used to tell apart two addresses that reach the same mailbox, so someone
-  # can't refer themselves with an alias of their own address. Deliberately
-  # excludes the library's GSuiteStrategy: it resolves MX records over DNS on
-  # every call, which has no business blocking a signup.
+  # can't refer themselves (or an account they already own) with an alias.
+  # The strategies, and crucially their order, are in the factory.
   RZ\CanonicalEmail\EmailCanonizer:
-    arguments:
-      $strategies:
-        - '@AppBundle\Service\Referral\PlusAddressStrategy'
-        - !service { class: RZ\CanonicalEmail\Strategy\GmailStrategy }
-        - !service { class: RZ\CanonicalEmail\Strategy\LowercaseDomainStrategy }
+    factory: ['AppBundle\Service\Referral\ReferralEmailCanonizerFactory', 'create']
 
   AppBundle\Controller\AssetsController:
     arguments:
@@ -749,6 +744,10 @@ services:
 
   AppBundle\Entity\Listener\:
     resource: '../src/Entity/Listener/*'
+
+  AppBundle\Entity\Listener\CustomerListener:
+    tags:
+      - { name: doctrine.orm.entity_listener }
 
   AppBundle\Entity\Listener\TaskListener:
     tags:
