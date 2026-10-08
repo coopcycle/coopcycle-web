@@ -226,6 +226,25 @@ class PricingMatrix
         return $this;
     }
 
+    /**
+     * A copy of this grid, without the rules it generated: those are generated again
+     * for whichever rule set the copy ends up in. Entry keys are kept, being unique
+     * within a grid rather than across them.
+     */
+    public function duplicate(): self
+    {
+        $matrix = new self();
+
+        $matrix->setName($this->name);
+        $matrix->setTarget($this->target);
+        $matrix->setTaskType($this->taskType);
+        $matrix->setRowAxisArray($this->rowAxis);
+        $matrix->setColumnAxisArray($this->columnAxis);
+        $matrix->setCells($this->cells);
+
+        return $matrix;
+    }
+
     public static function cellKey(MatrixAxisEntry $row, MatrixAxisEntry $column): string
     {
         return sprintf('%s:%s', $row->key, $column->key);

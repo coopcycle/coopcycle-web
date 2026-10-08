@@ -1263,9 +1263,27 @@ class AdminController extends AbstractController
             ->getRepository(Delivery\PricingRuleSet::class)
             ->find($id);
 
+        if (!$ruleSet) {
+            throw $this->createNotFoundException('Pricing rule set not found');
+        }
+
         $duplicated = $ruleSet->duplicate($this->translator);
 
-        return $this->renderPricingRuleSetForm($duplicated, $request);
+        // The copy is saved before it is opened, rather than held in a form until
+        // submitted: a grid belongs to a rule set that exists, and the form that
+        // edits one loads it by id.
+        $this->entityManager->persist($duplicated);
+        $this->entityManager->flush();
+
+        $this->addFlash(
+            'notice',
+            $this->translator->trans('global.changesSaved')
+        );
+
+        return $this->redirectToRoute(
+            'admin_deliveries_pricing_ruleset',
+            ['id' => $duplicated->getId()]
+        );
     }
 
     /**
