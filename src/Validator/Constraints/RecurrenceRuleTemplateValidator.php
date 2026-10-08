@@ -27,13 +27,15 @@ class RecurrenceRuleTemplateValidator extends ConstraintValidator
 
         if (count($violations) === 0) {
 
+            // A template saved from a delivery keeps the seconds (i.e. 12:45:00),
+            // the form sends the time without them (i.e. 12:45)
             $taskConstraint = new Assert\Collection([
                 'fields' => [
                     'after' => new Assert\Required([
-                        new Assert\Regex('/^[0-9]{2}:[0-9]{2}$/')
+                        new Assert\Regex('/^[0-9]{2}:[0-9]{2}(:[0-9]{2})?$/')
                     ]),
                     'before' => new Assert\Required([
-                        new Assert\Regex('/^[0-9]{2}:[0-9]{2}$/')
+                        new Assert\Regex('/^[0-9]{2}:[0-9]{2}(:[0-9]{2})?$/')
                     ]),
                 ],
                 'allowExtraFields' => true,

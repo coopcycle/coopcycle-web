@@ -1047,3 +1047,43 @@ Feature: Task recurrence rules
     And the user "bob" sends a "GET" request to "/api/recurrence_rules/1"
     Then the JSON node "manualSupplements" should have 1 element
     And the JSON node "manualSupplements[0].pricingRule" should be equal to "/api/pricing_rules/4"
+
+  Scenario: Update only the name of a recurrence rule created from a delivery
+    Given the fixtures files are loaded:
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | users.yml           |
+      | stores.yml          |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store": "/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix",
+          "doneBefore": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli",
+          "doneBefore": "tomorrow 13:30"
+        },
+        "rrule": "FREQ=WEEKLY;BYDAY=MO"
+      }
+      """
+    Then the response status code should be 201
+    # The template keeps the seconds of the times of the delivery
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/recurrence_rules/1" with body:
+      """
+      {
+        "name": "Weekly"
+      }
+      """
+    Then the response status code should be 200
+    And the JSON node "name" should be equal to "Weekly"
+    And the JSON node "template.hydra:member[0].before" should be equal to "13:00:00"
