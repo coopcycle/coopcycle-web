@@ -9,6 +9,7 @@ use Craue\ConfigBundle\CacheAdapter\CacheAdapterInterface as CraueCache;
 use Doctrine\Persistence\ManagerRegistry;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
+use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Process\Exception\ProcessTimedOutException;
@@ -29,6 +30,7 @@ class SettingsManager
     private $projectDir;
     private $forceStripe;
     private $versionCache;
+    private $craueConfigCache;
 
     private $secretSettings = [
         'stripe_test_publishable_key',
@@ -74,6 +76,7 @@ class SettingsManager
         GatewayResolver $gatewayResolver,
         string $projectDir,
         CacheInterface $versionCache,
+        CacheItemPoolInterface $craueConfigCache,
         $forceStripe = false)
     {
         $this->craueConfig = $craueConfig;
@@ -87,6 +90,7 @@ class SettingsManager
         $this->gatewayResolver = $gatewayResolver;
         $this->projectDir = $projectDir;
         $this->versionCache = $versionCache;
+        $this->craueConfigCache = $craueConfigCache;
         $this->forceStripe = $forceStripe;
     }
 
@@ -130,9 +134,23 @@ class SettingsManager
                 return $this->b2bEnabled;
         }
 
-        if (isset($this->cache[$name])) {
+        if (array_key_exists($name, $this->cache)) {
 
             return $this->cache[$name];
+        }
+
+        // Craue only caches the settings that exist, so a missing setting
+        // used to be looked up in the database on every request.
+        // We remember the missing ones in the same pool, so that flush() clears them too.
+        $missingKey = $this->getMissingKey($name);
+
+        // Fetch both keys at once; a hit is kept in the array layer for craueConfig->get()
+        $items = iterator_to_array($this->craueConfigCache->getItems([ $name, $missingKey ]));
+
+        if (!$items[$name]->isHit() && $items[$missingKey]->isHit()) {
+            $this->cache[$name] = null;
+
+            return null;
         }
 
         try {
@@ -159,7 +177,14 @@ class SettingsManager
 
             return $value;
 
-        } catch (\RuntimeException $e) {}
+        } catch (\RuntimeException $e) {
+            $missing = $this->craueConfigCache->getItem($missingKey);
+            $missing->set(true);
+            $missing->expiresAfter(60 * 5);
+            $this->craueConfigCache->save($missing);
+
+            $this->cache[$name] = null;
+        }
     }
 
     public function getBoolean($name)
@@ -328,6 +353,15 @@ class SettingsManager
 
             $this->craueConfig->set($name, $value);
         }
+
+        // The setting may have been remembered as missing
+        unset($this->cache[$name]);
+        $this->craueConfigCache->deleteItem($this->getMissingKey($name));
+    }
+
+    private function getMissingKey(string $name): string
+    {
+        return sprintf('missing.%s', $name);
     }
 
     public function flush()

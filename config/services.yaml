@@ -923,6 +923,7 @@ services:
       $forceStripe: "%env(bool:FORCE_STRIPE)%"
       $projectDir: "%kernel.project_dir%"
       $versionCache: "@version.cache"
+      $craueConfigCache: "@craue_config_cache_provider"
 
   AppBundle\Service\EmailManager:
     arguments:
