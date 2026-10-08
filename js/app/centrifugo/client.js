@@ -59,6 +59,8 @@ export function createCentrifuge(token, { refresh = true, onConnected, onDisconn
     ...(refresh ? { getToken: refreshToken } : {}),
   })
 
+  centrifuge.on('connected', ctx => clientIds.set(centrifuge, ctx.client))
+
   if (onConnected) {
     centrifuge.on('connected', onConnected)
   }
@@ -71,9 +73,30 @@ export function createCentrifuge(token, { refresh = true, onConnected, onDisconn
 }
 
 /**
+ * The id the server assigned to each connection.
+ *
+ * A subscription token is bound to one connection, so the backend needs the
+ * client id -- but centrifuge-js does not expose it (`_client` is private) and
+ * the subscription `getToken` context carries only the channel. It arrives once,
+ * on the `connected` event, so it is kept here against the client it belongs to.
+ */
+const clientIds = new WeakMap()
+
+/**
  * Asks the backend for a token authorising this connection on this channel.
  */
-async function subscriptionToken({ channel, client }) {
+async function subscriptionToken(centrifuge, channel) {
+  // The id is only known once connected. Subscribing before the connection is
+  // up is normal -- the SDK queues it -- so wait rather than send a request the
+  // server can only reject.
+  await centrifuge.ready()
+
+  const client = clientIds.get(centrifuge)
+
+  if (!client) {
+    throw new Error(`No client id yet, cannot request a token for ${channel}`)
+  }
+
   const response = await fetch('/centrifuge/subscription-token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -117,7 +140,7 @@ export function subscribe(centrifuge, channel, onMessage, { needsToken = false }
   const subscription = centrifuge.getSubscription(channel)
     ?? centrifuge.newSubscription(
       channel,
-      needsToken ? { getToken: subscriptionToken } : {},
+      needsToken ? { getToken: ctx => subscriptionToken(centrifuge, ctx.channel) } : {},
     )
 
   const listener = ctx => onMessage(ctx.data)
