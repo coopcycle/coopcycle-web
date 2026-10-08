@@ -369,6 +369,10 @@ services:
     arguments:
       $envEnabled: '%env(bool:REFERRAL_PROGRAM_ENABLED)%'
 
+  AppBundle\Controller\Admin\LoyaltyProgramController:
+    arguments:
+      $loyaltyProgramEnabled: '%env(bool:LOYALTY_PROGRAM_ENABLED)%'
+
   AppBundle\Service\Loyalty\LoyaltyProgramStatus:
     arguments:
       $envEnabled: '%env(bool:LOYALTY_PROGRAM_ENABLED)%'

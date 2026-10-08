@@ -31,10 +31,14 @@ class LoyaltyPointsEntryRepository extends EntityRepository
     /**
      * Oldest first, so points closest to expiring are spent before fresher
      * ones.
+     *
+     * $lockMode exists for spending: taking a write lock inside the
+     * redemption transaction is what stops two concurrent redemptions both
+     * reading the same balance and spending it twice.
      */
-    public function findSpendableCredits(Customer $customer, ?\DateTime $now = null): array
+    public function findSpendableCredits(Customer $customer, ?\DateTime $now = null, ?int $lockMode = null): array
     {
-        return $this->createQueryBuilder('e')
+        $query = $this->createQueryBuilder('e')
             ->andWhere('e.customer = :customer')
             ->andWhere('e.type = :credit')
             ->andWhere('e.remaining > 0')
@@ -44,8 +48,13 @@ class LoyaltyPointsEntryRepository extends EntityRepository
             ->setParameter('now', $now ?? new \DateTime())
             ->orderBy('e.expiresAt', 'ASC')
             ->addOrderBy('e.id', 'ASC')
-            ->getQuery()
-            ->getResult();
+            ->getQuery();
+
+        if (null !== $lockMode) {
+            $query->setLockMode($lockMode);
+        }
+
+        return $query->getResult();
     }
 
     public function findOneByOrder(OrderInterface $order): ?LoyaltyPointsEntry

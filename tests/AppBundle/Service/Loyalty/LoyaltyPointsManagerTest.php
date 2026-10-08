@@ -4,10 +4,16 @@ namespace Tests\AppBundle\Service\Loyalty;
 
 use AppBundle\Entity\Loyalty\LoyaltyPointsEntry;
 use AppBundle\Entity\Loyalty\LoyaltyPointsEntryRepository;
+use AppBundle\Entity\Loyalty\LoyaltyReward;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Service\Loyalty\InsufficientLoyaltyPointsException;
 use AppBundle\Service\Loyalty\LoyaltyPointsManager;
+use AppBundle\Service\Promotion\CustomerRewardCouponFactory;
 use AppBundle\Service\SettingsManager;
+use AppBundle\Sylius\Promotion\Action\FixedDiscountPromotionActionCommand;
+use AppBundle\Sylius\Promotion\PromotionCouponInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -19,6 +25,8 @@ class LoyaltyPointsManagerTest extends TestCase
 
     private $pointsEntryRepository;
     private $settingsManager;
+    private $couponFactory;
+    private $entityManager;
     private $manager;
 
     protected function setUp(): void
@@ -29,11 +37,38 @@ class LoyaltyPointsManagerTest extends TestCase
         $this->settingsManager = $this->prophesize(SettingsManager::class);
         $this->settingsManager->get(Argument::any())->willReturn(null);
 
+        $this->couponFactory = $this->prophesize(CustomerRewardCouponFactory::class);
+
+        $this->entityManager = $this->prophesize(EntityManagerInterface::class);
+        // Run the transaction body inline, so redeem() is exercised for real.
+        // Prophecy rebinds $this inside will(), hence the explicit capture.
+        $entityManager = $this->entityManager;
+        $this->entityManager->wrapInTransaction(Argument::type('callable'))
+            ->will(function ($args) use ($entityManager) {
+                return $args[0]($entityManager->reveal());
+            });
+        $this->entityManager->persist(Argument::any())->willReturn(null);
+        $this->entityManager->flush()->willReturn(null);
+
         $this->manager = new LoyaltyPointsManager(
             $this->pointsEntryRepository->reveal(),
             $this->settingsManager->reveal(),
+            $this->couponFactory->reveal(),
+            $this->entityManager->reveal(),
             $this->prophesize(LoggerInterface::class)->reveal()
         );
+    }
+
+    private function reward(int $pointsCost): LoyaltyReward
+    {
+        $reward = new LoyaltyReward();
+        $reward->setName('5 € off');
+        $reward->setPointsCost($pointsCost);
+        $reward->setRewardType(FixedDiscountPromotionActionCommand::TYPE);
+        $reward->setRewardAmount(500);
+        $reward->setCouponValidityDays(30);
+
+        return $reward;
     }
 
     private function orderWorth(int $itemsTotal): Order
@@ -115,5 +150,66 @@ class LoyaltyPointsManagerTest extends TestCase
             ->willReturn(LoyaltyPointsEntry::credit(new Customer(), 23));
 
         self::assertNull($this->manager->creditForOrder($order));
+    }
+
+    public function testRedeemingSpendsTheOldestPointsFirst(): void
+    {
+        $customer = new Customer();
+        $customer->setEmail('alice@example.com');
+
+        // Expiring soonest first, as the repository returns them.
+        $oldest = LoyaltyPointsEntry::credit($customer, 100, new \DateTime('+10 days'));
+        $newer = LoyaltyPointsEntry::credit($customer, 200, new \DateTime('+90 days'));
+
+        $this->pointsEntryRepository
+            ->findSpendableCredits($customer, Argument::cetera())
+            ->willReturn([$oldest, $newer]);
+
+        $coupon = $this->prophesize(PromotionCouponInterface::class)->reveal();
+        $this->couponFactory->create(Argument::cetera())->willReturn($coupon);
+
+        $entry = $this->manager->redeem($customer, $this->reward(150));
+
+        self::assertFalse($entry->isCredit());
+        // Debits are negative, so a plain SUM() over the ledger reads as history.
+        self::assertSame(-150, $entry->getAmount());
+        self::assertSame($coupon, $entry->getCoupon());
+
+        // The soonest-to-expire credit is drained before the fresher one is touched.
+        self::assertSame(0, $oldest->getRemaining());
+        self::assertSame(150, $newer->getRemaining());
+    }
+
+    public function testRedeemingRefusesWhenPointsAreShort(): void
+    {
+        $customer = new Customer();
+
+        $this->pointsEntryRepository
+            ->findSpendableCredits($customer, Argument::cetera())
+            ->willReturn([LoyaltyPointsEntry::credit($customer, 100)]);
+
+        $this->couponFactory->create(Argument::cetera())->shouldNotBeCalled();
+        $this->entityManager->persist(Argument::any())->shouldNotBeCalled();
+
+        $this->expectException(InsufficientLoyaltyPointsException::class);
+
+        $this->manager->redeem($customer, $this->reward(150));
+    }
+
+    /**
+     * Expired credits are already excluded by the repository, so a balance
+     * made up entirely of them can't be spent.
+     */
+    public function testRedeemingRefusesWhenThereAreNoSpendableCredits(): void
+    {
+        $customer = new Customer();
+
+        $this->pointsEntryRepository
+            ->findSpendableCredits($customer, Argument::cetera())
+            ->willReturn([]);
+
+        $this->expectException(InsufficientLoyaltyPointsException::class);
+
+        $this->manager->redeem($customer, $this->reward(1));
     }
 }
