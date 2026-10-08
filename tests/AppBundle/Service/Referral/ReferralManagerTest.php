@@ -7,6 +7,7 @@ use AppBundle\Entity\Referral\ReferralRepository;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\User;
 use AppBundle\Service\EmailManager;
+use AppBundle\Service\Referral\PlusAddressStrategy;
 use AppBundle\Service\Referral\ReferralCodeGenerator;
 use AppBundle\Service\Referral\ReferralManager;
 use AppBundle\Service\Referral\ReferralProgramStatus;
@@ -17,6 +18,9 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\LoggerInterface;
+use RZ\CanonicalEmail\EmailCanonizer;
+use RZ\CanonicalEmail\Strategy\GmailStrategy;
+use RZ\CanonicalEmail\Strategy\LowercaseDomainStrategy;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 
 class ReferralManagerTest extends TestCase
@@ -45,6 +49,14 @@ class ReferralManagerTest extends TestCase
         $this->referralProgramStatus->isActive()->willReturn(true);
         $this->logger = $this->prophesize(LoggerInterface::class);
 
+        // The real canonizer, wired as in services.yaml -- it's a pure
+        // value transformation, and it's the thing under test below.
+        $emailCanonizer = new EmailCanonizer([
+            new PlusAddressStrategy(),
+            new GmailStrategy(),
+            new LowercaseDomainStrategy(),
+        ]);
+
         $this->manager = new ReferralManager(
             $this->customerRepository->reveal(),
             $this->referralRepository->reveal(),
@@ -53,13 +65,17 @@ class ReferralManagerTest extends TestCase
             $this->entityManager->reveal(),
             $this->emailManager->reveal(),
             $this->referralProgramStatus->reveal(),
+            $emailCanonizer,
             $this->logger->reveal()
         );
     }
 
-    private function buildUserWithCustomer(): array
+    private function buildUserWithCustomer(?string $email = null): array
     {
         $customer = new Customer();
+        if (null !== $email) {
+            $customer->setEmail($email);
+        }
         $user = new User();
         $user->setCustomer($customer);
 
@@ -113,6 +129,63 @@ class ReferralManagerTest extends TestCase
 
         $this->entityManager->persist(Argument::type(Referral::class))->shouldNotBeCalled();
         $this->entityManager->flush()->shouldBeCalledOnce();
+
+        $this->manager->registerPendingReferral($user, 'abc123');
+    }
+
+    public function selfReferralByAliasProvider(): array
+    {
+        return [
+            'plus alias' => ['foo@example.com', 'foo+alias@example.com'],
+            'plus alias, different case' => ['foo@example.com', 'FOO+Alias@Example.com'],
+            'gmail dots' => ['foo@gmail.com', 'f.o.o@gmail.com'],
+            'googlemail alias of a gmail address' => ['foo@gmail.com', 'foo+alias@googlemail.com'],
+        ];
+    }
+
+    /**
+     * Registering under an alias of your own address is still perfectly fine
+     * -- it just must not earn you a referral reward for yourself.
+     *
+     * @dataProvider selfReferralByAliasProvider
+     */
+    public function testIgnoresSelfReferralByEmailAlias(string $referrerEmail, string $referredEmail): void
+    {
+        [$user, $referred] = $this->buildUserWithCustomer($referredEmail);
+
+        $referrer = new Customer();
+        $referrer->setEmail($referrerEmail);
+
+        $this->referralCodeGenerator->generateFor($referred)->shouldBeCalledOnce();
+        $this->customerRepository->findOneBy(['referralCode' => 'ABC123'])->willReturn($referrer);
+
+        $this->entityManager->persist(Argument::type(Referral::class))->shouldNotBeCalled();
+        $this->entityManager->flush()->shouldBeCalledOnce();
+        $this->emailManager->sendTo(Argument::cetera())->shouldNotBeCalled();
+
+        $this->manager->registerPendingReferral($user, 'abc123');
+    }
+
+    public function testStillAcceptsAReferralBetweenTwoDistinctMailboxes(): void
+    {
+        [$user, $referred] = $this->buildUserWithCustomer('bob@example.com');
+
+        $referrer = new Customer();
+        $referrer->setEmail('alice@example.com');
+
+        $this->referralCodeGenerator->generateFor($referred)->shouldBeCalledOnce();
+        $this->customerRepository->findOneBy(['referralCode' => 'ABC123'])->willReturn($referrer);
+        $this->referralRepository->findPendingByReferredCustomer($referred)->willReturn(null);
+
+        $coupon = $this->prophesize(PromotionCouponInterface::class)->reveal();
+        $this->referralRewardCouponFactory->createReferredWelcomeCoupon($referred)->willReturn($coupon);
+
+        $this->entityManager->persist(Argument::type(Referral::class))->shouldBeCalledOnce();
+        $this->entityManager->flush()->shouldBeCalledOnce();
+
+        $welcomeMessage = new \Symfony\Component\Mime\Email();
+        $this->emailManager->createReferralWelcomeMessage(Argument::type(Referral::class))->willReturn($welcomeMessage);
+        $this->emailManager->sendTo($welcomeMessage, 'bob@example.com')->shouldBeCalledOnce();
 
         $this->manager->registerPendingReferral($user, 'abc123');
     }

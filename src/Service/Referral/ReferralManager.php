@@ -10,6 +10,7 @@ use AppBundle\Service\EmailManager;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use RZ\CanonicalEmail\EmailCanonizer;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 
 /**
@@ -28,6 +29,7 @@ class ReferralManager
         private readonly EntityManagerInterface $entityManager,
         private readonly EmailManager $emailManager,
         private readonly ReferralProgramStatus $referralProgramStatus,
+        private readonly EmailCanonizer $emailCanonizer,
         private readonly LoggerInterface $logger)
     {
     }
@@ -63,7 +65,11 @@ class ReferralManager
             return;
         }
 
-        if ($referrer === $referred) {
+        if ($referrer === $referred || $this->reachesTheSameMailbox($referrer, $referred)) {
+            $this->logger->info(sprintf(
+                'Referral code "%s" belongs to the same mailbox as the new account, ignoring self-referral',
+                $referralCode
+            ));
             $this->entityManager->flush();
 
             return;
@@ -102,5 +108,24 @@ class ReferralManager
             $this->emailManager->createReferralWelcomeMessage($referral),
             $referred->getEmail()
         );
+    }
+
+    /**
+     * Plus-addressing stays deliberately valid at registration, so comparing
+     * the canonical form of both addresses is the only thing stopping someone
+     * signing up again as an alias of themselves (foo+alias@example.com) to
+     * claim their own referral reward.
+     */
+    private function reachesTheSameMailbox(Customer $referrer, Customer $referred): bool
+    {
+        $referrerEmail = $referrer->getEmail();
+        $referredEmail = $referred->getEmail();
+
+        if (empty($referrerEmail) || empty($referredEmail)) {
+            return false;
+        }
+
+        return $this->emailCanonizer->getCanonicalEmailAddress($referrerEmail)
+            === $this->emailCanonizer->getCanonicalEmailAddress($referredEmail);
     }
 }

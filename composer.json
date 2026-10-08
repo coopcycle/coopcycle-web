@@ -179,7 +179,8 @@
         "symfony/ux-autocomplete": "^2.32",
         "scheb/2fa-bundle": "^7.0",
         "scheb/2fa-email": "^7.0",
-        "islesurlasorguetourisme/daisyui-form-bundle": "dev-main"
+        "islesurlasorguetourisme/daisyui-form-bundle": "dev-main",
+        "rezozero/canonical-email": "^1.1"
     },
     "require-dev": {
         "symfony/debug-bundle": "*",
