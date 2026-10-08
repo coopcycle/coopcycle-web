@@ -21,6 +21,7 @@ order.items.containsDisabledProduct: La commande contient un produit désactivé
 order.fulfillment_methods.empty: Cet établissement est actuellement indisponible
 
 delivery.price.error.priceCalculation: Le prix de la course n'a pas pu être calculé.
+delivery.import.error.interrupted: "L'import a été interrompu, aucune livraison n'a été importée. Veuillez importer le fichier à nouveau."
 
 delivery.tasks.unexpectedCount: La entrega debe consistir en dos tareas.
 delivery.tasks.pickupAfterDropoff: La date de dépôt doit être postérieure à la date de retrait.

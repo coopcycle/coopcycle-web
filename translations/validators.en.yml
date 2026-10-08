@@ -22,6 +22,7 @@ order.items.containsDisabledProduct: The order contains a disabled product
 order.fulfillment_methods.empty: This establishment is currently unavailable
 
 delivery.price.error.priceCalculation: The delivery price could not be calculated.
+delivery.import.error.interrupted: The import was interrupted, no deliveries were imported. Please import the file again.
 
 delivery.tasks.unexpectedCount: Delivery must consist of two tasks.
 delivery.tasks.pickupAfterDropoff: Dropoff date must be after pickup date.
