@@ -840,6 +840,7 @@
         "DELIVERY_FORM_ERROR_PACKAGES": "Please select at least one package",
         "DELIVERY_FORM_ERROR_WEIGHT": "Please specify a weight",
         "DELIVERY_FORM_ERROR_HOUR": "Pickup must be before drop-off",
+        "DELIVERY_FORM_INVALID": "Some fields are missing or invalid, please check the form above",
         "DELIVERY_FORM_REMEMBER_ADDRESS": "Remember this address",
         "DELIVERY_FORM_TOTAL_PRICE": "Total price",
         "DELIVERY_FORM_TOTAL_VAT": "Incl. VAT",

@@ -341,14 +341,14 @@ const DeliveryForm = ({
       }
     }
 
-    // expand all tasks with errors
-    if (Object.keys(errors.tasks).length > 0) {
-      Object.values(expandedTasks).forEach((isExpanded, index) => {
-        if (!isExpanded && Object.keys(errors.tasks).includes(`${index}`)) {
+    // expand all tasks with errors, so that the messages are visible
+    Object.keys(errors.tasks)
+      .map(Number)
+      .forEach(index => {
+        if (!expandedTasks[index]) {
           handleTaskExpansion(index, true);
         }
       });
-    }
 
     const result =
       Object.keys(errors.tasks).length > 0 || errors.variantName ? errors : {};
@@ -481,7 +481,26 @@ const DeliveryForm = ({
       validate={validate}
       validateOnChange={false}
       validateOnBlur={false}>
-      {({ values, isSubmitting, setFieldValue }) => {
+      {({ values, errors, isSubmitting, submitCount, setFieldValue }) => {
+        const hasErrors = Object.keys(errors).length > 0;
+
+        //FIXME: we probably need to move all this into a function component
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        useEffect(() => {
+          // The submit button is at the bottom of the form, while the errors are
+          // displayed next to the fields: bring the first one into view,
+          // otherwise it looks like the click did nothing.
+          if (isSubmitting || submitCount === 0 || !hasErrors) return;
+
+          const firstError = Array.from(
+            document.querySelectorAll<HTMLElement>(
+              '.delivery-form .text-danger',
+            ),
+          ).find(el => el.offsetParent !== null);
+
+          firstError?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, [isSubmitting, submitCount, hasErrors]);
+
         //FIXME: we probably need to move all this into a function component
         // eslint-disable-next-line react-hooks/rules-of-hooks
         const previousValues = usePrevious(values);
@@ -850,6 +869,14 @@ const DeliveryForm = ({
                       disabled={isSubmitting || priceLoading || isSubmitted}>
                       {t('DELIVERY_FORM_SUBMIT')}
                     </Button>
+                    {submitCount > 0 && hasErrors ? (
+                      <div
+                        className="alert alert-danger mt-3 mb-0"
+                        role="alert"
+                        data-testid="delivery-form-invalid-alert">
+                        {t('DELIVERY_FORM_INVALID')}
+                      </div>
+                    ) : null}
                   </div>
                 ) : null}
 
