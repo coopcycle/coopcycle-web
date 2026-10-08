@@ -60,7 +60,10 @@ context('Delivery (role: dispatcher)', () => {
       'ant-select-disabled',
     )
 
-    cy.antdSelect('.ant-select[data-testid="pricing-rule-set-select"]', 'Flat')
+    // antdSelect looks for the dropdown from the current root, which has to be within the page body
+    cy.get('[data-testid="price-adjustments"]').within(() => {
+      cy.antdSelect('.ant-select[data-testid="pricing-rule-set-select"]', 'Flat')
+    })
 
     cy.get('[data-testid="tax-included"]').contains('15,00 €')
 
