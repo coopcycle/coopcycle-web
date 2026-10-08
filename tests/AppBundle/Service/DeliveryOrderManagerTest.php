@@ -134,6 +134,11 @@ class DeliveryOrderManagerTest extends TestCase
             ->willReturn([$this->prophesize(ProductVariantInterface::class)->reveal()])
             ->shouldBeCalled();
 
+        // So that a recalculation of the order keeps it
+        $this->pricingManager
+            ->setChosenPricingRuleSet($order, Argument::type(Delivery::class), $pricingRuleSet)
+            ->shouldBeCalled();
+
         $this->deliveryOrderManager->createOrderFromRecurrenceRule($recurrenceRule, '2026-10-06');
     }
 

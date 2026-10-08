@@ -599,6 +599,7 @@
         "PLUS_ADD_TAGS": "+ Ajouter des tags",
         "RESTAURANT": "Restaurant",
         "STORE": "Magasin",
+        "RECURRENCE_RULE": "Règle récurrente",
         "RESTAURANTS_GROUP": "Groupe de restaurants",
         "DELIVERY_FORM": "Formulaire de livraison",
         "DELIVERY_FORM_ADMIN_PRICE_ERROR": "Le prix n'a pas pu être calculé. Vous pouvez créer la livraison, n'oubliez pas de corriger la règle de prix liée à ce magasin.",

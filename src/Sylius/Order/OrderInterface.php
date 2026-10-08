@@ -6,6 +6,7 @@ use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\BusinessAccount;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Sylius\OrderEvent;
@@ -184,6 +185,13 @@ interface OrderInterface extends
     public function isFoodtech(): bool;
 
     public function getDeliveryPrice(): PriceInterface;
+
+    /**
+     * The rule set a dispatcher chose to price this order with, if any
+     */
+    public function getPricingRuleSet(): ?PricingRuleSet;
+
+    public function setPricingRuleSet(?PricingRuleSet $pricingRuleSet): void;
 
     public function getManualSupplements(): ManualSupplements;
 

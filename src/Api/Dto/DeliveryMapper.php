@@ -5,7 +5,6 @@ namespace AppBundle\Api\Dto;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
-use AppBundle\Entity\Sylius\PricingRulesBasedPrice;
 use AppBundle\Entity\Sylius\ProductOptionValue;
 use AppBundle\Entity\Task;
 use AppBundle\Service\TagManager;
@@ -112,18 +111,8 @@ class DeliveryMapper
 
         $deliveryOrderData->isSavedOrder = $isSavedOrder;
 
-        if (is_null($pricingRuleSet) && !is_null($order) && !$order->getItems()->isEmpty()) {
-            $price = $order->getDeliveryPrice();
-            if ($price instanceof PricingRulesBasedPrice) {
-                $pricingRuleSet = $price->getPricingRuleSet();
-            }
-        }
-
-        // Only expose a rule set that differs from the store's one,
-        // so that the form keeps following the store's rule set by default
-        if ($pricingRuleSet !== $deliveryEntity->getStore()?->getPricingRuleSet()) {
-            $deliveryOrderData->pricingRuleSet = $pricingRuleSet;
-        }
+        // Only a rule set chosen by a dispatcher, null follows the store's one
+        $deliveryOrderData->pricingRuleSet = $pricingRuleSet ?? $order?->getPricingRuleSet();
 
         if ($deliveryEntity->getId()) {
             $deliveryData->id = $deliveryEntity->getId();

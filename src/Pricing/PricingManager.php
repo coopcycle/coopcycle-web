@@ -9,7 +9,6 @@ use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\PriceInterface;
-use AppBundle\Entity\Sylius\PricingRulesBasedPrice;
 use AppBundle\Entity\Sylius\UpdateManualSupplements;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
 use AppBundle\Entity\Sylius\PricingStrategy;
@@ -174,26 +173,29 @@ class PricingManager
 
     /**
      * The pricing rule set used to calculate the price of a delivery, by order of precedence:
-     * 1. the one chosen by a dispatcher
-     * 2. the one the existing order was priced with, so that a recalculation
-     *    (an edit, a task cancellation, ...) keeps a rule set chosen previously
-     * 3. the one of the store
+     * 1. the one chosen by a dispatcher in this request
+     * 2. the one a dispatcher chose previously for the existing order, so that a recalculation
+     *    (an edit, a task cancellation, ...) keeps it
+     * 3. the one of the store, so that changing it applies to the orders priced with it
      */
     public function resolvePricingRuleSet(Delivery $delivery, ?PricingRuleSet $chosenPricingRuleSet = null): ?PricingRuleSet
     {
-        if (!is_null($chosenPricingRuleSet)) {
-            return $chosenPricingRuleSet;
-        }
+        return $chosenPricingRuleSet
+            ?? $delivery->getOrder()?->getPricingRuleSet()
+            ?? $delivery->getStore()?->getPricingRuleSet();
+    }
 
-        $order = $delivery->getOrder();
-        if (!is_null($order) && !$order->getItems()->isEmpty()) {
-            $price = $order->getDeliveryPrice();
-            if ($price instanceof PricingRulesBasedPrice && !is_null($price->getPricingRuleSet())) {
-                return $price->getPricingRuleSet();
-            }
-        }
+    /**
+     * Remembers the rule set chosen by a dispatcher on the order;
+     * choosing the store's one means following the store again
+     */
+    public function setChosenPricingRuleSet(OrderInterface $order, Delivery $delivery, PricingRuleSet $chosenPricingRuleSet): void
+    {
+        $storePricingRuleSet = $delivery->getStore()?->getPricingRuleSet();
 
-        return $delivery->getStore()?->getPricingRuleSet();
+        $order->setPricingRuleSet(
+            $chosenPricingRuleSet === $storePricingRuleSet ? null : $chosenPricingRuleSet
+        );
     }
 
     /**
@@ -260,7 +262,8 @@ class PricingManager
 
         return new OrderDuplicate(
             $delivery,
-            $previousDeliveryPrice instanceof ArbitraryPrice ? $previousDeliveryPrice : null
+            $previousDeliveryPrice instanceof ArbitraryPrice ? $previousDeliveryPrice : null,
+            $previousOrder->getPricingRuleSet()
         );
     }
 

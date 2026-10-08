@@ -691,6 +691,7 @@
         "PRIORITY": "Priority",
         "STATUS": "Status",
         "STORE": "Store",
+        "RECURRENCE_RULE": "Recurrence rule",
         "RESTAURANT": "Restaurant",
         "CUSTOMER": "Customer",
         "REPORTED_BY": "Reported by",

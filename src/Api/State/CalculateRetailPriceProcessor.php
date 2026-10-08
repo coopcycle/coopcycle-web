@@ -105,8 +105,13 @@ class CalculateRetailPriceProcessor implements TaxableInterface, ProcessorInterf
 
         $chosenPricingRuleSet = $this->authorizationChecker->isGranted('ROLE_DISPATCHER') ? $data->order?->pricingRuleSet : null;
 
+        // The rule set chosen for an existing order is only reused for someone allowed to edit it,
+        // it would otherwise disclose the pricing of another store
+        $canReuseOrderPricingRuleSet = is_null($delivery->getId()) || $this->authorizationChecker->isGranted('edit', $delivery);
+
         // The store may come from the token, when it is not set on the delivery
-        $pricingRuleSet = $this->pricingManager->resolvePricingRuleSet($delivery, $chosenPricingRuleSet)
+        $pricingRuleSet = $chosenPricingRuleSet
+            ?? ($canReuseOrderPricingRuleSet ? $delivery->getOrder()?->getPricingRuleSet() : null)
             ?? $store?->getPricingRuleSet();
 
         if (null === $pricingRuleSet) {

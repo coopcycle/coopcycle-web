@@ -3865,6 +3865,7 @@ Feature: Tasks
           "id": 1,
           "manualSupplements": [],
           "arbitraryPrice": null,
+          "pricingRuleSet": null,
           "isSavedOrder": false
         }
       }

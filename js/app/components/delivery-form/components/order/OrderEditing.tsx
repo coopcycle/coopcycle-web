@@ -23,6 +23,8 @@ type Props = {
   existingSupplements?: ManualSupplementValues[];
   updatedOrder?: OrderType;
   priceCalculation?: { calculation: CalculationOutput; order?: OrderType };
+  // The new price then always applies, it is not a choice anymore
+  hasPricingRuleSetChanged?: boolean;
 };
 
 // An item carrying no package delivery adjustment at all is priced as a whole:
@@ -113,6 +115,7 @@ export const OrderEditing = ({
   existingSupplements = [],
   updatedOrder,
   priceCalculation,
+  hasPricingRuleSetChanged = false,
 }: Props) => {
   const { isDispatcher } = useContext(UserContext);
   const { isPriceBreakdownEnabled, isDebugPricing } = useContext(FlagsContext);
@@ -127,8 +130,11 @@ export const OrderEditing = ({
   >(isDispatcher ? 'original' : 'new');
 
   useEffect(() => {
-    setFieldValue('order.recalculatePrice', selectedPriceOption === 'new');
-  }, [selectedPriceOption, setFieldValue]);
+    setFieldValue(
+      'order.recalculatePrice',
+      hasPricingRuleSetChanged || selectedPriceOption === 'new',
+    );
+  }, [hasPricingRuleSetChanged, selectedPriceOption, setFieldValue]);
 
   const orderManualSupplementsWithQuantity = useMemo(() => {
     return orderManualSupplements.map(rule => ({
@@ -182,7 +188,7 @@ export const OrderEditing = ({
           {!overridePrice &&
           updatedOrder &&
           hasCalculatedOrderItemsChanged(existingOrder, updatedOrder) ? (
-            !isDispatcher ? (
+            !isDispatcher || hasPricingRuleSetChanged ? (
               <>
                 <Cart
                   orderItems={getCalculatedOrderItems(existingOrder.items)}
@@ -283,7 +289,9 @@ export const OrderEditing = ({
         {/* Show both an old and a new total price when there is a price change */}
         {!overridePrice &&
         updatedOrder &&
-        (selectedPriceOption === 'new' || hasSupplementsChanged) &&
+        (selectedPriceOption === 'new' ||
+          hasSupplementsChanged ||
+          hasPricingRuleSetChanged) &&
         (isDispatcher || hasTotalChanged) ? (
           <>
             <TotalPrice

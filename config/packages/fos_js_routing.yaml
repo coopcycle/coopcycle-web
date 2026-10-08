@@ -35,6 +35,7 @@ fos_js_routing:
         - admin_orders
         - admin_restaurant
         - admin_store
+        - admin_store_recurrence_rule
         - admin_restaurant_dashboard
         - admin_restaurant_image_from_pixabay
         - admin_restaurant_stats

@@ -408,6 +408,15 @@ const DeliveryForm = ({
 
       setInitialManualSupplements([...initialValues.order.manualSupplements]);
 
+      // The server may serialize the IRI as an absolute URL (i.e. when cloning an order),
+      // the rule set options are identified by their path
+      if (initialValues.order.pricingRuleSet) {
+        initialValues.order.pricingRuleSet = new URL(
+          initialValues.order.pricingRuleSet,
+          window.location.origin,
+        ).pathname;
+      }
+
       if (preLoadedFormData.order?.arbitraryPrice) {
         // remove a previously copied value (different formats between API and the frontend)
         delete initialValues.order.arbitraryPrice;

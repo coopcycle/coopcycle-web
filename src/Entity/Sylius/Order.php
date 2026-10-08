@@ -69,6 +69,7 @@ use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\BusinessAccount;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusiness\AddressResolver;
 use AppBundle\Entity\LoopEat\OrderCredentials;
@@ -577,6 +578,12 @@ class Order extends BaseOrder implements OrderInterface
     protected Collection $bookmarks;
 
     protected ?RecurrenceRule $subscription = null;
+
+    /**
+     * The rule set a dispatcher chose to price this order with,
+     * the store's one is used when null
+     */
+    protected ?PricingRuleSet $pricingRuleSet = null;
 
     protected Collection $exports;
 
@@ -1891,6 +1898,16 @@ class Order extends BaseOrder implements OrderInterface
     public function setSubscription(?RecurrenceRule $subscription): void
     {
         $this->subscription = $subscription;
+    }
+
+    public function getPricingRuleSet(): ?PricingRuleSet
+    {
+        return $this->pricingRuleSet;
+    }
+
+    public function setPricingRuleSet(?PricingRuleSet $pricingRuleSet): void
+    {
+        $this->pricingRuleSet = $pricingRuleSet;
     }
 
     #[SerializedName('hasEdenredCredentials')]

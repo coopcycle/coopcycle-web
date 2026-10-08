@@ -454,6 +454,7 @@
         "TASK_FORM_SEARCH_ADDRESS_NAME_PLACEHOLDER": "Nombre de la dirección...",
         "RESTAURANT": "Restaurante",
         "STORE": "Tienda",
+        "RECURRENCE_RULE": "Regla de recurrencia",
         "RESTAURANTS_GROUP": "Grupo de restaurantes",
         "DELIVERY_FORM": "Formulario de entrega",
         "DELIVERY_FORM_ADMIN_PRICE_ERROR": "No se pudo calcular el precio. Puede crear el envío, pero no olvide corregir la regla de precio asociada a esta tienda.",

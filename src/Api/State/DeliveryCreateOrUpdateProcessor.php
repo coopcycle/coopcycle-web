@@ -193,6 +193,11 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                 $oldTotal = $order->getTotal();
                 $oldTaxTotal = $order->getTaxTotal();
 
+                // Choosing another rule set always re-prices the order with it,
+                // a price can not mix lines from two rule sets
+                $hasPricingRuleSetChanged = !is_null($pricingRuleSet)
+                    && $pricingRuleSet !== $this->pricingManager->resolvePricingRuleSet($delivery);
+
                 if (!is_null($arbitraryPrice)) {
                     $productVariants = $this->pricingManager->getProductVariantsWithPricingStrategy(
                         $delivery,
@@ -202,12 +207,16 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                         $order,
                         $productVariants
                     );
-                } elseif ($data instanceof DeliveryInputDto && $data->order?->recalculatePrice) {
+                } elseif ($hasPricingRuleSetChanged || ($data instanceof DeliveryInputDto && $data->order?->recalculatePrice)) {
                     $productVariants = $this->pricingManager->getProductVariantsWithPricingStrategy(
                         $delivery,
                         new CalculateUsingPricingRules($manualSupplements, $pricingRuleSet)
                     );
                     $this->pricingManager->processDeliveryOrder($order, $productVariants);
+
+                    if ($hasPricingRuleSetChanged) {
+                        $this->pricingManager->setChosenPricingRuleSet($order, $delivery, $pricingRuleSet);
+                    }
                 } elseif (!is_null($manualSupplements) && $this->hasManualSupplementsChanged($manualSupplements, $order)) {
                     $existingProductVariants = [];
                     foreach ($order->getItems() as $item) {
@@ -216,7 +225,7 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
 
                     $productVariants = $this->pricingManager->getProductVariantsWithPricingStrategy(
                         $delivery,
-                        new UpdateManualSupplements($manualSupplements, $existingProductVariants, $pricingRuleSet),
+                        new UpdateManualSupplements($manualSupplements, $existingProductVariants),
                     );
 
                     $this->pricingManager->processDeliveryOrder($order, $productVariants);

@@ -365,7 +365,8 @@ trait StoreTrait
                     $duplicate->delivery,
                     null,
                     $duplicate->previousArbitraryPrice,
-                    false
+                    false,
+                    pricingRuleSet: $duplicate->previousPricingRuleSet
                 );
             } elseif ('reverse' === $request->query->get('action')) {
                 try {
@@ -374,7 +375,8 @@ trait StoreTrait
                         $reverse,
                         null,
                         null,
-                        false
+                        false,
+                        pricingRuleSet: $fromOrder->getPricingRuleSet()
                     );
                 } catch (DeliveryNotReversableException $e) {
                     $errors[] = 'form.delivery.errors.not_reversable';

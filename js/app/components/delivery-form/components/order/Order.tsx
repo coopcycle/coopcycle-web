@@ -17,6 +17,7 @@ import { PaymentMethod } from './PaymentMethod';
 import { OrderOnCheckout } from './OrderOnCheckout';
 import { OrderEditing } from './OrderEditing';
 import { UserContext } from '../../../../UserContext';
+import { useGetStoreQuery } from '../../../../api/slice';
 
 type Props = {
   storeNodeId: string;
@@ -40,7 +41,20 @@ const Order = ({
   const { isDispatcher } = useContext(UserContext);
 
   const mode = useSelector(selectMode);
-  const { values } = useDeliveryFormFormikContext();
+  const { values, initialValues } = useDeliveryFormFormikContext();
+
+  const { data: storeData } = useGetStoreQuery(storeNodeId);
+
+  // The order is always re-priced when another rule set is chosen;
+  // null and the store's rule set both mean following the store
+  const hasPricingRuleSetChanged = useMemo(() => {
+    const storePricingRuleSet = storeData?.pricingRuleSet ?? null;
+
+    return (
+      (values.order?.pricingRuleSet ?? storePricingRuleSet) !==
+      (initialValues.order?.pricingRuleSet ?? storePricingRuleSet)
+    );
+  }, [values.order, initialValues.order, storeData]);
 
   const [newOrder, setNewOrder] = useState(undefined as OrderType | undefined);
 
@@ -154,6 +168,7 @@ const Order = ({
             existingSupplements={existingSupplements}
             updatedOrder={newOrder}
             priceCalculation={priceCalculation}
+            hasPricingRuleSetChanged={hasPricingRuleSetChanged}
           />
         ) : null}
 

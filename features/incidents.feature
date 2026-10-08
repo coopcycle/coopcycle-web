@@ -1306,3 +1306,66 @@ Feature: Incidents
           "@*@": "@*@"
         }
         """
+
+  Scenario: Accept suggestion carrying the pricing rule set of the order
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml             |
+      | payment_methods.yml             |
+      | sylius_products.yml             |
+      | store_with_manual_supplements.yml |
+      | package_delivery_order.yml      |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "dispatcher" is loaded:
+      | email      | dispatcher@coopcycle.org |
+      | password   | 123456            |
+    And the user "dispatcher" has role "ROLE_DISPATCHER"
+    And the user "bob" is authenticated
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/incidents" with body:
+      """
+      {
+        "description": "Wrong order details",
+        "failureReasonCode": "INCORRECT_ITEM",
+        "task": "/api/tasks/2",
+        "metadata": [
+          {
+            "suggestion": {
+              "tasks": [
+                {
+                  "id": 2
+                },
+                {
+                  "id": 1,
+                  "packages": [
+                    {"type": "XL", "quantity": 2}
+                  ],
+                  "weight": 30000
+                }
+              ],
+              "order": {
+                "pricingRuleSet": "/api/pricing_rule_sets/1"
+              }
+            }
+          }
+        ]
+      }
+      """
+    Then the response status code should be 201
+    And the database should contain an order with a total price 499
+    Given the user "dispatcher" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "dispatcher" sends a "PUT" request to "/api/incidents/1/action" with body:
+      """
+      {
+        "action": "accepted_suggestion"
+      }
+      """
+    Then the response status code should be 200
+    # Base: 499, weight: 250
+    And the database should contain an order with a total price 749

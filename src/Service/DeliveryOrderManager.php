@@ -10,6 +10,7 @@ use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\ProductRepository;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
 use AppBundle\Entity\Sylius\CalculateUsingPricingRules;
+use AppBundle\Entity\Sylius\UsePricingRules;
 use AppBundle\Entity\Task\RecurrenceRule;
 use AppBundle\Entity\User;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
@@ -84,6 +85,11 @@ class DeliveryOrderManager
 
         $order = $this->orderFactory->createForDelivery($delivery);
         $this->pricingManager->processDeliveryOrder($order, $productVariants);
+
+        // Kept even when none of its rules matched, so that a dispatcher sees what was chosen
+        if ($pricingStrategy instanceof UsePricingRules && !is_null($pricingStrategy->pricingRuleSet)) {
+            $this->pricingManager->setChosenPricingRuleSet($order, $delivery, $pricingStrategy->pricingRuleSet);
+        }
 
         // Linked before the first flush: if anything fails after it, the order
         // is still found for its rule, and a retry does not create it again.

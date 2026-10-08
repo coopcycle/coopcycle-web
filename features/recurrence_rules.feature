@@ -828,3 +828,25 @@ Feature: Task recurrence rules
         "@*@": "@*@"
       }
       """
+
+  Scenario: Can not delete a pricing rule set chosen for a recurrence rule
+    Given the fixtures files are loaded:
+      | users.yml            |
+      | addresses.yml        |
+      | recurrence_rules.yml |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/recurrence_rules/1" with body:
+      """
+      {
+        "pricingRuleSet": "/api/pricing_rule_sets/6"
+      }
+      """
+    Then the response status code should be 200
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "DELETE" request to "/api/pricing_rule_sets/6"
+    Then the response status code should be 400
+    And the JSON node "hydra:description" should contain "AppBundle\Entity\Task\RecurrenceRule#1"

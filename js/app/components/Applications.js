@@ -19,6 +19,10 @@ function LinkToApplication ({pricingRuleSetApplication}) {
       const url = window.Routing.generate("admin_business_restaurant_group", {id: pricingRuleSetApplication.id})
       return (<li><a href={url}>{t('RESTAURANTS_GROUP')} {pricingRuleSetApplication.name}</a></li>)
     }
+    case "AppBundle\\Entity\\Task\\RecurrenceRule": {
+      const url = window.Routing.generate("admin_store_recurrence_rule", {storeId: pricingRuleSetApplication.storeId, recurrenceRuleId: pricingRuleSetApplication.id})
+      return (<li><a href={url}>{t('RECURRENCE_RULE')} {pricingRuleSetApplication.name}</a></li>)
+    }
     case "AppBundle\\Entity\\DeliveryForm": {
       const url = window.Routing.generate("admin_form", {id: pricingRuleSetApplication.id})
       return (<li><a href={url}>{t('DELIVERY_FORM')} {pricingRuleSetApplication.name}</a></li>)
