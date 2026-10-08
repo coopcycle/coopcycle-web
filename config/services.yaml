@@ -369,6 +369,17 @@ services:
     arguments:
       $envEnabled: '%env(bool:REFERRAL_PROGRAM_ENABLED)%'
 
+  # Used to tell apart two addresses that reach the same mailbox, so someone
+  # can't refer themselves with an alias of their own address. Deliberately
+  # excludes the library's GSuiteStrategy: it resolves MX records over DNS on
+  # every call, which has no business blocking a signup.
+  RZ\CanonicalEmail\EmailCanonizer:
+    arguments:
+      $strategies:
+        - '@AppBundle\Service\Referral\PlusAddressStrategy'
+        - !service { class: RZ\CanonicalEmail\Strategy\GmailStrategy }
+        - !service { class: RZ\CanonicalEmail\Strategy\LowercaseDomainStrategy }
+
   AppBundle\Controller\AssetsController:
     arguments:
       $taskImagesFilesystem: '@task_images_filesystem'
