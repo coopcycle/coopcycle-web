@@ -2373,3 +2373,180 @@ Feature: Retail prices
       }
       """
     Then the response status code should be 403
+
+  Scenario: Get delivery price with a pricing rule set chosen by a dispatcher
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
+      | stores.yml          |
+    And the setting "subject_to_vat" has value "1"
+    And the user "dispatcher" is loaded:
+      | email      | dispatcher@coopcycle.org |
+      | password   | 123456            |
+    And the user "dispatcher" has role "ROLE_DISPATCHER"
+    And the user "dispatcher" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "dispatcher" sends a "POST" request to "/api/retail_prices/calculate" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "before": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "before": "tomorrow 15:00"
+        },
+        "order": {
+          "pricingRuleSet": "/api/pricing_rule_sets/6"
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/RetailPrice",
+        "@id":@string@,
+        "@type":"RetailPrice",
+        "amount":1500,
+        "currency":"EUR",
+        "tax":{"@*@":"@*@"},
+        "order":{"@*@":"@*@"},
+        "calculation": {
+          "ruleSet": "/api/pricing_rule_sets/6",
+          "@*@":"@*@"
+        }
+      }
+      """
+
+  Scenario: A store can not choose the pricing rule set
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
+      | stores.yml          |
+    And the setting "subject_to_vat" has value "1"
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_STORE"
+    And the user "bob" is authenticated
+    And the store with name "Acme" belongs to user "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/retail_prices/calculate" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "before": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "before": "tomorrow 15:00"
+        },
+        "order": {
+          "pricingRuleSet": "/api/pricing_rule_sets/6"
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/RetailPrice",
+        "@id":@string@,
+        "@type":"RetailPrice",
+        "amount":499,
+        "currency":"EUR",
+        "tax":{"@*@":"@*@"},
+        "order":{"@*@":"@*@"},
+        "calculation":{"@*@":"@*@"}
+      }
+      """
+
+  Scenario: Manual supplement validation - supplement from the pricing rule set chosen by a dispatcher
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
+      | store_with_manual_supplements.yml |
+    And the setting "subject_to_vat" has value "1"
+    And the user "dispatcher" is loaded:
+      | email      | dispatcher@coopcycle.org |
+      | password   | 123456            |
+    And the user "dispatcher" has role "ROLE_DISPATCHER"
+    And the user "dispatcher" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "dispatcher" sends a "POST" request to "/api/retail_prices/calculate" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "before": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "before": "tomorrow 15:00"
+        },
+        "order": {
+          "pricingRuleSet": "/api/pricing_rule_sets/2",
+          "manualSupplements": [
+            {
+              "pricingRule": "/api/pricing_rules/5",
+              "quantity": 1
+            }
+          ]
+        }
+      }
+      """
+    Then the response status code should be 200
+
+  Scenario: Manual supplement validation - a store can not use supplements from another pricing rule set
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
+      | store_with_manual_supplements.yml |
+    And the setting "subject_to_vat" has value "1"
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_STORE"
+    And the user "bob" is authenticated
+    And the store with name "Store with Manual Supplements" belongs to user "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/retail_prices/calculate" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "before": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "before": "tomorrow 15:00"
+        },
+        "order": {
+          "pricingRuleSet": "/api/pricing_rule_sets/2",
+          "manualSupplements": [
+            {
+              "pricingRule": "/api/pricing_rules/5",
+              "quantity": 1
+            }
+          ]
+        }
+      }
+      """
+    Then the response status code should be 400

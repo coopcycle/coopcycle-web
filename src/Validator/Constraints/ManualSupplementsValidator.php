@@ -6,13 +6,15 @@ use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Api\Dto\DeliveryOrderDto;
 use AppBundle\Entity\Store;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
 class ManualSupplementsValidator extends ConstraintValidator
 {
     public function __construct(
-        private readonly IriConverterInterface $iriConverter
+        private readonly IriConverterInterface $iriConverter,
+        private readonly AuthorizationCheckerInterface $authorizationChecker,
     ) {
     }
 
@@ -41,7 +43,10 @@ class ManualSupplementsValidator extends ConstraintValidator
             return; // Cannot validate without a store
         }
 
-        $pricingRuleSet = $store->getPricingRuleSet();
+        // Supplements come from the rule set chosen by a dispatcher, if any;
+        // the choice is ignored for other users, so are supplements from another rule set
+        $chosenPricingRuleSet = $this->authorizationChecker->isGranted('ROLE_DISPATCHER') ? $value->pricingRuleSet : null;
+        $pricingRuleSet = $chosenPricingRuleSet ?? $store->getPricingRuleSet();
         if (null === $pricingRuleSet) {
             // If store has no pricing rule set, no manual supplements are allowed
             $this->context

@@ -4717,6 +4717,8 @@ Feature: Deliveries
             "store": "\/api\/stores\/1",
             "orgName": "Acme",
             "arbitraryPriceTemplate": null,
+            "pricingRuleSet": null,
+            "manualSupplements": [],
             "isCancelled": false,
             "paused": false
           }
@@ -6775,3 +6777,487 @@ Feature: Deliveries
         "@*@":"@*@"
       }
       """
+
+  Scenario: Create delivery with a pricing rule set chosen by a dispatcher, a store owner update keeps it
+    Given the fixtures files are loaded:
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | stores.yml          |
+    Given the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456              |
+    And the user "admin" has role "ROLE_ADMIN"
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_STORE"
+    And the store with name "Acme" belongs to user "bob"
+    Given the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store": "/api/stores/1",
+        "tasks": [
+          {
+            "type": "PICKUP",
+            "address": "24, Rue de la Paix",
+            "before": "tomorrow 13:00"
+          },
+          {
+            "type": "DROPOFF",
+            "address": "48, Rue de Rivoli",
+            "before": "tomorrow 13:30"
+          }
+        ],
+        "order": {
+          "pricingRuleSet": "/api/pricing_rule_sets/6"
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@id":"/api/deliveries/1",
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "total": 1500,
+          "@*@": "@*@"
+        },
+        "@*@": "@*@"
+      }
+      """
+    Given the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/deliveries/1" with body:
+      """
+      {
+        "tasks": [
+          {
+            "id": 1
+          },
+          {
+            "id": 2,
+            "comments": "Updated comments"
+          }
+        ]
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@id":"/api/deliveries/1",
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "total": 1500,
+          "@*@": "@*@"
+        },
+        "@*@": "@*@"
+      }
+      """
+
+  Scenario: A store owner can not choose the pricing rule set of a delivery
+    Given the fixtures files are loaded:
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | stores.yml          |
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_STORE"
+    And the store with name "Acme" belongs to user "bob"
+    Given the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store": "/api/stores/1",
+        "tasks": [
+          {
+            "type": "PICKUP",
+            "address": "24, Rue de la Paix",
+            "before": "tomorrow 13:00"
+          },
+          {
+            "type": "DROPOFF",
+            "address": "48, Rue de Rivoli",
+            "before": "tomorrow 13:30"
+          }
+        ],
+        "order": {
+          "pricingRuleSet": "/api/pricing_rule_sets/6"
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@id":"/api/deliveries/1",
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "total": 499,
+          "@*@": "@*@"
+        },
+        "@*@": "@*@"
+      }
+      """
+
+  Scenario: Create delivery with recurrence and a pricing rule set as an admin
+    Given the fixtures files are loaded:
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | stores.yml          |
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_ADMIN"
+    Given the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store": "/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix",
+          "doneBefore": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli",
+          "doneBefore": "tomorrow 13:30"
+        },
+        "rrule": "FREQ=WEEKLY;BYDAY=MO",
+        "order": {
+          "pricingRuleSet": "/api/pricing_rule_sets/6"
+        }
+      }
+      """
+    Then the response status code should be 201
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/recurrence_rules/1"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@id": "/api/recurrence_rules/1",
+        "pricingRuleSet": "/api/pricing_rule_sets/6",
+        "@*@": "@*@"
+      }
+      """
+
+  Scenario: Update delivery back to the store's pricing rule set as a dispatcher
+    Given the fixtures files are loaded:
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | stores.yml          |
+    Given the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456              |
+    And the user "admin" has role "ROLE_ADMIN"
+    Given the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store": "/api/stores/1",
+        "tasks": [
+          {
+            "type": "PICKUP",
+            "address": "24, Rue de la Paix",
+            "before": "tomorrow 13:00"
+          },
+          {
+            "type": "DROPOFF",
+            "address": "48, Rue de Rivoli",
+            "before": "tomorrow 13:30"
+          }
+        ],
+        "order": {
+          "pricingRuleSet": "/api/pricing_rule_sets/6"
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@id":"/api/deliveries/1",
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "total": 1500,
+          "@*@": "@*@"
+        },
+        "@*@": "@*@"
+      }
+      """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "PUT" request to "/api/deliveries/1" with body:
+      """
+      {
+        "tasks": [
+          {
+            "id": 1
+          },
+          {
+            "id": 2
+          }
+        ],
+        "order": {
+          "pricingRuleSet": "/api/pricing_rule_sets/1",
+          "recalculatePrice": true
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@id":"/api/deliveries/1",
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "total": 499,
+          "@*@": "@*@"
+        },
+        "@*@": "@*@"
+      }
+      """
+
+  Scenario: A store owner update follows the new rule set of the store, when none was chosen
+    Given the fixtures files are loaded:
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | stores.yml          |
+    Given the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456              |
+    And the user "admin" has role "ROLE_ADMIN"
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_STORE"
+    And the store with name "Acme" belongs to user "bob"
+    Given the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store": "/api/stores/1",
+        "tasks": [
+          {
+            "type": "PICKUP",
+            "address": "24, Rue de la Paix",
+            "before": "tomorrow 13:00"
+          },
+          {
+            "type": "DROPOFF",
+            "address": "48, Rue de Rivoli",
+            "before": "tomorrow 13:30"
+          }
+        ]
+      }
+      """
+    Then the response status code should be 201
+    And the JSON node "order.total" should be equal to "499"
+    Given the store with name "Acme" has pricing rule set "Flat"
+    Given the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/deliveries/1" with body:
+      """
+      {
+        "tasks": [
+          {
+            "id": 1
+          },
+          {
+            "id": 2,
+            "comments": "Updated comments"
+          }
+        ]
+      }
+      """
+    Then the response status code should be 200
+    And the JSON node "order.total" should be equal to "1500"
+
+  Scenario: Choosing another pricing rule set re-prices an existing delivery
+    Given the fixtures files are loaded:
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | stores.yml          |
+    Given the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456              |
+    And the user "admin" has role "ROLE_ADMIN"
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_STORE"
+    And the store with name "Acme" belongs to user "bob"
+    Given the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store": "/api/stores/1",
+        "tasks": [
+          {
+            "type": "PICKUP",
+            "address": "24, Rue de la Paix",
+            "before": "tomorrow 13:00"
+          },
+          {
+            "type": "DROPOFF",
+            "address": "48, Rue de Rivoli",
+            "before": "tomorrow 13:30"
+          }
+        ]
+      }
+      """
+    Then the response status code should be 201
+    And the JSON node "order.total" should be equal to "499"
+    Given the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "PUT" request to "/api/deliveries/1" with body:
+      """
+      {
+        "tasks": [
+          {
+            "id": 1
+          },
+          {
+            "id": 2,
+            "comments": "Updated comments"
+          }
+        ],
+        "order": {
+          "pricingRuleSet": "/api/pricing_rule_sets/6"
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the JSON node "order.total" should be equal to "1500"
+    Given the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/deliveries/1" with body:
+      """
+      {
+        "tasks": [
+          {
+            "id": 1
+          },
+          {
+            "id": 2,
+            "comments": "Updated comments"
+          }
+        ]
+      }
+      """
+    Then the response status code should be 200
+    And the JSON node "order.total" should be equal to "1500"
+
+  Scenario: A price set manually replaces the pricing rule set chosen for a delivery
+    Given the fixtures files are loaded:
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | stores.yml          |
+    Given the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456              |
+    And the user "admin" has role "ROLE_ADMIN"
+    Given the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store": "/api/stores/1",
+        "tasks": [
+          {
+            "type": "PICKUP",
+            "address": "24, Rue de la Paix",
+            "before": "tomorrow 13:00"
+          },
+          {
+            "type": "DROPOFF",
+            "address": "48, Rue de Rivoli",
+            "before": "tomorrow 13:30"
+          }
+        ],
+        "order": {
+          "pricingRuleSet": "/api/pricing_rule_sets/6"
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the JSON node "order.total" should be equal to "1500"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "PUT" request to "/api/deliveries/1" with body:
+      """
+      {
+        "tasks": [
+          {
+            "id": 1
+          },
+          {
+            "id": 2
+          }
+        ],
+        "order": {
+          "pricingRuleSet": "/api/pricing_rule_sets/6",
+          "arbitraryPrice": {
+            "variantPrice": 1200,
+            "variantName": "my custom variant"
+          }
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the JSON node "order.total" should be equal to "1200"
+    # Back to a calculated price: the store's rule set applies
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "PUT" request to "/api/deliveries/1" with body:
+      """
+      {
+        "tasks": [
+          {
+            "id": 1
+          },
+          {
+            "id": 2
+          }
+        ],
+        "order": {
+          "recalculatePrice": true
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the JSON node "order.total" should be equal to "499"

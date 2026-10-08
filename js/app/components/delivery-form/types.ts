@@ -1,10 +1,12 @@
-import { ManualSupplementValues, TaskPayload } from '../../api/types';
+import { ManualSupplementValues, TaskPayload, Uri } from '../../api/types';
 
 export type OrderFormValues = {
   manualSupplements: ManualSupplementValues[];
   paymentMethod?: string;
   recalculatePrice?: boolean;
   isSavedOrder?: boolean;
+  // A rule set chosen by a dispatcher, null to use the store's one
+  pricingRuleSet?: Uri | null;
 };
 
 export type DeliveryFormValues = {

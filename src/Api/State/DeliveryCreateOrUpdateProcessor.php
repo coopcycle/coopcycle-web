@@ -10,6 +10,7 @@ use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Domain\Order\Event\OrderPriceUpdated;
 use AppBundle\Entity\Delivery;
 use AppBundle\Message\DeliveryUpdated;
+use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\UpdateManualSupplements;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
@@ -97,12 +98,20 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
             );
         }
 
-        $onCreatePricingStrategy = new CalculateUsingPricingRules();
+        /** @var PricingRuleSet|null $pricingRuleSet */
+        $pricingRuleSet = null;
+        if ($this->authorizationCheckerInterface->isGranted(
+                'ROLE_DISPATCHER'
+            ) && $data instanceof DeliveryInputDto) {
+            $pricingRuleSet = $data->order?->pricingRuleSet;
+        }
+
+        $onCreatePricingStrategy = new CalculateUsingPricingRules(pricingRuleSet: $pricingRuleSet);
 
         if (!is_null($arbitraryPrice)) {
             $onCreatePricingStrategy = new UseArbitraryPrice($arbitraryPrice);
         } elseif (!is_null($manualSupplements)) {
-            $onCreatePricingStrategy = new CalculateUsingPricingRules($manualSupplements);
+            $onCreatePricingStrategy = new CalculateUsingPricingRules($manualSupplements, $pricingRuleSet);
         }
 
         $isCreateOrderMode = is_null($delivery->getId());
@@ -184,6 +193,11 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                 $oldTotal = $order->getTotal();
                 $oldTaxTotal = $order->getTaxTotal();
 
+                // Choosing another rule set always re-prices the order with it,
+                // a price can not mix lines from two rule sets
+                $hasPricingRuleSetChanged = !is_null($pricingRuleSet)
+                    && !PricingManager::isSamePricingRuleSet($pricingRuleSet, $this->pricingManager->resolvePricingRuleSet($delivery));
+
                 if (!is_null($arbitraryPrice)) {
                     $productVariants = $this->pricingManager->getProductVariantsWithPricingStrategy(
                         $delivery,
@@ -193,12 +207,19 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                         $order,
                         $productVariants
                     );
-                } elseif ($data instanceof DeliveryInputDto && $data->order?->recalculatePrice) {
+
+                    // A price set manually replaces the rule set chosen, as it replaces the supplements
+                    $order->setPricingRuleSet(null);
+                } elseif ($hasPricingRuleSetChanged || ($data instanceof DeliveryInputDto && $data->order?->recalculatePrice)) {
                     $productVariants = $this->pricingManager->getProductVariantsWithPricingStrategy(
                         $delivery,
-                        new CalculateUsingPricingRules($manualSupplements)
+                        new CalculateUsingPricingRules($manualSupplements, $pricingRuleSet)
                     );
                     $this->pricingManager->processDeliveryOrder($order, $productVariants);
+
+                    if ($hasPricingRuleSetChanged) {
+                        $this->pricingManager->setChosenPricingRuleSet($order, $delivery, $pricingRuleSet);
+                    }
                 } elseif (!is_null($manualSupplements) && $this->hasManualSupplementsChanged($manualSupplements, $order)) {
                     $existingProductVariants = [];
                     foreach ($order->getItems() as $item) {

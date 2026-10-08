@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity\Sylius;
 
+use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Pricing\ManualSupplements;
 use AppBundle\Sylius\Product\ProductVariantInterface;
 
@@ -12,8 +13,9 @@ final class UpdateManualSupplements extends UsePricingRules
      */
     public function __construct(
         ManualSupplements $manualSupplements = new ManualSupplements([]),
-        public readonly array $productVariants = []
+        public readonly array $productVariants = [],
+        ?PricingRuleSet $pricingRuleSet = null,
     ) {
-        parent::__construct($manualSupplements);
+        parent::__construct($manualSupplements, $pricingRuleSet);
     }
 }

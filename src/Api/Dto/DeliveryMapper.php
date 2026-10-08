@@ -3,6 +3,7 @@
 namespace AppBundle\Api\Dto;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\ProductOptionValue;
 use AppBundle\Entity\Task;
@@ -29,7 +30,8 @@ class DeliveryMapper
         ?OrderInterface $order,
         ?ArbitraryPrice $arbitraryPrice,
         bool $isSavedOrder,
-        array $groups = []
+        array $groups = [],
+        ?PricingRuleSet $pricingRuleSet = null,
     ): DeliveryInputDto {
 
         $context = !empty($groups) ? ['groups' => $groups] : [];
@@ -108,6 +110,9 @@ class DeliveryMapper
         ) : null;
 
         $deliveryOrderData->isSavedOrder = $isSavedOrder;
+
+        // Only a rule set chosen by a dispatcher, null follows the store's one
+        $deliveryOrderData->pricingRuleSet = $pricingRuleSet ?? $order?->getPricingRuleSet();
 
         if ($deliveryEntity->getId()) {
             $deliveryData->id = $deliveryEntity->getId();
