@@ -263,6 +263,9 @@ export type Order = JsonLdEntity & {
   total: number;
   itemsTotal: number;
   taxTotal: number;
+  // Only with the order_tax_breakdown serialization group
+  itemsTaxTotal?: number;
+  incidentTaxTotal?: number;
   customer: Customer;
   vendor?: LocalBusiness;
   restaurant?: LocalBusiness;

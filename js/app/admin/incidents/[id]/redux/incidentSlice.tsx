@@ -2,6 +2,12 @@ import { createSlice } from '@reduxjs/toolkit';
 import { Incident, Order, Uri } from '../../../../api/types';
 import { RootState } from './incidentStore';
 
+// The tax rate applied to incident price differences
+export type ServiceTaxRate = {
+  amount: number;
+  includedInPrice: boolean;
+};
+
 const initialState = {
   loaded: false,
   incident: null as Incident | null,
@@ -9,6 +15,7 @@ const initialState = {
   storeUri: null as Uri | null,
   images: [],
   transporterEnabled: false,
+  serviceTaxRate: null as ServiceTaxRate | null,
 };
 
 export const incidentSlice = createSlice({
@@ -36,6 +43,9 @@ export const incidentSlice = createSlice({
     setTransporterEnabled(state, action) {
       state.transporterEnabled = action.payload;
     },
+    setServiceTaxRate(state, action) {
+      state.serviceTaxRate = action.payload;
+    },
   },
 });
 
@@ -47,6 +57,7 @@ export const {
   setImages,
   setEvents,
   setTransporterEnabled,
+  setServiceTaxRate,
 } = incidentSlice.actions;
 
 export const selectLoaded = (state: RootState) => state.incident.loaded;
@@ -56,5 +67,7 @@ export const selectStoreUri = (state: RootState) => state.incident.storeUri;
 export const selectImages = (state: RootState) => state.incident.images;
 export const selectTransporterEnabled = (state: RootState) =>
   state.incident.transporterEnabled;
+export const selectServiceTaxRate = (state: RootState) =>
+  state.incident.serviceTaxRate;
 export const selectEvents = (state: RootState) =>
   state.incident.incident.events;

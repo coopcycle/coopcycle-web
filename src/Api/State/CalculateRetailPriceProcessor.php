@@ -14,6 +14,8 @@ use AppBundle\Pricing\PricingManager;
 use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderFactory;
+use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Sylius\Component\Currency\Context\CurrencyContextInterface;
 use Sylius\Component\Taxation\Calculator\CalculatorInterface;
 use Sylius\Component\Taxation\Model\TaxableInterface;
@@ -22,7 +24,9 @@ use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
 use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -44,8 +48,31 @@ class CalculateRetailPriceProcessor implements TaxableInterface, ProcessorInterf
         private readonly NormalizerInterface $normalizer,
         private readonly RequestStack $requestStack,
         private readonly TranslatorInterface $translator,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly AuthorizationCheckerInterface $authorizationChecker,
+        private readonly LoggerInterface $logger,
         private readonly string $state
     ) {}
+
+    private function denyAccessUnlessCanEditDelivery(int $deliveryId): void
+    {
+        /** @var Delivery|null $delivery */
+        $delivery = $this->entityManager->getRepository(Delivery::class)->find($deliveryId);
+
+        // A missing delivery is reported by DeliveryProcessor
+        if (is_null($delivery)) {
+            return;
+        }
+
+        if (!$this->authorizationChecker->isGranted('edit', $delivery)) {
+            $this->logger->warning('Price calculation denied for a delivery the user can not edit', [
+                'delivery_id' => $deliveryId,
+                'store_id' => $delivery->getStore()?->getId(),
+            ]);
+
+            throw new AccessDeniedHttpException(sprintf('Delivery #%d can not be edited', $deliveryId));
+        }
+    }
 
     private function setTaxCategory(?TaxCategoryInterface $taxCategory): void
     {
@@ -62,6 +89,12 @@ class CalculateRetailPriceProcessor implements TaxableInterface, ProcessorInterf
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {
+        // DeliveryProcessor only checks the access to the store given in the body,
+        // not to the delivery loaded by its id
+        if ($data->id) {
+            $this->denyAccessUnlessCanEditDelivery($data->id);
+        }
+
         /** @var Delivery $delivery */
         $delivery = $this->decorated->process($data, $operation, ($data->id) ? array_merge($uriVariables, ['id' => $data->id]) : $uriVariables, $context);
 

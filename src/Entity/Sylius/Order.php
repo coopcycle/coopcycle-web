@@ -649,12 +649,38 @@ class Order extends BaseOrder implements OrderInterface
         return $taxTotal;
     }
 
+    #[Groups(['order_tax_breakdown'])]
     public function getItemsTaxTotal(): int
     {
         $taxTotal = 0;
 
         foreach ($this->items as $item) {
             $taxTotal += $item->getTaxTotal();
+        }
+
+        return $taxTotal;
+    }
+
+    /**
+     * Tax lines set on the order itself, rather than on its items, are either
+     * for the delivery fee (foodtech) or for incident price differences.
+     */
+    #[Groups(['order_tax_breakdown'])]
+    public function getIncidentTaxTotal(): int
+    {
+        $hasDeliveryAdjustments = !$this->getAdjustments(AdjustmentInterface::DELIVERY_ADJUSTMENT)->isEmpty();
+
+        $taxTotal = 0;
+
+        foreach ($this->getAdjustments(AdjustmentInterface::TAX_ADJUSTMENT) as $taxAdjustment) {
+            // Tax lines computed before they were tagged. Without a delivery fee
+            // on the order, they can only be for incidents.
+            $taxableType = $taxAdjustment->getDetails()['taxable_type']
+                ?? ($hasDeliveryAdjustments ? AdjustmentInterface::DELIVERY_ADJUSTMENT : AdjustmentInterface::INCIDENT_ADJUSTMENT);
+
+            if ($taxableType === AdjustmentInterface::INCIDENT_ADJUSTMENT) {
+                $taxTotal += $taxAdjustment->getAmount();
+            }
         }
 
         return $taxTotal;
