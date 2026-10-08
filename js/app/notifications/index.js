@@ -26,7 +26,7 @@ const Notifications = ({ initialNotifications, initialCount, centrifuge, namespa
   const [ count, setCount ] = useState(initialCount)
 
   useEffect(() => {
-    subscribe(centrifuge, `${namespace}_events#${username}`, data => {
+    const unsubscribe = subscribe(centrifuge, `${namespace}_events#${username}`, data => {
       const { event } = data
 
       switch (event.name) {
@@ -42,7 +42,10 @@ const Notifications = ({ initialNotifications, initialCount, centrifuge, namespa
           break
       }
     })
+
     centrifuge.connect()
+
+    return unsubscribe
   }, [])
 
   const onRemove = (notification) => {

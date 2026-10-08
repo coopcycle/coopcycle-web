@@ -97,22 +97,33 @@ async function subscriptionToken({ channel, client }) {
  * object with its own lifecycle, and the payload arrives as `ctx.data` -- so
  * this exists to keep that detail in one place rather than in seven.
  *
+ * Subscribing twice to the same channel on one client is tolerated: `v2` returned
+ * the existing subscription, whereas `newSubscription()` throws. That difference
+ * is not theoretical -- React runs effects twice under StrictMode, so the
+ * notifications widget asked for its channel twice on every page load and the
+ * second call took the whole component down.
+ *
  * @param {Object} options
  * @param {boolean} options.needsToken Whether the channel requires a
  *   subscription token. Centrifugo authorises a connection on its own
  *   user-limited channels (`..._events#<username>`) from the connection token,
  *   but refuses anything shared with "permission denied" unless a token is
  *   presented -- the tracking channel being the one that matters here.
- * @returns {Object} the subscription, so callers can unsubscribe
+ * @returns {function} detaches this listener -- suitable as a React effect
+ *   cleanup. Only the listener is removed, not the subscription: it may be
+ *   shared with another caller on the same channel.
  */
 export function subscribe(centrifuge, channel, onMessage, { needsToken = false } = {}) {
-  const subscription = centrifuge.newSubscription(
-    channel,
-    needsToken ? { getToken: subscriptionToken } : {},
-  )
+  const subscription = centrifuge.getSubscription(channel)
+    ?? centrifuge.newSubscription(
+      channel,
+      needsToken ? { getToken: subscriptionToken } : {},
+    )
 
-  subscription.on('publication', ctx => onMessage(ctx.data))
+  const listener = ctx => onMessage(ctx.data)
+
+  subscription.on('publication', listener)
   subscription.subscribe()
 
-  return subscription
+  return () => subscription.removeListener('publication', listener)
 }
