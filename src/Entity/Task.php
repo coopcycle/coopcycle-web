@@ -1294,23 +1294,6 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         return false;
     }
 
-    public function getIUB(): ?int
-    {
-        $iub_code = collect($this->getMetadata())->get('iub_code');
-        if (is_null($iub_code)) {
-            return null;
-        }
-        return intval($iub_code);
-    }
-
-    public function setIUB(?int $iub_code): self
-    {
-        $metadata = $this->getMetadata();
-        $metadata['iub_code'] = $iub_code;
-        $this->setMetadata($metadata);
-        return $this;
-    }
-
     public function getTimeSlot(): ?TimeSlot
     {
         return $this->timeSlot;
