@@ -212,12 +212,6 @@
 
   {{ form_row(form.on_demand_delivery_product_name) }}
 
-  {% if form.company_gln is defined %}
-    <hr>
-
-    {{ form_row(form.company_gln) }}
-  {% endif %}
-
   <hr>
 
   {{ form_rest(form) }}

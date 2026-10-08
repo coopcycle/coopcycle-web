@@ -75,7 +75,6 @@ services:
       $isDemo: '%is_demo%'
       $googleEnabled: '%env(bool:GOOGLE_ENABLED)%'
       $cashEnabled: '%env(bool:CASH_ON_DELIVERY_ENABLED)%'
-      $standtrackEnabled: '%env(STANDTRACK_API_KEY)%'
     tags: [ form.type ]
 
   AppBundle\Form\TaskType:
@@ -97,7 +96,6 @@ services:
       $cashOnDeliveryOptinEnabled: '%env(bool:CASH_ON_DELIVERY_OPTIN_ENABLED)%'
       $transportersConfig: '%transporters_config%'
       $billingEnabled: '%billing_enabled%'
-      $standtrackEnabled: '%env(STANDTRACK_API_KEY)%'
       $rdcConnections: '%rdc_connections%'
       $rdcEnabled: '%env(bool:RDC_ENABLED)%'
       $cykeEnabled: '%cyke_enabled%'
