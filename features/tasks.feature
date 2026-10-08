@@ -3787,6 +3787,50 @@ Feature: Tasks
     And the database entity "AppBundle\Entity\Sylius\Order" should have a property "state" with value "cart"
     And the database entity "AppBundle\Entity\Task" should have a property "status" with value "TODO"
 
+  Scenario: Cancel multiple tasks at once - a task that can't be found doesn't prevent the others to be cancelled
+    Given the fixtures files are loaded:
+      | bulk_cancel_tasks.yml |
+    And the user "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" has role "ROLE_DISPATCHER"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/tasks/cancel" with body:
+      """
+      {
+        "tasks": [
+          "/api/tasks/1",
+          "/api/tasks/2",
+          "/api/tasks/999"
+        ]
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "success": [
+          {
+            "@id":"/api/tasks/1",
+            "status":"CANCELLED",
+            "@*@":"@*@"
+          },
+          {
+            "@id":"/api/tasks/2",
+            "status":"CANCELLED",
+            "@*@":"@*@"
+          }
+        ],
+        "failed": {
+          "/api/tasks/999": "@string@"
+        }
+      }
+      """
+
   Scenario: Cancel multiple tasks at once requires the dispatcher role
     Given the fixtures files are loaded:
       | bulk_cancel_tasks.yml |

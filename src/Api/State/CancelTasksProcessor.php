@@ -2,9 +2,13 @@
 
 declare(strict_types=1);
 
-namespace AppBundle\Action\Task;
+namespace AppBundle\Api\State;
 
 use ApiPlatform\Api\IriConverterInterface;
+use ApiPlatform\Exception\ExceptionInterface as ApiPlatformException;
+use ApiPlatform\Metadata\Operation;
+use ApiPlatform\State\ProcessorInterface;
+use AppBundle\Api\Dto\CancelTasksDto;
 use AppBundle\Entity\Task;
 use AppBundle\Service\TaskManager;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -12,33 +16,49 @@ use AppBundle\Sylius\Order\OrderTransitions;
 use Doctrine\ORM\EntityManagerInterface;
 use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class BulkCancel extends Base
+class CancelTasksProcessor implements ProcessorInterface
 {
     public function __construct(
-        TaskManager $taskManager,
+        private readonly TaskManager $taskManager,
         private readonly IriConverterInterface $iriConverter,
         private readonly EntityManagerInterface $entityManager,
         private readonly NormalizerInterface $normalizer,
         private readonly StateMachineFactoryInterface $stateMachineFactory,
         private readonly TranslatorInterface $translator,
     )
+    {}
+
+    /**
+     * @param CancelTasksDto $data
+     */
+    public function process($data, Operation $operation, array $uriVariables = [], array $context = []): JsonResponse
     {
-        parent::__construct($taskManager);
-    }
-
-    public function __invoke(Request $request): JsonResponse
-    {
-        $payload = $request->toArray();
-
-        $tasks = array_map(fn(string $iri) => $this->iriConverter->getResourceFromIri($iri), $payload['tasks'] ?? []);
-        $tasks = array_filter($tasks, fn(Task $task) => !$task->isCancelled());
-
+        $tasks = [];
         $cancelled = [];
         $failed = [];
+
+        // A task that was deleted in the meantime doesn't prevent the others to be cancelled
+        foreach ($data->tasks as $iri) {
+            try {
+                $task = $this->iriConverter->getResourceFromIri($iri);
+            } catch (ApiPlatformException $e) {
+                $failed[$iri] = $e->getMessage();
+                continue;
+            }
+
+            if (!$task instanceof Task) {
+                $failed[$iri] = sprintf('"%s" is not a task', $iri);
+                continue;
+            }
+
+            if (!$task->isCancelled()) {
+                $tasks[] = $task;
+            }
+        }
 
         foreach ($this->groupByDelivery($tasks) as $group) {
 
@@ -53,7 +73,21 @@ class BulkCancel extends Base
             // The tasks of a delivery are cancelled with a single command,
             // so that when all of them are cancelled, the order is cancelled
             // without recalculating its price for each task
-            $this->taskManager->cancelTasks($group, recalculatePrice: true);
+            try {
+                $this->taskManager->cancelTasks($group, recalculatePrice: true);
+            } catch (HandlerFailedException $e) {
+                // i.e the order state changed since it was checked; the events of the failed command are discarded,
+                // so revert the tasks too, to flush the other groups only
+                $cause = $e;
+                while ($cause instanceof HandlerFailedException && null !== $cause->getPrevious()) {
+                    $cause = $cause->getPrevious();
+                }
+                foreach ($group as $task) {
+                    $this->entityManager->refresh($task);
+                    $failed[$this->iriConverter->getIriFromResource($task)] = $cause->getMessage();
+                }
+                continue;
+            }
 
             $cancelled = array_merge($cancelled, $group);
         }

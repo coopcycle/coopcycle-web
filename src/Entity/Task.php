@@ -26,11 +26,11 @@ use AppBundle\Action\Task\Restore as TaskRestore;
 use AppBundle\Action\Task\Start as TaskStart;
 use AppBundle\Action\Task\RemoveFromGroup;
 use AppBundle\Action\Task\BulkMarkAsDone as TaskBulkMarkAsDone;
-use AppBundle\Action\Task\BulkCancel as TaskBulkCancel;
 use AppBundle\Action\Task\Context as TaskContext;
 use AppBundle\Action\Task\DeliveryFormData as TaskDeliveryFormData;
 use AppBundle\Action\Task\AppendToComment as TaskAppendToComment;
 use AppBundle\Api\Dto\AssignTasksDto;
+use AppBundle\Api\Dto\CancelTasksDto;
 use AppBundle\Api\Dto\BioDeliverInput;
 use AppBundle\Api\Filter\AssignedFilter;
 use AppBundle\Api\Filter\TaskDateFilter;
@@ -39,6 +39,7 @@ use AppBundle\Api\Filter\TaskFilter;
 use AppBundle\Api\Filter\OrganizationFilter;
 use AppBundle\Api\State\AssignTasksProcessor;
 use AppBundle\Api\State\BioDeliverProcessor;
+use AppBundle\Api\State\CancelTasksProcessor;
 use AppBundle\Api\State\TasksProvider;
 use AppBundle\DataType\TsRange;
 use AppBundle\Domain\Task\Event as TaskDomainEvent;
@@ -312,7 +313,8 @@ use Symfony\Component\Validator\Constraints as Assert;
         ),
         new Put(
             uriTemplate: '/tasks/cancel',
-            controller: TaskBulkCancel::class,
+            input: CancelTasksDto::class,
+            processor: CancelTasksProcessor::class,
             openapiContext: [
                 'summary' => 'Cancel multiple Tasks at once',
                 'parameters' => [
@@ -330,7 +332,7 @@ use Symfony\Component\Validator\Constraints as Assert;
                 ]
             ],
             security: 'is_granted(\'ROLE_DISPATCHER\')',
-            write: false
+            denormalizationContext: ['groups' => ['tasks_cancel']],
         ),
         new Put(
             uriTemplate: '/tasks/images',
