@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { render } from '../utils/react'
 import { Badge, Popover } from 'antd'
-import Centrifuge from 'centrifuge'
+import { createCentrifuge, subscribe } from '../centrifugo/client'
 import axios from 'axios'
 
 import NotificationList from './NotificationList'
@@ -26,8 +26,8 @@ const Notifications = ({ initialNotifications, initialCount, centrifuge, namespa
   const [ count, setCount ] = useState(initialCount)
 
   useEffect(() => {
-    centrifuge.subscribe(`${namespace}_events#${username}`, message => {
-      const { event } = message.data
+    const unsubscribe = subscribe(centrifuge, `${namespace}_events#${username}`, data => {
+      const { event } = data
 
       switch (event.name) {
         case 'notifications':
@@ -42,7 +42,10 @@ const Notifications = ({ initialNotifications, initialCount, centrifuge, namespa
           break
       }
     })
+
     centrifuge.connect()
+
+    return unsubscribe
   }, [])
 
   const onRemove = (notification) => {
@@ -87,9 +90,7 @@ function bootstrap(el, options) {
     return
   }
 
-  const protocol = window.location.protocol === 'https:' ? 'wss': 'ws'
-  const centrifuge = new Centrifuge(`${protocol}://${window.location.host}/centrifugo/connection/websocket`)
-  centrifuge.setToken(options.token)
+  const centrifuge = createCentrifuge(options.token)
 
   const theme = el.dataset.notificationTheme || 'light'
 

@@ -1,6 +1,6 @@
 import MapHelper from '../MapHelper'
 import L from 'leaflet'
-import Centrifuge from 'centrifuge'
+import { createCentrifuge, subscribe } from '../centrifugo/client'
 
 import { createLeafletIcon } from '../components/Avatar'
 
@@ -42,19 +42,16 @@ map.fitBounds(group.getBounds())
 
 if (!isCompleted && centrifugoToken) {
 
-  const protocol = window.location.protocol === 'https:' ? 'wss': 'ws'
+  const centrifuge = createCentrifuge(centrifugoToken)
 
-  const centrifuge = new Centrifuge(`${protocol}://${window.location.host}/centrifugo/connection/websocket`)
-  centrifuge.setToken(centrifugoToken)
-
-  centrifuge.subscribe(centrifugoChannel, function(message) {
+  subscribe(centrifuge, centrifugoChannel, function(data) {
     const latLng = [
-      message.data.coords.lat,
-      message.data.coords.lng
+      data.coords.lat,
+      data.coords.lng
     ]
 
     if (!courierMarker) {
-      courierMarker = L.marker(latLng, { icon: createLeafletIcon(message.data.user) })
+      courierMarker = L.marker(latLng, { icon: createLeafletIcon(data.user) })
       courierMarker.setOpacity(1)
       courierMarker.addTo(map)
 
