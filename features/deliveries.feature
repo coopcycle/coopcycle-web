@@ -4718,6 +4718,7 @@ Feature: Deliveries
             "orgName": "Acme",
             "arbitraryPriceTemplate": null,
             "pricingRuleSet": null,
+            "manualSupplements": [],
             "isCancelled": false,
             "paused": false
           }

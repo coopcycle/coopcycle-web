@@ -16,6 +16,7 @@ use AppBundle\Entity\Sylius\CalculateUsingPricingRules;
 use AppBundle\Entity\Sylius\UsePricingRules;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\RecurrenceRule;
+use AppBundle\Entity\Task\RecurrenceRuleManualSupplement;
 use AppBundle\Service\TimeSlotManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
@@ -382,7 +383,45 @@ class PricingManager
             $pricingStrategy instanceof UsePricingRules ? $pricingStrategy->pricingRuleSet : null
         );
 
+        foreach ($recurrenceRule->getManualSupplements() as $manualSupplement) {
+            $recurrenceRule->removeManualSupplement($manualSupplement);
+        }
+        // A price set manually replaces the supplements
+        if ($pricingStrategy instanceof UsePricingRules) {
+            foreach ($pricingStrategy->manualSupplements->orderSupplements as $supplement) {
+                $recurrenceRule->addManualSupplement(
+                    RecurrenceRuleManualSupplement::create($supplement->pricingRule, $supplement->quantity)
+                );
+            }
+        }
+
         $recurrenceRule->setTemplate($template);
+    }
+
+    /**
+     * The manual supplements of the orders generated from a recurrence rule;
+     * a supplement that is not part of the rule set used anymore (i.e. the store changed its rule set) is skipped
+     */
+    public function getRecurrenceRuleManualSupplements(RecurrenceRule $recurrenceRule): ManualSupplements
+    {
+        $pricingRuleSet = $recurrenceRule->getPricingRuleSet() ?? $recurrenceRule->getStore()->getPricingRuleSet();
+
+        $manualSupplements = [];
+        foreach ($recurrenceRule->getManualSupplements() as $manualSupplement) {
+            $pricingRule = $manualSupplement->getPricingRule();
+
+            if (is_null($pricingRuleSet) || !$pricingRuleSet->getRules()->contains($pricingRule)) {
+                $this->feeCalculationLogger->warning(sprintf('Skipping manual supplement #%d of a recurrence rule, not part of the pricing rule set used', $pricingRule->getId()), [
+                    'recurrence_rule_id' => $recurrenceRule->getId(),
+                    'store_id' => $recurrenceRule->getStore()->getId(),
+                ]);
+                continue;
+            }
+
+            $manualSupplements[] = new ManualSupplement($pricingRule, $manualSupplement->getQuantity());
+        }
+
+        return new ManualSupplements($manualSupplements);
     }
 
     private function createOrderItem(ProductVariantInterface $variant): OrderItemInterface

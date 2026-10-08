@@ -158,6 +158,12 @@ const pickupSchema = {
   '@id': null, // Will be set when creating new tasks
 };
 
+// The server may serialize an IRI as an absolute URL (i.e. when there is no order yet,
+// when cloning an order or editing a recurrence rule), the form identifies them by their path
+function _iriToPath(iri: string): string {
+  return new URL(iri, window.location.origin).pathname;
+}
+
 type Props = {
   storeNodeId: Uri;
   deliveryId?: number;
@@ -406,15 +412,18 @@ const DeliveryForm = ({
         initialValues.order.manualSupplements = [];
       }
 
+      initialValues.order.manualSupplements =
+        initialValues.order.manualSupplements.map(supplement => ({
+          ...supplement,
+          pricingRule: _iriToPath(supplement.pricingRule),
+        }));
+
       setInitialManualSupplements([...initialValues.order.manualSupplements]);
 
-      // The server may serialize the IRI as an absolute URL (i.e. when cloning an order),
-      // the rule set options are identified by their path
       if (initialValues.order.pricingRuleSet) {
-        initialValues.order.pricingRuleSet = new URL(
+        initialValues.order.pricingRuleSet = _iriToPath(
           initialValues.order.pricingRuleSet,
-          window.location.origin,
-        ).pathname;
+        );
       }
 
       if (preLoadedFormData.order?.arbitraryPrice) {

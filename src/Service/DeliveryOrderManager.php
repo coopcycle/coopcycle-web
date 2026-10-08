@@ -176,7 +176,8 @@ class DeliveryOrderManager
             );
         } else {
             $pricingStrategy = new CalculateUsingPricingRules(
-                pricingRuleSet: $recurrenceRule->getPricingRuleSet()
+                $this->pricingManager->getRecurrenceRuleManualSupplements($recurrenceRule),
+                $recurrenceRule->getPricingRuleSet()
             );
         }
 

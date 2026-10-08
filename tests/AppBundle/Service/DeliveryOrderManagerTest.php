@@ -6,6 +6,7 @@ namespace Tests\AppBundle\Service;
 
 use AppBundle\Action\Incident\CreateIncident;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Sylius\CalculateUsingPricingRules;
 use AppBundle\Entity\Sylius\Order;
@@ -13,6 +14,8 @@ use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\ProductRepository;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\RecurrenceRule;
+use AppBundle\Pricing\ManualSupplement;
+use AppBundle\Pricing\ManualSupplements;
 use AppBundle\Pricing\PricingManager;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\DeliveryOrderManager;
@@ -65,6 +68,9 @@ class DeliveryOrderManagerTest extends TestCase
         $this->pricingManager
             ->processDeliveryOrder(Argument::any(), Argument::type('array'))
             ->shouldBeCalled();
+        $this->pricingManager
+            ->getRecurrenceRuleManualSupplements(Argument::type(RecurrenceRule::class))
+            ->willReturn(new ManualSupplements([]));
 
         $this->deliveryOrderManager = new DeliveryOrderManager(
             $this->prophesize(Security::class)->reveal(),
@@ -137,6 +143,31 @@ class DeliveryOrderManagerTest extends TestCase
         // So that a recalculation of the order keeps it
         $this->pricingManager
             ->setChosenPricingRuleSet($order, Argument::type(Delivery::class), $pricingRuleSet)
+            ->shouldBeCalled();
+
+        $this->deliveryOrderManager->createOrderFromRecurrenceRule($recurrenceRule, '2026-10-06');
+    }
+
+    public function testOrderIsPricedWithTheManualSupplementsOfItsRule()
+    {
+        $recurrenceRule = $this->createRecurrenceRule();
+        $order = $this->expectDeliveryAndOrder($recurrenceRule);
+
+        $manualSupplements = new ManualSupplements([
+            new ManualSupplement(new PricingRule(), 2),
+        ]);
+
+        $this->pricingManager
+            ->getRecurrenceRuleManualSupplements($recurrenceRule)
+            ->willReturn($manualSupplements);
+
+        $this->pricingManager
+            ->getProductVariantsWithPricingStrategy(
+                Argument::type(Delivery::class),
+                Argument::that(fn ($strategy) => $strategy instanceof CalculateUsingPricingRules
+                    && $strategy->manualSupplements === $manualSupplements)
+            )
+            ->willReturn([$this->prophesize(ProductVariantInterface::class)->reveal()])
             ->shouldBeCalled();
 
         $this->deliveryOrderManager->createOrderFromRecurrenceRule($recurrenceRule, '2026-10-06');

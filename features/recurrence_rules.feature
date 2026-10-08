@@ -46,6 +46,7 @@ Feature: Task recurrence rules
         },
         "arbitraryPriceTemplate": null,
         "pricingRuleSet": null,
+        "manualSupplements": [],
         "isCancelled":false,
         "paused":false
       }
@@ -124,6 +125,7 @@ Feature: Task recurrence rules
         },
         "arbitraryPriceTemplate": null,
         "pricingRuleSet": null,
+        "manualSupplements": [],
         "isCancelled":false,
         "paused":false
       }
@@ -209,6 +211,7 @@ Feature: Task recurrence rules
           "variantPrice":7200
         },
         "pricingRuleSet": null,
+        "manualSupplements": [],
         "isCancelled":false,
         "paused":false
       }
@@ -258,6 +261,7 @@ Feature: Task recurrence rules
         },
         "arbitraryPriceTemplate": null,
         "pricingRuleSet": null,
+        "manualSupplements": [],
         "isCancelled":false,
         "paused":false
       }
@@ -335,6 +339,7 @@ Feature: Task recurrence rules
         "name":null,
         "arbitraryPriceTemplate": null,
         "pricingRuleSet": null,
+        "manualSupplements": [],
         "isCancelled":false,
         "paused":false
       }
@@ -850,3 +855,195 @@ Feature: Task recurrence rules
     And the user "bob" sends a "DELETE" request to "/api/pricing_rule_sets/6"
     Then the response status code should be 400
     And the JSON node "hydra:description" should contain "AppBundle\Entity\Task\RecurrenceRule#1"
+
+  Scenario: Generate orders keeps the manual supplements of the recurrence rule
+    Given the fixtures files are loaded:
+      | sylius_products.yml               |
+      | sylius_taxation.yml               |
+      | payment_methods.yml               |
+      | users.yml                         |
+      | store_with_manual_supplements.yml |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store": "/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix",
+          "doneBefore": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli",
+          "doneBefore": "tomorrow 13:30"
+        },
+        "rrule": "FREQ=WEEKLY;BYDAY=MO",
+        "order": {
+          "manualSupplements": [
+            {
+              "pricingRule": "/api/pricing_rules/3",
+              "quantity": 1
+            }
+          ]
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the JSON node "order.total" should be equal to "699"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/recurrence_rules/1"
+    Then the response status code should be 200
+    And the JSON should match:
+      """
+      {
+        "@id": "/api/recurrence_rules/1",
+        "manualSupplements": [
+          {
+            "pricingRule": "/api/pricing_rules/3",
+            "quantity": 1,
+            "@*@": "@*@"
+          }
+        ],
+        "@*@": "@*@"
+      }
+      """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/recurrence_rules/generate_orders?date=2030-01-07"
+    Then the response status code should be 201
+    And the JSON node "succeeded" should be equal to "1"
+    When I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/orders/2"
+    Then the response status code should be 200
+    # Base: 499, supplement: 200
+    And the JSON node "total" should be equal to "699"
+
+  Scenario: Update the manual supplements of a recurrence rule
+    Given the fixtures files are loaded:
+      | sylius_products.yml               |
+      | sylius_taxation.yml               |
+      | payment_methods.yml               |
+      | users.yml                         |
+      | store_with_manual_supplements.yml |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store": "/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix",
+          "doneBefore": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli",
+          "doneBefore": "tomorrow 13:30"
+        },
+        "rrule": "FREQ=WEEKLY;BYDAY=MO",
+        "order": {
+          "manualSupplements": [
+            {
+              "pricingRule": "/api/pricing_rules/3",
+              "quantity": 1
+            }
+          ]
+        }
+      }
+      """
+    Then the response status code should be 201
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/recurrence_rules/1" with body:
+      """
+      {
+        "template": {
+          "@type": "hydra:Collection",
+          "hydra:member": [
+            {
+              "type": "PICKUP",
+              "address": {
+                "streetAddress": "24, Rue de la Paix"
+              },
+              "after": "12:45",
+              "before": "13:00"
+            },
+            {
+              "type": "DROPOFF",
+              "address": {
+                "streetAddress": "48, Rue de Rivoli"
+              },
+              "after": "13:15",
+              "before": "13:30"
+            }
+          ]
+        },
+        "manualSupplements": [
+          {
+            "pricingRule": "/api/pricing_rules/4",
+            "quantity": 2
+          }
+        ]
+      }
+      """
+    Then the response status code should be 200
+    And the JSON should match:
+      """
+      {
+        "@id":"/api/recurrence_rules/1",
+        "manualSupplements": [
+          {
+            "pricingRule": "/api/pricing_rules/4",
+            "quantity": 2,
+            "@*@": "@*@"
+          }
+        ],
+        "@*@": "@*@"
+      }
+      """
+    # Not a manual supplement
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/recurrence_rules/1" with body:
+      """
+      {
+        "template": {
+          "@type": "hydra:Collection",
+          "hydra:member": [
+            {
+              "type": "PICKUP",
+              "address": {
+                "streetAddress": "24, Rue de la Paix"
+              },
+              "after": "12:45",
+              "before": "13:00"
+            },
+            {
+              "type": "DROPOFF",
+              "address": {
+                "streetAddress": "48, Rue de Rivoli"
+              },
+              "after": "13:15",
+              "before": "13:30"
+            }
+          ]
+        },
+        "manualSupplements": [
+          {
+            "pricingRule": "/api/pricing_rules/1",
+            "quantity": 1
+          }
+        ]
+      }
+      """
+    Then the response status code should be 400
+    # The invalid update is not saved
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/recurrence_rules/1"
+    Then the JSON node "manualSupplements" should have 1 element
+    And the JSON node "manualSupplements[0].pricingRule" should be equal to "/api/pricing_rules/4"

@@ -8,6 +8,11 @@
     <field name="rule" type="rrule" column="rule" nullable="false"/>
     <field name="template" type="json" column="template" nullable="false"/>
     <field name="arbitraryPriceTemplate" type="json" column="arbitrary_price_template" nullable="true"/>
+    <one-to-many field="manualSupplements" target-entity="AppBundle\Entity\Task\RecurrenceRuleManualSupplement" mapped-by="recurrenceRule" orphan-removal="true">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+    </one-to-many>
     <field name="deletedAt" type="datetime" column="deleted_at" nullable="true"/>
     <many-to-one field="pricingRuleSet" target-entity="AppBundle\Entity\Delivery\PricingRuleSet">
       <join-columns>
