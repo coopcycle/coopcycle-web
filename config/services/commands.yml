@@ -35,6 +35,10 @@ services:
     tags:
       - { name: 'console.command', command: 'coopcycle:referral:backfill-codes' }
 
+  AppBundle\Command\BackfillReferralCanonicalEmailsCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:referral:backfill-canonical-emails' }
+
   AppBundle\Command\BotCommand:
     parent: M6Web\Bundle\DaemonBundle\Command\DaemonCommand
     autowire: false

@@ -79,6 +79,18 @@ class Customer extends BaseCustomer implements TaggableInterface, CustomerInterf
 
     protected ?string $referralCode = null;
 
+    /**
+     * The address with provider-specific aliasing stripped, so two accounts
+     * reaching the same mailbox can be spotted -- see
+     * AppBundle\Entity\Listener\CustomerListener, which keeps it in sync.
+     *
+     * Deliberately NOT unique and deliberately distinct from Sylius'
+     * emailCanonical (a plain lowercase used for lookups): registering under
+     * an alias of an existing account stays allowed, it just must not earn a
+     * referral reward.
+     */
+    protected ?string $referralCanonicalEmail = null;
+
     protected int $successfulReferralCount = 0;
 
     public function __construct()
@@ -365,6 +377,16 @@ class Customer extends BaseCustomer implements TaggableInterface, CustomerInterf
     public function setReferralCode(?string $referralCode): void
     {
         $this->referralCode = $referralCode;
+    }
+
+    public function getReferralCanonicalEmail(): ?string
+    {
+        return $this->referralCanonicalEmail;
+    }
+
+    public function setReferralCanonicalEmail(?string $referralCanonicalEmail): void
+    {
+        $this->referralCanonicalEmail = $referralCanonicalEmail;
     }
 
     public function getSuccessfulReferralCount(): int

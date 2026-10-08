@@ -75,6 +75,16 @@ class ReferralManager
             return;
         }
 
+        if ($this->isAliasOfAnExistingAccount($referred)) {
+            $this->logger->info(sprintf(
+                'Customer #%d signed up as an alias of an existing account, ignoring referral',
+                $referred->getId()
+            ));
+            $this->entityManager->flush();
+
+            return;
+        }
+
         if (null !== $this->referralRepository->findPendingByReferredCustomer($referred)) {
             $this->entityManager->flush();
 
@@ -127,5 +137,34 @@ class ReferralManager
 
         return $this->emailCanonizer->getCanonicalEmailAddress($referrerEmail)
             === $this->emailCanonizer->getCanonicalEmailAddress($referredEmail);
+    }
+
+    /**
+     * The referral reward is meant for bringing in someone new, so an account
+     * that merely aliases one that already exists earns nothing -- otherwise
+     * two people could split the proceeds of a "referral" one of them farmed
+     * by signing up a second time as foo+alias@example.com.
+     *
+     * Matched on Customer::$referralCanonicalEmail, which only exists from
+     * the point this shipped, so pre-existing accounts need
+     * coopcycle:referral:backfill-canonical-emails to be caught here.
+     */
+    private function isAliasOfAnExistingAccount(Customer $referred): bool
+    {
+        $email = $referred->getEmail();
+
+        if (empty($email)) {
+            return false;
+        }
+
+        $canonicalEmail = $this->emailCanonizer->getCanonicalEmailAddress($email);
+
+        foreach ($this->customerRepository->findBy(['referralCanonicalEmail' => $canonicalEmail]) as $customer) {
+            if ($customer !== $referred) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
