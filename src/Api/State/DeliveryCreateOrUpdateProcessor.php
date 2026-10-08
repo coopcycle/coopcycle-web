@@ -196,7 +196,7 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                 // Choosing another rule set always re-prices the order with it,
                 // a price can not mix lines from two rule sets
                 $hasPricingRuleSetChanged = !is_null($pricingRuleSet)
-                    && $pricingRuleSet !== $this->pricingManager->resolvePricingRuleSet($delivery);
+                    && !PricingManager::isSamePricingRuleSet($pricingRuleSet, $this->pricingManager->resolvePricingRuleSet($delivery));
 
                 if (!is_null($arbitraryPrice)) {
                     $productVariants = $this->pricingManager->getProductVariantsWithPricingStrategy(
@@ -207,6 +207,9 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                         $order,
                         $productVariants
                     );
+
+                    // A price set manually replaces the rule set chosen, as it replaces the supplements
+                    $order->setPricingRuleSet(null);
                 } elseif ($hasPricingRuleSetChanged || ($data instanceof DeliveryInputDto && $data->order?->recalculatePrice)) {
                     $productVariants = $this->pricingManager->getProductVariantsWithPricingStrategy(
                         $delivery,

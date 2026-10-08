@@ -7179,3 +7179,85 @@ Feature: Deliveries
       """
     Then the response status code should be 200
     And the JSON node "order.total" should be equal to "1500"
+
+  Scenario: A price set manually replaces the pricing rule set chosen for a delivery
+    Given the fixtures files are loaded:
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | stores.yml          |
+    Given the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456              |
+    And the user "admin" has role "ROLE_ADMIN"
+    Given the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store": "/api/stores/1",
+        "tasks": [
+          {
+            "type": "PICKUP",
+            "address": "24, Rue de la Paix",
+            "before": "tomorrow 13:00"
+          },
+          {
+            "type": "DROPOFF",
+            "address": "48, Rue de Rivoli",
+            "before": "tomorrow 13:30"
+          }
+        ],
+        "order": {
+          "pricingRuleSet": "/api/pricing_rule_sets/6"
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the JSON node "order.total" should be equal to "1500"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "PUT" request to "/api/deliveries/1" with body:
+      """
+      {
+        "tasks": [
+          {
+            "id": 1
+          },
+          {
+            "id": 2
+          }
+        ],
+        "order": {
+          "pricingRuleSet": "/api/pricing_rule_sets/6",
+          "arbitraryPrice": {
+            "variantPrice": 1200,
+            "variantName": "my custom variant"
+          }
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the JSON node "order.total" should be equal to "1200"
+    # Back to a calculated price: the store's rule set applies
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "PUT" request to "/api/deliveries/1" with body:
+      """
+      {
+        "tasks": [
+          {
+            "id": 1
+          },
+          {
+            "id": 2
+          }
+        ],
+        "order": {
+          "recalculatePrice": true
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the JSON node "order.total" should be equal to "499"

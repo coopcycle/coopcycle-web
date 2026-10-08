@@ -195,8 +195,25 @@ class PricingManager
         $storePricingRuleSet = $delivery->getStore()?->getPricingRuleSet();
 
         $order->setPricingRuleSet(
-            $chosenPricingRuleSet === $storePricingRuleSet ? null : $chosenPricingRuleSet
+            self::isSamePricingRuleSet($chosenPricingRuleSet, $storePricingRuleSet) ? null : $chosenPricingRuleSet
         );
+    }
+
+    /**
+     * Compares by id, so that it does not rely on both being the same instance
+     * (i.e. one denormalized from a request, the other loaded with an order)
+     */
+    public static function isSamePricingRuleSet(?PricingRuleSet $a, ?PricingRuleSet $b): bool
+    {
+        if ($a === $b) {
+            return true;
+        }
+
+        if (is_null($a) || is_null($b)) {
+            return false;
+        }
+
+        return $a->getId() === $b->getId();
     }
 
     /**
@@ -383,9 +400,7 @@ class PricingManager
             $pricingStrategy instanceof UsePricingRules ? $pricingStrategy->pricingRuleSet : null
         );
 
-        foreach ($recurrenceRule->getManualSupplements() as $manualSupplement) {
-            $recurrenceRule->removeManualSupplement($manualSupplement);
-        }
+        $recurrenceRule->clearManualSupplements();
         // A price set manually replaces the supplements
         if ($pricingStrategy instanceof UsePricingRules) {
             foreach ($pricingStrategy->manualSupplements->orderSupplements as $supplement) {
@@ -409,6 +424,9 @@ class PricingManager
         $manualSupplements = [];
         foreach ($recurrenceRule->getManualSupplements() as $manualSupplement) {
             $pricingRule = $manualSupplement->getPricingRule();
+            if (is_null($pricingRule)) {
+                continue;
+            }
 
             if (is_null($pricingRuleSet) || !$pricingRuleSet->getRules()->contains($pricingRule)) {
                 $this->feeCalculationLogger->warning(sprintf('Skipping manual supplement #%d of a recurrence rule, not part of the pricing rule set used', $pricingRule->getId()), [

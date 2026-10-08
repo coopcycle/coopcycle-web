@@ -240,6 +240,12 @@ class RecurrenceRule implements SoftDeleteableInterface
         $this->manualSupplements->removeElement($manualSupplement);
     }
 
+    public function clearManualSupplements(): void
+    {
+        // The removed supplements are deleted (orphan removal)
+        $this->manualSupplements->clear();
+    }
+
     /**
      * Only manual supplements of the rule set used to price the generated orders
      */

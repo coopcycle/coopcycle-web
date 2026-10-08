@@ -124,8 +124,9 @@ function convertValuesToRecurrenceRulePayload(values) {
       variantName: values.variantName ?? '',
       variantPrice: values.variantIncVATPrice,
     };
-    // A price set manually replaces the supplements
+    // A price set manually replaces the supplements and the rule set chosen
     data.manualSupplements = [];
+    data.pricingRuleSet = null;
   } else {
     data.arbitraryPriceTemplate = null;
     // Without the JSON-LD keys of the preloaded data
