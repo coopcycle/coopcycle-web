@@ -377,6 +377,10 @@ services:
     arguments:
       $envEnabled: '%env(bool:LOYALTY_PROGRAM_ENABLED)%'
 
+  AppBundle\Controller\Admin\MarketingController:
+    arguments:
+      $marketingAutomationEnabled: '%env(bool:MARKETING_AUTOMATION_ENABLED)%'
+
   AppBundle\Service\Marketing\MarketingAutomationStatus:
     arguments:
       $envEnabled: '%env(bool:MARKETING_AUTOMATION_ENABLED)%'
