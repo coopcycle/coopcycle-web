@@ -15,6 +15,7 @@ use Sylius\Component\Promotion\Factory\PromotionCouponFactoryInterface;
 use Sylius\Component\Promotion\Model\PromotionAction;
 use Sylius\Component\Promotion\Repository\PromotionCouponRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
+use Webmozart\Assert\Assert;
 
 /**
  * Mints the throwaway Promotion + single PromotionCoupon pair behind a reward
@@ -91,6 +92,11 @@ class CustomerRewardCouponFactory
         }
 
         $promotionCoupon = $this->promotionCouponFactory->createForPromotion($promotion);
+        // Sylius' factory is typed to its own narrower interface, but the
+        // configured resource is AppBundle's PromotionCoupon, which is what
+        // carries the per-customer limit and the internal flag used below.
+        Assert::isInstanceOf($promotionCoupon, PromotionCouponInterface::class);
+
         $promotionCoupon->setCode($this->generateUniqueCode());
         // The coupon is already scoped to this one customer via the
         // IsCustomerRule above, so the per-customer and global limits are the
