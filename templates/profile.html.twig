@@ -53,6 +53,15 @@
           </a>
         </li>
         {% endif %}
+        {% if loyalty_program_active() %}
+        <li
+          class="{{ app.request.attributes.get('_route') == 'profile_loyalty' ? 'active' : '' }}">
+          <a href="{{ path('profile_loyalty') }}">
+            <i class="fa fa-star mr-1"></i>
+            <span>{% trans %}profile.myLoyalty{% endtrans %}</span>
+          </a>
+        </li>
+        {% endif %}
         {% if is_granted('ROLE_COURIER') %}
         <li
           class="{{ app.request.attributes.get('_route') == 'profile_tasks' ? 'active' : '' }}">

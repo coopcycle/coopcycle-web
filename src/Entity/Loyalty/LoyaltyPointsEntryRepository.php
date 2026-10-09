@@ -57,6 +57,27 @@ class LoyaltyPointsEntryRepository extends EntityRepository
         return $query->getResult();
     }
 
+    /**
+     * The soonest batch of points due to lapse, so the customer can be told
+     * before they quietly disappear. Null when nothing is set to expire.
+     */
+    public function findNextExpiry(Customer $customer, ?\DateTime $now = null): ?LoyaltyPointsEntry
+    {
+        return $this->createQueryBuilder('e')
+            ->andWhere('e.customer = :customer')
+            ->andWhere('e.type = :credit')
+            ->andWhere('e.remaining > 0')
+            ->andWhere('e.expiresAt IS NOT NULL')
+            ->andWhere('e.expiresAt > :now')
+            ->setParameter('customer', $customer)
+            ->setParameter('credit', LoyaltyPointsEntry::TYPE_CREDIT)
+            ->setParameter('now', $now ?? new \DateTime())
+            ->orderBy('e.expiresAt', 'ASC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     public function findOneByOrder(OrderInterface $order): ?LoyaltyPointsEntry
     {
         return $this->findOneBy(['order' => $order, 'type' => LoyaltyPointsEntry::TYPE_CREDIT]);
