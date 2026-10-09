@@ -81,3 +81,4 @@ form.package_set.duplicatePackageNames: Les noms de paquet doivent être uniques
 store.packages_required.package_set_required: Un ensemble de paquets doit être sélectionné quand la marchandise est exigée
 
 failure_reason.code.unique: Ce code est déjà utilisé
+marketing.campaign.field.promotionCoupon.unknown: "Aucune promotion avec ce code. Vérifiez-le dans Promotions."

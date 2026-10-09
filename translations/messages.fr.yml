@@ -2141,8 +2141,7 @@ marketing.campaign.field.subject: Objet
 marketing.campaign.field.subject.help: L'objet que verront les clients.
 marketing.campaign.field.body: Message
 marketing.campaign.field.promotionCoupon: Coupon
-marketing.campaign.field.promotionCoupon.help: Facultatif. Choisissez une promotion existante à mentionner dans le message ; pensez à inclure le code dans le texte.
-marketing.campaign.field.promotionCoupon.none: Aucun coupon
+marketing.campaign.field.promotionCoupon.help: "Facultatif. Saisissez le code d'une promotion existante à mentionner dans le message ; pensez à l'inclure aussi dans le texte. Vous pouvez retrouver les codes dans Promotions."
 marketing.campaign.field.scheduledAt: Programmer pour
 marketing.campaign.field.scheduledAt.help: Laissez vide pour conserver la campagne en brouillon et l'envoyer manuellement.
 marketing.campaign.field.scheduledAt.in_the_past: Choisissez une date future.

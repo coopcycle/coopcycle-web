@@ -2207,8 +2207,7 @@ marketing.campaign.field.subject: Subject
 marketing.campaign.field.subject.help: The subject line customers will see.
 marketing.campaign.field.body: Message
 marketing.campaign.field.promotionCoupon: Coupon
-marketing.campaign.field.promotionCoupon.help: Optional. Pick an existing promotion to mention in the message; remember to include the code in the text.
-marketing.campaign.field.promotionCoupon.none: No coupon
+marketing.campaign.field.promotionCoupon.help: "Optional. Type the code of an existing promotion to mention in the message; remember to include it in the text too. You can look codes up under Promotions."
 marketing.campaign.field.scheduledAt: Schedule for
 marketing.campaign.field.scheduledAt.help: Leave empty to keep the campaign as a draft and send it by hand.
 marketing.campaign.field.scheduledAt.in_the_past: Pick a time in the future.
