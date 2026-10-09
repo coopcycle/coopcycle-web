@@ -43,6 +43,10 @@ services:
     tags:
       - { name: 'console.command', command: 'coopcycle:loyalty:expire-points' }
 
+  AppBundle\Command\SyncPostmarkSuppressionsCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:marketing:sync-suppressions' }
+
   AppBundle\Command\BotCommand:
     parent: M6Web\Bundle\DaemonBundle\Command\DaemonCommand
     autowire: false

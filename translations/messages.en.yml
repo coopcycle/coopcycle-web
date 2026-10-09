@@ -2161,3 +2161,11 @@ profile.loyalty.history.expired: Points expired
 profile.loyalty.history.expires_on: "expires on %date%"
 loyalty.redeem.success: "Reward redeemed! Use the code %code% on your next order to get \"%reward%\"."
 loyalty.redeem.insufficient: "You need %points% point(s) for this reward, and you have %balance%."
+form.settings.postmark_server_token.label: Postmark server token
+form.settings.postmark_server_token.help: Found under your Postmark server's API Tokens tab. Used to send campaigns and to read the suppression list.
+form.settings.postmark_broadcast_stream.label: Postmark broadcast stream
+form.settings.postmark_broadcast_stream.help: The ID of the Postmark message stream campaigns are sent on. Must be a Broadcast stream, so that unsubscribe links and suppressions are handled for you.
+form.settings.postmark_webhook_secret.label: Postmark webhook secret
+form.settings.postmark_webhook_secret.help: A secret of your choosing. Postmark does not sign its webhooks, so add it to the webhook URL you configure there, either as the password in https://user:secret@your-host/webhooks/postmark or as ?secret=... at the end.
+form.settings.postmark.title: Marketing emails (Postmark)
+form.settings.postmark.help: Used to send campaigns to customer segments, and to keep track of who has unsubscribed or bounced.
