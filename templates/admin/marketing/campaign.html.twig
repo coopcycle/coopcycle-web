@@ -113,7 +113,7 @@
             {% trans %}marketing.campaign.send_test.help{% endtrans %}
           </p>
         {% else %}
-          <p class="text-muted" style="margin-bottom:0;">{{ 'marketing.not_configured'|trans({'%url%': path('admin_settings')})|raw }}</p>
+          <p class="text-muted" style="margin-bottom:0;">{{ 'marketing.not_configured'|trans({'%url%': path('admin_marketing')})|raw }}</p>
         {% endif %}
       </div>
     </div>
@@ -122,7 +122,7 @@
     <div class="panel panel-default">
       <div class="panel-body">
         {% if not is_configured %}
-          <p class="text-muted">{{ 'marketing.not_configured'|trans({'%url%': path('admin_settings')})|raw }}</p>
+          <p class="text-muted">{{ 'marketing.not_configured'|trans({'%url%': path('admin_marketing')})|raw }}</p>
         {% elseif not is_active %}
           <p class="text-muted">{% trans %}marketing.program.inactive_warning{% endtrans %}</p>
         {% else %}

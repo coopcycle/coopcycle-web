@@ -36,17 +36,6 @@ class Settings
     #[Assert\Regex('/^ca_[A-Za-z0-9]+/')]
     public $stripe_live_connect_client_id;
 
-    public $postmark_server_token;
-
-    public $postmark_broadcast_stream;
-
-    public $postmark_webhook_secret;
-
-    public $postmark_sender_name;
-
-    #[Assert\Email]
-    public $postmark_sender_email;
-
     public $sms_enabled;
 
     #[Assert\Expression("!this.sms_enabled or value in ['mailjet', 'twilio']", message: 'This value should not be blank.')]

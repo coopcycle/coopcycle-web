@@ -6,6 +6,7 @@ use AppBundle\Entity\Marketing\Campaign;
 use AppBundle\Entity\Marketing\CampaignRecipientRepository;
 use AppBundle\Entity\Marketing\CampaignRepository;
 use AppBundle\Form\Marketing\CampaignType;
+use AppBundle\Form\Marketing\PostmarkType;
 use AppBundle\Service\Marketing\CampaignAudienceResolver;
 use AppBundle\Service\Marketing\CampaignEmailFactory;
 use AppBundle\Service\Marketing\CampaignNotSendableException;
@@ -68,6 +69,33 @@ class MarketingController extends AbstractController
             return $this->redirectToRoute('admin_marketing');
         }
 
+        $postmarkForm = $this->createForm(PostmarkType::class, [
+            'postmark_server_token' => $this->settingsManager->get('postmark_server_token'),
+            'postmark_broadcast_stream' => $this->settingsManager->get('postmark_broadcast_stream'),
+            'postmark_sender_name' => $this->settingsManager->get('postmark_sender_name'),
+            'postmark_sender_email' => $this->settingsManager->get('postmark_sender_email'),
+            'postmark_webhook_secret' => $this->settingsManager->get('postmark_webhook_secret'),
+        ]);
+        $postmarkForm->handleRequest($request);
+
+        if ($postmarkForm->isSubmitted() && $postmarkForm->isValid()) {
+            foreach ($postmarkForm->getData() as $key => $value) {
+                // A blank password field means "leave it as it is", not
+                // "erase the token" -- otherwise saving the sender address
+                // would quietly disconnect Postmark.
+                if (null === $value || '' === $value) {
+                    continue;
+                }
+
+                $this->settingsManager->set($key, (string) $value);
+            }
+
+            $this->settingsManager->flush();
+            $this->addFlash('notice', 'marketing.postmark.saved');
+
+            return $this->redirectToRoute('admin_marketing');
+        }
+
         $campaigns = $paginator->paginate(
             $this->campaignRepository->createListQueryBuilder(),
             $request->query->getInt('page', 1),
@@ -81,6 +109,7 @@ class MarketingController extends AbstractController
 
         return $this->render('admin/marketing/index.html.twig', [
             'active_form' => $activeForm,
+            'postmark_form' => $postmarkForm,
             'is_active' => $this->settingsManager->getBoolean('marketing_automation_active'),
             'is_configured' => $this->marketingMailer->isConfigured(),
             'campaigns' => $campaigns,

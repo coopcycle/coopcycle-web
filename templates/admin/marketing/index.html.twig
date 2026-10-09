@@ -30,13 +30,33 @@
 {% if not is_configured %}
 <div class="alert alert-warning" role="alert">
   <i class="fa fa-exclamation-triangle"></i>
-  {{ 'marketing.not_configured'|trans({'%url%': path('admin_settings')})|raw }}
+  {% trans %}marketing.not_configured_here{% endtrans %}
 </div>
 {% elseif not is_active %}
 <div class="alert alert-warning" role="alert">
   <i class="fa fa-exclamation-triangle"></i> {% trans %}marketing.program.inactive_warning{% endtrans %}
 </div>
 {% endif %}
+
+{% form_theme postmark_form 'bootstrap_3_layout.html.twig' %}
+<div class="panel panel-default">
+  <div class="panel-heading" style="cursor:pointer;" data-toggle="collapse" data-target="#postmark-panel">
+    <i class="fa fa-cog"></i> {% trans %}marketing.postmark.title{% endtrans %}
+    <span class="pull-right"><i class="fa fa-chevron-down"></i></span>
+  </div>
+  <div id="postmark-panel" class="panel-collapse collapse{{ is_configured ? '' : ' in' }}">
+    <div class="panel-body">
+      <div class="alert alert-info" role="alert">
+        <h4><i class="fa fa-info-circle"></i> {% trans %}marketing.postmark.info.title{% endtrans %}</h4>
+        <p style="margin:0;">{% trans %}marketing.postmark.info.body{% endtrans %}</p>
+      </div>
+      {{ form_start(postmark_form) }}
+        {{ form_widget(postmark_form) }}
+        <button type="submit" class="btn btn-primary">{% trans %}basics.save{% endtrans %}</button>
+      {{ form_end(postmark_form) }}
+    </div>
+  </div>
+</div>
 
 <div class="panel panel-default">
   <div class="panel-heading">

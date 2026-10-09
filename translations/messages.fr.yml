@@ -2095,18 +2095,18 @@ profile.loyalty.history.expired: Points expirés
 profile.loyalty.history.expires_on: "expirent le %date%"
 loyalty.redeem.success: "Récompense utilisée ! Saisissez le code %code% lors de votre prochaine commande pour obtenir « %reward% »."
 loyalty.redeem.insufficient: "Il vous faut %points% point(s) pour cette récompense, et vous en avez %balance%."
-form.settings.postmark_server_token.label: Jeton de serveur Postmark
-form.settings.postmark_server_token.help: Disponible dans l'onglet « API Tokens » de votre serveur Postmark. Utilisé pour envoyer les campagnes et lire la liste des suppressions.
-form.settings.postmark_broadcast_stream.label: Flux de diffusion Postmark
-form.settings.postmark_broadcast_stream.help: L'identifiant du flux Postmark utilisé pour les campagnes. Il doit s'agir d'un flux « Broadcast », afin que les liens de désinscription et les suppressions soient gérés pour vous.
-form.settings.postmark_webhook_secret.label: Secret du webhook Postmark
-form.settings.postmark_webhook_secret.help: "Un secret de votre choix. Postmark ne signe pas ses webhooks : ajoutez-le à l'URL que vous configurez chez eux, soit comme mot de passe dans https://user:secret@votre-hote/webhooks/postmark, soit via ?secret=... à la fin."
-form.settings.postmark.title: E-mails marketing (Postmark)
-form.settings.postmark.help: Utilisé pour envoyer les campagnes aux segments de clients, et pour savoir qui s'est désinscrit ou dont l'adresse rebondit.
-form.settings.postmark_sender_name.label: Nom de l'expéditeur marketing
-form.settings.postmark_sender_name.help: Le nom sous lequel les campagnes apparaissent. Par défaut, le nom de votre marque.
-form.settings.postmark_sender_email.label: Adresse d'expéditeur marketing
-form.settings.postmark_sender_email.help: L'adresse d'envoi des campagnes. Elle doit être une « Sender Signature » vérifiée sur votre compte Postmark, sans quoi Postmark refusera l'envoi.
+marketing.postmark.field.server_token: Jeton de serveur Postmark
+marketing.postmark.field.server_token.help: Disponible dans l'onglet « API Tokens » de votre serveur Postmark. Utilisé pour envoyer les campagnes et lire la liste des suppressions.
+marketing.postmark.field.broadcast_stream: Flux de diffusion Postmark
+marketing.postmark.field.broadcast_stream.help: L'identifiant du flux Postmark utilisé pour les campagnes. Il doit s'agir d'un flux « Broadcast », afin que les liens de désinscription et les suppressions soient gérés pour vous.
+marketing.postmark.field.webhook_secret: Secret du webhook Postmark
+marketing.postmark.field.webhook_secret.help: "Un secret de votre choix. Postmark ne signe pas ses webhooks : ajoutez-le à l'URL que vous configurez chez eux, soit comme mot de passe dans https://user:secret@votre-hote/webhooks/postmark, soit via ?secret=... à la fin."
+marketing.postmark.title: E-mails marketing (Postmark)
+marketing.postmark.info.body: Utilisé pour envoyer les campagnes aux segments de clients, et pour savoir qui s'est désinscrit ou dont l'adresse rebondit.
+marketing.postmark.field.sender_name: Nom de l'expéditeur marketing
+marketing.postmark.field.sender_name.help: Le nom sous lequel les campagnes apparaissent. Par défaut, le nom de votre marque.
+marketing.postmark.field.sender_email: Adresse d'expéditeur marketing
+marketing.postmark.field.sender_email.help: L'adresse d'envoi des campagnes. Elle doit être une « Sender Signature » vérifiée sur votre compte Postmark, sans quoi Postmark refusera l'envoi.
 marketing.title: Campagnes marketing
 marketing.program.active_label: Les campagnes marketing sont actives
 marketing.program.active_help: Tant que ceci est désactivé, les campagnes programmées ne partent pas et aucune campagne ne peut être envoyée manuellement. Les rebonds et désinscriptions continuent d'être enregistrés.
@@ -2216,3 +2216,6 @@ marketing.campaign.send_test.invalid_email: Cela ne ressemble pas à une adresse
 marketing.campaign.send_test.incomplete: Renseignez d'abord un objet et un message pour la campagne.
 marketing.campaign.send_test.suppressed: "Rien n'a été envoyé : %email% s'est désinscrit ou a déjà rebondi, Postmark ne lui délivrera donc rien."
 marketing.campaign.send_test.refused: "Postmark a refusé le message : %error%"
+marketing.postmark.info.title: Pourquoi Postmark est-il nécessaire ?
+marketing.postmark.saved: Paramètres Postmark enregistrés.
+marketing.not_configured_here: "Postmark n'est pas encore configuré : rien ne peut être envoyé. Renseignez les paramètres ci-dessus."

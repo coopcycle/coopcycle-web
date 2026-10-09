@@ -5,7 +5,6 @@ namespace AppBundle\Form;
 use AppBundle\Payment\GatewayResolver;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Form\PaymentGateway\MercadopagoType;
-use AppBundle\Form\Marketing\PostmarkType;
 use AppBundle\Form\PaymentGateway\PawapayType;
 use AppBundle\Form\PaymentGateway\PaygreenType;
 use AppBundle\Form\PaymentGateway\StripeType;
@@ -45,7 +44,6 @@ class SettingsType extends AbstractType
         private readonly bool $isDemo,
         private readonly bool $googleEnabled,
         private readonly bool $cashEnabled,
-        private readonly bool $marketingAutomationEnabled,
         ?string $standtrackEnabled
     )
     {
@@ -189,10 +187,6 @@ class SettingsType extends AbstractType
 
         if ($this->gatewayResolver->supports('pawapay')) {
             $builder->add('pawapay', PawapayType::class, ['mapped' => false]);
-        }
-
-        if ($this->marketingAutomationEnabled) {
-            $builder->add('postmark', PostmarkType::class, ['mapped' => false]);
         }
 
         $builder->add('notifications', NotificationsType::class, [

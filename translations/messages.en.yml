@@ -2161,18 +2161,18 @@ profile.loyalty.history.expired: Points expired
 profile.loyalty.history.expires_on: "expires on %date%"
 loyalty.redeem.success: "Reward redeemed! Use the code %code% on your next order to get \"%reward%\"."
 loyalty.redeem.insufficient: "You need %points% point(s) for this reward, and you have %balance%."
-form.settings.postmark_server_token.label: Postmark server token
-form.settings.postmark_server_token.help: Found under your Postmark server's API Tokens tab. Used to send campaigns and to read the suppression list.
-form.settings.postmark_broadcast_stream.label: Postmark broadcast stream
-form.settings.postmark_broadcast_stream.help: The ID of the Postmark message stream campaigns are sent on. Must be a Broadcast stream, so that unsubscribe links and suppressions are handled for you.
-form.settings.postmark_webhook_secret.label: Postmark webhook secret
-form.settings.postmark_webhook_secret.help: A secret of your choosing. Postmark does not sign its webhooks, so add it to the webhook URL you configure there, either as the password in https://user:secret@your-host/webhooks/postmark or as ?secret=... at the end.
-form.settings.postmark.title: Marketing emails (Postmark)
-form.settings.postmark.help: Used to send campaigns to customer segments, and to keep track of who has unsubscribed or bounced.
-form.settings.postmark_sender_name.label: Marketing sender name
-form.settings.postmark_sender_name.help: The name campaigns appear to come from. Defaults to your brand name.
-form.settings.postmark_sender_email.label: Marketing sender address
-form.settings.postmark_sender_email.help: The address campaigns are sent from. Must be a verified Sender Signature on your Postmark account, or Postmark will refuse the send.
+marketing.postmark.field.server_token: Postmark server token
+marketing.postmark.field.server_token.help: Found under your Postmark server's API Tokens tab. Used to send campaigns and to read the suppression list.
+marketing.postmark.field.broadcast_stream: Postmark broadcast stream
+marketing.postmark.field.broadcast_stream.help: The ID of the Postmark message stream campaigns are sent on. Must be a Broadcast stream, so that unsubscribe links and suppressions are handled for you.
+marketing.postmark.field.webhook_secret: Postmark webhook secret
+marketing.postmark.field.webhook_secret.help: A secret of your choosing. Postmark does not sign its webhooks, so add it to the webhook URL you configure there, either as the password in https://user:secret@your-host/webhooks/postmark or as ?secret=... at the end.
+marketing.postmark.title: Marketing emails (Postmark)
+marketing.postmark.info.body: Used to send campaigns to customer segments, and to keep track of who has unsubscribed or bounced.
+marketing.postmark.field.sender_name: Marketing sender name
+marketing.postmark.field.sender_name.help: The name campaigns appear to come from. Defaults to your brand name.
+marketing.postmark.field.sender_email: Marketing sender address
+marketing.postmark.field.sender_email.help: The address campaigns are sent from. Must be a verified Sender Signature on your Postmark account, or Postmark will refuse the send.
 marketing.title: Marketing campaigns
 marketing.program.active_label: Marketing campaigns are active
 marketing.program.active_help: While this is off, scheduled campaigns are not sent and campaigns cannot be sent by hand. Bounces and unsubscribes are still recorded.
@@ -2282,3 +2282,6 @@ marketing.campaign.send_test.invalid_email: That does not look like an email add
 marketing.campaign.send_test.incomplete: Give the campaign a subject and a message first.
 marketing.campaign.send_test.suppressed: "Nothing sent: %email% has unsubscribed or previously bounced, so Postmark will not deliver to it."
 marketing.campaign.send_test.refused: "Postmark refused the message: %error%"
+marketing.postmark.info.title: Why does this need Postmark?
+marketing.postmark.saved: Postmark settings saved.
+marketing.not_configured_here: Postmark is not configured yet, so nothing can be sent. Fill in the settings above.
