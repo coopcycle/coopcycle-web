@@ -10,6 +10,10 @@ use AppBundle\Enum\Optin;
 
 class RegistrationListener implements EventSubscriberInterface
 {
+    public function __construct(private readonly bool $confirmationEnabled)
+    {
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -40,6 +44,19 @@ class RegistrationListener implements EventSubscriberInterface
 
                 $user->addOptinConsent($consent);
             }
+        }
+
+        // Nucleos\ProfileBundle\EventListener\EmailConfirmationListener is the
+        // only vendor code that ever calls setEnabled(), and it's only
+        // registered when confirmation is enabled (it then explicitly
+        // disables the account until the confirmation link is clicked). When
+        // confirmation is disabled, nothing enables the account otherwise --
+        // Nucleos\UserBundle\Model\User::$enabled defaults to false -- so the
+        // web registration flow left every new account disabled, unable to
+        // log in. AppBundle\Action\Register (the app/API registration flow)
+        // already handles this explicitly; this is its web-flow equivalent.
+        if (!$this->confirmationEnabled) {
+            $user->setEnabled(true);
         }
     }
 }

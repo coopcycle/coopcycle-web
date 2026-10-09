@@ -304,6 +304,7 @@ profile.myTracking: My tracking
 profile.myShifts: My shifts
 profile.myOrders: My orders
 profile.myAddresses: My addresses
+profile.myReferrals: My referrals
 profile.myPersonalInfo: My personal information
 profile.payment: Payment
 profile.task.noTasks: No tasks scheduled
@@ -1970,6 +1971,89 @@ rfm.thresholds.frequency: Frequency (F)
 rfm.thresholds.saved: RFM thresholds saved successfully.
 rfm.thresholds.error.r_order: Recency thresholds must be in ascending order (Score 4 < Score 3 < Score 2).
 rfm.thresholds.error.f_order: Frequency thresholds must be in ascending order (Score 2 < Score 3 < Score 4).
+promotion_rule.is_first_order: Is first order
+referral.title: Referral Program
+referral.program.active_label: Referral program is active
+referral.program.active_help: Customers can't see, join, or earn anything from the referral program while this is off, even when the feature itself is enabled.
+referral.program.inactive_warning: The referral program is currently inactive. Customers cannot access it, and no rewards will be granted, until you turn it on above.
+referral.program.activated: Referral program activated.
+referral.program.deactivated: Referral program deactivated.
+referral.stats.total: Total referrals
+referral.stats.pending: Pending
+referral.stats.completed: Completed
+referral.stats.expired: Expired
+referral.stats.conversion_rate: Conversion rate
+referral.levels.configure: Configure levels
+referral.levels.saved: Referral levels saved successfully.
+referral.levels.info.title: How do referral levels work?
+referral.levels.info.body: As a referrer accumulates successful referrals (friends who placed a paid first order), they automatically move up through these tiers. Each level has its own reward amount or percentage, coupon validity period, and usage limit, applied to the coupon the referrer earns for each successful referral at that level.
+referral.level.field.minReferralCount: Minimum successful referrals
+referral.level.field.minReferralCount.help: Number of successful referrals (friends who placed a paid first order) needed to reach this level.
+referral.level.field.rewardType: Reward type
+referral.level.field.rewardAmount: Reward amount
+referral.level.field.rewardAmount.help: Discount amount. Only used when the reward type is "Fixed amount".
+referral.level.field.rewardPercentage: Reward percentage
+referral.level.field.rewardPercentage.help: Discount percentage. Only used when the reward type is "Percentage".
+referral.level.field.rewardAmount.required_for_fixed: Required when the reward type is "Fixed amount".
+referral.level.field.rewardPercentage.required_for_percentage: Required when the reward type is "Percentage".
+referral.level.field.couponValidityDays: Coupon validity (days)
+referral.level.field.couponValidityDays.help: Number of days the reward coupon stays valid after being issued.
+referral.level.field.usageLimit: Coupon usage limit
+referral.level.field.usageLimit.help: How many times the generated coupon can be used (usually 1).
+referral.reward_type.free_delivery: Free delivery
+referral.reward_type.fixed: Fixed amount
+referral.reward_type.percentage: Percentage
+referral.welcome_settings.configure: Configure welcome coupon
+referral.welcome_settings.saved: Welcome coupon settings saved successfully.
+referral.welcome_settings.info.title: What is the welcome coupon?
+referral.welcome_settings.info.body: When someone signs up using a friend's referral link, they immediately receive this coupon, valid on their first order only. It's a single global configuration, separate from the levels above, which apply to the referrer's own reward.
+referral.welcome_settings.field.rewardType: Reward type
+referral.welcome_settings.field.rewardAmount: Reward amount
+referral.welcome_settings.field.rewardAmount.help: Discount amount. Only used when the reward type is "Fixed amount".
+referral.welcome_settings.field.rewardPercentage: Reward percentage
+referral.welcome_settings.field.rewardPercentage.help: Discount percentage. Only used when the reward type is "Percentage".
+referral.welcome_settings.field.rewardAmount.required_for_fixed: Required when the reward type is "Fixed amount".
+referral.welcome_settings.field.rewardPercentage.required_for_percentage: Required when the reward type is "Percentage".
+referral.welcome_settings.field.couponValidityDays: Coupon validity (days)
+referral.welcome_settings.field.couponValidityDays.help: Number of days the welcome coupon stays valid; it can only be used on the referred customer's first order.
+referral.welcome_settings.field.pendingTtlDays: Pending referral expiry (days)
+referral.welcome_settings.field.pendingTtlDays.help: Number of days a referral can stay pending before being marked as expired if the referred customer never places an order.
+referral.column.referrer: Referrer
+referral.column.referred: Referred customer
+referral.column.status: Status
+referral.column.created_at: Created
+referral.column.completed_at: Completed
+referral.status.pending: Pending
+referral.status.completed: Completed
+referral.status.expired: Expired
+referral.clear_filter: Clear filter
+referral.filter.all: All
+referral.no_referrals: No referrals yet.
+profile.referrals.share.title: Invite friends
+profile.referrals.share.label: Your referral link
+profile.referrals.share.copy: Copy link
+profile.referrals.share.copied: Copied!
+profile.referrals.intro.fixed: "Invite your friends to join %brand_name%! Once a friend you invited places their first order, you'll earn %amount%."
+profile.referrals.intro.percentage: "Invite your friends to join %brand_name%! Once a friend you invited places their first order, you'll earn a %percent%% discount."
+profile.referrals.intro.generic: "Invite your friends to join %brand_name%, and get rewarded once they place their first order!"
+profile.referrals.successful_count: "%count% successful referral(s)"
+profile.referrals.next_level: "%count% more to reach %level%"
+profile.referrals.levels.title: Levels
+profile.referrals.levels.current: Current
+profile.referrals.levels.threshold: "From %count% successful referral(s)"
+profile.referrals.levels.reward_fixed: "%amount% reward"
+profile.referrals.levels.reward_percentage: "%percent%% discount"
+profile.referrals.column.friend: Friend
+profile.referrals.none_yet: You haven't referred anyone yet.
+profile.referrals.invite.button: "Invite a friend to join %brand_name%"
+profile.referrals.invite.modal_title: "Invite a friend to join %brand_name%"
+profile.referrals.invite.modal_help: Enter one or more email addresses, separated by commas or new lines.
+profile.referrals.invite.placeholder: "friend@example.com"
+profile.referrals.invite.submit: Send invitation(s)
+profile.referrals.invite.cancel: Cancel
+profile.referrals.invite.sent: "%count% invitation(s) sent!"
+profile.referrals.invite.invalid: "%count% email address(es) were invalid and were not sent."
+profile.referrals.invite.already_registered: "%count% email address(es) already have an account and were not invited."
 rfm.thresholds.rfm_r_score4_max_days: Score 4 — max days since last order
 rfm.thresholds.rfm_r_score3_max_days: Score 3 — max days since last order
 rfm.thresholds.rfm_r_score2_max_days: Score 2 — max days since last order

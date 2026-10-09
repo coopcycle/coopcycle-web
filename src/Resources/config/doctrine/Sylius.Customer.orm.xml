@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
   <entity name="AppBundle\Entity\Sylius\Customer" table="sylius_customer">
+    <indexes>
+      <index name="idx_customer_referral_canonical_email" columns="referral_canonical_email"/>
+    </indexes>
+    <field name="referralCode" type="string" column="referral_code" length="12" nullable="true" unique="true"/>
+    <field name="referralCanonicalEmail" type="string" column="referral_canonical_email" length="255" nullable="true"/>
+    <field name="successfulReferralCount" type="integer" column="successful_referral_count">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
     <one-to-one field="user" target-entity="AppBundle\Entity\User" mapped-by="customer">
       <cascade>
         <cascade-all/>
@@ -47,5 +57,11 @@
         </inverse-join-columns>
       </join-table>
     </many-to-many>
+    <entity-listeners>
+      <entity-listener class="AppBundle\Entity\Listener\CustomerListener">
+        <lifecycle-callback type="prePersist" method="prePersist" />
+        <lifecycle-callback type="preUpdate" method="preUpdate" />
+      </entity-listener>
+    </entity-listeners>
   </entity>
 </doctrine-mapping>
