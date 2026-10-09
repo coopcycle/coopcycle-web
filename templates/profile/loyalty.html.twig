@@ -1,0 +1,111 @@
+{% extends "profile.html.twig" %}
+
+{% block content %}
+
+<div class="mb-8">
+  <h2 class="text-xl font-semibold mb-2">{{ 'profile.loyalty.title'|trans }}</h2>
+  <p class="mb-4 text-gray-500">
+    {{ 'profile.loyalty.intro'|trans({'%brand_name%': coopcycle_setting('brand_name')}) }}
+  </p>
+
+  <div class="stats shadow">
+    <div class="stat">
+      <div class="stat-title">{{ 'profile.loyalty.balance'|trans }}</div>
+      <div class="stat-value text-primary">{{ balance }}</div>
+      <div class="stat-desc">
+        {% if next_expiry %}
+          {% trans with { '%count%': next_expiry.remaining, '%date%': next_expiry.expiresAt|format_date('long') } %}profile.loyalty.next_expiry{% endtrans %}
+        {% else %}
+          {{ 'profile.loyalty.no_expiry'|trans }}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="mb-8">
+  <h2 class="text-lg font-semibold mb-3">{{ 'profile.loyalty.rewards.title'|trans }}</h2>
+
+  {% if rewards is empty %}
+    <div class="alert alert-info">{{ 'profile.loyalty.rewards.none'|trans }}</div>
+  {% else %}
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    {% for reward in rewards %}
+    {% set affordable = balance >= reward.pointsCost %}
+    <div class="border rounded-lg p-4 {{ affordable ? 'border-primary' : 'border-gray-200' }}">
+      <div class="flex items-center justify-between mb-1">
+        <span class="font-semibold">{{ reward.name }}</span>
+        <span class="badge {{ affordable ? 'badge-primary' : 'badge-ghost' }} badge-sm">
+          {% trans with { '%count%': reward.pointsCost } %}profile.loyalty.rewards.cost{% endtrans %}
+        </span>
+      </div>
+      <p class="text-sm text-gray-500 mb-3">
+        {% if reward.rewardType == 'delivery_percentage_discount' %}
+          {{ 'referral.reward_type.free_delivery'|trans }}
+        {% elseif reward.rewardType == 'order_percentage_discount' %}
+          {% trans with { '%percent%': reward.rewardPercentage } %}profile.referrals.levels.reward_percentage{% endtrans %}
+        {% else %}
+          {% trans with { '%amount%': reward.rewardAmount|price_format } %}profile.referrals.levels.reward_fixed{% endtrans %}
+        {% endif %}
+      </p>
+
+      {% if affordable %}
+      <form method="post" action="{{ path('profile_loyalty_redeem', { id: reward.id }) }}">
+        <input type="hidden" name="_token" value="{{ csrf_token('profile_loyalty_redeem') }}">
+        <button type="submit" class="btn btn-primary btn-sm w-full">
+          {{ 'profile.loyalty.rewards.redeem'|trans }}
+        </button>
+      </form>
+      {% else %}
+      <p class="text-sm text-gray-500">
+        {% trans with { '%count%': reward.pointsCost - balance } %}profile.loyalty.rewards.points_to_go{% endtrans %}
+      </p>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+
+{% if history.totalItemCount > 0 %}
+<h2 class="text-lg font-semibold mb-3">{{ 'profile.loyalty.history.title'|trans }}</h2>
+<table class="table">
+  <thead>
+    <tr>
+      <th>{{ 'profile.loyalty.history.description'|trans }}</th>
+      <th class="text-right">{{ 'profile.loyalty.history.points'|trans }}</th>
+      <th class="text-right">{{ 'referral.column.created_at'|trans }}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for entry in history %}
+    <tr>
+      <td>
+        {% if entry.isCredit %}
+          {{ 'profile.loyalty.history.earned'|trans }}
+          {% if entry.expiresAt %}
+            <span class="text-gray-500">
+              &mdash; {% trans with { '%date%': entry.expiresAt|format_date('long') } %}profile.loyalty.history.expires_on{% endtrans %}
+            </span>
+          {% endif %}
+        {% else %}
+          {{ entry.reward ? entry.reward.name : 'profile.loyalty.history.spent'|trans }}
+          {% if entry.coupon %}
+            <span class="badge badge-ghost badge-sm">{{ entry.coupon.code }}</span>
+          {% endif %}
+        {% endif %}
+      </td>
+      <td class="text-right {{ entry.isCredit ? 'text-success' : '' }}">
+        {{ entry.amount > 0 ? '+' : '' }}{{ entry.amount }}
+      </td>
+      <td class="text-right">{{ entry.createdAt|ago }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<nav class="text-center">
+  {{ knp_pagination_render(history) }}
+</nav>
+{% endif %}
+
+{% endblock %}
