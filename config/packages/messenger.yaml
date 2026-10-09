@@ -95,4 +95,5 @@ framework:
             'AppBundle\Message\Zelty\PushOrder': async
             'AppBundle\Message\Zelty\ProcessZeltyCatalog': async
             'AppBundle\Message\RdcMessage': async
+            'AppBundle\Message\Marketing\SendCampaignEmail': async
             'AppBundle\Message\IncidentRdcMessage': async

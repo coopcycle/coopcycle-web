@@ -17,6 +17,7 @@ class CampaignRecipient
     public const STATUS_SENT = 'sent';
     public const STATUS_FAILED = 'failed';
     public const STATUS_SUPPRESSED = 'suppressed';
+    public const STATUS_SKIPPED = 'skipped';
 
     protected ?int $id = null;
 
@@ -93,6 +94,22 @@ class CampaignRecipient
     public function markAsSuppressed(): void
     {
         $this->status = self::STATUS_SUPPRESSED;
+    }
+
+    /**
+     * Not sent, but not a failure either -- most often the frequency cap
+     * catching someone who got another campaign between this one being
+     * worked out and being sent.
+     */
+    public function markAsSkipped(string $reason): void
+    {
+        $this->status = self::STATUS_SKIPPED;
+        $this->error = mb_substr($reason, 0, 255);
+    }
+
+    public function isPending(): bool
+    {
+        return self::STATUS_PENDING === $this->status;
     }
 
     public function getMessageId(): ?string

@@ -51,6 +51,10 @@ services:
     tags:
       - { name: 'console.command', command: 'coopcycle:marketing:send-test-email' }
 
+  AppBundle\Command\SendDueCampaignsCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:marketing:send-due-campaigns' }
+
   AppBundle\Command\BotCommand:
     parent: M6Web\Bundle\DaemonBundle\Command\DaemonCommand
     autowire: false
