@@ -2023,3 +2023,4 @@ hr.holidaysHistory.to: To
 hr.holidaysHistory.status: Status
 hr.holidaysHistory.comment: Comment
 delivery.time_slot.invalid: 'The selected time slot is not valid. Please choose another one.'
+form.product_option_value.delete.confirm: 'This value will no longer be available, but it will remain visible on previous orders. Do you want to continue?'

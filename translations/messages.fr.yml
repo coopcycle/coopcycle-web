@@ -1961,3 +1961,4 @@ hr.holidaysHistory.to: Au
 hr.holidaysHistory.status: Statut
 hr.holidaysHistory.comment: Commentaire
 delivery.time_slot.invalid: "La tranche horaire sélectionnée n'est pas valide. Merci d'en choisir une autre."
+form.product_option_value.delete.confirm: "Cette valeur ne sera plus disponible, mais elle restera visible sur les commandes précédentes. Voulez-vous continuer ?"

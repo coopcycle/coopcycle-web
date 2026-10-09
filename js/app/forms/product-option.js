@@ -42,6 +42,10 @@ $('#product_option_strategy').on('change', function() {
 });
 
 $(document).on('click', '[data-delete-row]', function() {
+  var confirmMessage = $(this).data('confirm');
+  if (confirmMessage && !window.confirm(confirmMessage)) {
+    return;
+  }
   var target = $(this).data('target');
   $(target).remove();
   updatePreview()
@@ -140,8 +144,6 @@ $('#add-option-value').on('click', function(e) {
   }
 
   $form.find("input[name$='[price]']").val(0)
-
-  $form.find('[data-delete-row]').prop('disabled', false)
 
   $('#product_option_values').append($form);
 

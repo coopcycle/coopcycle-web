@@ -1012,13 +1012,12 @@ trait RestaurantTrait
 
             $productOption = $form->getData();
 
-            $enabledValues = $productOption->getValues()->filter(function ($value) {
-                return $value->isEnabled();
+            $disabledValues = $productOption->getValues()->filter(function ($value) {
+                return !$value->isEnabled();
             });
 
-            $productOption->getValues()->clear();
-            foreach ($enabledValues as $optionValue) {
-                $productOption->getValues()->add($optionValue);
+            foreach ($disabledValues as $optionValue) {
+                $productOption->removeValue($optionValue);
             }
 
             foreach ($productOption->getValues() as $optionValue) {

@@ -10,6 +10,8 @@ use AppBundle\Sylius\Product\ProductOptionInterface;
 use AppBundle\Sylius\Product\ProductOptionValueInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Gedmo\SoftDeleteable\SoftDeleteable as SoftDeleteableInterface;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Sylius\Component\Resource\Model\ToggleableTrait;
 use Sylius\Component\Product\Model\ProductOptionValue as BaseProductOptionValue;
 use Sylius\Component\Product\Model\ProductOptionValueTranslationInterface;
@@ -29,10 +31,11 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
     ],
     normalizationContext: ['groups' => ['product_option']]
 )]
-class ProductOptionValue extends BaseProductOptionValue implements ProductOptionValueInterface
+class ProductOptionValue extends BaseProductOptionValue implements ProductOptionValueInterface, SoftDeleteableInterface
 {
     use ToggleableTrait;
     use HasZeltyMetadata;
+    use SoftDeleteable;
 
     /**
      * @var int

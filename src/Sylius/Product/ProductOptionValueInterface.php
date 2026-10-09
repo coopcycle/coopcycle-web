@@ -15,4 +15,9 @@ interface ProductOptionValueInterface extends BaseProductOptionValueInterface, T
     public function getPricingRule(): ?PricingRule;
 
     public function setPricingRule(?PricingRule $pricingRule): void;
+
+    /**
+     * @return bool
+     */
+    public function isDeleted();
 }
