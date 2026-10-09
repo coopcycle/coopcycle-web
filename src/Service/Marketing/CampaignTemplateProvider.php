@@ -15,6 +15,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  *
  * Segments without an agreed strategy still get a campaign -- just a blank
  * one. Better than hiding them.
+ *
+ * Everything here is seeded in the *instance* locale, not the admin's. The
+ * subject and body are read by customers, so they should be in the language
+ * the instance serves, whatever language the admin happens to be using the
+ * back office in. The name follows the same locale simply so a campaign
+ * isn't half in one language and half in another.
  */
 class CampaignTemplateProvider
 {
@@ -34,6 +40,7 @@ class CampaignTemplateProvider
     public function __construct(
         private readonly TranslatorInterface $translator,
         private readonly SettingsManager $settingsManager,
+        private readonly string $locale,
     ) {
     }
 
@@ -45,8 +52,8 @@ class CampaignTemplateProvider
     public function getName(string $segment): string
     {
         return $this->translator->trans('marketing.campaign.template.' . $segment . '.name', [
-            '%segment%' => $this->translator->trans('rfm.segment.' . $segment),
-        ]);
+            '%segment%' => $this->translator->trans('rfm.segment.' . $segment, [], null, $this->locale),
+        ], null, $this->locale);
     }
 
     public function getSubject(string $segment): string
@@ -57,7 +64,7 @@ class CampaignTemplateProvider
 
         return $this->translator->trans('marketing.campaign.template.' . $segment . '.subject', [
             '%brand_name%' => (string) $this->settingsManager->get('brand_name'),
-        ]);
+        ], null, $this->locale);
     }
 
     /**
@@ -69,7 +76,7 @@ class CampaignTemplateProvider
         $body = $this->hasStrategy($segment)
             ? $this->translator->trans('marketing.campaign.template.' . $segment . '.body', [
                 '%brand_name%' => (string) $this->settingsManager->get('brand_name'),
-            ])
+            ], null, $this->locale)
             : '';
 
         $paragraphs = '';
