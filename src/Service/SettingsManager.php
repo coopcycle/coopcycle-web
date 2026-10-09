@@ -55,6 +55,7 @@ class SettingsManager
         'subject_to_vat',
         'guest_checkout_enabled',
         'referral_program_active',
+        'loyalty_program_active',
     ];
 
     private static $integer = [
@@ -62,6 +63,8 @@ class SettingsManager
         'referral_welcome_reward_amount',
         'referral_welcome_coupon_validity_days',
         'referral_pending_ttl_days',
+        'loyalty_points_per_currency_unit',
+        'loyalty_points_validity_days',
     ];
 
     private $cache = [];

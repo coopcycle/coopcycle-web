@@ -2041,3 +2041,57 @@ profile.referrals.invite.cancel: Annuler
 profile.referrals.invite.sent: "%count% invitation(s) envoyée(s) !"
 profile.referrals.invite.invalid: "%count% adresse(s) e-mail invalide(s) n'ont pas été envoyée(s)."
 profile.referrals.invite.already_registered: "%count% adresse(s) e-mail possède(nt) déjà un compte et n'ont pas été invitée(s)."
+loyalty.title: Programme de fidélité
+loyalty.program.active_label: Le programme de fidélité est actif
+loyalty.program.active_help: Tant que ceci est désactivé, les clients ne cumulent aucun point et ne peuvent ni voir ni utiliser ceux qu'ils possèdent déjà, même si la fonctionnalité elle-même est activée.
+loyalty.program.inactive_warning: Le programme de fidélité est actuellement inactif. Les clients ne cumulent aucun point et ne peuvent pas utiliser ceux qu'ils possèdent tant que vous ne l'aurez pas activé ci-dessus.
+loyalty.program.activated: Le programme de fidélité est maintenant actif.
+loyalty.program.deactivated: Le programme de fidélité est maintenant inactif.
+loyalty.settings.configure: Configurer le cumul des points
+loyalty.settings.info.title: Comment les clients cumulent-ils des points ?
+loyalty.settings.info.body: Les points sont crédités automatiquement dès qu'une commande est payée, sur la base du total de la commande hors frais de livraison. Les points partiels sont arrondis à l'inférieur, afin qu'une commande ne rapporte jamais plus que sa valeur.
+loyalty.settings.saved: Paramètres enregistrés.
+loyalty.settings.field.pointsPerCurrencyUnit: Points cumulés par unité dépensée
+loyalty.settings.field.pointsPerCurrencyUnit.help: Nombre de points cumulés par le client pour chaque unité monétaire dépensée en nourriture, hors frais de livraison.
+loyalty.settings.field.pointsValidityDays: Validité des points (jours)
+loyalty.settings.field.pointsValidityDays.help: Nombre de jours pendant lesquels les points restent utilisables après avoir été cumulés. Utilisez 0 pour que les points n'expirent jamais.
+loyalty.rewards.configure: Configurer les récompenses
+loyalty.rewards.info.title: Qu'est-ce qu'une récompense ?
+loyalty.rewards.info.body: Le catalogue dans lequel les clients dépensent leurs points. Utiliser une récompense déduit son coût du solde du client et lui délivre un coupon, valable pour la durée définie ci-dessous.
+loyalty.rewards.saved: Récompenses enregistrées.
+loyalty.rewards.add: Ajouter une récompense
+loyalty.reward.field.name: Nom
+loyalty.reward.field.name.help: Affiché aux clients dans la liste des récompenses, par exemple « Livraison gratuite » ou « 5 € de réduction ».
+loyalty.reward.field.pointsCost: Coût en points
+loyalty.reward.field.pointsCost.help: Nombre de points dépensés par le client pour obtenir cette récompense.
+loyalty.reward.field.rewardType: Type de récompense
+loyalty.reward.field.rewardAmount: Montant de la récompense
+loyalty.reward.field.rewardAmount.help: Montant de la réduction. Utilisé uniquement lorsque le type de récompense est « Montant fixe ».
+loyalty.reward.field.rewardAmount.required_for_fixed: Un montant est obligatoire lorsque le type de récompense est « Montant fixe ».
+loyalty.reward.field.rewardPercentage: Pourcentage de la récompense
+loyalty.reward.field.rewardPercentage.help: Pourcentage de réduction. Utilisé uniquement lorsque le type de récompense est « Pourcentage ».
+loyalty.reward.field.rewardPercentage.required_for_percentage: Un pourcentage est obligatoire lorsque le type de récompense est « Pourcentage ».
+loyalty.reward.field.couponValidityDays: Validité du coupon (jours)
+loyalty.reward.field.couponValidityDays.help: Nombre de jours pendant lesquels le coupon reste valable après que le client a utilisé cette récompense.
+loyalty.reward.field.enabled: Disponible pour les clients
+loyalty.reward.field.enabled.help: Décochez pour masquer cette récompense sans la supprimer ; les coupons déjà délivrés ne sont pas affectés.
+profile.myLoyalty: Mes points de fidélité
+profile.loyalty.title: Points de fidélité
+profile.loyalty.intro: "Chaque commande passée chez %brand_name% vous rapporte des points. Dépensez-les dans les récompenses ci-dessous."
+profile.loyalty.balance: Votre solde
+profile.loyalty.next_expiry: "%count% point(s) expirent le %date%"
+profile.loyalty.no_expiry: Vos points n'expirent pas.
+profile.loyalty.rewards.title: Récompenses
+profile.loyalty.rewards.none: Aucune récompense n'est disponible pour le moment. Continuez à cumuler des points, ils vous attendront.
+profile.loyalty.rewards.cost: "%count% pts"
+profile.loyalty.rewards.redeem: Utiliser
+profile.loyalty.rewards.points_to_go: "Encore %count% point(s)"
+profile.loyalty.history.title: Historique
+profile.loyalty.history.description: Description
+profile.loyalty.history.points: Points
+profile.loyalty.history.earned: Points cumulés sur une commande
+profile.loyalty.history.spent: Récompense utilisée
+profile.loyalty.history.expired: Points expirés
+profile.loyalty.history.expires_on: "expirent le %date%"
+loyalty.redeem.success: "Récompense utilisée ! Saisissez le code %code% lors de votre prochaine commande pour obtenir « %reward% »."
+loyalty.redeem.insufficient: "Il vous faut %points% point(s) pour cette récompense, et vous en avez %balance%."

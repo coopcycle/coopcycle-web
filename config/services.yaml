@@ -369,6 +369,14 @@ services:
     arguments:
       $envEnabled: '%env(bool:REFERRAL_PROGRAM_ENABLED)%'
 
+  AppBundle\Controller\Admin\LoyaltyProgramController:
+    arguments:
+      $loyaltyProgramEnabled: '%env(bool:LOYALTY_PROGRAM_ENABLED)%'
+
+  AppBundle\Service\Loyalty\LoyaltyProgramStatus:
+    arguments:
+      $envEnabled: '%env(bool:LOYALTY_PROGRAM_ENABLED)%'
+
   # Used to tell apart two addresses that reach the same mailbox, so someone
   # can't refer themselves (or an account they already own) with an alias.
   # The strategies, and crucially their order, are in the factory.
@@ -861,6 +869,11 @@ services:
     factory: ['@doctrine.orm.default_entity_manager', getRepository]
     arguments:
       - AppBundle\Entity\Referral\Referral
+
+  AppBundle\Entity\Loyalty\LoyaltyPointsEntryRepository:
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\Loyalty\LoyaltyPointsEntry
 
   sylius.repository.order:
     alias: AppBundle\Entity\Sylius\OrderRepository

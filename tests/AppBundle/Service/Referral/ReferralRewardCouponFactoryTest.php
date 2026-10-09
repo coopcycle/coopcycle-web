@@ -6,6 +6,7 @@ use AppBundle\Entity\Referral\ReferralLevel;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Promotion;
 use AppBundle\Entity\Sylius\PromotionCoupon;
+use AppBundle\Service\Promotion\CustomerRewardCouponFactory;
 use AppBundle\Service\Referral\ReferralRewardCouponFactory;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Promotion\Action\DeliveryPercentageDiscountPromotionActionCommand;
@@ -43,12 +44,16 @@ class ReferralRewardCouponFactoryTest extends TestCase
         $settingsManager = $this->prophesize(SettingsManager::class);
         $settingsManager->get(Argument::any())->will(fn ($args) => $settings[$args[0]] ?? null);
 
-        return new ReferralRewardCouponFactory(
+        $customerRewardCouponFactory = new CustomerRewardCouponFactory(
             $promotionFactory->reveal(),
             $promotionRuleFactory->reveal(),
             $promotionCouponFactory->reveal(),
             $promotionCouponRepository->reveal(),
-            $entityManager->reveal(),
+            $entityManager->reveal()
+        );
+
+        return new ReferralRewardCouponFactory(
+            $customerRewardCouponFactory,
             $settingsManager->reveal()
         );
     }

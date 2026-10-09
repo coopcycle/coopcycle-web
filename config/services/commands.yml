@@ -39,6 +39,10 @@ services:
     tags:
       - { name: 'console.command', command: 'coopcycle:referral:backfill-canonical-emails' }
 
+  AppBundle\Command\ExpireLoyaltyPointsCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:loyalty:expire-points' }
+
   AppBundle\Command\BotCommand:
     parent: M6Web\Bundle\DaemonBundle\Command\DaemonCommand
     autowire: false

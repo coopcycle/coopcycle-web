@@ -2107,3 +2107,57 @@ hr.holidaysHistory.to: To
 hr.holidaysHistory.status: Status
 hr.holidaysHistory.comment: Comment
 delivery.time_slot.invalid: 'The selected time slot is not valid. Please choose another one.'
+loyalty.title: Loyalty program
+loyalty.program.active_label: Loyalty program is active
+loyalty.program.active_help: While this is off, customers earn no points and can't see or spend the ones they already have, even when the feature itself is enabled.
+loyalty.program.inactive_warning: The loyalty program is currently inactive. Customers earn no points, and cannot spend the ones they have, until you turn it on above.
+loyalty.program.activated: The loyalty program is now active.
+loyalty.program.deactivated: The loyalty program is now inactive.
+loyalty.settings.configure: Configure how points are earned
+loyalty.settings.info.title: How do customers earn points?
+loyalty.settings.info.body: Points are credited automatically once an order is paid for, based on the order total excluding the delivery fee. Partial points are rounded down, so an order never earns more than it was worth.
+loyalty.settings.saved: Settings saved.
+loyalty.settings.field.pointsPerCurrencyUnit: Points earned per unit spent
+loyalty.settings.field.pointsPerCurrencyUnit.help: How many points a customer earns for each unit of currency spent on food, excluding the delivery fee.
+loyalty.settings.field.pointsValidityDays: Points validity (days)
+loyalty.settings.field.pointsValidityDays.help: Number of days points stay spendable after being earned. Use 0 to let points never expire.
+loyalty.rewards.configure: Configure rewards
+loyalty.rewards.info.title: What are rewards?
+loyalty.rewards.info.body: The catalogue customers spend their points on. Redeeming one deducts its cost from the customer's balance and issues them a coupon, valid for the period set below.
+loyalty.rewards.saved: Rewards saved.
+loyalty.rewards.add: Add a reward
+loyalty.reward.field.name: Name
+loyalty.reward.field.name.help: Shown to customers in the rewards list, e.g. "Free delivery" or "5 € off".
+loyalty.reward.field.pointsCost: Points cost
+loyalty.reward.field.pointsCost.help: How many points a customer spends to redeem this reward.
+loyalty.reward.field.rewardType: Reward type
+loyalty.reward.field.rewardAmount: Reward amount
+loyalty.reward.field.rewardAmount.help: Discount amount. Only used when the reward type is "Fixed amount".
+loyalty.reward.field.rewardAmount.required_for_fixed: An amount is required when the reward type is "Fixed amount".
+loyalty.reward.field.rewardPercentage: Reward percentage
+loyalty.reward.field.rewardPercentage.help: Discount percentage. Only used when the reward type is "Percentage".
+loyalty.reward.field.rewardPercentage.required_for_percentage: A percentage is required when the reward type is "Percentage".
+loyalty.reward.field.couponValidityDays: Coupon validity (days)
+loyalty.reward.field.couponValidityDays.help: Number of days the coupon stays valid after the customer redeems this reward.
+loyalty.reward.field.enabled: Available to customers
+loyalty.reward.field.enabled.help: Uncheck to hide this reward without deleting it, leaving already-issued coupons untouched.
+profile.myLoyalty: My loyalty points
+profile.loyalty.title: Loyalty points
+profile.loyalty.intro: "Every order you place at %brand_name% earns you points. Spend them on the rewards below."
+profile.loyalty.balance: Your balance
+profile.loyalty.next_expiry: "%count% point(s) expire on %date%"
+profile.loyalty.no_expiry: Your points don't expire.
+profile.loyalty.rewards.title: Rewards
+profile.loyalty.rewards.none: There are no rewards available right now. Keep earning points -- they'll be waiting for you.
+profile.loyalty.rewards.cost: "%count% pts"
+profile.loyalty.rewards.redeem: Redeem
+profile.loyalty.rewards.points_to_go: "%count% more point(s) to go"
+profile.loyalty.history.title: History
+profile.loyalty.history.description: Description
+profile.loyalty.history.points: Points
+profile.loyalty.history.earned: Points earned on an order
+profile.loyalty.history.spent: Reward redeemed
+profile.loyalty.history.expired: Points expired
+profile.loyalty.history.expires_on: "expires on %date%"
+loyalty.redeem.success: "Reward redeemed! Use the code %code% on your next order to get \"%reward%\"."
+loyalty.redeem.insufficient: "You need %points% point(s) for this reward, and you have %balance%."
