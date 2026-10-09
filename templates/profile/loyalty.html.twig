@@ -88,6 +88,8 @@
               &mdash; {% trans with { '%date%': entry.expiresAt|format_date('long') } %}profile.loyalty.history.expires_on{% endtrans %}
             </span>
           {% endif %}
+        {% elseif entry.isExpiry %}
+          {{ 'profile.loyalty.history.expired'|trans }}
         {% else %}
           {{ entry.reward ? entry.reward.name : 'profile.loyalty.history.spent'|trans }}
           {% if entry.coupon %}

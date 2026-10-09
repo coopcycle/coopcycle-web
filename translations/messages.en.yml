@@ -2157,6 +2157,7 @@ profile.loyalty.history.description: Description
 profile.loyalty.history.points: Points
 profile.loyalty.history.earned: Points earned on an order
 profile.loyalty.history.spent: Reward redeemed
+profile.loyalty.history.expired: Points expired
 profile.loyalty.history.expires_on: "expires on %date%"
 loyalty.redeem.success: "Reward redeemed! Use the code %code% on your next order to get \"%reward%\"."
 loyalty.redeem.insufficient: "You need %points% point(s) for this reward, and you have %balance%."

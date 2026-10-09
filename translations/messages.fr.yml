@@ -2091,6 +2091,7 @@ profile.loyalty.history.description: Description
 profile.loyalty.history.points: Points
 profile.loyalty.history.earned: Points cumulés sur une commande
 profile.loyalty.history.spent: Récompense utilisée
+profile.loyalty.history.expired: Points expirés
 profile.loyalty.history.expires_on: "expirent le %date%"
 loyalty.redeem.success: "Récompense utilisée ! Saisissez le code %code% lors de votre prochaine commande pour obtenir « %reward% »."
 loyalty.redeem.insufficient: "Il vous faut %points% point(s) pour cette récompense, et vous en avez %balance%."
