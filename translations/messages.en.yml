@@ -2161,3 +2161,127 @@ profile.loyalty.history.expired: Points expired
 profile.loyalty.history.expires_on: "expires on %date%"
 loyalty.redeem.success: "Reward redeemed! Use the code %code% on your next order to get \"%reward%\"."
 loyalty.redeem.insufficient: "You need %points% point(s) for this reward, and you have %balance%."
+marketing.postmark.field.server_token: Postmark server token
+marketing.postmark.field.server_token.help: Found under your Postmark server's API Tokens tab. Used to send campaigns and to read the suppression list.
+marketing.postmark.field.broadcast_stream: Postmark broadcast stream
+marketing.postmark.field.broadcast_stream.help: The ID of the Postmark message stream campaigns are sent on. Must be a Broadcast stream, so that unsubscribe links and suppressions are handled for you.
+marketing.postmark.field.webhook_secret: Postmark webhook secret
+marketing.postmark.field.webhook_secret.help: A secret of your choosing. Postmark does not sign its webhooks, so add it to the webhook URL you configure there, either as the password in https://user:secret@your-host/webhooks/postmark or as ?secret=... at the end.
+marketing.postmark.title: Marketing emails (Postmark)
+marketing.postmark.info.body: Used to send campaigns to customer segments, and to keep track of who has unsubscribed or bounced.
+marketing.postmark.field.sender_name: Marketing sender name
+marketing.postmark.field.sender_name.help: The name campaigns appear to come from. Defaults to your brand name.
+marketing.postmark.field.sender_email: Marketing sender address
+marketing.postmark.field.sender_email.help: The address campaigns are sent from. Must be a verified Sender Signature on your Postmark account, or Postmark will refuse the send.
+marketing.title: Marketing campaigns
+marketing.program.active_label: Marketing campaigns are active
+marketing.program.active_help: While this is off, scheduled campaigns are not sent and campaigns cannot be sent by hand. Bounces and unsubscribes are still recorded.
+marketing.program.inactive_warning: Marketing campaigns are currently inactive. Nothing will be sent until you turn them on above.
+marketing.program.activated: Marketing campaigns are now active.
+marketing.program.deactivated: Marketing campaigns are now inactive.
+marketing.not_configured: 'Postmark is not configured yet, so nothing can be sent. Add your server token and sender address under <a href="%url%">Settings</a>.'
+marketing.campaign.new: Start a campaign
+marketing.campaign.new.help: Pick the segment you want to reach. Segments with a suggested strategy come with a subject and a message already written, which you can edit.
+marketing.campaign.new.has_strategy: Suggested strategy
+marketing.campaign.none_yet: No campaigns yet.
+marketing.campaign.saved: Campaign saved.
+marketing.campaign.deleted: Campaign deleted.
+marketing.campaign.scheduled_for: "scheduled for %date%"
+marketing.campaign.column.name: Campaign
+marketing.campaign.column.segment: Segment
+marketing.campaign.column.status: Status
+marketing.campaign.column.sent: Sent
+marketing.campaign.column.date: When
+marketing.campaign.status.draft: Draft
+marketing.campaign.status.scheduled: Scheduled
+marketing.campaign.status.sending: Sending
+marketing.campaign.status.sent: Sent
+marketing.campaign.recipient_status.pending: Still to send
+marketing.campaign.recipient_status.sent: Sent
+marketing.campaign.recipient_status.failed: Failed
+marketing.campaign.recipient_status.suppressed: Unsubscribed or bounced
+marketing.campaign.recipient_status.skipped: Skipped
+marketing.campaign.field.name: Campaign name
+marketing.campaign.field.name.help: For your own reference. Customers never see this.
+marketing.campaign.field.subject: Subject
+marketing.campaign.field.subject.help: The subject line customers will see.
+marketing.campaign.field.body: Message
+marketing.campaign.field.promotionCoupon: Coupon
+marketing.campaign.field.promotionCoupon.help: "Optional. Type the code of an existing promotion to mention in the message; remember to include it in the text too. You can look codes up under Promotions."
+marketing.campaign.field.scheduledAt: Schedule for
+marketing.campaign.field.scheduledAt.help: Leave empty to keep the campaign as a draft and send it by hand.
+marketing.campaign.field.scheduledAt.in_the_past: Pick a time in the future.
+marketing.campaign.audience.title: Who this reaches
+marketing.campaign.audience.of_segment: "of %total% in %segment%"
+marketing.campaign.audience.excluded: "Not included:"
+marketing.campaign.audience.no_consent: "%count% have not opted in to marketing emails"
+marketing.campaign.audience.suppressed: "%count% unsubscribed or bounced"
+marketing.campaign.audience.recently_emailed: "%count% were emailed in the last %days% days"
+marketing.campaign.audience.no_email: "%count% have no email address"
+marketing.campaign.audience.nobody_consented: Nobody in this segment has opted in to marketing emails, so there is no one to send to. Marketing consent is asked for at registration; accounts created before it was asked are not included.
+marketing.campaign.audience.after_sending: What this campaign actually reached.
+marketing.campaign.send.now: Send now
+marketing.campaign.send.help: The audience is worked out again at the moment of sending, so it reflects who is in the segment then.
+marketing.campaign.send.confirm: "Send this campaign to %count% customer(s)?"
+marketing.campaign.send.queued: "Campaign queued for %count% customer(s)."
+marketing.campaign.send.program_inactive: Turn marketing campaigns on before sending.
+marketing.campaign.delete.confirm: Delete this campaign?
+marketing.campaign.delete.already_sent: A campaign that has been sent cannot be deleted, because it records who was emailed.
+marketing.campaign.template.champions.name: "Thank you - %segment%"
+marketing.campaign.template.champions.subject: Thank you for being one of our best customers
+marketing.campaign.template.champions.body: |-
+  You order from us more than almost anyone, and we notice.
+
+  Thank you for supporting %brand_name% and the couriers who deliver for us.
+
+  If you would like to share us with a friend, your referral link is on your account page -- and you will both get something out of it.
+marketing.campaign.template.loyal_customers.name: "New places to try - %segment%"
+marketing.campaign.template.loyal_customers.subject: Some new places we think you will like
+marketing.campaign.template.loyal_customers.body: |-
+  You order with us regularly, so you get to hear about this first.
+
+  Here are the newest restaurants to join %brand_name%.
+
+  No discount, no catch -- just somewhere new to try.
+marketing.campaign.template.potential_loyalists.name: "Come back for a second order - %segment%"
+marketing.campaign.template.potential_loyalists.subject: Ready for your next order?
+marketing.campaign.template.potential_loyalists.body: |-
+  Thanks for ordering with %brand_name%. We hope it arrived just right.
+
+  Here is something towards your next one, whenever you fancy it.
+marketing.campaign.template.at_risk.name: "We miss you - %segment%"
+marketing.campaign.template.at_risk.subject: It has been a while
+marketing.campaign.template.at_risk.body: |-
+  You used to order with us often, and we have not seen you in a while.
+
+  If there was something we got wrong, we would genuinely like to know.
+
+  In the meantime, here is something to tempt you back.
+marketing.campaign.template.hibernating.name: "What is new - %segment%"
+marketing.campaign.template.hibernating.subject: A few things have changed since your last order
+marketing.campaign.template.hibernating.body: |-
+  It has been a long time since your last order with %brand_name%, and a fair bit has changed.
+
+  There are new restaurants, and we are delivering to more neighbourhoods than we were.
+
+  Have another look whenever you like.
+marketing.campaign.template.lost.name: "Last chance - %segment%"
+marketing.campaign.template.lost.subject: One last offer from us
+marketing.campaign.template.lost.body: |-
+  We have not seen you at %brand_name% for a very long time, so this will be the last email we send you about it.
+
+  If you would like to come back, here is our best offer.
+
+  If not, no hard feelings -- you can unsubscribe at the bottom of this email.
+marketing.campaign.send_test.title: Test this campaign
+marketing.campaign.send_test.button: Send test email
+marketing.campaign.send_test.placeholder: you@example.com
+marketing.campaign.send_test.help: Sends the message exactly as a customer would receive it, including the unsubscribe footer. It is not recorded against the campaign and does not count towards the sending limits.
+marketing.campaign.send_test.sent: "Test email sent to %email%."
+marketing.campaign.send_test.invalid_email: That does not look like an email address.
+marketing.campaign.send_test.incomplete: Give the campaign a subject and a message first.
+marketing.campaign.send_test.suppressed: "Nothing sent: %email% has unsubscribed or previously bounced, so Postmark will not deliver to it."
+marketing.campaign.send_test.refused: "Postmark refused the message: %error%"
+marketing.postmark.info.title: Why does this need Postmark?
+marketing.postmark.saved: Postmark settings saved.
+marketing.not_configured_here: Postmark is not configured yet, so nothing can be sent. Fill in the settings above.

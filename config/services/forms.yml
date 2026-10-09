@@ -78,6 +78,11 @@ services:
       $standtrackEnabled: '%env(STANDTRACK_API_KEY)%'
     tags: [ form.type ]
 
+  AppBundle\Form\Marketing\CampaignType:
+    arguments:
+      $promotionCouponRepository: '@sylius.repository.promotion_coupon'
+    tags: [ form.type ]
+
   AppBundle\Form\TaskType:
     tags: [ form.type ]
 

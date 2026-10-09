@@ -2095,3 +2095,127 @@ profile.loyalty.history.expired: Points expirés
 profile.loyalty.history.expires_on: "expirent le %date%"
 loyalty.redeem.success: "Récompense utilisée ! Saisissez le code %code% lors de votre prochaine commande pour obtenir « %reward% »."
 loyalty.redeem.insufficient: "Il vous faut %points% point(s) pour cette récompense, et vous en avez %balance%."
+marketing.postmark.field.server_token: Jeton de serveur Postmark
+marketing.postmark.field.server_token.help: Disponible dans l'onglet « API Tokens » de votre serveur Postmark. Utilisé pour envoyer les campagnes et lire la liste des suppressions.
+marketing.postmark.field.broadcast_stream: Flux de diffusion Postmark
+marketing.postmark.field.broadcast_stream.help: L'identifiant du flux Postmark utilisé pour les campagnes. Il doit s'agir d'un flux « Broadcast », afin que les liens de désinscription et les suppressions soient gérés pour vous.
+marketing.postmark.field.webhook_secret: Secret du webhook Postmark
+marketing.postmark.field.webhook_secret.help: "Un secret de votre choix. Postmark ne signe pas ses webhooks : ajoutez-le à l'URL que vous configurez chez eux, soit comme mot de passe dans https://user:secret@votre-hote/webhooks/postmark, soit via ?secret=... à la fin."
+marketing.postmark.title: E-mails marketing (Postmark)
+marketing.postmark.info.body: Utilisé pour envoyer les campagnes aux segments de clients, et pour savoir qui s'est désinscrit ou dont l'adresse rebondit.
+marketing.postmark.field.sender_name: Nom de l'expéditeur marketing
+marketing.postmark.field.sender_name.help: Le nom sous lequel les campagnes apparaissent. Par défaut, le nom de votre marque.
+marketing.postmark.field.sender_email: Adresse d'expéditeur marketing
+marketing.postmark.field.sender_email.help: L'adresse d'envoi des campagnes. Elle doit être une « Sender Signature » vérifiée sur votre compte Postmark, sans quoi Postmark refusera l'envoi.
+marketing.title: Campagnes marketing
+marketing.program.active_label: Les campagnes marketing sont actives
+marketing.program.active_help: Tant que ceci est désactivé, les campagnes programmées ne partent pas et aucune campagne ne peut être envoyée manuellement. Les rebonds et désinscriptions continuent d'être enregistrés.
+marketing.program.inactive_warning: Les campagnes marketing sont actuellement inactives. Rien ne sera envoyé tant que vous ne les aurez pas activées ci-dessus.
+marketing.program.activated: Les campagnes marketing sont maintenant actives.
+marketing.program.deactivated: Les campagnes marketing sont maintenant inactives.
+marketing.not_configured: 'Postmark n''est pas encore configuré : rien ne peut être envoyé. Renseignez votre jeton de serveur et votre adresse d''expéditeur dans les <a href="%url%">Paramètres</a>.'
+marketing.campaign.new: Lancer une campagne
+marketing.campaign.new.help: Choisissez le segment que vous souhaitez toucher. Les segments pour lesquels la plateforme propose une stratégie arrivent avec un objet et un message déjà rédigés, que vous pouvez modifier.
+marketing.campaign.new.has_strategy: Stratégie proposée
+marketing.campaign.none_yet: Aucune campagne pour le moment.
+marketing.campaign.saved: Campagne enregistrée.
+marketing.campaign.deleted: Campagne supprimée.
+marketing.campaign.scheduled_for: "programmée pour le %date%"
+marketing.campaign.column.name: Campagne
+marketing.campaign.column.segment: Segment
+marketing.campaign.column.status: Statut
+marketing.campaign.column.sent: Envoyés
+marketing.campaign.column.date: Quand
+marketing.campaign.status.draft: Brouillon
+marketing.campaign.status.scheduled: Programmée
+marketing.campaign.status.sending: Envoi en cours
+marketing.campaign.status.sent: Envoyée
+marketing.campaign.recipient_status.pending: Reste à envoyer
+marketing.campaign.recipient_status.sent: Envoyés
+marketing.campaign.recipient_status.failed: En échec
+marketing.campaign.recipient_status.suppressed: Désinscrits ou rebonds
+marketing.campaign.recipient_status.skipped: Ignorés
+marketing.campaign.field.name: Nom de la campagne
+marketing.campaign.field.name.help: Pour votre usage interne. Les clients ne le voient jamais.
+marketing.campaign.field.subject: Objet
+marketing.campaign.field.subject.help: L'objet que verront les clients.
+marketing.campaign.field.body: Message
+marketing.campaign.field.promotionCoupon: Coupon
+marketing.campaign.field.promotionCoupon.help: "Facultatif. Saisissez le code d'une promotion existante à mentionner dans le message ; pensez à l'inclure aussi dans le texte. Vous pouvez retrouver les codes dans Promotions."
+marketing.campaign.field.scheduledAt: Programmer pour
+marketing.campaign.field.scheduledAt.help: Laissez vide pour conserver la campagne en brouillon et l'envoyer manuellement.
+marketing.campaign.field.scheduledAt.in_the_past: Choisissez une date future.
+marketing.campaign.audience.title: Qui sera touché
+marketing.campaign.audience.of_segment: "sur %total% dans %segment%"
+marketing.campaign.audience.excluded: "Non inclus :"
+marketing.campaign.audience.no_consent: "%count% n'ont pas accepté les e-mails marketing"
+marketing.campaign.audience.suppressed: "%count% se sont désinscrits ou ont rebondi"
+marketing.campaign.audience.recently_emailed: "%count% ont reçu un e-mail ces %days% derniers jours"
+marketing.campaign.audience.no_email: "%count% n'ont pas d'adresse e-mail"
+marketing.campaign.audience.nobody_consented: "Personne dans ce segment n'a accepté les e-mails marketing : il n'y a donc personne à qui écrire. Le consentement marketing est demandé à l'inscription ; les comptes créés avant qu'il ne soit demandé ne sont pas inclus."
+marketing.campaign.audience.after_sending: Ce que cette campagne a réellement touché.
+marketing.campaign.send.now: Envoyer maintenant
+marketing.campaign.send.help: L'audience est recalculée au moment de l'envoi, afin de refléter qui se trouve alors dans le segment.
+marketing.campaign.send.confirm: "Envoyer cette campagne à %count% client(s) ?"
+marketing.campaign.send.queued: "Campagne mise en file pour %count% client(s)."
+marketing.campaign.send.program_inactive: Activez les campagnes marketing avant d'envoyer.
+marketing.campaign.delete.confirm: Supprimer cette campagne ?
+marketing.campaign.delete.already_sent: Une campagne déjà envoyée ne peut pas être supprimée, car elle conserve la trace des personnes contactées.
+marketing.campaign.template.champions.name: "Remerciements - %segment%"
+marketing.campaign.template.champions.subject: Merci de compter parmi nos meilleurs clients
+marketing.campaign.template.champions.body: |-
+  Vous commandez chez nous plus que presque personne, et nous le remarquons.
+
+  Merci de soutenir %brand_name% et les coursier·es qui livrent pour nous.
+
+  Si vous souhaitez nous faire connaître à un ami, votre lien de parrainage se trouve sur votre compte — et vous y gagnerez tous les deux.
+marketing.campaign.template.loyal_customers.name: "Nouvelles adresses - %segment%"
+marketing.campaign.template.loyal_customers.subject: Quelques nouvelles adresses qui devraient vous plaire
+marketing.campaign.template.loyal_customers.body: |-
+  Vous commandez régulièrement chez nous : vous êtes donc les premiers informés.
+
+  Voici les derniers restaurants à avoir rejoint %brand_name%.
+
+  Pas de réduction, pas de piège — simplement de nouvelles adresses à essayer.
+marketing.campaign.template.potential_loyalists.name: "Revenez pour une deuxième commande - %segment%"
+marketing.campaign.template.potential_loyalists.subject: Prêt·e pour votre prochaine commande ?
+marketing.campaign.template.potential_loyalists.body: |-
+  Merci d'avoir commandé chez %brand_name%. Nous espérons que tout est bien arrivé.
+
+  Voici un petit geste pour votre prochaine commande, quand l'envie vous prendra.
+marketing.campaign.template.at_risk.name: "Vous nous manquez - %segment%"
+marketing.campaign.template.at_risk.subject: Cela fait un moment
+marketing.campaign.template.at_risk.body: |-
+  Vous commandiez souvent chez nous, et nous ne vous avons pas vu·e depuis un certain temps.
+
+  Si quelque chose n'a pas été à la hauteur, nous aimerions sincèrement le savoir.
+
+  En attendant, voici de quoi vous donner envie de revenir.
+marketing.campaign.template.hibernating.name: "Ce qui a changé - %segment%"
+marketing.campaign.template.hibernating.subject: Quelques changements depuis votre dernière commande
+marketing.campaign.template.hibernating.body: |-
+  Cela fait longtemps que vous n'avez pas commandé chez %brand_name%, et pas mal de choses ont changé.
+
+  De nouveaux restaurants nous ont rejoints, et nous livrons dans davantage de quartiers qu'avant.
+
+  Jetez-y un œil quand vous voulez.
+marketing.campaign.template.lost.name: "Dernière chance - %segment%"
+marketing.campaign.template.lost.subject: Une dernière offre de notre part
+marketing.campaign.template.lost.body: |-
+  Nous ne vous avons pas vu·e chez %brand_name% depuis très longtemps : ce sera donc le dernier e-mail que nous vous enverrons à ce sujet.
+
+  Si vous souhaitez revenir, voici notre meilleure offre.
+
+  Sinon, sans rancune — vous pouvez vous désinscrire en bas de cet e-mail.
+marketing.campaign.send_test.title: Tester cette campagne
+marketing.campaign.send_test.button: Envoyer un e-mail de test
+marketing.campaign.send_test.placeholder: vous@example.com
+marketing.campaign.send_test.help: Envoie le message exactement tel qu'un client le recevra, y compris le pied de page de désinscription. Il n'est pas comptabilisé dans la campagne et n'entre pas dans les limites d'envoi.
+marketing.campaign.send_test.sent: "E-mail de test envoyé à %email%."
+marketing.campaign.send_test.invalid_email: Cela ne ressemble pas à une adresse e-mail.
+marketing.campaign.send_test.incomplete: Renseignez d'abord un objet et un message pour la campagne.
+marketing.campaign.send_test.suppressed: "Rien n'a été envoyé : %email% s'est désinscrit ou a déjà rebondi, Postmark ne lui délivrera donc rien."
+marketing.campaign.send_test.refused: "Postmark a refusé le message : %error%"
+marketing.postmark.info.title: Pourquoi Postmark est-il nécessaire ?
+marketing.postmark.saved: Paramètres Postmark enregistrés.
+marketing.not_configured_here: "Postmark n'est pas encore configuré : rien ne peut être envoyé. Renseignez les paramètres ci-dessus."

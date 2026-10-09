@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd" xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
+  <entity repository-class="AppBundle\Entity\Marketing\CampaignRepository" name="AppBundle\Entity\Marketing\Campaign" table="marketing_campaign">
+    <indexes>
+      <!-- The scheduler asks for due campaigns by status and time. -->
+      <index name="idx_marketing_campaign_due" columns="status,scheduled_at"/>
+    </indexes>
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="name" type="string" column="name" length="255"/>
+    <field name="segment" type="string" column="segment" length="64"/>
+    <field name="subject" type="string" column="subject" length="255" nullable="true"/>
+    <field name="bodyMjml" type="text" column="body_mjml" nullable="true"/>
+    <field name="bodyHtml" type="text" column="body_html" nullable="true"/>
+    <field name="status" type="string" column="status" length="16">
+      <options>
+        <option name="default">draft</option>
+      </options>
+    </field>
+    <field name="scheduledAt" type="datetime" column="scheduled_at" nullable="true"/>
+    <field name="sentAt" type="datetime" column="sent_at" nullable="true"/>
+    <field name="senderName" type="string" column="sender_name" length="255" nullable="true"/>
+    <field name="senderEmail" type="string" column="sender_email" length="255" nullable="true"/>
+    <field name="createdAt" type="datetime" column="created_at">
+      <gedmo:timestampable on="create"/>
+    </field>
+    <field name="updatedAt" type="datetime" column="updated_at">
+      <gedmo:timestampable on="update"/>
+    </field>
+    <many-to-one field="promotionCoupon" target-entity="AppBundle\Entity\Sylius\PromotionCoupon">
+      <join-columns>
+        <join-column name="promotion_coupon_id" referenced-column-name="id" nullable="true" on-delete="SET NULL"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

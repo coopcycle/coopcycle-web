@@ -48,6 +48,8 @@ class SettingsManager
         'paygreen_public_key',
         'paygreen_secret_key',
         'pawapay_api_key',
+        'postmark_server_token',
+        'postmark_webhook_secret',
     ];
 
     private static $boolean = [
@@ -56,6 +58,7 @@ class SettingsManager
         'guest_checkout_enabled',
         'referral_program_active',
         'loyalty_program_active',
+        'marketing_automation_active',
     ];
 
     private static $integer = [
@@ -65,6 +68,7 @@ class SettingsManager
         'referral_pending_ttl_days',
         'loyalty_points_per_currency_unit',
         'loyalty_points_validity_days',
+        'marketing_frequency_cap_days',
     ];
 
     private $cache = [];

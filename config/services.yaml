@@ -377,6 +377,14 @@ services:
     arguments:
       $envEnabled: '%env(bool:LOYALTY_PROGRAM_ENABLED)%'
 
+  AppBundle\Controller\Admin\MarketingController:
+    arguments:
+      $marketingAutomationEnabled: '%env(bool:MARKETING_AUTOMATION_ENABLED)%'
+
+  AppBundle\Service\Marketing\MarketingAutomationStatus:
+    arguments:
+      $envEnabled: '%env(bool:MARKETING_AUTOMATION_ENABLED)%'
+
   # Used to tell apart two addresses that reach the same mailbox, so someone
   # can't refer themselves (or an account they already own) with an alias.
   # The strategies, and crucially their order, are in the factory.
@@ -874,6 +882,26 @@ services:
     factory: ['@doctrine.orm.default_entity_manager', getRepository]
     arguments:
       - AppBundle\Entity\Loyalty\LoyaltyPointsEntry
+
+  AppBundle\Entity\Marketing\EmailSuppressionRepository:
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\Marketing\EmailSuppression
+
+  AppBundle\Entity\Marketing\CampaignRepository:
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\Marketing\Campaign
+
+  AppBundle\Entity\Marketing\CampaignRecipientRepository:
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\Marketing\CampaignRecipient
+
+  AppBundle\Entity\OptinConsentRepository:
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\OptinConsent
 
   sylius.repository.order:
     alias: AppBundle\Entity\Sylius\OrderRepository
