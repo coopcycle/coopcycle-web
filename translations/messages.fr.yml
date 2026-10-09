@@ -2103,3 +2103,7 @@ form.settings.postmark_webhook_secret.label: Secret du webhook Postmark
 form.settings.postmark_webhook_secret.help: "Un secret de votre choix. Postmark ne signe pas ses webhooks : ajoutez-le à l'URL que vous configurez chez eux, soit comme mot de passe dans https://user:secret@votre-hote/webhooks/postmark, soit via ?secret=... à la fin."
 form.settings.postmark.title: E-mails marketing (Postmark)
 form.settings.postmark.help: Utilisé pour envoyer les campagnes aux segments de clients, et pour savoir qui s'est désinscrit ou dont l'adresse rebondit.
+form.settings.postmark_sender_name.label: Nom de l'expéditeur marketing
+form.settings.postmark_sender_name.help: Le nom sous lequel les campagnes apparaissent. Par défaut, le nom de votre marque.
+form.settings.postmark_sender_email.label: Adresse d'expéditeur marketing
+form.settings.postmark_sender_email.help: L'adresse d'envoi des campagnes. Elle doit être une « Sender Signature » vérifiée sur votre compte Postmark, sans quoi Postmark refusera l'envoi.

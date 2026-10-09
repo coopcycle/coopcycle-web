@@ -37,6 +37,16 @@ class PostmarkType extends BaseType
                     'placeholder' => PostmarkClient::DEFAULT_BROADCAST_STREAM,
                 ],
             ])
+            ->add('postmark_sender_name', TextType::class, [
+                'required' => false,
+                'label' => 'form.settings.postmark_sender_name.label',
+                'help' => 'form.settings.postmark_sender_name.help',
+            ])
+            ->add('postmark_sender_email', TextType::class, [
+                'required' => false,
+                'label' => 'form.settings.postmark_sender_email.label',
+                'help' => 'form.settings.postmark_sender_email.help',
+            ])
             ->add('postmark_webhook_secret', PasswordType::class, [
                 'required' => false,
                 'label' => 'form.settings.postmark_webhook_secret.label',

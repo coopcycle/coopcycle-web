@@ -42,6 +42,11 @@ class Settings
 
     public $postmark_webhook_secret;
 
+    public $postmark_sender_name;
+
+    #[Assert\Email]
+    public $postmark_sender_email;
+
     public $sms_enabled;
 
     #[Assert\Expression("!this.sms_enabled or value in ['mailjet', 'twilio']", message: 'This value should not be blank.')]

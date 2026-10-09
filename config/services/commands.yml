@@ -47,6 +47,10 @@ services:
     tags:
       - { name: 'console.command', command: 'coopcycle:marketing:sync-suppressions' }
 
+  AppBundle\Command\SendTestMarketingEmailCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:marketing:send-test-email' }
+
   AppBundle\Command\BotCommand:
     parent: M6Web\Bundle\DaemonBundle\Command\DaemonCommand
     autowire: false
