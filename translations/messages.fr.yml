@@ -2207,3 +2207,12 @@ marketing.campaign.template.lost.body: |-
   Si vous souhaitez revenir, voici notre meilleure offre.
 
   Sinon, sans rancune — vous pouvez vous désinscrire en bas de cet e-mail.
+marketing.campaign.send_test.title: Tester cette campagne
+marketing.campaign.send_test.button: Envoyer un e-mail de test
+marketing.campaign.send_test.placeholder: vous@example.com
+marketing.campaign.send_test.help: Envoie le message exactement tel qu'un client le recevra, y compris le pied de page de désinscription. Il n'est pas comptabilisé dans la campagne et n'entre pas dans les limites d'envoi.
+marketing.campaign.send_test.sent: "E-mail de test envoyé à %email%."
+marketing.campaign.send_test.invalid_email: Cela ne ressemble pas à une adresse e-mail.
+marketing.campaign.send_test.incomplete: Renseignez d'abord un objet et un message pour la campagne.
+marketing.campaign.send_test.suppressed: "Rien n'a été envoyé : %email% s'est désinscrit ou a déjà rebondi, Postmark ne lui délivrera donc rien."
+marketing.campaign.send_test.refused: "Postmark a refusé le message : %error%"

@@ -92,6 +92,32 @@
       </div>
     </div>
 
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <i class="fa fa-envelope-o"></i> {% trans %}marketing.campaign.send_test.title{% endtrans %}
+      </div>
+      <div class="panel-body">
+        {% if is_configured %}
+          <form method="post" action="{{ path('admin_marketing_campaign_send_test', { id: campaign.id }) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('admin_marketing_campaign_send_test') }}">
+            <div class="form-group" style="margin-bottom:8px;">
+              <input type="email" name="email" class="form-control" required
+                     value="{{ app.user.email|default('') }}"
+                     placeholder="{% trans %}marketing.campaign.send_test.placeholder{% endtrans %}">
+            </div>
+            <button type="submit" class="btn btn-default btn-block">
+              <i class="fa fa-paper-plane-o"></i> {% trans %}marketing.campaign.send_test.button{% endtrans %}
+            </button>
+          </form>
+          <p class="text-muted" style="margin-top:8px;margin-bottom:0;">
+            {% trans %}marketing.campaign.send_test.help{% endtrans %}
+          </p>
+        {% else %}
+          <p class="text-muted" style="margin-bottom:0;">{{ 'marketing.not_configured'|trans({'%url%': path('admin_settings')})|raw }}</p>
+        {% endif %}
+      </div>
+    </div>
+
     {% if campaign.isEditable %}
     <div class="panel panel-default">
       <div class="panel-body">

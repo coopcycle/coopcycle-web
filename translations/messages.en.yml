@@ -2273,3 +2273,12 @@ marketing.campaign.template.lost.body: |-
   If you would like to come back, here is our best offer.
 
   If not, no hard feelings -- you can unsubscribe at the bottom of this email.
+marketing.campaign.send_test.title: Test this campaign
+marketing.campaign.send_test.button: Send test email
+marketing.campaign.send_test.placeholder: you@example.com
+marketing.campaign.send_test.help: Sends the message exactly as a customer would receive it, including the unsubscribe footer. It is not recorded against the campaign and does not count towards the sending limits.
+marketing.campaign.send_test.sent: "Test email sent to %email%."
+marketing.campaign.send_test.invalid_email: That does not look like an email address.
+marketing.campaign.send_test.incomplete: Give the campaign a subject and a message first.
+marketing.campaign.send_test.suppressed: "Nothing sent: %email% has unsubscribed or previously bounced, so Postmark will not deliver to it."
+marketing.campaign.send_test.refused: "Postmark refused the message: %error%"

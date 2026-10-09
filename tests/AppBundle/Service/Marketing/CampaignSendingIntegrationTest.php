@@ -8,6 +8,7 @@ use AppBundle\Entity\Marketing\CampaignRecipientRepository;
 use AppBundle\Message\Marketing\SendCampaignEmail;
 use AppBundle\MessageHandler\Marketing\SendCampaignEmailHandler;
 use AppBundle\Service\Marketing\CampaignAudienceResolver;
+use AppBundle\Service\Marketing\CampaignEmailFactory;
 use AppBundle\Service\Marketing\MarketingMailer;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -71,6 +72,9 @@ class CampaignSendingIntegrationTest extends KernelTestCase
         return new SendCampaignEmailHandler(
             self::getContainer()->get(CampaignRecipientRepository::class),
             self::getContainer()->get(CampaignAudienceResolver::class),
+            // The real factory, so these tests keep covering the message
+            // that actually goes out rather than one built for the test.
+            new CampaignEmailFactory($this->marketingMailer),
             $this->marketingMailer,
             $this->entityManager,
             new NullLogger()

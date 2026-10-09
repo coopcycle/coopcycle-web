@@ -7,6 +7,7 @@ use AppBundle\Entity\Marketing\CampaignRecipientRepository;
 use AppBundle\Entity\Marketing\CampaignRepository;
 use AppBundle\Form\Marketing\CampaignType;
 use AppBundle\Service\Marketing\CampaignAudienceResolver;
+use AppBundle\Service\Marketing\CampaignEmailFactory;
 use AppBundle\Service\Marketing\CampaignNotSendableException;
 use AppBundle\Service\Marketing\CampaignSender;
 use AppBundle\Service\Marketing\CampaignTemplateProvider;
@@ -23,6 +24,7 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -190,6 +192,70 @@ class MarketingController extends AbstractController
 
         $this->addFlash('notice', $translator->trans('marketing.campaign.send.queued', [
             '%count%' => $audience->count(),
+        ]));
+
+        return $this->redirectToRoute('admin_marketing_campaign', ['id' => $id]);
+    }
+
+    #[Route('/admin/marketing/campaigns/{id}/send-test', name: 'admin_marketing_campaign_send_test', methods: ['POST'])]
+    public function sendTestAction(
+        int $id,
+        Request $request,
+        CampaignEmailFactory $emailFactory,
+        TranslatorInterface $translator): Response
+    {
+        $this->denyAccess();
+
+        $campaign = $this->findCampaign($id);
+
+        if (!$this->isCsrfTokenValid('admin_marketing_campaign_send_test', $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $recipient = trim((string) $request->request->get('email'));
+
+        if (false === filter_var($recipient, FILTER_VALIDATE_EMAIL)) {
+            $this->addFlash('error', $translator->trans('marketing.campaign.send_test.invalid_email'));
+
+            return $this->redirectToRoute('admin_marketing_campaign', ['id' => $id]);
+        }
+
+        if (empty($campaign->getSubject()) || empty($campaign->getBodyHtml())) {
+            $this->addFlash('error', $translator->trans('marketing.campaign.send_test.incomplete'));
+
+            return $this->redirectToRoute('admin_marketing_campaign', ['id' => $id]);
+        }
+
+        try {
+            // Deliberately the mailer and not the sender: a test writes no
+            // recipient row, so it neither counts towards the campaign's
+            // figures nor leaves the tester capped out of the real send by
+            // the frequency rule.
+            $sent = $this->marketingMailer->send($emailFactory->create($campaign, $recipient));
+        } catch (MarketingMailerNotConfiguredException $e) {
+            $this->addFlash('error', $e->getMessage());
+
+            return $this->redirectToRoute('admin_marketing_campaign', ['id' => $id]);
+        } catch (TransportExceptionInterface $e) {
+            $this->addFlash('error', $translator->trans('marketing.campaign.send_test.refused', [
+                '%error%' => $e->getMessage(),
+            ]));
+
+            return $this->redirectToRoute('admin_marketing_campaign', ['id' => $id]);
+        }
+
+        if (!$sent) {
+            // Worth saying plainly: otherwise a test that silently goes
+            // nowhere reads as the feature being broken.
+            $this->addFlash('error', $translator->trans('marketing.campaign.send_test.suppressed', [
+                '%email%' => $recipient,
+            ]));
+
+            return $this->redirectToRoute('admin_marketing_campaign', ['id' => $id]);
+        }
+
+        $this->addFlash('notice', $translator->trans('marketing.campaign.send_test.sent', [
+            '%email%' => $recipient,
         ]));
 
         return $this->redirectToRoute('admin_marketing_campaign', ['id' => $id]);

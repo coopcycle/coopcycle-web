@@ -7,13 +7,12 @@ use AppBundle\Entity\Marketing\CampaignRecipient;
 use AppBundle\Entity\Marketing\CampaignRecipientRepository;
 use AppBundle\Message\Marketing\SendCampaignEmail;
 use AppBundle\Service\Marketing\CampaignAudienceResolver;
+use AppBundle\Service\Marketing\CampaignEmailFactory;
 use AppBundle\Service\Marketing\MarketingMailer;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Mime\Address;
-use Symfony\Component\Mime\Email;
 
 #[AsMessageHandler]
 class SendCampaignEmailHandler
@@ -21,6 +20,7 @@ class SendCampaignEmailHandler
     public function __construct(
         private readonly CampaignRecipientRepository $recipientRepository,
         private readonly CampaignAudienceResolver $audienceResolver,
+        private readonly CampaignEmailFactory $emailFactory,
         private readonly MarketingMailer $marketingMailer,
         private readonly EntityManagerInterface $entityManager,
         private readonly LoggerInterface $logger,
@@ -53,14 +53,7 @@ class SendCampaignEmailHandler
             return;
         }
 
-        $email = (new Email())
-            ->from(new Address(
-                (string) $campaign->getSenderEmail(),
-                (string) $campaign->getSenderName()
-            ))
-            ->to($recipient->getEmail())
-            ->subject((string) $campaign->getSubject())
-            ->html((string) $campaign->getBodyHtml());
+        $email = $this->emailFactory->create($campaign, $recipient->getEmail());
 
         try {
             $sent = $this->marketingMailer->send($email);
