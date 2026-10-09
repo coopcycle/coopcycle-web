@@ -20,6 +20,7 @@ class LoyaltyPointsEntry
 {
     public const TYPE_CREDIT = 'credit';
     public const TYPE_DEBIT = 'debit';
+    public const TYPE_EXPIRY = 'expiry';
 
     protected ?int $id = null;
 
@@ -74,6 +75,22 @@ class LoyaltyPointsEntry
         return $entry;
     }
 
+    /**
+     * Records points lapsing. Lapsed credits are already excluded from the
+     * balance by their expiry date, so this changes no total -- it's what
+     * stops the history leaving the customer to work out for themselves why
+     * their balance dropped.
+     */
+    public static function expiry(Customer $customer, int $amount): self
+    {
+        $entry = new self();
+        $entry->customer = $customer;
+        $entry->type = self::TYPE_EXPIRY;
+        $entry->amount = -1 * abs($amount);
+
+        return $entry;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -92,6 +109,11 @@ class LoyaltyPointsEntry
     public function isCredit(): bool
     {
         return self::TYPE_CREDIT === $this->type;
+    }
+
+    public function isExpiry(): bool
+    {
+        return self::TYPE_EXPIRY === $this->type;
     }
 
     public function getAmount(): int

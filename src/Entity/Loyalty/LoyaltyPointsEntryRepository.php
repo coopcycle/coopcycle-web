@@ -4,6 +4,7 @@ namespace AppBundle\Entity\Loyalty;
 
 use AppBundle\Entity\Sylius\Customer;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Sylius\Component\Order\Model\OrderInterface;
 
 class LoyaltyPointsEntryRepository extends EntityRepository
@@ -76,6 +77,23 @@ class LoyaltyPointsEntryRepository extends EntityRepository
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    /**
+     * Credits whose expiry date has passed but that still carry a balance,
+     * across every customer. Returned oldest first and iterated in batches
+     * by the sweep, since this runs over the whole table.
+     */
+    public function createLapsedCreditsQueryBuilder(?\DateTime $now = null): QueryBuilder
+    {
+        return $this->createQueryBuilder('e')
+            ->andWhere('e.type = :credit')
+            ->andWhere('e.remaining > 0')
+            ->andWhere('e.expiresAt IS NOT NULL')
+            ->andWhere('e.expiresAt <= :now')
+            ->setParameter('credit', LoyaltyPointsEntry::TYPE_CREDIT)
+            ->setParameter('now', $now ?? new \DateTime())
+            ->orderBy('e.expiresAt', 'ASC');
     }
 
     public function findOneByOrder(OrderInterface $order): ?LoyaltyPointsEntry
