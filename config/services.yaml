@@ -884,6 +884,21 @@ services:
     arguments:
       - AppBundle\Entity\Marketing\EmailSuppression
 
+  AppBundle\Entity\Marketing\CampaignRepository:
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\Marketing\Campaign
+
+  AppBundle\Entity\Marketing\CampaignRecipientRepository:
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\Marketing\CampaignRecipient
+
+  AppBundle\Entity\OptinConsentRepository:
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\OptinConsent
+
   sylius.repository.order:
     alias: AppBundle\Entity\Sylius\OrderRepository
 

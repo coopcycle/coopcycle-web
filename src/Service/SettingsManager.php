@@ -68,6 +68,7 @@ class SettingsManager
         'referral_pending_ttl_days',
         'loyalty_points_per_currency_unit',
         'loyalty_points_validity_days',
+        'marketing_frequency_cap_days',
     ];
 
     private $cache = [];
