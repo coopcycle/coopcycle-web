@@ -7,7 +7,6 @@ import {
   Radio,
   Skeleton,
   Table,
-  Space,
 } from 'antd';
 import type { TableProps } from 'antd'
 import '../Style.scss';
@@ -47,7 +46,7 @@ const PaymentForm = ({ payment, liablePartyForm }) => {
         const httpClient = new window._auth.httpClient();
 
         setIsLoading(true)
-        const { response, error } = await httpClient.post(
+        const { error } = await httpClient.post(
           payment['@id'] + '/refunds',
           {
             ...liablePartyForm.getFieldsValue(),
@@ -126,7 +125,7 @@ export default function ({ order, liablePartyForm }) {
 
     async function fetchData() {
       const httpClient = new window._auth.httpClient();
-      const { response, error } = await httpClient.get(order['@id'] + '/payments');
+      const { response } = await httpClient.get(order['@id'] + '/payments');
       setPayments(response['hydra:member']);
     }
 
@@ -191,7 +190,7 @@ export default function ({ order, liablePartyForm }) {
 
             const httpClient = new window._auth.httpClient();
             setIsFullRefundButtonLoading(true)
-            const { response, error } = await httpClient.put(
+            const { error } = await httpClient.put(
               order['@id'] + '/refund',
               liablePartyForm.getFieldsValue(),
             );

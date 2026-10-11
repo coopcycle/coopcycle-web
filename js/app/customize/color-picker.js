@@ -1,5 +1,5 @@
-import React, { useEffect, useState, createRef, useRef } from 'react'
-import { ColorPicker, Button, Flex, Tooltip, Popover, Input } from 'antd';
+import React from 'react'
+import { ColorPicker } from 'antd';
 import chroma from 'chroma-js';
 
 export default function ({ onChange, ...props }) {

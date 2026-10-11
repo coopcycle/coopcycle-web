@@ -24,7 +24,7 @@ async function _handleStatusSubmit(id, body) {
   );
 }
 async function syncData(id, body, t, dispatch, incident) {
-  const { error, data } = await _handleStatusSubmit(id, body);
+  const { error } = await _handleStatusSubmit(id, body);
   if (error) {
     notification.error({ message: t('SOMETHING_WENT_WRONG') });
   } else {
