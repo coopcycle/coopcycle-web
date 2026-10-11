@@ -1,7 +1,7 @@
 import React from 'react'
 import moment from 'moment'
 import { withTranslation } from 'react-i18next'
-import { Alert, Button, List, Flex, Typography } from 'antd'
+import { Alert, Button, List, Flex } from 'antd'
 import { CloseOutlined } from '@ant-design/icons';
 
 moment.locale($('html').attr('lang'))

@@ -8,7 +8,7 @@ import {
 
 import { moment } from '../../coopcycle-frontend-js'
 import { selectUnassignedTasks, selectAllTasks, selectSelectedDate, taskListAdapter, taskAdapter, tourAdapter } from '../../coopcycle-frontend-js/logistics/redux'
-import { filter, forEach, find, reduce, map, differenceWith, includes, mapValues } from 'lodash'
+import { filter, forEach, find, map, differenceWith, includes, mapValues } from 'lodash'
 import { isTaskVisible, isOffline, recurrenceTemplateToArray } from './utils'
 import { taskUtils } from '../../coopcycle-frontend-js/logistics/redux';
 import { selectAllTours, selectAssignedTasks, selectTaskIdToTourIdMap, selectUnassignedTours } from '../../../shared/src/logistics/redux/selectors'

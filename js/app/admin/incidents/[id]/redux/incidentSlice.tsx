@@ -69,5 +69,3 @@ export const selectTransporterEnabled = (state: RootState) =>
   state.incident.transporterEnabled;
 export const selectServiceTaxRate = (state: RootState) =>
   state.incident.serviceTaxRate;
-export const selectEvents = (state: RootState) =>
-  state.incident.incident.events;

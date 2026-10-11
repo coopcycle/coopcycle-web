@@ -1,11 +1,11 @@
-import React, { useEffect, useState, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { createRoot } from 'react-dom/client'
 
 import Swiper from 'swiper'
 import { Navigation } from 'swiper/modules'
 import _ from 'lodash'
 import qs from 'qs'
-import { Cascader, Skeleton, Card, Space } from 'antd';
+import { Cascader } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 // TODO

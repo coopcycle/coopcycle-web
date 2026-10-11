@@ -29,7 +29,7 @@ export default function ({ incident, order, form }) {
           return;
         }
 
-        const { response: incidentWithMetadata, error: addMetadataError } = await httpClient.post(
+        const { error: addMetadataError } = await httpClient.post(
           incident['@id'] + '/metadata',
           {
             metadata: [

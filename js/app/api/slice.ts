@@ -13,7 +13,6 @@ import {
   Zone,
   Package,
   StoreTimeSlot,
-  TimeSlotChoice,
   Order,
   OrderTiming,
   OrderValidation,
