@@ -672,6 +672,7 @@
         "SEARCH_QUERY_BAR_SAVE_NAME_PLACEHOLDER": "Name this search…",
         "SEARCH_QUERY_BAR_NO_SAVED_SEARCHES": "No saved searches yet",
         "SEARCH_QUERY_BAR_DELETE_SAVED_SEARCH": "Delete this saved search",
+        "SEARCH_QUERY_BAR_EXCLUDE": "Exclude",
         "SEARCH_QUERY_BAR_HELP": "How does this search work?",
         "SEARCH_QUERY_BAR_HELP_FIELDS": "Start typing a field name to see the fields you can filter on, then pick a value from the list.",
         "SEARCH_QUERY_BAR_HELP_EXCLUDE": "Prefix with a « - » to exclude instead of include.",

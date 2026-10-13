@@ -510,6 +510,7 @@
         "SEARCH_QUERY_BAR_SAVE_NAME_PLACEHOLDER": "Nommer cette recherche…",
         "SEARCH_QUERY_BAR_NO_SAVED_SEARCHES": "Aucune recherche enregistrée",
         "SEARCH_QUERY_BAR_DELETE_SAVED_SEARCH": "Supprimer cette recherche enregistrée",
+        "SEARCH_QUERY_BAR_EXCLUDE": "Exclure",
         "SEARCH_QUERY_BAR_HELP": "Comment fonctionne cette recherche ?",
         "SEARCH_QUERY_BAR_HELP_FIELDS": "Commencez à taper le nom d'un champ pour voir les champs disponibles, puis choisissez une valeur dans la liste.",
         "SEARCH_QUERY_BAR_HELP_EXCLUDE": "Préfixez avec un « - » pour exclure au lieu d'inclure.",

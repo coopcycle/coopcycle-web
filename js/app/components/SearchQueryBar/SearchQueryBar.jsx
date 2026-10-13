@@ -95,6 +95,9 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
   const [editingIndex, setEditingIndex] = useState(null)
   const [isOpen, setIsOpen] = useState(false)
   const [highlightedIndex, setHighlightedIndex] = useState(0)
+  // Set while the pointer is over a row's "Exclude" shortcut, so the row it
+  // belongs to can preview what clicking would do (struck-through label).
+  const [excludeHoverIndex, setExcludeHoverIndex] = useState(null)
   const [asyncOptions, setAsyncOptions] = useState([])
   const [isLoadingAsyncOptions, setIsLoadingAsyncOptions] = useState(false)
   // Checked { value, label } options while editing a `multi: true` field's
@@ -190,6 +193,7 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
         .map(field => ({
           type: 'key',
           key: `key:${field.key}`,
+          field: field.key,
           label: field.label,
           insert: `${exclude ? '-' : ''}${field.key}:`,
         }))
@@ -232,6 +236,7 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
     return filteredOptions.map(option => ({
       type: 'value',
       key: `value:${option.value}`,
+      value: option.value,
       label: option.label,
       description: option.description,
       insert: serializeFilterToken({ key: activeField.key, value: option.value, exclude: liveToken.exclude }),
@@ -240,6 +245,7 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
 
   useEffect(() => {
     setHighlightedIndex(0)
+    setExcludeHoverIndex(null)
   }, [suggestions])
 
   const focusInput = () => {
@@ -439,6 +445,37 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
     }
     setIsOpen(true)
     focusInput()
+  }
+
+  // Applies a suggestion as an exclusion ("-owner:Foo") - what each row's
+  // "Exclude" shortcut does, so the "-" prefix never has to be typed by
+  // hand (it still can, see SEARCH_QUERY_BAR_HELP_EXCLUDE).
+  const applyExclusion = (suggestion) => {
+    if (suggestion.type === 'key') {
+      setDraft(`-${suggestion.field}:`)
+      setIsOpen(true)
+      focusInput()
+      return
+    }
+
+    if (suggestion.type === 'checkbox') {
+      // A `multi: true` field excludes the whole "-key:(v1 OR v2)" token
+      // rather than one of its values, so the "-" goes on the draft that
+      // buildPendingToken() reads the exclusion back from - and the
+      // dropdown stays open, like a normal checkbox click.
+      if (!hasExcludePrefix(draft)) {
+        setDraft(`-${draft}`)
+      }
+      if (!suggestion.checked) {
+        toggleMultiValue(suggestion)
+      }
+      return
+    }
+
+    applySuggestion({
+      ...suggestion,
+      insert: serializeFilterToken({ key: activeField.key, value: suggestion.value, exclude: true }),
+    })
   }
 
   // The bounds of the "date:[a TO b]" being edited, as the RangePicker
@@ -848,29 +885,60 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
               }}
               onMouseEnter={() => setHighlightedIndex(index)}
               style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
                 padding: '6px 12px',
                 cursor: 'pointer',
                 background: index === highlightedIndex ? '#f5f5f5' : 'transparent',
               }}
             >
-              {suggestion.type === 'key' ? (
-                <><strong>{suggestion.key.slice(4)}</strong><span style={{ color: '#aaa' }}> — {suggestion.label}</span></>
-              ) : suggestion.type === 'checkbox' ? (
-                <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
-                  <Checkbox checked={suggestion.checked} onChange={() => {}} />
-                  <span>{suggestion.label}</span>
-                </label>
-              ) : (
-                <>
-                  <div>{suggestion.label}</div>
-                  {suggestion.description && (
-                    // Context that tells otherwise-alike values apart, e.g.
-                    // an order number's date/owner/customer.
-                    <div style={{ fontSize: 12, color: '#aaa', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {suggestion.description}
-                    </div>
-                  )}
-                </>
+              <div style={{
+                flex: 1,
+                minWidth: 0,
+                // Previews the exclusion while its shortcut is hovered.
+                textDecoration: index === excludeHoverIndex ? 'line-through' : 'none',
+              }}>
+                {suggestion.type === 'key' ? (
+                  <><strong>{suggestion.key.slice(4)}</strong><span style={{ color: '#aaa' }}> — {suggestion.label}</span></>
+                ) : suggestion.type === 'checkbox' ? (
+                  <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+                    <Checkbox checked={suggestion.checked} onChange={() => {}} />
+                    <span>{suggestion.label}</span>
+                  </label>
+                ) : (
+                  <>
+                    <div>{suggestion.label}</div>
+                    {suggestion.description && (
+                      // Context that tells otherwise-alike values apart, e.g.
+                      // an order number's date/owner/customer.
+                      <div style={{ fontSize: 12, color: '#aaa', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {suggestion.description}
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+              {index === highlightedIndex && (
+                <span
+                  role="button"
+                  onMouseEnter={() => setExcludeHoverIndex(index)}
+                  onMouseLeave={() => setExcludeHoverIndex(null)}
+                  onMouseDown={(e) => {
+                    // Stops the row's own handler from *including* the
+                    // suggestion instead, and keeps focus in the draft input.
+                    e.preventDefault()
+                    e.stopPropagation()
+                    applyExclusion(suggestion)
+                  }}
+                  style={{
+                    flexShrink: 0,
+                    fontSize: 12,
+                    color: index === excludeHoverIndex ? '#595959' : '#aaa',
+                  }}
+                >
+                  {t('SEARCH_QUERY_BAR_EXCLUDE')}
+                </span>
               )}
             </div>
           ))}
