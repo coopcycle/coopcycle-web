@@ -119,9 +119,13 @@ class GenerateOrdersForDateHandlerTest extends KernelTestCase
         $this->assertEquals(5, $generation->getAttempts());
     }
 
-    public function testRollsBackARuleThatFailsHalfway()
+    /**
+     * Two rules generating orders on mondays and fridays
+     *
+     * @return RecurrenceRule[]
+     */
+    private function loadRecurrenceRules(): array
     {
-        // LOAD FIXTURES: two rules generating orders on mondays and fridays
         $dbPurger = self::getContainer()->get(DatabasePurger::class);
         $dbPurger->purge();
         $dbPurger->resetSequences();
@@ -136,7 +140,64 @@ class GenerateOrdersForDateHandlerTest extends KernelTestCase
             __DIR__.'/../../../fixtures/ORM/recurrence_rules_generate_orders.yml',
         ], $_SERVER);
 
-        [$firstRule, $secondRule] = $this->entityManager->getRepository(RecurrenceRule::class)->findBy([], ['id' => 'ASC']);
+        return $this->entityManager->getRepository(RecurrenceRule::class)->findBy([], ['id' => 'ASC']);
+    }
+
+    public function testSkipsARuleThatHasNotStartedYet()
+    {
+        [$firstRule, $secondRule] = $this->loadRecurrenceRules();
+
+        // Prepared in advance, for a business starting the day after
+        $firstRule->setStartDate(new \DateTime('2030-01-15'));
+        $this->entityManager->flush();
+
+        ($this->handler)(new GenerateOrdersForDate(self::MONDAY));
+
+        $this->entityManager->clear();
+
+        $orders = $this->entityManager->getRepository(Order::class)->findAll();
+        $this->assertCount(1, $orders);
+        $this->assertEquals($secondRule->getId(), $orders[0]->getSubscription()->getId());
+    }
+
+    public function testSkipsARuleThatHasExpired()
+    {
+        [$firstRule, $secondRule] = $this->loadRecurrenceRules();
+
+        // A short term contract, over the day before
+        $firstRule->setEndDate(new \DateTime('2030-01-13'));
+        $this->entityManager->flush();
+
+        ($this->handler)(new GenerateOrdersForDate(self::MONDAY));
+
+        $this->entityManager->clear();
+
+        $orders = $this->entityManager->getRepository(Order::class)->findAll();
+        $this->assertCount(1, $orders);
+        $this->assertEquals($secondRule->getId(), $orders[0]->getSubscription()->getId());
+    }
+
+    public function testGeneratesOnTheBoundsOfTheDateRange()
+    {
+        [$firstRule, $secondRule] = $this->loadRecurrenceRules();
+
+        // Both bounds are included, and here they are the generated day itself
+        $firstRule->setStartDate(new \DateTime(self::MONDAY));
+        $firstRule->setEndDate(new \DateTime(self::MONDAY));
+        $secondRule->setStartDate(new \DateTime('2030-01-01'));
+        $secondRule->setEndDate(new \DateTime('2030-12-31'));
+        $this->entityManager->flush();
+
+        ($this->handler)(new GenerateOrdersForDate(self::MONDAY));
+
+        $this->entityManager->clear();
+
+        $this->assertCount(2, $this->entityManager->getRepository(Order::class)->findAll());
+    }
+
+    public function testRollsBackARuleThatFailsHalfway()
+    {
+        [$firstRule, $secondRule] = $this->loadRecurrenceRules();
 
         // The first rule writes its order and tasks, then fails: on lcr, the
         // worker ran out of memory publishing the live updates of the new tasks.

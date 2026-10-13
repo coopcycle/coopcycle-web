@@ -742,6 +742,9 @@ stores.recurrence_rules.empty_message: Lorsqu\'une commande récurrente est cré
 recurrence_rules.table.repeat: Répéter
 recurrence_rules.table.generate_orders: Générer des tâches/commandes automatiquement
 recurrence_rules.table.created_at: Règle créée
+recurrence_rules.from_date: "À partir du %date%"
+recurrence_rules.until_date: "Jusqu'au %date%"
+recurrence_rules.inactive: Inactive aujourd'hui
 recurrence_rule.legacy: Supprimer cette règle dans le panneau de dispatch
 recurrence_rule.price.missing: Le prix de livraison n'a pas pu être calculé. Veuillez vérifier la tarification.
 suggest.submitted.title: Merci de nous avoir suggéré ce restaurant !

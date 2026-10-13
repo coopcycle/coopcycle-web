@@ -308,7 +308,9 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                     $store,
                     $delivery,
                     $recurrRule,
-                    $onCreatePricingStrategy
+                    $onCreatePricingStrategy,
+                    $data->rruleStartDate,
+                    $data->rruleEndDate
                 );
 
                 if (!is_null($recurrenceRule)) {

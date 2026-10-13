@@ -51,6 +51,56 @@ class RecurrenceRuleBetweenTest extends TestCase
         $this->assertEmpty($response);
     }
 
+    public function outsideOfDateRangeProvider()
+    {
+        return [
+            'not started yet' => ['2021-02-15', null],
+            'already expired' => [null, '2021-02-11'],
+        ];
+    }
+
+    /**
+     * @dataProvider outsideOfDateRangeProvider
+     */
+    public function testNothingIsCreatedOutsideOfTheDateRange(?string $startDate, ?string $endDate)
+    {
+        $content = json_encode([
+            "after" => "2021-02-12T00:00:00+01:00",
+            "before" => "2021-02-12T23:59:59+01:00"
+        ]);
+        $request = Request::create('/api/recurrence_rules/1/between', 'POST', [], [], [], [], $content);
+
+        $store = new Store();
+        $store->setOrganization(new Organization());
+
+        $recurrenceRule = new RecurrenceRule();
+        $recurrenceRule->setStore($store);
+        $recurrenceRule->setRule(new Rule('FREQ=WEEKLY;BYDAY=MO,FR'));
+        $recurrenceRule->setStartDate($startDate ? new \DateTime($startDate) : null);
+        $recurrenceRule->setEndDate($endDate ? new \DateTime($endDate) : null);
+        $recurrenceRule->setTemplate([
+            '@type' => 'hydra:Collection',
+            'hydra:member' => [
+                [
+                    "@type" => "Task",
+                    "type" => "PICKUP",
+                    "address" => [
+                        "streetAddress" => "78 Avenue Victoria, 75001 Paris, France"
+                    ],
+                    "after" => '10:00',
+                    "before" => '11:00'
+                ]
+            ]
+        ]);
+
+        $this->denormalizer->denormalize(Argument::cetera())->shouldNotBeCalled();
+
+        $response = call_user_func_array($this->action, [$recurrenceRule, $request]);
+
+        $this->assertIsArray($response);
+        $this->assertEmpty($response);
+    }
+
     public function createTasksProvider()
     {
         return [

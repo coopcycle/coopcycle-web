@@ -41,6 +41,10 @@ document.addEventListener('DOMContentLoaded', () => {
       ? JSON.parse(container.dataset.formData)
       : null;
     preLoadedFormData.rrule = container.dataset.recurrenceRule;
+    preLoadedFormData.rruleStartDate =
+      container.dataset.recurrenceRuleStartDate || null;
+    preLoadedFormData.rruleEndDate =
+      container.dataset.recurrenceRuleEndDate || null;
 
     const isDispatcher = container.dataset.isDispatcher === 'true';
     const isDebugPricing = container.dataset.isDebugPricing === 'true';

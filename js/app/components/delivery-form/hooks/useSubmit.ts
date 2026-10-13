@@ -58,6 +58,8 @@ function convertValuesToDeliveryPayload(
     data = {
       ...data,
       rrule: values.rrule,
+      rruleStartDate: values.rruleStartDate ?? null,
+      rruleEndDate: values.rruleEndDate ?? null,
     };
   }
 
@@ -86,6 +88,8 @@ function convertDateInRecurrenceRulePayload(value) {
 function convertValuesToRecurrenceRulePayload(values) {
   let data = {
     rule: values.rrule,
+    startDate: values.rruleStartDate ?? null,
+    endDate: values.rruleEndDate ?? null,
     pricingRuleSet: values.order?.pricingRuleSet ?? null,
     manualSupplements: [] as ManualSupplementValues[],
     template: {

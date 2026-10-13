@@ -80,6 +80,10 @@ class GenerateOrdersForDateHandler
         });
 
         $subscriptions = array_filter($subscriptions, function (Task\RecurrenceRule $subscription) use ($date) {
+            return $subscription->isActiveOn(new \DateTime($date));
+        });
+
+        $subscriptions = array_filter($subscriptions, function (Task\RecurrenceRule $subscription) use ($date) {
             return $this->filterByDate($subscription, $date);
         });
 

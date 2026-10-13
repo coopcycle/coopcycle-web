@@ -624,6 +624,8 @@ export type PostDeliveryRequest = {
   tasks: TaskPayload[];
   order?: OrderPayload;
   rrule?: string;
+  rruleStartDate?: string | null;
+  rruleEndDate?: string | null;
 };
 
 export type PutDeliveryRequest = {

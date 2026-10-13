@@ -12,6 +12,9 @@ export type OrderFormValues = {
 export type DeliveryFormValues = {
   tasks: TaskPayload[];
   rrule?: string;
+  // Plain days (YYYY-MM-DD) bounding the recurrence, both included
+  rruleStartDate?: string | null;
+  rruleEndDate?: string | null;
   order: OrderFormValues;
   variantIncVATPrice?: number;
   variantName?: string;

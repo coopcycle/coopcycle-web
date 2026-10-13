@@ -285,10 +285,19 @@ class PricingManager
         );
     }
 
-    public function createRecurrenceRule(Store $store, Delivery $delivery, Rule $rule, PricingStrategy $pricingStrategy): ?RecurrenceRule
+    public function createRecurrenceRule(
+        Store $store,
+        Delivery $delivery,
+        Rule $rule,
+        PricingStrategy $pricingStrategy,
+        ?\DateTime $startDate = null,
+        ?\DateTime $endDate = null
+    ): ?RecurrenceRule
     {
         $recurrenceRule = new RecurrenceRule();
         $recurrenceRule->setStore($store);
+        $recurrenceRule->setStartDate($startDate);
+        $recurrenceRule->setEndDate($endDate);
 
         $this->setData($recurrenceRule, $delivery, $rule, $pricingStrategy);
 

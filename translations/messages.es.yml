@@ -563,6 +563,9 @@ stores.recurrence_rules.empty_message: Cuando se cree un pedido recurrente, las 
 recurrence_rules.table.repeat: Repetir
 recurrence_rules.table.generate_orders: Generar tareas/pedidos
 recurrence_rules.table.created_at: Regla creada
+recurrence_rules.from_date: "Desde el %date%"
+recurrence_rules.until_date: "Hasta el %date%"
+recurrence_rules.inactive: No activa hoy
 recurrence_rule.legacy: Utilice el panel de despacho para eliminar esta regla
 recurrence_rule.price.missing: No se pudo calcular el precio de entrega. Por favor, verifique la tarificación.
 meta.title: Plataforma de logística para cooperativas

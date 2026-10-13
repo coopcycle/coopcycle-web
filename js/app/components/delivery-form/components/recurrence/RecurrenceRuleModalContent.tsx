@@ -3,8 +3,8 @@ import { useDispatch } from 'react-redux';
 import { RRule, rrulestr } from 'rrule';
 import _ from 'lodash';
 import Select from 'react-select';
-import { Button, Checkbox, Collapse, Input } from 'antd';
-import moment from 'moment';
+import { Button, Checkbox, Collapse, DatePicker, Input } from 'antd';
+import moment, { Moment } from 'moment';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
@@ -53,7 +53,7 @@ const RecurrenceEditor = ({ recurrence, onChange }) => {
   // which would incorrectly pre-check today's day.
   const hasByday = /BYDAY=/i.test(recurrence);
   const byweekday: number[] = hasByday
-    ? (ruleObj.options.byweekday as number[]) ?? []
+    ? ((ruleObj.options.byweekday as number[]) ?? [])
     : [];
 
   return (
@@ -90,7 +90,7 @@ const getByDayValue = recurrenceRule => {
 };
 
 const validateForm = values => {
-  let errors = {};
+  let errors: { rule?: string; endDate?: string } = {};
 
   if (!values.rule) {
     errors.rule = 'Required';
@@ -102,8 +102,22 @@ const validateForm = values => {
     errors.rule = 'Invalid recurrence rule';
   }
 
+  if (
+    values.startDate &&
+    values.endDate &&
+    values.endDate.isBefore(values.startDate, 'day')
+  ) {
+    errors.endDate = 'Invalid date range';
+  }
+
   return errors;
 };
+
+// The dates are stored as plain days (YYYY-MM-DD), the time is irrelevant
+const DATE_FORMAT = 'YYYY-MM-DD';
+
+const toMoment = (date: string | null | undefined): Moment | null =>
+  date ? moment(date) : null;
 
 const defaultRecurrenceRule =
   'FREQ=WEEKLY;BYDAY=' + moment().locale('en').format('dd').toUpperCase();
@@ -119,8 +133,11 @@ const getInitialRule = (recurrenceRule: string | null | undefined): string => {
 };
 
 const ModalContent = () => {
-  const { rruleValue: recurrenceRule, setFieldValue: setSharedFieldValue } =
-    useDeliveryFormFormikContext();
+  const {
+    rruleValue: recurrenceRule,
+    values: sharedValues,
+    setFieldValue: setSharedFieldValue,
+  } = useDeliveryFormFormikContext();
 
   const [isOverrideRule, setIsOverrideRule] = useState<boolean>(() => {
     if (!recurrenceRule) {
@@ -159,7 +176,11 @@ const ModalContent = () => {
         </h4>
       </div>
       <Formik
-        initialValues={{ rule: getInitialRule(recurrenceRule) }}
+        initialValues={{
+          rule: getInitialRule(recurrenceRule),
+          startDate: toMoment(sharedValues.rruleStartDate),
+          endDate: toMoment(sharedValues.rruleEndDate),
+        }}
         validate={validateForm}
         onSubmit={values => {
           let rrule;
@@ -170,6 +191,14 @@ const ModalContent = () => {
             rrule = getByDayValue(values.rule) ? values.rule : null;
           }
           setSharedFieldValue('rrule', rrule);
+          setSharedFieldValue(
+            'rruleStartDate',
+            values.startDate ? values.startDate.format(DATE_FORMAT) : null,
+          );
+          setSharedFieldValue(
+            'rruleEndDate',
+            values.endDate ? values.endDate.format(DATE_FORMAT) : null,
+          );
           dispatch(closeRecurrenceModal());
         }}
         validateOnBlur={true}
@@ -192,6 +221,52 @@ const ModalContent = () => {
                 )}
               </div>
             ) : null}
+
+            <div className="p-4 border-bottom">
+              <div className="mb-2">
+                <label className="d-block font-weight-normal mb-0">
+                  {t('RECURRENCE_DATE_RANGE')}
+                </label>
+                <small className="d-block text-muted">
+                  {t('RECURRENCE_DATE_RANGE_HELP')}
+                </small>
+              </div>
+              <div className="d-flex">
+                <div className="mr-3">
+                  <small className="d-block text-muted">
+                    {t('RECURRENCE_START_DATE')}
+                  </small>
+                  <DatePicker
+                    data-testid="recurrence-start-date"
+                    format={DATE_FORMAT}
+                    value={values.startDate}
+                    allowClear={true}
+                    onChange={date => {
+                      setFieldValue('startDate', date);
+                    }}
+                  />
+                </div>
+                <div>
+                  <small className="d-block text-muted">
+                    {t('RECURRENCE_END_DATE')}
+                  </small>
+                  <DatePicker
+                    data-testid="recurrence-end-date"
+                    format={DATE_FORMAT}
+                    value={values.endDate}
+                    allowClear={true}
+                    onChange={date => {
+                      setFieldValue('endDate', date);
+                    }}
+                  />
+                </div>
+              </div>
+              {errors.endDate && (
+                <div className="text-danger mt-2">
+                  {t('RECURRENCE_DATE_RANGE_INVALID')}
+                </div>
+              )}
+            </div>
 
             <Collapse defaultActiveKey={isOverrideRule ? ['1'] : []}>
               <Panel header={t('RECURRENCE_ADVANCED')} key="1">

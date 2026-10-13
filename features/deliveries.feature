@@ -4720,7 +4720,9 @@ Feature: Deliveries
             "pricingRuleSet": null,
             "manualSupplements": [],
             "isCancelled": false,
-            "paused": false
+            "paused": false,
+            "startDate": null,
+            "endDate": null
           }
         ],
         "hydra:totalItems": 1

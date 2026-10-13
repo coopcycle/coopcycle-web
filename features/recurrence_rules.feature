@@ -48,7 +48,9 @@ Feature: Task recurrence rules
         "pricingRuleSet": null,
         "manualSupplements": [],
         "isCancelled":false,
-        "paused":false
+        "paused":false,
+        "startDate":null,
+        "endDate":null
       }
       """
 
@@ -127,7 +129,9 @@ Feature: Task recurrence rules
         "pricingRuleSet": null,
         "manualSupplements": [],
         "isCancelled":false,
-        "paused":false
+        "paused":false,
+        "startDate":null,
+        "endDate":null
       }
       """
 
@@ -213,7 +217,108 @@ Feature: Task recurrence rules
         "pricingRuleSet": null,
         "manualSupplements": [],
         "isCancelled":false,
-        "paused":false
+        "paused":false,
+        "startDate":null,
+        "endDate":null
+      }
+      """
+
+  Scenario: Create recurrence rule with a start and an end date
+    Given the fixtures files are loaded:
+      | users.yml           |
+      | stores.yml          |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/recurrence_rules" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "rule":"FREQ=WEEKLY;",
+        "startDate":"2024-01-15",
+        "endDate":"2024-06-30",
+        "template": {
+          "@type":"Task",
+          "address": {
+            "streetAddress": "1, Rue de Rivoli, 75004 Paris"
+          },
+          "after":"11:30",
+          "before":"12:00"
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/RecurrenceRule",
+        "@id":"/api/recurrence_rules/1",
+        "@type":"RecurrenceRule",
+        "store":"/api/stores/1",
+        "orgName":"Acme",
+        "name":null,
+        "rule":"FREQ=WEEKLY",
+        "template":{
+          "@type":"Task",
+          "address": {
+            "streetAddress": @string@
+          },
+          "after":"11:30",
+          "before":"12:00"
+        },
+        "arbitraryPriceTemplate": null,
+        "pricingRuleSet": null,
+        "manualSupplements": [],
+        "isCancelled":false,
+        "paused":false,
+        "startDate":"2024-01-15T00:00:00+01:00",
+        "endDate":"2024-06-30T00:00:00+02:00"
+      }
+      """
+
+  Scenario: Create recurrence rule with an end date before the start date
+    Given the fixtures files are loaded:
+      | users.yml           |
+      | stores.yml          |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/recurrence_rules" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "rule":"FREQ=WEEKLY;",
+        "startDate":"2024-06-30",
+        "endDate":"2024-01-15",
+        "template": {
+          "@type":"Task",
+          "address": {
+            "streetAddress": "1, Rue de Rivoli, 75004 Paris"
+          },
+          "after":"11:30",
+          "before":"12:00"
+        }
+      }
+      """
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/ConstraintViolationList",
+        "@type":"ConstraintViolationList",
+        "hydra:title":@string@,
+        "hydra:description":"endDate: The end date must be after the start date",
+        "violations":[
+          {
+            "propertyPath":"endDate",
+            "message":"The end date must be after the start date",
+            "code":null
+          }
+        ]
       }
       """
 
@@ -263,7 +368,9 @@ Feature: Task recurrence rules
         "pricingRuleSet": null,
         "manualSupplements": [],
         "isCancelled":false,
-        "paused":false
+        "paused":false,
+        "startDate":null,
+        "endDate":null
       }
       """
 
@@ -341,7 +448,9 @@ Feature: Task recurrence rules
         "pricingRuleSet": null,
         "manualSupplements": [],
         "isCancelled":false,
-        "paused":false
+        "paused":false,
+        "startDate":null,
+        "endDate":null
       }
       """
 

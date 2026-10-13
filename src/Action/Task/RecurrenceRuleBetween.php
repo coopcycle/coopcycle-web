@@ -51,6 +51,11 @@ class RecurrenceRuleBetween
 
         $startDate = new \DateTime($body['after']);
 
+        // Outside of the rule's own start/end dates, nothing is generated
+        if (!$data->isActiveOn($startDate)) {
+            return [];
+        }
+
         $rule = $data->getRule();
 
         $payloads = array_map(function ($payload) use ($transformer, $constraint, $rule, $startDate) {

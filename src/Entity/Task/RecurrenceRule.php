@@ -108,6 +108,22 @@ class RecurrenceRule implements SoftDeleteableInterface
     #[Groups(['task_recurrence_rule'])]
     private bool $paused = false;
 
+    /**
+     * The first day the rule generates orders, included. Null means it has
+     * always been active.
+     */
+    #[ApiProperty(openapiContext: ['type' => 'string', 'format' => 'date', 'example' => '2024-01-15'])]
+    #[Groups(['task_recurrence_rule'])]
+    private ?\DateTime $startDate = null;
+
+    /**
+     * The last day the rule generates orders, included. Null means it never
+     * expires.
+     */
+    #[ApiProperty(openapiContext: ['type' => 'string', 'format' => 'date', 'example' => '2024-06-30'])]
+    #[Groups(['task_recurrence_rule'])]
+    private ?\DateTime $endDate = null;
+
     public function __construct()
     {
         $this->manualSupplements = new ArrayCollection();
@@ -301,6 +317,59 @@ class RecurrenceRule implements SoftDeleteableInterface
     public function setPaused(bool $paused): void
     {
         $this->paused = $paused;
+    }
+
+    public function getStartDate(): ?\DateTime
+    {
+        return $this->startDate;
+    }
+
+    public function setStartDate(?\DateTime $startDate): void
+    {
+        $this->startDate = $startDate;
+    }
+
+    public function getEndDate(): ?\DateTime
+    {
+        return $this->endDate;
+    }
+
+    public function setEndDate(?\DateTime $endDate): void
+    {
+        $this->endDate = $endDate;
+    }
+
+    /**
+     * Whether the rule may generate orders on the given day, both bounds included.
+     * A rule without bounds is always active.
+     */
+    public function isActiveOn(\DateTimeInterface $date): bool
+    {
+        $day = new \DateTime($date->format('Y-m-d'));
+
+        if (!is_null($this->startDate) && $day < new \DateTime($this->startDate->format('Y-m-d'))) {
+            return false;
+        }
+
+        if (!is_null($this->endDate) && $day > new \DateTime($this->endDate->format('Y-m-d'))) {
+            return false;
+        }
+
+        return true;
+    }
+
+    #[Assert\Callback]
+    public function validateDateRange(ExecutionContextInterface $context): void
+    {
+        if (is_null($this->startDate) || is_null($this->endDate)) {
+            return;
+        }
+
+        if ($this->endDate < $this->startDate) {
+            $context->buildViolation('The end date must be after the start date')
+                ->atPath('endDate')
+                ->addViolation();
+        }
     }
 
 }
