@@ -287,11 +287,12 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
   // `selection` to build it from a selection that hasn't been stored in
   // state yet (setState being asynchronous).
   const buildPendingToken = (selection = multiSelection) => {
-    if (activeField?.multi && liveToken.isFilter) {
-      return selection.length > 0
-        ? serializeFilterToken({ key: activeField.key, values: selection.map(o => o.value), exclude: liveToken.exclude })
-        : null
+    if (activeField?.multi && liveToken.isFilter && selection.length > 0) {
+      return serializeFilterToken({ key: activeField.key, values: selection.map(o => o.value), exclude: liveToken.exclude })
     }
+    // A `multi: true` field with nothing ticked falls through to the typed
+    // draft: a value typed by hand ("owner:Les Zzz", matching no option)
+    // would otherwise be dropped on the floor, emptying the filter.
     const typed = draft.trim()
     // canonicalizeToken(), not the raw draft: a value typed with spaces
     // ("owner:Les Invisibles") only survives being re-joined into the query
@@ -745,6 +746,7 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
   // normal tag once the filter is finished - see applyMultiValue()/submit().
   const pendingTag = activeField?.multi && liveToken.isFilter && multiSelection.length > 0 ? (
     <Tag
+      data-cy="search-query-bar-pending-tag"
       style={{
         marginInlineEnd: 4,
         fontSize: 14,
@@ -770,6 +772,7 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
     <input
       ref={inputRef}
       type="text"
+      data-cy="search-query-bar-input"
       value={draft}
       placeholder={committedTokens.length === 0 ? (placeholder || t('SEARCH_QUERY_BAR_PLACEHOLDER')) : ''}
       onChange={onDraftChange}
@@ -801,6 +804,7 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
           return (
             <Tag
               key={index}
+              data-cy="search-query-bar-tag"
               closable
               onClick={() => editToken(index)}
               onClose={(e) => { e.preventDefault(); e.stopPropagation(); removeToken(index) }}
@@ -952,6 +956,7 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
           {suggestions.map((suggestion, index) => (
             <div
               key={suggestion.key}
+              data-cy="search-query-bar-suggestion"
               onMouseDown={(e) => {
                 e.preventDefault()
                 if (suggestion.type === 'checkbox') {
@@ -972,7 +977,7 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
                 background: index === highlightedIndex ? '#f5f5f5' : 'transparent',
               }}
             >
-              <div style={{
+              <div data-cy="search-query-bar-suggestion-label" style={{
                 flex: 1,
                 minWidth: 0,
                 // Previews the exclusion while its shortcut is hovered.
@@ -1014,6 +1019,7 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
               {index === highlightedIndex && (
                 <span
                   role="button"
+                  data-cy="search-query-bar-exclude"
                   onMouseEnter={() => setExcludeHoverIndex(index)}
                   onMouseLeave={() => setExcludeHoverIndex(null)}
                   onMouseDown={(e) => {
