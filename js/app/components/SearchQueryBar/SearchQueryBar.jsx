@@ -497,22 +497,18 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
       return
     }
 
-    if (suggestion.type === 'checkbox') {
-      // A `multi: true` field excludes the whole "-key:(v1 OR v2)" token
-      // rather than one of its values, so the "-" goes on the draft that
-      // buildPendingToken() reads the exclusion back from - and the
-      // dropdown stays open, like a normal checkbox click.
-      if (!hasExcludePrefix(draft)) {
-        setDraft(`-${draft}`)
-      }
-      if (!suggestion.checked) {
-        toggleMultiValue(suggestion)
-      }
-      return
-    }
-
+    // Excluding one value is a finished filter, on a `multi: true` field's
+    // checkbox row as much as on a plain value row: it's committed as a tag
+    // and searched straight away, rather than left pending like a tick.
+    // That's what empties the bar of what was typed to find the value -
+    // keeping a half-typed "-owner:la" next to the tag reads as if nothing
+    // had been applied. Ticked-but-unfinished values are dropped with it;
+    // they belong to the "include these" token being built, which this
+    // exclusion replaces.
+    setMultiSelection([])
     applySuggestion({
       ...suggestion,
+      type: 'value',
       insert: serializeFilterToken({ key: activeField.key, value: suggestion.value, exclude: true }),
     })
   }

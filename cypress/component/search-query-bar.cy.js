@@ -137,20 +137,33 @@ describe('SearchQueryBar', () => {
 
       suggestion('Les Invisibles').find(EXCLUDE).click()
 
-      // Nothing is searched yet (the dropdown stays open for more values),
-      // but the bar already shows the filter as an exclusion.
-      cy.get('@onSearch').should('not.have.been.called')
-      cy.get(PENDING_TAG)
-        .should('contain', '-')
-        .and('contain', 'owner')
+      // The exclusion is a finished filter: it shows as a tag, the search
+      // runs, and nothing of what was typed to find the value is left
+      // behind (a half-typed "-owner:les" would read as if the click had
+      // done nothing).
+      cy.get(TAG)
+        .contains('-')
+        .parent()
+        .should('contain', 'owner')
         .and('contain', 'Les Invisibles')
-
-      cy.get(INPUT).type('{enter}')
-
+      cy.get(INPUT).should('have.value', '')
       cy.get('@onSearch').should(
         'have.been.calledOnceWith',
         'state:new -owner:"Les Invisibles"',
       )
+    })
+
+    it('drops the ticked values the exclusion replaces', () => {
+      mountBar().type('owner:les')
+
+      suggestion('Les Sakura').find('.ant-checkbox-input').click()
+      suggestion('Les Invisibles').find(EXCLUDE).click()
+
+      cy.get('@onSearch').should(
+        'have.been.calledOnceWith',
+        '-owner:"Les Invisibles"',
+      )
+      cy.get(PENDING_TAG).should('not.exist')
     })
 
     it('excludes a single-value field right away', () => {
