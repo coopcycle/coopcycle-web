@@ -1704,6 +1704,7 @@ deliveries.importing: The file %filename% is being imported.
 deliveries.imports.created_at: Created at
 deliveries.imports.see_file: See file
 deliveries.imports.see_errored_file: To errors details
+deliveries.imports.error.interrupted: The import was interrupted by an unexpected error and did not finish. The lines handled before it may already have been imported, please check them before importing this file again.
 business.account.settings.link: Link with my account
 form.business_restaurant_group.restaurants_with_menu: Restaurants with menu
 form.business_restaurant_group.restaurant: Restaurant
