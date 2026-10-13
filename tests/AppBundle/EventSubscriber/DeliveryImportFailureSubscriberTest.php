@@ -6,7 +6,7 @@ use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
 use AppBundle\EventSubscriber\DeliveryImportFailureSubscriber;
 use AppBundle\Message\ImportDeliveries;
 use AppBundle\Message\ImportTasks;
-use AppBundle\Service\LiveUpdates;
+use AppBundle\Service\DeliveryImportStatusManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectRepository;
@@ -25,7 +25,7 @@ class DeliveryImportFailureSubscriberTest extends TestCase
     private $doctrine;
     private $entityManager;
     private $repository;
-    private $liveUpdates;
+    private $statusManager;
     private DeliveryImportFailureSubscriber $subscriber;
 
     public function setUp(): void
@@ -41,14 +41,14 @@ class DeliveryImportFailureSubscriberTest extends TestCase
         $this->doctrine = $this->prophesize(ManagerRegistry::class);
         $this->doctrine->getManager()->willReturn($this->entityManager->reveal());
 
-        $this->liveUpdates = $this->prophesize(LiveUpdates::class);
+        $this->statusManager = $this->prophesize(DeliveryImportStatusManager::class);
 
         $translator = $this->prophesize(TranslatorInterface::class);
         $translator->trans(Argument::cetera())->willReturn('Import interrupted');
 
         $this->subscriber = new DeliveryImportFailureSubscriber(
             $this->doctrine->reveal(),
-            $this->liveUpdates->reveal(),
+            $this->statusManager->reveal(),
             $translator->reveal(),
             $this->prophesize(LoggerInterface::class)->reveal()
         );
@@ -79,18 +79,8 @@ class DeliveryImportFailureSubscriberTest extends TestCase
 
         $this->subscriber->onFailure($this->failedEvent(new ImportDeliveries('import.csv'), false));
 
-        $this->assertSame(DeliveryImportQueue::STATUS_FAILED, $queue->getStatus());
-        $this->assertSame(
-            [['row' => 0, 'errors' => ['Import interrupted']]],
-            $queue->getErrors()
-        );
-
-        $this->entityManager->flush()->shouldHaveBeenCalled();
-        $this->liveUpdates
-            ->toDispatchers('delivery_import:updated', [
-                'filename' => 'import.csv',
-                'status' => DeliveryImportQueue::STATUS_FAILED,
-            ])
+        $this->statusManager
+            ->failed($queue, [['row' => 0, 'errors' => ['Import interrupted']]])
             ->shouldHaveBeenCalled();
     }
 
@@ -104,8 +94,7 @@ class DeliveryImportFailureSubscriberTest extends TestCase
 
         $this->subscriber->onFailure($this->failedEvent(new ImportDeliveries('import.csv'), true));
 
-        $this->assertSame(DeliveryImportQueue::STATUS_STARTED, $queue->getStatus());
-        $this->entityManager->flush()->shouldNotHaveBeenCalled();
+        $this->statusManager->failed(Argument::cetera())->shouldNotHaveBeenCalled();
     }
 
     public function testOtherMessagesAreIgnored()
@@ -115,7 +104,7 @@ class DeliveryImportFailureSubscriberTest extends TestCase
             false
         ));
 
-        $this->entityManager->flush()->shouldNotHaveBeenCalled();
+        $this->statusManager->failed(Argument::cetera())->shouldNotHaveBeenCalled();
     }
 
     public function testEntityManagerIsResetWhenItWasClosedByTheFailure()
@@ -133,7 +122,7 @@ class DeliveryImportFailureSubscriberTest extends TestCase
 
         $this->subscriber->onFailure($this->failedEvent(new ImportDeliveries('import.csv'), false));
 
-        $this->assertSame(DeliveryImportQueue::STATUS_FAILED, $queue->getStatus());
-        $this->entityManager->flush()->shouldHaveBeenCalled();
+        // The queue is looked up on the manager that replaced the closed one
+        $this->statusManager->failed($queue, Argument::any())->shouldHaveBeenCalled();
     }
 }

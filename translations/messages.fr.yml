@@ -1549,6 +1549,7 @@ deliveries.imports.created_at: Créé le
 deliveries.imports.see_file: Voir le fichier
 deliveries.imports.see_errored_file: Voir les erreurs
 deliveries.imports.error.interrupted: L'import a été interrompu par une erreur inattendue et n'est pas allé à son terme. Les lignes traitées avant celle-ci ont peut-être déjà été importées, merci de les vérifier avant d'importer à nouveau ce fichier.
+deliveries.imports.error.stalled: L'import a été arrêté car il n'était toujours pas terminé après un temps anormalement long, probablement parce que le worker qui le traitait a disparu. Les lignes traitées avant cet arrêt ont peut-être déjà été importées, merci de les vérifier avant d'importer à nouveau ce fichier.
 adminDashboard.business_restaurant_groups.title: Groupes de restaurants d'entreprise
 registration.flow.finish: "Terminer mon inscription"
 form.settings.company_legal_name.label: "Nom légal de l'entreprise"

@@ -7,10 +7,10 @@ use AppBundle\Entity\Tour;
 use AppBundle\Entity\TourRepository;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Message\ImportDeliveries;
+use AppBundle\Service\DeliveryImportStatusManager;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\DeliveryOrderManager;
 use AppBundle\Service\RemotePushNotificationManager;
-use AppBundle\Service\LiveUpdates;
 use AppBundle\Spreadsheet\DeliverySpreadsheetParser;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Filesystem;
@@ -29,7 +29,7 @@ class ImportDeliveriesHandler
         private ValidatorInterface $validator,
         private TranslatorInterface $translator,
         private DeliveryOrderManager $deliveryOrderManager,
-        private LiveUpdates $liveUpdates,
+        private DeliveryImportStatusManager $statusManager,
         private DeliveryManager $deliveryManager,
         private LoggerInterface $logger,
         private TourRepository $tourRepository
@@ -62,7 +62,7 @@ class ImportDeliveriesHandler
 
         $store = $queue->getStore();
 
-        $this->updateQueueStatus($queue, DeliveryImportQueue::STATUS_STARTED);
+        $this->statusManager->started($queue);
 
         $result = $this->spreadsheetParser->parse($tempnam, $message->getOptions());
 
@@ -122,33 +122,11 @@ class ImportDeliveriesHandler
         $this->entityManager->flush();
 
         if ($result->hasErrors()) {
-            $this->updateQueueStatus($queue, DeliveryImportQueue::STATUS_FAILED, $result->getNormalizedErrors());
+            $this->statusManager->failed($queue, $result->getNormalizedErrors());
         } else {
-            $this->updateQueueStatus($queue, DeliveryImportQueue::STATUS_COMPLETED);
+            $this->statusManager->completed($queue);
         }
 
         unlink($tempnam);
-    }
-
-    private function updateQueueStatus(DeliveryImportQueue $queue, string $status, array $errors = [])
-    {
-        $queue->setStatus($status);
-
-        if (DeliveryImportQueue::STATUS_STARTED === $status) {
-            $queue->setStartedAt(new \DateTime());
-        } else {
-            $queue->setFinishedAt(new \DateTime());
-        }
-
-        if (!empty($errors)) {
-            $queue->setErrors($errors);
-        }
-
-        $this->entityManager->flush();
-
-        $this->liveUpdates->toDispatchers('delivery_import:updated', [
-            'filename' => $queue->getFilename(),
-            'status' => $status
-        ]);
     }
 }

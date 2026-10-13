@@ -4,7 +4,7 @@ namespace AppBundle\EventSubscriber;
 
 use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
 use AppBundle\Message\ImportDeliveries;
-use AppBundle\Service\LiveUpdates;
+use AppBundle\Service\DeliveryImportStatusManager;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -23,7 +23,7 @@ class DeliveryImportFailureSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private readonly ManagerRegistry $doctrine,
-        private readonly LiveUpdates $liveUpdates,
+        private readonly DeliveryImportStatusManager $statusManager,
         private readonly TranslatorInterface $translator,
         private readonly LoggerInterface $logger
     )
@@ -70,26 +70,11 @@ class DeliveryImportFailureSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $queue->setStatus(DeliveryImportQueue::STATUS_FAILED);
-        $queue->setFinishedAt(new \DateTime());
-
         // The handler flushes as it goes, so the rows handled before the error
         // are already imported: say so rather than let a dispatcher assume the
         // file has to be imported again as a whole.
-        $queue->setErrors([
-            [
-                'row' => 0,
-                'errors' => [
-                    $this->translator->trans('deliveries.imports.error.interrupted'),
-                ],
-            ],
-        ]);
-
-        $entityManager->flush();
-
-        $this->liveUpdates->toDispatchers('delivery_import:updated', [
-            'filename' => $queue->getFilename(),
-            'status' => DeliveryImportQueue::STATUS_FAILED,
-        ]);
+        $this->statusManager->failed($queue, DeliveryImportStatusManager::errorForWholeImport(
+            $this->translator->trans('deliveries.imports.error.interrupted')
+        ));
     }
 }
