@@ -135,6 +135,30 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
 
   const activeField = liveToken.isFilter ? fieldsByKey[liveToken.key] : null
 
+  // Whether what's typed so far is the value of a filter on a field the bar
+  // knows about, i.e. still being written - e.g. `owner:Les Inv`. Values
+  // routinely contain spaces ("Les Invisibles"), so a space there belongs to
+  // the value and mustn't end the token; the token is finished by picking a
+  // suggestion, pressing Enter or leaving the bar, and gets quoted then (see
+  // buildPendingToken()). Dates are left out: their value comes from the
+  // picker and never holds a space.
+  const isTypingFilterValue = (value) => {
+    const live = parseLiveToken(value)
+    const field = live.isFilter ? fieldsByKey[live.key] : null
+    if (!field || field.type === 'date') {
+      return false
+    }
+    // ...unless a known filter appears further on, as when a whole query is
+    // pasted in ("-state:cancelled owner:les"): that's several tokens, not
+    // one long value.
+    return tokenize(value).slice(1).every(token => {
+      // parseLiveToken, so a key whose value isn't typed yet ("state:")
+      // already counts as the start of the next filter.
+      const parsed = parseLiveToken(token)
+      return !(parsed.isFilter && fieldsByKey[parsed.key])
+    })
+  }
+
   const loadAsyncOptions = useCallback(
     debounce(async (field, input) => {
       setIsLoadingAsyncOptions(true)
@@ -150,7 +174,7 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
 
   useEffect(() => {
     if (activeField && activeField.type === 'async') {
-      loadAsyncOptions(activeField, liveToken.value || '')
+      loadAsyncOptions(activeField, unquote((liveToken.value || '').trim()))
     }
   }, [activeField, liveToken.value, loadAsyncOptions])
 
@@ -175,7 +199,7 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
       return []
     }
 
-    const keyword = (liveToken.value || '').toLowerCase()
+    const keyword = unquote((liveToken.value || '').trim()).toLowerCase()
     const options = activeField.type === 'async' ? asyncOptions : (activeField.options || [])
     const filteredOptions = options
       .filter(option => activeField.type === 'async' || String(option.label).toLowerCase().includes(keyword))
@@ -258,7 +282,11 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
         ? serializeFilterToken({ key: activeField.key, values: multiSelection.map(o => o.value), exclude: liveToken.exclude })
         : null
     }
-    return draft && !isBareKeyToken(draft) ? draft : null
+    const typed = draft.trim()
+    // canonicalizeToken(), not the raw draft: a value typed with spaces
+    // ("owner:Les Invisibles") only survives being re-joined into the query
+    // once quoted.
+    return typed && !isBareKeyToken(typed) ? canonicalizeToken(typed) : null
   }
 
   const submit = useCallback(() => {
@@ -551,6 +579,12 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
     if (hasUnterminatedQuote(value)) {
       // Mid-way through typing a quoted (possibly multi-word) value - keep
       // it whole in the draft rather than splitting on the space(s) inside.
+      setDraft(value)
+      setIsOpen(true)
+      return
+    }
+
+    if (isTypingFilterValue(value)) {
       setDraft(value)
       setIsOpen(true)
       return
