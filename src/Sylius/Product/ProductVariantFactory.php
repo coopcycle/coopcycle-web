@@ -122,7 +122,20 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
         ]);
         $productVariant->setTaxCategory($taxCategory);
 
-        $productVariant->setPosition(1);
+        // The position is left unset on purpose, so that Gedmo appends the
+        // variant at the end of the list.
+        //
+        // Sylius maps ProductVariant::$position as a sortable position grouped
+        // by product, so inserting at a fixed position makes Gedmo relocate
+        // every variant that comes after it:
+        //
+        //   UPDATE sylius_product_variant SET position = position + 1
+        //   WHERE position >= :position AND product_id = :onDemandDeliveryProduct
+        //
+        // These variants are created one per order and never deleted, so that
+        // group holds every delivery ever priced. Inserting at position 1 then
+        // rewrote the whole table on each order, and two orders priced at the
+        // same time deadlocked each other.
 
         return $productVariant;
     }
