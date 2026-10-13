@@ -15,6 +15,10 @@ services:
     tags:
       - { name: 'console.command', command: 'coopcycle:orders:process-taxes' }
 
+  AppBundle\Command\RepairMissingDeliveryPriceCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:orders:repair-missing-delivery-price' }
+
   # Replace Sylius' generate-coupons command with our subclass that adds
   # --prefix / --suffix. Registered under the vendor service id so the existing
   # aliases resolve to it and there is no clash on the command name.
