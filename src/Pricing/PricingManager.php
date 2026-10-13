@@ -55,6 +55,7 @@ class PricingManager
         private readonly TimeSlotManager $timeSlotManager,
         private readonly PriceCalculationVisitor $priceCalculationVisitor,
         private readonly PriceUpdateVisitor $priceUpdateVisitor,
+        private readonly PriceReviewIncidents $priceReviewIncidents,
         private readonly LoggerInterface $feeCalculationLogger
     ) {
     }
@@ -223,6 +224,43 @@ class PricingManager
         if ($order->isFoodtech()) {
             $this->feeCalculationLogger->info('processDeliveryOrder command should NOT be called on foodtech orders');
             return;
+        }
+
+        // An order item is what holds the price of an on demand delivery order,
+        // so an order without any of them has no price at all, and can not even
+        // be displayed: see Order::getDeliveryPrice().
+        // When the price could not be calculated (no rule matched, the rule set
+        // was changed, a task was cancelled, ...), fall back to a placeholder
+        // price of 0 and have a dispatcher review it, rather than leaving the
+        // order empty.
+        if (count($productVariants) === 0) {
+            $delivery = $order->getDelivery();
+
+            if (null === $delivery) {
+                // Nothing to build a placeholder from; keep the previous items,
+                // a stale price is still better than an unusable order
+                $this->feeCalculationLogger->error('No price to set on an order without a delivery', [
+                    'order' => $order->getId(),
+                ]);
+
+                return;
+            }
+
+            $this->feeCalculationLogger->warning('No price could be calculated, setting a placeholder price', [
+                'order' => $order->getId(),
+            ]);
+
+            $productVariants = [
+                $this->getCustomProductVariant(
+                    $delivery,
+                    new ArbitraryPrice(
+                        $this->translator->trans('form.delivery.price.missing'),
+                        0
+                    )
+                ),
+            ];
+
+            $this->priceReviewIncidents->schedule($order);
         }
 
         //remove previously added items

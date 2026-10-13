@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\AppBundle\Service;
 
-use AppBundle\Action\Incident\CreateIncident;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
@@ -27,8 +26,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
-use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * An order generated from a recurrence rule is found again for that rule and date
@@ -73,15 +70,12 @@ class DeliveryOrderManagerTest extends TestCase
             ->willReturn(new ManualSupplements([]));
 
         $this->deliveryOrderManager = new DeliveryOrderManager(
-            $this->prophesize(Security::class)->reveal(),
             $this->entityManager->reveal(),
-            $this->prophesize(TranslatorInterface::class)->reveal(),
             $this->productRepository->reveal(),
             $this->deliveryManager->reveal(),
             $this->orderManager->reveal(),
             $this->orderFactory->reveal(),
             $this->pricingManager->reveal(),
-            $this->prophesize(CreateIncident::class)->reveal(),
             false,
         );
     }

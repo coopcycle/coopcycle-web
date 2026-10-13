@@ -2,9 +2,7 @@
 
 namespace AppBundle\Service;
 
-use AppBundle\Action\Incident\CreateIncident;
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\ProductRepository;
@@ -12,27 +10,21 @@ use AppBundle\Entity\Sylius\UseArbitraryPrice;
 use AppBundle\Entity\Sylius\CalculateUsingPricingRules;
 use AppBundle\Entity\Sylius\UsePricingRules;
 use AppBundle\Entity\Task\RecurrenceRule;
-use AppBundle\Entity\User;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Pricing\PricingManager;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DeliveryOrderManager
 {
     public function __construct(
-        private readonly Security $security,
         private readonly EntityManagerInterface $entityManager,
-        private readonly TranslatorInterface $translator,
         private readonly ProductRepository $productRepository,
         private readonly DeliveryManager $deliveryManager,
         private readonly OrderManager $orderManager,
         private readonly OrderFactory $orderFactory,
         private readonly PricingManager $pricingManager,
-        private readonly CreateIncident $createIncident,
         private readonly bool $cashEnabled,
     ) {
     }
@@ -66,22 +58,12 @@ class DeliveryOrderManager
             $delivery,
             $pricingStrategy
         );
-        $incident = null;
-
-        if (count($productVariants) === 0) {
-            if ($throwException) {
-                throw new NoRuleMatchedException();
-            }
-
-            // otherwise; set price to 0 and create an incident
-            $productVariants = [
-                $this->pricingManager->getCustomProductVariant(
-                    $delivery,
-                    new ArbitraryPrice($this->translator->trans('form.delivery.price.missing'), 0)
-                ),
-            ];
-            $incident = new Incident();
+        if (count($productVariants) === 0 && $throwException) {
+            throw new NoRuleMatchedException();
         }
+
+        // otherwise, PricingManager::processDeliveryOrder() sets a placeholder
+        // price of 0 and has a dispatcher review the order
 
         $order = $this->orderFactory->createForDelivery($delivery);
         $this->pricingManager->processDeliveryOrder($order, $productVariants);
@@ -118,33 +100,6 @@ class DeliveryOrderManager
             $this->orderManager->onDemand($order);
 
             $this->entityManager->flush();
-
-            $user = $this->security->getUser();
-
-            $isUserWithAccount = $user instanceof User && null !== $user->getId();
-            // If it's not a user with an account, it could be an ApiApp
-            // ApiKey: see BearerTokenAuthenticator
-            // OAuth client: League\Bundle\OAuth2ServerBundle\Security\User\NullUser
-
-            if (null !== $incident) {
-                $title = $this->translator->trans('form.delivery.price.missing.incident', [
-                    '%number%' => $order->getNumber(),
-                ]);
-
-                //FIXME: allow to set $createdBy API clients (ApiApp) and integrations; see Incident::createdBy
-                if (!$isUserWithAccount) {
-                    $title = $title.' (API client)';
-                }
-
-                $incident->setTitle($title);
-                $incident->setFailureReasonCode('PRICE_REVIEW_NEEDED');
-                $incident->setTask($delivery->getPickup());
-
-                $this->createIncident->__invoke(
-                    $incident,
-                    $isUserWithAccount ? $user : null
-                );
-            }
         }
 
         return $order;
