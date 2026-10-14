@@ -48,8 +48,8 @@ export const onSuggestionsFetchRequested = function({ value }) {
 export function poweredBy() {
 
   return (
-    <small className="d-flex align-items-center">
-      <img src={ GeocodeEarth } width="14" height="14" className="mr-2" />
+    <small className="tw:flex tw:items-center tw:gap-2">
+      <img src={ GeocodeEarth } width="14" height="14" className="tw:shrink-0" />
       <span>© <a href="https://geocode.earth">Geocode Earth</a>, <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>, and <a href="https://geocode.earth/guidelines">others</a></span>
     </small>
   )
