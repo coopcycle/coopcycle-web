@@ -45,21 +45,6 @@ const LastSlideContent = ({ onClick }) => {
   )
 }
 
-function handleContentEditableChange(e, ref) {
-  ref.current = e.target.value;
-}
-
-function handleContentEditableBlur(ref, cb) {
-
-  ref.current = sanitizeHtml(unescapeHTML(ref.current), {
-    // https://github.com/apostrophecms/sanitize-html?tab=readme-ov-file#what-if-i-dont-want-to-allow-any-tags
-    allowedTags: [],
-    allowedAttributes: {},
-  });
-
-  cb(ref.current)
-}
-
 const isExpired = (slide) => slide.expiresAt ? moment().isAfter(slide.expiresAt) : false;
 
 function sanitize(value, edit) {
