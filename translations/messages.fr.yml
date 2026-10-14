@@ -2030,6 +2030,7 @@ profile.referrals.share.title: Inviter des amis
 profile.referrals.share.label: Votre lien de parrainage
 profile.referrals.share.copy: Copier le lien
 profile.referrals.share.copied: Copié !
+profile.referrals.intro.free_delivery: "Invitez vos amis à rejoindre %brand_name% ! Dès qu'un ami que vous avez invité passe sa première commande, vous gagnez une livraison gratuite."
 profile.referrals.intro.fixed: "Invitez vos amis à rejoindre %brand_name% ! Dès qu'un ami que vous avez invité passe sa première commande, vous gagnez %amount%."
 profile.referrals.intro.percentage: "Invitez vos amis à rejoindre %brand_name% ! Dès qu'un ami que vous avez invité passe sa première commande, vous gagnez une réduction de %percent%%."
 profile.referrals.intro.generic: "Invitez vos amis à rejoindre %brand_name% et soyez récompensé dès leur première commande !"

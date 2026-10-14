@@ -2038,6 +2038,7 @@ profile.referrals.share.title: Invite friends
 profile.referrals.share.label: Your referral link
 profile.referrals.share.copy: Copy link
 profile.referrals.share.copied: Copied!
+profile.referrals.intro.free_delivery: "Invite your friends to join %brand_name%! Once a friend you invited places their first order, you'll earn a free delivery."
 profile.referrals.intro.fixed: "Invite your friends to join %brand_name%! Once a friend you invited places their first order, you'll earn %amount%."
 profile.referrals.intro.percentage: "Invite your friends to join %brand_name%! Once a friend you invited places their first order, you'll earn a %percent%% discount."
 profile.referrals.intro.generic: "Invite your friends to join %brand_name%, and get rewarded once they place their first order!"
