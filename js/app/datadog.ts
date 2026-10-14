@@ -18,12 +18,19 @@ const isBot = regex.test(navigator.userAgent)
 // https://docs.datadoghq.com/getting_started/tagging/unified_service_tagging/
 const service = 'frontend'
 
+// The deployed git revision, as written to the instance's .env by the deploy.
+// Part of unified service tagging, like "service" & "env", it is what lets a
+// log or an error be traced back to the release it appeared in.
+// https://docs.datadoghq.com/getting_started/tagging/unified_service_tagging/
+const version = el?.dataset.version
+
 if (clientToken) {
   datadogLogs.init({
     clientToken: clientToken,
     site: 'datadoghq.com',
     service,
     env: el.dataset.env,
+    version,
     forwardErrorsToLogs: true,
     // Only tracked sessions send logs; from 0 to 100
     sessionSampleRate: isBot ? 0 : 100,
@@ -36,8 +43,7 @@ if (clientToken) {
     site: 'datadoghq.com',
     service,
     env: el.dataset.env,
-    // Specify a version number to identify the deployed version of your application in Datadog
-    // version: '1.0.0',
+    version,
     // 'Browser RUM' session sample rate; from 0 to 100
     sessionSampleRate: isBot ? 0 : 5,
     // 'Browser RUM & Session Replay' sample rate (% from sessions tracked by RUM/sessionSampleRate); from 0 to 100

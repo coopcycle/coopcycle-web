@@ -8,6 +8,9 @@ when@prod:
         tracing:
             enabled: false
         options:
+            # Set by the deploy (coopcycle-ops), to the git tag being deployed.
+            # Lets Sentry tell in which release a bug first appeared.
+            release: '%env(COOPCYCLE_RELEASE)%'
             tags:
                 coopcycle_app_name: '%env(COOPCYCLE_APP_NAME)%'
             ignore_exceptions:

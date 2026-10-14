@@ -2,6 +2,7 @@
   <div id="sentry"
        data-dsn="{{ sentry_public_dsn }}"
        data-app-name="{{ instance_name }}"
+       data-release="{{ app_version }}"
   ></div>
   {{ encore_entry_script_tags('sentry') }}
 {% endif %}
@@ -11,6 +12,7 @@
        data-client-token="{{ datadog_client_token }}"
        data-application-id="{{ datadog_application_id }}"
        data-env="{{ instance_name }}"
+       data-version="{{ app_version }}"
   ></div>
 {% endif %}
 

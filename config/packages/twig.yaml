@@ -9,6 +9,7 @@ twig:
     globals:
         is_demo: "%is_demo%"
         instance_name: "%env(COOPCYCLE_APP_NAME)%"
+        app_version: "%env(COOPCYCLE_RELEASE)%"
         sentry_public_dsn: "%sentry_public_dsn%"
         datadog_client_token: "%env(COOPCYCLE_DATADOG_CLIENT_TOKEN)%"
         datadog_application_id: "%env(COOPCYCLE_DATADOG_APPLICATION_ID)%"

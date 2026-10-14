@@ -6,9 +6,10 @@ if (el) {
   Sentry.init({
     dsn: el.dataset.dsn,
 
-    // Alternatively, use `process.env.npm_package_version` for a dynamic release version
-    // if your build tool supports it.
-    // release: "my-project-name@2.3.12",
+    // Same release as the backend (see config/packages/sentry.yaml): the git
+    // revision the instance is deployed at, so that an error can be traced
+    // back to the release it appeared in.
+    release: el.dataset.release,
 
     integrations: [
       Sentry.browserTracingIntegration(),

@@ -10,8 +10,8 @@ describe('sentry', () => {
     document.body.innerHTML = ''
   })
 
-  it('tags errors with the app name', () => {
-    document.body.innerHTML = '<div id="sentry" data-dsn="https://key@sentry.example/1" data-app-name="libelubike"></div>'
+  it('tags errors with the app name & the deployed release', () => {
+    document.body.innerHTML = '<div id="sentry" data-dsn="https://key@sentry.example/1" data-app-name="libelubike" data-release="b367781db"></div>'
 
     let Sentry
     jest.isolateModules(() => {
@@ -21,6 +21,7 @@ describe('sentry', () => {
 
     expect(Sentry.init).toHaveBeenCalledWith(expect.objectContaining({
       dsn: 'https://key@sentry.example/1',
+      release: 'b367781db',
       initialScope: {
         tags: { coopcycle_app_name: 'libelubike' },
       },

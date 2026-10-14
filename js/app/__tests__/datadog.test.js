@@ -1,6 +1,7 @@
 jest.mock('@datadog/browser-logs', () => ({
   datadogLogs: { init: jest.fn(), logger: {} },
 }))
+
 jest.mock('@datadog/browser-rum', () => ({
   datadogRum: { init: jest.fn() },
 }))
@@ -11,33 +12,40 @@ describe('datadog', () => {
     document.body.innerHTML = ''
   })
 
-  const load = () => {
-    let logs, rum
+  it('tags logs & RUM events with the deployed version', () => {
+    document.body.innerHTML =
+      '<div id="datadog" data-client-token="pubtoken" data-application-id="app-id" data-env="libelubike" data-version="b367781db"></div>'
+
+    let datadogLogs, datadogRum
     jest.isolateModules(() => {
-      logs = require('@datadog/browser-logs').datadogLogs
-      rum = require('@datadog/browser-rum').datadogRum
+      ;({ datadogLogs } = require('@datadog/browser-logs'))
+      ;({ datadogRum } = require('@datadog/browser-rum'))
       require('../datadog')
     })
-    return { logs, rum }
-  }
 
-  it('uses the instance name as env', () => {
-    document.body.innerHTML = `<div id="datadog"
-      data-client-token="pub123"
-      data-application-id="app123"
-      data-env="libelubike"></div>`
+    // "service", "env" & "version" are Datadog's unified service tagging
+    expect(datadogLogs.init).toHaveBeenCalledWith(expect.objectContaining({
+      service: 'frontend',
+      env: 'libelubike',
+      version: 'b367781db',
+    }))
 
-    const { logs, rum } = load()
-
-    const expected = expect.objectContaining({ service: 'frontend', env: 'libelubike' })
-    expect(logs.init).toHaveBeenCalledWith(expected)
-    expect(rum.init).toHaveBeenCalledWith(expected)
+    expect(datadogRum.init).toHaveBeenCalledWith(expect.objectContaining({
+      service: 'frontend',
+      env: 'libelubike',
+      version: 'b367781db',
+    }))
   })
 
-  it('does nothing without a client token', () => {
-    const { logs, rum } = load()
+  it('does nothing without the #datadog element', () => {
+    let datadogLogs, datadogRum
+    jest.isolateModules(() => {
+      ;({ datadogLogs } = require('@datadog/browser-logs'))
+      ;({ datadogRum } = require('@datadog/browser-rum'))
+      require('../datadog')
+    })
 
-    expect(logs.init).not.toHaveBeenCalled()
-    expect(rum.init).not.toHaveBeenCalled()
+    expect(datadogLogs.init).not.toHaveBeenCalled()
+    expect(datadogRum.init).not.toHaveBeenCalled()
   })
 })
