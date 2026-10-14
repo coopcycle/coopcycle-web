@@ -49,6 +49,7 @@ twig:
         shift_planning_enabled: '%env(bool:SHIFT_PLANNING_ENABLED)%'
         referral_program_enabled: '%env(bool:REFERRAL_PROGRAM_ENABLED)%'
         loyalty_program_enabled: '%env(bool:LOYALTY_PROGRAM_ENABLED)%'
+        marketing_automation_enabled: '%env(bool:MARKETING_AUTOMATION_ENABLED)%'
         invitation_link_provider: '@AppBundle\Service\InvitationLinkProviderService'
         paygreen_environment: '%env(PAYGREEN_ENVIRONMENT)%'
 
