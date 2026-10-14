@@ -404,7 +404,7 @@ const SuggestionsContainer = ({
           <button
             type="button"
             data-cy="address-autosuggest-map-picker"
-            className="tw:inline-flex tw:items-center tw:gap-1.5 tw:text-xs"
+            className="tw:inline-flex tw:items-center tw:gap-1.5 tw:text-xs tw:cursor-pointer tw:underline-offset-2 tw:transition-colors tw:hover:text-primary tw:hover:underline"
             onClick={() => {
               onMapPickerLabelClick()
             }}>
