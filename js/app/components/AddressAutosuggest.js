@@ -391,6 +391,7 @@ const SuggestionsContainer = ({
       </div>
       {hasSuggestions && (
       <div
+        data-cy="address-autosuggest-footer"
         className={clsx(
           'tw:flex',
           'tw:items-center',
@@ -402,6 +403,7 @@ const SuggestionsContainer = ({
         {mapPickerEnabled && (
           <button
             type="button"
+            data-cy="address-autosuggest-map-picker"
             className="tw:inline-flex tw:items-center tw:gap-1.5 tw:text-xs"
             onClick={() => {
               onMapPickerLabelClick()
