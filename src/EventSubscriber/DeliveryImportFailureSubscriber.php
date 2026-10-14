@@ -5,6 +5,7 @@ namespace AppBundle\EventSubscriber;
 use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
 use AppBundle\Message\ImportDeliveries;
 use AppBundle\Service\DeliveryImportStatusManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -57,6 +58,7 @@ class DeliveryImportFailureSubscriber implements EventSubscriberInterface
 
         // Whatever failed the message most likely failed a flush, which closes
         // the entity manager, so get a working one before writing the status
+        /** @var EntityManagerInterface $entityManager */
         $entityManager = $this->doctrine->getManager();
         if (!$entityManager->isOpen()) {
             $entityManager = $this->doctrine->resetManager();
