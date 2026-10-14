@@ -7,10 +7,12 @@
   <h2 class="text-xl font-semibold mb-2">{{ 'profile.referrals.share.title'|trans }}</h2>
   <p class="mb-4 text-gray-500">
     {% if upcoming_level %}
-      {% if upcoming_level.rewardType == 'order_percentage_discount' %}
+      {% if upcoming_level.rewardType == 'delivery_percentage_discount' %}
+        {{ 'profile.referrals.intro.free_delivery'|trans({'%brand_name%': coopcycle_setting('brand_name')}) }}
+      {% elseif upcoming_level.rewardType == 'order_percentage_discount' %}
         {{ 'profile.referrals.intro.percentage'|trans({'%brand_name%': coopcycle_setting('brand_name'), '%percent%': upcoming_level.rewardPercentage}) }}
       {% else %}
-        {{ 'profile.referrals.intro.fixed'|trans({'%brand_name%': coopcycle_setting('brand_name'), '%amount%': upcoming_level.rewardAmount|price_format}) }}
+        {{ 'profile.referrals.intro.fixed'|trans({'%brand_name%': coopcycle_setting('brand_name'), '%amount%': (upcoming_level.rewardAmount ?? 0)|price_format}) }}
       {% endif %}
     {% else %}
       {{ 'profile.referrals.intro.generic'|trans({'%brand_name%': coopcycle_setting('brand_name')}) }}
@@ -87,10 +89,12 @@
         {% trans with { '%count%': lvl.minReferralCount } %}profile.referrals.levels.threshold{% endtrans %}
       </p>
       <p class="text-sm">
-        {% if lvl.rewardType == 'order_percentage_discount' %}
+        {% if lvl.rewardType == 'delivery_percentage_discount' %}
+          {{ 'referral.reward_type.free_delivery'|trans }}
+        {% elseif lvl.rewardType == 'order_percentage_discount' %}
           {% trans with { '%percent%': lvl.rewardPercentage } %}profile.referrals.levels.reward_percentage{% endtrans %}
         {% else %}
-          {% trans with { '%amount%': lvl.rewardAmount|price_format } %}profile.referrals.levels.reward_fixed{% endtrans %}
+          {% trans with { '%amount%': (lvl.rewardAmount ?? 0)|price_format } %}profile.referrals.levels.reward_fixed{% endtrans %}
         {% endif %}
       </p>
     </div>
