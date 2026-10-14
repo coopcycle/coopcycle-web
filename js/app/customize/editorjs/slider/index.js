@@ -1,4 +1,4 @@
-import React, { useEffect, useState, createRef, useRef } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Swiper, SwiperSlide, useSwiper } from 'swiper/react';
 import {
@@ -21,7 +21,6 @@ import moment from 'moment'
 import { useTranslation } from 'react-i18next';
 import { useEditable } from 'use-editable'
 import clsx from 'clsx';
-import _ from 'lodash'
 
 import ColorPicker from '../../color-picker';
 
