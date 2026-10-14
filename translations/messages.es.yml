@@ -563,6 +563,9 @@ stores.recurrence_rules.empty_message: Cuando se cree un pedido recurrente, las 
 recurrence_rules.table.repeat: Repetir
 recurrence_rules.table.generate_orders: Generar tareas/pedidos
 recurrence_rules.table.created_at: Regla creada
+recurrence_rules.from_date: "Desde el %date%"
+recurrence_rules.until_date: "Hasta el %date%"
+recurrence_rules.inactive: No activa hoy
 recurrence_rule.legacy: Utilice el panel de despacho para eliminar esta regla
 recurrence_rule.price.missing: No se pudo calcular el precio de entrega. Por favor, verifique la tarificación.
 meta.title: Plataforma de logística para cooperativas
@@ -759,6 +762,7 @@ task.form.finish: Terminar tarea
 task.form.details: Detalles de la tarea
 task.form.finish.DONE.info: La tarea se completó con éxito
 task.form.finish.FAIL.info: La tarea no se pudo completar
+task.cancel.order_not_cancellable: "El pedido %number% no se puede cancelar"
 form.store_type.time_slot.label: Franja horaria
 form.store_type.package_set.label: Paquete conjunto
 form.delivery.package.label: Paquete
@@ -1513,6 +1517,8 @@ deliveries.importing: El fichero %filename% va a ser importado.
 deliveries.imports.created_at: Creado el
 deliveries.imports.see_file: Ver archivo
 deliveries.imports.see_errored_file: Detalles de los errores
+deliveries.imports.error.interrupted: La importación se interrumpió por un error inesperado y no se completó. Es posible que las líneas procesadas antes del error ya se hayan importado, compruébalas antes de volver a importar este fichero.
+deliveries.imports.error.stalled: La importación se detuvo porque no había terminado tras un tiempo anormalmente largo, probablemente porque el worker que la procesaba desapareció. Es posible que las líneas procesadas antes ya se hayan importado, compruébalas antes de volver a importar este fichero.
 business.account.settings.link: Asociar a mi cuenta
 form.business_restaurant_group.restaurants_with_menu: Restaurantes con menú
 form.business_restaurant_group.restaurant: Restaurante

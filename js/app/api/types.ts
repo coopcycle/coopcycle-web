@@ -263,6 +263,9 @@ export type Order = JsonLdEntity & {
   total: number;
   itemsTotal: number;
   taxTotal: number;
+  // Only with the order_tax_breakdown serialization group
+  itemsTaxTotal?: number;
+  incidentTaxTotal?: number;
   customer: Customer;
   vendor?: LocalBusiness;
   restaurant?: LocalBusiness;
@@ -486,6 +489,8 @@ export type PricingRuleSet = JsonLdEntity & {
   matrices: PricingMatrix[];
 };
 
+export type PricingRuleSetName = Pick<PricingRuleSet, '@id' | 'name'>;
+
 export type OptimizationGain = {
   distance?: number;
   duration?: number;
@@ -568,6 +573,8 @@ export type OrderPayload = {
   };
   recalculatePrice?: boolean;
   isSavedOrder?: boolean;
+  // A rule set chosen by a dispatcher, null to use the store's one
+  pricingRuleSet?: Uri | null;
 };
 
 export type AddressPayload = {
@@ -617,6 +624,8 @@ export type PostDeliveryRequest = {
   tasks: TaskPayload[];
   order?: OrderPayload;
   rrule?: string;
+  rruleStartDate?: string | null;
+  rruleEndDate?: string | null;
 };
 
 export type PutDeliveryRequest = {
@@ -631,6 +640,7 @@ export type PutRecurrenceRuleRequest = {
   template?: DeliveryTemplate;
   store?: Uri;
   generateOrders?: boolean;
+  pricingRuleSet?: Uri | null;
 };
 
 export type CreatePricingRuleSetRequest = {

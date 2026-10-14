@@ -376,13 +376,22 @@ const SuggestionsContainer = ({
 }) => {
   const { t } = useTranslation()
 
+  // When "multiSection" is enabled, react-autosuggest gives us an array of
+  // sections, otherwise a single <ul> element (or null when there is nothing
+  // to show). The footer must be rendered in both cases, as the attribution
+  // is a legal requirement of the geocoding providers.
+  const hasSuggestions = Array.isArray(children)
+    ? children.length > 0
+    : Boolean(children)
+
   return (
     <div {...containerProps}>
       <div className="tw:max-h-52 tw:overflow-y-auto">
         {children}
       </div>
-      {Array.isArray(children) && (
+      {hasSuggestions && (
       <div
+        data-cy="address-autosuggest-footer"
         className={clsx(
           'tw:flex',
           'tw:items-center',
@@ -394,8 +403,8 @@ const SuggestionsContainer = ({
         {mapPickerEnabled && (
           <button
             type="button"
-            // className="tw:btn tw:btn-link tw:btn-xs"
-            className="tw:text-xs"
+            data-cy="address-autosuggest-map-picker"
+            className="tw:inline-flex tw:items-center tw:gap-1.5 tw:text-xs tw:cursor-pointer tw:underline-offset-2 tw:transition-colors tw:hover:text-primary tw:hover:underline"
             onClick={() => {
               onMapPickerLabelClick()
             }}>
@@ -585,6 +594,24 @@ class AddressAutosuggest extends Component {
     if (this.props.autofocus) {
       setTimeout(() => this.autosuggest?.input.focus(), 150)
     }
+  }
+
+  openMapPicker() {
+    // Blur the input, so that the suggestions dropdown gets closed.
+    // Otherwise, it would be rendered on top of the map picker modal.
+    //
+    // When something inside the suggestions container is clicked,
+    // react-autosuggest sets an internal flag and re-focuses the input on blur,
+    // to avoid closing the dropdown. As the "map picker" button lives inside
+    // the suggestions container, we need to reset that flag first.
+    if (this.autosuggest) {
+      this.autosuggest.justClickedOnSuggestionsContainer = false
+      if (this.autosuggest.input) {
+        this.autosuggest.input.blur()
+      }
+    }
+
+    this.setState({ showMapPicker: true })
   }
 
   onClear() {
@@ -800,7 +827,7 @@ class AddressAutosuggest extends Component {
             style,
           }}
           mapPickerEnabled={this.props.mapPickerEnabled}
-          onMapPickerLabelClick={() => this.setState({ showMapPicker: true })}
+          onMapPickerLabelClick={() => this.openMapPicker()}
           poweredBy={this.poweredBy()}>
           {children}
         </SuggestionsContainer>,
@@ -812,7 +839,7 @@ class AddressAutosuggest extends Component {
       <SuggestionsContainer
         containerProps={containerProps}
         mapPickerEnabled={this.props.mapPickerEnabled}
-        onMapPickerLabelClick={() => this.setState({ showMapPicker: true })}
+        onMapPickerLabelClick={() => this.openMapPicker()}
         poweredBy={this.poweredBy()}>
         {children}
       </SuggestionsContainer>

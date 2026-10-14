@@ -11,10 +11,13 @@ use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\DataType\NumRange;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Sylius\Product\ProductOptionInterface;
+use AppBundle\Sylius\Product\ProductOptionValueInterface;
 use AppBundle\Validator\Constraints\ProductOption as AssertProductOption;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use AppBundle\Integration\Zelty\HasZeltyMetadata;
 use Sylius\Component\Product\Model\ProductOption as BaseProductOption;
+use Sylius\Component\Product\Model\ProductOptionValueInterface as BaseProductOptionValueInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\SerializedName;
 
@@ -87,6 +90,32 @@ class ProductOption extends BaseProductOption implements ProductOptionInterface
     public function setRestaurant(?LocalBusiness $restaurant)
     {
         $this->restaurant = $restaurant;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * Soft deleted values are kept in database, because they may be referenced
+     * by product variants belonging to previous orders, but they must not be
+     * exposed anymore.
+     */
+    public function getValues(): Collection
+    {
+        return $this->values->filter(
+            fn (ProductOptionValueInterface $value) => !$value->isDeleted()
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * The value is only detached from the collection, it keeps a reference to
+     * this option, so that soft deleted values can still be resolved from
+     * previous orders.
+     */
+    public function removeValue(BaseProductOptionValueInterface $optionValue): void
+    {
+        $this->values->removeElement($optionValue);
     }
 
     /**

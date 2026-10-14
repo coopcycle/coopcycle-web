@@ -69,7 +69,9 @@ export const OverridePrice = ({ overridePrice, setOverridePrice }: Props) => {
         </Checkbox>
       </div>
       {overridePrice && (
-        <OverridePriceForm setPrice={setNewPrice} taxRate={taxRate} />
+        <div className="price-adjustments__content">
+          <OverridePriceForm setPrice={setNewPrice} taxRate={taxRate} />
+        </div>
       )}
     </>
   );

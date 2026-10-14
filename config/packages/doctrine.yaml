@@ -7,7 +7,9 @@ doctrine:
         user:     "%env(COOPCYCLE_DB_USER)%"
         password: "%env(COOPCYCLE_DB_PASSWORD)%"
         sslmode: "%env(COOPCYCLE_POSTGRES_SSLMODE)%"
-        charset:  UTF8
+        # No `charset` here: with pdo_pgsql, DBAL turns it into a `SET NAMES` query
+        # on every connection, i.e. one extra round-trip per request.
+        # The client encoding defaults to the database encoding, which is UTF8.
         types:
             geography: Jsor\Doctrine\PostGIS\Types\GeographyType
             geometry: Jsor\Doctrine\PostGIS\Types\GeometryType

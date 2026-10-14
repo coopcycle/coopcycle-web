@@ -11,7 +11,7 @@ import Modal from 'react-modal'
 import React, { useState } from 'react'
 import Spreadsheet from 'react-spreadsheet'
 import { render } from 'react-dom'
-import Centrifuge from 'centrifuge'
+import { createCentrifuge, subscribe } from '../centrifugo/client'
 
 import './list.scss'
 
@@ -229,12 +229,10 @@ function addRedownload(el) {
 const deliveryImports = document.querySelector('[data-delivery-imports]')
 if (deliveryImports) {
 
-  const protocol = window.location.protocol === 'https:' ? 'wss': 'ws'
-  const centrifuge = new Centrifuge(`${protocol}://${window.location.host}/centrifugo/connection/websocket`)
-  centrifuge.setToken(deliveryImports.dataset.centrifugoToken)
+  const centrifuge = createCentrifuge(deliveryImports.dataset.centrifugoToken)
 
-  centrifuge.subscribe(deliveryImports.dataset.centrifugoChannel, function(message) {
-    const { event } = message.data
+  subscribe(centrifuge, deliveryImports.dataset.centrifugoChannel, function(data) {
+    const { event } = data
     if (event.name === 'delivery_import:updated') {
       const row = document.querySelector(`[data-delivery-import-filename="${event.data.filename}"]`)
       const statusIcon = row.querySelector('[data-delivery-import-status]')

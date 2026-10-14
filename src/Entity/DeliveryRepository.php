@@ -284,8 +284,21 @@ class DeliveryRepository extends EntityRepository
      */
     public function findDeliveriesWithProofsOfDelivery(Store|int $store, DateTimeInterface $from, DateTimeInterface $to): array
     {
-        return $this->createProofsOfDeliveryQueryBuilder($store, $from, $to)
-            ->select('DISTINCT d')
+        // `SELECT DISTINCT d` makes Postgres compare *every* column of the
+        // delivery, and `delivery.metadata` is a json column, a type without an
+        // equality operator. Deduplicate on the id, then hydrate the entities.
+        $ids = $this->createProofsOfDeliveryQueryBuilder($store, $from, $to)
+            ->select('DISTINCT d.id')
+            ->getQuery()
+            ->getSingleColumnResult();
+
+        if (empty($ids)) {
+            return [];
+        }
+
+        return $this->createQueryBuilder('d')
+            ->andWhere('d.id IN (:ids)')
+            ->setParameter('ids', $ids)
             ->addOrderBy('d.createdAt', 'DESC')
             ->getQuery()
             ->getResult();

@@ -616,3 +616,35 @@ Feature: Pricing rules set
         ]
       }
     """
+
+  Scenario: List the names of the pricing rule sets as a dispatcher
+    Given the fixtures files are loaded:
+      | sylius_products.yml |
+      | stores.yml          |
+    And the user "dispatcher" is loaded:
+      | email      | dispatcher@coopcycle.org |
+      | password   | 123456                   |
+    And the user "dispatcher" has role "ROLE_DISPATCHER"
+    And the user "dispatcher" is authenticated
+    When I add "Accept" header equal to "application/ld+json"
+    And the user "dispatcher" sends a "GET" request to "/api/pricing_rule_sets?properties[]=name"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/PricingRuleSet",
+        "@id":"/api/pricing_rule_sets",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          {
+            "@id":"/api/pricing_rule_sets/1",
+            "@type":"PricingRuleSet",
+            "name":"Default"
+          },
+          @...@
+        ],
+        "hydra:totalItems":6,
+        "@*@":"@*@"
+      }
+      """

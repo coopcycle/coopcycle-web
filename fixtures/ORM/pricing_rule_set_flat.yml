@@ -1,0 +1,12 @@
+# A rule set not linked to any store, that a dispatcher can choose for a delivery
+AppBundle\Entity\Delivery\PricingRuleSet:
+  pricing_rule_set_flat:
+    name: Flat
+    rules: [ '@pricing_rule_flat' ]
+
+AppBundle\Entity\Delivery\PricingRule:
+  pricing_rule_flat:
+    expression: 'distance \> 0'
+    price: 1500
+    position: 1
+    ruleSet: '@pricing_rule_set_flat'

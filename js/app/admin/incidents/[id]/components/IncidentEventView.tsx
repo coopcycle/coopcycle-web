@@ -51,7 +51,15 @@ function _metadataToText({ type, metadata }: IncidentEvent, t: TFunction) {
         </>
       );
     case 'applied_price_diff':
-      return money(metadata.diff);
+      // Events recorded before both amounts were stored only have the diff
+      if (metadata.diff_tax_excluded === undefined) {
+        return money(metadata.diff);
+      }
+
+      return t('INCIDENTS_PRICE_DIFF_WITH_TAX', {
+        taxIncluded: money(metadata.diff_tax_included),
+        taxExcluded: money(metadata.diff_tax_excluded),
+      });
     case 'accepted_suggestion':
       if (!metadata || metadata.diff === undefined) {
         return '';

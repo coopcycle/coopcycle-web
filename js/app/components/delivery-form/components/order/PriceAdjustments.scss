@@ -1,0 +1,11 @@
+.price-adjustments {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: left;
+
+  // Aligns what an option reveals with the label of its checkbox
+  &__content {
+    margin-left: 24px;
+  }
+}

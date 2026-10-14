@@ -743,6 +743,9 @@ stores.recurrence_rules.empty_message: Lorsqu\'une commande récurrente est cré
 recurrence_rules.table.repeat: Répéter
 recurrence_rules.table.generate_orders: Générer des tâches/commandes automatiquement
 recurrence_rules.table.created_at: Règle créée
+recurrence_rules.from_date: "À partir du %date%"
+recurrence_rules.until_date: "Jusqu'au %date%"
+recurrence_rules.inactive: Inactive aujourd'hui
 recurrence_rule.legacy: Supprimer cette règle dans le panneau de dispatch
 recurrence_rule.price.missing: Le prix de livraison n'a pas pu être calculé. Veuillez vérifier la tarification.
 suggest.submitted.title: Merci de nous avoir suggéré ce restaurant !
@@ -967,6 +970,7 @@ task.form.edit: Modifier la tâche %id%
 task.form.finish: Terminer la tâche
 task.form.details: Détails
 task.form.finish.DONE.info: La tâche a été terminée avec succès
+task.cancel.order_not_cancellable: "La commande %number% ne peut pas être annulée"
 form.registration.username.help: "Votre nom d'utilisateur ne peut pas dépasser 15\
   \ caractères. Un nom d'utilisateur ne peut contenir que des caractères alphanumériques\
   \ (lettres A-Z, chiffres 0-9) à l'exception du tiret bas (_)\n"
@@ -1545,6 +1549,8 @@ deliveries.importing: Le fichier %filename% va bientôt être importé.
 deliveries.imports.created_at: Créé le
 deliveries.imports.see_file: Voir le fichier
 deliveries.imports.see_errored_file: Voir les erreurs
+deliveries.imports.error.interrupted: L'import a été interrompu par une erreur inattendue et n'est pas allé à son terme. Les lignes traitées avant celle-ci ont peut-être déjà été importées, merci de les vérifier avant d'importer à nouveau ce fichier.
+deliveries.imports.error.stalled: L'import a été arrêté car il n'était toujours pas terminé après un temps anormalement long, probablement parce que le worker qui le traitait a disparu. Les lignes traitées avant cet arrêt ont peut-être déjà été importées, merci de les vérifier avant d'importer à nouveau ce fichier.
 adminDashboard.business_restaurant_groups.title: Groupes de restaurants d'entreprise
 registration.flow.finish: "Terminer mon inscription"
 form.settings.company_legal_name.label: "Nom légal de l'entreprise"
@@ -1597,6 +1603,9 @@ incident.reason.REFUND_NEEDED: Remboursement nécessaire
 incident.reason.ADDRESS_REVIEW_NEEDED: Adresse à vérifier
 incident.reason.STORE_UNAVAILABLE: Commerce indisponible
 incident.reason.DELIVERY_DELAYS: Retards de livraison
+transporter.address_review.title: "Adresse à vérifier : %address%"
+transporter.address_review.not_found: "Aucun résultat pour l'adresse « %address% » envoyée par le transporteur."
+transporter.address_review.out_of_range: "L'adresse « %address% » a été localisée à « %found% », en dehors de la zone de l'instance."
 basics.select_all: "Tout sélectionner"
 basics.delete_selected: "Supprimer la sélection"
 delivery.table.heading.owner: "Propriétaire"
@@ -1958,6 +1967,7 @@ hr.holidaysHistory.to: Au
 hr.holidaysHistory.status: Statut
 hr.holidaysHistory.comment: Commentaire
 delivery.time_slot.invalid: "La tranche horaire sélectionnée n'est pas valide. Merci d'en choisir une autre."
+form.product_option_value.delete.confirm: "Cette valeur ne sera plus disponible, mais elle restera visible sur les commandes précédentes. Voulez-vous continuer ?"
 promotion_rule.is_first_order: Première commande
 referral.title: Programme de parrainage
 referral.program.active_label: Le programme de parrainage est actif

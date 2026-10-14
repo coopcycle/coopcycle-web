@@ -6,6 +6,7 @@ use AppBundle\Api\Dto\ResourceApplication;
 use AppBundle\Entity\Contract;
 use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\Store;
+use AppBundle\Entity\Task\RecurrenceRule;
 use Hashids\Hashids;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -22,11 +23,18 @@ class ApplicationsNormalizer implements NormalizerInterface
 
     public function normalize($object, $format = null, array $context = array())
     {
-        return [
+        $data = [
             'entity' => $this->getClass($object->resource),
             'name' => $this->getName($object->resource),
             'id' => $this->getId($object->resource)
         ];
+
+        // A recurrence rule is only reachable through its store
+        if ($object->resource instanceof RecurrenceRule) {
+            $data['storeId'] = $object->resource->getStore()->getId();
+        }
+
+        return $data;
     }
 
     public function getName($object) {
@@ -37,6 +45,8 @@ class ApplicationsNormalizer implements NormalizerInterface
         } else if ($object instanceof DeliveryForm) {
             $hashids12 = new Hashids($this->secret, 12);
             return $hashids12->encode($object->getId());
+        } else if ($object instanceof RecurrenceRule) {
+            return $object->getName() ?? $object->getStore()->getName();
         }
     }
 

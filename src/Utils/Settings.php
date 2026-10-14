@@ -83,8 +83,6 @@ class Settings
 
     public $company_legal_id;
 
-    public $company_gln;
-
     #[AssertGoogleApiKey]
     public $google_api_key_custom;
 

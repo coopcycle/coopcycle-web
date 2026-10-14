@@ -7,21 +7,14 @@ import {
   Order as OrderType,
   PricingRule,
   RetailPrice,
-  Uri,
 } from '../../../../api/types';
 import { TotalPrice } from './TotalPrice';
 import { useTranslation } from 'react-i18next';
 import { PriceCalculation } from '../../../../delivery/PriceCalculation';
-import { Checkbox, Divider } from 'antd';
 import ManualSupplements from './ManualSupplements';
 import { UserContext } from '../../../../UserContext';
-import { useGetStorePaymentMethodsQuery } from '../../../../api/slice';
-import { useDeliveryFormFormikContext } from '../../hooks/useDeliveryFormFormikContext';
-import CashOnDeliveryDisclaimer from './CashOnDeliveryDisclaimer';
-import BlockLabel from '../BlockLabel';
 
 type Props = {
-  storeNodeId: Uri;
   orderManualSupplements?: PricingRule[];
   overridePrice: boolean;
   newOrder?: OrderType;
@@ -31,7 +24,6 @@ type Props = {
 };
 
 export const OrderOnCheckout = ({
-  storeNodeId,
   orderManualSupplements = [],
   overridePrice,
   newOrder,
@@ -42,14 +34,6 @@ export const OrderOnCheckout = ({
   const { isDispatcher } = useContext(UserContext);
   const { isPriceBreakdownEnabled, isDebugPricing } = useContext(FlagsContext);
   const { t } = useTranslation();
-  const { values, setFieldValue } = useDeliveryFormFormikContext();
-
-  const { data: paymentMethods } = useGetStorePaymentMethodsQuery(storeNodeId);
-
-  const isCashOnDeliveryAvailable =
-    paymentMethods?.methods?.some(
-      method => method.type === 'cash_on_delivery',
-    ) ?? false;
 
   return (
     <div>
@@ -86,30 +70,8 @@ export const OrderOnCheckout = ({
         )}
 
       {isDispatcher && !overridePrice && orderManualSupplements.length > 0 ? (
-        <div>
-          <Divider size="middle" />
+        <div className="mt-3">
           <ManualSupplements rules={orderManualSupplements} />
-        </div>
-      ) : null}
-
-      {isCashOnDeliveryAvailable ? (
-        <div>
-          <Divider size="middle" />
-          <BlockLabel label={t('PAYMENT_FORM_TITLE')} />
-          <Checkbox
-            checked={values.order.paymentMethod === 'cash_on_delivery'}
-            data-testid="cash-on-delivery-checkbox"
-            onChange={e => {
-              setFieldValue(
-                'order.paymentMethod',
-                e.target.checked ? 'cash_on_delivery' : undefined,
-              );
-            }}>
-            {t('PM_CASH')}
-          </Checkbox>
-          {values.order.paymentMethod === 'cash_on_delivery' && (
-            <CashOnDeliveryDisclaimer />
-          )}
         </div>
       ) : null}
     </div>

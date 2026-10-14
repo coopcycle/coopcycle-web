@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { Divider, Spin } from 'antd';
+import { Spin } from 'antd';
 import { useSelector } from 'react-redux';
 
 import {
@@ -12,10 +12,12 @@ import { selectMode } from '../../redux/formSlice';
 import { useDeliveryFormFormikContext } from '../../hooks/useDeliveryFormFormikContext';
 import { useCalculatedPrice } from '../../hooks/useCalculatedPrice';
 import { useOrderManualSupplements } from '../../hooks/useOrderManualSupplements';
-import { OverridePrice } from './OverridePrice';
+import { PriceAdjustments } from './PriceAdjustments';
+import { PaymentMethod } from './PaymentMethod';
 import { OrderOnCheckout } from './OrderOnCheckout';
 import { OrderEditing } from './OrderEditing';
 import { UserContext } from '../../../../UserContext';
+import { useGetStoreQuery } from '../../../../api/slice';
 
 type Props = {
   storeNodeId: string;
@@ -39,7 +41,20 @@ const Order = ({
   const { isDispatcher } = useContext(UserContext);
 
   const mode = useSelector(selectMode);
-  const { values } = useDeliveryFormFormikContext();
+  const { values, initialValues } = useDeliveryFormFormikContext();
+
+  const { data: storeData } = useGetStoreQuery(storeNodeId);
+
+  // The order is always re-priced when another rule set is chosen;
+  // null and the store's rule set both mean following the store
+  const hasPricingRuleSetChanged = useMemo(() => {
+    const storePricingRuleSet = storeData?.pricingRuleSet ?? null;
+
+    return (
+      (values.order?.pricingRuleSet ?? storePricingRuleSet) !==
+      (initialValues.order?.pricingRuleSet ?? storePricingRuleSet)
+    );
+  }, [values.order, initialValues.order, storeData]);
 
   const [newOrder, setNewOrder] = useState(undefined as OrderType | undefined);
 
@@ -75,6 +90,7 @@ const Order = ({
     isLoading: orderManualSupplementsIsLoading,
   } = useOrderManualSupplements({
     storeUri: storeNodeId,
+    pricingRuleSetUri: values.order?.pricingRuleSet,
     enabled: isDispatcher,
   });
 
@@ -136,7 +152,6 @@ const Order = ({
       <div>
         {modeIn(mode, [Mode.DELIVERY_CREATE, Mode.RECURRENCE_RULE_UPDATE]) ? (
           <OrderOnCheckout
-            storeNodeId={storeNodeId}
             orderManualSupplements={orderManualSupplements}
             overridePrice={overridePrice}
             newOrder={newOrder}
@@ -153,20 +168,23 @@ const Order = ({
             existingSupplements={existingSupplements}
             updatedOrder={newOrder}
             priceCalculation={priceCalculation}
+            hasPricingRuleSetChanged={hasPricingRuleSetChanged}
           />
         ) : null}
 
-        <div>
-          {isDispatcher && (
-            <div>
-              <Divider size="middle" />
-              <OverridePrice
-                overridePrice={overridePrice}
-                setOverridePrice={setOverridePrice}
-              />
-            </div>
-          )}
-        </div>
+        {isDispatcher && (
+          <div className="mt-3">
+            <PriceAdjustments
+              storeNodeId={storeNodeId}
+              overridePrice={overridePrice}
+              setOverridePrice={setOverridePrice}
+            />
+          </div>
+        )}
+
+        {modeIn(mode, [Mode.DELIVERY_CREATE, Mode.RECURRENCE_RULE_UPDATE]) ? (
+          <PaymentMethod storeNodeId={storeNodeId} />
+        ) : null}
       </div>
     </Spin>
   );

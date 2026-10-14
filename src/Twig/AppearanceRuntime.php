@@ -7,6 +7,7 @@ use Intervention\Image\ImageManager;
 use League\Flysystem\Filesystem;
 use League\Flysystem\UnableToCheckFileExistence;
 use League\Flysystem\UnableToReadFile;
+use League\Flysystem\UnableToRetrieveMetadata;
 use Liip\ImagineBundle\Service\FilterService;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -15,6 +16,8 @@ use Twig\Extension\RuntimeExtensionInterface;
 
 class AppearanceRuntime implements RuntimeExtensionInterface
 {
+    const BANNER_BACKGROUND_URL_CACHE_KEY = 'banner_background_url';
+
     private $settingsManager;
     private $assetsFilesystem;
     private $imagineFilter;
@@ -168,14 +171,23 @@ class AppearanceRuntime implements RuntimeExtensionInterface
         if (!$filename) {
             return null;
         }
-        try {
-            if (!$this->assetsFilesystem->fileExists($filename)) {
+
+        // This is called on every frontend page, avoid a call to S3 each time.
+        // The cache is cleared when a new banner is uploaded.
+        return $this->appCache->get(self::BANNER_BACKGROUND_URL_CACHE_KEY, function (ItemInterface $item) use ($filename) {
+            $item->expiresAfter(60 * 60 * 24);
+
+            try {
+                $lastModified = $this->assetsFilesystem->lastModified($filename);
+            } catch (UnableToRetrieveMetadata) {
+                $item->expiresAfter(60 * 5);
+
                 return null;
             }
-        } catch (UnableToCheckFileExistence|UnableToReadFile) {
-            return null;
-        }
-        return '/assets/banner_background';
+
+            // The version allows the browser to cache the image
+            return sprintf('/assets/banner_background?v=%d', $lastModified);
+        });
     }
 
     public function getTheme()

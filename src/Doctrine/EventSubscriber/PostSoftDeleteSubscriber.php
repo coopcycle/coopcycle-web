@@ -7,12 +7,14 @@ use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderItem;
 use AppBundle\Entity\Sylius\Product;
+use AppBundle\Entity\Sylius\ProductOptionValue;
 use AppBundle\Entity\Sylius\ProductTaxon;
 use AppBundle\Entity\Trailer;
 use AppBundle\Entity\Vehicle;
 use AppBundle\Message\SoftDelete\CleanupProductOption;
 use AppBundle\Sylius\Product\ProductInterface;
 use AppBundle\Sylius\Product\ProductOptionInterface;
+use AppBundle\Sylius\Product\ProductOptionValueInterface;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Gedmo\SoftDeleteable\SoftDeleteableListener;
@@ -59,6 +61,35 @@ class PostSoftDeleteSubscriber implements EventSubscriber
 
         if ($entity instanceof ProductOptionInterface) {
             $this->messageBus->dispatch(new CleanupProductOption($entity));
+        }
+
+        if ($entity instanceof ProductOptionValueInterface) {
+
+            // Other option values may be conditioned by the one being deleted.
+            // The link must be removed, as it isn't selectable anymore.
+            $filters = $objectManager->getFilters();
+            $wasEnabled = $filters->isEnabled('disabled_filter');
+            if ($wasEnabled) {
+                $filters->disable('disabled_filter');
+            }
+
+            $dependentValues = $objectManager->getRepository(ProductOptionValue::class)
+                ->createQueryBuilder('v')
+                ->innerJoin('v.dependsOn', 'd')
+                ->andWhere('d = :optionValue')
+                ->setParameter('optionValue', $entity)
+                ->getQuery()
+                ->getResult();
+
+            if ($wasEnabled) {
+                $filters->enable('disabled_filter');
+            }
+
+            foreach ($dependentValues as $dependentValue) {
+                $dependentValue->getDependsOn()->removeElement($entity);
+            }
+
+            $unitOfWork->computeChangeSets();
         }
 
         if ($entity instanceof LocalBusiness || $entity instanceof Store) {

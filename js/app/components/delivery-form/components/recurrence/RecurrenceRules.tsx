@@ -16,7 +16,7 @@ import './RecurrenceRules.scss';
 import BlockLabel from '../BlockLabel';
 
 function Content() {
-  const { rruleValue: recurrenceRule } = useDeliveryFormFormikContext();
+  const { rruleValue: recurrenceRule, values } = useDeliveryFormFormikContext();
 
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -54,6 +54,8 @@ function Content() {
   return (
     <RecurrenceRule
       rrule={recurrenceRule}
+      startDate={values.rruleStartDate}
+      endDate={values.rruleEndDate}
       onClick={() => dispatch(openRecurrenceModal())}
     />
   );

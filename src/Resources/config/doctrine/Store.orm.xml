@@ -37,7 +37,6 @@
         <option name="default">unit</option>
       </options>
     </field>
-    <field name="storeGLN" type="string" column="store_gln" nullable="true"/>
     <field name="cashOnDeliveryEnabled" type="boolean" column="cash_on_delivery_enabled">
       <options>
         <option name="default">0</option>

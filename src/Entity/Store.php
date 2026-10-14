@@ -206,11 +206,6 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     protected string $billingMethod = 'unit';
 
-    /**
-     * The GLN of the store used for field M03004
-     */
-    protected ?string $storeGLN = null;
-
     #[Groups(['store'])]
     protected $cashOnDeliveryEnabled = false;
 
@@ -680,16 +675,6 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     public function getBillingMethod(): string
     {
         return $this->billingMethod;
-    }
-
-    public function setStoreGLN(?string $storeGLN): void
-    {
-        $this->storeGLN = $storeGLN;
-    }
-
-    public function getStoreGLN(): ?string
-    {
-        return $this->storeGLN;
     }
 
     public function isMultiPickupEnabled(): bool

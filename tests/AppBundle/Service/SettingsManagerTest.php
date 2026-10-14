@@ -94,9 +94,80 @@ class SettingsManagerTest extends TestCase
             $b2bEnabled = false,
             new GatewayResolver('fr'),
             '/path/to/project_dir',
+            new ArrayAdapter(),
             new ArrayAdapter()
         );
 
         $this->assertEquals($expected, $settingsManager->canSendSms());
+    }
+
+    private function createSettingsManager(ArrayAdapter $craueConfigCache): SettingsManager
+    {
+        return new SettingsManager(
+            $this->craueConfig->reveal(),
+            $this->craueCache->reveal(),
+            Setting::class,
+            $this->doctrine->reveal(),
+            $this->phoneNumberUtil->reveal(),
+            'fr',
+            $foodtechEnable = true,
+            $b2bEnabled = false,
+            new GatewayResolver('fr'),
+            '/path/to/project_dir',
+            new ArrayAdapter(),
+            $craueConfigCache
+        );
+    }
+
+    public function testMissingSettingIsLookedUpOnce()
+    {
+        $this->craueConfig->get('company_logo')
+            ->willThrow(new \RuntimeException('Setting "company_logo" couldn\'t be found.'))
+            ->shouldBeCalledTimes(1);
+
+        $craueConfigCache = new ArrayAdapter();
+
+        // Two instances sharing the pool, i.e. two requests
+        $this->assertNull($this->createSettingsManager($craueConfigCache)->get('company_logo'));
+        $this->assertNull($this->createSettingsManager($craueConfigCache)->get('company_logo'));
+    }
+
+    public function testMissingSettingIsLookedUpAgainOnceCreated()
+    {
+        $craueConfigCache = new ArrayAdapter();
+
+        $this->craueConfig->get('company_logo')
+            ->willThrow(new \RuntimeException('Setting "company_logo" couldn\'t be found.'));
+
+        $this->assertNull($this->createSettingsManager($craueConfigCache)->get('company_logo'));
+
+        // Craue caches the value under the setting name when it is created
+        $item = $craueConfigCache->getItem('company_logo');
+        $item->set('logo.png');
+        $craueConfigCache->save($item);
+
+        $this->craueConfig->get('company_logo')->willReturn('logo.png');
+
+        $this->assertEquals('logo.png', $this->createSettingsManager($craueConfigCache)->get('company_logo'));
+    }
+
+    public function testSetInvalidatesMissingSetting()
+    {
+        $craueConfigCache = new ArrayAdapter();
+        $settingsManager = $this->createSettingsManager($craueConfigCache);
+
+        $this->craueConfig->get('company_logo')
+            ->willThrow(new \RuntimeException('Setting "company_logo" couldn\'t be found.'));
+
+        $this->assertNull($settingsManager->get('company_logo'));
+        $this->assertTrue($craueConfigCache->hasItem('missing.company_logo'));
+
+        $this->craueConfig->set('company_logo', 'logo.png')->shouldBeCalled();
+        $this->craueConfig->get('company_logo')->willReturn('logo.png');
+
+        $settingsManager->set('company_logo', 'logo.png');
+
+        $this->assertFalse($craueConfigCache->hasItem('missing.company_logo'));
+        $this->assertEquals('logo.png', $settingsManager->get('company_logo'));
     }
 }

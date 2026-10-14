@@ -80,6 +80,21 @@
 
         <td width="15%">
           {{ recurrenceRule.getRule()|recurr_rule }}
+          {% if recurrenceRule.startDate or recurrenceRule.endDate %}
+            <small class="d-block text-muted">
+              {% if recurrenceRule.startDate %}
+                {{ 'recurrence_rules.from_date'|trans({ '%date%': recurrenceRule.startDate|format_date('short') }) }}
+              {% endif %}
+              {% if recurrenceRule.endDate %}
+                {{ 'recurrence_rules.until_date'|trans({ '%date%': recurrenceRule.endDate|format_date('short') }) }}
+              {% endif %}
+            </small>
+            {% if not recurrenceRule.isActiveOn(date()) %}
+              <small class="d-block text-warning">
+                {% trans %}recurrence_rules.inactive{% endtrans %}
+              </small>
+            {% endif %}
+          {% endif %}
         </td>
 
         <td class="text-center" width="15%">

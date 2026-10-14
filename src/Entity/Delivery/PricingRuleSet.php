@@ -48,6 +48,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
         ),
         new GetCollection(
             normalizationContext: ['groups' => ['pricing_rule_set:read']],
+            // Dispatchers can choose a rule set to price a delivery
+            security: "is_granted('ROLE_DISPATCHER')",
+            // A light list with ?properties[]=name, without the rules
+            filters: ['pricing_rule_set.property_filter']
         ),
     ],
     security: "is_granted('ROLE_ADMIN')"
@@ -203,10 +207,31 @@ class PricingRuleSet
 
         $ruleSet->setName($translatedName);
 
+        // Copy the grids first: a rule generated from one has to point at the copy,
+        // or saving the original grid would reach into this rule set as well
+        $matrixCopies = new \SplObjectStorage();
+        foreach ($this->getMatrices() as $matrix) {
+            $matrixCopy = $matrix->duplicate();
+            $ruleSet->addMatrix($matrixCopy);
+            $matrixCopies[$matrix] = $matrixCopy;
+        }
+
         $rules = new ArrayCollection();
         foreach ($this->getRules() as $rule) {
             // do not assign same rule reference
-            $rules->add(clone $rule);
+            $ruleCopy = clone $rule;
+
+            $matrix = $rule->getMatrix();
+            if (null !== $matrix && isset($matrixCopies[$matrix])) {
+                $ruleCopy->setMatrixCell(
+                    $matrixCopies[$matrix],
+                    $rule->getMatrixRowKey(),
+                    $rule->getMatrixColumnKey()
+                );
+                $matrixCopies[$matrix]->addRule($ruleCopy);
+            }
+
+            $rules->add($ruleCopy);
         }
         $ruleSet->setRules($rules);
 

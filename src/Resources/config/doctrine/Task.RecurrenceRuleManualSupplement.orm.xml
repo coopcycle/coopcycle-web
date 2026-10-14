@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\Task\RecurrenceRuleManualSupplement" table="task_rrule_manual_supplement">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="quantity" type="integer" column="quantity" nullable="false"/>
+    <many-to-one field="recurrenceRule" target-entity="AppBundle\Entity\Task\RecurrenceRule" inversed-by="manualSupplements">
+      <join-columns>
+        <join-column name="recurrence_rule_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
+      </join-columns>
+    </many-to-one>
+    <!-- Removing a supplement from its rule set removes it from the recurrence rules -->
+    <many-to-one field="pricingRule" target-entity="AppBundle\Entity\Delivery\PricingRule">
+      <join-columns>
+        <join-column name="pricing_rule_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

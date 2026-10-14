@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { Collapse, Divider, Radio } from 'antd';
+import { Collapse, Radio } from 'antd';
 import { useTranslation } from 'react-i18next';
 import FlagsContext from '../../FlagsContext';
 import Cart from './Cart';
@@ -23,6 +23,8 @@ type Props = {
   existingSupplements?: ManualSupplementValues[];
   updatedOrder?: OrderType;
   priceCalculation?: { calculation: CalculationOutput; order?: OrderType };
+  // The new price then always applies, it is not a choice anymore
+  hasPricingRuleSetChanged?: boolean;
 };
 
 // An item carrying no package delivery adjustment at all is priced as a whole:
@@ -33,8 +35,8 @@ function hasNoBreakdown(item: OrderItemType) {
   return (
     !(item.adjustments['order_item_package_delivery_calculated']?.length > 0) &&
     !(
-      item.adjustments['order_item_package_delivery_manual_supplement']?.length >
-      0
+      item.adjustments['order_item_package_delivery_manual_supplement']
+        ?.length > 0
     )
   );
 }
@@ -113,6 +115,7 @@ export const OrderEditing = ({
   existingSupplements = [],
   updatedOrder,
   priceCalculation,
+  hasPricingRuleSetChanged = false,
 }: Props) => {
   const { isDispatcher } = useContext(UserContext);
   const { isPriceBreakdownEnabled, isDebugPricing } = useContext(FlagsContext);
@@ -127,8 +130,11 @@ export const OrderEditing = ({
   >(isDispatcher ? 'original' : 'new');
 
   useEffect(() => {
-    setFieldValue('order.recalculatePrice', selectedPriceOption === 'new');
-  }, [selectedPriceOption, setFieldValue]);
+    setFieldValue(
+      'order.recalculatePrice',
+      hasPricingRuleSetChanged || selectedPriceOption === 'new',
+    );
+  }, [hasPricingRuleSetChanged, selectedPriceOption, setFieldValue]);
 
   const orderManualSupplementsWithQuantity = useMemo(() => {
     return orderManualSupplements.map(rule => ({
@@ -182,7 +188,7 @@ export const OrderEditing = ({
           {!overridePrice &&
           updatedOrder &&
           hasCalculatedOrderItemsChanged(existingOrder, updatedOrder) ? (
-            !isDispatcher ? (
+            !isDispatcher || hasPricingRuleSetChanged ? (
               <>
                 <Cart
                   orderItems={getCalculatedOrderItems(existingOrder.items)}
@@ -283,7 +289,9 @@ export const OrderEditing = ({
         {/* Show both an old and a new total price when there is a price change */}
         {!overridePrice &&
         updatedOrder &&
-        (selectedPriceOption === 'new' || hasSupplementsChanged) &&
+        (selectedPriceOption === 'new' ||
+          hasSupplementsChanged ||
+          hasPricingRuleSetChanged) &&
         (isDispatcher || hasTotalChanged) ? (
           <>
             <TotalPrice
@@ -318,8 +326,7 @@ export const OrderEditing = ({
         )}
 
       {isDispatcher && !overridePrice && orderManualSupplements.length > 0 && (
-        <div>
-          <Divider size="middle" />
+        <div className="mt-3">
           <ManualSupplements rules={orderManualSupplementsWithQuantity} />
         </div>
       )}

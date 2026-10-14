@@ -1263,9 +1263,27 @@ class AdminController extends AbstractController
             ->getRepository(Delivery\PricingRuleSet::class)
             ->find($id);
 
+        if (!$ruleSet) {
+            throw $this->createNotFoundException('Pricing rule set not found');
+        }
+
         $duplicated = $ruleSet->duplicate($this->translator);
 
-        return $this->renderPricingRuleSetForm($duplicated, $request);
+        // The copy is saved before it is opened, rather than held in a form until
+        // submitted: a grid belongs to a rule set that exists, and the form that
+        // edits one loads it by id.
+        $this->entityManager->persist($duplicated);
+        $this->entityManager->flush();
+
+        $this->addFlash(
+            'notice',
+            $this->translator->trans('global.changesSaved')
+        );
+
+        return $this->redirectToRoute(
+            'admin_deliveries_pricing_ruleset',
+            ['id' => $duplicated->getId()]
+        );
     }
 
     /**
@@ -1341,7 +1359,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    #[Route(path: '/admin/deliveries/failures', name: 'admin_failures_list')]
+    #[Route(path: '/admin/incidents/failures', name: 'admin_failures_list')]
     public function failuresAction()
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -1354,7 +1372,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    #[Route(path: '/admin/deliveries/failures/new', name: 'admin_deliveries_failures_failurereasonset_new')]
+    #[Route(path: '/admin/incidents/failures/new', name: 'admin_deliveries_failures_failurereasonset_new')]
     public function newFailureReasonSetAction(Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -1363,7 +1381,7 @@ class AdminController extends AbstractController
         return $this->renderFailureReasonSetForm($failureReasonSet, $request);
     }
 
-    #[Route(path: '/admin/deliveries/failures/{id}', name: 'admin_deliveries_failures_failurereasonset')]
+    #[Route(path: '/admin/incidents/failures/{id}', name: 'admin_deliveries_failures_failurereasonset')]
     public function failureReasonSetAction($id, Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -1374,7 +1392,7 @@ class AdminController extends AbstractController
         return $this->renderFailureReasonSetForm($failureReasonSet, $request);
     }
 
-    #[Route(path: '/admin/deliveries/failures/{id}/delete', methods: ['POST'], name: 'admin_failures_delete')]
+    #[Route(path: '/admin/incidents/failures/{id}/delete', methods: ['POST'], name: 'admin_failures_delete')]
     public function deleteFailureReasonSetAction($id)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');

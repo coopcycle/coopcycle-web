@@ -254,6 +254,16 @@ class PricingRule
         return $this->getExpression() === 'false';
     }
 
+    /**
+     * A copy belongs to nothing yet: not to a row in database, and not to the product
+     * option values that past orders of the original reference.
+     */
+    public function __clone()
+    {
+        $this->id = null;
+        $this->productOptionValues = new ArrayCollection();
+    }
+
     public function getMatrix(): ?PricingMatrix
     {
         return $this->matrix;

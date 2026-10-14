@@ -48,6 +48,9 @@ class CancelHandler
     {
         // Track orders that need processing to avoid processing the same order multiple times
         $ordersToProcess = [];
+        // When several tasks of the same delivery are cancelled at once,
+        // the order state only changes once the command is handled
+        $cancelledOrders = [];
 
         foreach ($cancelledTasks as $cancelledTask) {
 
@@ -58,6 +61,10 @@ class CancelHandler
 
             $order = $delivery->getOrder();
             if (null === $order) {
+                continue;
+            }
+
+            if (isset($cancelledOrders[$order->getId()])) {
                 continue;
             }
 
@@ -75,6 +82,7 @@ class CancelHandler
             if ($cancelOrder && $order->getState() !== OrderInterface::STATE_CANCELLED && $order->getState() !== OrderInterface::STATE_REFUSED) {
                 $this->eventBus->dispatch(new TaskUpdated($cancelledTask));
                 $this->orderManager->cancel($order, 'All tasks were cancelled');
+                $cancelledOrders[$order->getId()] = true;
             } elseif (!$cancelOrder && $order->getState() !== OrderInterface::STATE_CANCELLED && $order->getState() !== OrderInterface::STATE_REFUSED) {
                 // For non-cancelled orders with cancelled tasks, mark for processing
                 $ordersToProcess[$order->getId()] = $order;

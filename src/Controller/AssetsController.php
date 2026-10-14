@@ -21,6 +21,7 @@ use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
 use Symfony\Component\Routing\Attribute\Route;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
@@ -77,15 +78,21 @@ class AssetsController extends AbstractController
         }
 
         try {
-            if (!$assetsFilesystem->fileExists($filename)) {
-                throw $this->createNotFoundException();
-            }
             $content = $assetsFilesystem->read($filename);
-        } catch (UnableToCheckFileExistence|UnableToReadFile $e) {
+        } catch (UnableToReadFile $e) {
             throw $this->createNotFoundException();
         }
         $mimeType = str_ends_with($filename, '.png') ? 'image/png' : 'image/jpeg';
-        return new Response($content, 200, ['Content-Type' => $mimeType]);
+
+        $response = new Response($content, 200, ['Content-Type' => $mimeType]);
+
+        // The URL is versioned with the last modification time, see AppearanceRuntime::getBannerBackgroundUrl()
+        $response->setPublic();
+        $response->setMaxAge(60 * 60 * 24 * 7);
+        // The image doesn't depend on the user, keep it public even if the session was started
+        $response->headers->set(AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER, 'true');
+
+        return $response;
     }
 
     /**

@@ -11,6 +11,7 @@ use AppBundle\Message\ImportTasks;
 use AppBundle\Spreadsheet\ProductSpreadsheetParser;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Spreadsheet\TaskSpreadsheetParser;
+use AppBundle\Twig\AppearanceRuntime;
 use AppBundle\Utils\ValidationUtils;
 use AppBundle\Validator\Constraints\Spreadsheet as AssertSpreadsheet;
 use Doctrine\ORM\EntityManagerInterface;
@@ -225,6 +226,7 @@ final class UploadListener
             $this->settingsManager->set('banner_background_image', "banner_background.{$ext}");
             $this->settingsManager->flush();
             $this->appCache->delete('banner_background_image_tone');
+            $this->appCache->delete(AppearanceRuntime::BANNER_BACKGROUND_URL_CACHE_KEY);
         } else {
             $this->appCache->delete('banner_svg_stat');
             $this->appCache->delete('banner_svg');

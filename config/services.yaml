@@ -785,10 +785,6 @@ services:
     tags:
       - { name: doctrine.orm.entity_listener }
 
-  AppBundle\Integration\Standtrack\StandtrackTaskListener:
-    tags:
-      - { name: doctrine.orm.entity_listener }
-
   AppBundle\Entity\Listener\TaskRdcStatusListener:
     arguments:
       $rdcEnabled: '%env(bool:RDC_ENABLED)%'
@@ -973,6 +969,10 @@ services:
     arguments:
       $properties: []
 
+  pricing_rule_set.property_filter:
+    parent: 'api_platform.serializer.property_filter'
+    tags: [ 'api_platform.filter' ]
+
   coopcycle.web_success_handler:
     class: AppBundle\EventListener\AuthenticationWebSuccessHandler
     arguments: ['@security.http_utils', '@router']
@@ -1003,6 +1003,7 @@ services:
       $forceStripe: "%env(bool:FORCE_STRIPE)%"
       $projectDir: "%kernel.project_dir%"
       $versionCache: "@version.cache"
+      $craueConfigCache: "@craue_config_cache_provider"
 
   AppBundle\Service\EmailManager:
     arguments:
@@ -1429,8 +1430,6 @@ services:
   AppBundle\MessageHandler\EmailHandler: ~
 
   AppBundle\MessageHandler\ImportTasksHandler: ~
-
-  AppBundle\MessageHandler\CalculateTaskDistanceHandler: ~
 
   AppBundle\MessageHandler\CalculateRouteHandler:
     tags:
@@ -1890,10 +1889,6 @@ services:
     decorates: api_platform.serializer.context_builder
     arguments:
       $decorated: '@AppBundle\Serializer\CustomSerializationContextBuiler.inner'
-
-  AppBundle\Integration\Standtrack\StandtrackClient:
-    arguments:
-      $standtrackApiKey: '%env(STANDTRACK_API_KEY)%'
 
   AppBundle\Integration\Rdc\Api\RdcClientFactory:
     arguments:

@@ -16,6 +16,7 @@ use AppBundle\Entity\Organization;
 use AppBundle\Entity\RemotePushToken;
 use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Entity\ReusablePackagings;
+use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Order;
@@ -1351,6 +1352,17 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $task->setOrganization($organization);
 
         $this->doctrine->getManagerForClass(Task::class)->flush();
+    }
+
+    #[Given('the store with name :storeName has pricing rule set :ruleSetName')]
+    public function theStoreWithNameHasPricingRuleSet($storeName, $ruleSetName)
+    {
+        $ruleSet = $this->doctrine->getRepository(PricingRuleSet::class)->findOneByName($ruleSetName);
+        $store = $this->doctrine->getRepository(Store::class)->findOneByName($storeName);
+
+        $store->setPricingRuleSet($ruleSet);
+
+        $this->doctrine->getManagerForClass(Store::class)->flush();
     }
 
     #[Given('the store with name :storeName has failure reason set :failureReasonSet')]

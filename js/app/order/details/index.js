@@ -1,7 +1,7 @@
 import React, { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import _ from 'lodash'
-import Centrifuge from 'centrifuge'
+import { createCentrifuge, subscribe } from '../../centrifugo/client'
 import { Provider } from 'react-redux'
 
 import './details.scss'
@@ -66,23 +66,12 @@ if (timelineEl) {
   }
 
   if (!_.includes(['cancelled', 'fulfilled', 'refused'], order.state)) {
-    const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws'
+    // The visitor has no session, so there is nobody to issue a fresh token to:
+    // the connection just ends when this one expires.
+    const centrifuge = createCentrifuge(options.centrifugo.token, { refresh: false })
 
-    const centrifuge = new Centrifuge(
-      `${protocol}://${window.location.host}/centrifugo/connection/websocket`,
-      {
-        // In this case, we don't refresh the connection
-        // https://github.com/centrifugal/centrifuge-js#refreshendpoint
-        refreshAttempts: 0,
-        onRefresh: function (ctx, cb) {
-          cb({ status: 403 })
-        },
-      },
-    )
-
-    centrifuge.setToken(options.centrifugo.token)
-    centrifuge.subscribe(options.centrifugo.channel, message => {
-      const { event } = message.data
+    subscribe(centrifuge, options.centrifugo.channel, data => {
+      const { event } = data
 
       switch (event.name) {
         case 'order:accepted':

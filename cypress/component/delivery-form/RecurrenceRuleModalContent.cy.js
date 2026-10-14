@@ -9,6 +9,7 @@ import moment from 'moment'
 
 it('displays a default rule', () => {
   cy.stub(hookModule, 'useDeliveryFormFormikContext').returns({
+    values: {},
     rruleValue: undefined,
     setFieldValue: cy.stub(),
   })
@@ -34,6 +35,7 @@ it('displays a default rule', () => {
 
 it('displays a standard rule', () => {
   cy.stub(hookModule, 'useDeliveryFormFormikContext').returns({
+    values: {},
     rruleValue: 'FREQ=WEEKLY;BYDAY=MO',
     setFieldValue: cy.stub(),
   })
@@ -57,6 +59,7 @@ it('displays a standard rule', () => {
 
 it('displays a custom rule', () => {
   cy.stub(hookModule, 'useDeliveryFormFormikContext').returns({
+    values: {},
     rruleValue: 'RRULE:FREQ=WEEKLY;INTERVAL=2;WKST=MO;BYDAY=MO',
     setFieldValue: cy.stub(),
   })
@@ -85,6 +88,7 @@ it('displays a custom rule', () => {
 
 it('switch to a custom rule', () => {
   cy.stub(hookModule, 'useDeliveryFormFormikContext').returns({
+    values: {},
     rruleValue: 'FREQ=WEEKLY;BYDAY=MO',
     setFieldValue: cy.spy().as('setFieldValue'),
   })
@@ -117,6 +121,7 @@ it('switch to a custom rule', () => {
 
 it('switch to a standard rule', () => {
   cy.stub(hookModule, 'useDeliveryFormFormikContext').returns({
+    values: {},
     rruleValue: 'RRULE:FREQ=WEEKLY;INTERVAL=2;WKST=MO;BYDAY=MO',
     setFieldValue: cy.spy().as('setFieldValue'),
   })
@@ -151,4 +156,41 @@ it('switch to a standard rule', () => {
   cy.get('[data-testid="save"]').click()
 
   cy.get('@setFieldValue').should('have.been.calledWith', 'rrule', defaultRule)
+})
+
+it('saves the start and end dates', () => {
+  cy.stub(hookModule, 'useDeliveryFormFormikContext').returns({
+    values: { rruleStartDate: '2024-01-15', rruleEndDate: null },
+    rruleValue: 'FREQ=WEEKLY;BYDAY=MO',
+    setFieldValue: cy.spy().as('setFieldValue'),
+  })
+
+  const reduxStore = createStoreFromPreloadedState()
+
+  cy.mount(
+    <Provider store={reduxStore}>
+      <ModalContent />
+    </Provider>,
+  )
+
+  // The start date is preloaded, the end date is left empty
+  cy.get('input[data-testid="recurrence-start-date"]').should(
+    'have.value',
+    '2024-01-15',
+  )
+
+  cy.get('input[data-testid="recurrence-end-date"]').type('2024-06-30{enter}')
+
+  cy.get('[data-testid="save"]').click()
+
+  cy.get('@setFieldValue').should(
+    'have.been.calledWith',
+    'rruleStartDate',
+    '2024-01-15',
+  )
+  cy.get('@setFieldValue').should(
+    'have.been.calledWith',
+    'rruleEndDate',
+    '2024-06-30',
+  )
 })

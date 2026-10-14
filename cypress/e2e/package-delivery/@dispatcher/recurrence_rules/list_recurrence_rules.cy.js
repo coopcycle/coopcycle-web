@@ -31,6 +31,11 @@ context('Managing recurrence rules (role: dispatcher)', () => {
 
     cy.get('[data-testid="recurrence-add"]').click()
     cy.chooseDaysOfTheWeek([5, 6])
+
+    // The rule is prepared in advance, for a short term contract
+    cy.get('input[data-testid="recurrence-start-date"]').type('2030-01-15{enter}')
+    cy.get('input[data-testid="recurrence-end-date"]').type('2030-06-30{enter}')
+
     cy.get('[data-testid=save]').click()
 
     cy.get('button[type="submit"]').click()
@@ -53,6 +58,13 @@ context('Managing recurrence rules (role: dispatcher)', () => {
       .should('exist')
     cy.get('[data-testid=recurrence-list-item]')
       .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
+      .should('exist')
+
+    cy.get('[data-testid=recurrence-list-item]')
+      .contains(/15\/01\/2030/)
+      .should('exist')
+    cy.get('[data-testid=recurrence-list-item]')
+      .contains(/30\/06\/2030/)
       .should('exist')
   })
 })

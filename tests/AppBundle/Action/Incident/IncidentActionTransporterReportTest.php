@@ -12,6 +12,7 @@ use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\User;
 use AppBundle\Service\TaskManager;
+use AppBundle\Sylius\Taxation\TaxesHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -44,6 +45,7 @@ class IncidentActionTransporterReportTest extends TestCase
             $this->prophesize(DenormalizerInterface::class)->reveal(),
             $this->prophesize(DeliveryCreateOrUpdateProcessor::class)->reveal(),
             $this->prophesize(MessageBusInterface::class)->reveal(),
+            $this->prophesize(TaxesHelper::class)->reveal(),
         );
     }
 

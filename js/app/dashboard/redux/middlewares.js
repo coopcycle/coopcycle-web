@@ -16,7 +16,7 @@ import {
   updateTour,
 } from './actions'
 import _ from 'lodash'
-import Centrifuge from 'centrifuge'
+import { createCentrifuge, subscribe } from '../../centrifugo/client'
 import { selectSelectedDate } from '../../coopcycle-frontend-js/logistics/redux'
 import { selectLastOptimResult } from './selectors'
 
@@ -46,15 +46,15 @@ export const socketIO = ({ dispatch, getState }) => {
     Synchronization between mobile dispatch or other web dispatch instances.
   */
 
-  if (!centrifuge) {
+  // No token means no realtime: the page was rendered without one, or we are in
+  // a test. Attempting to connect would subscribe to undefined channels, which
+  // the SDK rejects outright.
+  if (!centrifuge && getState().config.centrifugoToken) {
 
-    const protocol = window.location.protocol === 'https:' ? 'wss': 'ws'
+    centrifuge = createCentrifuge(getState().config.centrifugoToken)
 
-    centrifuge = new Centrifuge(`${protocol}://${window.location.host}/centrifugo/connection/websocket`)
-    centrifuge.setToken(getState().config.centrifugoToken)
-
-    centrifuge.subscribe(getState().config.centrifugoEventsChannel, function(message) {
-      const { event } = message.data
+    subscribe(centrifuge, getState().config.centrifugoEventsChannel, function(data) {
+      const { event } = data
       const currentDate = selectSelectedDate(getState())
 
       console.debug('Received event : ' + event.name)
@@ -94,10 +94,10 @@ export const socketIO = ({ dispatch, getState }) => {
       }
     })
 
-    centrifuge.subscribe(getState().config.centrifugoTrackingChannel, function(message) {
+    subscribe(centrifuge, getState().config.centrifugoTrackingChannel, function(data) {
       pulse()
-      dispatch(setGeolocation(message.data.user, message.data.coords, message.data.ts))
-    })
+      dispatch(setGeolocation(data.user, data.coords, data.ts))
+    }, { needsToken: true })
 
     centrifuge.connect()
 

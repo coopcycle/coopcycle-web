@@ -40,7 +40,9 @@
       {{ form_widget(form.enabled) }}
     </div>
     <div>
-      <button data-delete-row data-target="{{ '#' ~ row_id }}" type="button" class="btn btn-transparent" tabindex="-1" disabled>
+      <button data-delete-row data-target="{{ '#' ~ row_id }}"
+        {% if form.vars.data?.id is not empty %}data-confirm="{{ 'form.product_option_value.delete.confirm'|trans|e('html_attr') }}"{% endif %}
+        type="button" class="btn btn-transparent" tabindex="-1">
         <i class="fa fa-lg fa-trash"></i>
       </button>
     </div>

@@ -93,19 +93,24 @@ final class OrderTaxesProcessor implements OrderProcessorInterface, TaxableInter
 
         foreach ($taxableAdjustments as $adjustment) {
             $taxRate = $this->taxRateResolver->resolve($this, ['country' => strtolower($this->state)]);
-            $taxAdjustment = $this->createAdjustmentWithRate($adjustment->getAmount(), $taxRate);
+            // Delivery and incident taxes share the same rate, and so the same label.
+            // Keep track of what was taxed, so they can be told apart when displayed.
+            $taxAdjustment = $this->createAdjustmentWithRate($adjustment->getAmount(), $taxRate, [
+                'taxable_type' => $adjustment->getType(),
+            ]);
 
             $order->addAdjustment($taxAdjustment);
         }
     }
 
-    private function createAdjustmentWithRate($base, $taxRate)
+    private function createAdjustmentWithRate($base, $taxRate, array $details = [])
     {
         $taxAdjustment = $this->adjustmentFactory->createWithData(
             AdjustmentInterface::TAX_ADJUSTMENT,
             $this->translator->trans($taxRate->getName(), [], 'taxation'),
             (int) $this->calculator->calculate($base, $taxRate),
-            $neutral = $taxRate->isIncludedInPrice()
+            $neutral = $taxRate->isIncludedInPrice(),
+            $details
         );
         $taxAdjustment->setOriginCode($taxRate->getCode());
 

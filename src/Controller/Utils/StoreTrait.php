@@ -6,6 +6,8 @@ use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\Metadata\Exception\ItemNotFoundException;
 use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Api\Dto\DeliveryMapper;
+use AppBundle\Pricing\ManualSupplement;
+use AppBundle\Api\Dto\ManualSupplementDto;
 use AppBundle\Cyke\Client as CykeClient;
 use AppBundle\Entity\Address;
 use AppBundle\Annotation\HideSoftDeleted;
@@ -365,7 +367,8 @@ trait StoreTrait
                     $duplicate->delivery,
                     null,
                     $duplicate->previousArbitraryPrice,
-                    false
+                    false,
+                    pricingRuleSet: $duplicate->previousPricingRuleSet
                 );
             } elseif ('reverse' === $request->query->get('action')) {
                 try {
@@ -374,7 +377,8 @@ trait StoreTrait
                         $reverse,
                         null,
                         null,
-                        false
+                        false,
+                        pricingRuleSet: $fromOrder->getPricingRuleSet()
                     );
                 } catch (DeliveryNotReversableException $e) {
                     $errors[] = 'form.delivery.errors.not_reversable';
@@ -421,6 +425,7 @@ trait StoreTrait
         EntityManagerInterface $entityManager,
         DeliveryManager $deliveryManager,
         DeliveryMapper $deliveryMapper,
+        PricingManager $pricingManager,
     ) {
         $recurrenceRule = $entityManager
             ->getRepository(RecurrenceRule::class)
@@ -448,8 +453,17 @@ trait StoreTrait
             $tempDelivery,
             null,
             $arbitraryPrice,
-            false
+            false,
+            pricingRuleSet: $recurrenceRule->getPricingRuleSet()
         );
+
+        $formData->order->manualSupplements = array_map(function (ManualSupplement $supplement) {
+            $supplementData = new ManualSupplementDto();
+            $supplementData->pricingRule = $supplement->pricingRule;
+            $supplementData->quantity = $supplement->quantity;
+
+            return $supplementData;
+        }, $pricingManager->getRecurrenceRuleManualSupplements($recurrenceRule)->orderSupplements);
 
         return $this->render('store/recurrence_rules/form.html.twig', $this->auth([
             'layout' => $request->attributes->get('layout'),

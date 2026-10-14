@@ -26,14 +26,22 @@ class TaskManager
         private MessageBusInterface $commandBus
     ) {}
 
-    public function markAsDone(Task $task, $notes = null, $contactName = null, bool $calculateCO2 = true)
+    public function markAsDone(Task $task, $notes = null, $contactName = null)
     {
-        $this->commandBus->dispatch(new MarkAsDone($task, $notes, $contactName, $calculateCO2));
+        $this->commandBus->dispatch(new MarkAsDone($task, $notes, $contactName));
     }
 
     public function cancel(Task $task, bool $recalculatePrice = false)
     {
         $this->commandBus->dispatch(new Cancel([$task], $recalculatePrice));
+    }
+
+    /**
+     * @param Task[] $tasks
+     */
+    public function cancelTasks(array $tasks, bool $recalculatePrice = false): void
+    {
+        $this->commandBus->dispatch(new Cancel($tasks, $recalculatePrice));
     }
 
     public function deleteGroup(TaskGroup $taskGroup)

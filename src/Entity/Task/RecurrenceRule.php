@@ -11,8 +11,11 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\Task\RecurrenceRuleBetween as BetweenController;
+use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Store;
 use AppBundle\Validator\Constraints\RecurrenceRuleTemplate as AssertRecurrenceRuleTemplate;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Gedmo\SoftDeleteable\SoftDeleteable as SoftDeleteableInterface;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Gedmo\Timestampable\Traits\Timestampable;
@@ -20,6 +23,7 @@ use Recurr\Rule;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ApiResource(
     shortName: 'RecurrenceRule',
@@ -77,6 +81,22 @@ class RecurrenceRule implements SoftDeleteableInterface
     private ?array $arbitraryPriceTemplate = null;
 
     /**
+     * The rule set chosen by a dispatcher to price the generated orders,
+     * the store's one is used when null
+     */
+    #[Groups(['task_recurrence_rule'])]
+    private ?PricingRuleSet $pricingRuleSet = null;
+
+    /**
+     * The manual supplements added to the generated orders
+     *
+     * @var Collection<int, RecurrenceRuleManualSupplement>
+     */
+    #[Assert\Valid]
+    #[Groups(['task_recurrence_rule'])]
+    private Collection $manualSupplements;
+
+    /**
      * @var Store
      */
     #[Assert\NotNull]
@@ -87,6 +107,27 @@ class RecurrenceRule implements SoftDeleteableInterface
 
     #[Groups(['task_recurrence_rule'])]
     private bool $paused = false;
+
+    /**
+     * The first day the rule generates orders, included. Null means it has
+     * always been active.
+     */
+    #[ApiProperty(openapiContext: ['type' => 'string', 'format' => 'date', 'example' => '2024-01-15'])]
+    #[Groups(['task_recurrence_rule'])]
+    private ?\DateTime $startDate = null;
+
+    /**
+     * The last day the rule generates orders, included. Null means it never
+     * expires.
+     */
+    #[ApiProperty(openapiContext: ['type' => 'string', 'format' => 'date', 'example' => '2024-06-30'])]
+    #[Groups(['task_recurrence_rule'])]
+    private ?\DateTime $endDate = null;
+
+    public function __construct()
+    {
+        $this->manualSupplements = new ArrayCollection();
+    }
 
     /**
      * @return int
@@ -184,6 +225,73 @@ class RecurrenceRule implements SoftDeleteableInterface
         $this->arbitraryPriceTemplate = $arbitraryPriceTemplate;
     }
 
+    public function getPricingRuleSet(): ?PricingRuleSet
+    {
+        return $this->pricingRuleSet;
+    }
+
+    public function setPricingRuleSet(?PricingRuleSet $pricingRuleSet): void
+    {
+        $this->pricingRuleSet = $pricingRuleSet;
+    }
+
+    /**
+     * @return Collection<int, RecurrenceRuleManualSupplement>
+     */
+    public function getManualSupplements(): Collection
+    {
+        return $this->manualSupplements;
+    }
+
+    public function addManualSupplement(RecurrenceRuleManualSupplement $manualSupplement): void
+    {
+        if (!$this->manualSupplements->contains($manualSupplement)) {
+            $manualSupplement->setRecurrenceRule($this);
+            $this->manualSupplements->add($manualSupplement);
+        }
+    }
+
+    public function removeManualSupplement(RecurrenceRuleManualSupplement $manualSupplement): void
+    {
+        $this->manualSupplements->removeElement($manualSupplement);
+    }
+
+    public function clearManualSupplements(): void
+    {
+        // The removed supplements are deleted (orphan removal)
+        $this->manualSupplements->clear();
+    }
+
+    /**
+     * Only manual supplements of the rule set used to price the generated orders
+     */
+    #[Assert\Callback]
+    public function validateManualSupplements(ExecutionContextInterface $context): void
+    {
+        // Not set yet when the store is missing, which is reported by its own constraint
+        /** @var Store|null $store */
+        $store = $this->store;
+
+        $pricingRuleSet = $this->pricingRuleSet ?? $store?->getPricingRuleSet();
+
+        foreach ($this->manualSupplements as $index => $manualSupplement) {
+            $pricingRule = $manualSupplement->getPricingRule();
+            if (is_null($pricingRule)) {
+                continue;
+            }
+
+            $isApplicable = $pricingRule->isManualSupplement()
+                && !is_null($pricingRuleSet)
+                && $pricingRuleSet->getRules()->contains($pricingRule);
+
+            if (!$isApplicable) {
+                $context->buildViolation(sprintf('Pricing rule #%d is not a manual supplement of the pricing rule set used', $pricingRule->getId()))
+                    ->atPath(sprintf('manualSupplements[%d].pricingRule', $index))
+                    ->addViolation();
+            }
+        }
+    }
+
     #[SerializedName('isCancelled')]
     #[Groups(['task_recurrence_rule'])]
     public function isCancelled(): bool
@@ -209,6 +317,59 @@ class RecurrenceRule implements SoftDeleteableInterface
     public function setPaused(bool $paused): void
     {
         $this->paused = $paused;
+    }
+
+    public function getStartDate(): ?\DateTime
+    {
+        return $this->startDate;
+    }
+
+    public function setStartDate(?\DateTime $startDate): void
+    {
+        $this->startDate = $startDate;
+    }
+
+    public function getEndDate(): ?\DateTime
+    {
+        return $this->endDate;
+    }
+
+    public function setEndDate(?\DateTime $endDate): void
+    {
+        $this->endDate = $endDate;
+    }
+
+    /**
+     * Whether the rule may generate orders on the given day, both bounds included.
+     * A rule without bounds is always active.
+     */
+    public function isActiveOn(\DateTimeInterface $date): bool
+    {
+        $day = new \DateTime($date->format('Y-m-d'));
+
+        if (!is_null($this->startDate) && $day < new \DateTime($this->startDate->format('Y-m-d'))) {
+            return false;
+        }
+
+        if (!is_null($this->endDate) && $day > new \DateTime($this->endDate->format('Y-m-d'))) {
+            return false;
+        }
+
+        return true;
+    }
+
+    #[Assert\Callback]
+    public function validateDateRange(ExecutionContextInterface $context): void
+    {
+        if (is_null($this->startDate) || is_null($this->endDate)) {
+            return;
+        }
+
+        if ($this->endDate < $this->startDate) {
+            $context->buildViolation('The end date must be after the start date')
+                ->atPath('endDate')
+                ->addViolation();
+        }
     }
 
 }

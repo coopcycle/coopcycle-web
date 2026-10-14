@@ -8,6 +8,8 @@ import { Uri } from '../../../api/types';
 
 type Params = {
   storeUri: Uri;
+  // A rule set chosen by a dispatcher, instead of the store's one
+  pricingRuleSetUri?: Uri | null;
   // Manual supplements are a dispatcher-only feature; the pricing rule set
   // endpoint is not accessible to stores (403), so skip the fetch for them.
   enabled?: boolean;
@@ -15,13 +17,17 @@ type Params = {
 
 export const useOrderManualSupplements = ({
   storeUri,
+  pricingRuleSetUri,
   enabled = true,
 }: Params) => {
   const { data: storeData, isLoading: storeIsLoading } =
     useGetStoreQuery(storeUri);
+
+  const ruleSetUri = pricingRuleSetUri ?? storeData?.pricingRuleSet;
+
   const { data: pricingRuleSet, isLoading: pricingRuleSetIsLoading } =
-    useGetPricingRuleSetQuery(storeData?.pricingRuleSet, {
-      skip: !enabled || !storeData?.pricingRuleSet,
+    useGetPricingRuleSetQuery(ruleSetUri, {
+      skip: !enabled || !ruleSetUri,
     });
 
   const orderManualSupplements = useMemo(() => {

@@ -89,6 +89,7 @@ export default function MapPicker({ onSelect, onClose = () => { }, isOpen }) {
     <Modal
       overlayClassName="ReactModal__Overlay ReactModal__Overlay--zIndex-2001"
       className="ReactModal__Content--mappicker"
+      data={{ cy: 'map-picker-modal' }}
       onRequestClose={onClose}
       isOpen={isOpen}>
       <h3 className="mb-3">{t('SELECT_YOUR_LOCATION')}</h3>
@@ -109,6 +110,7 @@ export default function MapPicker({ onSelect, onClose = () => { }, isOpen }) {
       </MapContainer>
       <button
         className="btn btn-primary float-right my-2"
+        data-cy="map-picker-confirm"
         onClick={async () => {
           setLoading(true)
           const address = await reverseGeocode(coordinates)

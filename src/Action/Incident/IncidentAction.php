@@ -14,6 +14,7 @@ use AppBundle\Entity\Incident\IncidentEvent;
 use AppBundle\Entity\Store;
 use AppBundle\Service\TaskManager;
 use AppBundle\Sylius\Order\AdjustmentInterface;
+use AppBundle\Sylius\Taxation\TaxesHelper;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Sylius\Component\Order\Factory\AdjustmentFactoryInterface;
@@ -37,6 +38,7 @@ class IncidentAction extends Base
         private readonly DenormalizerInterface $denormalizer,
         private readonly DeliveryCreateOrUpdateProcessor $deliveryProcessor,
         private readonly MessageBusInterface $eventBus,
+        private readonly TaxesHelper $taxesHelper,
     )
     {
     }
@@ -146,6 +148,9 @@ class IncidentAction extends Base
             throw new \InvalidArgumentException("diff is required");
         }
 
+        // Amounts are in cents, but may come as floats from JavaScript (e.g. 12.34 * 100)
+        $priceDiff = (int) round((float) $priceDiff);
+
         $order = $data->getTask()->getDelivery()?->getOrder();
         if (is_null($order)) {
             throw new \InvalidArgumentException("There is no order linked to this task");
@@ -153,6 +158,7 @@ class IncidentAction extends Base
 
         $oldTotal = $order->getTotal();
         $oldTaxTotal = $order->getTaxTotal();
+        $oldIncidentTaxTotal = $order->getIncidentTaxTotal();
 
         if ($order->getTotal() + $priceDiff < 0) {
             throw new \InvalidArgumentException("Price diff cannot be negative");
@@ -176,8 +182,17 @@ class IncidentAction extends Base
 
         $this->entityManager->persist($order);
 
+        // Whether the diff includes tax depends on the service tax rate,
+        // so store both amounts to display them without knowing the rate.
+        $diffTax = $order->getIncidentTaxTotal() - $oldIncidentTaxTotal;
+        $taxIncluded = $this->taxesHelper->getServiceTaxRate()?->isIncludedInPrice() ?? true;
+
         $event->setType(IncidentEvent::TYPE_APPLY_PRICE_DIFF);
-        $event->setMetadata(["diff" => $priceDiff]);
+        $event->setMetadata([
+            "diff" => $priceDiff,
+            "diff_tax_excluded" => $taxIncluded ? $priceDiff - $diffTax : $priceDiff,
+            "diff_tax_included" => $taxIncluded ? $priceDiff : $priceDiff + $diffTax,
+        ]);
     }
 
     private function createTransporterReport(Incident &$data, IncidentEvent &$event, InputBag $params): void

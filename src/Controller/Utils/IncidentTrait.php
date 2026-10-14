@@ -5,6 +5,7 @@ namespace AppBundle\Controller\Utils;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\Incident\IncidentImage;
+use AppBundle\Sylius\Taxation\TaxesHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Liip\ImagineBundle\Service\FilterService;
 use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
@@ -25,7 +26,8 @@ trait IncidentTrait {
 
     public function incidentAction($id, Request $request,
         EntityManagerInterface $entityManager,
-        StateMachineFactoryInterface $stateMachineFactory) {
+        StateMachineFactoryInterface $stateMachineFactory,
+        TaxesHelper $taxesHelper) {
         /** @var ?Incident $incident */
         $incident = $entityManager->getRepository(Incident::class)->find($id);
 
@@ -54,6 +56,9 @@ trait IncidentTrait {
             }
         }
 
+        // The rate applied to incident price differences, see OrderTaxesProcessor
+        $serviceTaxRate = $taxesHelper->getServiceTaxRate();
+
         return $this->render($request->attributes->get('template'), $this->auth([
             'incident' => $incident,
             'delivery' => $delivery,
@@ -62,6 +67,10 @@ trait IncidentTrait {
             'transporterEnabled' => $transporterEnabled,
             'isLastmile' => $isLastmile,
             'isRefundable' => $isRefundable,
+            'serviceTaxRate' => is_null($serviceTaxRate) ? null : [
+                'amount' => $serviceTaxRate->getAmount(),
+                'includedInPrice' => $serviceTaxRate->isIncludedInPrice(),
+            ],
         ]));
     }
 }

@@ -20,6 +20,7 @@ import type { DeliveryFormValues } from '../types';
 import {
   AddressPayload,
   Delivery,
+  ManualSupplementValues,
   PostDeliveryRequest,
 } from '../../../api/types';
 import { isTemporaryId } from '../idUtils';
@@ -57,6 +58,8 @@ function convertValuesToDeliveryPayload(
     data = {
       ...data,
       rrule: values.rrule,
+      rruleStartDate: values.rruleStartDate ?? null,
+      rruleEndDate: values.rruleEndDate ?? null,
     };
   }
 
@@ -85,6 +88,10 @@ function convertDateInRecurrenceRulePayload(value) {
 function convertValuesToRecurrenceRulePayload(values) {
   let data = {
     rule: values.rrule,
+    startDate: values.rruleStartDate ?? null,
+    endDate: values.rruleEndDate ?? null,
+    pricingRuleSet: values.order?.pricingRuleSet ?? null,
+    manualSupplements: [] as ManualSupplementValues[],
     template: {
       '@type': 'hydra:Collection',
       'hydra:member': structuredClone(values.tasks).map(task => {
@@ -121,8 +128,18 @@ function convertValuesToRecurrenceRulePayload(values) {
       variantName: values.variantName ?? '',
       variantPrice: values.variantIncVATPrice,
     };
+    // A price set manually replaces the supplements and the rule set chosen
+    data.manualSupplements = [];
+    data.pricingRuleSet = null;
   } else {
     data.arbitraryPriceTemplate = null;
+    // Without the JSON-LD keys of the preloaded data
+    data.manualSupplements = (values.order?.manualSupplements ?? []).map(
+      ({ pricingRule, quantity }) => ({
+        pricingRule,
+        quantity,
+      }),
+    );
   }
 
   return data;

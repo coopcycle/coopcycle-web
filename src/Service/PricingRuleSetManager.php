@@ -7,6 +7,7 @@ use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\Store;
+use AppBundle\Entity\Task\RecurrenceRule;
 use AppBundle\Sylius\Product\ProductOptionValueFactory;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -36,7 +37,8 @@ class PricingRuleSetManager
         $results = array_merge(
             $this->getStores($pricingRuleSet),
             $contracts,
-            $this->getDeliveryForms($pricingRuleSet)
+            $this->getDeliveryForms($pricingRuleSet),
+            $this->getRecurrenceRules($pricingRuleSet)
         );
 
         return $results;
@@ -60,6 +62,16 @@ class PricingRuleSetManager
      */
     public function getStores(PricingRuleSet $pricingRuleSet) {
         return $this->entityManager->getRepository(Store::class)->findBy(['pricingRuleSet' => $pricingRuleSet]);
+    }
+
+    /**
+     * Recurrence rules a dispatcher chose this rule set for;
+     * deleting it would silently price their next orders with the store's one
+     *
+     * @return RecurrenceRule[]
+     */
+    public function getRecurrenceRules(PricingRuleSet $pricingRuleSet) {
+        return $this->entityManager->getRepository(RecurrenceRule::class)->findBy(['pricingRuleSet' => $pricingRuleSet]);
     }
 
     /**

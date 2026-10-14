@@ -26,6 +26,7 @@ import {
 import { RecurrenceRules } from './components/recurrence/RecurrenceRules';
 import useSubmit from './hooks/useSubmit';
 import Order from './components/order/Order';
+import BlockLabel from './components/BlockLabel';
 import SuggestionModal from './SuggestionModal';
 import DeliveryResume from './DeliveryResume';
 import ShopifyOrderAlert, {
@@ -157,6 +158,12 @@ const pickupSchema = {
   '@id': null, // Will be set when creating new tasks
 };
 
+// The server may serialize an IRI as an absolute URL (i.e. when there is no order yet,
+// when cloning an order or editing a recurrence rule), the form identifies them by their path
+function _iriToPath(iri: string): string {
+  return new URL(iri, window.location.origin).pathname;
+}
+
 type Props = {
   storeNodeId: Uri;
   deliveryId?: number;
@@ -225,6 +232,11 @@ const DeliveryForm = ({
   const { t } = useTranslation();
 
   const { logger } = useDatadog();
+
+  const canSaveOrder =
+    modeIn(mode, [Mode.DELIVERY_CREATE, Mode.DELIVERY_UPDATE]) && isDispatcher;
+  const canAddReverse =
+    mode === Mode.DELIVERY_CREATE && isDispatcher && isReverseDeliveryEnabled;
 
   // Store owners can modify a delivery until it has been assigned to a courier
   const isLockedForStore =
@@ -335,14 +347,14 @@ const DeliveryForm = ({
       }
     }
 
-    // expand all tasks with errors
-    if (Object.keys(errors.tasks).length > 0) {
-      Object.values(expandedTasks).forEach((isExpanded, index) => {
-        if (!isExpanded && Object.keys(errors.tasks).includes(`${index}`)) {
+    // expand all tasks with errors, so that the messages are visible
+    Object.keys(errors.tasks)
+      .map(Number)
+      .forEach(index => {
+        if (!expandedTasks[index]) {
           handleTaskExpansion(index, true);
         }
       });
-    }
 
     const result =
       Object.keys(errors.tasks).length > 0 || errors.variantName ? errors : {};
@@ -400,7 +412,19 @@ const DeliveryForm = ({
         initialValues.order.manualSupplements = [];
       }
 
+      initialValues.order.manualSupplements =
+        initialValues.order.manualSupplements.map(supplement => ({
+          ...supplement,
+          pricingRule: _iriToPath(supplement.pricingRule),
+        }));
+
       setInitialManualSupplements([...initialValues.order.manualSupplements]);
+
+      if (initialValues.order.pricingRuleSet) {
+        initialValues.order.pricingRuleSet = _iriToPath(
+          initialValues.order.pricingRuleSet,
+        );
+      }
 
       if (preLoadedFormData.order?.arbitraryPrice) {
         // remove a previously copied value (different formats between API and the frontend)
@@ -466,7 +490,26 @@ const DeliveryForm = ({
       validate={validate}
       validateOnChange={false}
       validateOnBlur={false}>
-      {({ values, isSubmitting, setFieldValue }) => {
+      {({ values, errors, isSubmitting, submitCount, setFieldValue }) => {
+        const hasErrors = Object.keys(errors).length > 0;
+
+        //FIXME: we probably need to move all this into a function component
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        useEffect(() => {
+          // The submit button is at the bottom of the form, while the errors are
+          // displayed next to the fields: bring the first one into view,
+          // otherwise it looks like the click did nothing.
+          if (isSubmitting || submitCount === 0 || !hasErrors) return;
+
+          const firstError = Array.from(
+            document.querySelectorAll<HTMLElement>(
+              '.delivery-form .text-danger',
+            ),
+          ).find(el => el.offsetParent !== null);
+
+          firstError?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, [isSubmitting, submitCount, hasErrors]);
+
         //FIXME: we probably need to move all this into a function component
         // eslint-disable-next-line react-hooks/rules-of-hooks
         const previousValues = usePrevious(values);
@@ -777,38 +820,40 @@ const DeliveryForm = ({
                   </div>
                 ) : null}
 
-                {modeIn(mode, [Mode.DELIVERY_CREATE, Mode.DELIVERY_UPDATE]) &&
-                isDispatcher ? (
-                  <div
-                    className="border-top py-3"
-                    data-testid="saved_order__container">
-                    <Checkbox
-                      name="delivery.saved_order"
-                      checked={values.order.isSavedOrder}
-                      onChange={e => {
-                        e.stopPropagation();
-                        setFieldValue('order.isSavedOrder', e.target.checked);
-                      }}>
-                      {t('DELIVERY_FORM_SAVED_ORDER')}
-                    </Checkbox>
-                  </div>
-                ) : null}
-
-                {mode === Mode.DELIVERY_CREATE &&
-                isDispatcher &&
-                isReverseDeliveryEnabled ? (
+                {canSaveOrder || canAddReverse ? (
                   <div className="border-top py-3">
-                    <Checkbox
-                      name="delivery.add_reverse"
-                      onChange={e => {
-                        e.stopPropagation();
-                        setFieldValue('addReverse', e.target.checked);
-                      }}>
-                      {t('DELIVERY_FORM_ADD_REVERSE')}
-                    </Checkbox>
-                    <Tooltip title={t('DELIVERY_FORM_ADD_REVERSE_HELP')}>
-                      <InfoCircleOutlined />
-                    </Tooltip>
+                    <BlockLabel label={t('DELIVERY_FORM_OPTIONS')} />
+                    {canSaveOrder ? (
+                      <div data-testid="saved_order__container">
+                        <Checkbox
+                          name="delivery.saved_order"
+                          checked={values.order.isSavedOrder}
+                          onChange={e => {
+                            e.stopPropagation();
+                            setFieldValue(
+                              'order.isSavedOrder',
+                              e.target.checked,
+                            );
+                          }}>
+                          {t('DELIVERY_FORM_SAVED_ORDER')}
+                        </Checkbox>
+                      </div>
+                    ) : null}
+                    {canAddReverse ? (
+                      <div className="mt-2">
+                        <Checkbox
+                          name="delivery.add_reverse"
+                          onChange={e => {
+                            e.stopPropagation();
+                            setFieldValue('addReverse', e.target.checked);
+                          }}>
+                          {t('DELIVERY_FORM_ADD_REVERSE')}
+                        </Checkbox>
+                        <Tooltip title={t('DELIVERY_FORM_ADD_REVERSE_HELP')}>
+                          <InfoCircleOutlined />
+                        </Tooltip>
+                      </div>
+                    ) : null}
                   </div>
                 ) : null}
 
@@ -833,6 +878,14 @@ const DeliveryForm = ({
                       disabled={isSubmitting || priceLoading || isSubmitted}>
                       {t('DELIVERY_FORM_SUBMIT')}
                     </Button>
+                    {submitCount > 0 && hasErrors ? (
+                      <div
+                        className="alert alert-danger mt-3 mb-0"
+                        role="alert"
+                        data-testid="delivery-form-invalid-alert">
+                        {t('DELIVERY_FORM_INVALID')}
+                      </div>
+                    ) : null}
                   </div>
                 ) : null}
 

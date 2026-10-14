@@ -29,7 +29,6 @@ use AppBundle\Security\UserManager;
 abstract class LocalBusinessType extends AbstractType
 {
     protected bool $transportersEnabled;
-    protected bool $standtrackEnabled;
     protected array $rdcConnections = [];
     protected bool $rdcEnabled = false;
 
@@ -47,7 +46,6 @@ abstract class LocalBusinessType extends AbstractType
         protected bool $cashOnDeliveryOptinEnabled = false,
         protected array $transportersConfig = [],
         protected bool $billingEnabled = false,
-        ?string $standtrackEnabled = null,
         protected bool $zeltyEnabled = false,
         array $rdcConnections = [],
         bool $rdcEnabled = false,
@@ -55,7 +53,6 @@ abstract class LocalBusinessType extends AbstractType
     )
     {
         $this->transportersEnabled = !empty($transportersConfig);
-        $this->standtrackEnabled = !empty($standtrackEnabled);
         $this->rdcConnections = $rdcConnections;
         $this->rdcEnabled = $rdcEnabled;
     }

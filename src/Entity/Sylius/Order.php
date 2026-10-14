@@ -69,6 +69,7 @@ use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\BusinessAccount;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusiness\AddressResolver;
 use AppBundle\Entity\LoopEat\OrderCredentials;
@@ -578,6 +579,12 @@ class Order extends BaseOrder implements OrderInterface
 
     protected ?RecurrenceRule $subscription = null;
 
+    /**
+     * The rule set a dispatcher chose to price this order with,
+     * the store's one is used when null
+     */
+    protected ?PricingRuleSet $pricingRuleSet = null;
+
     protected Collection $exports;
 
     private ?int $zeltyOrderId = null;
@@ -649,12 +656,38 @@ class Order extends BaseOrder implements OrderInterface
         return $taxTotal;
     }
 
+    #[Groups(['order_tax_breakdown'])]
     public function getItemsTaxTotal(): int
     {
         $taxTotal = 0;
 
         foreach ($this->items as $item) {
             $taxTotal += $item->getTaxTotal();
+        }
+
+        return $taxTotal;
+    }
+
+    /**
+     * Tax lines set on the order itself, rather than on its items, are either
+     * for the delivery fee (foodtech) or for incident price differences.
+     */
+    #[Groups(['order_tax_breakdown'])]
+    public function getIncidentTaxTotal(): int
+    {
+        $hasDeliveryAdjustments = !$this->getAdjustments(AdjustmentInterface::DELIVERY_ADJUSTMENT)->isEmpty();
+
+        $taxTotal = 0;
+
+        foreach ($this->getAdjustments(AdjustmentInterface::TAX_ADJUSTMENT) as $taxAdjustment) {
+            // Tax lines computed before they were tagged. Without a delivery fee
+            // on the order, they can only be for incidents.
+            $taxableType = $taxAdjustment->getDetails()['taxable_type']
+                ?? ($hasDeliveryAdjustments ? AdjustmentInterface::DELIVERY_ADJUSTMENT : AdjustmentInterface::INCIDENT_ADJUSTMENT);
+
+            if ($taxableType === AdjustmentInterface::INCIDENT_ADJUSTMENT) {
+                $taxTotal += $taxAdjustment->getAmount();
+            }
         }
 
         return $taxTotal;
@@ -1891,6 +1924,16 @@ class Order extends BaseOrder implements OrderInterface
     public function setSubscription(?RecurrenceRule $subscription): void
     {
         $this->subscription = $subscription;
+    }
+
+    public function getPricingRuleSet(): ?PricingRuleSet
+    {
+        return $this->pricingRuleSet;
+    }
+
+    public function setPricingRuleSet(?PricingRuleSet $pricingRuleSet): void
+    {
+        $this->pricingRuleSet = $pricingRuleSet;
     }
 
     #[SerializedName('hasEdenredCredentials')]

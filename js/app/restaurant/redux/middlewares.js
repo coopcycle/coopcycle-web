@@ -1,5 +1,5 @@
 import {mapAddressFields, playerUpdateEvent, SET_PLAYER_TOKEN} from './actions'
-import Centrifuge from "centrifuge"
+import { createCentrifuge, subscribe } from '../../centrifugo/client'
 
 /**
  * This middleware checks if the shipping address was updated,
@@ -29,20 +29,12 @@ export const playerWebsocket = ({dispatch, getState}) => {
     const { player } = getState()
 
     if (action.type === SET_PLAYER_TOKEN && prevState.player.token === null && player.token)  {
-      const protocol = window.location.protocol === 'https:' ? 'wss': 'ws'
-      const centrifuge = new Centrifuge(`${protocol}://${window.location.host}/centrifugo/connection/websocket`, {
-        // In this case, we don't refresh the connection
-        // https://github.com/centrifugal/centrifuge-js#refreshendpoint
-        refreshAttempts: 0,
-        onRefresh: function(ctx, cb) {
-          cb({ status: 403 })
-        }
-      })
+      // The player has no session, so no token can be reissued: the connection
+      // ends when this one expires.
+      const centrifuge = createCentrifuge(player.centrifugo.token, { refresh: false })
 
-      centrifuge.setToken(player.centrifugo.token)
-
-      centrifuge.subscribe(player.centrifugo.channel, message => {
-        dispatch(playerUpdateEvent(message.data.event.data.order))
+      subscribe(centrifuge, player.centrifugo.channel, data => {
+        dispatch(playerUpdateEvent(data.event.data.order))
       })
       centrifuge.connect()
     }

@@ -100,7 +100,7 @@
     "beautifymarker": "^1.0.9",
     "bootstrap": "^5.3.8",
     "bootstrap-sass": "^3.4.3",
-    "centrifuge": "^2.8.4",
+    "centrifuge": "^5.7.4",
     "chai": "^4.5.0",
     "chart.js": "^4.4.0",
     "chroma-js": "^2.4.2",

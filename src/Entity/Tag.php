@@ -25,6 +25,10 @@ class Tag
 {
     use Timestampable;
 
+    /**
+     * @deprecated Report an ADDRESS_REVIEW_NEEDED incident instead,
+     *   as AppBundle\Transporter\ImportFromPoint does.
+     */
     const ADDRESS_NEED_REVIEW_TAG = 'review-needed';
 
     protected $id;

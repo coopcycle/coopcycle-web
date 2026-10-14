@@ -95,6 +95,9 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
   const [editingIndex, setEditingIndex] = useState(null)
   const [isOpen, setIsOpen] = useState(false)
   const [highlightedIndex, setHighlightedIndex] = useState(0)
+  // Set while the pointer is over a row's "Exclude" shortcut, so the row it
+  // belongs to can preview what clicking would do (struck-through label).
+  const [excludeHoverIndex, setExcludeHoverIndex] = useState(null)
   const [asyncOptions, setAsyncOptions] = useState([])
   const [isLoadingAsyncOptions, setIsLoadingAsyncOptions] = useState(false)
   // Checked { value, label } options while editing a `multi: true` field's
@@ -124,6 +127,8 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
   const containerRef = useRef(null)
   const datePickerRef = useRef(null)
   const httpClientRef = useRef(null)
+  // The last query handed to onSearch - see emitSearch().
+  const lastSearchRef = useRef(sanitizeQuery(defaultValue, fields.map(field => field.key)).join(' '))
 
   const fieldsByKey = useMemo(() => {
     const map = {}
@@ -134,6 +139,30 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
   const liveToken = useMemo(() => parseLiveToken(draft), [draft])
 
   const activeField = liveToken.isFilter ? fieldsByKey[liveToken.key] : null
+
+  // Whether what's typed so far is the value of a filter on a field the bar
+  // knows about, i.e. still being written - e.g. `owner:Les Inv`. Values
+  // routinely contain spaces ("Les Invisibles"), so a space there belongs to
+  // the value and mustn't end the token; the token is finished by picking a
+  // suggestion, pressing Enter or leaving the bar, and gets quoted then (see
+  // buildPendingToken()). Dates are left out: their value comes from the
+  // picker and never holds a space.
+  const isTypingFilterValue = (value) => {
+    const live = parseLiveToken(value)
+    const field = live.isFilter ? fieldsByKey[live.key] : null
+    if (!field || field.type === 'date') {
+      return false
+    }
+    // ...unless a known filter appears further on, as when a whole query is
+    // pasted in ("-state:cancelled owner:les"): that's several tokens, not
+    // one long value.
+    return tokenize(value).slice(1).every(token => {
+      // parseLiveToken, so a key whose value isn't typed yet ("state:")
+      // already counts as the start of the next filter.
+      const parsed = parseLiveToken(token)
+      return !(parsed.isFilter && fieldsByKey[parsed.key])
+    })
+  }
 
   const loadAsyncOptions = useCallback(
     debounce(async (field, input) => {
@@ -150,7 +179,7 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
 
   useEffect(() => {
     if (activeField && activeField.type === 'async') {
-      loadAsyncOptions(activeField, liveToken.value || '')
+      loadAsyncOptions(activeField, unquote((liveToken.value || '').trim()))
     }
   }, [activeField, liveToken.value, loadAsyncOptions])
 
@@ -166,6 +195,7 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
         .map(field => ({
           type: 'key',
           key: `key:${field.key}`,
+          field: field.key,
           label: field.label,
           insert: `${exclude ? '-' : ''}${field.key}:`,
         }))
@@ -175,7 +205,7 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
       return []
     }
 
-    const keyword = (liveToken.value || '').toLowerCase()
+    const keyword = unquote((liveToken.value || '').trim()).toLowerCase()
     const options = activeField.type === 'async' ? asyncOptions : (activeField.options || [])
     const filteredOptions = options
       .filter(option => activeField.type === 'async' || String(option.label).toLowerCase().includes(keyword))
@@ -208,6 +238,7 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
     return filteredOptions.map(option => ({
       type: 'value',
       key: `value:${option.value}`,
+      value: option.value,
       label: option.label,
       description: option.description,
       insert: serializeFilterToken({ key: activeField.key, value: option.value, exclude: liveToken.exclude }),
@@ -216,6 +247,7 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
 
   useEffect(() => {
     setHighlightedIndex(0)
+    setExcludeHoverIndex(null)
   }, [suggestions])
 
   const focusInput = () => {
@@ -250,25 +282,53 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
   // Builds the token for whatever's currently being edited - the checked
   // options of a `multi: true` field, or the plain typed `draft` otherwise -
   // or null if there's nothing worth committing (see isBareKeyToken/empty
-  // selection). Shared by submit() and onDraftBlur() so both finalize an
-  // in-progress multi-value edit the same way.
-  const buildPendingToken = () => {
-    if (activeField?.multi && liveToken.isFilter) {
-      return multiSelection.length > 0
-        ? serializeFilterToken({ key: activeField.key, values: multiSelection.map(o => o.value), exclude: liveToken.exclude })
-        : null
+  // selection). Shared by submit(), toggleMultiValue() and onDraftBlur() so
+  // they all finalize an in-progress multi-value edit the same way; pass
+  // `selection` to build it from a selection that hasn't been stored in
+  // state yet (setState being asynchronous).
+  const buildPendingToken = (selection = multiSelection) => {
+    if (activeField?.multi && liveToken.isFilter && selection.length > 0) {
+      return serializeFilterToken({ key: activeField.key, values: selection.map(o => o.value), exclude: liveToken.exclude })
     }
-    return draft && !isBareKeyToken(draft) ? draft : null
+    // A `multi: true` field with nothing ticked falls through to the typed
+    // draft: a value typed by hand ("owner:Les Zzz", matching no option)
+    // would otherwise be dropped on the floor, emptying the filter.
+    const typed = draft.trim()
+    // canonicalizeToken(), not the raw draft: a value typed with spaces
+    // ("owner:Les Invisibles") only survives being re-joined into the query
+    // once quoted.
+    return typed && !isBareKeyToken(typed) ? canonicalizeToken(typed) : null
   }
 
-  const submit = useCallback(() => {
+  // Puts `pending` (whatever is still being typed/ticked) back among the
+  // finished tags - at the end, or at the tag's own position when one is
+  // being edited, so editing doesn't reorder the query.
+  const composeTokens = (pending) => {
+    if (!pending) {
+      return committedTokens
+    }
+    return editingIndex === null
+      ? [...committedTokens, pending]
+      : [...committedTokens.slice(0, editingIndex), pending, ...committedTokens.slice(editingIndex)]
+  }
+
+  // Every search the bar runs goes through here, so onDraftBlur() can tell
+  // whether what it's about to submit has already been submitted - ticking
+  // a checkbox searches straight away, and clicking away right after
+  // shouldn't refetch the same thing.
+  const emitSearch = (query) => {
+    lastSearchRef.current = query
+    onSearch(query)
+  }
+
+  const submit = useCallback((selectionOverride) => {
+    // Guarded: submit() is also used as an event handler, which would
+    // otherwise pass the event as the selection.
+    const selection = Array.isArray(selectionOverride) ? selectionOverride : multiSelection
     setIsOpen(false)
-    let finalTokens = committedTokens
-    const pending = buildPendingToken()
+    const pending = buildPendingToken(selection)
+    const finalTokens = composeTokens(pending)
     if (pending) {
-      finalTokens = editingIndex === null
-        ? [...committedTokens, pending]
-        : [...committedTokens.slice(0, editingIndex), pending, ...committedTokens.slice(editingIndex)]
       setCommittedTokens(finalTokens)
       setDraft('')
       setMultiSelection([])
@@ -276,7 +336,7 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
       setDateRangeDraft(null)
       setEditingIndex(null)
     }
-    onSearch(finalTokens.join(' '))
+    emitSearch(finalTokens.join(' '))
   }, [committedTokens, draft, editingIndex, onSearch, activeField, liveToken, multiSelection])
 
   const clearAll = () => {
@@ -284,16 +344,12 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
     setDraft('')
     setEditingIndex(null)
     setIsOpen(false)
-    onSearch('')
+    emitSearch('')
   }
 
   // The full query as it would be submitted right now, including whatever's
   // still being typed (mirrors submit()'s composition).
-  const currentQueryString = () => {
-    const pending = buildPendingToken()
-    const tokens = pending ? [...committedTokens, pending] : committedTokens
-    return tokens.join(' ')
-  }
+  const currentQueryString = () => composeTokens(buildPendingToken()).join(' ')
 
   const getHttpClient = () => {
     if (!httpClientRef.current) {
@@ -330,7 +386,7 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
     setDraft('')
     setEditingIndex(null)
     setIsSavedSearchesOpen(false)
-    onSearch(tokens.join(' '))
+    emitSearch(tokens.join(' '))
   }
 
   const deleteSavedSearch = async (item, e) => {
@@ -389,14 +445,27 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
 
   // Toggles one option of a `multi: true` field's checkbox dropdown - keeps
   // the dropdown open (unlike applySuggestion()) so several values can be
-  // checked in a row; the resulting "key:(v1 OR v2)" token is only built
-  // once the edit is finished (see buildPendingToken()).
+  // checked in a row. It deliberately doesn't run the search: that would
+  // reload the page under the user mid-selection. The tick shows up in the
+  // bar right away as a pending tag instead (see pendingTag below), and the
+  // search runs once the filter is finished - label click, Enter or blur.
   const toggleMultiValue = (suggestion) => {
     setMultiSelection(prev => (
       prev.some(o => o.value === suggestion.value)
         ? prev.filter(o => o.value !== suggestion.value)
         : [...prev, { value: suggestion.value, label: suggestion.label }]
     ))
+  }
+
+  // Clicking a checkbox row's *label* (or pressing Enter on it) finishes
+  // the whole filter rather than just ticking one more box: the row's value
+  // is added to whatever is already ticked, the token is committed as a tag
+  // and the search runs - same as picking a single-value suggestion.
+  const applyMultiValue = (suggestion) => {
+    const next = multiSelection.some(o => o.value === suggestion.value)
+      ? multiSelection
+      : [...multiSelection, { value: suggestion.value, label: suggestion.label }]
+    submit(next)
   }
 
   // Key suggestions insert a bare "key:" that still needs a value typed
@@ -406,11 +475,42 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
     if (suggestion.type === 'key') {
       setDraft(suggestion.insert)
     } else {
+      // The tag it becomes is a finished filter, so the search runs right
+      // away - a tag appearing while the results stay put reads as broken.
+      const query = composeTokens(suggestion.insert).join(' ')
       commitTokens([suggestion.insert])
       setDraft('')
+      emitSearch(query)
     }
     setIsOpen(true)
     focusInput()
+  }
+
+  // Applies a suggestion as an exclusion ("-owner:Foo") - what each row's
+  // "Exclude" shortcut does, so the "-" prefix never has to be typed by
+  // hand (it still can, see SEARCH_QUERY_BAR_HELP_EXCLUDE).
+  const applyExclusion = (suggestion) => {
+    if (suggestion.type === 'key') {
+      setDraft(`-${suggestion.field}:`)
+      setIsOpen(true)
+      focusInput()
+      return
+    }
+
+    // Excluding one value is a finished filter, on a `multi: true` field's
+    // checkbox row as much as on a plain value row: it's committed as a tag
+    // and searched straight away, rather than left pending like a tick.
+    // That's what empties the bar of what was typed to find the value -
+    // keeping a half-typed "-owner:la" next to the tag reads as if nothing
+    // had been applied. Ticked-but-unfinished values are dropped with it;
+    // they belong to the "include these" token being built, which this
+    // exclusion replaces.
+    setMultiSelection([])
+    applySuggestion({
+      ...suggestion,
+      type: 'value',
+      insert: serializeFilterToken({ key: activeField.key, value: suggestion.value, exclude: true }),
+    })
   }
 
   // The bounds of the "date:[a TO b]" being edited, as the RangePicker
@@ -507,10 +607,16 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
       // after finishing a value), and Enter should submit as-is instead of
       // inserting an unwanted filter.
       if (isOpen && suggestions.length > 0 && draft !== '') {
-        // A multi-value field's row toggles its checkbox and keeps the
-        // dropdown open, instead of committing+closing like a normal value.
+        // A multi-value field's row finishes the filter with that value
+        // added to the ones already ticked - unless boxes *are* ticked, in
+        // which case Enter submits those: the highlighted row is wherever
+        // the pointer last passed, and adding it would be a surprise.
         if (suggestions[highlightedIndex].type === 'checkbox') {
-          toggleMultiValue(suggestions[highlightedIndex])
+          if (multiSelection.length > 0) {
+            submit()
+          } else {
+            applyMultiValue(suggestions[highlightedIndex])
+          }
         } else {
           applySuggestion(suggestions[highlightedIndex])
         }
@@ -537,12 +643,19 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
     }
 
     const pending = buildPendingToken()
+    const query = composeTokens(pending).join(' ')
     commitTokens(pending ? [pending] : [])
     setDraft('')
     setMultiSelection([])
     setDateMode(null)
     setDateRangeDraft(null)
     setIsOpen(false)
+    // Clicking away applies what's ticked/typed, instead of silently
+    // keeping it out of the search - skipped when that exact query is
+    // already the one showing (see emitSearch()).
+    if (query !== lastSearchRef.current) {
+      emitSearch(query)
+    }
   }
 
   const onDraftChange = (e) => {
@@ -551,6 +664,12 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
     if (hasUnterminatedQuote(value)) {
       // Mid-way through typing a quoted (possibly multi-word) value - keep
       // it whole in the draft rather than splitting on the space(s) inside.
+      setDraft(value)
+      setIsOpen(true)
+      return
+    }
+
+    if (isTypingFilterValue(value)) {
       setDraft(value)
       setIsOpen(true)
       return
@@ -616,10 +735,40 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
     </div>
   )
 
+  // The `multi: true` filter being built, shown as a dashed, non-closable
+  // tag next to the tags of the finished filters: ticking a box updates the
+  // bar immediately this way, without running the search (which would
+  // reload the page before a second box could be ticked). It turns into a
+  // normal tag once the filter is finished - see applyMultiValue()/submit().
+  const pendingTag = activeField?.multi && liveToken.isFilter && multiSelection.length > 0 ? (
+    <Tag
+      data-cy="search-query-bar-pending-tag"
+      style={{
+        marginInlineEnd: 4,
+        fontSize: 14,
+        padding: '3px 9px',
+        lineHeight: '18px',
+        borderStyle: 'dashed',
+        background: '#fafafa',
+      }}
+    >
+      {hasExcludePrefix(draft) && <span style={{ color: '#cf1322' }}>-</span>}
+      <span>{activeField.key}</span>
+      <span style={{ color: '#aaa' }}>:</span>
+      <span
+        style={{ color: '#1677ff', fontWeight: 500 }}
+        title={multiSelection.map(o => o.label).join(' OR ')}
+      >
+        {formatGroupValues(multiSelection.map(o => o.label))}
+      </span>
+    </Tag>
+  ) : null
+
   const draftInput = (
     <input
       ref={inputRef}
       type="text"
+      data-cy="search-query-bar-input"
       value={draft}
       placeholder={committedTokens.length === 0 ? (placeholder || t('SEARCH_QUERY_BAR_PLACEHOLDER')) : ''}
       onChange={onDraftChange}
@@ -651,6 +800,7 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
           return (
             <Tag
               key={index}
+              data-cy="search-query-bar-tag"
               closable
               onClick={() => editToken(index)}
               onClose={(e) => { e.preventDefault(); e.stopPropagation(); removeToken(index) }}
@@ -674,6 +824,7 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
             </Tag>
           )
         })}
+        {pendingTag}
         {draftInput}
         {(committedTokens.length > 0 || draft) && (
           <i
@@ -801,42 +952,87 @@ export default function SearchQueryBar({ fields, defaultValue = '', onSearch, pl
           {suggestions.map((suggestion, index) => (
             <div
               key={suggestion.key}
+              data-cy="search-query-bar-suggestion"
               onMouseDown={(e) => {
                 e.preventDefault()
                 if (suggestion.type === 'checkbox') {
-                  // Keeps the dropdown open, unlike applySuggestion() -
-                  // several values can be checked in a row.
-                  toggleMultiValue(suggestion)
-                  setHighlightedIndex(index)
+                  // Anywhere but the checkbox itself (which stops this
+                  // handler) means "this value, done" - see applyMultiValue().
+                  applyMultiValue(suggestion)
                 } else {
                   applySuggestion(suggestion)
                 }
               }}
               onMouseEnter={() => setHighlightedIndex(index)}
               style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
                 padding: '6px 12px',
                 cursor: 'pointer',
                 background: index === highlightedIndex ? '#f5f5f5' : 'transparent',
               }}
             >
-              {suggestion.type === 'key' ? (
-                <><strong>{suggestion.key.slice(4)}</strong><span style={{ color: '#aaa' }}> — {suggestion.label}</span></>
-              ) : suggestion.type === 'checkbox' ? (
-                <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
-                  <Checkbox checked={suggestion.checked} onChange={() => {}} />
-                  <span>{suggestion.label}</span>
-                </label>
-              ) : (
-                <>
-                  <div>{suggestion.label}</div>
-                  {suggestion.description && (
-                    // Context that tells otherwise-alike values apart, e.g.
-                    // an order number's date/owner/customer.
-                    <div style={{ fontSize: 12, color: '#aaa', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {suggestion.description}
-                    </div>
-                  )}
-                </>
+              <div data-cy="search-query-bar-suggestion-label" style={{
+                flex: 1,
+                minWidth: 0,
+                // Previews the exclusion while its shortcut is hovered.
+                textDecoration: index === excludeHoverIndex ? 'line-through' : 'none',
+              }}>
+                {suggestion.type === 'key' ? (
+                  <><strong>{suggestion.key.slice(4)}</strong><span style={{ color: '#aaa' }}> — {suggestion.label}</span></>
+                ) : suggestion.type === 'checkbox' ? (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    {/* Not a <label>: the checkbox and the text do different
+                        things here - ticking adds a value and keeps the
+                        dropdown open, the text finishes the filter. */}
+                    <span
+                      onMouseDown={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        toggleMultiValue(suggestion)
+                        setHighlightedIndex(index)
+                      }}
+                      style={{ display: 'inline-flex' }}
+                    >
+                      <Checkbox checked={suggestion.checked} onChange={() => {}} />
+                    </span>
+                    <span>{suggestion.label}</span>
+                  </div>
+                ) : (
+                  <>
+                    <div>{suggestion.label}</div>
+                    {suggestion.description && (
+                      // Context that tells otherwise-alike values apart, e.g.
+                      // an order number's date/owner/customer.
+                      <div style={{ fontSize: 12, color: '#aaa', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {suggestion.description}
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+              {index === highlightedIndex && (
+                <span
+                  role="button"
+                  data-cy="search-query-bar-exclude"
+                  onMouseEnter={() => setExcludeHoverIndex(index)}
+                  onMouseLeave={() => setExcludeHoverIndex(null)}
+                  onMouseDown={(e) => {
+                    // Stops the row's own handler from *including* the
+                    // suggestion instead, and keeps focus in the draft input.
+                    e.preventDefault()
+                    e.stopPropagation()
+                    applyExclusion(suggestion)
+                  }}
+                  style={{
+                    flexShrink: 0,
+                    fontSize: 12,
+                    color: index === excludeHoverIndex ? '#595959' : '#aaa',
+                  }}
+                >
+                  {t('SEARCH_QUERY_BAR_EXCLUDE')}
+                </span>
               )}
             </div>
           ))}
