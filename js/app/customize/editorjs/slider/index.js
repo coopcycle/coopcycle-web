@@ -1,4 +1,4 @@
-import React, { useEffect, useState, createRef, useRef } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Swiper, SwiperSlide, useSwiper } from 'swiper/react';
 import {
@@ -21,7 +21,6 @@ import moment from 'moment'
 import { useTranslation } from 'react-i18next';
 import { useEditable } from 'use-editable'
 import clsx from 'clsx';
-import _ from 'lodash'
 
 import ColorPicker from '../../color-picker';
 
@@ -44,21 +43,6 @@ const LastSlideContent = ({ onClick }) => {
       <PlusSquareOutlined style={{ fontSize: '24px' }} />
     </a>
   )
-}
-
-function handleContentEditableChange(e, ref) {
-  ref.current = e.target.value;
-}
-
-function handleContentEditableBlur(ref, cb) {
-
-  ref.current = sanitizeHtml(unescapeHTML(ref.current), {
-    // https://github.com/apostrophecms/sanitize-html?tab=readme-ov-file#what-if-i-dont-want-to-allow-any-tags
-    allowedTags: [],
-    allowedAttributes: {},
-  });
-
-  cb(ref.current)
 }
 
 const isExpired = (slide) => slide.expiresAt ? moment().isAfter(slide.expiresAt) : false;
