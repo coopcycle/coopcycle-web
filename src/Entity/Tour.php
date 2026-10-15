@@ -45,6 +45,14 @@ class Tour extends TaskCollection implements TaskCollectionInterface
 {
     private $date;
 
+    /**
+     * Incremented on every change to the tour, including changes that only
+     * touch its items. Clients echo it back as `If-Match` so that a write
+     * built from a stale read is refused instead of silently applied.
+     * @see \AppBundle\Doctrine\EventSubscriber\TaskSubscriber\EntityChangeSetProcessor
+     */
+    protected $version;
+
     protected $id;
 
     /**
@@ -61,6 +69,11 @@ class Tour extends TaskCollection implements TaskCollectionInterface
     /**
      * @return mixed
      */
+    public function getVersion(): ?int
+    {
+        return $this->version;
+    }
+
     public function getId()
     {
         return $this->id;

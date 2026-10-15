@@ -111,6 +111,14 @@ class TaskList implements TaskCollectionInterface
 {
     use TaskCollectionTrait;
 
+    /**
+     * Incremented on every change to the list, including changes that only
+     * touch its items. Clients echo it back as `If-Match` so that a write
+     * built from a stale read is refused instead of silently applied.
+     * @see \AppBundle\Doctrine\EventSubscriber\TaskSubscriber\EntityChangeSetProcessor
+     */
+    protected $version;
+
     #[Groups(['task_list'])]
     private $id;
 
@@ -144,6 +152,11 @@ class TaskList implements TaskCollectionInterface
     public function __construct()
     {
         $this->items = new ArrayCollection();
+    }
+
+    public function getVersion(): ?int
+    {
+        return $this->version;
     }
 
     public function getId()
