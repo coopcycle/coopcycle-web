@@ -67,14 +67,14 @@ class Tour extends TaskCollection implements TaskCollectionInterface
     #[Groups(['tour', 'task'])]
     protected $name;
 
-    /**
-     * @return mixed
-     */
     public function getVersion(): ?int
     {
         return $this->version;
     }
 
+    /**
+     * @return mixed
+     */
     public function getId()
     {
         return $this->id;
