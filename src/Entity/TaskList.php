@@ -115,8 +115,9 @@ class TaskList implements TaskCollectionInterface
      * Incremented on every change to the list, including changes that only
      * touch its items. Clients echo it back as `If-Match` so that a write
      * built from a stale read is refused instead of silently applied.
-     * @see \AppBundle\Doctrine\EventSubscriber\TaskSubscriber\EntityChangeSetProcessor
+     * @see \AppBundle\Doctrine\EventSubscriber\TaskCollectionVersionSubscriber
      */
+    #[Groups(['task_list'])]
     protected $version;
 
     #[Groups(['task_list'])]

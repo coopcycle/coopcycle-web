@@ -49,8 +49,9 @@ class Tour extends TaskCollection implements TaskCollectionInterface
      * Incremented on every change to the tour, including changes that only
      * touch its items. Clients echo it back as `If-Match` so that a write
      * built from a stale read is refused instead of silently applied.
-     * @see \AppBundle\Doctrine\EventSubscriber\TaskSubscriber\EntityChangeSetProcessor
+     * @see \AppBundle\Doctrine\EventSubscriber\TaskCollectionVersionSubscriber
      */
+    #[Groups(['task_collection', 'tour'])]
     protected $version;
 
     protected $id;
