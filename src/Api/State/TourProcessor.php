@@ -15,6 +15,8 @@ use Doctrine\ORM\OptimisticLockException;
 use Doctrine\DBAL\LockMode;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 class TourProcessor implements ProcessorInterface
 {
@@ -23,7 +25,8 @@ class TourProcessor implements ProcessorInterface
         private ProcessorInterface $persistProcessor,
         private ItemProvider $provider,
         private RequestStack $requestStack,
-        private EntityManagerInterface $entityManager)
+        private EntityManagerInterface $entityManager,
+        private LoggerInterface $logger = new NullLogger())
     {}
 
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
@@ -101,6 +104,14 @@ class TourProcessor implements ProcessorInterface
         $ifMatch = $request->headers->get('If-Match');
 
         if (null === $ifMatch || '' === $ifMatch || '*' === $ifMatch) {
+            // How much of the fleet still writes without a precondition. This
+            // is what tells us when `If-Match` can be made mandatory, and for
+            // which tenants — see the rollout in #5372.
+            $this->logger->info(sprintf(
+                'Tour write without If-Match from %s',
+                $request->headers->get('User-Agent', 'unknown client')
+            ));
+
             return;
         }
 
