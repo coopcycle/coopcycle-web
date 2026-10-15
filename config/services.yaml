@@ -986,6 +986,10 @@ services:
     tags:
       - { name: monolog.logger, channel: coopcycle.logistics }
 
+  # Runs last (priority 16, see the attribute): the subscribers above may still
+  # add or remove items, and the version has to account for everything they did.
+  AppBundle\Doctrine\EventSubscriber\TaskCollectionVersionSubscriber: ~
+
   AppBundle\Doctrine\EventSubscriber\OrganizationSubscriber: ~
 
   AppBundle\Doctrine\EventSubscriber\SearchDeliveriesSubscriber:
