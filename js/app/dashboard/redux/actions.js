@@ -1990,6 +1990,19 @@ export function modifyTour(tour, tasks) {
 
     dispatch(updateTourInUI(tour, tasks))
 
+    const headers = {
+      'Authorization': `Bearer ${jwt}`,
+      'Accept': 'application/ld+json',
+      'Content-Type': 'application/ld+json'
+    }
+
+    // A tour is replaced wholesale, so this request drops every task it does
+    // not mention. Tell the API which version we built it from, so that a
+    // board that has drifted is refused instead of quietly winning.
+    if (tour.version !== undefined && tour.version !== null) {
+      headers['If-Match'] = `"${tour.version}"`
+    }
+
     let response
 
     try {
@@ -2000,16 +2013,44 @@ export function modifyTour(tour, tasks) {
           name: tour.name,
           tasks: tasks
         },
-        headers: {
-          'Authorization': `Bearer ${jwt}`,
-          'Accept': 'application/ld+json',
-          'Content-Type': 'application/ld+json'
-        }
+        headers
       })
     } catch (error) {
+      dispatch(toggleTourLoading(tour['@id']))
+
+      if (error.response && error.response.status === 409) {
+        // Somebody else changed this tour while we were looking at it. Put
+        // the truth back on the board rather than retrying: our payload was
+        // computed against a tour that no longer exists, so replaying it
+        // would drop exactly the work the other write just added.
         // eslint-disable-next-line no-console
-        console.error(error)
-        dispatch(modifyTourRequestError(tour))
+        console.debug(`Tour ${tour['@id']} changed under us, refetching`)
+
+        dispatch(modifyTourRequestError(tour, tasks))
+
+        try {
+          const fresh = await createClient(dispatch).request({
+            method: 'get',
+            url: tour['@id'],
+            headers: {
+              'Authorization': `Bearer ${jwt}`,
+              'Accept': 'application/ld+json'
+            }
+          })
+          dispatch(updateTour(fresh.data))
+        } catch (refetchError) {
+          // eslint-disable-next-line no-console
+          console.error(refetchError)
+        }
+
+        return
+      }
+
+      // eslint-disable-next-line no-console
+      console.error(error)
+      dispatch(modifyTourRequestError(tour, tasks))
+
+      return
     }
 
     let _tour = response.data
