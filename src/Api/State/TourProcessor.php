@@ -11,13 +11,19 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\Tour;
 use AppBundle\Service\RoutingInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\DBAL\LockMode;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
 class TourProcessor implements ProcessorInterface
 {
     public function __construct(
         private RoutingInterface $routing,
         private ProcessorInterface $persistProcessor,
-        private ItemProvider $provider)
+        private ItemProvider $provider,
+        private RequestStack $requestStack,
+        private EntityManagerInterface $entityManager)
     {}
 
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
@@ -26,6 +32,8 @@ class TourProcessor implements ProcessorInterface
 
             /** @var Tour */
             $tour = $this->provider->provide($operation, $uriVariables, $context);
+
+            $this->assertNotStale($tour);
 
             if (!empty($data->name)) {
                 $tour->setName($data->name);
@@ -67,6 +75,53 @@ class TourProcessor implements ProcessorInterface
         $tour->setDistance(ceil($distance));
 
         return $this->persistProcessor->process($tour, $operation, $uriVariables, $context);
+    }
+
+    /**
+     * A tour is replaced wholesale: every task the payload omits is dropped
+     * from it. That makes a write built from a stale read destructive rather
+     * than merely out of date, and nothing in the request distinguishes the
+     * two — "the dispatcher removed these tasks" and "this client has not
+     * heard about them yet" are the same bytes.
+     *
+     * So when the client tells us which version it is working from, hold it to
+     * it. `If-Match` is optional: clients that do not send it keep the old
+     * behaviour, which is what lets this ship without a coordinated release.
+     *
+     * @see https://github.com/coopcycle/coopcycle-web/issues/5372
+     */
+    private function assertNotStale(Tour $tour): void
+    {
+        $request = $this->requestStack->getCurrentRequest();
+
+        if (null === $request) {
+            return;
+        }
+
+        $ifMatch = $request->headers->get('If-Match');
+
+        if (null === $ifMatch || '' === $ifMatch || '*' === $ifMatch) {
+            return;
+        }
+
+        // Accept both a bare version and a properly quoted entity tag.
+        $expected = trim(ltrim(trim($ifMatch), 'W/'), '"');
+
+        if (!ctype_digit($expected)) {
+            throw new ConflictHttpException(sprintf('Malformed If-Match: %s', $ifMatch));
+        }
+
+        try {
+            // Also arms the version check on the UPDATE itself, so a tour that
+            // changes between here and the flush is caught too.
+            $this->entityManager->lock($tour, LockMode::OPTIMISTIC, (int) $expected);
+        } catch (OptimisticLockException $e) {
+            throw new ConflictHttpException(sprintf(
+                'Tour %d has changed since version %s was read; refetch it and retry',
+                $tour->getId(),
+                $expected
+            ), $e);
+        }
     }
 
     /**
