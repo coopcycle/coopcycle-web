@@ -101,6 +101,14 @@ class TaskCollectionVersionSubscriber
             return;
         }
 
+        // Deleting a tour cascades to its items, which brings us here with the
+        // tour itself already scheduled for removal. Making it dirty then asks
+        // Doctrine to UPDATE a row it is about to DELETE, in that order, and
+        // the flush blows up — `DELETE FROM tour` had already removed it.
+        if ($uow->isScheduledForDelete($parent)) {
+            return;
+        }
+
         $metadata = $em->getClassMetadata(get_class($parent));
 
         // Touching `updatedAt` is what makes the parent dirty, so that Doctrine
