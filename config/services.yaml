@@ -163,6 +163,12 @@ services:
   AppBundle\Api\State\:
     resource: '../src/Api/State/*'
 
+  # Same channel as the other dispatch logs, so the If-Match coverage signal
+  # sits beside the warnings it is meant to be read against.
+  AppBundle\Api\State\TourProcessor:
+    tags:
+      - { name: monolog.logger, channel: coopcycle.logistics }
+
   AppBundle\Api\Filter\:
     resource: '../src/Api/Filter/*'
     tags: ['api_platform.filter']
@@ -985,6 +991,10 @@ services:
   AppBundle\Doctrine\EventSubscriber\TaskListSubscriber:
     tags:
       - { name: monolog.logger, channel: coopcycle.logistics }
+
+  # Runs last (priority 16, see the attribute): the subscribers above may still
+  # add or remove items, and the version has to account for everything they did.
+  AppBundle\Doctrine\EventSubscriber\TaskCollectionVersionSubscriber: ~
 
   AppBundle\Doctrine\EventSubscriber\OrganizationSubscriber: ~
 

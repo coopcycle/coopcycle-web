@@ -19,6 +19,8 @@ use AppBundle\Api\Filter\DateFilter;
 use AppBundle\Api\State\TaskListProvider;
 use AppBundle\Api\State\MyTasksProvider;
 use AppBundle\Entity\Task\CollectionTrait as TaskCollectionTrait;
+use AppBundle\Entity\Task\VersionedCollectionInterface;
+use AppBundle\Entity\Task\VersionedCollectionTrait;
 use AppBundle\Entity\TaskList\Item;
 use Doctrine\Common\Collections\ArrayCollection;
 use Shahonseven\ColorHash;
@@ -107,9 +109,10 @@ use Symfony\Component\Validator\Constraints as Assert;
     normalizationContext: ['groups' => ['task_list']]
 )]
 #[ApiFilter(filterClass: DateFilter::class, properties: ['date'])]
-class TaskList implements TaskCollectionInterface
+class TaskList implements TaskCollectionInterface, VersionedCollectionInterface
 {
     use TaskCollectionTrait;
+    use VersionedCollectionTrait;
 
     #[Groups(['task_list'])]
     private $id;

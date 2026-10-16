@@ -246,4 +246,89 @@ class SetTaskListItemsFunctionalTest extends ApiTestCase
         // instead of growing with the number of tasks.
         $this->assertLessThanOrEqual(2, $counts['task_event_select']);
     }
+
+    /**
+     * Adding or removing an item changes what the list holds, so the list's
+     * version has to move with it — that is what a client's `If-Match` is
+     * compared against.
+     *
+     * Doctrine only increments a version field as part of the UPDATE it issues
+     * for a dirty entity, and a membership change touches the item rows, not
+     * the list. Without `TaskCollectionVersionSubscriber` the list gets no
+     * UPDATE at all and the version silently stands still while its contents
+     * change — leaving a stale client free to write over them.
+     */
+    public function testChangingTheItemsBumpsTheListVersion()
+    {
+        $jwtManager = self::getContainer()->get(JWTTokenManagerInterface::class);
+
+        [ $admin, $courier ] = $this->bootstrapUsers();
+
+        $date = new \DateTime('today');
+
+        $tasks = [];
+        for ($i = 0; $i < 3; $i++) {
+            $tasks[] = $this->createTask($date, $i);
+        }
+        $extraTask = $this->createTask($date, 99);
+        $this->entityManager->flush();
+
+        $iris = [];
+        foreach ($tasks as $task) {
+            $task->assignTo($courier);
+            $iris[] = '/api/tasks/'.$task->getId();
+        }
+        $this->entityManager->flush();
+
+        $extraIri = '/api/tasks/'.$extraTask->getId();
+
+        $versionBefore = $this->readListVersion($courier, $date);
+        $this->assertNotNull($versionBefore, 'the list should be versioned');
+
+        $client = static::createClient(defaultOptions: [
+            'headers' => ['authorization' => 'Bearer '.$jwtManager->create($admin)],
+        ]);
+
+        // Add one item
+        $client->request('PUT', sprintf('/api/task_lists/set_items/%s/courier', $date->format('Y-m-d')), [
+            'json' => ['items' => array_merge($iris, [$extraIri])],
+        ]);
+        $this->assertResponseStatusCodeSame(200);
+
+        $versionAfterAdd = $this->readListVersion($courier, $date);
+        $this->assertGreaterThan(
+            $versionBefore,
+            $versionAfterAdd,
+            'adding an item should bump the version'
+        );
+
+        // Remove it again
+        $client->request('PUT', sprintf('/api/task_lists/set_items/%s/courier', $date->format('Y-m-d')), [
+            'json' => ['items' => $iris],
+        ]);
+        $this->assertResponseStatusCodeSame(200);
+
+        $this->assertGreaterThan(
+            $versionAfterAdd,
+            $this->readListVersion($courier, $date),
+            'removing an item should bump the version'
+        );
+    }
+
+    /**
+     * Read the persisted version, not a hydrated one: the request runs in its
+     * own kernel, and this side's entity manager can hand back an entity that
+     * predates it.
+     */
+    private function readListVersion(User $courier, \DateTime $date): ?int
+    {
+        $version = $this->entityManager->getConnection()->fetchOne(
+            'SELECT version FROM task_list WHERE courier_id = ? AND date = ?',
+            [$courier->getId(), $date->format('Y-m-d')]
+        );
+
+        $this->assertNotFalse($version, 'the courier should have a task list');
+
+        return (int) $version;
+    }
 }

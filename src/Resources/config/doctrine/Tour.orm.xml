@@ -6,6 +6,7 @@
     </indexes>
     <field name="name" type="string" column="name"/>
     <field name="date" type="date" column="date"/>
+    <field name="version" type="integer" column="version" version="true"/>
     <one-to-one field="taskListItem" target-entity="AppBundle\Entity\TaskList\Item" mapped-by="tour">
     </one-to-one>
   </entity>

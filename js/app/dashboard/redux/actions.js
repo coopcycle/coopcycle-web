@@ -1988,7 +1988,26 @@ export function modifyTour(tour, tasks) {
 
     tasks = _.map(tasks, t => t['@id'] || t)
 
+    // What the board held before the optimistic update, so a rejected write
+    // can be rolled back to something that was actually persisted. `tour` is
+    // the attempted state — for a rename it already carries the new name —
+    // so putting it back on failure would show an edit that never landed.
+    const previousTour = selectTourById(getState(), tour['@id'])
+
     dispatch(updateTourInUI(tour, tasks))
+
+    const headers = {
+      'Authorization': `Bearer ${jwt}`,
+      'Accept': 'application/ld+json',
+      'Content-Type': 'application/ld+json'
+    }
+
+    // A tour is replaced wholesale, so this request drops every task it does
+    // not mention. Tell the API which version we built it from, so that a
+    // board that has drifted is refused instead of quietly winning.
+    if (tour.version !== undefined && tour.version !== null) {
+      headers['If-Match'] = `"${tour.version}"`
+    }
 
     let response
 
@@ -2000,16 +2019,60 @@ export function modifyTour(tour, tasks) {
           name: tour.name,
           tasks: tasks
         },
-        headers: {
-          'Authorization': `Bearer ${jwt}`,
-          'Accept': 'application/ld+json',
-          'Content-Type': 'application/ld+json'
-        }
+        headers
       })
     } catch (error) {
+      dispatch(toggleTourLoading(tour['@id']))
+
+      if (error.response && error.response.status === 409) {
+        // Somebody else changed this tour while we were looking at it. Put
+        // the truth back on the board rather than retrying: our payload was
+        // computed against a tour that no longer exists, so replaying it
+        // would drop exactly the work the other write just added.
         // eslint-disable-next-line no-console
-        console.error(error)
-        dispatch(modifyTourRequestError(tour))
+        console.debug(`Tour ${tour['@id']} changed under us, refetching`)
+
+        dispatch(modifyTourRequestError(previousTour || tour, tasks))
+
+        try {
+          const fresh = await createClient(dispatch).request({
+            method: 'get',
+            url: tour['@id'],
+            headers: {
+              'Authorization': `Bearer ${jwt}`,
+              'Accept': 'application/ld+json'
+            }
+          })
+          dispatch(updateTour(fresh.data))
+        } catch (refetchError) {
+          // The usual reason the refetch 404s is that the write we lost to
+          // was a delete. Leaving the tour on the board would strand it:
+          // every later write to it conflicts, and the refetch that would
+          // clear it can never succeed.
+          if (refetchError.response && refetchError.response.status === 404) {
+            dispatch(deleteTourSuccess(tour['@id']))
+
+            return
+          }
+
+          // Otherwise the rollback above stands: the board shows the last
+          // state we know was real, which is behind the server. Say so rather
+          // than letting the dispatcher keep working from it silently.
+          // eslint-disable-next-line no-console
+          console.error(refetchError)
+          toast.error(i18next.t('ADMIN_DASHBOARD_MODIFY_TASK_LIST_ERROR'))
+
+          return
+        }
+
+        return
+      }
+
+      // eslint-disable-next-line no-console
+      console.error(error)
+      dispatch(modifyTourRequestError(previousTour || tour, tasks))
+
+      return
     }
 
     let _tour = response.data
