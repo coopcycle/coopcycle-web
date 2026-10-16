@@ -1988,6 +1988,12 @@ export function modifyTour(tour, tasks) {
 
     tasks = _.map(tasks, t => t['@id'] || t)
 
+    // What the board held before the optimistic update, so a rejected write
+    // can be rolled back to something that was actually persisted. `tour` is
+    // the attempted state — for a rename it already carries the new name —
+    // so putting it back on failure would show an edit that never landed.
+    const previousTour = selectTourById(getState(), tour['@id'])
+
     dispatch(updateTourInUI(tour, tasks))
 
     const headers = {
@@ -2026,7 +2032,7 @@ export function modifyTour(tour, tasks) {
         // eslint-disable-next-line no-console
         console.debug(`Tour ${tour['@id']} changed under us, refetching`)
 
-        dispatch(modifyTourRequestError(tour, tasks))
+        dispatch(modifyTourRequestError(previousTour || tour, tasks))
 
         try {
           const fresh = await createClient(dispatch).request({
@@ -2039,8 +2045,24 @@ export function modifyTour(tour, tasks) {
           })
           dispatch(updateTour(fresh.data))
         } catch (refetchError) {
+          // The usual reason the refetch 404s is that the write we lost to
+          // was a delete. Leaving the tour on the board would strand it:
+          // every later write to it conflicts, and the refetch that would
+          // clear it can never succeed.
+          if (refetchError.response && refetchError.response.status === 404) {
+            dispatch(deleteTourSuccess(tour['@id']))
+
+            return
+          }
+
+          // Otherwise the rollback above stands: the board shows the last
+          // state we know was real, which is behind the server. Say so rather
+          // than letting the dispatcher keep working from it silently.
           // eslint-disable-next-line no-console
           console.error(refetchError)
+          toast.error(i18next.t('ADMIN_DASHBOARD_MODIFY_TASK_LIST_ERROR'))
+
+          return
         }
 
         return
@@ -2048,7 +2070,7 @@ export function modifyTour(tour, tasks) {
 
       // eslint-disable-next-line no-console
       console.error(error)
-      dispatch(modifyTourRequestError(tour, tasks))
+      dispatch(modifyTourRequestError(previousTour || tour, tasks))
 
       return
     }
