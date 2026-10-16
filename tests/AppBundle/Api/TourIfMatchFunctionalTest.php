@@ -156,6 +156,29 @@ class TourIfMatchFunctionalTest extends ApiTestCase
         $this->assertResponseStatusCodeSame(409);
     }
 
+    /**
+     * A header we cannot parse says the client is broken, not that somebody
+     * else got there first. The dashboard reacts to a 409 by discarding the
+     * dispatcher's edit and refetching, so answering one here would report a
+     * client bug as a phantom conflict.
+     */
+    public function testAMalformedIfMatchIsARequestError()
+    {
+        [$client, $iris, $tourIri] = $this->createTour();
+
+        foreach (['not-a-version', '"7", "9"', 'W/""'] as $ifMatch) {
+            $client->request('PUT', $tourIri, [
+                'headers' => ['If-Match' => $ifMatch],
+                'json' => ['tasks' => array_slice($iris, 0, 2)],
+            ]);
+
+            $this->assertResponseStatusCodeSame(
+                400,
+                sprintf('If-Match %s should not read as a conflict', $ifMatch)
+            );
+        }
+    }
+
     public function testACurrentIfMatchIsAccepted()
     {
         [$client, $iris, $tourIri] = $this->createTour();

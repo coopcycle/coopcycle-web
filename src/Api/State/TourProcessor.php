@@ -14,6 +14,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\DBAL\LockMode;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -107,10 +108,12 @@ class TourProcessor implements ProcessorInterface
             // How much of the fleet still writes without a precondition. This
             // is what tells us when `If-Match` can be made mandatory, and for
             // which tenants — see the rollout in #5372.
-            $this->logger->info(sprintf(
-                'Tour write without If-Match from %s',
-                $request->headers->get('User-Agent', 'unknown client')
-            ));
+            // The message is kept constant and the client put in the context,
+            // so this collapses into one Datadog pattern instead of one per
+            // User-Agent, on the channel the unassignment warnings are read on.
+            $this->logger->info('Tour write without If-Match', [
+                'user_agent' => $request->headers->get('User-Agent', 'unknown client'),
+            ]);
 
             return;
         }
@@ -118,13 +121,19 @@ class TourProcessor implements ProcessorInterface
         // Accept both a bare version and a properly quoted entity tag.
         $expected = trim(ltrim(trim($ifMatch), 'W/'), '"');
 
+        // A header we cannot parse is the client's bug, not a conflict. Saying
+        // 409 here would have the dashboard throw away the dispatcher's edit
+        // and refetch, reporting a header bug as somebody else's change.
         if (!ctype_digit($expected)) {
-            throw new ConflictHttpException(sprintf('Malformed If-Match: %s', $ifMatch));
+            throw new BadRequestHttpException(sprintf('Malformed If-Match: %s', $ifMatch));
         }
 
         try {
             // Also arms the version check on the UPDATE itself, so a tour that
-            // changes between here and the flush is caught too.
+            // changes between here and the flush is caught too — that window
+            // spans an OSRM round trip, so it is not theoretical. Doctrine
+            // raises the same exception there, mapped to 409 in
+            // `api_platform.yaml` since it escapes this try/catch.
             $this->entityManager->lock($tour, LockMode::OPTIMISTIC, (int) $expected);
         } catch (OptimisticLockException $e) {
             throw new ConflictHttpException(sprintf(
