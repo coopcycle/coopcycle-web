@@ -14,6 +14,8 @@ use AppBundle\Api\Dto\TourInput;
 use AppBundle\Api\State\TourProcessor;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
+use AppBundle\Entity\Task\VersionedCollectionInterface;
+use AppBundle\Entity\Task\VersionedCollectionTrait;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use AppBundle\Api\Filter\DateFilter;
@@ -41,18 +43,11 @@ use AppBundle\Vroom\Shipment as VroomShipment;
     denormalizationContext: ['groups' => ['tour']]
 )]
 #[ApiFilter(filterClass: DateFilter::class, properties: ['date'])]
-class Tour extends TaskCollection implements TaskCollectionInterface
+class Tour extends TaskCollection implements TaskCollectionInterface, VersionedCollectionInterface
 {
-    private $date;
+    use VersionedCollectionTrait;
 
-    /**
-     * Incremented on every change to the tour, including changes that only
-     * touch its items. Clients echo it back as `If-Match` so that a write
-     * built from a stale read is refused instead of silently applied.
-     * @see \AppBundle\Doctrine\EventSubscriber\TaskCollectionVersionSubscriber
-     */
-    #[Groups(['task_collection', 'tour'])]
-    protected $version;
+    private $date;
 
     protected $id;
 
@@ -66,11 +61,6 @@ class Tour extends TaskCollection implements TaskCollectionInterface
      */
     #[Groups(['tour', 'task'])]
     protected $name;
-
-    public function getVersion(): ?int
-    {
-        return $this->version;
-    }
 
     /**
      * @return mixed

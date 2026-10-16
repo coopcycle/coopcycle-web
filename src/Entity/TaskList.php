@@ -19,6 +19,8 @@ use AppBundle\Api\Filter\DateFilter;
 use AppBundle\Api\State\TaskListProvider;
 use AppBundle\Api\State\MyTasksProvider;
 use AppBundle\Entity\Task\CollectionTrait as TaskCollectionTrait;
+use AppBundle\Entity\Task\VersionedCollectionInterface;
+use AppBundle\Entity\Task\VersionedCollectionTrait;
 use AppBundle\Entity\TaskList\Item;
 use Doctrine\Common\Collections\ArrayCollection;
 use Shahonseven\ColorHash;
@@ -107,18 +109,10 @@ use Symfony\Component\Validator\Constraints as Assert;
     normalizationContext: ['groups' => ['task_list']]
 )]
 #[ApiFilter(filterClass: DateFilter::class, properties: ['date'])]
-class TaskList implements TaskCollectionInterface
+class TaskList implements TaskCollectionInterface, VersionedCollectionInterface
 {
     use TaskCollectionTrait;
-
-    /**
-     * Incremented on every change to the list, including changes that only
-     * touch its items. Clients echo it back as `If-Match` so that a write
-     * built from a stale read is refused instead of silently applied.
-     * @see \AppBundle\Doctrine\EventSubscriber\TaskCollectionVersionSubscriber
-     */
-    #[Groups(['task_list'])]
-    protected $version;
+    use VersionedCollectionTrait;
 
     #[Groups(['task_list'])]
     private $id;
@@ -153,11 +147,6 @@ class TaskList implements TaskCollectionInterface
     public function __construct()
     {
         $this->items = new ArrayCollection();
-    }
-
-    public function getVersion(): ?int
-    {
-        return $this->version;
     }
 
     public function getId()

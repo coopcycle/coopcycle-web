@@ -2,9 +2,9 @@
 
 namespace AppBundle\Doctrine\EventSubscriber;
 
+use AppBundle\Entity\Task\VersionedCollectionInterface;
 use AppBundle\Entity\TaskCollectionItem;
 use AppBundle\Entity\TaskList;
-use AppBundle\Entity\Tour;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
@@ -89,12 +89,12 @@ class TaskCollectionVersionSubscriber
 
     private function collect(\SplObjectStorage $parents, $parent): void
     {
-        if ($parent instanceof TaskList || $parent instanceof Tour) {
+        if ($parent instanceof VersionedCollectionInterface) {
             $parents->attach($parent);
         }
     }
 
-    private function touch($em, UnitOfWork $uow, $parent): void
+    private function touch($em, UnitOfWork $uow, VersionedCollectionInterface $parent): void
     {
         // A collection being created already starts at version 1.
         if ($uow->isScheduledForInsert($parent)) {
