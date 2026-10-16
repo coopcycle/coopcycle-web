@@ -12,16 +12,33 @@ namespace AppBundle\Entity\Task;
  * version back as `If-Match` and the server refuses the ones that have fallen
  * behind.
  *
+ * The two carry it differently, on purpose:
+ *
+ *  - `Tour` maps it as a Doctrine version field. Optimistic locking is armed,
+ *    `TourProcessor` enforces `If-Match`, and a concurrent write loses at the
+ *    UPDATE.
+ *  - `TaskList` maps it as a plain column that this bundle increments itself.
+ *    Nothing sends `If-Match` for a task list yet, so arming Doctrine's
+ *    locking there would buy no protection while making every concurrent
+ *    `set_items` write — the busiest path in the product, and one every
+ *    shipped version of the mobile app uses — fail. It becomes a real version
+ *    field in step 2, together with the endpoints and the client handling.
+ *
  * `Delivery` is the other collection under `TaskCollection` and deliberately
- * does not implement this: versioning it would put optimistic locking on every
- * concurrent delivery write, which is a far larger change than the dispatch
- * endpoints need.
+ * has no version at all.
  *
  * @see https://github.com/coopcycle/coopcycle-web/issues/5372
  */
 interface VersionedCollectionInterface
 {
     public function getVersion(): ?int;
+
+    /**
+     * Only called for a collection Doctrine does not version itself.
+     *
+     * @see \AppBundle\Doctrine\EventSubscriber\TaskCollectionVersionSubscriber
+     */
+    public function bumpVersion(): void;
 
     /**
      * Declared here because marking the collection dirty is how its version is

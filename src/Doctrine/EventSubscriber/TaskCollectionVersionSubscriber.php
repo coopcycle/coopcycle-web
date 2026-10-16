@@ -26,8 +26,12 @@ use Doctrine\ORM\UnitOfWork;
  * a separate flush. Within a `set_items` request nothing marks the list dirty,
  * so this is load-bearing rather than defensive.
  *
- * Only `TaskList` and `Tour` are versioned. `Delivery`, the other collection
- * under `TaskCollection`, is deliberately left alone.
+ * `Tour` is a Doctrine version field, so the UPDATE carries the increment by
+ * itself. `TaskList` is a plain column — see `VersionedCollectionInterface`
+ * for why it is not locked yet — so the increment is applied here. Either way
+ * the parent has to be made dirty, which is the part that is load-bearing.
+ *
+ * `Delivery`, the other collection under `TaskCollection`, has no version.
  *
  * @see https://github.com/coopcycle/coopcycle-web/issues/5372
  */
@@ -112,9 +116,16 @@ class TaskCollectionVersionSubscriber
         $metadata = $em->getClassMetadata(get_class($parent));
 
         // Touching `updatedAt` is what makes the parent dirty, so that Doctrine
-        // issues the UPDATE that carries the version increment. It also makes
-        // `updatedAt` honest about membership changes, which it was not before.
+        // issues an UPDATE at all. It also makes `updatedAt` honest about
+        // membership changes, which it was not before.
         $parent->setUpdatedAt(new \DateTime());
+
+        // Doctrine increments a mapped version field as part of that UPDATE,
+        // and guards it with a `WHERE version = ?`. A collection it does not
+        // version gets neither, so carry the increment ourselves.
+        if (!$metadata->isVersioned) {
+            $parent->bumpVersion();
+        }
 
         if (empty($uow->getEntityChangeSet($parent))) {
             $uow->computeChangeSet($metadata, $parent);
