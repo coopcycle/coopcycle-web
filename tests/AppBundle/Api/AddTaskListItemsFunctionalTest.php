@@ -343,4 +343,191 @@ class AddTaskListItemsFunctionalTest extends ApiTestCase
             'next week\'s task has no business on today\'s list'
         );
     }
+
+    private function createTour(\DateTime $date, array $tasks): \AppBundle\Entity\Tour
+    {
+        $tour = new \AppBundle\Entity\Tour();
+        $tour->setName('Tour de test');
+        $tour->setDate($date);
+
+        foreach ($tasks as $task) {
+            $tour->addTask($task);
+        }
+
+        $this->entityManager->persist($tour);
+
+        return $tour;
+    }
+
+    public function testRemovingAnItemLeavesTheRestOfTheListAlone()
+    {
+        [ $admin, $courier ] = $this->bootstrapUsers();
+
+        $date = new \DateTime('today');
+
+        $tasks = [];
+        for ($i = 0; $i < 4; $i++) {
+            $tasks[] = $this->createTask($date, $i);
+        }
+        $this->entityManager->flush();
+
+        $this->assignAll($tasks, $courier);
+
+        $taskListId = $this->listFor($courier, $date)->getId();
+        $iris = array_map(fn (Task $t) => '/api/tasks/'.$t->getId(), $tasks);
+        $removedId = $tasks[1]->getId();
+
+        $this->entityManager->clear();
+
+        $client = $this->client($admin);
+        $client->request('DELETE', sprintf('/api/task_lists/%d/items/tasks/%d', $taskListId, $removedId));
+
+        $this->assertResponseStatusCodeSame(204);
+
+        $this->assertSame(
+            [$iris[0], $iris[2], $iris[3]],
+            $this->readItemIris($taskListId),
+            'only the named task should be gone, and the positions should close up'
+        );
+
+        $removed = $this->entityManager->getRepository(Task::class)->find($removedId);
+        $this->assertFalse(
+            $removed->isAssigned(),
+            'a task off the list must not stay assigned, or it becomes invisible on the board'
+        );
+    }
+
+    /**
+     * The safety property that makes this endpoint better than omission: a
+     * dispatcher working from a stale board cannot reach across and unassign
+     * a task that has since moved to somebody else.
+     */
+    public function testRemovingATaskThatHasMovedOnDoesNothing()
+    {
+        [ $admin, $courier, $otherCourier ] = $this->bootstrapUsers();
+
+        $date = new \DateTime('today');
+
+        $task = $this->createTask($date, 1);
+        $this->entityManager->flush();
+
+        // It starts on the first courier's list, then moves to the second.
+        $this->assignAll([$task], $courier);
+        $staleListId = $this->listFor($courier, $date)->getId();
+
+        $this->assignAll([$task], $otherCourier);
+        $currentListId = $this->listFor($otherCourier, $date)->getId();
+
+        $taskId = $task->getId();
+        $taskIri = '/api/tasks/'.$taskId;
+
+        $this->entityManager->clear();
+
+        // The stale client still believes the task is on the first list.
+        $client = $this->client($admin);
+        $client->request('DELETE', sprintf('/api/task_lists/%d/items/tasks/%d', $staleListId, $taskId));
+
+        $this->assertResponseStatusCodeSame(204);
+
+        $this->assertSame(
+            [$taskIri],
+            $this->readItemIris($currentListId),
+            'the task should still be where it actually is'
+        );
+
+        $current = $this->entityManager->getRepository(Task::class)->find($taskId);
+        $this->assertTrue(
+            $current->isAssigned(),
+            'and still assigned: the stale call must not unassign somebody else\'s work'
+        );
+    }
+
+    public function testRemovingATourUnassignsItsTasks()
+    {
+        [ $admin, $courier ] = $this->bootstrapUsers();
+
+        $date = new \DateTime('today');
+
+        $loose = $this->createTask($date, 1);
+        $inTour = [$this->createTask($date, 2), $this->createTask($date, 3)];
+        $this->entityManager->flush();
+
+        $tour = $this->createTour($date, $inTour);
+        $this->entityManager->flush();
+
+        $this->assignAll([$loose], $courier);
+
+        $taskListId = $this->listFor($courier, $date)->getId();
+        $tourId = $tour->getId();
+        $looseIri = '/api/tasks/'.$loose->getId();
+        $inTourIds = array_map(fn (Task $t) => $t->getId(), $inTour);
+
+        $this->entityManager->clear();
+
+        $client = $this->client($admin);
+        $client->request('POST', sprintf('/api/task_lists/%d/items', $taskListId), [
+            'json' => ['items' => ['/api/tours/'.$tourId]],
+        ]);
+        $this->assertResponseStatusCodeSame(201);
+
+        $this->entityManager->clear();
+
+        $client->request('DELETE', sprintf('/api/task_lists/%d/items/tours/%d', $taskListId, $tourId));
+        $this->assertResponseStatusCodeSame(204);
+
+        $this->assertSame(
+            [$looseIri],
+            $this->readItemIris($taskListId),
+            'the tour should be off the list, the loose task untouched'
+        );
+
+        foreach ($inTourIds as $taskId) {
+            $task = $this->entityManager->getRepository(Task::class)->find($taskId);
+            $this->assertFalse(
+                $task->isAssigned(),
+                'a tour\'s tasks go with it, or they are assigned to a courier whose list they are not on'
+            );
+        }
+    }
+
+    /**
+     * A task that is on the list through a tour is not an item of the list.
+     * Quietly doing nothing would read as the board ignoring the dispatcher.
+     */
+    public function testATaskInsideATourCannotBeRemovedOnItsOwn()
+    {
+        [ $admin, $courier ] = $this->bootstrapUsers();
+
+        $date = new \DateTime('today');
+
+        $inTour = [$this->createTask($date, 1), $this->createTask($date, 2)];
+        $this->entityManager->flush();
+
+        $tour = $this->createTour($date, $inTour);
+        $this->entityManager->flush();
+
+        $client = $this->client($admin);
+        $client->request('POST', '/api/task_lists', [
+            'json' => [
+                'courier' => '/api/users/'.$courier->getId(),
+                'date' => $date->format('Y-m-d'),
+            ],
+        ]);
+        $this->assertResponseIsSuccessful();
+
+        $taskListId = $this->listFor($courier, $date)->getId();
+        $tourId = $tour->getId();
+        $nestedTaskId = $inTour[0]->getId();
+
+        $this->entityManager->clear();
+
+        $client->request('POST', sprintf('/api/task_lists/%d/items', $taskListId), [
+            'json' => ['items' => ['/api/tours/'.$tourId]],
+        ]);
+        $this->assertResponseStatusCodeSame(201);
+
+        $client->request('DELETE', sprintf('/api/task_lists/%d/items/tasks/%d', $taskListId, $nestedTaskId));
+
+        $this->assertResponseStatusCodeSame(422);
+    }
 }

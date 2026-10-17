@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Put;
@@ -12,6 +13,7 @@ use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\TaskList\Create as CreateTaskListController;
 use AppBundle\Action\TaskList\Optimize as OptimizeController;
+use AppBundle\Action\TaskList\RemoveItem as RemoveTaskListItemController;
 use AppBundle\Action\TaskList\SetItems as SetTaskListItemsController;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use AppBundle\Api\Dto\AddTaskListItemsInput;
@@ -113,6 +115,18 @@ use Symfony\Component\Validator\Constraints as Assert;
             processor: AddTaskListItemsProcessor::class,
             security: 'is_granted(\'ROLE_DISPATCHER\')',
             read: false
+        ),
+        new Delete(
+            uriTemplate: '/task_lists/{id}/items/{type}/{itemId}',
+            requirements: ['id' => '[0-9]+', 'type' => 'tasks|tours', 'itemId' => '[0-9]+'],
+            openapiContext: [
+                'summary' => 'Takes one task or tour off a task list, and unassigns it.',
+                'description' => 'Preferred over leaving the item out of PUT /api/task_lists/set_items/{date}/{username}, which cannot tell a deliberate removal from a client that never knew about the item. Scoped to this list: if the item is no longer on it, nothing happens and the response is still 204.',
+            ],
+            controller: RemoveTaskListItemController::class,
+            security: 'is_granted(\'ROLE_DISPATCHER\')',
+            read: false,
+            serialize: false
         ),
         new GetCollection(
             uriTemplate: '/task_lists/v2',

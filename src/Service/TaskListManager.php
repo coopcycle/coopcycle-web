@@ -7,6 +7,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
 use AppBundle\Entity\TaskList\Item;
 use AppBundle\Entity\Tour;
+use AppBundle\Exception\ItemBelongsToTourException;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -162,6 +163,99 @@ class TaskListManager {
         foreach ($taskList->getTasks() as $task) {
             $task->assignTo($taskList->getCourier());
         }
+    }
+
+    /**
+     * Take one item off a list, naming it.
+     *
+     * The counterpart of `addItems()`, and the other half of what makes a
+     * stale client harmless: removal stops being expressible by omission, so
+     * saying nothing about a task can no longer unassign it.
+     *
+     * Scoped to this list on purpose. If the task has since moved to another
+     * courier it is no longer an item here, and the call does nothing rather
+     * than reaching across and unassigning it from whoever holds it now —
+     * which is the same lost update in a different shape.
+     *
+     * @param Task|Tour $taskOrTour
+     *
+     * @throws ItemBelongsToTourException if the task is on the list through a
+     *                                    tour, which has to be changed as a tour
+     *
+     * @see https://github.com/coopcycle/coopcycle-web/issues/5372
+     */
+    public function removeItem(TaskList $taskList, $taskOrTour): void
+    {
+        $ordered = $taskList->getItems()->toArray();
+        usort($ordered, fn (Item $a, Item $b) => $a->getPosition() <=> $b->getPosition());
+
+        $item = $this->findItemFor($ordered, $taskOrTour);
+
+        if (null === $item) {
+            if ($taskOrTour instanceof Task) {
+                $this->assertNotHeldByATour($ordered, $taskOrTour);
+            }
+
+            // Already gone, or never here. Nothing to do, and nothing to
+            // report: a client asking twice, or asking about a task that has
+            // moved on, is not an error.
+            return;
+        }
+
+        $taskList->getItems()->removeElement($item);
+        $item->setParent(null);
+
+        // Nothing syncs `assignedTo` back from the list, so a task left
+        // assigned here would be assigned to a courier whose list it is not
+        // on — the "invisible task" state that #874 and
+        // `Version20260901090000` had to repair.
+        foreach ($this->tasksOf($taskOrTour) as $task) {
+            $task->unassign();
+        }
+
+        $remaining = array_values(array_filter($ordered, fn (Item $i) => $i !== $item));
+
+        foreach ($remaining as $index => $remainingItem) {
+            $remainingItem->setPosition($index);
+        }
+    }
+
+    /**
+     * A task on the list through a tour is not an item of the list, so there
+     * is nothing here to remove. Silently doing nothing would read to the
+     * dispatcher as the board ignoring them, so say what to do instead.
+     *
+     * @param Item[] $items
+     */
+    private function assertNotHeldByATour(array $items, Task $task): void
+    {
+        foreach ($items as $item) {
+            $tour = $item->getTour();
+
+            if (null === $tour) {
+                continue;
+            }
+
+            if (in_array($task, $tour->getTasks(), true)) {
+                throw new ItemBelongsToTourException(sprintf(
+                    'Task %d is on this list through tour %d; change the tour instead',
+                    $task->getId(),
+                    $tour->getId()
+                ));
+            }
+        }
+    }
+
+    /**
+     * The tasks a list item stands for: a tour brings all of its own.
+     *
+     * @param Task|Tour $taskOrTour
+     *
+     * @return Task[]
+     */
+    private function tasksOf($taskOrTour): array
+    {
+        return $taskOrTour instanceof Tour ? $taskOrTour->getTasks() : [$taskOrTour];
     }
 
     /**
