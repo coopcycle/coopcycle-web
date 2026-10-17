@@ -11,7 +11,7 @@ import clsx from 'clsx'
 import Task from './Task'
 
 import Avatar from '../../components/Avatar'
-import { unassignTasks, togglePolyline, optimizeTaskList, onlyFilter, toggleTaskListPanelExpanded, putTaskListItems } from '../redux/actions'
+import { unassignTasks, togglePolyline, optimizeTaskList, onlyFilter, toggleTaskListPanelExpanded, reorderTaskList } from '../redux/actions'
 import { selectExpandedTaskListPanelsIds, selectLastOptimResult, selectOptimLoading, selectPolylineEnabledByUsername, selectVisibleTaskIds } from '../redux/selectors'
 import Tour from './Tour'
 import { getDroppableListStyle } from '../utils'
@@ -276,7 +276,7 @@ export const TaskList = ({ username, distance, duration, taskListsLoading }) => 
               }
               { lastOptimResult.unassignedCount > 0 ? <><br /><span className="error">{ t('ADMIN_DASHBOARD_OPTIMIZATION_UNASSIGNED_TASKS', {count: lastOptimResult.unassignedCount}) }</span></> : null}
             </p>
-              <a className="btn btn-default btn-xs" onClick={() => dispatch(putTaskListItems(username, lastOptimResult.previous.items))}>{ t('UNDO') }</a>
+              <a className="btn btn-default btn-xs" onClick={() => dispatch(reorderTaskList(username, lastOptimResult.previous.items))}>{ t('UNDO') }</a>
           </div>
          : null
         }

@@ -522,6 +522,107 @@ export function removeTaskListItems(username, items) {
 }
 
 /**
+ * Put a rider's list in a given order, without changing what is on it.
+ *
+ * `If-Match` carries the version the order was computed against, so an order
+ * built against a list somebody else has since changed is refused rather than
+ * applied to the wrong items. On 409 the board is brought up to date and the
+ * dispatcher is told; retrying automatically would reapply an order that no
+ * longer describes the list.
+ *
+ * @param {string} username - Username of the rider
+ * @param {Array.Objects} orderedItems - Every item on the list, in the wanted order
+ * @see https://github.com/coopcycle/coopcycle-web/issues/5372
+ */
+export function setTaskListOrder(username, orderedItems) {
+
+  return async function(dispatch, getState) {
+
+    const wantedItems = orderedItems.map((item) => item['@id'] || item)
+
+    return dispatch(modifyTaskList(username, wantedItems, [], async (list) => {
+      const { jwt } = getState()
+      const httpClient = createClient(dispatch)
+      const headers = jsonLdHeaders(jwt)
+
+      const read = async () => (await httpClient.request({
+        method: 'get',
+        url: list['@id'],
+        headers,
+      })).data
+
+      // A list the board has been holding since before versions were served
+      // has none to send, and the API requires one.
+      const version = list.version ?? (await read()).version
+
+      try {
+        const response = await httpClient.request({
+          method: 'put',
+          url: `${list['@id']}/order`,
+          data: { items: wantedItems },
+          headers: { ...headers, 'If-Match': `"${version}"` },
+        })
+
+        return response.data
+      } catch (error) {
+        if (error.response && error.response.status === 409) {
+          // Somebody else changed the list while we were ordering it. Show
+          // what it actually is now — returning it means the board ends up
+          // truthful rather than rolled back to an equally outdated view.
+          // eslint-disable-next-line no-console
+          console.debug(`Task list of ${username} changed under us, refetching`)
+          toast.warn(i18next.t('ADMIN_DASHBOARD_MODIFY_TASK_LIST_ERROR'))
+
+          return await read()
+        }
+
+        throw error
+      }
+    }))
+  }
+}
+
+/**
+ * Make a rider's list match an order computed elsewhere — route optimization,
+ * or undoing it.
+ *
+ * Neither is a pure reorder: the optimizer leaves behind the tasks it could
+ * not fit, and undoing it has to put them back. So the difference is settled
+ * first, by naming it through the items endpoints, and only then is the order
+ * written. That keeps every step something a drifted board cannot turn into a
+ * silent unassignment.
+ *
+ * It does mean the change is no longer one request: if the ordering fails
+ * after the membership part succeeded, the list holds the right items in the
+ * old order, which is visible and retryable rather than silently wrong.
+ *
+ * @param {string} username - Username of the rider
+ * @param {Array.Objects} orderedItems - The list as it should end up
+ */
+export function reorderTaskList(username, orderedItems) {
+
+  return async function(dispatch, getState) {
+
+    const taskList = selectTaskListByUsername(getState(), {username: username})
+    const wantedItems = orderedItems.map((item) => item['@id'] || item)
+    const currentItems = taskList.items
+
+    const removed = currentItems.filter(iri => !wantedItems.includes(iri))
+    const added = wantedItems.filter(iri => !currentItems.includes(iri))
+
+    if (removed.length > 0) {
+      await dispatch(removeTaskListItems(username, removed))
+    }
+
+    if (added.length > 0) {
+      await dispatch(addTaskListItems(username, added))
+    }
+
+    return dispatch(setTaskListOrder(username, wantedItems))
+  }
+}
+
+/**
  * PUT tasklist's items
  *
  * @deprecated Replaced by `addTaskListItems` and `removeTaskListItems`, which
@@ -1359,7 +1460,7 @@ export function optimizeTaskList(taskList) {
       }
     })
       .then(response => {
-        dispatch(putTaskListItems(taskList.username, response.data.solution.items))
+        dispatch(reorderTaskList(taskList.username, response.data.solution.items))
         dispatch(setOptimResult({previous: taskList, unassignedCount: response.data.unassignedCount}))
       })
       // eslint-disable-next-line no-console
