@@ -437,8 +437,8 @@ function jsonLdHeaders(jwt) {
 /**
  * Put items on a rider's list, naming them.
  *
- * Unlike `putTaskListItems`, this says nothing about the items it does not
- * name, so a board that has drifted cannot unassign work it never knew about.
+ * Says nothing about the items it does not name, so a board that has drifted
+ * cannot unassign work it never knew about.
  * An item held by another rider is moved by the API in the same transaction.
  *
  * @param {string} username - Username of the rider to which we assign
@@ -619,43 +619,6 @@ export function reorderTaskList(username, orderedItems) {
     }
 
     return dispatch(setTaskListOrder(username, wantedItems))
-  }
-}
-
-/**
- * PUT tasklist's items
- *
- * @deprecated Replaced by `addTaskListItems` and `removeTaskListItems`, which
- *   name what they change. Still used by the paths that rewrite a whole list
- *   at once — route optimization and undoing it.
- *
- * @param {string} username - Username of the rider to which we assign
- * @param {Array.Objects} items - Items to be assigned, list of tasks and tours to be assigned
- * @param {Array.Object} relatedChanges - @see modifyTaskList
- */
-export function putTaskListItems(username, items, relatedChanges = []) {
-
-  return async function(dispatch, getState) {
-
-    const newItems = items.map((item) => item['@id'] || item)
-
-    const url = window.Routing.generate('_api_/task_lists/set_items/{date}/{username}_put', {
-      date: selectSelectedDate(getState()).format('YYYY-MM-DD'),
-      username,
-    })
-
-    return dispatch(modifyTaskList(username, newItems, relatedChanges, async () => {
-      const { jwt } = getState()
-
-      const response = await createClient(dispatch).request({
-        method: 'put',
-        url,
-        data: {'items': newItems},
-        headers: jsonLdHeaders(jwt),
-      })
-
-      return response.data
-    }))
   }
 }
 

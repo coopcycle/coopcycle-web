@@ -50,6 +50,19 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Put(
             uriTemplate: '/task_lists/set_items/{date}/{username}',
             controller: SetTaskListItemsController::class,
+            openapiContext: [
+                'summary' => 'Deprecated. Replaces the whole task list; use the items and order endpoints instead.',
+                'description' => 'This takes the list as absolute state, so a task left out of the payload is unassigned. A client that has merely not heard of a task sends exactly the same bytes as one deliberately removing it, which is why work has been silently unassigned in the field for years. Use POST /api/task_lists/{id}/items, DELETE /api/task_lists/{id}/items/{type}/{itemId} and PUT /api/task_lists/{id}/order, which name what they change.',
+            ],
+            deprecationReason: 'Replaced by the task list items and order endpoints, which name what they change instead of replacing the whole list. See https://github.com/coopcycle/coopcycle-web/issues/5372',
+            sunset: self::SET_ITEMS_SUNSET,
+            extraProperties: [
+                'deprecated_since' => '2026-10-17',
+                'successor_version' => [
+                    '/api/task_lists/{id}/items',
+                    '/api/task_lists/{id}/order',
+                ],
+            ],
             security: 'is_granted(\'ROLE_DISPATCHER\')',
             read: false
         ),
@@ -155,6 +168,18 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiFilter(filterClass: DateFilter::class, properties: ['date'])]
 class TaskList implements TaskCollectionInterface, VersionedCollectionInterface
 {
+    /**
+     * When `set_items` stops working.
+     *
+     * Far enough out that every mobile app in the field has had time to be
+     * replaced — they cannot be upgraded on our schedule, and they are the
+     * reason this is a deprecation rather than a removal. Bring it forward
+     * once the logs show nothing is calling it.
+     *
+     * @see \AppBundle\Action\TaskList\SetItems
+     */
+    public const SET_ITEMS_SUNSET = '2027-10-01';
+
     use TaskCollectionTrait;
     use VersionedCollectionTrait;
 

@@ -120,6 +120,55 @@ class SetTaskListItemsFunctionalTest extends ApiTestCase
         return $counts;
     }
 
+    /**
+     * The endpoint still works — mobile apps in the field depend on it — but
+     * it has to say that it is going away, and when, to clients that read the
+     * response rather than the docs.
+     *
+     * @see https://github.com/coopcycle/coopcycle-web/issues/5372
+     */
+    public function testTheResponseSaysTheEndpointIsDeprecated()
+    {
+        $jwtManager = self::getContainer()->get(JWTTokenManagerInterface::class);
+
+        [ $admin, $courier ] = $this->bootstrapUsers();
+
+        $date = new \DateTime('today');
+        $task = $this->createTask($date, 1);
+        $this->entityManager->flush();
+
+        $task->assignTo($courier);
+        $this->entityManager->flush();
+
+        $taskIri = '/api/tasks/'.$task->getId();
+
+        $this->entityManager->clear();
+
+        $client = static::createClient(defaultOptions: [
+            'headers' => ['authorization' => 'Bearer '.$jwtManager->create($admin)],
+        ]);
+
+        $client->request('PUT', sprintf('/api/task_lists/set_items/%s/courier', $date->format('Y-m-d')), [
+            'json' => ['items' => [$taskIri]],
+        ]);
+
+        $this->assertResponseIsSuccessful();
+
+        $headers = $client->getResponse()->getHeaders();
+
+        $this->assertSame(
+            [(new \DateTimeImmutable(TaskList::SET_ITEMS_SUNSET))->format(\DateTimeInterface::RFC1123)],
+            $headers['sunset'] ?? [],
+            'clients need to know when this stops working'
+        );
+        $this->assertArrayHasKey('deprecation', $headers);
+        $this->assertStringStartsWith('@', $headers['deprecation'][0]);
+
+        $links = implode(', ', $headers['link'] ?? []);
+        $this->assertStringContainsString('/api/task_lists/{id}/items>; rel="successor-version"', $links);
+        $this->assertStringContainsString('/api/task_lists/{id}/order>; rel="successor-version"', $links);
+    }
+
     public function testAssigningOneTaskDoesNotRewriteTheWholeList()
     {
         $jwtManager = self::getContainer()->get(JWTTokenManagerInterface::class);

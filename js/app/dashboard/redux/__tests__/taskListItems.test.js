@@ -331,3 +331,84 @@ describe('reorderTaskList', () => {
     ])
   })
 })
+
+const deferred = () => {
+  let resolve, reject
+  const promise = new Promise((res, rej) => { resolve = res; reject = rej })
+  return { promise, resolve, reject }
+}
+
+const taskListResponse = items => ({
+  data: {
+    '@id': TASK_LIST,
+    username: 'admin',
+    items,
+    updatedAt: '2024-01-09T11:02:30+01:00',
+  },
+})
+
+describe('concurrent modifications of the same list', () => {
+
+  const twoInFlight = (store) => {
+    const first = deferred()
+    const second = deferred()
+    const pending = [ first, second ]
+    mockRequest(() => pending.shift().promise)
+
+    return {
+      first,
+      second,
+      firstCall: store.dispatch(addTaskListItems('admin', [ { '@id': TOUR } ])),
+      secondCall: store.dispatch(addTaskListItems('admin', [ { '@id': UNASSIGNED_TASK } ])),
+    }
+  }
+
+  it('discards a response that has been superseded by a newer modification', async () => {
+    const store = createStore()
+    const { first, second, firstCall, secondCall } = twoInFlight(store)
+
+    // the responses come back in the reverse order
+    second.resolve(taskListResponse([ TOUR, UNASSIGNED_TASK ]))
+    await secondCall
+    first.resolve(taskListResponse([ TOUR ]))
+    await firstCall
+
+    // the outdated response must not have reverted the latest modification
+    expect(selectTaskListItems(store)).toEqual([ TOUR, UNASSIGNED_TASK ])
+    expect(store.getState().logistics.ui.taskListsRequests.admin.pending).toBe(0)
+  })
+
+  it('keeps the task lists loading as long as a modification is in flight', async () => {
+    const store = createStore()
+    const { first, second, firstCall, secondCall } = twoInFlight(store)
+
+    second.resolve(taskListResponse([ TOUR, UNASSIGNED_TASK ]))
+    await secondCall
+
+    // drag'n'drop must stay disabled, the first modification is still in flight
+    expect(store.getState().logistics.ui.taskListsLoading).toBe(true)
+
+    first.resolve(taskListResponse([ TOUR ]))
+    await firstCall
+
+    expect(store.getState().logistics.ui.taskListsLoading).toBe(false)
+  })
+
+  it('does not roll back a superseded modification that failed', async () => {
+    const store = createStore()
+
+    // eslint-disable-next-line no-console
+    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {})
+
+    const { first, second, firstCall, secondCall } = twoInFlight(store)
+
+    second.resolve(taskListResponse([ TOUR, UNASSIGNED_TASK ]))
+    await secondCall
+    first.reject(new Error('Internal Server Error'))
+    await firstCall
+
+    expect(selectTaskListItems(store)).toEqual([ TOUR, UNASSIGNED_TASK ])
+
+    consoleError.mockRestore()
+  })
+})
