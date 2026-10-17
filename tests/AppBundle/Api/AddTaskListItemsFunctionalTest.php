@@ -287,10 +287,22 @@ class AddTaskListItemsFunctionalTest extends ApiTestCase
 
         $this->assertResponseStatusCodeSame(201);
 
+        $expected = [$existingIris[0], $newTaskIri, $existingIris[1], $existingIris[2]];
+
         $this->assertSame(
-            [$existingIris[0], $newTaskIri, $existingIris[1], $existingIris[2]],
+            $expected,
             $this->readItemIris($taskListId),
             'the task should land where the dispatcher dropped it'
+        );
+
+        // And the response has to agree with the database. Inserting an item
+        // sets positions without reordering the in-memory collection, so a
+        // client upserting this response would otherwise show the drop in the
+        // wrong place until its next read.
+        $this->assertSame(
+            $expected,
+            json_decode($client->getResponse()->getContent(), true)['items'],
+            'the response should list the items in the order the list holds them'
         );
     }
 
