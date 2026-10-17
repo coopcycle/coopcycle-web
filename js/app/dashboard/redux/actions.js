@@ -15,6 +15,7 @@ import {
   selectExpandedTaskListPanelsIds,
   selectNav,
   selectNextWorkingDay,
+  selectCouriers,
   selectPendingTaskListRequests,
   selectSelectedTasks,
   selectTaskLists,
@@ -774,31 +775,57 @@ export function setTaskListGroupMode(mode) {
   return { type: SET_TASK_LIST_GROUP_MODE, mode }
 }
 
+/**
+ * Open a rider's list for a day, so that items can be put on it.
+ *
+ * The API answers with the existing list when there already is one, which is
+ * what makes it safe to call whenever a courier is put on the board.
+ *
+ * @param {Object} date - moment object for the day
+ * @param {string} username - Username of the rider
+ */
 export function createTaskList(date, username) {
 
-  return async function(dispatch) {
+  return async function(dispatch, getState) {
 
-    const url = window.Routing.generate('admin_task_list_create', {
-      date: date.format('YYYY-MM-DD'),
-      username
-    })
+    const state = getState()
+    const courier = selectCouriers(state).find(c => c.username === username)
+
+    if (!courier) {
+      const error = new Error(`No courier named ${username}`)
+      // eslint-disable-next-line no-console
+      console.error(error)
+      dispatch(createTaskListFailure(error))
+
+      return
+    }
 
     dispatch(createTaskListRequest())
 
+    const { jwt } = state
+
     let response
+
     try {
-      response =  await createClient(dispatch).post(url, {}, {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/ld+json'
+      response = await createClient(dispatch).request({
+        method: 'post',
+        url: '/api/task_lists',
+        data: {
+          courier: `/api/users/${courier.id}`,
+          date: date.format('YYYY-MM-DD'),
         },
+        headers: jsonLdHeaders(jwt),
       })
     } catch (error) {
       // eslint-disable-next-line no-console
+      console.error(error)
       dispatch(createTaskListFailure(error))
+
+      return
     }
 
     dispatch(createTaskListSuccess(response.data))
+
     return response.data
   }
 }

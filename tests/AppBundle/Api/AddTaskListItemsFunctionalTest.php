@@ -147,6 +147,46 @@ class AddTaskListItemsFunctionalTest extends ApiTestCase
         ]);
     }
 
+    /**
+     * Putting a courier on the dispatch board opens their list through this,
+     * so it has to be callable for a courier who already has one — adding the
+     * same courier twice, or two dispatchers doing it at once.
+     */
+    public function testOpeningAListIsRepeatable()
+    {
+        [ $admin, $courier ] = $this->bootstrapUsers();
+
+        $date = new \DateTime('today');
+
+        $client = $this->client($admin);
+
+        $payload = [
+            'json' => [
+                'courier' => '/api/users/'.$courier->getId(),
+                'date' => $date->format('Y-m-d'),
+            ],
+        ];
+
+        $client->request('POST', '/api/task_lists', $payload);
+        $this->assertResponseIsSuccessful();
+        $first = json_decode($client->getResponse()->getContent(), true);
+
+        $client->request('POST', '/api/task_lists', $payload);
+        $this->assertResponseIsSuccessful();
+        $second = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertSame(
+            $first['@id'],
+            $second['@id'],
+            'the second call should hand back the same list, not fail on the unique constraint'
+        );
+
+        // The dashboard keys its task lists by username and addresses them by
+        // IRI, so both have to be in the response it stores.
+        $this->assertSame('courier', $second['username']);
+        $this->assertSame([], $second['items']);
+    }
+
     public function testTheItemsAlreadyOnTheListAreLeftAlone()
     {
         [ $admin, $courier ] = $this->bootstrapUsers();

@@ -1,6 +1,6 @@
 import moment from 'moment'
 
-import { addTaskListItems, removeTaskListItems, reorderTaskList, setTaskListOrder } from '../actions'
+import { addTaskListItems, createTaskList, removeTaskListItems, reorderTaskList, setTaskListOrder } from '../actions'
 import { storeFixture } from './storeFixture'
 import { createStoreFromPreloadedState } from '../store'
 import { selectTaskById, selectTaskListByUsername } from '../../../../shared/src/logistics/redux/selectors'
@@ -408,6 +408,53 @@ describe('concurrent modifications of the same list', () => {
     await firstCall
 
     expect(selectTaskListItems(store)).toEqual([ TOUR, UNASSIGNED_TASK ])
+
+    consoleError.mockRestore()
+  })
+})
+
+describe('createTaskList', () => {
+
+  it('opens the list through the API, naming the courier by IRI', async () => {
+    const store = createStore()
+    const requests = []
+
+    mockRequest((config) => {
+      requests.push(config)
+
+      return Promise.resolve({
+        data: { '@id': '/api/task_lists/113', username: 'bot_1', items: [] },
+      })
+    })
+
+    const taskList = await store.dispatch(createTaskList(moment('2024-01-09'), 'bot_1'))
+
+    expect(requests).toEqual([
+      expect.objectContaining({
+        method: 'post',
+        url: '/api/task_lists',
+        data: { courier: '/api/users/2', date: '2024-01-09' },
+      }),
+    ])
+    expect(taskList).toMatchObject({ username: 'bot_1' })
+  })
+
+  it('does not call the API for a courier it does not know', async () => {
+    const store = createStore()
+    const requests = []
+
+    // eslint-disable-next-line no-console
+    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {})
+
+    mockRequest((config) => {
+      requests.push(config)
+
+      return Promise.resolve({ data: {} })
+    })
+
+    await store.dispatch(createTaskList(moment('2024-01-09'), 'nobody'))
+
+    expect(requests).toEqual([])
 
     consoleError.mockRestore()
   })

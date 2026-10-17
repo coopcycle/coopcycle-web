@@ -344,12 +344,15 @@ export const storeFixture = {
     config: {
       couriersList: [
         {
+          id: 1,
           username: 'admin'
         },
         {
+          id: 2,
           username: 'bot_1'
         },
         {
+          id: 3,
           username: 'bot_10'
         },
       ],
