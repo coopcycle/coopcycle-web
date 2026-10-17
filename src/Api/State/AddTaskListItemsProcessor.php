@@ -7,7 +7,6 @@ use ApiPlatform\State\ProcessorInterface;
 use AppBundle\Api\Dto\AddTaskListItemsInput;
 use AppBundle\Entity\TaskList;
 use AppBundle\Service\TaskListManager;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -24,7 +23,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class AddTaskListItemsProcessor implements ProcessorInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
         private TaskListManager $taskListManager
     ) {}
 
@@ -33,16 +31,14 @@ class AddTaskListItemsProcessor implements ProcessorInterface
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {
-        $taskList = $this->entityManager->getRepository(TaskList::class)
-            ->find($uriVariables['id'] ?? null);
+        $taskList = $this->taskListManager->withLockedList(
+            (int) ($uriVariables['id'] ?? 0),
+            fn (TaskList $list) => $this->taskListManager->addItems($list, $data->items, $data->position)
+        );
 
         if (null === $taskList) {
             throw new NotFoundHttpException('Task list not found');
         }
-
-        $this->taskListManager->addItems($taskList, $data->items, $data->position);
-
-        $this->entityManager->flush();
 
         return $taskList;
     }

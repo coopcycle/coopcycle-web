@@ -9,7 +9,6 @@ use AppBundle\Api\Dto\RemoveTaskListItemsInput;
 use AppBundle\Entity\TaskList;
 use AppBundle\Exception\ItemBelongsToTourException;
 use AppBundle\Service\TaskListManager;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
@@ -27,7 +26,6 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 class RemoveTaskListItemsProcessor implements ProcessorInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
         private TaskListManager $taskListManager,
         private IriConverterInterface $iriConverter
     ) {}
@@ -37,25 +35,23 @@ class RemoveTaskListItemsProcessor implements ProcessorInterface
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {
-        $taskList = $this->entityManager->getRepository(TaskList::class)
-            ->find($uriVariables['id'] ?? null);
-
-        if (null === $taskList) {
-            throw new NotFoundHttpException('Task list not found');
-        }
-
         $tasksAndTours = array_map(
             fn (string $itemIri) => $this->iriConverter->getResourceFromIri($itemIri),
             $data->items
         );
 
         try {
-            $this->taskListManager->removeItems($taskList, $tasksAndTours);
+            $taskList = $this->taskListManager->withLockedList(
+                (int) ($uriVariables['id'] ?? 0),
+                fn (TaskList $list) => $this->taskListManager->removeItems($list, $tasksAndTours)
+            );
         } catch (ItemBelongsToTourException $e) {
             throw new UnprocessableEntityHttpException($e->getMessage(), $e);
         }
 
-        $this->entityManager->flush();
+        if (null === $taskList) {
+            throw new NotFoundHttpException('Task list not found');
+        }
 
         return $taskList;
     }

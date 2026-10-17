@@ -578,6 +578,87 @@ class AddTaskListItemsFunctionalTest extends ApiTestCase
     }
 
     /**
+     * @return string[] the SQL statements a request ran
+     */
+    private function queriesOf($client): array
+    {
+        $statements = [];
+
+        foreach ($client->getProfile()->getCollector('db')->getQueries() as $queries) {
+            foreach ($queries as $query) {
+                $statements[] = preg_replace('/\s+/', ' ', is_array($query) ? $query['sql'] : $query->getSql());
+            }
+        }
+
+        return $statements;
+    }
+
+    /**
+     * Every mutation holds the list's row while it runs, so concurrent ones
+     * queue instead of interleaving. They rewrite overlapping sets of
+     * `task_list_item` rows, and interleaving got them deadlocked.
+     *
+     * @dataProvider mutations
+     */
+    public function testAMutationHoldsTheListWhileItRuns(string $method, string $path, ?array $body)
+    {
+        [ $admin, $courier ] = $this->bootstrapUsers();
+
+        $date = new \DateTime('today');
+
+        $tasks = [$this->createTask($date, 1), $this->createTask($date, 2)];
+        $this->entityManager->flush();
+
+        $this->assignAll($tasks, $courier);
+
+        $taskListId = $this->listFor($courier, $date)->getId();
+        $iris = array_map(fn (Task $t) => '/api/tasks/'.$t->getId(), $tasks);
+        $version = (int) $this->entityManager->getConnection()->fetchOne(
+            'SELECT version FROM task_list WHERE id = ?',
+            [$taskListId]
+        );
+
+        $this->entityManager->clear();
+
+        $client = $this->client($admin);
+        $client->enableProfiler();
+
+        $options = ['headers' => ['If-Match' => sprintf('"%d"', $version)]];
+
+        if (null !== $body) {
+            $options['json'] = ['items' => array_map(
+                fn (string $placeholder) => strtr($placeholder, ['{task}' => $iris[0], '{task2}' => $iris[1]]),
+                $body
+            )];
+        }
+
+        $client->request($method, sprintf($path, $taskListId, $tasks[0]->getId()), $options);
+
+        $this->assertResponseIsSuccessful();
+
+        $locks = array_filter(
+            $this->queriesOf($client),
+            fn (string $sql) => str_contains($sql, 'FROM task_list t0') && str_contains($sql, 'FOR UPDATE')
+        );
+
+        $this->assertNotEmpty(
+            $locks,
+            sprintf('%s %s should take the row before writing to the list', $method, $path)
+        );
+    }
+
+    public function mutations(): array
+    {
+        return [
+            'adding items' => ['POST', '/api/task_lists/%d/items', ['{task}']],
+            'removing items' => ['POST', '/api/task_lists/%d/items/remove', ['{task}']],
+            'removing one item' => ['DELETE', '/api/task_lists/%d/items/tasks/%d', null],
+            // Ordering is refused unless it names the whole list
+            'reordering' => ['PUT', '/api/task_lists/%d/order', ['{task2}', '{task}']],
+        ];
+    }
+
+    /**
      * The safety property that makes this endpoint better than omission: a
      * dispatcher working from a stale board cannot reach across and unassign
      * a task that has since moved to somebody else.

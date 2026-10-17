@@ -9,7 +9,6 @@ use AppBundle\Api\Precondition\IfMatch;
 use AppBundle\Entity\TaskList;
 use AppBundle\Exception\OrderChangesMembershipException;
 use AppBundle\Service\TaskListManager;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -33,7 +32,6 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 class SetTaskListOrderProcessor implements ProcessorInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
         private TaskListManager $taskListManager,
         private RequestStack $requestStack
     ) {}
@@ -43,22 +41,24 @@ class SetTaskListOrderProcessor implements ProcessorInterface
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {
-        $taskList = $this->entityManager->getRepository(TaskList::class)
-            ->find($uriVariables['id'] ?? null);
-
-        if (null === $taskList) {
-            throw new NotFoundHttpException('Task list not found');
-        }
-
-        $this->assertNotStale($taskList);
-
         try {
-            $this->taskListManager->reorder($taskList, $data->items);
+            $taskList = $this->taskListManager->withLockedList(
+                (int) ($uriVariables['id'] ?? 0),
+                function (TaskList $list) use ($data) {
+                    // Both of these run with the row held, so the version the
+                    // client is held to, and the membership it is checked
+                    // against, are what the write will actually land on.
+                    $this->assertNotStale($list);
+                    $this->taskListManager->reorder($list, $data->items);
+                }
+            );
         } catch (OrderChangesMembershipException $e) {
             throw new UnprocessableEntityHttpException($e->getMessage(), $e);
         }
 
-        $this->entityManager->flush();
+        if (null === $taskList) {
+            throw new NotFoundHttpException('Task list not found');
+        }
 
         return $taskList;
     }
@@ -69,10 +69,9 @@ class SetTaskListOrderProcessor implements ProcessorInterface
      * that cannot yet handle it — so the version is compared here rather than
      * enforced on the UPDATE.
      *
-     * That leaves a window between this check and the flush. It is bounded on
-     * purpose: membership has already been verified to be unchanged, so the
-     * worst a write landing in that window can cost is the ordering, never an
-     * assignment.
+     * Called with the list's row held, which is what makes comparing it
+     * enough: no other write can land between the comparison and the flush,
+     * because no other write can start.
      */
     private function assertNotStale(TaskList $taskList): void
     {

@@ -40,13 +40,6 @@ final class RemoveItem
 
     public function __invoke(Request $request): Response
     {
-        $taskList = $this->entityManager->getRepository(TaskList::class)
-            ->find($request->get('id'));
-
-        if (null === $taskList) {
-            throw new NotFoundHttpException('Task list not found');
-        }
-
         $type = (string) $request->get('type');
         $class = self::TYPES[$type] ?? null;
 
@@ -62,12 +55,17 @@ final class RemoveItem
         }
 
         try {
-            $this->taskListManager->removeItem($taskList, $taskOrTour);
+            $taskList = $this->taskListManager->withLockedList(
+                (int) $request->get('id'),
+                fn (TaskList $list) => $this->taskListManager->removeItem($list, $taskOrTour)
+            );
         } catch (ItemBelongsToTourException $e) {
             throw new UnprocessableEntityHttpException($e->getMessage(), $e);
         }
 
-        $this->entityManager->flush();
+        if (null === $taskList) {
+            throw new NotFoundHttpException('Task list not found');
+        }
 
         return new Response(null, Response::HTTP_NO_CONTENT);
     }

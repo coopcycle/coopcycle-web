@@ -9,6 +9,7 @@ use AppBundle\Entity\TaskList\Item;
 use AppBundle\Entity\Tour;
 use AppBundle\Exception\ItemBelongsToTourException;
 use AppBundle\Exception\OrderChangesMembershipException;
+use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -23,6 +24,45 @@ class TaskListManager {
         ?LoggerInterface $logger = null,
     ) {
         $this->logger = $logger ?? new NullLogger();
+    }
+
+    /**
+     * Run a mutation against a task list, holding its row for the duration.
+     *
+     * Every one of these mutations writes more rows than it sounds like:
+     * putting an item on a list, or taking one off, closes up the positions
+     * of everything around it. Two of them running at once therefore rewrite
+     * the same set of `task_list_item` rows, and Doctrine does not promise to
+     * flush them in the same order each time — so Postgres finds a lock cycle
+     * and kills one of the transactions with a deadlock.
+     *
+     * Taking the parent row first turns that into a queue: a second writer
+     * waits for the first to commit instead of interleaving with it. It works
+     * only because every path that mutates a task list goes through here. One
+     * that did not would still be able to close a cycle against the others.
+     *
+     * The list is also loaded inside the lock, so a mutation sees the state
+     * the writer before it left behind rather than the state it read first.
+     *
+     * @param callable(TaskList): void $mutation
+     *
+     * @return TaskList|null the list, or null if there is no such list
+     */
+    public function withLockedList(int $taskListId, callable $mutation): ?TaskList
+    {
+        return $this->entityManager->wrapInTransaction(function () use ($taskListId, $mutation) {
+
+            $taskList = $this->entityManager->getRepository(TaskList::class)
+                ->find($taskListId, LockMode::PESSIMISTIC_WRITE);
+
+            if (null === $taskList) {
+                return null;
+            }
+
+            $mutation($taskList);
+
+            return $taskList;
+        });
     }
 
     /*

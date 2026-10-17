@@ -169,6 +169,55 @@ class SetTaskListItemsFunctionalTest extends ApiTestCase
         $this->assertStringContainsString('/api/task_lists/{id}/order>; rel="successor-version"', $links);
     }
 
+    /**
+     * This rewrites every item on the list, so it has to queue behind the
+     * endpoints that replaced it rather than interleave with them. A writer
+     * that did not take the row could still close a deadlock cycle against
+     * the ones that do, which would make locking them pointless.
+     */
+    public function testItHoldsTheListWhileItRuns()
+    {
+        $jwtManager = self::getContainer()->get(JWTTokenManagerInterface::class);
+
+        [ $admin, $courier ] = $this->bootstrapUsers();
+
+        $date = new \DateTime('today');
+        $task = $this->createTask($date, 1);
+        $this->entityManager->flush();
+
+        $task->assignTo($courier);
+        $this->entityManager->flush();
+
+        $taskIri = '/api/tasks/'.$task->getId();
+
+        $this->entityManager->clear();
+
+        $client = static::createClient(defaultOptions: [
+            'headers' => ['authorization' => 'Bearer '.$jwtManager->create($admin)],
+        ]);
+        $client->enableProfiler();
+
+        $client->request('PUT', sprintf('/api/task_lists/set_items/%s/courier', $date->format('Y-m-d')), [
+            'json' => ['items' => [$taskIri]],
+        ]);
+
+        $this->assertResponseIsSuccessful();
+
+        $locks = [];
+
+        foreach ($client->getProfile()->getCollector('db')->getQueries() as $queries) {
+            foreach ($queries as $query) {
+                $sql = preg_replace('/\s+/', ' ', is_array($query) ? $query['sql'] : $query->getSql());
+
+                if (str_contains($sql, 'task_list') && str_contains($sql, 'FOR UPDATE')) {
+                    $locks[] = $sql;
+                }
+            }
+        }
+
+        $this->assertNotEmpty($locks, 'set_items should take the row before rewriting the list');
+    }
+
     public function testAssigningOneTaskDoesNotRewriteTheWholeList()
     {
         $jwtManager = self::getContainer()->get(JWTTokenManagerInterface::class);

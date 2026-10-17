@@ -8,6 +8,7 @@ use AppBundle\Entity\TaskList\Item;
 use AppBundle\Entity\Tour;
 use AppBundle\Entity\User;
 use AppBundle\Service\TaskListManager;
+use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManager;
 use ShipMonk\DoctrineEntityPreloader\EntityPreloader;
@@ -51,16 +52,31 @@ final class SetItems
         $date = new \DateTime($request->get('date'));
         $user = $this->userManager->findUserByUsername($request->get('username'));
 
-        $taskList = $this->taskListProvider->getTaskListForUserAndDate($date, $user);
-
-        $preloader = new EntityPreloader($this->entityManager);
-        $preloader->preload($taskList->getTasks(), 'assignedTo');
-
         // Tasks are sent as JSON payload
         $data = $request->toArray();
 
-        $this->taskListManager->assign($taskList, $data['items']);
+        return $this->entityManager->wrapInTransaction(function () use ($date, $user, $data) {
 
-        return $taskList;
+            $taskList = $this->taskListProvider->getTaskListForUserAndDate($date, $user);
+
+            // This rewrites every item on the list, so it has to queue behind
+            // the endpoints that replaced it rather than interleave with them
+            // — they hold the row while they work, and a writer that did not
+            // would still be able to deadlock against them.
+            //
+            // It does not make this endpoint safe: it still replaces the list
+            // with whatever the client last saw. It only stops it taking the
+            // database down with it.
+            if (null !== $taskList->getId()) {
+                $this->entityManager->lock($taskList, LockMode::PESSIMISTIC_WRITE);
+            }
+
+            $preloader = new EntityPreloader($this->entityManager);
+            $preloader->preload($taskList->getTasks(), 'assignedTo');
+
+            $this->taskListManager->assign($taskList, $data['items']);
+
+            return $taskList;
+        });
     }
 }
