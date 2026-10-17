@@ -185,11 +185,7 @@ export function assignAfter(username, task, after) {
     )
 
     if (-1 !== taskIndex) {
-      const newTaskListItems = taskList.items.slice()
-      Array.prototype.splice.apply(newTaskListItems,
-        Array.prototype.concat([ taskIndex + 1, 0 ], task['@id'])
-      )
-      dispatch(putTaskListItems(username, newTaskListItems))
+      dispatch(addTaskListItems(username, [ task ], taskIndex + 1))
     }
   }
 }
@@ -211,10 +207,7 @@ export function unassignTasks(username, items) {
       return
     }
 
-    const taskList = selectTaskListByUsername(getState(), {username: username}),
-      toRemove = items.map(i => i['@id'])
-
-    await dispatch(putTaskListItems(username, withoutItemsIRIs(taskList.items, toRemove)))
+    await dispatch(removeTaskListItems(username, items))
   }
 }
 
@@ -354,58 +347,39 @@ export function importError(token, message) {
 }
 
 /**
- * PUT tasklist's items
- * @param {string} username - Username of the rider to which we assign
- * @param {Array.Objects} items - Items to be assigned, list of tasks and tours to be assigned
+ * The bookkeeping every task list modification shares: show the change
+ * straight away, undo it if the API refuses, and drop the outcome of a
+ * request that a newer modification has already superseded.
+ *
+ * @param {string} username - Username of the rider
+ * @param {Array.string} optimisticItems - what the board should show meanwhile
  * @param {Array.Object} relatedChanges - Optimistic changes made to *other* task lists
  *   as part of the same operation (typically tasks taken away from another rider).
  *   They are undone as well if this request fails. @see removePreviouslyAssignedTasks
+ * @param {Function} perform - async (taskList) => the task list as the API now has it
  */
-export function putTaskListItems(username, items, relatedChanges = []) {
+function modifyTaskList(username, optimisticItems, relatedChanges, perform) {
 
   return async function(dispatch, getState) {
 
     const state = getState()
+    const taskList = selectTaskListByUsername(state, {username: username})
+    const previousItems = taskList.items
 
-    const tasksList = selectTaskListByUsername(getState(), {username: username})
-    const previousItems = tasksList.items
-
-    // support passing URIs directly - TODO uniformize behaviour
-    const newItems = items.map((item) => item['@id'] || item)
-
-    const { assignedTaskIds, unassignedTaskIds } = assignmentChangeSet(state, newItems, previousItems)
+    const { assignedTaskIds, unassignedTaskIds } = assignmentChangeSet(state, optimisticItems, previousItems)
     const requestId = nextTaskListRequestId()
 
-    dispatch(modifyTaskListRequest(username, newItems, previousItems, {
+    dispatch(modifyTaskListRequest(username, optimisticItems, previousItems, {
       assignedTaskIds,
       unassignedTaskIds,
       requestId,
       isApiRequest: true,
     }))
 
-    const date = selectSelectedDate(state)
-
-    const url = window.Routing.generate('_api_/task_lists/set_items/{date}/{username}_put', {
-      date: date.format('YYYY-MM-DD'),
-      username,
-    })
-
-    const { jwt } = getState()
-    const httpClient = createClient(dispatch)
-
-    let response
+    let updated
 
     try {
-      response = await httpClient.request({
-        method: 'put',
-        url,
-        data: {'items': newItems},
-        headers: {
-          'Authorization': `Bearer ${jwt}`,
-          'Accept': 'application/ld+json',
-          'Content-Type': 'application/ld+json'
-        }
-      })
+      updated = await perform(taskList)
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error(error)
@@ -420,8 +394,8 @@ export function putTaskListItems(username, items, relatedChanges = []) {
       }
 
       // Roll back the optimistic update, otherwise the dispatcher keeps seeing an
-      // assignment the API refused, and the next drag'n'drop would PUT (and thus
-      // persist) that bogus task list.
+      // assignment the API refused, and the next drag'n'drop would build on (and
+      // thus persist) that bogus task list.
       dispatch(modifyTaskListRequestFailure(username, previousItems, {
         assignedTaskIds: unassignedTaskIds,
         unassignedTaskIds: assignedTaskIds,
@@ -443,11 +417,144 @@ export function putTaskListItems(username, items, relatedChanges = []) {
       console.debug(`Discarding outdated task list response for ${username}`)
       dispatch(modifyTaskListRequestDiscarded(username, requestId))
 
-      return response.data
+      return updated
     }
 
-    dispatch(modifyTaskListRequestSuccess(response.data, requestId))
-    return response.data
+    dispatch(modifyTaskListRequestSuccess(updated, requestId))
+
+    return updated
+  }
+}
+
+function jsonLdHeaders(jwt) {
+  return {
+    'Authorization': `Bearer ${jwt}`,
+    'Accept': 'application/ld+json',
+    'Content-Type': 'application/ld+json'
+  }
+}
+
+/**
+ * Put items on a rider's list, naming them.
+ *
+ * Unlike `putTaskListItems`, this says nothing about the items it does not
+ * name, so a board that has drifted cannot unassign work it never knew about.
+ * An item held by another rider is moved by the API in the same transaction.
+ *
+ * @param {string} username - Username of the rider to which we assign
+ * @param {Array.Objects} items - Tasks and tours to put on the list
+ * @param {?number} position - Where to insert them; appended when null
+ * @param {Array.Object} relatedChanges - @see modifyTaskList
+ * @see https://github.com/coopcycle/coopcycle-web/issues/5372
+ */
+export function addTaskListItems(username, items, position = null, relatedChanges = []) {
+
+  return async function(dispatch, getState) {
+
+    const taskList = selectTaskListByUsername(getState(), {username: username})
+    const newItems = items.map((item) => item['@id'] || item)
+
+    // Mirror what the API does — take the named items out of wherever they
+    // were, then splice them in — so the board shows what the server will
+    // end up with rather than something close to it.
+    const optimisticItems = taskList.items.filter(iri => !newItems.includes(iri))
+    const at = position === null
+      ? optimisticItems.length
+      : Math.max(0, Math.min(position, optimisticItems.length))
+    optimisticItems.splice(at, 0, ...newItems)
+
+    return dispatch(modifyTaskList(username, optimisticItems, relatedChanges, async (list) => {
+      const { jwt } = getState()
+
+      const response = await createClient(dispatch).request({
+        method: 'post',
+        url: `${list['@id']}/items`,
+        data: { items: newItems, position },
+        headers: jsonLdHeaders(jwt),
+      })
+
+      return response.data
+    }))
+  }
+}
+
+/**
+ * Take items off a rider's list, naming them.
+ *
+ * One request per item, because each one names what it removes — that is the
+ * property that makes a stale board harmless, and it is worth more than the
+ * round trips. The API answers 204, so the list is read back afterwards
+ * rather than guessed at.
+ *
+ * @param {string} username - Username of the rider
+ * @param {Array.Objects} items - Tasks and tours to take off the list
+ * @see https://github.com/coopcycle/coopcycle-web/issues/5372
+ */
+export function removeTaskListItems(username, items) {
+
+  return async function(dispatch, getState) {
+
+    const taskList = selectTaskListByUsername(getState(), {username: username})
+    const removedItems = items.map((item) => item['@id'] || item)
+    const optimisticItems = taskList.items.filter(iri => !removedItems.includes(iri))
+
+    return dispatch(modifyTaskList(username, optimisticItems, [], async (list) => {
+      const { jwt } = getState()
+      const httpClient = createClient(dispatch)
+      const headers = jsonLdHeaders(jwt)
+
+      await Promise.all(removedItems.map(iri => httpClient.request({
+        method: 'delete',
+        // `/api/tasks/1` and `/api/tours/2` become `tasks/1` and `tours/2`
+        url: `${list['@id']}/items${iri.replace(/^\/api/, '')}`,
+        headers,
+      })))
+
+      const response = await httpClient.request({
+        method: 'get',
+        url: list['@id'],
+        headers,
+      })
+
+      return response.data
+    }))
+  }
+}
+
+/**
+ * PUT tasklist's items
+ *
+ * @deprecated Replaced by `addTaskListItems` and `removeTaskListItems`, which
+ *   name what they change. Still used by the paths that rewrite a whole list
+ *   at once — route optimization and undoing it.
+ *
+ * @param {string} username - Username of the rider to which we assign
+ * @param {Array.Objects} items - Items to be assigned, list of tasks and tours to be assigned
+ * @param {Array.Object} relatedChanges - @see modifyTaskList
+ */
+export function putTaskListItems(username, items, relatedChanges = []) {
+
+  return async function(dispatch, getState) {
+
+    const newItems = items.map((item) => item['@id'] || item)
+
+    const url = window.Routing.generate('_api_/task_lists/set_items/{date}/{username}_put', {
+      date: selectSelectedDate(getState()).format('YYYY-MM-DD'),
+      username,
+    })
+
+    return dispatch(modifyTaskList(username, newItems, relatedChanges, async () => {
+      const { jwt } = getState()
+
+      const response = await createClient(dispatch).request({
+        method: 'put',
+        url,
+        data: {'items': newItems},
+        headers: jsonLdHeaders(jwt),
+      })
+
+      return response.data
+    }))
   }
 }
 
@@ -645,17 +752,9 @@ function moveTo(task, direction) {
     const taskList = _.find(taskLists, taskList => taskList.username === task.assignedTo)
 
     if (taskList) {
-      const taskId = task['@id'],
-        newItems = taskList.items.filter(t => t !== taskId)
-      switch (direction) {
-        case 'top':
-          newItems.unshift(taskId)
-          break
-        case 'bottom':
-          newItems.push(taskId)
-          break
-      }
-      dispatch(putTaskListItems(taskList.username, newItems))
+      // Naming an item already on the list moves it, so this is the same
+      // request as an assignment, with the position the only difference.
+      dispatch(addTaskListItems(taskList.username, [ task ], direction === 'top' ? 0 : null))
     }
   }
 }

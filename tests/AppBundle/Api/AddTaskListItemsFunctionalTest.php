@@ -182,6 +182,43 @@ class AddTaskListItemsFunctionalTest extends ApiTestCase
         );
     }
 
+    /**
+     * The dashboard upserts this response straight into its store, so it has
+     * to look like an ordinary task list: items flattened to IRIs, and the
+     * canonical `@id` rather than this operation's URI.
+     */
+    public function testTheResponseIsAnOrdinaryTaskList()
+    {
+        [ $admin, $courier ] = $this->bootstrapUsers();
+
+        $date = new \DateTime('today');
+
+        $existing = $this->createTask($date, 1);
+        $added = $this->createTask($date, 2);
+        $this->entityManager->flush();
+
+        $this->assignAll([$existing], $courier);
+
+        $taskListId = $this->listFor($courier, $date)->getId();
+        $existingIri = '/api/tasks/'.$existing->getId();
+        $addedIri = '/api/tasks/'.$added->getId();
+
+        $this->entityManager->clear();
+
+        $client = $this->client($admin);
+        $client->request('POST', sprintf('/api/task_lists/%d/items', $taskListId), [
+            'json' => ['items' => [$addedIri]],
+        ]);
+
+        $this->assertResponseStatusCodeSame(201);
+
+        $json = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertSame(sprintf('/api/task_lists/%d', $taskListId), $json['@id']);
+        $this->assertSame([$existingIri, $addedIri], $json['items']);
+        $this->assertArrayHasKey('version', $json, 'the client needs it to write back safely');
+    }
+
     public function testAnItemCanBeInsertedAtAPosition()
     {
         [ $admin, $courier ] = $this->bootstrapUsers();
