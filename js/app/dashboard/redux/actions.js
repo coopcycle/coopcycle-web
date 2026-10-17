@@ -482,10 +482,13 @@ export function addTaskListItems(username, items, position = null, relatedChange
 /**
  * Take items off a rider's list, naming them.
  *
- * One request per item, because each one names what it removes — that is the
- * property that makes a stale board harmless, and it is worth more than the
- * round trips. The API answers 204, so the list is read back afterwards
- * rather than guessed at.
+ * Naming them is what makes a stale board harmless: a client that has not
+ * heard of a task can no longer unassign it by staying silent about it.
+ *
+ * One request for the whole batch, not one per item. Removing an item
+ * renumbers the ones that remain, so a clear-the-list that fanned out into
+ * twenty concurrent requests had them all rewriting the same rows and
+ * deadlocking against each other.
  *
  * @param {string} username - Username of the rider
  * @param {Array.Objects} items - Tasks and tours to take off the list
@@ -501,20 +504,12 @@ export function removeTaskListItems(username, items) {
 
     return dispatch(modifyTaskList(username, optimisticItems, [], async (list) => {
       const { jwt } = getState()
-      const httpClient = createClient(dispatch)
-      const headers = jsonLdHeaders(jwt)
 
-      await Promise.all(removedItems.map(iri => httpClient.request({
-        method: 'delete',
-        // `/api/tasks/1` and `/api/tours/2` become `tasks/1` and `tours/2`
-        url: `${list['@id']}/items${iri.replace(/^\/api/, '')}`,
-        headers,
-      })))
-
-      const response = await httpClient.request({
-        method: 'get',
-        url: list['@id'],
-        headers,
+      const response = await createClient(dispatch).request({
+        method: 'post',
+        url: `${list['@id']}/items/remove`,
+        data: { items: removedItems },
+        headers: jsonLdHeaders(jwt),
       })
 
       return response.data

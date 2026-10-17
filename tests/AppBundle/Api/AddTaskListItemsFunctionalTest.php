@@ -475,6 +475,109 @@ class AddTaskListItemsFunctionalTest extends ApiTestCase
     }
 
     /**
+     * Clearing a list is one thing the dispatcher does. Doing it as one
+     * request per item had each one renumbering every surviving row, so they
+     * deadlocked against each other on `task_list_item`.
+     */
+    public function testAWholeListCanBeClearedInOneRequest()
+    {
+        [ $admin, $courier ] = $this->bootstrapUsers();
+
+        $date = new \DateTime('today');
+
+        $tasks = [];
+        for ($i = 0; $i < 12; $i++) {
+            $tasks[] = $this->createTask($date, $i);
+        }
+        $this->entityManager->flush();
+
+        $this->assignAll($tasks, $courier);
+
+        $taskListId = $this->listFor($courier, $date)->getId();
+        $iris = array_map(fn (Task $t) => '/api/tasks/'.$t->getId(), $tasks);
+        $ids = array_map(fn (Task $t) => $t->getId(), $tasks);
+
+        $this->entityManager->clear();
+
+        $client = $this->client($admin);
+        $client->request('POST', sprintf('/api/task_lists/%d/items/remove', $taskListId), [
+            'json' => ['items' => $iris],
+        ]);
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSame([], $this->readItemIris($taskListId));
+
+        foreach ($ids as $taskId) {
+            $task = $this->entityManager->getRepository(Task::class)->find($taskId);
+            $this->assertFalse($task->isAssigned(), 'everything on the list should be unassigned');
+        }
+    }
+
+    public function testRemovingSomeItemsClosesUpThePositionsOnce()
+    {
+        [ $admin, $courier ] = $this->bootstrapUsers();
+
+        $date = new \DateTime('today');
+
+        $tasks = [];
+        for ($i = 0; $i < 5; $i++) {
+            $tasks[] = $this->createTask($date, $i);
+        }
+        $this->entityManager->flush();
+
+        $this->assignAll($tasks, $courier);
+
+        $taskListId = $this->listFor($courier, $date)->getId();
+        $iris = array_map(fn (Task $t) => '/api/tasks/'.$t->getId(), $tasks);
+
+        $this->entityManager->clear();
+
+        $client = $this->client($admin);
+        $client->request('POST', sprintf('/api/task_lists/%d/items/remove', $taskListId), [
+            'json' => ['items' => [$iris[1], $iris[3]]],
+        ]);
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSame([$iris[0], $iris[2], $iris[4]], $this->readItemIris($taskListId));
+
+        $positions = $this->entityManager->getConnection()->fetchFirstColumn(
+            'SELECT position FROM task_list_item WHERE parent_id = ? ORDER BY position ASC',
+            [$taskListId]
+        );
+        $this->assertSame([0, 1, 2], array_map('intval', $positions));
+    }
+
+    /**
+     * An item somebody else already took off is not an error: the batch is
+     * applied as far as it still makes sense.
+     */
+    public function testRemovingWhatIsNoLongerThereIsNotAnError()
+    {
+        [ $admin, $courier ] = $this->bootstrapUsers();
+
+        $date = new \DateTime('today');
+
+        $onTheList = $this->createTask($date, 1);
+        $neverOnIt = $this->createTask($date, 2);
+        $this->entityManager->flush();
+
+        $this->assignAll([$onTheList], $courier);
+
+        $taskListId = $this->listFor($courier, $date)->getId();
+        $iris = ['/api/tasks/'.$onTheList->getId(), '/api/tasks/'.$neverOnIt->getId()];
+
+        $this->entityManager->clear();
+
+        $client = $this->client($admin);
+        $client->request('POST', sprintf('/api/task_lists/%d/items/remove', $taskListId), [
+            'json' => ['items' => $iris],
+        ]);
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSame([], $this->readItemIris($taskListId));
+    }
+
+    /**
      * The safety property that makes this endpoint better than omission: a
      * dispatcher working from a stale board cannot reach across and unassign
      * a task that has since moved to somebody else.

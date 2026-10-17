@@ -17,10 +17,12 @@ use AppBundle\Action\TaskList\RemoveItem as RemoveTaskListItemController;
 use AppBundle\Action\TaskList\SetItems as SetTaskListItemsController;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use AppBundle\Api\Dto\AddTaskListItemsInput;
+use AppBundle\Api\Dto\RemoveTaskListItemsInput;
 use AppBundle\Api\Dto\TaskListOrderInput;
 use AppBundle\Api\Dto\MyTaskListDto;
 use AppBundle\Api\Filter\DateFilter;
 use AppBundle\Api\State\AddTaskListItemsProcessor;
+use AppBundle\Api\State\RemoveTaskListItemsProcessor;
 use AppBundle\Api\State\SetTaskListOrderProcessor;
 use AppBundle\Api\State\TaskListProvider;
 use AppBundle\Api\State\MyTasksProvider;
@@ -128,6 +130,22 @@ use Symfony\Component\Validator\Constraints as Assert;
             input: AddTaskListItemsInput::class,
             denormalizationContext: ['groups' => ['task_list_items']],
             processor: AddTaskListItemsProcessor::class,
+            security: 'is_granted(\'ROLE_DISPATCHER\')',
+            read: false
+        ),
+        new Post(
+            uriTemplate: '/task_lists/{id}/items/remove',
+            requirements: ['id' => '[0-9]+'],
+            openapiContext: [
+                'summary' => 'Takes tasks and tours off a task list, and unassigns them.',
+                'description' => 'The counterpart of POST /api/task_lists/{id}/items. Items not on the list are ignored, so asking twice is not an error. Prefer this over repeating the single-item DELETE: removing an item renumbers the ones that remain, so several concurrent single removals contend for the same rows.',
+            ],
+            input: RemoveTaskListItemsInput::class,
+            denormalizationContext: ['groups' => ['task_list_items']],
+            processor: RemoveTaskListItemsProcessor::class,
+            // Nothing is created here; POST only because a DELETE carrying a
+            // list of items in its body is not reliably served.
+            status: 200,
             security: 'is_granted(\'ROLE_DISPATCHER\')',
             read: false
         ),

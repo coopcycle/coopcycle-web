@@ -125,27 +125,31 @@ describe('addTaskListItems', () => {
 
 describe('removeTaskListItems', () => {
 
-  it('deletes each item by name, then reads the list back', async () => {
-    const store = createStore()
+  it('names everything it removes in a single request', async () => {
+    const store = createStore({ items: [ TOUR, UNASSIGNED_TASK ] })
     const requests = []
 
     mockRequest((config) => {
       requests.push(config)
 
-      if (config.method === 'get') {
-        return Promise.resolve({
-          data: { '@id': TASK_LIST, username: 'admin', items: [] },
-        })
-      }
-
-      return Promise.resolve({ status: 204 })
+      return Promise.resolve({
+        data: { '@id': TASK_LIST, username: 'admin', items: [] },
+      })
     })
 
-    await store.dispatch(removeTaskListItems('admin', [ { '@id': TOUR } ]))
+    await store.dispatch(removeTaskListItems('admin', [
+      { '@id': TOUR },
+      { '@id': UNASSIGNED_TASK },
+    ]))
 
+    // One request, not one per item: each removal renumbers the survivors,
+    // so concurrent ones rewrite the same rows and deadlock.
     expect(requests).toEqual([
-      expect.objectContaining({ method: 'delete', url: `${TASK_LIST}/items/tours/111` }),
-      expect.objectContaining({ method: 'get', url: TASK_LIST }),
+      expect.objectContaining({
+        method: 'post',
+        url: `${TASK_LIST}/items/remove`,
+        data: { items: [ TOUR, UNASSIGNED_TASK ] },
+      }),
     ])
     expect(selectTaskListItems(store)).toEqual([])
   })
@@ -164,7 +168,7 @@ describe('removeTaskListItems', () => {
     })
   })
 
-  it('rolls back when a delete fails', async () => {
+  it('rolls back when the removal fails', async () => {
     const store = createStore()
 
     // eslint-disable-next-line no-console
@@ -279,8 +283,7 @@ describe('reorderTaskList', () => {
     await store.dispatch(reorderTaskList('admin', [ TOUR ]))
 
     expect(requests.map(r => `${r.method} ${r.url}`)).toEqual([
-      `delete ${TASK_LIST}/items/tasks/728`,
-      `get ${TASK_LIST}`,
+      `post ${TASK_LIST}/items/remove`,
       `put ${TASK_LIST}/order`,
     ])
   })

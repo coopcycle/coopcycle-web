@@ -213,58 +213,86 @@ class TaskListManager {
     }
 
     /**
-     * Take one item off a list, naming it.
+     * Take items off a list, naming them.
      *
      * The counterpart of `addItems()`, and the other half of what makes a
      * stale client harmless: removal stops being expressible by omission, so
      * saying nothing about a task can no longer unassign it.
      *
-     * Scoped to this list on purpose. If the task has since moved to another
-     * courier it is no longer an item here, and the call does nothing rather
-     * than reaching across and unassigning it from whoever holds it now —
-     * which is the same lost update in a different shape.
+     * Scoped to this list on purpose. If a task has since moved to another
+     * courier it is no longer an item here, and it is left alone rather than
+     * being reached across and unassigned from whoever holds it now — which
+     * is the same lost update in a different shape.
      *
-     * @param Task|Tour $taskOrTour
+     * Takes the whole batch because renumbering the survivors is the
+     * expensive part: it writes every remaining row, so doing it once per
+     * removal rather than once per batch had concurrent requests deadlocking
+     * against each other on `task_list_item`.
      *
-     * @throws ItemBelongsToTourException if the task is on the list through a
+     * @param array<Task|Tour> $tasksAndTours
+     *
+     * @throws ItemBelongsToTourException if a task is on the list through a
      *                                    tour, which has to be changed as a tour
      *
      * @see https://github.com/coopcycle/coopcycle-web/issues/5372
      */
-    public function removeItem(TaskList $taskList, $taskOrTour): void
+    public function removeItems(TaskList $taskList, array $tasksAndTours): void
     {
         $ordered = $taskList->getItems()->toArray();
         usort($ordered, fn (Item $a, Item $b) => $a->getPosition() <=> $b->getPosition());
 
-        $item = $this->findItemFor($ordered, $taskOrTour);
+        $removed = [];
 
-        if (null === $item) {
-            if ($taskOrTour instanceof Task) {
-                $this->assertNotHeldByATour($ordered, $taskOrTour);
+        foreach ($tasksAndTours as $taskOrTour) {
+            $item = $this->findItemFor($ordered, $taskOrTour);
+
+            if (null === $item) {
+                if ($taskOrTour instanceof Task) {
+                    $this->assertNotHeldByATour($ordered, $taskOrTour);
+                }
+
+                // Already gone, or never here. Nothing to do, and nothing to
+                // report: a client asking twice, or asking about a task that
+                // has moved on, is not an error.
+                continue;
             }
 
-            // Already gone, or never here. Nothing to do, and nothing to
-            // report: a client asking twice, or asking about a task that has
-            // moved on, is not an error.
+            $taskList->getItems()->removeElement($item);
+            $item->setParent(null);
+
+            // Nothing syncs `assignedTo` back from the list, so a task left
+            // assigned here would be assigned to a courier whose list it is
+            // not on — the "invisible task" state that #874 and
+            // `Version20260901090000` had to repair.
+            foreach ($this->tasksOf($taskOrTour) as $task) {
+                $task->unassign();
+            }
+
+            $removed[] = $item;
+        }
+
+        if (0 === count($removed)) {
             return;
         }
 
-        $taskList->getItems()->removeElement($item);
-        $item->setParent(null);
+        $remaining = array_values(array_filter(
+            $ordered,
+            fn (Item $item) => !in_array($item, $removed, true)
+        ));
 
-        // Nothing syncs `assignedTo` back from the list, so a task left
-        // assigned here would be assigned to a courier whose list it is not
-        // on — the "invisible task" state that #874 and
-        // `Version20260901090000` had to repair.
-        foreach ($this->tasksOf($taskOrTour) as $task) {
-            $task->unassign();
+        foreach ($remaining as $index => $item) {
+            $item->setPosition($index);
         }
+    }
 
-        $remaining = array_values(array_filter($ordered, fn (Item $i) => $i !== $item));
-
-        foreach ($remaining as $index => $remainingItem) {
-            $remainingItem->setPosition($index);
-        }
+    /**
+     * @param Task|Tour $taskOrTour
+     *
+     * @throws ItemBelongsToTourException
+     */
+    public function removeItem(TaskList $taskList, $taskOrTour): void
+    {
+        $this->removeItems($taskList, [$taskOrTour]);
     }
 
     /**
