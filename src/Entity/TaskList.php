@@ -13,7 +13,6 @@ use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\TaskList\Create as CreateTaskListController;
 use AppBundle\Action\TaskList\Optimize as OptimizeController;
-use AppBundle\Action\TaskList\RemoveItem as RemoveTaskListItemController;
 use AppBundle\Action\TaskList\SetItems as SetTaskListItemsController;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use AppBundle\Api\Dto\AddTaskListItemsInput;
@@ -22,6 +21,7 @@ use AppBundle\Api\Dto\TaskListOrderInput;
 use AppBundle\Api\Dto\MyTaskListDto;
 use AppBundle\Api\Filter\DateFilter;
 use AppBundle\Api\State\AddTaskListItemsProcessor;
+use AppBundle\Api\State\RemoveTaskListItemProcessor;
 use AppBundle\Api\State\RemoveTaskListItemsProcessor;
 use AppBundle\Api\State\SetTaskListOrderProcessor;
 use AppBundle\Api\State\TaskListProvider;
@@ -156,10 +156,11 @@ use Symfony\Component\Validator\Constraints as Assert;
                 'summary' => 'Takes one task or tour off a task list, and unassigns it.',
                 'description' => 'Preferred over leaving the item out of PUT /api/task_lists/set_items/{date}/{username}, which cannot tell a deliberate removal from a client that never knew about the item. Scoped to this list: if the item is no longer on it, nothing happens and the response is still 204.',
             ],
-            controller: RemoveTaskListItemController::class,
-            security: 'is_granted(\'ROLE_DISPATCHER\')',
-            read: false,
-            serialize: false
+            // Only the task list is identified by the URI; `type` and
+            // `itemId` name the item to take off it.
+            uriVariables: ['id'],
+            processor: RemoveTaskListItemProcessor::class,
+            security: 'is_granted(\'ROLE_DISPATCHER\')'
         ),
         new Put(
             uriTemplate: '/task_lists/{id}/order',

@@ -1,15 +1,16 @@
 <?php
 
-namespace AppBundle\Action\TaskList;
+namespace AppBundle\Api\State;
 
+use ApiPlatform\Metadata\Operation;
+use ApiPlatform\State\ProcessorInterface;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
 use AppBundle\Entity\Tour;
 use AppBundle\Exception\ItemBelongsToTourException;
 use AppBundle\Service\TaskListManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
@@ -24,9 +25,15 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
  * so a dispatcher working from a stale board cannot unassign a task that has
  * since moved to somebody else.
  *
+ * Deleting a sub-resource rather than the resource itself, so this replaces
+ * API Platform's own delete processor: the task list stays, one of its items
+ * goes.
+ *
+ * @see \AppBundle\Api\State\RemoveTaskListItemsProcessor for the batch form,
+ *      which is what the dashboard uses
  * @see https://github.com/coopcycle/coopcycle-web/issues/5372
  */
-final class RemoveItem
+class RemoveTaskListItemProcessor implements ProcessorInterface
 {
     private const TYPES = [
         'tasks' => Task::class,
@@ -35,12 +42,20 @@ final class RemoveItem
 
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private TaskListManager $taskListManager
+        private TaskListManager $taskListManager,
+        private RequestStack $requestStack
     ) {}
 
-    public function __invoke(Request $request): Response
+    /**
+     * @param TaskList $data the list the item is being taken off
+     */
+    public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {
-        $type = (string) $request->get('type');
+        $request = $this->requestStack->getCurrentRequest();
+
+        // Only `id` identifies the task list, so the rest of the template is
+        // read from the request rather than from $uriVariables.
+        $type = (string) ($request?->attributes->get('type') ?? '');
         $class = self::TYPES[$type] ?? null;
 
         if (null === $class) {
@@ -48,25 +63,21 @@ final class RemoveItem
         }
 
         $taskOrTour = $this->entityManager->getRepository($class)
-            ->find($request->get('itemId'));
+            ->find($request?->attributes->get('itemId'));
 
         if (null === $taskOrTour) {
             throw new NotFoundHttpException(sprintf('No such %s', rtrim($type, 's')));
         }
 
         try {
-            $taskList = $this->taskListManager->withLockedList(
-                (int) $request->get('id'),
+            $this->taskListManager->withLockedList(
+                $data->getId(),
                 fn (TaskList $list) => $this->taskListManager->removeItem($list, $taskOrTour)
             );
         } catch (ItemBelongsToTourException $e) {
             throw new UnprocessableEntityHttpException($e->getMessage(), $e);
         }
 
-        if (null === $taskList) {
-            throw new NotFoundHttpException('Task list not found');
-        }
-
-        return new Response(null, Response::HTTP_NO_CONTENT);
+        return null;
     }
 }

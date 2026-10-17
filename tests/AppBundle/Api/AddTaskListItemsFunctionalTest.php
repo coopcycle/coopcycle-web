@@ -659,6 +659,39 @@ class AddTaskListItemsFunctionalTest extends ApiTestCase
     }
 
     /**
+     * Removal addresses a list that API Platform reads for us, so a list that
+     * is not there is its 404 rather than ours. An item that is not there is
+     * still ours.
+     */
+    public function testRemovingFromSomethingThatDoesNotExist()
+    {
+        [ $admin, $courier ] = $this->bootstrapUsers();
+
+        $date = new \DateTime('today');
+        $task = $this->createTask($date, 1);
+        $this->entityManager->flush();
+
+        $this->assignAll([$task], $courier);
+
+        $taskListId = $this->listFor($courier, $date)->getId();
+        $taskId = $task->getId();
+
+        $this->entityManager->clear();
+
+        $client = $this->client($admin);
+
+        $client->request('DELETE', sprintf('/api/task_lists/999999/items/tasks/%d', $taskId));
+        $this->assertResponseStatusCodeSame(404, 'no such task list');
+
+        $client->request('DELETE', sprintf('/api/task_lists/%d/items/tasks/999999', $taskListId));
+        $this->assertResponseStatusCodeSame(404, 'no such task');
+
+        // Refused by the route's own requirement before any of this runs
+        $client->request('DELETE', sprintf('/api/task_lists/%d/items/pigeons/%d', $taskListId, $taskId));
+        $this->assertResponseStatusCodeSame(404, 'a list item is a task or a tour');
+    }
+
+    /**
      * The safety property that makes this endpoint better than omission: a
      * dispatcher working from a stale board cannot reach across and unassign
      * a task that has since moved to somebody else.
