@@ -52,7 +52,10 @@ class Tour extends TaskCollection implements TaskCollectionInterface, VersionedC
     protected $id;
 
     /**
-     * @var Item
+     * The item that puts this tour on a task list, or null while the tour is
+     * on none — which is its state from creation until a dispatcher files it.
+     *
+     * @var Item|null
      */
     private $taskListItem;
 
@@ -131,7 +134,7 @@ class Tour extends TaskCollection implements TaskCollectionInterface, VersionedC
     /**
      * Get the value of taskListItem
      *
-     * @return Item
+     * @return Item|null
      */
     public function getTaskListItem()
     {

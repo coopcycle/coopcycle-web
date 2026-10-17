@@ -7,6 +7,7 @@ use ApiPlatform\Metadata\Put;
 use ApiPlatform\Doctrine\Orm\State\ItemProvider;
 use ApiPlatform\State\ProcessorInterface;
 use AppBundle\Api\Dto\TourInput;
+use AppBundle\Api\Precondition\IfMatch;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Tour;
 use AppBundle\Service\RoutingInterface;
@@ -14,7 +15,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\DBAL\LockMode;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -102,9 +102,9 @@ class TourProcessor implements ProcessorInterface
             return;
         }
 
-        $ifMatch = $request->headers->get('If-Match');
+        $expected = IfMatch::expectedVersion($request);
 
-        if (null === $ifMatch || '' === $ifMatch || '*' === $ifMatch) {
+        if (null === $expected) {
             // How much of the fleet still writes without a precondition. This
             // is what tells us when `If-Match` can be made mandatory, and for
             // which tenants — see the rollout in #5372.
@@ -118,26 +118,16 @@ class TourProcessor implements ProcessorInterface
             return;
         }
 
-        // Accept both a bare version and a properly quoted entity tag.
-        $expected = trim(ltrim(trim($ifMatch), 'W/'), '"');
-
-        // A header we cannot parse is the client's bug, not a conflict. Saying
-        // 409 here would have the dashboard throw away the dispatcher's edit
-        // and refetch, reporting a header bug as somebody else's change.
-        if (!ctype_digit($expected)) {
-            throw new BadRequestHttpException(sprintf('Malformed If-Match: %s', $ifMatch));
-        }
-
         try {
             // Also arms the version check on the UPDATE itself, so a tour that
             // changes between here and the flush is caught too — that window
             // spans an OSRM round trip, so it is not theoretical. Doctrine
             // raises the same exception there, mapped to 409 in
             // `api_platform.yaml` since it escapes this try/catch.
-            $this->entityManager->lock($tour, LockMode::OPTIMISTIC, (int) $expected);
+            $this->entityManager->lock($tour, LockMode::OPTIMISTIC, $expected);
         } catch (OptimisticLockException $e) {
             throw new ConflictHttpException(sprintf(
-                'Tour %d has changed since version %s was read; refetch it and retry',
+                'Tour %d has changed since version %d was read; refetch it and retry',
                 $tour->getId(),
                 $expected
             ), $e);

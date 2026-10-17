@@ -42,7 +42,6 @@ fos_js_routing:
         - admin_business_restaurant_group
         - admin_tags
         - admin_task_image_download
-        - admin_task_list_create
         - admin_task_receipt
         - admin_transporter_message
         - admin_users_search

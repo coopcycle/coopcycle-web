@@ -10,7 +10,7 @@ import {
   cancelTasks,
   completeTasks,
   createTaskList,
-  putTaskListItems,
+  addTaskListItems,
   openMoveToDayModal,
   moveToBottom,
   moveToTop,
@@ -150,8 +150,7 @@ const useAssignAction = function() {
       tasksList= await dispatch(createTaskList(date, username))
     }
 
-    const newTasksList = [...tasksList.items, ...tasksToAssign.map(t => t['@id'])]
-    return dispatch(putTaskListItems(tasksList.username, newTasksList))
+    return dispatch(addTaskListItems(tasksList.username, tasksToAssign))
   }
 }
 
