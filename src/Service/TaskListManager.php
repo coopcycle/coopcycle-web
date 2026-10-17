@@ -95,6 +95,141 @@ class TaskListManager {
     }
 
     /**
+     * Put items on a list without disturbing the ones already there.
+     *
+     * This is the delta counterpart of `assign()`. The caller names what it
+     * wants added or moved, and nothing else is touched, so a client working
+     * from a stale read can no longer remove work it never knew about — the
+     * property that makes the whole-list PUT unsafe.
+     *
+     * An item already held by another list is moved rather than duplicated,
+     * in this same flush, so a drag from one courier to another cannot leave
+     * the task on both or on neither.
+     *
+     * @param string[] $itemIris IRIs of tasks and tours
+     * @param int|null $position where to insert them; appended when absent
+     *
+     * @see https://github.com/coopcycle/coopcycle-web/issues/5372
+     */
+    public function addItems(TaskList $taskList, array $itemIris, ?int $position = null): void
+    {
+        $itemIris = $this->rejectItemsFromOtherDays($taskList, $itemIris);
+
+        if (0 === count($itemIris)) {
+            return;
+        }
+
+        // An ordered snapshot to splice into. Positions are rewritten at the
+        // end, so they stay dense however the list was ordered before.
+        $ordered = $taskList->getItems()->toArray();
+        usort($ordered, fn (Item $a, Item $b) => $a->getPosition() <=> $b->getPosition());
+
+        $incoming = [];
+
+        foreach ($itemIris as $itemIri) {
+            $taskOrTour = $this->iriConverter->getResourceFromIri($itemIri);
+
+            $existing = $this->findItemFor($ordered, $taskOrTour);
+
+            if (null !== $existing) {
+                // Already on this list: naming it again is a move, not an add.
+                $ordered = array_values(array_filter($ordered, fn (Item $item) => $item !== $existing));
+                $incoming[] = $existing;
+
+                continue;
+            }
+
+            $incoming[] = $this->takeFromCurrentList($taskList, $taskOrTour);
+        }
+
+        $at = null === $position
+            ? count($ordered)
+            : max(0, min($position, count($ordered)));
+
+        array_splice($ordered, $at, 0, $incoming);
+
+        foreach ($ordered as $index => $item) {
+            $item->setPosition($index);
+
+            if ($item->getParent() !== $taskList) {
+                $taskList->addItem($item);
+            }
+        }
+
+        // Cascade the assignment the way `assign()` does. For a task that came
+        // from another courier this is also what takes it off their list, via
+        // `EntityChangeSetProcessor`.
+        foreach ($taskList->getTasks() as $task) {
+            $task->assignTo($taskList->getCourier());
+        }
+    }
+
+    /**
+     * An item for this task or tour, taken off whatever list currently holds
+     * it so that it cannot end up on two.
+     */
+    private function takeFromCurrentList(TaskList $taskList, $taskOrTour): Item
+    {
+        if ($taskOrTour instanceof Tour) {
+            // A tour travels as a single item, and nothing syncs its
+            // membership from its tasks the way `EntityChangeSetProcessor`
+            // does for a task. Re-parent the existing item rather than
+            // deleting and recreating it: `task_list_item.tour_id` is unique,
+            // and Doctrine writes inserts before deletes.
+            $item = $taskOrTour->getTaskListItem();
+
+            if (null !== $item) {
+                return $item;
+            }
+
+            $item = new Item();
+            $item->setTour($taskOrTour);
+
+            return $item;
+        }
+
+        // `EntityChangeSetProcessor` takes the task off the previous courier's
+        // list when `assignedTo` changes, but it sees no change when the task
+        // merely moves between two days of the *same* courier, so that case is
+        // handled here.
+        $currentList = $this->entityManager->getRepository(TaskList::class)
+            ->findTaskListContainingTask($taskOrTour, $taskList->getCourier());
+
+        if (null !== $currentList && $currentList !== $taskList) {
+            $currentList->removeTask($taskOrTour);
+        }
+
+        $item = new Item();
+        $item->setTask($taskOrTour);
+
+        return $item;
+    }
+
+    /**
+     * The item on this list standing for a given task or tour, if any.
+     *
+     * @param Item[] $items
+     */
+    private function findItemFor(array $items, $taskOrTour): ?Item
+    {
+        foreach ($items as $item) {
+            if ($taskOrTour instanceof Tour) {
+                if ($item->getTour() === $taskOrTour) {
+                    return $item;
+                }
+
+                continue;
+            }
+
+            if ($item->getTask() === $taskOrTour) {
+                return $item;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * A task list is a courier's planning for one specific day, so an item may
      * only be filed on it if the task can actually be carried out that day:
      * the list's date must fall inside the task's [doneAfter, doneBefore]

@@ -14,8 +14,10 @@ use AppBundle\Action\TaskList\Create as CreateTaskListController;
 use AppBundle\Action\TaskList\Optimize as OptimizeController;
 use AppBundle\Action\TaskList\SetItems as SetTaskListItemsController;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
+use AppBundle\Api\Dto\AddTaskListItemsInput;
 use AppBundle\Api\Dto\MyTaskListDto;
 use AppBundle\Api\Filter\DateFilter;
+use AppBundle\Api\State\AddTaskListItemsProcessor;
 use AppBundle\Api\State\TaskListProvider;
 use AppBundle\Api\State\MyTasksProvider;
 use AppBundle\Entity\Task\CollectionTrait as TaskCollectionTrait;
@@ -98,6 +100,19 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Post(
             controller: CreateTaskListController::class,
             security: 'is_granted(\'ROLE_DISPATCHER\')'
+        ),
+        new Post(
+            uriTemplate: '/task_lists/{id}/items',
+            requirements: ['id' => '[0-9]+'],
+            openapiContext: [
+                'summary' => 'Puts tasks and tours on a task list, leaving the rest of the list alone.',
+                'description' => 'Preferred over PUT /api/task_lists/set_items/{date}/{username}, which takes the whole list as absolute state and therefore lets a client that is out of sync silently unassign work it never knew about. Items already on another list are moved, not duplicated.',
+            ],
+            input: AddTaskListItemsInput::class,
+            denormalizationContext: ['groups' => ['task_list_items']],
+            processor: AddTaskListItemsProcessor::class,
+            security: 'is_granted(\'ROLE_DISPATCHER\')',
+            read: false
         ),
         new GetCollection(
             uriTemplate: '/task_lists/v2',
