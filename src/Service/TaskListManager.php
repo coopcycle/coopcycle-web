@@ -8,6 +8,7 @@ use AppBundle\Entity\TaskList;
 use AppBundle\Entity\TaskList\Item;
 use AppBundle\Entity\Tour;
 use AppBundle\Exception\ItemBelongsToTourException;
+use AppBundle\Exception\OrderChangesMembershipException;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -162,6 +163,52 @@ class TaskListManager {
         // `EntityChangeSetProcessor`.
         foreach ($taskList->getTasks() as $task) {
             $task->assignTo($taskList->getCourier());
+        }
+    }
+
+    /**
+     * Rewrite the order of a list, and nothing else.
+     *
+     * The last whole-list write left, and the only one that is safe to keep:
+     * it is refused outright if the set of items it names differs in any way
+     * from what is on the list. A client whose board has drifted therefore
+     * cannot express a removal here at all — it gets told its payload does not
+     * describe this list, instead of silently unassigning the difference.
+     *
+     * @param string[] $itemIris every item on the list, in the wanted order
+     *
+     * @throws OrderChangesMembershipException if the payload adds, drops or
+     *                                         repeats anything
+     *
+     * @see https://github.com/coopcycle/coopcycle-web/issues/5372
+     */
+    public function reorder(TaskList $taskList, array $itemIris): void
+    {
+        $current = [];
+
+        foreach ($taskList->getItems() as $item) {
+            $current[$item->getItemIri($this->iriConverter)] = $item;
+        }
+
+        $submitted = array_values($itemIris);
+
+        $dropped = array_values(array_diff(array_keys($current), $submitted));
+        $added = array_values(array_diff($submitted, array_keys($current)));
+
+        // The counts also catch a payload that repeats an item, and a list
+        // holding the same task twice — which is corrupt, and not something to
+        // renumber blindly.
+        if (count($dropped) > 0 || count($added) > 0 || count($submitted) !== $taskList->getItems()->count()) {
+            throw new OrderChangesMembershipException(sprintf(
+                'This changes which items are on the list, which ordering does not do%s%s. '
+                .'Use POST /api/task_lists/{id}/items and DELETE /api/task_lists/{id}/items/{type}/{itemId}.',
+                count($added) > 0 ? sprintf('; not on the list: %s', implode(', ', $added)) : '',
+                count($dropped) > 0 ? sprintf('; missing from the payload: %s', implode(', ', $dropped)) : ''
+            ));
+        }
+
+        foreach ($submitted as $position => $itemIri) {
+            $current[$itemIri]->setPosition($position);
         }
     }
 

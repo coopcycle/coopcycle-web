@@ -17,9 +17,11 @@ use AppBundle\Action\TaskList\RemoveItem as RemoveTaskListItemController;
 use AppBundle\Action\TaskList\SetItems as SetTaskListItemsController;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use AppBundle\Api\Dto\AddTaskListItemsInput;
+use AppBundle\Api\Dto\TaskListOrderInput;
 use AppBundle\Api\Dto\MyTaskListDto;
 use AppBundle\Api\Filter\DateFilter;
 use AppBundle\Api\State\AddTaskListItemsProcessor;
+use AppBundle\Api\State\SetTaskListOrderProcessor;
 use AppBundle\Api\State\TaskListProvider;
 use AppBundle\Api\State\MyTasksProvider;
 use AppBundle\Entity\Task\CollectionTrait as TaskCollectionTrait;
@@ -127,6 +129,19 @@ use Symfony\Component\Validator\Constraints as Assert;
             security: 'is_granted(\'ROLE_DISPATCHER\')',
             read: false,
             serialize: false
+        ),
+        new Put(
+            uriTemplate: '/task_lists/{id}/order',
+            requirements: ['id' => '[0-9]+'],
+            openapiContext: [
+                'summary' => 'Reorders a task list, without changing which items are on it.',
+                'description' => 'Takes every item currently on the list, in the wanted order. Refused with 422 if the payload would add, drop or repeat anything — use the items endpoints for that. If-Match is required and carries the task list version; a mismatch answers 409.',
+            ],
+            input: TaskListOrderInput::class,
+            denormalizationContext: ['groups' => ['task_list_order']],
+            processor: SetTaskListOrderProcessor::class,
+            security: 'is_granted(\'ROLE_DISPATCHER\')',
+            read: false
         ),
         new GetCollection(
             uriTemplate: '/task_lists/v2',
