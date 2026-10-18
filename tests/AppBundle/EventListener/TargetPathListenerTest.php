@@ -23,7 +23,7 @@ class TargetPathListenerTest extends TestCase
         $this->listener = new TargetPathListener();
     }
 
-    private function handle(string $uri, array $headers = []): Session
+    private function handle(string $uri, array $headers = [], bool $withSessionCookie = true): Session
     {
         $session = new Session(new MockArraySessionStorage());
         $session->start();
@@ -31,8 +31,10 @@ class TargetPathListenerTest extends TestCase
 
         $request = Request::create($uri);
         $request->setSession($session);
-        // hasPreviousSession() only returns true once the session cookie is there
-        $request->cookies->set($session->getName(), $session->getId());
+
+        if ($withSessionCookie) {
+            $request->cookies->set($session->getName(), $session->getId());
+        }
 
         foreach ($headers as $name => $value) {
             $request->headers->set($name, $value);
@@ -112,6 +114,21 @@ class TargetPathListenerTest extends TestCase
         $uri = 'http://localhost/cart.json';
 
         $session = $this->handle($uri, ['Accept' => 'application/json']);
+
+        $this->assertFalse($session->has(self::TARGET_PATH_KEY));
+    }
+
+    /**
+     * Symfony saves the target path as soon as a session is available, so a
+     * background request arriving *without* a session cookie (expired session,
+     * tab left open overnight) stores one in a brand new session. This is how
+     * users kept landing on the /profile/jwt JSON after logging in.
+     */
+    public function testDropsTargetPathOfABackgroundRequestWithoutASessionCookie()
+    {
+        $uri = 'http://localhost/profile/jwt';
+
+        $session = $this->handle($uri, ['Sec-Fetch-Dest' => 'empty'], false);
 
         $this->assertFalse($session->has(self::TARGET_PATH_KEY));
     }
