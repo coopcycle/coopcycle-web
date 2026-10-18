@@ -20,8 +20,22 @@ class TaskListNormalizer implements NormalizerInterface, DenormalizerInterface
     )
     {}
 
+    /**
+     * The items of a task list, as IRIs, in the order the list holds them.
+     *
+     * Sorted by position rather than taken as they come: a write that puts an
+     * item somewhere other than the end sets positions without reordering the
+     * in-memory collection, so the two disagree until the entity is loaded
+     * again. Clients upsert this response straight into their own state, and
+     * would show the drop in the wrong place until their next read.
+     */
     private function flattenItemsUris(array $items)
     {
+        usort(
+            $items,
+            fn (array $a, array $b) => ($a['position'] ?? 0) <=> ($b['position'] ?? 0)
+        );
+
         $itemsUris = [];
         foreach($items as $item) {
             if (isset($item['task'])) {

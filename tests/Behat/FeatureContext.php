@@ -537,6 +537,19 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->apiKeys[$storeName] = $apiKey;
     }
 
+    /**
+     * `If-Match` carries an entity tag, which is a quoted string — the quotes
+     * are part of the header, not Gherkin syntax, and a step argument cannot
+     * carry them.
+     *
+     * @see \AppBundle\Api\Precondition\IfMatch
+     */
+    #[When('I add an If-Match header for version :version')]
+    public function iAddAnIfMatchHeaderForVersion($version)
+    {
+        $this->restContext->iAddHeaderEqualTo('If-Match', sprintf('"%s"', $version));
+    }
+
     #[When('I send an authenticated :method request to :url')]
     public function iSendAnAuthenticatedRequestTo($method, $url, ?PyStringNode $body = null)
     {

@@ -1,8 +1,7 @@
-import React, { useEffect, useState, createRef } from 'react'
+import React, { useState } from 'react'
 import { createRoot } from 'react-dom/client'
-import chroma from 'chroma-js'
 import ColorPicker from '../../color-picker';
-import { Input, Space } from 'antd';
+import { Input } from 'antd';
 import { LinkOutlined } from '@ant-design/icons';
 
 import {

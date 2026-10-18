@@ -120,6 +120,104 @@ class SetTaskListItemsFunctionalTest extends ApiTestCase
         return $counts;
     }
 
+    /**
+     * The endpoint still works — mobile apps in the field depend on it — but
+     * it has to say that it is going away, and when, to clients that read the
+     * response rather than the docs.
+     *
+     * @see https://github.com/coopcycle/coopcycle-web/issues/5372
+     */
+    public function testTheResponseSaysTheEndpointIsDeprecated()
+    {
+        $jwtManager = self::getContainer()->get(JWTTokenManagerInterface::class);
+
+        [ $admin, $courier ] = $this->bootstrapUsers();
+
+        $date = new \DateTime('today');
+        $task = $this->createTask($date, 1);
+        $this->entityManager->flush();
+
+        $task->assignTo($courier);
+        $this->entityManager->flush();
+
+        $taskIri = '/api/tasks/'.$task->getId();
+
+        $this->entityManager->clear();
+
+        $client = static::createClient(defaultOptions: [
+            'headers' => ['authorization' => 'Bearer '.$jwtManager->create($admin)],
+        ]);
+
+        $client->request('PUT', sprintf('/api/task_lists/set_items/%s/courier', $date->format('Y-m-d')), [
+            'json' => ['items' => [$taskIri]],
+        ]);
+
+        $this->assertResponseIsSuccessful();
+
+        $headers = $client->getResponse()->getHeaders();
+
+        $this->assertSame(
+            [(new \DateTimeImmutable(TaskList::SET_ITEMS_SUNSET))->format(\DateTimeInterface::RFC1123)],
+            $headers['sunset'] ?? [],
+            'clients need to know when this stops working'
+        );
+        $this->assertArrayHasKey('deprecation', $headers);
+        $this->assertStringStartsWith('@', $headers['deprecation'][0]);
+
+        $links = implode(', ', $headers['link'] ?? []);
+        $this->assertStringContainsString('/api/task_lists/{id}/items>; rel="successor-version"', $links);
+        $this->assertStringContainsString('/api/task_lists/{id}/order>; rel="successor-version"', $links);
+    }
+
+    /**
+     * This rewrites every item on the list, so it has to queue behind the
+     * endpoints that replaced it rather than interleave with them. A writer
+     * that did not take the row could still close a deadlock cycle against
+     * the ones that do, which would make locking them pointless.
+     */
+    public function testItHoldsTheListWhileItRuns()
+    {
+        $jwtManager = self::getContainer()->get(JWTTokenManagerInterface::class);
+
+        [ $admin, $courier ] = $this->bootstrapUsers();
+
+        $date = new \DateTime('today');
+        $task = $this->createTask($date, 1);
+        $this->entityManager->flush();
+
+        $task->assignTo($courier);
+        $this->entityManager->flush();
+
+        $taskIri = '/api/tasks/'.$task->getId();
+
+        $this->entityManager->clear();
+
+        $client = static::createClient(defaultOptions: [
+            'headers' => ['authorization' => 'Bearer '.$jwtManager->create($admin)],
+        ]);
+        $client->enableProfiler();
+
+        $client->request('PUT', sprintf('/api/task_lists/set_items/%s/courier', $date->format('Y-m-d')), [
+            'json' => ['items' => [$taskIri]],
+        ]);
+
+        $this->assertResponseIsSuccessful();
+
+        $locks = [];
+
+        foreach ($client->getProfile()->getCollector('db')->getQueries() as $queries) {
+            foreach ($queries as $query) {
+                $sql = preg_replace('/\s+/', ' ', is_array($query) ? $query['sql'] : $query->getSql());
+
+                if (str_contains($sql, 'task_list') && str_contains($sql, 'FOR UPDATE')) {
+                    $locks[] = $sql;
+                }
+            }
+        }
+
+        $this->assertNotEmpty($locks, 'set_items should take the row before rewriting the list');
+    }
+
     public function testAssigningOneTaskDoesNotRewriteTheWholeList()
     {
         $jwtManager = self::getContainer()->get(JWTTokenManagerInterface::class);
@@ -245,5 +343,90 @@ class SetTaskListItemsFunctionalTest extends ApiTestCase
         // ...but TaskSubscriber preloads their events, so this stays flat
         // instead of growing with the number of tasks.
         $this->assertLessThanOrEqual(2, $counts['task_event_select']);
+    }
+
+    /**
+     * Adding or removing an item changes what the list holds, so the list's
+     * version has to move with it — that is what a client's `If-Match` is
+     * compared against.
+     *
+     * Doctrine only increments a version field as part of the UPDATE it issues
+     * for a dirty entity, and a membership change touches the item rows, not
+     * the list. Without `TaskCollectionVersionSubscriber` the list gets no
+     * UPDATE at all and the version silently stands still while its contents
+     * change — leaving a stale client free to write over them.
+     */
+    public function testChangingTheItemsBumpsTheListVersion()
+    {
+        $jwtManager = self::getContainer()->get(JWTTokenManagerInterface::class);
+
+        [ $admin, $courier ] = $this->bootstrapUsers();
+
+        $date = new \DateTime('today');
+
+        $tasks = [];
+        for ($i = 0; $i < 3; $i++) {
+            $tasks[] = $this->createTask($date, $i);
+        }
+        $extraTask = $this->createTask($date, 99);
+        $this->entityManager->flush();
+
+        $iris = [];
+        foreach ($tasks as $task) {
+            $task->assignTo($courier);
+            $iris[] = '/api/tasks/'.$task->getId();
+        }
+        $this->entityManager->flush();
+
+        $extraIri = '/api/tasks/'.$extraTask->getId();
+
+        $versionBefore = $this->readListVersion($courier, $date);
+        $this->assertNotNull($versionBefore, 'the list should be versioned');
+
+        $client = static::createClient(defaultOptions: [
+            'headers' => ['authorization' => 'Bearer '.$jwtManager->create($admin)],
+        ]);
+
+        // Add one item
+        $client->request('PUT', sprintf('/api/task_lists/set_items/%s/courier', $date->format('Y-m-d')), [
+            'json' => ['items' => array_merge($iris, [$extraIri])],
+        ]);
+        $this->assertResponseStatusCodeSame(200);
+
+        $versionAfterAdd = $this->readListVersion($courier, $date);
+        $this->assertGreaterThan(
+            $versionBefore,
+            $versionAfterAdd,
+            'adding an item should bump the version'
+        );
+
+        // Remove it again
+        $client->request('PUT', sprintf('/api/task_lists/set_items/%s/courier', $date->format('Y-m-d')), [
+            'json' => ['items' => $iris],
+        ]);
+        $this->assertResponseStatusCodeSame(200);
+
+        $this->assertGreaterThan(
+            $versionAfterAdd,
+            $this->readListVersion($courier, $date),
+            'removing an item should bump the version'
+        );
+    }
+
+    /**
+     * Read the persisted version, not a hydrated one: the request runs in its
+     * own kernel, and this side's entity manager can hand back an entity that
+     * predates it.
+     */
+    private function readListVersion(User $courier, \DateTime $date): ?int
+    {
+        $version = $this->entityManager->getConnection()->fetchOne(
+            'SELECT version FROM task_list WHERE courier_id = ? AND date = ?',
+            [$courier->getId(), $date->format('Y-m-d')]
+        );
+
+        $this->assertNotFalse($version, 'the courier should have a task list');
+
+        return (int) $version;
     }
 }

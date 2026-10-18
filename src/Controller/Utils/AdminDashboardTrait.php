@@ -11,7 +11,6 @@ use AppBundle\Entity\Store;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskImage;
-use AppBundle\Entity\TaskList;
 use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Entity\Task\RecurrenceRule as TaskRecurrenceRule;
 use AppBundle\Entity\Tour;
@@ -25,8 +24,6 @@ use AppBundle\Service\TaskManager;
 use AppBundle\Utils\TaskImageNamer;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\Query\Expr;
-use Nucleos\UserBundle\Model\UserInterface;
-use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Hashids\Hashids;
 use League\Flysystem\Filesystem;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
@@ -36,7 +33,6 @@ use Redis;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\MimeType\FileinfoMimeTypeGuesser;
 use Symfony\Component\HttpFoundation\HeaderUtils;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -123,7 +119,9 @@ trait AdminDashboardTrait
         $couriers = $this->entityManager
             ->getRepository(User::class)
             ->createQueryBuilder('u')
-            ->select('u.username')
+            // The id so the dashboard can name a courier to the API; the
+            // username because that is what it keys task lists by.
+            ->select('u.id', 'u.username')
             ->where('u.roles LIKE :roles')
             ->orderBy('u.username', 'ASC')
             ->setParameter('roles', '%ROLE_COURIER%')
@@ -242,44 +240,6 @@ trait AdminDashboardTrait
         }
 
         return $this->loadPositions($tile38, $newCursor, $points);
-    }
-
-    protected function getTaskList(\DateTime $date, UserInterface $user)
-    {
-        $this->denyAccessUnlessGranted('ROLE_DISPATCHER');
-        $taskList = $this->entityManager
-            ->getRepository(TaskList::class)
-            ->findOneBy(['date' => $date, 'courier' => $user]);
-
-        if (null === $taskList) {
-            $taskList = new TaskList();
-            $taskList->setDate($date);
-            $taskList->setCourier($user);
-        }
-
-        return $taskList;
-    }
-
-    #[Route("/admin/task-lists/{date}/{username}", name: "admin_task_list_create", requirements: ["date" => "[0-9]{4}-[0-9]{2}-[0-9]{2}"], methods: ["POST"])]
-    public function createTaskListAction($date, $username, Request $request, UserManagerInterface $userManager, NormalizerInterface $normalizer)
-    {
-        $this->denyAccessUnlessGranted('ROLE_DISPATCHER');
-
-        $date = new \DateTime($date);
-        $user = $userManager->findUserByUsername($username);
-
-        $taskList = $this->getTaskList($date, $user);
-
-        if (null === $taskList->getId()) {
-            $this->entityManager->persist($taskList);
-            $this->entityManager->flush();
-        }
-
-        $taskListNormalized = $normalizer->normalize($taskList, 'jsonld', [
-            'groups' => ['task_list']
-        ]);
-
-        return new JsonResponse($taskListNormalized);
     }
 
     #[Route("/admin/tasks/{taskId}/images/{imageId}/download", name: "admin_task_image_download")]

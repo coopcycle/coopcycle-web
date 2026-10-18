@@ -11,9 +11,7 @@ import RecurrenceRule from './RecurrenceRule'
 import UnassignedTasksPopoverContent from './UnassignedTasksPopoverContent'
 import {
   setTaskListGroupMode,
-  openNewTaskModal,
   setCurrentRecurrenceRule,
-  openNewRecurrenceRuleModal,
   deleteGroup,
   editGroup,
   showRecurrenceRules,
