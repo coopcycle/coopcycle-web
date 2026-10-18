@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Put;
@@ -14,11 +15,20 @@ use AppBundle\Action\TaskList\Create as CreateTaskListController;
 use AppBundle\Action\TaskList\Optimize as OptimizeController;
 use AppBundle\Action\TaskList\SetItems as SetTaskListItemsController;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
+use AppBundle\Api\Dto\AddTaskListItemsInput;
+use AppBundle\Api\Dto\RemoveTaskListItemsInput;
+use AppBundle\Api\Dto\TaskListOrderInput;
 use AppBundle\Api\Dto\MyTaskListDto;
 use AppBundle\Api\Filter\DateFilter;
+use AppBundle\Api\State\AddTaskListItemsProcessor;
+use AppBundle\Api\State\RemoveTaskListItemProcessor;
+use AppBundle\Api\State\RemoveTaskListItemsProcessor;
+use AppBundle\Api\State\SetTaskListOrderProcessor;
 use AppBundle\Api\State\TaskListProvider;
 use AppBundle\Api\State\MyTasksProvider;
 use AppBundle\Entity\Task\CollectionTrait as TaskCollectionTrait;
+use AppBundle\Entity\Task\VersionedCollectionInterface;
+use AppBundle\Entity\Task\VersionedCollectionTrait;
 use AppBundle\Entity\TaskList\Item;
 use Doctrine\Common\Collections\ArrayCollection;
 use Shahonseven\ColorHash;
@@ -42,6 +52,19 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Put(
             uriTemplate: '/task_lists/set_items/{date}/{username}',
             controller: SetTaskListItemsController::class,
+            openapiContext: [
+                'summary' => 'Deprecated. Replaces the whole task list; use the items and order endpoints instead.',
+                'description' => 'This takes the list as absolute state, so a task left out of the payload is unassigned. A client that has merely not heard of a task sends exactly the same bytes as one deliberately removing it, which is why work has been silently unassigned in the field for years. Use POST /api/task_lists/{id}/items, DELETE /api/task_lists/{id}/items/{type}/{itemId} and PUT /api/task_lists/{id}/order, which name what they change.',
+            ],
+            deprecationReason: 'Replaced by the task list items and order endpoints, which name what they change instead of replacing the whole list. See https://github.com/coopcycle/coopcycle-web/issues/5372',
+            sunset: self::SET_ITEMS_SUNSET,
+            extraProperties: [
+                'deprecated_since' => '2026-10-17',
+                'successor_version' => [
+                    '/api/task_lists/{id}/items',
+                    '/api/task_lists/{id}/order',
+                ],
+            ],
             security: 'is_granted(\'ROLE_DISPATCHER\')',
             read: false
         ),
@@ -97,6 +120,61 @@ use Symfony\Component\Validator\Constraints as Assert;
             controller: CreateTaskListController::class,
             security: 'is_granted(\'ROLE_DISPATCHER\')'
         ),
+        new Post(
+            uriTemplate: '/task_lists/{id}/items',
+            requirements: ['id' => '[0-9]+'],
+            openapiContext: [
+                'summary' => 'Puts tasks and tours on a task list, leaving the rest of the list alone.',
+                'description' => 'Preferred over PUT /api/task_lists/set_items/{date}/{username}, which takes the whole list as absolute state and therefore lets a client that is out of sync silently unassign work it never knew about. Items already on another list are moved, not duplicated.',
+            ],
+            input: AddTaskListItemsInput::class,
+            denormalizationContext: ['groups' => ['task_list_items']],
+            processor: AddTaskListItemsProcessor::class,
+            security: 'is_granted(\'ROLE_DISPATCHER\')',
+            read: false
+        ),
+        new Post(
+            uriTemplate: '/task_lists/{id}/items/remove',
+            requirements: ['id' => '[0-9]+'],
+            openapiContext: [
+                'summary' => 'Takes tasks and tours off a task list, and unassigns them.',
+                'description' => 'The counterpart of POST /api/task_lists/{id}/items. Items not on the list are ignored, so asking twice is not an error. Prefer this over repeating the single-item DELETE: removing an item renumbers the ones that remain, so several concurrent single removals contend for the same rows.',
+            ],
+            input: RemoveTaskListItemsInput::class,
+            denormalizationContext: ['groups' => ['task_list_items']],
+            processor: RemoveTaskListItemsProcessor::class,
+            // Nothing is created here; POST only because a DELETE carrying a
+            // list of items in its body is not reliably served.
+            status: 200,
+            security: 'is_granted(\'ROLE_DISPATCHER\')',
+            read: false
+        ),
+        new Delete(
+            uriTemplate: '/task_lists/{id}/items/{type}/{itemId}',
+            requirements: ['id' => '[0-9]+', 'type' => 'tasks|tours', 'itemId' => '[0-9]+'],
+            openapiContext: [
+                'summary' => 'Takes one task or tour off a task list, and unassigns it.',
+                'description' => 'Preferred over leaving the item out of PUT /api/task_lists/set_items/{date}/{username}, which cannot tell a deliberate removal from a client that never knew about the item. Scoped to this list: if the item is no longer on it, nothing happens and the response is still 204.',
+            ],
+            // Only the task list is identified by the URI; `type` and
+            // `itemId` name the item to take off it.
+            uriVariables: ['id'],
+            processor: RemoveTaskListItemProcessor::class,
+            security: 'is_granted(\'ROLE_DISPATCHER\')'
+        ),
+        new Put(
+            uriTemplate: '/task_lists/{id}/order',
+            requirements: ['id' => '[0-9]+'],
+            openapiContext: [
+                'summary' => 'Reorders a task list, without changing which items are on it.',
+                'description' => 'Takes every item currently on the list, in the wanted order. Refused with 422 if the payload would add, drop or repeat anything — use the items endpoints for that. If-Match is required and carries the task list version; a mismatch answers 409.',
+            ],
+            input: TaskListOrderInput::class,
+            denormalizationContext: ['groups' => ['task_list_order']],
+            processor: SetTaskListOrderProcessor::class,
+            security: 'is_granted(\'ROLE_DISPATCHER\')',
+            read: false
+        ),
         new GetCollection(
             uriTemplate: '/task_lists/v2',
             openapiContext: ['summary' => 'Retrieves TaskLists as lists of tours and tasks.'],
@@ -107,9 +185,22 @@ use Symfony\Component\Validator\Constraints as Assert;
     normalizationContext: ['groups' => ['task_list']]
 )]
 #[ApiFilter(filterClass: DateFilter::class, properties: ['date'])]
-class TaskList implements TaskCollectionInterface
+class TaskList implements TaskCollectionInterface, VersionedCollectionInterface
 {
+    /**
+     * When `set_items` stops working.
+     *
+     * Far enough out that every mobile app in the field has had time to be
+     * replaced — they cannot be upgraded on our schedule, and they are the
+     * reason this is a deprecation rather than a removal. Bring it forward
+     * once the logs show nothing is calling it.
+     *
+     * @see \AppBundle\Action\TaskList\SetItems
+     */
+    public const SET_ITEMS_SUNSET = '2027-10-01';
+
     use TaskCollectionTrait;
+    use VersionedCollectionTrait;
 
     #[Groups(['task_list'])]
     private $id;
