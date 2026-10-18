@@ -5,8 +5,6 @@ import ReactMarkdown from 'react-markdown'
 import CodeMirror from 'codemirror/lib/codemirror'
 import 'codemirror/mode/markdown/markdown'
 import Dropzone from 'dropzone'
-import EditorJS from '@editorjs/editorjs';
-import ShopCollection from './editorjs/shop-collection'
 
 import HomepageEditor from './HomepageEditor'
 

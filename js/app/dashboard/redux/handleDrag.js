@@ -4,7 +4,7 @@ import { setIsTourDragging, selectAllTasks } from "../../coopcycle-frontend-js/l
 import { clearSelectedTasks,
   insertInUnassignedTasks,
   insertInUnassignedTours,
-  putTaskListItems as putTaskListItemsAction,
+  addTaskListItems as addTaskListItemsAction,
   modifyTour as modifyTourAction,
   removeTasksFromTour as removeTasksFromTourAction,
   unassignTasks as unassignTasksAction,
@@ -109,7 +109,7 @@ export function handleDragStart(result) {
 
 export function handleDragEnd(
   result,
-  putTaskListItems=putTaskListItemsAction,
+  addTaskListItems=addTaskListItemsAction,
   modifyTour=modifyTourAction,
   unassignTasks=unassignTasksAction,
   removeTasksFromTour=removeTasksFromTourAction) {
@@ -125,33 +125,18 @@ export function handleDragEnd(
      *   had already been taken out of the list, but not the other selected ones.
     */
     const handleDropInTaskList = async (tasksList, selectedItems, index, primaryItemId = null) => {
-      const previousItems = tasksList.items
-      let newTasksListItems = [...previousItems]
-
-      selectedItems.forEach((t) => {
-        let itemIndex = newTasksListItems.findIndex((item) => item === t['@id'])
-        // if the item was already in the tasklist, remove from its original place
-        if (itemIndex > -1) {
-          newTasksListItems.splice(itemIndex, 1)
-        }
-
-      })
-
-      newTasksListItems.splice(
-        dropIndex(index, previousItems, selectedItems, primaryItemId),
-        0,
-        ...selectedItems.map(it => it['@id'])
-      )
+      // Where the items land once every selected one has been taken out of
+      // the list, which is what the API does with the ones it is given.
+      const position = dropIndex(index, tasksList.items, selectedItems, primaryItemId)
 
       // Tasks may have been moved between couriers
-      // No need to unassign via API, because the PUT operation will take care of this
+      // No need to unassign via API, because the API moves them in the same transaction
       // This action just removes the previously assigned tasks, if any
       // It does *NOT* perform any HTTP request, it is to reflect change visually
-      // It returns what is needed to undo it, should the PUT below fail
+      // It returns what is needed to undo it, should the request below fail
       const removedFromOtherTaskLists = dispatch(removePreviouslyAssignedTasks(tasksList.username, selectedItems)) ?? []
 
-      // This will actually perform the PUT operation
-      dispatch(putTaskListItems(tasksList.username, newTasksListItems, removedFromOtherTaskLists))
+      dispatch(addTaskListItems(tasksList.username, selectedItems, position, removedFromOtherTaskLists))
     }
 
     // dropped nowhere

@@ -14,6 +14,8 @@ use AppBundle\Api\Dto\TourInput;
 use AppBundle\Api\State\TourProcessor;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
+use AppBundle\Entity\Task\VersionedCollectionInterface;
+use AppBundle\Entity\Task\VersionedCollectionTrait;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use AppBundle\Api\Filter\DateFilter;
@@ -41,14 +43,19 @@ use AppBundle\Vroom\Shipment as VroomShipment;
     denormalizationContext: ['groups' => ['tour']]
 )]
 #[ApiFilter(filterClass: DateFilter::class, properties: ['date'])]
-class Tour extends TaskCollection implements TaskCollectionInterface
+class Tour extends TaskCollection implements TaskCollectionInterface, VersionedCollectionInterface
 {
+    use VersionedCollectionTrait;
+
     private $date;
 
     protected $id;
 
     /**
-     * @var Item
+     * The item that puts this tour on a task list, or null while the tour is
+     * on none — which is its state from creation until a dispatcher files it.
+     *
+     * @var Item|null
      */
     private $taskListItem;
 
@@ -127,7 +134,7 @@ class Tour extends TaskCollection implements TaskCollectionInterface
     /**
      * Get the value of taskListItem
      *
-     * @return Item
+     * @return Item|null
      */
     public function getTaskListItem()
     {

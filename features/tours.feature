@@ -53,6 +53,7 @@ Feature: Tours
         "@context":"/api/contexts/Tour",
         "@id":"/api/tours/1",
         "@type":"Tour",
+        "version":@integer@,
         "date":"2018-03-05",
         "@*@":"@*@"
       }
