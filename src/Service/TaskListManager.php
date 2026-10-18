@@ -7,6 +7,9 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
 use AppBundle\Entity\TaskList\Item;
 use AppBundle\Entity\Tour;
+use AppBundle\Exception\ItemBelongsToTourException;
+use AppBundle\Exception\OrderChangesMembershipException;
+use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -21,6 +24,45 @@ class TaskListManager {
         ?LoggerInterface $logger = null,
     ) {
         $this->logger = $logger ?? new NullLogger();
+    }
+
+    /**
+     * Run a mutation against a task list, holding its row for the duration.
+     *
+     * Every one of these mutations writes more rows than it sounds like:
+     * putting an item on a list, or taking one off, closes up the positions
+     * of everything around it. Two of them running at once therefore rewrite
+     * the same set of `task_list_item` rows, and Doctrine does not promise to
+     * flush them in the same order each time — so Postgres finds a lock cycle
+     * and kills one of the transactions with a deadlock.
+     *
+     * Taking the parent row first turns that into a queue: a second writer
+     * waits for the first to commit instead of interleaving with it. It works
+     * only because every path that mutates a task list goes through here. One
+     * that did not would still be able to close a cycle against the others.
+     *
+     * The list is also loaded inside the lock, so a mutation sees the state
+     * the writer before it left behind rather than the state it read first.
+     *
+     * @param callable(TaskList): void $mutation
+     *
+     * @return TaskList|null the list, or null if there is no such list
+     */
+    public function withLockedList(int $taskListId, callable $mutation): ?TaskList
+    {
+        return $this->entityManager->wrapInTransaction(function () use ($taskListId, $mutation) {
+
+            $taskList = $this->entityManager->getRepository(TaskList::class)
+                ->find($taskListId, LockMode::PESSIMISTIC_WRITE);
+
+            if (null === $taskList) {
+                return null;
+            }
+
+            $mutation($taskList);
+
+            return $taskList;
+        });
     }
 
     /*
@@ -92,6 +134,308 @@ class TaskListManager {
         foreach ($taskList->getTasks() as $task) {
             $task->assignTo($taskList->getCourier());
         }
+    }
+
+    /**
+     * Put items on a list without disturbing the ones already there.
+     *
+     * This is the delta counterpart of `assign()`. The caller names what it
+     * wants added or moved, and nothing else is touched, so a client working
+     * from a stale read can no longer remove work it never knew about — the
+     * property that makes the whole-list PUT unsafe.
+     *
+     * An item already held by another list is moved rather than duplicated,
+     * in this same flush, so a drag from one courier to another cannot leave
+     * the task on both or on neither.
+     *
+     * @param string[] $itemIris IRIs of tasks and tours
+     * @param int|null $position where to insert them; appended when absent
+     *
+     * @see https://github.com/coopcycle/coopcycle-web/issues/5372
+     */
+    public function addItems(TaskList $taskList, array $itemIris, ?int $position = null): void
+    {
+        $itemIris = $this->rejectItemsFromOtherDays($taskList, $itemIris);
+
+        if (0 === count($itemIris)) {
+            return;
+        }
+
+        // An ordered snapshot to splice into. Positions are rewritten at the
+        // end, so they stay dense however the list was ordered before.
+        $ordered = $taskList->getItems()->toArray();
+        usort($ordered, fn (Item $a, Item $b) => $a->getPosition() <=> $b->getPosition());
+
+        $incoming = [];
+
+        foreach ($itemIris as $itemIri) {
+            $taskOrTour = $this->iriConverter->getResourceFromIri($itemIri);
+
+            $existing = $this->findItemFor($ordered, $taskOrTour);
+
+            if (null !== $existing) {
+                // Already on this list: naming it again is a move, not an add.
+                $ordered = array_values(array_filter($ordered, fn (Item $item) => $item !== $existing));
+                $incoming[] = $existing;
+
+                continue;
+            }
+
+            $incoming[] = $this->takeFromCurrentList($taskList, $taskOrTour);
+        }
+
+        $at = null === $position
+            ? count($ordered)
+            : max(0, min($position, count($ordered)));
+
+        array_splice($ordered, $at, 0, $incoming);
+
+        foreach ($ordered as $index => $item) {
+            $item->setPosition($index);
+
+            if ($item->getParent() !== $taskList) {
+                $taskList->addItem($item);
+            }
+        }
+
+        // Cascade the assignment the way `assign()` does. For a task that came
+        // from another courier this is also what takes it off their list, via
+        // `EntityChangeSetProcessor`.
+        foreach ($taskList->getTasks() as $task) {
+            $task->assignTo($taskList->getCourier());
+        }
+    }
+
+    /**
+     * Rewrite the order of a list, and nothing else.
+     *
+     * The last whole-list write left, and the only one that is safe to keep:
+     * it is refused outright if the set of items it names differs in any way
+     * from what is on the list. A client whose board has drifted therefore
+     * cannot express a removal here at all — it gets told its payload does not
+     * describe this list, instead of silently unassigning the difference.
+     *
+     * @param string[] $itemIris every item on the list, in the wanted order
+     *
+     * @throws OrderChangesMembershipException if the payload adds, drops or
+     *                                         repeats anything
+     *
+     * @see https://github.com/coopcycle/coopcycle-web/issues/5372
+     */
+    public function reorder(TaskList $taskList, array $itemIris): void
+    {
+        $current = [];
+
+        foreach ($taskList->getItems() as $item) {
+            $current[$item->getItemIri($this->iriConverter)] = $item;
+        }
+
+        $submitted = array_values($itemIris);
+
+        $dropped = array_values(array_diff(array_keys($current), $submitted));
+        $added = array_values(array_diff($submitted, array_keys($current)));
+
+        // The counts also catch a payload that repeats an item, and a list
+        // holding the same task twice — which is corrupt, and not something to
+        // renumber blindly.
+        if (count($dropped) > 0 || count($added) > 0 || count($submitted) !== $taskList->getItems()->count()) {
+            throw new OrderChangesMembershipException(sprintf(
+                'This changes which items are on the list, which ordering does not do%s%s. '
+                .'Use POST /api/task_lists/{id}/items and DELETE /api/task_lists/{id}/items/{type}/{itemId}.',
+                count($added) > 0 ? sprintf('; not on the list: %s', implode(', ', $added)) : '',
+                count($dropped) > 0 ? sprintf('; missing from the payload: %s', implode(', ', $dropped)) : ''
+            ));
+        }
+
+        foreach ($submitted as $position => $itemIri) {
+            $current[$itemIri]->setPosition($position);
+        }
+    }
+
+    /**
+     * Take items off a list, naming them.
+     *
+     * The counterpart of `addItems()`, and the other half of what makes a
+     * stale client harmless: removal stops being expressible by omission, so
+     * saying nothing about a task can no longer unassign it.
+     *
+     * Scoped to this list on purpose. If a task has since moved to another
+     * courier it is no longer an item here, and it is left alone rather than
+     * being reached across and unassigned from whoever holds it now — which
+     * is the same lost update in a different shape.
+     *
+     * Takes the whole batch because renumbering the survivors is the
+     * expensive part: it writes every remaining row, so doing it once per
+     * removal rather than once per batch had concurrent requests deadlocking
+     * against each other on `task_list_item`.
+     *
+     * @param array<Task|Tour> $tasksAndTours
+     *
+     * @throws ItemBelongsToTourException if a task is on the list through a
+     *                                    tour, which has to be changed as a tour
+     *
+     * @see https://github.com/coopcycle/coopcycle-web/issues/5372
+     */
+    public function removeItems(TaskList $taskList, array $tasksAndTours): void
+    {
+        $ordered = $taskList->getItems()->toArray();
+        usort($ordered, fn (Item $a, Item $b) => $a->getPosition() <=> $b->getPosition());
+
+        $removed = [];
+
+        foreach ($tasksAndTours as $taskOrTour) {
+            $item = $this->findItemFor($ordered, $taskOrTour);
+
+            if (null === $item) {
+                if ($taskOrTour instanceof Task) {
+                    $this->assertNotHeldByATour($ordered, $taskOrTour);
+                }
+
+                // Already gone, or never here. Nothing to do, and nothing to
+                // report: a client asking twice, or asking about a task that
+                // has moved on, is not an error.
+                continue;
+            }
+
+            $taskList->getItems()->removeElement($item);
+            $item->setParent(null);
+
+            // Nothing syncs `assignedTo` back from the list, so a task left
+            // assigned here would be assigned to a courier whose list it is
+            // not on — the "invisible task" state that #874 and
+            // `Version20260901090000` had to repair.
+            foreach ($this->tasksOf($taskOrTour) as $task) {
+                $task->unassign();
+            }
+
+            $removed[] = $item;
+        }
+
+        if (0 === count($removed)) {
+            return;
+        }
+
+        $remaining = array_values(array_filter(
+            $ordered,
+            fn (Item $item) => !in_array($item, $removed, true)
+        ));
+
+        foreach ($remaining as $index => $item) {
+            $item->setPosition($index);
+        }
+    }
+
+    /**
+     * @param Task|Tour $taskOrTour
+     *
+     * @throws ItemBelongsToTourException
+     */
+    public function removeItem(TaskList $taskList, $taskOrTour): void
+    {
+        $this->removeItems($taskList, [$taskOrTour]);
+    }
+
+    /**
+     * A task on the list through a tour is not an item of the list, so there
+     * is nothing here to remove. Silently doing nothing would read to the
+     * dispatcher as the board ignoring them, so say what to do instead.
+     *
+     * @param Item[] $items
+     */
+    private function assertNotHeldByATour(array $items, Task $task): void
+    {
+        foreach ($items as $item) {
+            $tour = $item->getTour();
+
+            if (null === $tour) {
+                continue;
+            }
+
+            if (in_array($task, $tour->getTasks(), true)) {
+                throw new ItemBelongsToTourException(sprintf(
+                    'Task %d is on this list through tour %d; change the tour instead',
+                    $task->getId(),
+                    $tour->getId()
+                ));
+            }
+        }
+    }
+
+    /**
+     * The tasks a list item stands for: a tour brings all of its own.
+     *
+     * @param Task|Tour $taskOrTour
+     *
+     * @return Task[]
+     */
+    private function tasksOf($taskOrTour): array
+    {
+        return $taskOrTour instanceof Tour ? $taskOrTour->getTasks() : [$taskOrTour];
+    }
+
+    /**
+     * An item for this task or tour, taken off whatever list currently holds
+     * it so that it cannot end up on two.
+     */
+    private function takeFromCurrentList(TaskList $taskList, $taskOrTour): Item
+    {
+        if ($taskOrTour instanceof Tour) {
+            // A tour travels as a single item, and nothing syncs its
+            // membership from its tasks the way `EntityChangeSetProcessor`
+            // does for a task. Re-parent the existing item rather than
+            // deleting and recreating it: `task_list_item.tour_id` is unique,
+            // and Doctrine writes inserts before deletes.
+            $item = $taskOrTour->getTaskListItem();
+
+            if (null !== $item) {
+                return $item;
+            }
+
+            $item = new Item();
+            $item->setTour($taskOrTour);
+
+            return $item;
+        }
+
+        // `EntityChangeSetProcessor` takes the task off the previous courier's
+        // list when `assignedTo` changes, but it sees no change when the task
+        // merely moves between two days of the *same* courier, so that case is
+        // handled here.
+        $currentList = $this->entityManager->getRepository(TaskList::class)
+            ->findTaskListContainingTask($taskOrTour, $taskList->getCourier());
+
+        if (null !== $currentList && $currentList !== $taskList) {
+            $currentList->removeTask($taskOrTour);
+        }
+
+        $item = new Item();
+        $item->setTask($taskOrTour);
+
+        return $item;
+    }
+
+    /**
+     * The item on this list standing for a given task or tour, if any.
+     *
+     * @param Item[] $items
+     */
+    private function findItemFor(array $items, $taskOrTour): ?Item
+    {
+        foreach ($items as $item) {
+            if ($taskOrTour instanceof Tour) {
+                if ($item->getTour() === $taskOrTour) {
+                    return $item;
+                }
+
+                continue;
+            }
+
+            if ($item->getTask() === $taskOrTour) {
+                return $item;
+            }
+        }
+
+        return null;
     }
 
     /**

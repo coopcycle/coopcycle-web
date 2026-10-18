@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { Button, Flex, Select, Input } from 'antd';
 import {
   CloseOutlined,
@@ -6,7 +6,7 @@ import {
 import { createRoot } from 'react-dom/client'
 import _ from 'lodash'
 
-import { configureStore, createSlice, createAction, createReducer } from '@reduxjs/toolkit'
+import { configureStore, createSlice } from '@reduxjs/toolkit'
 import { Provider, useSelector, useDispatch } from 'react-redux'
 
 import { Navigation, Manipulation } from 'swiper/modules'

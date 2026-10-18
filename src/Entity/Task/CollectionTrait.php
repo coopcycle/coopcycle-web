@@ -66,4 +66,20 @@ trait CollectionTrait
     {
         return $this->updatedAt;
     }
+
+    /**
+     * Gedmo owns this field on an ordinary update, but a collection whose
+     * items changed has no changeset of its own: adding or removing an item
+     * touches the item rows, not this one. Doctrine would then issue no
+     * UPDATE at all, leaving both `updatedAt` and the optimistic locking
+     * version stale while the collection's contents have in fact changed.
+     *
+     * @see \AppBundle\Doctrine\EventSubscriber\TaskCollectionVersionSubscriber
+     */
+    public function setUpdatedAt(\DateTime $updatedAt)
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
 }

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useCallback, createContext, useCont
 import { createRoot } from 'react-dom/client';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Form, Modal, Typography, Input, Popconfirm } from 'antd';
+import { Button, Form, Modal, Input, Popconfirm } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
 // https://blog.logrocket.com/implement-pragmatic-drag-drop-library-guide/

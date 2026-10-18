@@ -133,6 +133,13 @@ services:
     resource: '../src/Action/*'
     tags: ['controller.service_arguments']
 
+  # Same channel again, so the count of who still writes whole lists can be
+  # read against the unassignment warnings it explains.
+  AppBundle\Action\TaskList\SetItems:
+    tags:
+      - { name: controller.service_arguments }
+      - { name: monolog.logger, channel: coopcycle.logistics }
+
   AppBundle\EventSubscriber\:
     resource: '../src/EventSubscriber/*'
 
@@ -163,6 +170,12 @@ services:
 
   AppBundle\Api\State\:
     resource: '../src/Api/State/*'
+
+  # Same channel as the other dispatch logs, so the If-Match coverage signal
+  # sits beside the warnings it is meant to be read against.
+  AppBundle\Api\State\TourProcessor:
+    tags:
+      - { name: monolog.logger, channel: coopcycle.logistics }
 
   AppBundle\Api\Filter\:
     resource: '../src/Api/Filter/*'
@@ -397,6 +410,10 @@ services:
       $templating: '@twig'
     tags:
       - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+
+  AppBundle\EventListener\DeprecatedOperationListener:
+    tags:
+      - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
 
   AppBundle\EventListener\DeauthenticatedListener:
     tags:
@@ -1020,6 +1037,10 @@ services:
   AppBundle\Doctrine\EventSubscriber\TaskListSubscriber:
     tags:
       - { name: monolog.logger, channel: coopcycle.logistics }
+
+  # Runs last (priority 16, see the attribute): the subscribers above may still
+  # add or remove items, and the version has to account for everything they did.
+  AppBundle\Doctrine\EventSubscriber\TaskCollectionVersionSubscriber: ~
 
   AppBundle\Doctrine\EventSubscriber\OrganizationSubscriber: ~
 

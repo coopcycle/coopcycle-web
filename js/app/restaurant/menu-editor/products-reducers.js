@@ -1,6 +1,5 @@
 import {
   fetchProductsSuccess,
-  updateSectionProducts,
 } from './actions'
 
 const initialState = {

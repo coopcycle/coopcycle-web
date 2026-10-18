@@ -257,3 +257,18 @@ Sylius\Component\Promotion\Model\PromotionCoupon:
       groups: ['promotion']
     updatedAt:
       groups: ['promotion']
+
+# The version a client writes back as `If-Match`. Declared here rather than as
+# an attribute because the property lives in a shared trait, and the two
+# collections are read under different groups.
+# See https://github.com/coopcycle/coopcycle-web/issues/5372
+AppBundle\Entity\TaskList:
+  attributes:
+    version:
+      groups: ['task_list']
+
+AppBundle\Entity\Tour:
+  attributes:
+    version:
+      groups: ['task_collection', 'tour']
+

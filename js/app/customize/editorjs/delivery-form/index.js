@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useState, useRef } from 'react'
 import { createRoot } from 'react-dom/client'
 
 import { Select } from 'antd';

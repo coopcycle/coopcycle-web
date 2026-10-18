@@ -51,7 +51,7 @@ const PricingRule = ({
   const { t } = useTranslation();
   const [localRule, setLocalRule] = useState(rule);
 
-  const [priceObj, setPriceObj] = useState(() => {
+  const [priceObj] = useState(() => {
     return rule.priceAst
       ? parsePriceAST(rule.priceAst, rule.price)
       : new FixedPrice(0);

@@ -46,6 +46,7 @@ Feature: Dispatch
             "@id":"@string@.startsWith('/api/task_lists')",
             "id": "@integer@",
             "@type":"TaskList",
+            "version":@integer@,
             "items":@array@,
             "distance":0,
             "duration":0,
@@ -62,6 +63,7 @@ Feature: Dispatch
             "@id":"@string@.startsWith('/api/task_lists')",
             "id": "@integer@",
             "@type":"TaskList",
+            "version":@integer@,
             "items":@array@,
             "distance":0,
             "duration":0,
@@ -110,6 +112,7 @@ Feature: Dispatch
           {
             "@id":"/api/task_lists/1",
             "@type":"TaskList",
+            "version":@integer@,
             "id":1,
             "items":[
               "/api/tasks/1"
@@ -128,6 +131,7 @@ Feature: Dispatch
           {
             "@id":"/api/task_lists/4",
             "@type":"TaskList",
+            "version":@integer@,
             "id":4,
             "items":[
               "/api/tasks/7"
@@ -426,6 +430,7 @@ Feature: Dispatch
           "@context":"/api/contexts/TaskList",
           "@id":"/api/task_lists/3",
           "@type":"TaskList",
+          "version":@integer@,
           "id":3,
           "items":[
             "/api/tasks/3",
@@ -500,6 +505,7 @@ Feature: Dispatch
             "@id":"/api/task_lists/1",
             "id": "@integer@",
             "@type":"TaskList",
+            "version":@integer@,
             "items":[
               {
                 "@id":"/api/tasks/1",
@@ -524,6 +530,7 @@ Feature: Dispatch
             "@id":"/api/task_lists/2",
             "id": "@integer@",
             "@type":"TaskList",
+            "version":@integer@,
             "items":[
               {
                 "@id":"/api/tasks/3",
@@ -749,6 +756,7 @@ Feature: Dispatch
          "@context":"/api/contexts/Tour",
          "@id":"@string@.startsWith('/api/tours')",
          "@type":"Tour",
+         "version":@integer@,
          "name":"Monday tour",
          "date": "2018-02-02",
          "items":[
@@ -790,6 +798,7 @@ Feature: Dispatch
          "@context":"/api/contexts/Tour",
          "@id":"/api/tours/1",
          "@type":"Tour",
+         "version":@integer@,
          "name":"Monday tour",
          "date": "2018-03-02",
          "items":[
@@ -833,6 +842,7 @@ Feature: Dispatch
          "@context":"/api/contexts/Tour",
          "@id":"/api/tours/4",
          "@type":"Tour",
+         "version":@integer@,
          "name":"Monday tour",
          "date": "2018-03-02",
          "items":[

@@ -21,6 +21,12 @@ api_platform:
         ApiPlatform\Validator\Exception\ValidationException: 400
         AppBundle\Api\Exception\BadRequestHttpException: 400
         AppBundle\Exception\LoopeatInsufficientStockException: 400
+        # A versioned collection that changed under a writer. TourProcessor
+        # raises this from lock() when the If-Match is already behind, but
+        # Doctrine also raises it at flush time, for a write that landed after
+        # the check and before the UPDATE. Both have to reach the client as
+        # the same conflict, or the dashboard will not know to refetch.
+        Doctrine\ORM\OptimisticLockException: 409
     # see https://github.com/api-platform/core/pull/2721
     messenger:
         enabled: false

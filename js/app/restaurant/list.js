@@ -1,7 +1,6 @@
 import Swiper from 'swiper'
 import { Navigation } from 'swiper/modules'
 
-import  _ from 'lodash'
 
 import 'swiper/css';
 import 'swiper/css/navigation'

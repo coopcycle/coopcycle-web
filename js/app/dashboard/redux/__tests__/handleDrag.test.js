@@ -5,6 +5,22 @@ import { setIsTourDragging } from '../../../coopcycle-frontend-js/logistics/redu
 import { createStoreFromPreloadedState } from '../store';
 import { selectSelectedTasks } from '../selectors';
 
+/**
+ * What `addTaskListItems` was last called with. The drag handler now names
+ * the items it is moving and where they land, instead of handing over a
+ * rewritten copy of the whole list, so that is what these assert on.
+ */
+function lastAssignment(mock) {
+  const [ username, items, position, relatedChanges ] = mock.mock.calls[mock.mock.calls.length - 1]
+
+  return {
+    username,
+    items: items.map(item => item['@id'] || item),
+    position,
+    relatedChanges,
+  }
+}
+
 describe('handleDragEnd', () => {
     let store = createStoreFromPreloadedState(storeFixture)
 
@@ -22,14 +38,12 @@ describe('handleDragEnd', () => {
 
       expect(mockModifyTaskList).toHaveBeenCalledTimes(1)
 
-      expect(mockModifyTaskList).toHaveBeenLastCalledWith(
-        "admin",
-        [
-          '/api/tours/114',
-          '/api/tours/111',
-        ],
-        []
-      )
+      expect(lastAssignment(mockModifyTaskList)).toEqual({
+        username: 'admin',
+        items: [ '/api/tours/114' ],
+        position: 0,
+        relatedChanges: [],
+      })
 
       expect(mockModifyTour).toHaveBeenCalledTimes(0)
 
@@ -48,14 +62,12 @@ describe('handleDragEnd', () => {
 
       handleDragEnd(result, mockModifyTaskList, mockModifyTour)(dispatch, store.getState)
 
-      expect(mockModifyTaskList).toHaveBeenLastCalledWith(
-        "admin",
-        [
-          '/api/tours/111',
-          '/api/tours/114',
-        ],
-        []
-      )
+      expect(lastAssignment(mockModifyTaskList)).toEqual({
+        username: 'admin',
+        items: [ '/api/tours/114' ],
+        position: 1,
+        relatedChanges: [],
+      })
       expect(mockModifyTour).toHaveBeenCalledTimes(0)
 
     })
@@ -83,14 +95,12 @@ describe('handleDragEnd', () => {
 
       expect(mockModifyTaskList).toHaveBeenCalledTimes(2)
 
-      expect(mockModifyTaskList).toHaveBeenLastCalledWith(
-        "admin",
-        [
-          '/api/tours/111',
-          '/api/tours/114',
-        ],
-        []
-      )
+      expect(lastAssignment(mockModifyTaskList)).toEqual({
+        username: 'admin',
+        items: [ '/api/tours/114' ],
+        position: 1,
+        relatedChanges: [],
+      })
 
       expect(mockModifyTour).toHaveBeenCalledTimes(0)
 
@@ -134,14 +144,12 @@ describe('handleDragEnd', () => {
 
       handleDragEnd(result, mockModifyTaskList, mockModifyTour)(dispatch, store.getState)
 
-      expect(mockModifyTaskList).toHaveBeenLastCalledWith(
-        "admin",
-        [
-          '/api/tours/111',
-          '/api/tasks/736'
-        ],
-        []
-      )
+      expect(lastAssignment(mockModifyTaskList)).toEqual({
+        username: 'admin',
+        items: [ '/api/tasks/736' ],
+        position: 1,
+        relatedChanges: [],
+      })
       expect(mockModifyTour).toHaveBeenCalledTimes(0)
 
 
@@ -320,15 +328,12 @@ describe('handleDragEnd', () => {
 
       handleDragEnd(result, mockModifyTaskList, mockModifyTour)(dispatch, store.getState)
 
-      expect(mockModifyTaskList).toHaveBeenCalledWith(
-        "admin",
-        [
-         '/api/tasks/733',
-         '/api/tasks/732',
-         '/api/tours/111'
-        ],
-        []
-      )
+      expect(lastAssignment(mockModifyTaskList)).toEqual({
+        username: 'admin',
+        items: [ '/api/tasks/733', '/api/tasks/732' ],
+        position: 0,
+        relatedChanges: [],
+      })
     })
   })
 
@@ -459,11 +464,12 @@ describe('handleDragEnd - edge cases', () => {
       mockModifyTaskList
     )(dispatch, store.getState)
 
-    expect(mockModifyTaskList).toHaveBeenCalledWith(
-      'admin',
-      ['/api/tours/111', '/api/tasks/729'],
-      []
-    )
+    expect(lastAssignment(mockModifyTaskList)).toEqual({
+      username: 'admin',
+      items: [ '/api/tasks/729' ],
+      position: 1,
+      relatedChanges: [],
+    })
   })
 
   it('should remove a task from a tour when dragged to unassigned', () => {
@@ -540,15 +546,15 @@ describe('handleDragEnd - edge cases', () => {
       mockModifyTaskList
     )(dispatch, store.getState)
 
-    expect(mockModifyTaskList).toHaveBeenCalledWith(
-      'admin',
-      [
+    expect(lastAssignment(mockModifyTaskList)).toEqual({
+      username: 'admin',
+      items: [
         '/api/tasks/735', // pickup must come first
         '/api/tasks/734', // dropoff after its pickup
-        '/api/tours/111',
       ],
-      []
-    )
+      position: 0,
+      relatedChanges: [],
+    })
   })
 
   it('should move a task from a courier tasklist into a tour', () => {
@@ -649,16 +655,12 @@ describe('handleDragEnd, moving several items at once', () => {
       mockModifyTaskList
     )(dispatch, store.getState)
 
-    expect(mockModifyTaskList).toHaveBeenCalledWith(
-      'admin',
-      [
-        '/api/tasks/738',
-        '/api/tasks/736',
-        '/api/tasks/737',
-        '/api/tours/111',
-      ],
-      []
-    )
+    expect(lastAssignment(mockModifyTaskList)).toEqual({
+      username: 'admin',
+      items: [ '/api/tasks/736', '/api/tasks/737' ],
+      position: 1,
+      relatedChanges: [],
+    })
   })
 
   it('should insert a multiple selection at the dropped index inside a tour', () => {
