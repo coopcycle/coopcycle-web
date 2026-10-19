@@ -246,7 +246,10 @@ export function updateSection(sectionId, name, description) {
 
       dispatch(setIsLoading(true))
 
-      const { response, error } = await httpClient.put(section['@id'], newSection);
+      const { response, error } = await httpClient.put(section['@id'], {
+        name,
+        description,
+      });
 
       if (error) {
         console.error(error);

@@ -14,10 +14,11 @@ final class MenuInput
     public $description;
 
     /**
-     * @var Product[]
+     * @var Product[]|null Null when the payload does not contain the key,
+     *                     meaning the products must be left untouched.
      */
     #[Groups(["restaurant_menu"])]
-    public $products = [];
+    public ?array $products = null;
 
     #[Groups(["restaurant_menus"])]
     public $sections = [];

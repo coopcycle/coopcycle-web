@@ -42,38 +42,44 @@ class RestaurantMenuSectionProcessor implements ProcessorInterface
             /** @var Taxon */
             $section = $this->sectionProvider->provide($operation, $uriVariables, $context);
 
-            // Optimized version in raw SQL
+            // When the payload does not contain any "products" key,
+            // we only update the section itself, and leave the products untouched
+            if (null !== $data->products) {
 
-            // 1. Remove the product from existing sections
-            $qb = $this->entityManager->getRepository(ProductTaxon::class)->createQueryBuilder('tp');
-            $qb
-                ->delete()
-                ->andWhere('tp.taxon != :section')
-                ->andWhere('tp.product IN (:products)')
-                ->setParameter('section', $section)
-                ->setParameter('products', array_map(fn ($p) => $p->getId(), $data->products));
+                // Optimized version in raw SQL
 
-            $qb->getQuery()->execute();
+                // 1. Remove the product from existing sections
+                $qb = $this->entityManager->getRepository(ProductTaxon::class)->createQueryBuilder('tp');
+                $qb
+                    ->delete()
+                    ->andWhere('tp.taxon != :section')
+                    ->andWhere('tp.product IN (:products)')
+                    ->setParameter('section', $section)
+                    ->setParameter('products', array_map(fn ($p) => $p->getId(), $data->products));
 
-            // 2. Clear the section
-            // We clear the section to make sure positions are right
-            $qb = $this->entityManager->getRepository(ProductTaxon::class)->createQueryBuilder('tp');
-            $qb
-                ->delete()
-                ->andWhere('tp.taxon = :section')
-                ->setParameter('section', $section);
+                $qb->getQuery()->execute();
 
-            $qb->getQuery()->execute();
+                // 2. Clear the section
+                // We clear the section to make sure positions are right
+                $qb = $this->entityManager->getRepository(ProductTaxon::class)->createQueryBuilder('tp');
+                $qb
+                    ->delete()
+                    ->andWhere('tp.taxon = :section')
+                    ->setParameter('section', $section);
 
-            foreach ($data->products as $position => $product) {
-                $section->addProduct($product, $position);
+                $qb->getQuery()->execute();
+
+                foreach ($data->products as $position => $product) {
+                    $section->addProduct($product, $position);
+                }
             }
 
             if (!empty($data->name)) {
                 $section->setName($data->name);
             }
 
-            if (!empty($data->description)) {
+            // An empty string is a valid value here, it means the description is removed
+            if (null !== $data->description) {
                 $section->setDescription($data->description);
             }
 
