@@ -121,7 +121,9 @@ trait AdminDashboardTrait
             ->createQueryBuilder('u')
             // The id so the dashboard can name a courier to the API; the
             // username because that is what it keys task lists by.
-            ->select('u.id', 'u.username')
+            // Keep disabled couriers available for existing task lists,
+            // but let the dashboard exclude them from assignment choices.
+            ->select('u.id', 'u.username', 'u.enabled')
             ->where('u.roles LIKE :roles')
             ->orderBy('u.username', 'ASC')
             ->setParameter('roles', '%ROLE_COURIER%')

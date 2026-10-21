@@ -345,15 +345,18 @@ export const storeFixture = {
       couriersList: [
         {
           id: 1,
-          username: 'admin'
+          username: 'admin',
+          enabled: true,
         },
         {
           id: 2,
-          username: 'bot_1'
+          username: 'bot_1',
+          enabled: true,
         },
         {
           id: 3,
-          username: 'bot_10'
+          username: 'bot_10',
+          enabled: true,
         },
       ],
      },
