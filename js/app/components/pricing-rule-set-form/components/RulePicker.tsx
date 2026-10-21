@@ -4,16 +4,21 @@ import { withTranslation } from 'react-i18next';
 import RulePickerLine from './RulePickerLine';
 import { linesToString } from '../../../delivery/pricing/expression-builder';
 import { parseAST } from '../../../delivery/pricing/pricing-rule-parser';
+import { PricingRuleCondition } from '../types/PricingRuleType';
 
 type Props = {
   ruleTarget: string;
   expressionAST: object | null;
-  onExpressionChange: (expression: string) => void;
+  initialLines?: PricingRuleCondition[];
+  onExpressionChange: (
+    expression: string,
+    lines: PricingRuleCondition[],
+  ) => void;
   t: (key: string) => string;
 };
 
 type State = {
-  lines: Array<{ left: string; operator: string; right: string | string[] }>;
+  lines: PricingRuleCondition[];
   rev: number;
 };
 
@@ -22,7 +27,9 @@ class RulePicker extends React.Component<Props, State> {
     super(props);
 
     this.state = {
-      lines: this.props.expressionAST ? parseAST(this.props.expressionAST) : [],
+      lines:
+        this.props.initialLines ??
+        (this.props.expressionAST ? parseAST(this.props.expressionAST) : []),
       // This is used as a "revision counter",
       // to create an accurate React key prop
       rev: 0,
@@ -66,7 +73,10 @@ class RulePicker extends React.Component<Props, State> {
   }
 
   componentDidUpdate() {
-    this.props.onExpressionChange(linesToString(this.state.lines));
+    this.props.onExpressionChange(
+      linesToString(this.state.lines),
+      this.state.lines,
+    );
   }
 
   render() {

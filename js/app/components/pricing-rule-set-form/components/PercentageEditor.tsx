@@ -21,7 +21,7 @@ type Props = {
 
 export default ({ defaultValue, onChange }: Props) => {
   const [percentage, setPercentage] = useState(
-    defaultValue.percentage || 10000,
+    defaultValue.percentage ?? 10000,
   ); // 10000 = 100.00%
 
   const { t } = useTranslation();

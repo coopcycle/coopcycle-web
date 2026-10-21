@@ -7,6 +7,7 @@ import {
 } from '@hello-pangea/dnd';
 import PricingRule from './PricingRule';
 import { PricingRule as PricingRuleType } from '../../../api/types';
+import { PricingRuleEditorState } from '../types/PricingRuleType';
 
 type Props = {
   rules: PricingRuleType[];
@@ -16,6 +17,8 @@ type Props = {
   getGlobalIndexById: (ruleId: string) => number;
   updateRule: (ruleId: string, updatedRule: PricingRuleType) => void;
   removeRule: (ruleId: string) => void;
+  duplicateRule: (ruleId: string, editorState: PricingRuleEditorState) => void;
+  initialEditorStates: Record<string, PricingRuleEditorState>;
   ruleValidationErrors: { [ruleId: string]: string[] };
   isManualSupplement?: boolean;
 };
@@ -28,6 +31,8 @@ const DraggableRulesList = ({
   getGlobalIndexById,
   updateRule,
   removeRule,
+  duplicateRule,
+  initialEditorStates,
   ruleValidationErrors,
   isManualSupplement = false,
 }: Props) => {
@@ -81,6 +86,10 @@ const DraggableRulesList = ({
                           updateRule(ruleId, updatedRule)
                         }
                         onRemove={() => removeRule(ruleId)}
+                        onDuplicate={editorState =>
+                          duplicateRule(ruleId, editorState)
+                        }
+                        initialEditorState={initialEditorStates[ruleId]}
                         validationErrors={ruleValidationErrors[ruleId] || []}
                         dragHandleProps={provided.dragHandleProps}
                         isDragging={snapshot.isDragging}

@@ -274,6 +274,9 @@ export class PercentagePrice extends Price {
 }
 
 export class PriceRange extends Price {
+  /**
+   * @param {'packages.totalVolumeUnits()' | 'delivery.packages.totalVolumeUnits()' | null} [multiplier]
+   */
   constructor(attribute, price, step, threshold, multiplier = null) {
     super()
     this.attribute = attribute

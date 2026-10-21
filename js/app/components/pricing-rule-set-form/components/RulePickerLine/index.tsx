@@ -135,7 +135,7 @@ class RulePickerLine extends React.Component<Props, State> {
 
   handleFirstBoundChange(ev: React.ChangeEvent<HTMLInputElement>): void {
     const { type } = this.state;
-    let value = this.state.value as string[];
+    let value = [...(this.state.value as string[])];
     value[0] = (
       parseFloat(ev.target.value) * (isK(type) ? 1000 : 1)
     ).toString();
@@ -144,7 +144,7 @@ class RulePickerLine extends React.Component<Props, State> {
 
   handleSecondBoundChange(ev: React.ChangeEvent<HTMLInputElement>): void {
     const { type } = this.state;
-    let value = this.state.value as string[];
+    let value = [...(this.state.value as string[])];
     value[1] = (
       parseFloat(ev.target.value) * (isK(type) ? 1000 : 1)
     ).toString();
