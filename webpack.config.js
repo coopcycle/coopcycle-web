@@ -25,6 +25,7 @@ Encore
   .addEntry('admin-foodtech-dashboard', './js/app/admin/foodtech/dashboard.js')
   .addEntry('admin-version', './js/app/admin/version.js')
   .addEntry('admin-referral-program', './js/app/admin/referral-program.js')
+  .addEntry('admin-loyalty-program', './js/app/admin/loyalty-program.js')
   .addEntry('business-account', './js/app/business-account/index.js')
   .addEntry('common', './js/app/common.js')
   .addEntry('customize-form', './js/app/customize/form.js')

@@ -1,0 +1,96 @@
+{% extends "admin.html.twig" %}
+
+{% block prepare_title %}
+  {{ add_title_prefix('loyalty.title'|trans) }}
+{% endblock %}
+
+{% block breadcrumb %}
+<li><a href="{{ path('admin_loyalty_program') }}">{% trans %}loyalty.title{% endtrans %}</a></li>
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('admin-loyalty-program') }}
+{% endblock %}
+
+{% block content %}
+
+{% form_theme active_form 'bootstrap_3_layout.html.twig' %}
+<div class="panel panel-default" style="margin-bottom:16px;">
+  <div class="panel-body">
+    {{ form_start(active_form, { attr: { id: 'loyalty-program-active-form' } }) }}
+      <div class="d-flex align-items-center" style="gap:8px;">
+        {{ form_widget(active_form.active) }}
+        <strong>{% trans %}loyalty.program.active_label{% endtrans %}</strong>
+      </div>
+      <p class="text-muted" style="margin:4px 0 0;">{% trans %}loyalty.program.active_help{% endtrans %}</p>
+    {{ form_end(active_form) }}
+  </div>
+</div>
+
+{% if not is_active %}
+<div class="alert alert-warning" role="alert">
+  <i class="fa fa-exclamation-triangle"></i> {% trans %}loyalty.program.inactive_warning{% endtrans %}
+</div>
+{% endif %}
+
+{% form_theme settings_form 'bootstrap_3_layout.html.twig' %}
+<div class="panel panel-default">
+  <div class="panel-heading" style="cursor:pointer;" data-toggle="collapse" data-target="#loyalty-settings-panel">
+    <i class="fa fa-sliders"></i> {% trans %}loyalty.settings.configure{% endtrans %}
+    <span class="pull-right"><i class="fa fa-chevron-down"></i></span>
+  </div>
+  <div id="loyalty-settings-panel" class="panel-collapse collapse in">
+    <div class="panel-body">
+      <div class="alert alert-info" role="alert">
+        <h4><i class="fa fa-info-circle"></i> {% trans %}loyalty.settings.info.title{% endtrans %}</h4>
+        <p style="margin:0;">{% trans %}loyalty.settings.info.body{% endtrans %}</p>
+      </div>
+      {{ form_start(settings_form) }}
+        {{ form_widget(settings_form) }}
+        <button type="submit" class="btn btn-primary">{% trans %}basics.save{% endtrans %}</button>
+      {{ form_end(settings_form) }}
+    </div>
+  </div>
+</div>
+
+{% form_theme rewards_form 'bootstrap_3_layout.html.twig' %}
+<div class="panel panel-default">
+  <div class="panel-heading" style="cursor:pointer;" data-toggle="collapse" data-target="#loyalty-rewards-panel">
+    <i class="fa fa-gift"></i> {% trans %}loyalty.rewards.configure{% endtrans %}
+    <span class="pull-right"><i class="fa fa-chevron-down"></i></span>
+  </div>
+  <div id="loyalty-rewards-panel" class="panel-collapse collapse in">
+    <div class="panel-body">
+      <div class="alert alert-info" role="alert">
+        <h4><i class="fa fa-info-circle"></i> {% trans %}loyalty.rewards.info.title{% endtrans %}</h4>
+        <p style="margin:0;">{% trans %}loyalty.rewards.info.body{% endtrans %}</p>
+      </div>
+
+      {{ form_start(rewards_form) }}
+        <div id="loyalty-rewards-list" data-prototype="{{ form_widget(rewards_form.rewards.vars.prototype)|e('html_attr') }}">
+          {% for reward in rewards_form.rewards %}
+            <div class="loyalty-reward-entry panel panel-default">
+              <div class="panel-body">
+                {{ form_widget(reward) }}
+                <button type="button" class="btn btn-sm btn-danger delete-reward-entry">
+                  <i class="fa fa-trash"></i> {% trans %}basics.delete{% endtrans %}
+                </button>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <button type="button" id="loyalty-rewards-add" class="btn btn-default">
+          <i class="fa fa-plus"></i> {% trans %}loyalty.rewards.add{% endtrans %}
+        </button>
+        <button type="submit" class="btn btn-primary">{% trans %}basics.save{% endtrans %}</button>
+      {{ form_end(rewards_form) }}
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+  {{ encore_entry_script_tags('admin-loyalty-program') }}
+{% endblock %}
