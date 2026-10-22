@@ -77,6 +77,11 @@ services:
       $cashEnabled: '%env(bool:CASH_ON_DELIVERY_ENABLED)%'
     tags: [ form.type ]
 
+  AppBundle\Form\Marketing\CampaignType:
+    arguments:
+      $promotionCouponRepository: '@sylius.repository.promotion_coupon'
+    tags: [ form.type ]
+
   AppBundle\Form\TaskType:
     tags: [ form.type ]
 

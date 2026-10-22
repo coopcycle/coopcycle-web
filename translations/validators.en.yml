@@ -90,3 +90,4 @@ incident.metadata.suggestion.invalid: The suggestion field in metadata is not va
 store.packages_required.package_set_required: A package set must be selected when packages are required
 
 failure_reason.code.unique: This code is already in use
+marketing.campaign.field.promotionCoupon.unknown: "No promotion with this code. Check it under Promotions."
