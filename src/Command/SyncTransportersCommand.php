@@ -60,6 +60,10 @@ class SyncTransportersCommand extends Command {
     /** @var array<string,string> */
     private array $packageMapping = [];
 
+    //TODO: Temporary, for a special case in Paris
+    /** @var array<int,string> */
+    private array $postalCodes = [];
+
     private ?string $companyLegalName;
     private ?string $companyLegalID;
 
@@ -187,6 +191,7 @@ class SyncTransportersCommand extends Command {
             $this->importFromPoint->setPackageMapping(
                 $this->resolvePackageMapping($this->packageMapping)
             );
+            $this->postalCodes = array_map(fn($c) => (string) $c, $config['postal_codes'] ?? []);
 
             if (isset($config['sync']['uri'])) {
                 $inFs = $outFs = $this->initTransporterSyncOptions($config['sync']);
@@ -314,15 +319,17 @@ class SyncTransportersCommand extends Command {
     {
         $imported = 0;
         $skipped = 0;
+        $filtered = 0;
         $failedFiles = 0;
 
         // Each file is imported in isolation so a single malformed or
         // otherwise unimportable file cannot abort the whole batch.
         foreach ($sync->pull() as $content) {
             try {
-                [$imp, $skp] = $this->importFileContent($content);
+                [$imp, $skp, $flt] = $this->importFileContent($content);
                 $imported += $imp;
                 $skipped += $skp;
+                $filtered += $flt;
             } catch (\Throwable $e) {
                 $failedFiles++;
                 $this->output->writeln(sprintf(
@@ -372,7 +379,7 @@ class SyncTransportersCommand extends Command {
             );
         }
 
-        $summary = "Done syncing, imported $imported tasks ($skipped already-imported, $failedFiles file(s) failed)";
+        $summary = "Done syncing, imported $imported tasks ($skipped already-imported, $filtered filtered out by postal code, $failedFiles file(s) failed)";
         $this->output->writeln($summary);
         $this->transporterLogger->info($summary, ['transporter' => $this->transporter]);
     }
@@ -380,7 +387,7 @@ class SyncTransportersCommand extends Command {
     /**
      * Imports a single EDIFACT file's tasks.
      *
-     * @return array{0:int,1:int} [imported, skipped]
+     * @return array{0:int,1:int,2:int} [imported, skipped, filtered]
      * @throws FilesystemException
      * @throws TransporterException
      */
@@ -422,6 +429,7 @@ class SyncTransportersCommand extends Command {
 
         $imported = 0;
         $skipped = 0;
+        $filtered = 0;
         foreach ($messages as $tasks) {
             foreach ($tasks->getTasks() as $task) {
                 // Idempotency: skip tasks already imported for this transporter
@@ -437,27 +445,30 @@ class SyncTransportersCommand extends Command {
                 }
 
                 $edifactMessage = $this->storeInboundEdi($task, $filename);
-                $this->importTask($task, $edifactMessage);
-                $imported++;
+                if ($this->importTask($task, $edifactMessage)) {
+                    $imported++;
+                } else {
+                    $filtered++;
+                }
             }
         }
 
-        return [$imported, $skipped];
+        return [$imported, $skipped, $filtered];
     }
 
-    private function importTask(Point $point, EDIFACTMessage $edi): void {
-        match($point->getType()) {
+    private function importTask(Point $point, EDIFACTMessage $edi): bool {
+        return match($point->getType()) {
             INOVERTMessageType::SCONTR => $this->importScontrTask($point, $edi),
             INOVERTMessageType::PICKUP => $this->importPickupTask($point, $edi),
             INOVERTMessageType::DISPOR => $this->importDisporTask($point, $edi),
         };
     }
 
-    private function importDisporTask(Point $point, EDIFACTMessage $edi): void {
-        $this->importScontrTask($point, $edi);
+    private function importDisporTask(Point $point, EDIFACTMessage $edi): bool {
+        return $this->importScontrTask($point, $edi);
     }
 
-    private function importScontrTask(Point $point, EDIFACTMessage $edi): void {
+    private function importScontrTask(Point $point, EDIFACTMessage $edi): bool {
         if ($this->output->isVerbose()) {
             $this->debugPoint($point);
         }
@@ -468,6 +479,9 @@ class SyncTransportersCommand extends Command {
 
         // DROPOFF SETUP
         $dropoff = $this->importFromPoint->import($point, $edi);
+        if (!$this->isPostalCodeAllowed($dropoff, $point)) {
+            return false;
+        }
 
         $pickup->setNext($dropoff);
         $dropoff->setPrevious($pickup);
@@ -487,6 +501,8 @@ class SyncTransportersCommand extends Command {
         if (!$this->dryRun) {
             $this->persistShipment($delivery, $edi, $dropoff);
         }
+
+        return true;
     }
 
     /**
@@ -539,13 +555,16 @@ class SyncTransportersCommand extends Command {
         ]);
     }
 
-    private function importPickupTask(Point $point, EDIFACTMessage $edi): void {
+    private function importPickupTask(Point $point, EDIFACTMessage $edi): bool {
         if ($this->output->isVerbose()) {
             $this->debugPoint($point);
         }
 
         // PICKUP SETUP
         $pickup = $this->importFromPoint->import($point, $edi);
+        if (!$this->isPostalCodeAllowed($pickup, $point)) {
+            return false;
+        }
 
         // DROPOFF SETUP
         $dropoff = $this->importFromPoint
@@ -569,6 +588,36 @@ class SyncTransportersCommand extends Command {
         if (!$this->dryRun) {
             $this->persistShipment($delivery, $edi, $pickup);
         }
+
+        return true;
+    }
+
+    //TODO: Temporary, see $postalCodes
+    private function isPostalCodeAllowed(Task $task, Point $point): bool
+    {
+        if (empty($this->postalCodes)) {
+            return true;
+        }
+
+        // Checked on the geocoded address, the transporter often only sends the département
+        $postalCode = trim($task->getAddress()->getPostalCode() ?? '');
+
+        // Geocoding failed: import it anyway, the dispatcher reviews it from the incident
+        if (empty($postalCode)) {
+            return true;
+        }
+
+        foreach ($this->postalCodes as $prefix) {
+            if (str_starts_with($postalCode, $prefix)) {
+                return true;
+            }
+        }
+
+        $this->transporterLogger->info(
+            sprintf('Task %s filtered out by postal code "%s"', $point->getId(), $postalCode),
+            ['transporter' => $this->transporter]
+        );
+        return false;
     }
 
     /**
