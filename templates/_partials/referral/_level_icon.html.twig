@@ -1,0 +1,7 @@
+{# Shared bronze/silver/gold icon, used by both the admin dashboard and the
+   customer-facing referral page so the two stay visually consistent. #}
+{% macro icon(name, extraClass) %}
+  {%- set icons = { bronze: 'fa-shield', silver: 'fa-star', gold: 'fa-trophy' } -%}
+  {%- set colors = { bronze: '#cd7f32', silver: '#9ca3af', gold: '#eab308' } -%}
+  <i class="fa {{ icons[name]|default('fa-trophy') }}{% if extraClass %} {{ extraClass }}{% endif %}" style="color: {{ colors[name]|default('#999999') }};"></i>
+{% endmacro %}

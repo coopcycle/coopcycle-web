@@ -16,6 +16,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use AppBundle\Enum\Optin;
 use AppBundle\Form\Type\TermsAndConditionsAndPrivacyPolicyType;
@@ -27,6 +28,7 @@ class RegistrationType extends AbstractTypeExtension
     public function __construct(
         private SettingsManager $settingsManager,
         string $country,
+        private RequestStack $requestStack,
         private bool $splitTermsAndConditionsAndPrivacyPolicy = false)
     {
         $this->country = strtoupper($country);
@@ -62,6 +64,17 @@ class RegistrationType extends AbstractTypeExtension
         $builder->add('fullName', TextType::class, [
             'label' => 'form.fullName',
             'property_path' => 'customer.fullName',
+        ]);
+
+        // Unmapped: resolved against Customer::$referralCode by
+        // ReferralManager after registration succeeds, not a User/Customer
+        // field itself. Pre-filled from a "?ref=" link, but can also be
+        // typed in directly.
+        $builder->add('referralCode', TextType::class, [
+            'label' => 'form.registration.referralCode.label',
+            'required' => false,
+            'mapped' => false,
+            'data' => $this->requestStack->getCurrentRequest()?->query->get('ref'),
         ]);
 
         if ($this->splitTermsAndConditionsAndPrivacyPolicy) {

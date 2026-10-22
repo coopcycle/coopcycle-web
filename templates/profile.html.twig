@@ -44,6 +44,15 @@
             <span>{% trans %}profile.myAddresses{% endtrans %}</span>
           </a>
         </li>
+        {% if referral_program_active() %}
+        <li
+          class="{{ app.request.attributes.get('_route') == 'profile_referrals' ? 'active' : '' }}">
+          <a href="{{ path('profile_referrals') }}">
+            <i class="fa fa-gift mr-1"></i>
+            <span>{% trans %}profile.myReferrals{% endtrans %}</span>
+          </a>
+        </li>
+        {% endif %}
         {% if is_granted('ROLE_COURIER') %}
         <li
           class="{{ app.request.attributes.get('_route') == 'profile_tasks' ? 'active' : '' }}">

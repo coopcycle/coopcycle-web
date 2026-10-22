@@ -3,5 +3,10 @@
   <entity name="AppBundle\Entity\Sylius\PromotionCoupon" table="sylius_promotion_coupon">
     <field name="perCustomerUsageLimit" type="integer" column="per_customer_usage_limit" nullable="true"/>
     <field name="featured" type="boolean" column="featured"/>
+    <field name="internal" type="boolean" column="internal">
+      <options>
+        <option name="default">false</option>
+      </options>
+    </field>
   </entity>
 </doctrine-mapping>
