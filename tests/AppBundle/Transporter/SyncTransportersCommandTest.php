@@ -771,7 +771,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
 
         $commandTester->assertCommandIsSuccessful();
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('imported 1 tasks (1 already-imported, 0 file(s) failed)', $output);
+        $this->assertStringContainsString('imported 1 tasks (1 already-imported, 0 filtered out by postal code, 0 file(s) failed)', $output);
 
         $this->assertTrue($ediRepo->hasInbound('JOY0123456789', 'DBSCHENKER'));
         $deliveries = $this->entityManager->getRepository(Delivery::class)->findAll();
@@ -2433,6 +2433,127 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->assertWindowEqualsDay($expectedBefore, $pickup->getBefore());
         $this->assertWindowEqualsDay($expectedAfter, $dropoff->getAfter());
         $this->assertWindowEqualsDay($expectedBefore, $dropoff->getBefore());
+    }
+
+    public function testPostalCodeFilterSkipsOtherPostalCodes(): void
+    {
+        $this->params = $this->prophesize(ParameterBagInterface::class);
+        $this->params->get('transporters_config')
+            ->willReturn([
+                'TELIAE' => [
+                    'enabled' => true,
+                    'name' => 'Taliae test',
+                    'legal_name' => 'Taliae Testing Inc.',
+                    'legal_id' => '0000044',
+                    'postal_codes' => ['13'],
+                    'sync' => [
+                        'filemask' => self::FS_MASK_TALIAE,
+                        'uri' => $this->syncTaliaeFs,
+                    ]
+                ]
+            ]);
+
+        $this->syncTaliaeFs->write(
+            sprintf('to_%s/test.edi', self::FS_MASK_TALIAE),
+            self::EDI_DISPOR_SAMPLE
+        );
+
+        $command = $this->initCommand();
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(['transporter' => 'TELIAE']);
+
+        $commandTester->assertCommandIsSuccessful();
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('imported 0 tasks', $output);
+        $this->assertStringContainsString('1 filtered out by postal code', $output);
+
+        // The file is still acknowledged on the remote
+        $dir_list = $this->syncTaliaeFs->listContents(sprintf('to_%s', self::FS_MASK_TALIAE))->toArray();
+        $this->assertCount(0, $dir_list);
+
+        $this->assertCount(0, $this->entityManager->getRepository(Delivery::class)->findAll());
+        $this->assertCount(0, $this->entityManager->getRepository(EDIFACTMessage::class)->findAll());
+    }
+
+    public function testPostalCodeFilterImportsMatchingPrefix(): void
+    {
+        $this->params = $this->prophesize(ParameterBagInterface::class);
+        $this->params->get('transporters_config')
+            ->willReturn([
+                'TELIAE' => [
+                    'enabled' => true,
+                    'name' => 'Taliae test',
+                    'legal_name' => 'Taliae Testing Inc.',
+                    'legal_id' => '0000044',
+                    'postal_codes' => ['13', '75'],
+                    'sync' => [
+                        'filemask' => self::FS_MASK_TALIAE,
+                        'uri' => $this->syncTaliaeFs,
+                    ]
+                ]
+            ]);
+
+        $this->syncTaliaeFs->write(
+            sprintf('to_%s/test.edi', self::FS_MASK_TALIAE),
+            self::EDI_DISPOR_SAMPLE
+        );
+
+        $command = $this->initCommand();
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(['transporter' => 'TELIAE']);
+
+        $commandTester->assertCommandIsSuccessful();
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('imported 1 tasks', $output);
+        $this->assertStringContainsString('0 filtered out by postal code', $output);
+
+        $this->assertCount(1, $this->entityManager->getRepository(Delivery::class)->findAll());
+    }
+
+    public function testPostalCodeFilterImportsAddressesThatFailedToGeocode(): void
+    {
+        $this->params = $this->prophesize(ParameterBagInterface::class);
+        $this->params->get('transporters_config')
+            ->willReturn([
+                'DBSCHENKER' => [
+                    'enabled' => true,
+                    'name' => 'DBSchenker test',
+                    'legal_name' => 'DBSchenker Testing Inc.',
+                    'legal_id' => '0000011',
+                    'postal_codes' => ['13'],
+                    'sync' => [
+                        'filemask' => self::FS_MASK_DBS,
+                        'uri' => $this->syncDBSchenkerFs,
+                    ]
+                ]
+            ]);
+
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/test.edi', self::FS_MASK_DBS),
+            self::INVALID_ADDRESS_EDI_SAMPLE
+        );
+
+        $command = $this->initCommand();
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(['transporter' => 'DBSCHENKER']);
+
+        $commandTester->assertCommandIsSuccessful();
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('imported 1 tasks', $output);
+        $this->assertStringContainsString('0 filtered out by postal code', $output);
+
+        $deliveries = $this->entityManager->getRepository(Delivery::class)->findAll();
+        $this->assertCount(1, $deliveries);
+
+        /** @var Delivery $delivery */
+        $delivery = array_shift($deliveries);
+        $dropoff = $delivery->getDropoff();
+        $this->assertEquals('INVALID ADDRESS', $dropoff->getAddress()->getStreetaddress());
+
+        // The dispatcher decides from the incident
+        $incidents = $this->entityManager->getRepository(Incident::class)->findBy(['task' => $dropoff]);
+        $this->assertCount(1, $incidents);
+        $this->assertEquals('ADDRESS_REVIEW_NEEDED', $incidents[0]->getFailureReasonCode());
     }
 
     private function assertWindowEqualsDay(\DateTime $expected, ?\DateTime $actual): void
