@@ -5,7 +5,7 @@ import Select, { components } from 'react-select'
 import _ from 'lodash'
 
 import Avatar from '../../components/Avatar'
-import { selectCouriers, selectCouriersWithExclude } from '../redux/selectors'
+import { selectCouriersWithExclude } from '../redux/selectors'
 
 const courierAsOption = courier => ({
   ...courier,
@@ -42,11 +42,11 @@ class CourierSelect extends Component {
   render() {
 
     const options = this.props.couriers.map(courierAsOption)
-    const { isMulti, selectedCourier } = this.props
+    const {isMulti } = this.props
 
     return (
       <Select
-        defaultValue={ selectedCourier ? courierAsOption(selectedCourier) : undefined }
+        defaultValue={ lookupCourier(options, this.props.username) }
         options={ options }
         onChange={ this.props.onChange }
         placeholder={ isMulti ? this.props.t('ADMIN_DASHBOARD_COURIERS_SELECT_PLACEHOLDER') : this.props.t('ADMIN_DASHBOARD_COURIER_SELECT_PLACEHOLDER') }
@@ -72,7 +72,6 @@ function mapStateToProps(state, ownProps) {
 
   return {
     couriers: selectCouriersWithExclude(state, ownProps.exclude),
-    selectedCourier: lookupCourier(selectCouriers(state), ownProps.username),
   }
 }
 

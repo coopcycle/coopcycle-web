@@ -448,15 +448,14 @@ export const selectCouriersWithExclude = createSelector(
   taskListSelectors.selectAll,
   (state, exclude) => exclude,
   (couriers, taskLists, exclude) => {
-    const enabledCouriers = filter(couriers, courier => courier.enabled === true)
 
     if (exclude) {
       const usernames = taskLists.map(taskList => taskList.username)
 
-      return filter(enabledCouriers, courier => !includes(usernames, courier.username))
+      return filter(couriers, courier => !includes(usernames, courier.username))
     }
 
-    return enabledCouriers
+    return couriers
   }
 )
 
