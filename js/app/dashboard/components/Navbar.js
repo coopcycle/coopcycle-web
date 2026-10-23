@@ -37,7 +37,7 @@ import {
 } from '../redux/actions';
 import { selectSelectedDate } from '../../coopcycle-frontend-js/logistics/redux'
 import DeliveryCreateNewButton from '../../components/DeliveryCreateNewButton'
-import { selectNav, selectStores } from '../redux/selectors';
+import { selectHiddenTasksCount, selectNav, selectStores } from '../redux/selectors';
 import SearchInput from './SearchInput'
 
 const { Header } = Layout
@@ -168,9 +168,19 @@ const Filters = ({ withOpenLabel = false, withClearLabel = false }) => {
 
   const isDefaultFilters = useSelector(state => state.settings.isDefaultFilters)
   const isActive = !isDefaultFilters
+  const hiddenTasksCount = useSelector(selectHiddenTasksCount)
 
   return (
     <Space>
+      {hiddenTasksCount > 0 && (
+        <Tooltip title={t('ADMIN_DASHBOARD_NAV_FILTERS_HIDDEN_TASKS_HELP')}>
+          <Tag color="warning" className="m-0">
+            {t('ADMIN_DASHBOARD_NAV_FILTERS_HIDDEN_TASKS', {
+              count: hiddenTasksCount,
+            })}
+          </Tag>
+        </Tooltip>
+      )}
       <Tooltip title={t('ADMIN_DASHBOARD_NAV_FILTERS')}>
         <Button
           type={isActive ? 'primary' : 'text'}
