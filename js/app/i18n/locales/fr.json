@@ -390,6 +390,7 @@
         "FORM_PRICING_RULE_EXPRESSION_REQUIRED": "Ajoutez au moins une condition",
         "FORM_PRICING_RULE_PRICE_REQUIRED": "Ajoutez un prix",
         "FORM_PRICING_RULE_REORDER": "Glisser pour réorganiser",
+        "FORM_PRICING_RULE_DUPLICATE": "Dupliquer la règle",
         "PRICING_ADD_RULE_LEGACY": "Ajouter une règle",
         "RULE_LEGACY_TARGET_DYNAMIC": "Livraisons simples (un retrait, un dépôt) : appliquer une fois par commande ; Livraisons multi-points : appliquer pour chaque point (tâche de RETRAIT et/ou de DÉPÔT) si :",
         "RULE_LEGACY_TARGET_DYNAMIC_HELP": "Cette règle est obsolète en faveur de règles distinctes appliquées soit une fois par commande, soit par point. Veuillez envisager de migrer vers le nouveau format. (Voir le guide de migration ci-dessus)",
