@@ -9,7 +9,12 @@
 {% endfor %}
 {% set cuisines = cuisines|sort((a, b) => a.label <=> b.label) %}
 
-<div {{ attributes.defaults(stimulus_controller('shop-search')) }}>
+<div {{ attributes.defaults(stimulus_controller('shop-search')) }} data-bookmark-label="{{ 'restaurants.bookmark'|trans }}">
+
+  <section class="shop-bookmarks mb-4 px-4" data-shop-bookmarks hidden aria-labelledby="shop-bookmarks-heading">
+    <h2 id="shop-bookmarks-heading">{{ 'restaurants.bookmarks'|trans }}</h2>
+    <ul data-shop-bookmarks-list></ul>
+  </section>
 
   <div class="mb-4">
 
