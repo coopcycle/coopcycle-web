@@ -119,12 +119,12 @@ trait AdminDashboardTrait
         $couriers = $this->entityManager
             ->getRepository(User::class)
             ->createQueryBuilder('u')
-            // The id so the dashboard can name a courier to the API; the
-            // username because that is what it keys task lists by.
             ->select('u.id', 'u.username')
             ->where('u.roles LIKE :roles')
+            ->andWhere('u.enabled = :enabled')
             ->orderBy('u.username', 'ASC')
             ->setParameter('roles', '%ROLE_COURIER%')
+            ->setParameter('enabled', true)
             ->getQuery()
             ->getArrayResult();
 
