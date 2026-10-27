@@ -607,6 +607,9 @@ class RdcServiceRequestMapperTest extends TestCase
         // Mirrored on both tasks, so it shows up wherever the task does.
         $this->assertSame('TEST-001', $delivery->getPickup()->getMetadata()['external_reference']);
         $this->assertSame('TEST-001', $delivery->getDropoff()->getMetadata()['external_reference']);
+        // Shown in the comments, riders look for it.
+        $this->assertSame('🏷️ Reference: TEST-001', $delivery->getPickup()->getComments());
+        $this->assertSame('🏷️ Reference: TEST-001', $delivery->getDropoff()->getComments());
         // The label id is no longer stored as the pickup barcode.
         $pickupMetadata = $delivery->getPickup()->getMetadata();
         $this->assertArrayNotHasKey('barcode', $pickupMetadata);
@@ -669,6 +672,7 @@ class RdcServiceRequestMapperTest extends TestCase
 
         // No fallback: the requestor id is only kept under `rdc`.
         $this->assertNull($delivery->getExternalReference());
+        $this->assertNull($delivery->getPickup()->getComments());
         $this->assertArrayNotHasKey('external_reference', $delivery->getPickup()->getMetadata());
         $this->assertSame('EXT-REF-ONLY', $delivery->getMetadata()['rdc']['requestor_id']);
     }
@@ -851,10 +855,10 @@ class RdcServiceRequestMapperTest extends TestCase
         $this->assertSame('Hugo Bernard', $dropoffAddress->getContactName());
         $this->assertSame('+33600000002', $phoneUtil->format($dropoffAddress->getTelephone(), PhoneNumberFormat::E164));
 
-        $orderDescription = '📦 CUSTOMER_ORDER_DESCRIPTION: 6 cartons de produits pharmaceutiques (collecte C-26-1234-1)';
-        $this->assertSame($orderDescription, $delivery->getPickup()->getComments());
+        $header = "🏷️ Reference: C-26-1234-1\n📦 CUSTOMER_ORDER_DESCRIPTION: 6 cartons de produits pharmaceutiques (collecte C-26-1234-1)";
+        $this->assertSame($header, $delivery->getPickup()->getComments());
         $this->assertSame(
-            sprintf("%s\n💬 Livraison par la cour, sonner au local du rez-de-chaussée.", $orderDescription),
+            sprintf("%s\n💬 Livraison par la cour, sonner au local du rez-de-chaussée.", $header),
             $delivery->getDropoff()->getComments()
         );
     }

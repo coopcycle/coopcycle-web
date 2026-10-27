@@ -86,10 +86,13 @@ class RdcServiceRequestMapper
             $pickup->setWeight($weightGrams);
         }
 
+        // The label number is printed on the parcel: riders look for it.
+        $reference = is_null($externalRef) ? null : sprintf('🏷️ Reference: %s', $externalRef);
         // The special characteristics describe the goods: both tasks need them.
         $characteristics = $this->buildCommentsFromSpecialCharacteristics($apiRequest->specialCharacteristics);
 
         $pickupComments = $this->joinComments([
+            $reference,
             $characteristics,
             $this->buildCommentsFromSpecialInstructions($apiRequest->getPickupSpecialInstructions()),
         ]);
@@ -99,6 +102,7 @@ class RdcServiceRequestMapper
 
         // Instructions on the service request itself apply to the dropoff
         $dropoffComments = $this->joinComments([
+            $reference,
             $characteristics,
             $this->buildCommentsFromSpecialInstructions($apiRequest->specialInstructions),
             $this->buildCommentsFromSpecialInstructions($apiRequest->getDropoffSpecialInstructions()),
