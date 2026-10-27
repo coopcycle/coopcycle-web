@@ -71,4 +71,50 @@ class RdcApiServiceRequestTest extends TestCase
         $this->assertSame('C.Market Grands Hommes', $request->getPickupAddress()->name);
         $this->assertSame('', $request->getDropoffAddress()->name);
     }
+
+    public function testContactNamesComeFromPersons(): void
+    {
+        $request = RdcApiServiceRequest::parse([
+            'contacts' => [
+                [
+                    'role' => 'SHIPPER',
+                    'email' => 'contact@pharmacie-exemple.fr',
+                    'persons' => [
+                        ['familyName' => 'Martin', 'givenName' => 'Claire', 'telephone' => '0600000001'],
+                    ],
+                ],
+                ['role' => 'RECIPIENT', 'familyName' => 'Doe', 'telephone' => '0600000002'],
+            ],
+        ]);
+
+        $shipper = $request->getShipperContact();
+        $this->assertSame('Claire Martin', $shipper->name);
+        // The person's phone is used when the contact has none
+        $this->assertSame('0600000001', $shipper->phone);
+        $this->assertSame('contact@pharmacie-exemple.fr', $shipper->email);
+
+        // Contact-level familyName is kept as a fallback
+        $this->assertSame('Doe', $request->getRecipientContact()->name);
+    }
+
+    public function testShipperContactIsEmptyWhenAbsent(): void
+    {
+        $request = RdcApiServiceRequest::parse(['contacts' => [['role' => 'RECIPIENT', 'familyName' => 'Doe']]]);
+
+        $this->assertSame('', $request->getShipperContact()->name);
+    }
+
+    public function testLocationSpecialInstructions(): void
+    {
+        $request = RdcApiServiceRequest::parse([
+            'startLocation' => ['location' => ['address' => []]],
+            'endLocation' => ['location' => [
+                'address' => [],
+                'specialInstructions' => [['description' => 'Livraison par la cour']],
+            ]],
+        ]);
+
+        $this->assertSame([], $request->getPickupSpecialInstructions());
+        $this->assertSame([['description' => 'Livraison par la cour']], $request->getDropoffSpecialInstructions());
+    }
 }
