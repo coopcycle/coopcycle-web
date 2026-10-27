@@ -447,6 +447,7 @@ services:
     autoconfigure: false # see comment above
     arguments:
       $adjustmentFactory: "@sylius.factory.adjustment"
+      $promotionProcessor: "@sylius.promotion_processor"
     tags:
       - { name: monolog.logger, channel: fee_calculation }
 

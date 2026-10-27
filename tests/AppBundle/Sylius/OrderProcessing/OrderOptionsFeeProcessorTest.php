@@ -24,6 +24,7 @@ use Psr\Log\NullLogger;
 use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Order\Model\OrderItemInterface;
 use Sylius\Component\Order\Processor\CompositeOrderProcessor;
+use Sylius\Component\Promotion\Processor\PromotionProcessorInterface;
 use Sylius\Component\Promotion\Repository\PromotionRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -62,6 +63,7 @@ class OrderOptionsFeeProcessorTest extends KernelTestCase
         $this->pricingManager = $this->prophesize(PricingManager::class);
 
         $this->promotionRepository = $this->prophesize(PromotionRepositoryInterface::class);
+        $this->promotionProcessor = $this->prophesize(PromotionProcessorInterface::class);
 
         $this->orderFeeProcessor = new OrderFeeProcessor(
             $this->adjustmentFactory,
@@ -69,6 +71,7 @@ class OrderOptionsFeeProcessorTest extends KernelTestCase
             $this->deliveryManager->reveal(),
             $this->pricingManager->reveal(),
             $this->promotionRepository->reveal(),
+            $this->promotionProcessor->reveal(),
             new NullLogger(),
             new NullLoggingUtils()
         );

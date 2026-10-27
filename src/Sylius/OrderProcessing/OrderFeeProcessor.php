@@ -15,6 +15,7 @@ use Sylius\Component\Order\Model\OrderInterface as BaseOrderInterface;
 use Sylius\Component\Order\Model\Adjustment;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Promotion\Model\PromotionInterface;
+use Sylius\Component\Promotion\Processor\PromotionProcessorInterface;
 use Sylius\Component\Promotion\Repository\PromotionRepositoryInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Webmozart\Assert\Assert;
@@ -27,6 +28,7 @@ final class OrderFeeProcessor implements OrderProcessorInterface
         private readonly DeliveryManager $deliveryManager,
         private readonly PricingManager $pricingManager,
         private readonly PromotionRepositoryInterface $promotionRepository,
+        private readonly PromotionProcessorInterface $promotionProcessor,
         private readonly LoggerInterface $logger,
         private readonly LoggingUtils $loggingUtils
     )
@@ -104,6 +106,26 @@ final class OrderFeeProcessor implements OrderProcessorInterface
                         ['order' => $this->loggingUtils->getOrderId($order)]);
                 }
             }
+        }
+
+        $prevCustomerAmount = $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT);
+
+        $this->upsertAdjustment(
+            $order,
+            AdjustmentInterface::DELIVERY_ADJUSTMENT,
+            'order.adjustment_type.delivery',
+            $customerAmount,
+            $neutral = false);
+
+        // Promotions are applied by OrderPromotionProcessor *BEFORE* this processor,
+        // i.e with the previous delivery amount.
+        // When the delivery amount changes (e.g when the order total reaches another price range),
+        // promotions based on the delivery amount (e.g percentage discount) must be applied again.
+        if ($prevCustomerAmount !== $customerAmount) {
+            $this->logger->info(sprintf('OrderFeeProcessor | customer amount: %d | prev: %d | re-applying promotions', $customerAmount, $prevCustomerAmount),
+                ['order' => $this->loggingUtils->getOrderId($order)]);
+
+            $this->promotionProcessor->process($order);
         }
 
         $deliveryPromotionAdjustments = $order->getAdjustments(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT);
@@ -192,13 +214,6 @@ final class OrderFeeProcessor implements OrderProcessorInterface
             true,
             [],
             true);
-
-        $this->upsertAdjustment(
-            $order,
-            AdjustmentInterface::DELIVERY_ADJUSTMENT,
-            'order.adjustment_type.delivery',
-            $customerAmount,
-            $neutral = false);
 
         $this->logger->info('OrderFeeProcessor | finished', ['order' => $this->loggingUtils->getOrderId($order)]);
     }
