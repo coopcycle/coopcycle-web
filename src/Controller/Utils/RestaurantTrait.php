@@ -271,7 +271,7 @@ trait RestaurantTrait
             $loopeatAuthorizeUrl = $loopeatClient->getRestaurantOAuthAuthorizeUrl($params);
         }
 
-        $cuisines = $appCache->get('translated_cuisines', function (ItemInterface $item) use ($translator) {
+        $cuisines = $appCache->get(sprintf('translated_cuisines.%s', $request->getLocale()), function (ItemInterface $item) use ($translator) {
 
             // We could cache this forever, but from time to time we add cuisines
             $item->expiresAfter(60 * 60 * 24);
