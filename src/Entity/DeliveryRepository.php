@@ -320,12 +320,12 @@ class DeliveryRepository extends EntityRepository
         // (delivery.metadata->'rdc'->>'lo_uri'); deliveries imported before that
         // refactor kept it on the pickup task metadata (task.metadata->>'rdc_lo_uri').
         $sql = "SELECT DISTINCT d.id FROM delivery d
-            JOIN task_collection_item tci ON tci.parent = d.id
+            JOIN task_collection_item tci ON tci.parent_id = d.id
             JOIN task t ON tci.task_id = t.id
             WHERE d.metadata->'rdc'->>'lo_uri' = :loUri
                OR t.metadata->>'rdc_lo_uri' = :loUri";
 
-        $result = $conn->executeQuery($sql, ['lo_uri' => $loUri])->fetchOne();
+        $result = $conn->executeQuery($sql, ['loUri' => $loUri])->fetchOne();
 
         if ($result === false) {
             return null;
