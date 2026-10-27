@@ -57,6 +57,8 @@ class RdcServiceRequestProcessorTest extends TestCase
         $delivery = new Delivery();
 
         $this->deliveryRepository->method('findByLoUri')->with(self::LO_URI)->willReturn(null);
+        // A store without RDC connection keeps the default one
+        $this->serviceFacade->expects($this->never())->method('forConnection');
         $this->mapper->expects($this->once())->method('mapToDelivery')->willReturn($delivery);
         $this->deliveryOrderManager->expects($this->once())->method('createOrder');
         $this->serviceFacade->expects($this->once())->method('createService')->willReturn('svc-1');
@@ -123,5 +125,36 @@ class RdcServiceRequestProcessorTest extends TestCase
 
         $this->assertSame('svc-1', $delivery->getMetadata()['rdc']['service_id']);
         $this->assertArrayNotHasKey('activity_id', $delivery->getMetadata()['rdc']);
+    }
+
+    public function testBolCallsGoThroughTheStoreConnection(): void
+    {
+        $store = new Store();
+        $store->setRdcConnectionId('BOL.MEMBER.OTHER_PROVIDER');
+
+        $rdcClient = $this->createMock(RdcClientInterface::class);
+        $rdcClient->method('getBaseUrl')->willReturn('https://bol.other-provider.example.com');
+
+        $connectionFacade = $this->createMock(RdcServiceFacade::class);
+        $connectionFacade->method('getRdcClient')->willReturn($rdcClient);
+
+        $this->serviceFacade->expects($this->once())
+            ->method('forConnection')
+            ->with('BOL.MEMBER.OTHER_PROVIDER')
+            ->willReturn($connectionFacade);
+
+        $this->deliveryRepository->method('findByLoUri')->willReturn(null);
+        $this->mapper->method('mapToDelivery')->willReturn(new Delivery());
+
+        // Nothing goes through the default connection
+        $this->serviceFacade->expects($this->never())->method('createService');
+        $this->serviceFacade->expects($this->never())->method('notifyOriginNode');
+
+        $connectionFacade->expects($this->once())->method('createService')->willReturn('svc-1');
+        $connectionFacade->expects($this->once())->method('createActivity')->willReturn('act-1');
+        $connectionFacade->expects($this->once())->method('linkActivityToService')->with('svc-1', 'act-1');
+        $connectionFacade->expects($this->once())->method('notifyOriginNode');
+
+        $this->processor->process(new RdcApiServiceRequest(), $store, self::LO_URI, 1);
     }
 }

@@ -38,6 +38,8 @@ class RdcServiceRequestProcessor
             ]);
         }
 
+        $serviceFacade = $this->resolveServiceFacade($store);
+
         try {
             $pickupAddress = $this->mapper->mapPickupAddress($apiRequest);
             $dropoffAddress = $this->mapper->mapDropoffAddress($apiRequest);
@@ -48,7 +50,7 @@ class RdcServiceRequestProcessor
             // would conflict: remember each one as soon as it exists.
             $serviceId = $delivery->getMetadata()['rdc']['service_id'] ?? null;
             if (is_null($serviceId)) {
-                $serviceId = $this->serviceFacade->createService(
+                $serviceId = $serviceFacade->createService(
                     (string) $delivery->getId(),
                     $apiRequest,
                     $apiRequest->getBarcode(),
@@ -66,8 +68,8 @@ class RdcServiceRequestProcessor
             $activityId = $delivery->getMetadata()['rdc']['activity_id'] ?? null;
             if (is_null($activityId)) {
                 $pickupTaskId = (string) $delivery->getPickup()->getId();
-                $serviceUri = sprintf('%s/services/%s', $this->serviceFacade->getRdcClient()->getBaseUrl(), $serviceId);
-                $activityId = $this->serviceFacade->createActivity(
+                $serviceUri = sprintf('%s/services/%s', $serviceFacade->getRdcClient()->getBaseUrl(), $serviceId);
+                $activityId = $serviceFacade->createActivity(
                     $pickupTaskId,
                     $serviceUri,
                     $pickupAddress,
@@ -79,7 +81,7 @@ class RdcServiceRequestProcessor
                 $this->entityManager->flush();
             }
 
-            $this->serviceFacade->linkActivityToService($serviceId, $activityId);
+            $serviceFacade->linkActivityToService($serviceId, $activityId);
 
             $this->logger->info('BOL Service and Activity created', [
                 'delivery_id' => $delivery->getId(),
@@ -87,7 +89,7 @@ class RdcServiceRequestProcessor
                 'activity_id' => $activityId,
             ]);
 
-            $this->serviceFacade->notifyOriginNode(
+            $serviceFacade->notifyOriginNode(
                 $originNodeUri ?? $apiRequest->getUri(),
                 $serviceId,
                 $apiRequest,
@@ -103,6 +105,24 @@ class RdcServiceRequestProcessor
         }
 
         return $delivery;
+    }
+
+    /**
+     * The BOL calls must go through the connection the service request came
+     * from, which is also the one status updates use (see RdcTaskContextResolver).
+     */
+    private function resolveServiceFacade(Store $store): RdcServiceFacade
+    {
+        $connectionId = $store->getRdcConnectionId();
+        if (empty($connectionId)) {
+            $this->logger->warning('Store has no RDC connection, using the default one', [
+                'store_id' => $store->getId(),
+            ]);
+
+            return $this->serviceFacade;
+        }
+
+        return $this->serviceFacade->forConnection($connectionId);
     }
 
     private function findDelivery(?string $loUri): ?Delivery
