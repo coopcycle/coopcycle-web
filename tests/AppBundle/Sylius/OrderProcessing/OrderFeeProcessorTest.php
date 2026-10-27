@@ -27,6 +27,7 @@ use Sylius\Component\Order\Model\Adjustment;
 use Sylius\Component\Order\Model\OrderItemInterface;
 use Sylius\Component\Promotion\Model\Promotion;
 use Sylius\Component\Promotion\Model\PromotionAction;
+use Sylius\Component\Promotion\Processor\PromotionProcessorInterface;
 use Sylius\Component\Promotion\Repository\PromotionRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -55,6 +56,7 @@ class OrderFeeProcessorTest extends KernelTestCase
         $this->pricingManager = $this->prophesize(PricingManager::class);
 
         $this->promotionRepository = $this->prophesize(PromotionRepositoryInterface::class);
+        $this->promotionProcessor = $this->prophesize(PromotionProcessorInterface::class);
 
         $this->orderFeeProcessor = new OrderFeeProcessor(
             $this->adjustmentFactory,
@@ -62,6 +64,7 @@ class OrderFeeProcessorTest extends KernelTestCase
             $this->deliveryManager->reveal(),
             $this->pricingManager->reveal(),
             $this->promotionRepository->reveal(),
+            $this->promotionProcessor->reveal(),
             new NullLogger(),
             new NullLoggingUtils()
         );
@@ -359,6 +362,103 @@ class OrderFeeProcessorTest extends KernelTestCase
         $this->assertEquals(350, $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT));
     }
 
+    public function testOrderWithVariableCustomerAmountReappliesDeliveryPromotion()
+    {
+        $pricing = new PricingRuleSet();
+        $contract = self::createContract(550, 0, 0.00, false, null, true, $pricing);
+
+        $restaurant = new Restaurant();
+        $restaurant->setContract($contract);
+
+        $order = new Order();
+        $order->setRestaurant($restaurant);
+        $order->addItem($this->createOrderItem(6500));
+
+        $promotion = new Promotion();
+        $promotion->setCode('DELIVERY_20');
+        $promotion->setName('20% off delivery');
+
+        $promotionAction = new PromotionAction();
+        $promotionAction->setType(DeliveryPercentageDiscountPromotionActionCommand::TYPE);
+        $promotionAction->setConfiguration([
+            'percentage' => 0.2,
+        ]);
+
+        $promotion->addAction($promotionAction);
+
+        $this->promotionRepository
+            ->findOneBy(['code' => 'DELIVERY_20'])
+            ->willReturn($promotion);
+
+        // The order was previously processed with a lower delivery price,
+        // promotions were applied (by OrderPromotionProcessor) with this stale price
+        $deliveryAdjustment = new Adjustment();
+        $deliveryAdjustment->setType(AdjustmentInterface::DELIVERY_ADJUSTMENT);
+        $deliveryAdjustment->setLabel('Delivery');
+        $deliveryAdjustment->setAmount(750);
+
+        $order->addAdjustment($deliveryAdjustment);
+
+        $deliveryPromotionAction = new DeliveryPercentageDiscountPromotionActionCommand($this->adjustmentFactory);
+        $deliveryPromotionAction->execute($order, $promotionAction->getConfiguration(), $promotion);
+
+        $this->assertEquals(-150, $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT));
+
+        $delivery = new Delivery();
+
+        $this->deliveryManager
+            ->createFromOrder($order)
+            ->willReturn($delivery);
+
+        $this->pricingManager
+            ->getPrice($delivery, $pricing)
+            ->willReturn(960);
+
+        $this->promotionProcessor
+            ->process($order)
+            ->will(function () use ($order, $deliveryPromotionAction, $promotionAction, $promotion) {
+                $deliveryPromotionAction->revert($order, $promotionAction->getConfiguration(), $promotion);
+                $deliveryPromotionAction->execute($order, $promotionAction->getConfiguration(), $promotion);
+            })
+            ->shouldBeCalledOnce();
+
+        $this->orderFeeProcessor->process($order);
+
+        $this->assertEquals(960, $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT));
+        $this->assertEquals(-192, $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT));
+        $this->assertEquals(6500 + 960 - 192, $order->getTotal());
+
+        // The platform fee is decreased with the up-to-date promotion amount
+        $this->assertEquals(550 - 192, $order->getFeeTotal());
+    }
+
+    public function testOrderWithUnchangedCustomerAmountDoesNotReapplyPromotions()
+    {
+        $contract = self::createContract(550, 350, 0.00);
+
+        $restaurant = new Restaurant();
+        $restaurant->setContract($contract);
+
+        $order = new Order();
+        $order->setRestaurant($restaurant);
+        $order->addItem($this->createOrderItem(1000));
+
+        $deliveryAdjustment = new Adjustment();
+        $deliveryAdjustment->setType(AdjustmentInterface::DELIVERY_ADJUSTMENT);
+        $deliveryAdjustment->setLabel('Delivery');
+        $deliveryAdjustment->setAmount(350);
+
+        $order->addAdjustment($deliveryAdjustment);
+
+        $this->promotionProcessor
+            ->process($order)
+            ->shouldNotBeCalled();
+
+        $this->orderFeeProcessor->process($order);
+
+        $this->assertEquals(350, $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT));
+    }
+
     public function testOrderWithVariableCustomerAmountAndMissingShippingAddress()
     {
         $pricing = new PricingRuleSet();
@@ -588,6 +688,8 @@ class OrderFeeProcessorTest extends KernelTestCase
 
         $order->getAdjustmentsTotal(AdjustmentInterface::TIP_ADJUSTMENT)
             ->willReturn(0);
+        $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT)
+            ->willReturn(0);
 
         $order->getTipAmount()->willReturn(null);
 
@@ -797,6 +899,8 @@ class OrderFeeProcessorTest extends KernelTestCase
             ->willReturn(new ArrayCollection([]));
 
         $order->getAdjustmentsTotal(AdjustmentInterface::TIP_ADJUSTMENT)
+            ->willReturn(0);
+        $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT)
             ->willReturn(0);
 
         $order->getTipAmount()->willReturn(null);
