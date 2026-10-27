@@ -69,19 +69,21 @@ class RdcServiceRequestMapper
         $delivery->setMetadata('rdc.lo_uri', $loUri);
         $delivery->setMetadata('rdc.created_at', (new DateTime())->format(DateTimeInterface::ATOM));
 
-        $externalRef = $apiRequest->getExternalRef();
+        // The requestor label number (REQUESTOR_LABEL_ID) is the one printed on
+        // the parcel, so it is what dispatch and riders look for.
+        $externalRef = $apiRequest->getBarcode();
         if (!is_null($externalRef)) {
             $delivery->setExternalReference($externalRef);
         }
 
-        $barcode = $apiRequest->getBarcode();
-        if (!is_null($barcode)) {
-            $pickup->setBarcode($barcode);
+        $requestorId = $apiRequest->getExternalRef();
+        if (!is_null($requestorId)) {
+            $delivery->setMetadata('rdc.requestor_id', $requestorId);
         }
 
         $weightGrams = $this->extractWeightFromLocation($apiRequest->startLocation);
         if (!is_null($weightGrams)) {
-            $dropoff->setWeight($weightGrams);
+            $pickup->setWeight($weightGrams);
         }
 
         // Dropoff comments from special instructions
