@@ -14,6 +14,10 @@ jobs:
       CYPRESS_INSTALL_BINARY: '0'
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
       - name: Install JS dependencies
         run: npm ci
       - name: Run ESLint
