@@ -192,6 +192,12 @@ class SyncTransportersCommand extends Command {
                 $this->resolvePackageMapping($this->packageMapping)
             );
             $this->postalCodes = array_map(fn($c) => (string) $c, $config['postal_codes'] ?? []);
+            if (!empty($this->postalCodes)) {
+                // Makes a typo in the config key visible: no line, no filter
+                $message = sprintf('Postal code filter active: %s', implode(', ', $this->postalCodes));
+                $output->writeln($message);
+                $this->transporterLogger->info($message, ['transporter' => $this->transporter]);
+            }
 
             if (isset($config['sync']['uri'])) {
                 $inFs = $outFs = $this->initTransporterSyncOptions($config['sync']);
@@ -599,24 +605,35 @@ class SyncTransportersCommand extends Command {
             return true;
         }
 
-        // Checked on the geocoded address, the transporter often only sends the département
-        $postalCode = trim($task->getAddress()->getPostalCode() ?? '');
+        // The geocoded one first, the transporter often only sends the département
+        $geocoded = trim($task->getAddress()->getPostalCode() ?? '');
 
         // Geocoding failed: import it anyway, the dispatcher reviews it from the incident
-        if (empty($postalCode)) {
+        if (empty($geocoded)) {
             return true;
         }
 
+        // The transporter's one too, in case the geocoder picked the wrong place
+        $recipients = $point->getNamesAndAddresses(NameAndAddressType::RECIPIENT);
+        $fromTransporter = trim(($recipients[0] ?? null)?->getPostalCode() ?? '');
+
         foreach ($this->postalCodes as $prefix) {
-            if (str_starts_with($postalCode, $prefix)) {
+            if (str_starts_with($geocoded, $prefix)) {
+                return true;
+            }
+            if (!empty($fromTransporter) && str_starts_with($fromTransporter, $prefix)) {
                 return true;
             }
         }
 
-        $this->transporterLogger->info(
-            sprintf('Task %s filtered out by postal code "%s"', $point->getId(), $postalCode),
-            ['transporter' => $this->transporter]
+        $message = sprintf(
+            'Task %s filtered out by postal code (geocoded: "%s", transporter: "%s")',
+            $point->getId(),
+            $geocoded,
+            $fromTransporter
         );
+        $this->output->writeln(sprintf('<comment>%s</comment>', $message));
+        $this->transporterLogger->info($message, ['transporter' => $this->transporter]);
         return false;
     }
 
