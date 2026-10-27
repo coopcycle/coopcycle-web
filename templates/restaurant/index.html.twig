@@ -201,7 +201,11 @@
                 {# Never cache a preview: it is not what the public sees #}
                 {% include 'restaurant/_partials/menu_content.html.twig' %}
               {% else %}
-                {% set cache_key = restaurant|cache_key(restaurant_menu_cache_annotation ~ (business_context.active ? '_business' : '')) %}
+                {#
+                The locale MUST be part of the key: the cached HTML contains translated strings,
+                and the live components URLs, which are prefixed with the locale (/{_locale}/_components)
+                #}
+                {% set cache_key = restaurant|cache_key(restaurant_menu_cache_annotation ~ '_' ~ app.request.locale ~ (business_context.active ? '_business' : '')) %}
                 {% cache cache_key ttl(300) %}
                   {% include 'restaurant/_partials/menu_content.html.twig' %}
                 {% endcache %}

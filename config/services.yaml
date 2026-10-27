@@ -1224,6 +1224,7 @@ services:
   AppBundle\EventSubscriber\ClearTwigCacheSubscriber:
     arguments:
       $annotation: '%restaurant_menu_cache_annotation%'
+      $localeRegex: '%locale_regex%'
 
   AppBundle\EventListener\Upload\UploadListener:
     arguments:
