@@ -60,4 +60,15 @@ class RdcApiServiceRequestTest extends TestCase
         $this->assertNull($dropoff->start);
         $this->assertNull($dropoff->end);
     }
+
+    public function testAddressesCarryTheLocationName(): void
+    {
+        $request = RdcApiServiceRequest::parse([
+            'startLocation' => ['location' => ['locationName' => 'C.Market Grands Hommes', 'address' => []]],
+            'endLocation' => ['location' => ['address' => []]],
+        ]);
+
+        $this->assertSame('C.Market Grands Hommes', $request->getPickupAddress()->name);
+        $this->assertSame('', $request->getDropoffAddress()->name);
+    }
 }

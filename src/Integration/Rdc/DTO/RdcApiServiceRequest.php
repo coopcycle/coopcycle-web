@@ -164,6 +164,7 @@ final class RdcApiServiceRequest
             postalCode: $address['postalCode'] ?? '',
             city: $address['addressLocality'] ?? '',
             country: $address['addressCountry']['countryCode'] ?? '',
+            name: $this->startLocation['location']['locationName'] ?? '',
         );
     }
 
@@ -177,6 +178,7 @@ final class RdcApiServiceRequest
             postalCode: $address['postalCode'] ?? '',
             city: $address['addressLocality'] ?? '',
             country: $address['addressCountry']['countryCode'] ?? '',
+            name: $this->endLocation['location']['locationName'] ?? '',
         );
     }
 

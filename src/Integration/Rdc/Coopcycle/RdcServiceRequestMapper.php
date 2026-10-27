@@ -10,7 +10,6 @@ use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
 use AppBundle\Integration\Rdc\DTO\RdcApiServiceRequest;
 use AppBundle\Integration\Rdc\DTO\ServiceRequestAddress;
-use AppBundle\Integration\Rdc\DTO\ServiceRequestContact;
 use AppBundle\Integration\Rdc\DTO\TimeSlot;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\Geocoder;
@@ -92,12 +91,14 @@ class RdcServiceRequestMapper
             $dropoff->setComments($dropoffComments);
         }
 
-        // Recipient contact
+        // Recipient contact. Applicolis sends no name on the RECIPIENT contact,
+        // the recipient name is the dropoff location name.
         $recipient = $apiRequest->getRecipientContact();
-        if ($this->isContactNotEmpty($recipient)) {
-            $addr = $dropoff->getAddress();
-            if ($recipient->name) {
-                $addr->setContactName($recipient->name);
+        $contactName = $recipient->name ?: $dropoffAddress->name;
+        $addr = $dropoff->getAddress();
+        if (!is_null($addr)) {
+            if (!empty($contactName)) {
+                $addr->setContactName($contactName);
             }
             if ($recipient->phone) {
                 try {
@@ -150,6 +151,9 @@ class RdcServiceRequestMapper
         $entityAddress->setAddressLocality($address->city);
         $entityAddress->setPostalCode($address->postalCode);
         $entityAddress->setAddressCountry($address->country);
+        if (!empty($address->name)) {
+            $entityAddress->setName($address->name);
+        }
 
         // Geocode the address to get coordinates
         $geocoded = $this->geocoder->geocode($streetAddress);
@@ -209,11 +213,6 @@ class RdcServiceRequestMapper
         }
 
         return $foundAny ? (int) round($totalKg * 1000) : null;
-    }
-
-    private function isContactNotEmpty(ServiceRequestContact $contact): bool
-    {
-        return !empty($contact->name) || !empty($contact->phone) || !empty($contact->email);
     }
 
     private function buildCommentsFromSpecialInstructions(?array $specialInstructions): ?string

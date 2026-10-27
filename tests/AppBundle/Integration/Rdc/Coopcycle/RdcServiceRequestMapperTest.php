@@ -575,6 +575,65 @@ class RdcServiceRequestMapperTest extends TestCase
         return $method->invoke($this->mapper, $specialInstructions);
     }
 
+    public function testMapToDeliveryUsesLocationNamesFromApplicolisPayload(): void
+    {
+        // Shaped like what Applicolis sends: the RECIPIENT contact has no name,
+        // the names are on the locations.
+        $apiRequest = \AppBundle\Integration\Rdc\DTO\RdcApiServiceRequest::parse([
+            'startLocation' => [
+                'location' => [
+                    'locationName' => 'C.Market Grands Hommes',
+                    'address' => [
+                        'addressLines' => ['Place des Grands Hommes, Bordeaux, France'],
+                        'addressCountry' => ['countryCode' => 'FR'],
+                    ],
+                ],
+            ],
+            'endLocation' => [
+                'location' => [
+                    'locationName' => 'JANE DOE',
+                    'address' => [
+                        'addressLines' => ["Rue d'Aviau 1 33000 Bordeaux France"],
+                        'addressCountry' => ['countryCode' => 'FR'],
+                    ],
+                ],
+            ],
+            'contacts' => [
+                ['email' => 'jane.doe@example.com', 'role' => 'RECIPIENT'],
+            ],
+            'externalReferences' => [
+                ['externalReferenceType' => 'REQUESTOR_LABEL_ID', 'reference' => '637900000'],
+            ],
+        ]);
+
+        $delivery = $this->mapper->mapToDelivery($apiRequest, new \AppBundle\Entity\Store());
+
+        $this->assertSame('C.Market Grands Hommes', $delivery->getPickup()->getAddress()->getName());
+        $this->assertSame('JANE DOE', $delivery->getDropoff()->getAddress()->getName());
+        $this->assertSame('JANE DOE', $delivery->getDropoff()->getAddress()->getContactName());
+    }
+
+    public function testMapToDeliveryPrefersRecipientContactNameOverLocationName(): void
+    {
+        $base = $this->buildApiRequestWithBarcode('TEST-CONTACT');
+        $endLocation = $base->endLocation;
+        $endLocation['location']['locationName'] = 'ACME Corp';
+
+        $apiRequest = new \AppBundle\Integration\Rdc\DTO\RdcApiServiceRequest(
+            contacts: [
+                ['familyName' => 'Doe', 'role' => 'RECIPIENT'],
+            ],
+            externalReferences: $base->externalReferences,
+            startLocation: $base->startLocation,
+            endLocation: $endLocation,
+        );
+
+        $delivery = $this->mapper->mapToDelivery($apiRequest, new \AppBundle\Entity\Store());
+
+        $this->assertSame('ACME Corp', $delivery->getDropoff()->getAddress()->getName());
+        $this->assertSame('Doe', $delivery->getDropoff()->getAddress()->getContactName());
+    }
+
     private function invokeExtractWeight(?array $location): ?int
     {
         $method = new ReflectionMethod($this->mapper, 'extractWeightFromLocation');
