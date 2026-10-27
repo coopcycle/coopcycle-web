@@ -56,7 +56,14 @@ final class RdcMessageHandler
             return;
         }
 
-        $delivery = $this->processor->process($dto, $store, $message->loUri, $message->loRevision);
+        try {
+            $delivery = $this->processor->process($dto, $store, $message->loUri, $message->loRevision);
+        } catch (\Throwable $e) {
+            // Release the claim, otherwise Messenger's retries would be skipped
+            // as "already processed" and the event would be lost.
+            $this->redis->del($key);
+            throw $e;
+        }
 
         $this->logger->info('RDC delivery processed', [
             'event_hash' => $eventHash,

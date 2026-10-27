@@ -69,46 +69,52 @@ class RdcServiceRequestMapper
         $delivery->setMetadata('rdc.lo_uri', $loUri);
         $delivery->setMetadata('rdc.created_at', (new DateTime())->format(DateTimeInterface::ATOM));
 
-        $externalRef = $apiRequest->getExternalRef();
+        // The requestor label number (REQUESTOR_LABEL_ID) is the one printed on
+        // the parcel, so it is what dispatch and riders look for.
+        $externalRef = $apiRequest->getBarcode();
         if (!is_null($externalRef)) {
             $delivery->setExternalReference($externalRef);
         }
 
-        $barcode = $apiRequest->getBarcode();
-        if (!is_null($barcode)) {
-            $pickup->setBarcode($barcode);
+        $requestorId = $apiRequest->getExternalRef();
+        if (!is_null($requestorId)) {
+            $delivery->setMetadata('rdc.requestor_id', $requestorId);
         }
 
         $weightGrams = $this->extractWeightFromLocation($apiRequest->startLocation);
         if (!is_null($weightGrams)) {
-            $dropoff->setWeight($weightGrams);
+            $pickup->setWeight($weightGrams);
         }
 
-        // Dropoff comments from special instructions
-        $dropoffComments = $this->buildCommentsFromSpecialInstructions($apiRequest->specialInstructions);
+        // The label number is printed on the parcel: riders look for it.
+        $reference = is_null($externalRef) ? null : sprintf('🏷️ Reference: %s', $externalRef);
+        // The special characteristics describe the goods: both tasks need them.
+        $characteristics = $this->buildCommentsFromSpecialCharacteristics($apiRequest->specialCharacteristics);
+
+        $pickupComments = $this->joinComments([
+            $reference,
+            $characteristics,
+            $this->buildCommentsFromSpecialInstructions($apiRequest->getPickupSpecialInstructions()),
+        ]);
+        if (!is_null($pickupComments)) {
+            $pickup->setComments($pickupComments);
+        }
+
+        // Instructions on the service request itself apply to the dropoff
+        $dropoffComments = $this->joinComments([
+            $reference,
+            $characteristics,
+            $this->buildCommentsFromSpecialInstructions($apiRequest->specialInstructions),
+            $this->buildCommentsFromSpecialInstructions($apiRequest->getDropoffSpecialInstructions()),
+        ]);
         if (!is_null($dropoffComments)) {
             $dropoff->setComments($dropoffComments);
         }
 
-        // Recipient contact
-        $recipient = $apiRequest->getRecipientContact();
-        if ($this->isContactNotEmpty($recipient)) {
-            $addr = $dropoff->getAddress();
-            if ($recipient->name) {
-                $addr->setContactName($recipient->name);
-            }
-            if ($recipient->phone) {
-                try {
-                    $phoneNumber = $this->phoneUtil->parse($recipient->phone, 'FR');
-                    $addr->setTelephone($phoneNumber);
-                } catch (\Exception $e) {
-                    $this->logger->warning('Failed to parse phone number', [
-                        'phone' => $recipient->phone,
-                        'error' => $e->getMessage(),
-                    ]);
-                }
-            }
-        }
+        $this->applyContact($pickup->getAddress(), $apiRequest->getShipperContact());
+        // Applicolis sends no name on the RECIPIENT contact, the recipient name
+        // is the dropoff location name.
+        $this->applyContact($dropoff->getAddress(), $apiRequest->getRecipientContact(), $dropoffAddress->name);
 
         return $delivery;
     }
@@ -136,18 +142,30 @@ class RdcServiceRequestMapper
 
     private function createAddress(ServiceRequestAddress $address): Address
     {
-        $streetAddress = trim(sprintf(
-            '%s %s %s',
-            $address->streetAddress,
-            $address->addressLine1,
-            $address->addressLine2
-        ));
+        // Some providers put the city in the address line, others send it
+        // apart: the geocoder needs it either way.
+        $streetAddress = $address->streetAddress;
+        $locality = trim(sprintf('%s %s', $address->postalCode, $address->city));
+        $hasLocality = str_contains($streetAddress, $address->postalCode ?: $address->city);
+        if (!empty($locality) && !$hasLocality) {
+            $streetAddress = sprintf('%s, %s', $streetAddress, $locality);
+        }
 
         $entityAddress = new Address();
-        $entityAddress->setStreetAddress(trim($streetAddress));
+        $entityAddress->setStreetAddress($streetAddress);
         $entityAddress->setAddressLocality($address->city);
         $entityAddress->setPostalCode($address->postalCode);
         $entityAddress->setAddressCountry($address->country);
+        if (!empty($address->name)) {
+            $entityAddress->setName($address->name);
+        }
+
+        // The other lines are complements ("Bâtiment B"), which would only
+        // confuse the geocoder.
+        $complement = trim(sprintf('%s %s', $address->addressLine1, $address->addressLine2));
+        if (!empty($complement)) {
+            $entityAddress->setDescription($complement);
+        }
 
         // Geocode the address to get coordinates
         $geocoded = $this->geocoder->geocode($streetAddress);
@@ -209,11 +227,6 @@ class RdcServiceRequestMapper
         return $foundAny ? (int) round($totalKg * 1000) : null;
     }
 
-    private function isContactNotEmpty(ServiceRequestContact $contact): bool
-    {
-        return !empty($contact->name) || !empty($contact->phone) || !empty($contact->email);
-    }
-
     private function buildCommentsFromSpecialInstructions(?array $specialInstructions): ?string
     {
         if (empty($specialInstructions)) {
@@ -230,7 +243,12 @@ class RdcServiceRequestMapper
         foreach ($specialInstructions as $instruction) {
             $code = $instruction['instructionCode'] ?? null;
             $description = $instruction['description'] ?? null;
-            if (empty($code) || empty($description)) {
+            if (empty($description)) {
+                continue;
+            }
+            // Without a code, it is a free comment
+            if (empty($code)) {
+                $lines[] = sprintf('%s %s', $emojiByCode['COMMENT'], $description);
                 continue;
             }
             $emoji = $emojiByCode[$code] ?? '📌';
@@ -238,6 +256,71 @@ class RdcServiceRequestMapper
         }
 
         return empty($lines) ? null : implode("\n", $lines);
+    }
+
+    private function buildCommentsFromSpecialCharacteristics(?array $specialCharacteristics): ?string
+    {
+        if (empty($specialCharacteristics)) {
+            return null;
+        }
+
+        $emojiByReference = [
+            'CUSTOMER_ORDER_DESCRIPTION' => '📦',
+        ];
+
+        $lines = [];
+        foreach ($specialCharacteristics as $characteristic) {
+            $reference = $characteristic['characteristicReference'] ?? null;
+            $label = $characteristic['specialCharacteristicType'] ?? $reference;
+
+            $value = $characteristic['stringValue'] ?? null;
+            $numericalValue = $characteristic['numericalValue'] ?? null;
+            if (empty($value) && isset($numericalValue['value'])) {
+                $value = trim(sprintf('%s %s', $numericalValue['value'], $numericalValue['unit'] ?? ''));
+            }
+            if (empty($value)) {
+                continue;
+            }
+
+            $emoji = $emojiByReference[$reference ?? ''] ?? '⭐';
+            $lines[] = empty($label)
+                ? sprintf('%s %s', $emoji, $value)
+                : sprintf('%s %s: %s', $emoji, $label, $value);
+        }
+
+        return empty($lines) ? null : implode("\n", $lines);
+    }
+
+    private function joinComments(array $parts): ?string
+    {
+        $parts = array_filter($parts);
+
+        return empty($parts) ? null : implode("\n", $parts);
+    }
+
+    private function applyContact(?Address $address, ServiceRequestContact $contact, string $fallbackName = ''): void
+    {
+        if (is_null($address)) {
+            return;
+        }
+
+        $name = $contact->name ?: $fallbackName;
+        if (!empty($name)) {
+            $address->setContactName($name);
+        }
+
+        if (empty($contact->phone)) {
+            return;
+        }
+
+        try {
+            $address->setTelephone($this->phoneUtil->parse($contact->phone, 'FR'));
+        } catch (\Exception $e) {
+            $this->logger->warning('Failed to parse phone number', [
+                'phone' => $contact->phone,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     public function mapPickupAddress(RdcApiServiceRequest $apiRequest): array
