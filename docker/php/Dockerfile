@@ -5,7 +5,6 @@ RUN apk update
 RUN apk add --no-cache \
         git \
         icu \
-        icu-data-full \
         zlib
 
 ENV APCU_VERSION=5.1.28
