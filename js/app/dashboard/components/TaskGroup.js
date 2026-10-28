@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from "react-redux";
 
 import { withTranslation } from 'react-i18next'
-import Popconfirm from 'antd/lib/popconfirm'
+import { Button, Popover } from 'antd'
 
 import Task from './Task'
 import { selectExpandedTasksGroupsPanelsIds } from '../redux/selectors'
@@ -18,6 +18,7 @@ class TaskGroup extends React.Component {
       group: props.group,
       editName: false,
       newName: '',
+      deleteConfirmOpen: false,
     }
 
     this.onEditPressed = this.onEditPressed.bind(this)
@@ -82,6 +83,35 @@ class TaskGroup extends React.Component {
     })
   }
 
+  onDeleteConfirmed(keepTasks) {
+    this.setState({ deleteConfirmOpen: false })
+    this.props.onConfirmDelete(keepTasks)
+  }
+
+  renderDeleteConfirm() {
+    const { t } = this.props
+
+    return (
+      <div>
+        <p>{ t('ADMIN_DASHBOARD_DELETE_GROUP_CHOICE') }</p>
+        <div className="d-flex justify-content-end">
+          <Button size="small" className="mr-2"
+            onClick={ () => this.setState({ deleteConfirmOpen: false }) }>
+            { t('ADMIN_DASHBOARD_CANCEL') }
+          </Button>
+          <Button size="small" className="mr-2"
+            onClick={ () => this.onDeleteConfirmed(true) }>
+            { t('ADMIN_DASHBOARD_DELETE_GROUP_KEEP_TASKS') }
+          </Button>
+          <Button size="small" type="primary" danger
+            onClick={ () => this.onDeleteConfirmed(false) }>
+            { t('ADMIN_DASHBOARD_DELETE_GROUP_AND_TASKS') }
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
   render() {
     const { tasks, toggleTasksGroupPanelExpanded, expandedTasksGroupPanelIds } = this.props
     const { group } = this.state
@@ -110,18 +140,18 @@ class TaskGroup extends React.Component {
                     onClick={ e => this.onEditPressed(e, this.state.group) }>
                     <i className="fa fa-pencil"></i>
                   </a>
-                  <Popconfirm
+                  <Popover
                     placement="left"
-                    title={ this.props.t('ADMIN_DASHBOARD_DELETE_GROUP_CONFIRM') }
-                    onConfirm={ this.props.onConfirmDelete }
-                    okText={ this.props.t('CROPPIE_CONFIRM') }
-                    cancelText={ this.props.t('ADMIN_DASHBOARD_CANCEL') }
+                    trigger="click"
+                    open={ this.state.deleteConfirmOpen }
+                    onOpenChange={ open => this.setState({ deleteConfirmOpen: open }) }
+                    content={ this.renderDeleteConfirm() }
                     >
                     <a role="button" href="#" className="text-reset"
                       onClick={ e => e.preventDefault() }>
                       <i className="fa fa-trash"></i>
                     </a>
-                  </Popconfirm>
+                  </Popover>
                 </div>
               </>
             }

@@ -157,7 +157,7 @@ export const UnassignedTours = ({ splitCollapseAction }) => {
                             key={ itemId }
                             group={ item }
                             tasks={ item.tasks }
-                            onConfirmDelete={ () => dispatch(deleteGroup(item)) }
+                            onConfirmDelete={ keepTasks => dispatch(deleteGroup(item, keepTasks)) }
                             onEdit={ (data) => dispatch(editGroup(data)) } />
                         </div>
                       )}

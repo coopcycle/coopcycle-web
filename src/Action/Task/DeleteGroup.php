@@ -3,6 +3,7 @@
 namespace AppBundle\Action\Task;
 
 use AppBundle\Service\TaskManager;
+use Symfony\Component\HttpFoundation\Request;
 
 class DeleteGroup
 {
@@ -12,9 +13,10 @@ class DeleteGroup
         $this->taskManager = $taskManager;
     }
 
-    public function __invoke($data)
+    public function __invoke($data, Request $request)
     {
-        $this->taskManager->deleteGroup($data);
+        // With ?keep_tasks=1, only the group is deleted, its tasks go back to unassigned
+        $this->taskManager->deleteGroup($data, !$request->query->getBoolean('keep_tasks'));
 
         return $data;
     }
