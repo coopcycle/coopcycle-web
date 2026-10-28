@@ -127,5 +127,9 @@ class PriceReviewIncidents
             $incident,
             $isUserWithAccount ? $user : null
         );
+
+        // The incident is flushed by CreateIncident, but not the task:incident-reported
+        // event it records on the task, and nothing flushes after us
+        $this->entityManager->flush();
     }
 }

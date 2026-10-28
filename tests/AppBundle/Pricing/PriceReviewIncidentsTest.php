@@ -31,6 +31,7 @@ class PriceReviewIncidentsTest extends TestCase
     {
         $this->entityManager = $this->prophesize(EntityManagerInterface::class);
         $this->entityManager->isOpen()->willReturn(true);
+        $this->entityManager->flush()->will(function () {});
 
         $this->createIncident = $this->prophesize(CreateIncident::class);
 
@@ -85,6 +86,9 @@ class PriceReviewIncidentsTest extends TestCase
                 null
             )
             ->shouldBeCalledTimes(1);
+
+        // The task:incident-reported event is only written on flush
+        $this->entityManager->flush()->shouldBeCalled();
 
         $this->priceReviewIncidents->createPending();
     }
