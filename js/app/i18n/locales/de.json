@@ -31,7 +31,7 @@
         "ADMIN_DASHBOARD_NORMAL": "Normal",
         "ADMIN_DASHBOARD_RUSH": "Rush",
         "ADMIN_DASHBOARD_COURIER": "Kurier",
-        "ADMIN_DASHBOARD_CANCEL": "Löschen",
+        "ADMIN_DASHBOARD_CANCEL": "Abbrechen",
         "ADMIN_DASHBOARD_CANCEL_TASK": "Löschen",
         "ADMIN_DASHBOARD_DUPLICATE_TASK": "Duplizieren",
         "ADMIN_DASHBOARD_ADD": "Hinzufügen",
