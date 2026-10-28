@@ -2435,6 +2435,82 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->assertWindowEqualsDay($expectedBefore, $dropoff->getBefore());
     }
 
+    public function testSenderOverrideIsUsedInReports(): void
+    {
+        $this->params = $this->prophesize(ParameterBagInterface::class);
+        $this->params->get('transporters_config')
+            ->willReturn([
+                'TELIAE' => [
+                    'enabled' => true,
+                    'name' => 'Taliae test',
+                    'legal_name' => 'Taliae Testing Inc.',
+                    'legal_id' => '0000044',
+                    'sender_legal_name' => 'Shared Coop',
+                    'sender_legal_id' => '12345678900011',
+                    'sync' => [
+                        'filemask' => self::FS_MASK_TALIAE,
+                        'uri' => $this->syncTaliaeFs,
+                    ]
+                ]
+            ]);
+
+        $this->syncTaliaeFs->write(
+            sprintf('to_%s/test.edi', self::FS_MASK_TALIAE),
+            self::EDI_DISPOR_SAMPLE
+        );
+
+        $command = $this->initCommand();
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(['transporter' => 'TELIAE']);
+        $commandTester->assertCommandIsSuccessful();
+        $this->assertStringContainsString('Reporting as Shared Coop (12345678900011)', $commandTester->getDisplay());
+
+        /** @var Delivery $delivery */
+        $delivery = $this->entityManager->getRepository(Delivery::class)->findOneBy([]);
+        foreach ([$delivery->getPickup(), $delivery->getDropoff()] as $task) {
+            $this->taskManager->start($task);
+            $this->entityManager->flush();
+            $this->taskManager->markAsDone($task);
+            $this->entityManager->flush();
+        }
+
+        $commandTester->execute(['transporter' => 'TELIAE']);
+        $commandTester->assertCommandIsSuccessful();
+
+        $reports = $this->syncTaliaeFs->listContents(sprintf('from_%s', self::FS_MASK_TALIAE))->toArray();
+        $this->assertCount(1, $reports);
+        $report = $this->syncTaliaeFs->read($reports[0]->path());
+
+        $this->assertStringContainsString("UNB+UNOC:1+12345678900011:22+0000044:22", $report);
+        $this->assertStringContainsString("NAD+MS+12345678900011:5++Shared Coop'", $report);
+        $this->assertStringNotContainsString('4447190000', $report);
+        $this->assertStringNotContainsString('Coopcycle Testing Inc.', $report);
+    }
+
+    public function testSenderOverrideRequiresBothNameAndId(): void
+    {
+        $this->params = $this->prophesize(ParameterBagInterface::class);
+        $this->params->get('transporters_config')
+            ->willReturn([
+                'TELIAE' => [
+                    'enabled' => true,
+                    'name' => 'Taliae test',
+                    'legal_name' => 'Taliae Testing Inc.',
+                    'legal_id' => '0000044',
+                    'sender_legal_name' => 'Shared Coop',
+                    'sync' => [
+                        'filemask' => self::FS_MASK_TALIAE,
+                        'uri' => $this->syncTaliaeFs,
+                    ]
+                ]
+            ]);
+
+        $this->expectExceptionMessage('sender_legal_name and sender_legal_id must be set together');
+
+        $commandTester = new CommandTester($this->initCommand());
+        $commandTester->execute(['transporter' => 'TELIAE']);
+    }
+
     private function assertWindowEqualsDay(\DateTime $expected, ?\DateTime $actual): void
     {
         $this->assertNotNull($actual, 'Window timestamp must not be null');

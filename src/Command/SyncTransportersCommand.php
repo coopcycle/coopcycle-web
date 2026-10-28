@@ -188,6 +188,18 @@ class SyncTransportersCommand extends Command {
                 $this->resolvePackageMapping($this->packageMapping)
             );
 
+            // Coops sharing a transporter contract must all report as the same sub-contractor
+            if (isset($config['sender_legal_name']) !== isset($config['sender_legal_id'])) {
+                throw new Exception('sender_legal_name and sender_legal_id must be set together');
+            }
+            if (isset($config['sender_legal_name'])) {
+                $this->companyLegalName = $config['sender_legal_name'];
+                $this->companyLegalID = (string) $config['sender_legal_id'];
+                $message = sprintf('Reporting as %s (%s)', $this->companyLegalName, $this->companyLegalID);
+                $output->writeln($message);
+                $this->transporterLogger->info($message, ['transporter' => $this->transporter]);
+            }
+
             if (isset($config['sync']['uri'])) {
                 $inFs = $outFs = $this->initTransporterSyncOptions($config['sync']);
             }
