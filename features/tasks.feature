@@ -616,6 +616,44 @@ Feature: Tasks
       }
       """
 
+  Scenario: Delete a task group with its tasks
+    Given the fixtures files are loaded:
+      | tasks.yml           |
+      | users.yml           |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "DELETE" request to "/api/task_groups/1"
+    Then the response status code should be 204
+    When the user "bob" is authenticated
+    And I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/tasks/2"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON node "status" should be equal to "CANCELLED"
+    And the JSON node "group" should be null
+
+  Scenario: Delete a task group and keep its tasks
+    Given the fixtures files are loaded:
+      | tasks.yml           |
+      | users.yml           |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "DELETE" request to "/api/task_groups/1?keep_tasks=1"
+    Then the response status code should be 204
+    When the user "bob" is authenticated
+    And I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/tasks/2"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON node "status" should be equal to "TODO"
+    And the JSON node "group" should be null
+
   Scenario: Start a task
     Given the fixtures files are loaded:
       | tasks.yml           |

@@ -111,4 +111,65 @@ describe('taskEntityReducers', () => {
     })
   })
 
+  describe('DELETE_GROUP_SUCCESS', () => {
+
+    const state = {
+      ids: [
+        '/api/tasks/1',
+        '/api/tasks/2',
+      ],
+      entities: {
+        '/api/tasks/1': {
+          '@id': '/api/tasks/1',
+          group: { '@id': '/api/task_groups/1' },
+        },
+        '/api/tasks/2': {
+          '@id': '/api/tasks/2',
+          group: null,
+        },
+      },
+    }
+
+    it('should remove the tasks of the group', () => {
+      expect(taskEntityReducers(state, {
+        type: 'DELETE_GROUP_SUCCESS',
+        group: '/api/task_groups/1',
+        keepTasks: false,
+      })).toEqual({
+        ids: [
+          '/api/tasks/2',
+        ],
+        entities: {
+          '/api/tasks/2': {
+            '@id': '/api/tasks/2',
+            group: null,
+          },
+        },
+      })
+    })
+
+    it('should keep the tasks of the group, without group', () => {
+      expect(taskEntityReducers(state, {
+        type: 'DELETE_GROUP_SUCCESS',
+        group: '/api/task_groups/1',
+        keepTasks: true,
+      })).toEqual({
+        ids: [
+          '/api/tasks/1',
+          '/api/tasks/2',
+        ],
+        entities: {
+          '/api/tasks/1': {
+            '@id': '/api/tasks/1',
+            group: null,
+          },
+          '/api/tasks/2': {
+            '@id': '/api/tasks/2',
+            group: null,
+          },
+        },
+      })
+    })
+  })
+
 })

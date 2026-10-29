@@ -44,9 +44,9 @@ class TaskManager
         $this->commandBus->dispatch(new Cancel($tasks, $recalculatePrice));
     }
 
-    public function deleteGroup(TaskGroup $taskGroup)
+    public function deleteGroup(TaskGroup $taskGroup, bool $cancelTasks = true)
     {
-        $this->commandBus->dispatch(new DeleteGroup($taskGroup));
+        $this->commandBus->dispatch(new DeleteGroup($taskGroup, $cancelTasks));
     }
 
     public function addToGroup(array $tasks, TaskGroup $taskGroup)
