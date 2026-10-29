@@ -90,14 +90,9 @@
         {% include '_partials/delivery/sort.html.twig' %}
       </div>
       {# Filter is active #}
-      {% if deliveries.paginatorOptions.filterFieldParameterName in deliveries.params|keys %}
-        {% set params_without_filters = {} %}
-        {% for key, value in deliveries.params %}
-          {% if key not in [ deliveries.paginatorOptions.filterFieldParameterName, deliveries.paginatorOptions.filterValueParameterName ] %}
-            {% set params_without_filters = params_without_filters|merge({ (key): value }) %}
-          {% endif %}
-        {% endfor %}
-        <a class="btn btn-sm btn-default mr-4" href="{{ path(deliveries.route, params_without_filters) }}">
+      {% if filters.owner %}
+        {% set params_without_filters = deliveries.params|filter((value, key) => key not in [ 'store', 'restaurant', 'page' ]) %}
+        <a class="btn btn-sm btn-default mr-4" href="{{ path(deliveries.route, params_without_filters) }}" data-testid="deliveries__clear_filter">
           {{ 'deliveries.filter.clear'|trans }} <i class="fa fa-times"></i>
         </a>
       {% endif %}

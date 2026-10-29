@@ -109,6 +109,32 @@ class DeliveryRepository extends EntityRepository
             ;
     }
     /**
+     * The listings filter by owner themselves, instead of letting KnpPaginator
+     * do it: its WhereWalker crashes (TypeError) on the parenthesized subquery
+     * added by firstPickupOnly().
+     */
+    public function filterByStore(QueryBuilder $qb, int $storeId): QueryBuilder
+    {
+        return $qb
+            ->andWhere('d.store = :owner_store')
+            ->setParameter('owner_store', $storeId)
+            ;
+    }
+
+    /**
+     * @see filterByStore()
+     */
+    public function filterByRestaurant(QueryBuilder $qb, int $restaurantId): QueryBuilder
+    {
+        return $qb
+            ->join('d.order', 'owner_o')
+            ->join('owner_o.vendors', 'owner_v')
+            ->andWhere('owner_v.restaurant = :owner_restaurant')
+            ->setParameter('owner_restaurant', $restaurantId)
+            ;
+    }
+
+    /**
      * Filters on the date the delivery happens, *not* on the date it was
      * created: the listings display & sort t.doneBefore (see today(), past() &
      * upcoming()), so filtering on d.createdAt made deliveries scheduled
