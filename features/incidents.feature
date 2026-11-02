@@ -915,6 +915,168 @@ Feature: Incidents
       """
     And the database should contain an order with a total price 799
 
+  Scenario: Update the address of an ADDRESS_REVIEW_NEEDED incident
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml        |
+      | payment_methods.yml        |
+      | sylius_products.yml        |
+      | store_with_manual_supplements.yml |
+      | package_delivery_order.yml |
+      | pricing_rule_long_distance.yml |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the user "dispatcher" is loaded:
+      | email      | dispatcher@coopcycle.org |
+      | password   | 123456            |
+    And the user "dispatcher" has role "ROLE_DISPATCHER"
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/incidents" with body:
+      """
+      {
+        "description": "No such street",
+        "failureReasonCode": "ADDRESS_REVIEW_NEEDED",
+        "task": "/api/tasks/2"
+      }
+      """
+    Then the response status code should be 201
+    And the database should contain an order with a total price 499
+    Given the user "dispatcher" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "dispatcher" sends a "PUT" request to "/api/incidents/1/action" with body:
+      """
+      {
+        "action": "updated_address",
+        "address": {
+          "streetAddress": "1, Parvis de La Défense, 92800 Puteaux, France",
+          "postalCode": "92800",
+          "addressLocality": "Puteaux",
+          "latitude": 48.8918,
+          "longitude": 2.2380
+        },
+        "close": true
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Incident",
+        "@id":"@string@",
+        "@type":"Incident",
+        "id":@integer@,
+        "title":"@string@",
+        "status":"CLOSED",
+        "priority":@integer@,
+        "task":{"id":2,"status":"@string@","type":"@string@"},
+        "author":{"id":@integer@,"username":@string@},
+        "delivery":{"id":@integer@},
+        "order":{"id":@integer@,"restaurant":{"id":null,"name":null},"customer":{"id":null,"username":null}},
+        "store":{"id":@integer@,"name":@string@},
+        "failureReasonCode":"ADDRESS_REVIEW_NEEDED",
+        "description":"No such street",
+        "images":[],
+        "events":[
+          {
+            "@type": "IncidentEvent",
+            "@id":"@string@",
+            "id":@integer@,
+            "type":"updated_address",
+            "message":null,
+            "metadata":{
+              "address": {
+                "from": "23, Avenue Claude Vellefaux, 75010 Paris, France",
+                "to": "1, Parvis de La Défense, 92800 Puteaux, France"
+              },
+              "price": {
+                "from": 499,
+                "to": 699,
+                "diff_tax_included": 200,
+                "diff_tax_excluded": 200
+              }
+            },
+            "createdBy":"/api/users/3",
+            "createdAt":"@string@.isDateTime()"
+          }
+        ],
+        "createdBy":"/api/users/2",
+        "createdAt":"@string@.isDateTime()",
+        "updatedAt":"@string@.isDateTime()",
+        "tags":[],
+        "metadata": {"@*@": "@*@"}
+      }
+      """
+    When I add "Accept" header equal to "application/ld+json"
+    And the user "dispatcher" sends a "GET" request to "/api/tasks/2"
+    Then the response status code should be 200
+    And the JSON node "address.streetAddress" should be equal to "1, Parvis de La Défense, 92800 Puteaux, France"
+    And the JSON node "address.contactName" should be equal to "John Doe"
+    And the JSON node "address.geo.latitude" should be equal to the number 48.8918
+    And the database should contain an order with a total price 699
+
+  Scenario: Update the address of an ADDRESS_REVIEW_NEEDED incident from the store address book
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml        |
+      | payment_methods.yml        |
+      | sylius_products.yml        |
+      | store_with_manual_supplements.yml |
+      | package_delivery_order.yml |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the user "dispatcher" is loaded:
+      | email      | dispatcher@coopcycle.org |
+      | password   | 123456            |
+    And the user "dispatcher" has role "ROLE_DISPATCHER"
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/incidents" with body:
+      """
+      {
+        "description": "No such street",
+        "failureReasonCode": "ADDRESS_REVIEW_NEEDED",
+        "task": "/api/tasks/2"
+      }
+      """
+    Then the response status code should be 201
+    Given the user "dispatcher" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "dispatcher" sends a "GET" request to "/api/stores/1/addresses"
+    Then the response status code should be 200
+    And the JSON node "hydra:member[0].@id" should be equal to "/api/addresses/1"
+    And the JSON node "hydra:member[0].name" should be equal to "Office"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "dispatcher" sends a "PUT" request to "/api/incidents/1/action" with body:
+      """
+      {
+        "action": "updated_address",
+        "address": "/api/addresses/1"
+      }
+      """
+    Then the response status code should be 200
+    And the JSON node "status" should be equal to "OPEN"
+    And the JSON node "events[0].type" should be equal to "updated_address"
+    And the JSON node "events[0].metadata.address.to" should be equal to "72, Rue Saint-Maur, 75011 Paris, France"
+    And the JSON node "events[0].metadata.price" should not be null
+    When I add "Accept" header equal to "application/ld+json"
+    And the user "dispatcher" sends a "GET" request to "/api/tasks/2"
+    Then the response status code should be 200
+    # A copy, the store address book entry is left untouched
+    And the JSON node "address.@id" should match "/^\/api\/addresses\/(?!1$)\d+$/"
+    And the JSON node "address.streetAddress" should be equal to "72, Rue Saint-Maur, 75011 Paris, France"
+    And the JSON node "address.contactName" should be equal to "Jane smith"
+
   Scenario: Report incident: pre-fill missing manual supplements in suggestion
     Given the fixtures files are loaded:
       | sylius_taxation.yml        |

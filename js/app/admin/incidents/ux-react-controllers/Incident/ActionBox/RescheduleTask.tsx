@@ -74,6 +74,8 @@ export default function ({ incident, task }) {
           onClick={() => submit(true)}>
           {t('ADMIN_DASHBOARD_AND_CLOSE_THE_INCIDENT', {
             action: t('ADMIN_DASHBOARD_RESCHEDULE'),
+            // Rendered as text by React, which already escapes it
+            interpolation: { escapeValue: false },
           })}
         </Button>
       </p>
