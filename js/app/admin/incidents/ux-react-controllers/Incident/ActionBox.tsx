@@ -14,6 +14,7 @@ import ApplyPriceDiffTask from './ActionBox/ApplyPriceDiffTask';
 import TransporterReport from './ActionBox/TransporterReport';
 import CreditNoteForm from './ActionBox/CreditNote';
 import RefundForm from './ActionBox/Refund';
+import UpdateAddress from './ActionBox/UpdateAddress';
 
 import { useTranslation } from 'react-i18next';
 
@@ -85,6 +86,7 @@ export default function ({
   const [open, setOpen] = useState(false);
 
   const [rescheduleDrawer, setRescheduleDrawer] = useState(false);
+  const [updateAddressDrawer, setUpdateAddressDrawer] = useState(false);
   const [priceDiffDrawer, setPriceDiffDrawer] = useState(false);
   const [transporterReportModal, setTransporterReportModal] = useState(false);
   const [isCreditNoteModalVisible, setIsCreditNoteModalVisible] =
@@ -109,6 +111,21 @@ export default function ({
         </Button>
       ),
       shouldRender: task.status !== 'DONE',
+    },
+    {
+      key: 'update-address',
+      component: () => (
+        <Button
+          data-testid="update-address-button"
+          style={styles.btn}
+          onClick={() => setUpdateAddressDrawer(true)}>
+          {t('INCIDENTS_UPDATE_ADDRESS')}
+        </Button>
+      ),
+      shouldRender:
+        incident.failureReasonCode === 'ADDRESS_REVIEW_NEEDED' &&
+        task.status !== 'DONE' &&
+        task.status !== 'CANCELLED',
     },
     {
       key: 'cancel',
@@ -223,6 +240,15 @@ export default function ({
           onClose={() => setRescheduleDrawer(false)}
           open={rescheduleDrawer}>
           <RescheduleTask task={task} incident={incident} />
+        </Drawer>
+
+        <Drawer
+          placement={placement}
+          width={480}
+          title={t('INCIDENTS_UPDATE_ADDRESS')}
+          onClose={() => setUpdateAddressDrawer(false)}
+          open={updateAddressDrawer}>
+          <UpdateAddress incident={incident} />
         </Drawer>
 
         <Drawer

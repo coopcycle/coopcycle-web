@@ -26,7 +26,21 @@ function _eventTypeToText(event: IncidentEvent) {
       return 'ACCEPTED_SUGGESTION';
     case 'rejected_suggestion':
       return 'REJECTED_SUGGESTION';
+    case 'updated_address':
+      return 'UPDATED_THE_ADDRESS';
   }
+}
+
+// The price of the order before and after the address was updated
+type UpdatedAddressPrice = {
+  from: number;
+  to: number;
+  diff_tax_included: number;
+  diff_tax_excluded: number;
+};
+
+function _signedMoney(amount: number) {
+  return (amount > 0 ? '+' : '') + money(amount);
 }
 
 function _metadataToText({ type, metadata }: IncidentEvent, t: TFunction) {
@@ -50,6 +64,40 @@ function _metadataToText({ type, metadata }: IncidentEvent, t: TFunction) {
           </div>
         </>
       );
+    case 'updated_address': {
+      const address = metadata.address as { from: string; to: string };
+      const price = metadata.price as UpdatedAddressPrice | null;
+
+      return (
+        <>
+          <div>
+            <span style={{ width: '55px', display: 'inline-block' }}>
+              {t('INCIDENTS_RESCHEDULE_FROM')}:
+            </span>
+            {address.from}
+          </div>
+          <div>
+            <span style={{ width: '55px', display: 'inline-block' }}>
+              {t('INCIDENTS_RESCHEDULE_TO')}:
+            </span>
+            {address.to}
+          </div>
+          {price && (
+            <div data-testid="timeline-event-price">
+              <span style={{ width: '55px', display: 'inline-block' }}>
+                {t('INCIDENTS_PRICE')}:
+              </span>
+              {money(price.from)} → {money(price.to)} (
+              {t('INCIDENTS_PRICE_DIFF_WITH_TAX', {
+                taxIncluded: _signedMoney(price.diff_tax_included),
+                taxExcluded: _signedMoney(price.diff_tax_excluded),
+              })}
+              )
+            </div>
+          )}
+        </>
+      );
+    }
     case 'applied_price_diff':
       // Events recorded before both amounts were stored only have the diff
       if (metadata.diff_tax_excluded === undefined) {
