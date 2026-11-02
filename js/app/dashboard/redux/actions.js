@@ -208,7 +208,8 @@ export function unassignTasks(username, items) {
       return
     }
 
-    await dispatch(removeTaskListItems(username, items))
+    // The updated list, or nothing if the request failed and was rolled back
+    return dispatch(removeTaskListItems(username, items))
   }
 }
 
@@ -2366,7 +2367,7 @@ export function removeTasksFromTour(tour, tasks, modifyTourAction=modifyTour) {
 
   return function(dispatch) {
     let newTourItems = withoutItemsIRIs(tour.items, tasks.map(t => t['@id']))
-    dispatch(modifyTourAction(tour, newTourItems))
+    return dispatch(modifyTourAction(tour, newTourItems))
   }
 }
 
