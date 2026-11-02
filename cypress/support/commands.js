@@ -146,7 +146,7 @@ Cypress.Commands.add('antdSelect', (selector, text) => {
     .not('.ant-select-dropdown-hidden')
     .within(() => {
       let attempts = 0
-      const maxAttempts = 10
+      const maxAttempts = 60
 
       function tryFindOption() {
         cy.get('.rc-virtual-list-holder-inner .ant-select-item-option', {
@@ -176,22 +176,15 @@ Cypress.Commands.add('antdSelect', (selector, text) => {
             return
           }
 
-          // Fail early to debug test failures on CI
+          // The list is virtual: only the visible options are rendered, and a scroll
+          // can go past the option we look for. For times, scroll back up when it did.
           const textMoment = toMoment(text)
-          const firstOptionText = $options.toArray()[0].textContent
+          const firstOptionText = $options.first().text()
           const firstOptionMoment = toMoment(firstOptionText)
-          if (
+          const scrollUp =
             textMoment &&
             firstOptionMoment &&
             textMoment.isBefore(firstOptionMoment)
-          ) {
-            cy.log(
-              `The text "${text}" is before the first option "${firstOptionText}", skipping further attempts.`,
-            )
-            throw new Error(
-              `The text "${text}" is before the first option "${firstOptionText}", skipping further attempts.`,
-            )
-          }
 
           if (attempts >= maxAttempts) {
             cy.log(
@@ -204,12 +197,24 @@ Cypress.Commands.add('antdSelect', (selector, text) => {
 
           attempts++
 
+          // Scroll by a third of the rendered options, so that consecutive
+          // renders always overlap, even if the scroll is applied late or twice
+          const rowHeight = $options.first().outerHeight()
+          const rows = Math.max(1, Math.floor($options.length / 3))
+
           cy.get('.rc-virtual-list-holder').trigger('wheel', {
             deltaX: 0,
-            deltaY: 32 * 6, // 1 row = ~32px
+            deltaY: (scrollUp ? -1 : 1) * rowHeight * rows,
             deltaMode: 0,
           })
-          cy.wait(500)
+
+          // Wait for the list to render the new options, a stale read would scroll twice
+          cy.get('.rc-virtual-list-holder-inner .ant-select-item-option', {
+            log: false,
+          })
+            .first()
+            .should('not.have.text', firstOptionText)
+
           tryFindOption()
         })
       }
