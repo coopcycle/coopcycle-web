@@ -1,6 +1,9 @@
 parameters:
   zelty_enabled: '%env(bool:ZELTY_ENABLED)%'
-  # Zelty signs every webhook with the same secret for the whole instance
+  # Zelty signs every webhook with the same secret for the whole instance.
+  # Optional so that instances without Zelty boot; while it is empty,
+  # ZeltyWebhookSignatureSubscriber rejects every webhook.
+  env(ZELTY_WEBHOOK_SECRET): ''
   zelty_webhook_secret: '%env(ZELTY_WEBHOOK_SECRET)%'
 
 services:
