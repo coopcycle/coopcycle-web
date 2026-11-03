@@ -82,19 +82,23 @@ function _metadataToText({ type, metadata }: IncidentEvent, t: TFunction) {
             </span>
             {address.to}
           </div>
-          {price && (
-            <div data-testid="timeline-event-price">
-              <span style={{ width: '55px', display: 'inline-block' }}>
-                {t('INCIDENTS_PRICE')}:
-              </span>
-              {money(price.from)} → {money(price.to)} (
-              {t('INCIDENTS_PRICE_DIFF_WITH_TAX', {
-                taxIncluded: _signedMoney(price.diff_tax_included),
-                taxExcluded: _signedMoney(price.diff_tax_excluded),
-              })}
-              )
-            </div>
-          )}
+          <div data-testid="timeline-event-price">
+            <span style={{ width: '55px', display: 'inline-block' }}>
+              {t('INCIDENTS_PRICE')}:
+            </span>
+            {/* i.e. a price set by hand, or no order */}
+            {!price && t('INCIDENTS_PRICE_NOT_RECALCULATED')}
+            {price && (
+              <>
+                {money(price.from)} → {money(price.to)} (
+                {t('INCIDENTS_PRICE_DIFF_WITH_TAX', {
+                  taxIncluded: _signedMoney(price.diff_tax_included),
+                  taxExcluded: _signedMoney(price.diff_tax_excluded),
+                })}
+                )
+              </>
+            )}
+          </div>
         </>
       );
     }
