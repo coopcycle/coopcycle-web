@@ -115,9 +115,11 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
             controller: Orders::class,
             security: 'is_granted(\'edit\', object)'
         ),
+        // ?coordinate=lat,lng narrows to the shops that deliver there;
+        // ?category=, ?cuisine[]=, ?type= and ?collection= narrow the same way
+        // the /shops page does (see ShopFilterExtension).
         new GetCollection(
             uriTemplate: '/restaurants',
-            paginationEnabled: false,
             normalizationContext: [
                 'groups' => [
                     'restaurant',

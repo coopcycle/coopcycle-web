@@ -356,75 +356,121 @@ class LocalBusinessRepository extends EntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * The filters a customer can browse the shops with.
+     *
+     * Shared by findByFilters() and by the API's collection extension, so
+     * that /shops and /api/restaurants select the same shops. The aliases are
+     * derived from $alias, so the clauses can be grafted onto a query builder
+     * that already has joins of its own.
+     *
+     * @param array<string, string|string[]> $filters
+     */
+    public function applyFilters(QueryBuilder $qb, array $filters, string $alias = 'r'): void
+    {
+        foreach ($filters as $key => $value) {
+            switch ($key) {
+                case 'type':
+                    $qb
+                        ->andWhere(sprintf('%s.type = :%s_type', $alias, $alias))
+                        ->setParameter(sprintf('%s_type', $alias), $value);
+                    break;
+                case 'cuisine':
+                    $cuisineAlias = sprintf('%s_cuisine', $alias);
+                    $qb
+                        ->innerJoin(
+                            sprintf('%s.servesCuisine', $alias),
+                            $cuisineAlias,
+                            Expr\Join::WITH,
+                            $qb->expr()->in(sprintf('%s.name', $cuisineAlias), sprintf(':%s_names', $cuisineAlias))
+                        )
+                        ->setParameter(sprintf('%s_names', $cuisineAlias), (array) $value);
+                    break;
+                case 'category':
+                    $this->applyCategoryFilter($qb, (string) $value, $alias);
+                    break;
+                case 'collection':
+                    $itemAlias = sprintf('%s_collection_item', $alias);
+                    $collectionAlias = sprintf('%s_collection', $alias);
+                    $qb
+                        ->innerJoin(
+                            ShopCollectionItem::class,
+                            $itemAlias,
+                            Expr\Join::WITH,
+                            sprintf('%s.shop = %s.id', $itemAlias, $alias)
+                        )
+                        ->innerJoin(
+                            ShopCollection::class,
+                            $collectionAlias,
+                            Expr\Join::WITH,
+                            sprintf('%s.collection = %s.id', $itemAlias, $collectionAlias)
+                        )
+                        ->andWhere(sprintf('%s.slug = :%s_slug', $collectionAlias, $collectionAlias))
+                        ->setParameter(sprintf('%s_slug', $collectionAlias), $value);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    private function applyCategoryFilter(QueryBuilder $qb, string $category, string $alias): void
+    {
+        switch ($category) {
+            case 'featured':
+                $qb
+                    ->andWhere(sprintf('%s.featured = :%s_featured', $alias, $alias))
+                    ->setParameter(sprintf('%s_featured', $alias), true);
+                break;
+            case 'exclusive':
+                $qb
+                    ->andWhere(sprintf('%s.exclusive = :%s_exclusive', $alias, $alias))
+                    ->setParameter(sprintf('%s_exclusive', $alias), true);
+                break;
+            case 'new':
+                // The cap that goes with this one lives in findByFilters(); the
+                // API paginates instead of truncating.
+                $qb
+                    ->andWhere(sprintf('%s.createdAt > :%s_since', $alias, $alias))
+                    ->setParameter(
+                        sprintf('%s_since', $alias),
+                        (new \DateTime())->modify(sprintf('-%d days', $this->getNewShopDays()))
+                    )
+                    ->orderBy(sprintf('%s.createdAt', $alias), 'DESC');
+                break;
+            case 'zerowaste':
+                $qb
+                    ->andWhere(
+                        $qb->expr()->orX(
+                            $qb->expr()->eq(sprintf('%s.depositRefundEnabled', $alias), sprintf(':%s_zerowaste', $alias)),
+                            $qb->expr()->eq(sprintf('%s.loopeatEnabled', $alias), sprintf(':%s_zerowaste', $alias))
+                        )
+                    )
+                    ->setParameter(sprintf('%s_zerowaste', $alias), true);
+                break;
+            case 'edenred':
+                $qb
+                    ->andWhere(sprintf('%s.edenredEnabled = :%s_edenred', $alias, $alias))
+                    ->andWhere(sprintf('%s.edenredMerchantId IS NOT NULL', $alias))
+                    ->setParameter(sprintf('%s_edenred', $alias), true);
+                break;
+            default:
+                break;
+        }
+    }
+
     public function findByFilters(array $filters, bool $asQueryBuilder = false)
     {
         $qb = $this->createQueryBuilder('r');
 
         $this->addBusinessContextClause($qb, 'r');
 
-        if (count($filters) > 0) {
-            foreach ($filters as $key => $value) {
-                switch($key) {
-                    case 'type':
-                        $qb
-                            ->andWhere('r.type = :type')
-                            ->setParameter('type', $value);
-                        break;
-                    case 'cuisine':
-                        $qb
-                            ->innerJoin('r.servesCuisine', 'c', Expr\Join::WITH, $qb->expr()->in('c.name', ':cuisines'))
-                            ->setParameter('cuisines', $value);
-                        break;
-                    case 'category':
-                        switch($value) {
-                            case 'featured':
-                                $qb
-                                    ->andWhere('r.featured = :featured')
-                                    ->setParameter('featured', true);
-                                break;
-                            case 'exclusive':
-                                $qb
-                                    ->andWhere('r.exclusive = :exclusive')
-                                    ->setParameter('exclusive', true);
-                                break;
-                            case 'new':
-                                $qb
-                                    ->andWhere('r.createdAt > :since')
-                                    ->setParameter('since', (new \DateTime())->modify(sprintf('-%d days', $this->getNewShopDays())))
-                                    ->setMaxResults(self::LATESTS_SHOPS_LIMIT)
-                                    ->orderBy('r.createdAt', 'DESC');
-                                break;
-                            case 'zerowaste':
-                                $qb
-                                    ->andWhere(
-                                        $qb->expr()->orX(
-                                        $qb->expr()->eq('r.depositRefundEnabled', ':enabled'),
-                                        $qb->expr()->eq('r.loopeatEnabled', ':enabled'))
-                                    )
-                                    ->setParameter('enabled', true);
-                                break;
-                            case 'edenred':
-                                $qb
-                                    ->andWhere('r.edenredEnabled = :edenredEnabled')
-                                    ->andWhere('r.edenredMerchantId IS NOT NULL')
-                                    ->setParameter('edenredEnabled', true);
-                                break;
-                            default:
-                                break;
-                        }
-                        break;
+        $this->applyFilters($qb, $filters, 'r');
 
-                    case 'collection':
-                        $qb
-                            ->innerJoin(ShopCollectionItem::class, 'collection_item', Expr\Join::WITH, 'collection_item.shop = r.id')
-                            ->innerJoin(ShopCollection::class, 'collection', Expr\Join::WITH, 'collection_item.collection = collection.id')
-                            ->andWhere('collection.slug = :slug')
-                            ->setParameter('slug', $value);
-                        break;
-                    default:
-                        break;
-                }
-            }
+        // The homepage and the shops page show the newest shops as a teaser,
+        // not as a browsable list, so they only ever want the first few.
+        if ('new' === ($filters['category'] ?? null)) {
+            $qb->setMaxResults(self::LATESTS_SHOPS_LIMIT);
         }
 
         return $asQueryBuilder ? $qb : $qb->getQuery()->getResult();
