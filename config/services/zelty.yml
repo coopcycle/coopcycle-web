@@ -25,9 +25,7 @@ services:
   AppBundle\Integration\Zelty\ZeltyCatalogPullService: ~
   AppBundle\Integration\Zelty\ZeltyImportService: ~
   AppBundle\Integration\Zelty\ZeltyCatalogDenormalizer: ~
-  AppBundle\Integration\Zelty\ZeltyCatalogProcessor:
-    arguments:
-      $webhookSecret: '%zelty_webhook_secret%'
+  AppBundle\Integration\Zelty\ZeltyCatalogProcessor: ~
   AppBundle\Integration\Zelty\ZeltyDishWebhookDenormalizer: ~
   AppBundle\Integration\Zelty\ZeltyDishWebhookProcessor: ~
   AppBundle\Integration\Zelty\ZeltyMenuWebhookDenormalizer: ~

@@ -109,6 +109,7 @@ services:
       $shopifyApiSecret: '%shopify_api_secret%'
       $shopifyGatewaySecret: '%shopify_gateway_secret%'
       $shopifyThemeExtensionUuid: '%shopify_theme_extension_uuid%'
+      $zeltyWebhookSecret: '%zelty_webhook_secret%'
 
   # For some cache pools, want *STABLE* cache keys between deploys.
   # To achieve this, we *EXPLICITLY* set a namespace,
