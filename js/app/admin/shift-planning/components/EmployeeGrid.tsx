@@ -4,7 +4,7 @@ import { CloseOutlined, PlusOutlined, StarFilled } from '@ant-design/icons';
 import { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
-import { useGetEmployeeProfilesQuery, usePutShiftMutation } from '../../../api/slice';
+import { useGetEmployeeProfilesQuery, usePostShiftMutation, usePutShiftMutation } from '../../../api/slice';
 import {
   HolidayRequest,
   PlanningUser,
@@ -83,6 +83,7 @@ export default function EmployeeGrid({
 
   const [isAdding, setIsAdding] = useState(false);
   const [putShift] = usePutShiftMutation();
+  const [postShift] = usePostShiftMutation();
 
   const days = [...Array(7)].map((_, i) => weekStart.add(i, 'day'));
   const today = dayjs().format('YYYY-MM-DD');
@@ -136,10 +137,10 @@ export default function EmployeeGrid({
   // wall-clock time); dropping on a different rider's row reassigns it to
   // that rider instead. Both can happen from a single drag.
   const onMove = useCallback(
-    async (source: CellData, destination: CellData) => {
+    async (source: CellData, destination: CellData, duplicate: boolean) => {
       const { shiftUri, userUri: fromUserUri, dayKey: fromDayKey } = source;
       const { userUri: toUserUri, dayKey: toDayKey } = destination;
-      if (fromUserUri === toUserUri && fromDayKey === toDayKey) {
+      if (!duplicate && fromUserUri === toUserUri && fromDayKey === toDayKey) {
         return;
       }
 
@@ -156,8 +157,7 @@ export default function EmployeeGrid({
             );
 
       try {
-        await putShift({
-          '@id': shift['@id'],
+        const payload = {
           activity: shift.activity,
           startsAt: withDay(shift.startsAt, toDayKey),
           endsAt: withDay(shift.endsAt, toDayKey),
@@ -165,13 +165,15 @@ export default function EmployeeGrid({
           breakMinutes: shift.breakMinutes,
           comment: shift.comment,
           users: newUsers,
-        }).unwrap();
-        message.success(t('SHIFT_PLANNING_SAVED'));
+          requiredSkills: shift.requiredSkills.map(skill => skill['@id']),
+        };
+        await (duplicate ? postShift(payload) : putShift({ '@id': shift['@id'], ...payload })).unwrap();
+        message.success(t(duplicate ? 'SHIFT_PLANNING_DUPLICATE_SUCCESS' : 'SHIFT_PLANNING_SAVED'));
       } catch {
         message.error(t('SHIFT_PLANNING_ERROR'));
       }
     },
-    [shifts, putShift, message, t],
+    [shifts, putShift, postShift, message, t],
   );
   useCellDropMonitor(onMove);
 
