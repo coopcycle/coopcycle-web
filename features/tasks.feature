@@ -624,7 +624,7 @@ Feature: Tasks
     And the user "bob" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "bob" sends a "DELETE" request to "/api/task_groups/1"
+    And the user "bob" sends a "DELETE" request to "/api/task_groups/1?cancel_tasks=1"
     Then the response status code should be 204
     When the user "bob" is authenticated
     And I add "Content-Type" header equal to "application/ld+json"
@@ -643,7 +643,7 @@ Feature: Tasks
     And the user "bob" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "bob" sends a "DELETE" request to "/api/task_groups/1?keep_tasks=1"
+    And the user "bob" sends a "DELETE" request to "/api/task_groups/1"
     Then the response status code should be 204
     When the user "bob" is authenticated
     And I add "Content-Type" header equal to "application/ld+json"

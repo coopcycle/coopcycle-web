@@ -9,7 +9,7 @@ class DeleteGroup
     private $taskGroup;
     private $cancelTasks;
 
-    public function __construct(TaskGroup $taskGroup, bool $cancelTasks = true)
+    public function __construct(TaskGroup $taskGroup, bool $cancelTasks = false)
     {
         $this->taskGroup = $taskGroup;
         $this->cancelTasks = $cancelTasks;

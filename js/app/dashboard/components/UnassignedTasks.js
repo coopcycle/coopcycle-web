@@ -183,8 +183,8 @@ export const UnassignedTasks = () => {
                               key={group.id}
                               group={group}
                               tasks={group.tasks}
-                              onConfirmDelete={keepTasks =>
-                                dispatch(deleteGroup(group, keepTasks))
+                              onConfirmDelete={cancelTasks =>
+                                dispatch(deleteGroup(group, cancelTasks))
                               }
                               onEdit={data => dispatch(editGroup(data))}
                             />

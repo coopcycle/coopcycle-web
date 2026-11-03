@@ -83,9 +83,9 @@ class TaskGroup extends React.Component {
     })
   }
 
-  onDeleteConfirmed(keepTasks) {
+  onDeleteConfirmed(cancelTasks) {
     this.setState({ deleteConfirmOpen: false })
-    this.props.onConfirmDelete(keepTasks)
+    this.props.onConfirmDelete(cancelTasks)
   }
 
   renderDeleteConfirm() {
@@ -100,11 +100,11 @@ class TaskGroup extends React.Component {
             { t('ADMIN_DASHBOARD_CANCEL') }
           </Button>
           <Button size="small" className="mr-2"
-            onClick={ () => this.onDeleteConfirmed(true) }>
+            onClick={ () => this.onDeleteConfirmed(false) }>
             { t('ADMIN_DASHBOARD_DELETE_GROUP_KEEP_TASKS') }
           </Button>
           <Button size="small" type="primary" danger
-            onClick={ () => this.onDeleteConfirmed(false) }>
+            onClick={ () => this.onDeleteConfirmed(true) }>
             { t('ADMIN_DASHBOARD_DELETE_GROUP_AND_TASKS') }
           </Button>
         </div>

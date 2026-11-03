@@ -1808,11 +1808,11 @@ export function deleteRecurrenceRule(recurrenceRule) {
   }
 }
 
-export function deleteGroupSuccess(group, keepTasks = false) {
-  return { type: DELETE_GROUP_SUCCESS, group, keepTasks }
+export function deleteGroupSuccess(group, cancelTasks = false) {
+  return { type: DELETE_GROUP_SUCCESS, group, cancelTasks }
 }
 
-export function deleteGroup(group, keepTasks = false) {
+export function deleteGroup(group, cancelTasks = false) {
 
   return function(dispatch, getState) {
 
@@ -1822,14 +1822,14 @@ export function deleteGroup(group, keepTasks = false) {
 
     createClient(dispatch).request({
       method: 'delete',
-      url: keepTasks ? `${resourceId}?keep_tasks=1` : resourceId,
+      url: cancelTasks ? `${resourceId}?cancel_tasks=1` : resourceId,
       headers: {
         'Authorization': `Bearer ${jwt}`,
         'Accept': 'application/ld+json',
         'Content-Type': 'application/ld+json'
       }
     })
-      .then(() => dispatch(deleteGroupSuccess(resourceId, keepTasks)))
+      .then(() => dispatch(deleteGroupSuccess(resourceId, cancelTasks)))
       // eslint-disable-next-line no-console
       .catch(error => console.log(error))
   }

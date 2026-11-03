@@ -15,8 +15,8 @@ class DeleteGroup
 
     public function __invoke($data, Request $request)
     {
-        // With ?keep_tasks=1, only the group is deleted, its tasks go back to unassigned
-        $this->taskManager->deleteGroup($data, !$request->query->getBoolean('keep_tasks'));
+        // Tasks are only cancelled with ?cancel_tasks=1, otherwise they go back to unassigned
+        $this->taskManager->deleteGroup($data, $request->query->getBoolean('cancel_tasks'));
 
         return $data;
     }

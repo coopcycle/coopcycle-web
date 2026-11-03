@@ -66,14 +66,14 @@ export default (state = initialState, action) => {
         return state
       }
 
-      if (action.keepTasks) {
-        return taskAdapter.upsertMany(state, tasksMatchingGroup.map(t => ({
-          ...t,
-          group: null
-        })))
+      if (action.cancelTasks) {
+        return taskAdapter.removeMany(state, tasksMatchingGroup.map(t => t['@id']))
       }
 
-      return taskAdapter.removeMany(state, tasksMatchingGroup.map(t => t['@id']))
+      return taskAdapter.upsertMany(state, tasksMatchingGroup.map(t => ({
+        ...t,
+        group: null
+      })))
 
     case REMOVE_TASK:
       return taskAdapter.removeOne(state, action.task['@id'])

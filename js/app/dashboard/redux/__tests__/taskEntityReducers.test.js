@@ -134,7 +134,7 @@ describe('taskEntityReducers', () => {
       expect(taskEntityReducers(state, {
         type: 'DELETE_GROUP_SUCCESS',
         group: '/api/task_groups/1',
-        keepTasks: false,
+        cancelTasks: true,
       })).toEqual({
         ids: [
           '/api/tasks/2',
@@ -152,7 +152,7 @@ describe('taskEntityReducers', () => {
       expect(taskEntityReducers(state, {
         type: 'DELETE_GROUP_SUCCESS',
         group: '/api/task_groups/1',
-        keepTasks: true,
+        cancelTasks: false,
       })).toEqual({
         ids: [
           '/api/tasks/1',
