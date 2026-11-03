@@ -100,18 +100,7 @@ export default function ({
   const priceDiffDisabledReason = _priceDiffDisabledReason(isLastmile, order);
 
   const buttons = [
-    {
-      key: 'reschedule',
-      component: () => (
-        <Button
-          data-testid="reschedule-button"
-          style={styles.btn}
-          onClick={() => setRescheduleDrawer(true)}>
-          {t('RESCHEDULE_THE_TASK')}
-        </Button>
-      ),
-      shouldRender: task.status !== 'DONE',
-    },
+    // First, as this is what an address review is about
     {
       key: 'update-address',
       component: () => (
@@ -126,6 +115,18 @@ export default function ({
         incident.failureReasonCode === 'ADDRESS_REVIEW_NEEDED' &&
         task.status !== 'DONE' &&
         task.status !== 'CANCELLED',
+    },
+    {
+      key: 'reschedule',
+      component: () => (
+        <Button
+          data-testid="reschedule-button"
+          style={styles.btn}
+          onClick={() => setRescheduleDrawer(true)}>
+          {t('RESCHEDULE_THE_TASK')}
+        </Button>
+      ),
+      shouldRender: task.status !== 'DONE',
     },
     {
       key: 'cancel',
@@ -248,7 +249,7 @@ export default function ({
           title={t('INCIDENTS_UPDATE_ADDRESS')}
           onClose={() => setUpdateAddressDrawer(false)}
           open={updateAddressDrawer}>
-          <UpdateAddress incident={incident} />
+          <UpdateAddress incident={incident} task={task} />
         </Drawer>
 
         <Drawer
