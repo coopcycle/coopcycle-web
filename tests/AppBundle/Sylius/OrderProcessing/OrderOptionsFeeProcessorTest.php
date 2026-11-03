@@ -17,6 +17,7 @@ use AppBundle\Sylius\OrderProcessing\OrderVendorProcessor;
 use AppBundle\Sylius\Product\ProductOptionInterface;
 use AppBundle\Sylius\Product\ProductOptionValueInterface;
 use AppBundle\Sylius\Product\ProductVariantInterface;
+use AppBundle\Sylius\Promotion\Action\PercentageDiscountPromotionActionCommand;
 use Doctrine\Common\Collections\ArrayCollection;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -32,6 +33,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class OrderOptionsFeeProcessorTest extends KernelTestCase
 {
     use ProphecyTrait;
+    use PromotionProcessorTrait;
 
     private $adjustmentFactory;
     private $orderItemQuantityModifier;
@@ -293,5 +295,65 @@ class OrderOptionsFeeProcessorTest extends KernelTestCase
         $expectedFeeTotal = (int) (((1000 + 250 + 1000) * 0.25) + 350);
 
         $this->assertEquals($expectedFeeTotal, $order->getFeeTotal());
+    }
+
+    public function testItemsPercentagePromotionIncludesOptions()
+    {
+        $promotion = self::createPromotion('ITEMS_10', PercentageDiscountPromotionActionCommand::TYPE, [
+            'percentage' => 0.1,
+        ]);
+
+        $optionsFeeProcessor = new OrderOptionsFeeProcessor(
+            $this->orderOptionsProcessor,
+            new OrderFeeProcessor(
+                $this->adjustmentFactory,
+                $this->translator->reveal(),
+                $this->deliveryManager->reveal(),
+                $this->pricingManager->reveal(),
+                $this->promotionRepository->reveal(),
+                $this->createPromotionProcessor([ $promotion ]),
+                new NullLogger(),
+                new NullLoggingUtils()
+            ),
+            $this->orderVendorProcessor->reveal()
+        );
+
+        $drinks = $this->createProductOption(ProductOptionInterface::STRATEGY_OPTION_VALUE);
+        $coffee = $this->createProductOptionValue($drinks, 'Coffee', 250);
+
+        $cookieVariant = $this->createProductVariant([ $coffee ]);
+
+        $cookie = new OrderItem();
+        $cookie->setVariant($cookieVariant);
+        $cookie->setUnitPrice(1000);
+
+        $this->orderItemQuantityModifier->modify($cookie, 1);
+
+        $cheeseCakeVariant = $this->createProductVariant();
+
+        $cheeseCake = new OrderItem();
+        $cheeseCake->setVariant($cheeseCakeVariant);
+        $cheeseCake->setUnitPrice(1000);
+
+        $this->orderItemQuantityModifier->modify($cheeseCake, 1);
+
+        $contract = self::createContract(350, 350, 0.25);
+
+        $restaurant = new Restaurant();
+        $restaurant->setContract($contract);
+
+        $order = new Order();
+        $order->setRestaurant($restaurant);
+
+        $order->addItem($cheeseCake);
+        $optionsFeeProcessor->process($order);
+
+        $this->assertEquals(-100, $order->getAdjustmentsTotal(AdjustmentInterface::ORDER_PROMOTION_ADJUSTMENT));
+
+        $order->addItem($cookie);
+        $optionsFeeProcessor->process($order);
+
+        // The promotion is calculated with the price of the options
+        $this->assertEquals(-225, $order->getAdjustmentsTotal(AdjustmentInterface::ORDER_PROMOTION_ADJUSTMENT));
     }
 }

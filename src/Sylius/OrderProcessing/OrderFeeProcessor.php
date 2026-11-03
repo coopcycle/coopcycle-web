@@ -44,6 +44,7 @@ final class OrderFeeProcessor implements OrderProcessorInterface
 
         if (!$order->hasVendor()) {
             $this->logger->info('OrderFeeProcessor | skipped (no vendor)', ['order' => $this->loggingUtils->getOrderId($order)]);
+            $this->promotionProcessor->process($order);
             return;
         }
 
@@ -108,8 +109,6 @@ final class OrderFeeProcessor implements OrderProcessorInterface
             }
         }
 
-        $prevCustomerAmount = $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT);
-
         $this->upsertAdjustment(
             $order,
             AdjustmentInterface::DELIVERY_ADJUSTMENT,
@@ -117,16 +116,23 @@ final class OrderFeeProcessor implements OrderProcessorInterface
             $customerAmount,
             $neutral = false);
 
-        // Promotions are applied by OrderPromotionProcessor *BEFORE* this processor,
-        // i.e with the previous delivery amount.
-        // When the delivery amount changes (e.g when the order total reaches another price range),
-        // promotions based on the delivery amount (e.g percentage discount) must be applied again.
-        if ($prevCustomerAmount !== $customerAmount) {
-            $this->logger->info(sprintf('OrderFeeProcessor | customer amount: %d | prev: %d | re-applying promotions', $customerAmount, $prevCustomerAmount),
-                ['order' => $this->loggingUtils->getOrderId($order)]);
+        $newTipAmount = $order->getTipAmount();
 
-            $this->promotionProcessor->process($order);
+        // $order->getTipAmount() is the tip amount set in the current request
+        // preserve the previous tip amount if $newTipAmount is null
+        if (null !== $newTipAmount) {
+            $this->upsertAdjustment(
+                $order,
+                AdjustmentInterface::TIP_ADJUSTMENT,
+                'order.adjustment_type.tip',
+                $newTipAmount,
+                $neutral = false);
         }
+
+        // IMPORTANT
+        // Promotions are applied *HERE*, because they depend on the delivery amount & the tip (e.g delivery percentage discount),
+        // and the platform fee depends on the promotions (see decreasePlatformFee())
+        $this->promotionProcessor->process($order);
 
         $deliveryPromotionAdjustments = $order->getAdjustments(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT);
         foreach ($deliveryPromotionAdjustments as $deliveryPromotionAdjustment) {
@@ -146,19 +152,6 @@ final class OrderFeeProcessor implements OrderProcessorInterface
                 $this->logger->info(sprintf('OrderFeeProcessor | business amount: %d | applied order promotion', $businessAmount),
                     ['order' => $this->loggingUtils->getOrderId($order)]);
             }
-        }
-
-        $newTipAmount = $order->getTipAmount();
-
-        // $order->getTipAmount() is the tip amount set in the current request
-        // preserve the previous tip amount if $newTipAmount is null
-        if (null !== $newTipAmount) {
-            $this->upsertAdjustment(
-                $order,
-                AdjustmentInterface::TIP_ADJUSTMENT,
-                'order.adjustment_type.tip',
-                $newTipAmount,
-                $neutral = false);
         }
 
         // If the order is fulfilled with delivery method,

@@ -19,6 +19,7 @@ use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\OrderProcessing\OrderFeeProcessor;
 use AppBundle\Sylius\Promotion\Action\DeliveryPercentageDiscountPromotionActionCommand;
 use AppBundle\Sylius\Promotion\Action\FixedDiscountPromotionActionCommand;
+use AppBundle\Sylius\Promotion\Action\PercentageDiscountPromotionActionCommand;
 use Doctrine\Common\Collections\ArrayCollection;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -35,6 +36,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class OrderFeeProcessorTest extends KernelTestCase
 {
     use ProphecyTrait;
+    use PromotionProcessorTrait;
 
     private $adjustmentFactory;
     private $orderFeeProcessor;
@@ -58,13 +60,18 @@ class OrderFeeProcessorTest extends KernelTestCase
         $this->promotionRepository = $this->prophesize(PromotionRepositoryInterface::class);
         $this->promotionProcessor = $this->prophesize(PromotionProcessorInterface::class);
 
-        $this->orderFeeProcessor = new OrderFeeProcessor(
+        $this->orderFeeProcessor = $this->createOrderFeeProcessor($this->promotionProcessor->reveal());
+    }
+
+    private function createOrderFeeProcessor(PromotionProcessorInterface $promotionProcessor): OrderFeeProcessor
+    {
+        return new OrderFeeProcessor(
             $this->adjustmentFactory,
             $this->translator->reveal(),
             $this->deliveryManager->reveal(),
             $this->pricingManager->reveal(),
             $this->promotionRepository->reveal(),
-            $this->promotionProcessor->reveal(),
+            $promotionProcessor,
             new NullLogger(),
             new NullLoggingUtils()
         );
@@ -362,7 +369,7 @@ class OrderFeeProcessorTest extends KernelTestCase
         $this->assertEquals(350, $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT));
     }
 
-    public function testOrderWithVariableCustomerAmountReappliesDeliveryPromotion()
+    public function testDeliveryPercentagePromotionUsesCurrentDeliveryAmount()
     {
         $pricing = new PricingRuleSet();
         $contract = self::createContract(550, 0, 0.00, false, null, true, $pricing);
@@ -374,35 +381,15 @@ class OrderFeeProcessorTest extends KernelTestCase
         $order->setRestaurant($restaurant);
         $order->addItem($this->createOrderItem(6500));
 
-        $promotion = new Promotion();
-        $promotion->setCode('DELIVERY_20');
-        $promotion->setName('20% off delivery');
-
-        $promotionAction = new PromotionAction();
-        $promotionAction->setType(DeliveryPercentageDiscountPromotionActionCommand::TYPE);
-        $promotionAction->setConfiguration([
+        $promotion = self::createPromotion('DELIVERY_20', DeliveryPercentageDiscountPromotionActionCommand::TYPE, [
             'percentage' => 0.2,
         ]);
-
-        $promotion->addAction($promotionAction);
 
         $this->promotionRepository
             ->findOneBy(['code' => 'DELIVERY_20'])
             ->willReturn($promotion);
 
-        // The order was previously processed with a lower delivery price,
-        // promotions were applied (by OrderPromotionProcessor) with this stale price
-        $deliveryAdjustment = new Adjustment();
-        $deliveryAdjustment->setType(AdjustmentInterface::DELIVERY_ADJUSTMENT);
-        $deliveryAdjustment->setLabel('Delivery');
-        $deliveryAdjustment->setAmount(750);
-
-        $order->addAdjustment($deliveryAdjustment);
-
-        $deliveryPromotionAction = new DeliveryPercentageDiscountPromotionActionCommand($this->adjustmentFactory);
-        $deliveryPromotionAction->execute($order, $promotionAction->getConfiguration(), $promotion);
-
-        $this->assertEquals(-150, $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT));
+        $orderFeeProcessor = $this->createOrderFeeProcessor($this->createPromotionProcessor([ $promotion ]));
 
         $delivery = new Delivery();
 
@@ -410,19 +397,22 @@ class OrderFeeProcessorTest extends KernelTestCase
             ->createFromOrder($order)
             ->willReturn($delivery);
 
+        // The order was previously processed with a lower delivery price
+        $this->pricingManager
+            ->getPrice($delivery, $pricing)
+            ->willReturn(750);
+
+        $orderFeeProcessor->process($order);
+
+        $this->assertEquals(750, $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT));
+        $this->assertEquals(-150, $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT));
+
+        // The order total reaches another price range
         $this->pricingManager
             ->getPrice($delivery, $pricing)
             ->willReturn(960);
 
-        $this->promotionProcessor
-            ->process($order)
-            ->will(function () use ($order, $deliveryPromotionAction, $promotionAction, $promotion) {
-                $deliveryPromotionAction->revert($order, $promotionAction->getConfiguration(), $promotion);
-                $deliveryPromotionAction->execute($order, $promotionAction->getConfiguration(), $promotion);
-            })
-            ->shouldBeCalledOnce();
-
-        $this->orderFeeProcessor->process($order);
+        $orderFeeProcessor->process($order);
 
         $this->assertEquals(960, $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT));
         $this->assertEquals(-192, $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT));
@@ -432,7 +422,7 @@ class OrderFeeProcessorTest extends KernelTestCase
         $this->assertEquals(550 - 192, $order->getFeeTotal());
     }
 
-    public function testOrderWithUnchangedCustomerAmountDoesNotReapplyPromotions()
+    public function testDeliveryPercentagePromotionWithTakeAway()
     {
         $contract = self::createContract(550, 350, 0.00);
 
@@ -441,22 +431,73 @@ class OrderFeeProcessorTest extends KernelTestCase
 
         $order = new Order();
         $order->setRestaurant($restaurant);
-        $order->addItem($this->createOrderItem(1000));
+        $order->addItem($this->createOrderItem(2000));
 
-        $deliveryAdjustment = new Adjustment();
-        $deliveryAdjustment->setType(AdjustmentInterface::DELIVERY_ADJUSTMENT);
-        $deliveryAdjustment->setLabel('Delivery');
-        $deliveryAdjustment->setAmount(350);
+        $promotion = self::createPromotion('DELIVERY_20', DeliveryPercentageDiscountPromotionActionCommand::TYPE, [
+            'percentage' => 0.2,
+        ]);
 
-        $order->addAdjustment($deliveryAdjustment);
+        $orderFeeProcessor = $this->createOrderFeeProcessor($this->createPromotionProcessor([ $promotion ]));
 
-        $this->promotionProcessor
-            ->process($order)
-            ->shouldNotBeCalled();
-
-        $this->orderFeeProcessor->process($order);
+        $orderFeeProcessor->process($order);
 
         $this->assertEquals(350, $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT));
+        $this->assertEquals(-70, $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT));
+
+        $order->setTakeaway(true);
+
+        $orderFeeProcessor->process($order);
+
+        $this->assertEquals(0, $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT));
+        $this->assertEquals(0, $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT));
+        $this->assertEquals(2000, $order->getTotal());
+    }
+
+    public function testOrderPercentagePromotionIncludesTip()
+    {
+        $contract = self::createContract(550, 350, 0.00);
+
+        $restaurant = new Restaurant();
+        $restaurant->setContract($contract);
+
+        $order = new Order();
+        $order->setRestaurant($restaurant);
+        $order->addItem($this->createOrderItem(2000));
+
+        $promotion = self::createPromotion('ORDER_10', PercentageDiscountPromotionActionCommand::TYPE, [
+            'percentage' => 0.1,
+            'items_total' => false,
+        ]);
+
+        $orderFeeProcessor = $this->createOrderFeeProcessor($this->createPromotionProcessor([ $promotion ]));
+
+        $orderFeeProcessor->process($order);
+
+        $this->assertEquals(-235, $order->getAdjustmentsTotal(AdjustmentInterface::ORDER_PROMOTION_ADJUSTMENT));
+
+        $order->setTipAmount(300);
+
+        $orderFeeProcessor->process($order);
+
+        $this->assertEquals(300, $order->getAdjustmentsTotal(AdjustmentInterface::TIP_ADJUSTMENT));
+        $this->assertEquals(-265, $order->getAdjustmentsTotal(AdjustmentInterface::ORDER_PROMOTION_ADJUSTMENT));
+    }
+
+    public function testOrderWithoutRestaurantAppliesPromotions()
+    {
+        $order = new Order();
+        $order->addItem($this->createOrderItem(1000));
+
+        $promotion = self::createPromotion('ORDER_10', PercentageDiscountPromotionActionCommand::TYPE, [
+            'percentage' => 0.1,
+        ]);
+
+        $orderFeeProcessor = $this->createOrderFeeProcessor($this->createPromotionProcessor([ $promotion ]));
+
+        $orderFeeProcessor->process($order);
+
+        $this->assertEquals(-100, $order->getAdjustmentsTotal(AdjustmentInterface::ORDER_PROMOTION_ADJUSTMENT));
+        $this->assertCount(0, $order->getAdjustments(AdjustmentInterface::FEE_ADJUSTMENT));
     }
 
     public function testOrderWithVariableCustomerAmountAndMissingShippingAddress()
@@ -688,8 +729,6 @@ class OrderFeeProcessorTest extends KernelTestCase
 
         $order->getAdjustmentsTotal(AdjustmentInterface::TIP_ADJUSTMENT)
             ->willReturn(0);
-        $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT)
-            ->willReturn(0);
 
         $order->getTipAmount()->willReturn(null);
 
@@ -899,8 +938,6 @@ class OrderFeeProcessorTest extends KernelTestCase
             ->willReturn(new ArrayCollection([]));
 
         $order->getAdjustmentsTotal(AdjustmentInterface::TIP_ADJUSTMENT)
-            ->willReturn(0);
-        $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT)
             ->willReturn(0);
 
         $order->getTipAmount()->willReturn(null);
