@@ -407,7 +407,9 @@
         "DELIVERY_FORM_SAVED_ORDER": "Añadir a Pedidos guardados",
         "SUBSCRIPTION_CANCELLED": "Regla de recurrencia cancelada",
         "ADMIN_DASHBOARD_VIEW_MODE_DROPOFF_ASC": "Mostrar las entregas de forma ascendente.",
-        "ADMIN_DASHBOARD_DELETE_GROUP_CONFIRM": "¿Estas segura que quieres borrar todas las tareas del grupo?",
+        "ADMIN_DASHBOARD_DELETE_GROUP_CHOICE": "¿Qué quieres hacer con las tareas de este grupo?",
+        "ADMIN_DASHBOARD_DELETE_GROUP_KEEP_TASKS": "Mover las tareas a \"Sin asignar\"",
+        "ADMIN_DASHBOARD_DELETE_GROUP_AND_TASKS": "Eliminar las tareas",
         "RRULE": {
             "every": "cada",
             "week": "semana",
