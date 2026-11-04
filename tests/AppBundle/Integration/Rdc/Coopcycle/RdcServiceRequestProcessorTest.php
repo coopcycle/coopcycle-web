@@ -183,16 +183,16 @@ class RdcServiceRequestProcessorTest extends TestCase
      */
     private function store(): Store
     {
-        $this->serviceFacade->method('forConnection')->with('BOL.MEMBER.APPLICOLIS')->willReturnSelf();
+        $this->serviceFacade->method('forConnection')->with('BOL.MEMBER.PROVIDER')->willReturnSelf();
 
         $store = new Store();
-        $store->setRdcConnectionId('BOL.MEMBER.APPLICOLIS');
+        $store->setRdcConnectionId('BOL.MEMBER.PROVIDER');
 
         return $store;
     }
 
     private function apiRequest(): RdcApiServiceRequest
     {
-        return new RdcApiServiceRequest(requestor: ['legalEntityName' => 'NOWASTEPHARMA']);
+        return new RdcApiServiceRequest(requestor: ['legalEntityName' => 'REQUESTOR']);
     }
 }

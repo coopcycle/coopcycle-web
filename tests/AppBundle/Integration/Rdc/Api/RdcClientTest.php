@@ -18,7 +18,7 @@ class RdcClientTest extends TestCase
     {
         $httpClient = new MockHttpClient(function (string $method, string $url, array $options): MockResponse {
             $this->assertSame('POST', $method);
-            $this->assertSame('https://bol-api.nwp.example.com/service-requests/C-26-1234-1/change-requests?source=true', $url);
+            $this->assertSame('https://bol-api.requestor.example.com/service-requests/C-26-1234-1/change-requests?source=true', $url);
             $this->assertContains('Authorization: Bearer our-token', $options['headers']);
             $this->assertContains('X-BOL-Member-Identifier: BOL.MEMBER.COOPCYCLE', $options['headers']);
 
@@ -40,7 +40,7 @@ class RdcClientTest extends TestCase
         ), $tokenManager);
 
         $response = $client->postRemote(
-            'https://bol-api.nwp.example.com/service-requests/C-26-1234-1/change-requests?source=true',
+            'https://bol-api.requestor.example.com/service-requests/C-26-1234-1/change-requests?source=true',
             ['operations' => []],
         );
 

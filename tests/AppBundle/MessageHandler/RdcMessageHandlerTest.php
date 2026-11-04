@@ -67,7 +67,7 @@ class RdcMessageHandlerTest extends TestCase
 
     public function testFailsAndReleasesClaimWhenNoStoreIsLinked(): void
     {
-        $this->storeResolver->method('resolveStore')->with('BOL.MEMBER.APPLICOLIS')->willReturn(null);
+        $this->storeResolver->method('resolveStore')->with('BOL.MEMBER.PROVIDER')->willReturn(null);
         $this->redis->method('set')->willReturn(true);
 
         // So that it can be replayed from the failure transport once the store is linked
@@ -77,7 +77,7 @@ class RdcMessageHandlerTest extends TestCase
             ->with($this->stringStartsWith('rdc_webhook_event:'));
 
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('BOL.MEMBER.APPLICOLIS');
+        $this->expectExceptionMessage('BOL.MEMBER.PROVIDER');
 
         ($this->handler)($this->buildMessage());
     }
@@ -97,7 +97,7 @@ class RdcMessageHandlerTest extends TestCase
 
         return new RdcMessage(
             loPayload: [],
-            loMember: 'BOL.MEMBER.APPLICOLIS',
+            loMember: 'BOL.MEMBER.PROVIDER',
             loUri: $loUri,
             loRevision: 1,
             notificationMetadata: [

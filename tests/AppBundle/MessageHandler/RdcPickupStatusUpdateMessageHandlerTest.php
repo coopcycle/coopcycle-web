@@ -21,12 +21,12 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 
 class RdcPickupStatusUpdateMessageHandlerTest extends TestCase
 {
-    private const LO_URI = 'https://bol-api.nwp.example.com/service-requests/C-26-1234-1';
+    private const LO_URI = 'https://bol-api.requestor.example.com/service-requests/C-26-1234-1';
 
     public function testARefusedRevisionReadFailsTheCancellation(): void
     {
         $store = new Store();
-        $store->setRdcConnectionId('BOL.MEMBER.NOWASTEPHARMA');
+        $store->setRdcConnectionId('BOL.MEMBER.PROVIDER');
 
         $delivery = new Delivery();
         $delivery->setStore($store);
@@ -45,7 +45,7 @@ class RdcPickupStatusUpdateMessageHandlerTest extends TestCase
         $rdcClient->expects($this->never())->method('postRemote');
 
         $rdcClientFactory = $this->createMock(RdcClientFactory::class);
-        $rdcClientFactory->method('create')->with('BOL.MEMBER.NOWASTEPHARMA')->willReturn($rdcClient);
+        $rdcClientFactory->method('create')->with('BOL.MEMBER.PROVIDER')->willReturn($rdcClient);
 
         $handler = new RdcPickupStatusUpdateMessageHandler(
             $entityManager,

@@ -51,10 +51,10 @@ class RdcServiceFacadeTest extends TestCase
         $factory = $this->createMock(RdcClientFactory::class);
         $factory->expects($this->once())
             ->method('create')
-            ->with('BOL.MEMBER.APPLICOLIS')
+            ->with('BOL.MEMBER.PROVIDER')
             ->willReturn($this->createMock(RdcClientInterface::class));
 
-        $facade = new RdcServiceFacade($factory, new NullLogger(), 'BOL.MEMBER.APPLICOLIS');
+        $facade = new RdcServiceFacade($factory, new NullLogger(), 'BOL.MEMBER.PROVIDER');
 
         $this->assertSame($facade->getRdcClient(), $facade->getRdcClient());
     }
@@ -63,13 +63,13 @@ class RdcServiceFacadeTest extends TestCase
     {
         $facade = new RdcServiceFacade($this->createMock(RdcClientFactory::class), new NullLogger(), '');
         $apiRequest = RdcApiServiceRequest::parse([
-            'requestor' => ['legalEntityName' => 'NOWASTEPHARMA'],
+            'requestor' => ['legalEntityName' => 'REQUESTOR'],
         ]);
 
         $serviceData = $facade->buildServiceData('42', $apiRequest, 'C-26-1234-1');
 
-        $this->assertSame(['legalEntityName' => 'NOWASTEPHARMA'], $serviceData['requestor']);
-        $this->assertSame('livraison NOWASTEPHARMA n° 42', $serviceData['serviceName']);
+        $this->assertSame(['legalEntityName' => 'REQUESTOR'], $serviceData['requestor']);
+        $this->assertSame('livraison REQUESTOR n° 42', $serviceData['serviceName']);
     }
 
     public function testBuildServiceDataRequiresARequestor(): void
