@@ -8,8 +8,7 @@ Feature: Zelty catalog push webhook
       """
       {"taxes":[{"id":1,"name":"TVA 10%","rate":1000}]}
       """
-    When I add "Content-Type" header equal to "application/json"
-    And I send a "POST" request to "/api/zelty/webhook/catalog/1" with body:
+    When I send a Zelty webhook to "/api/zelty/webhook/catalog/1" with body:
       """
       {
         "data": {
@@ -76,8 +75,7 @@ Feature: Zelty catalog push webhook
       """
       {"taxes":[{"id":1,"name":"TVA 10%","rate":1000},{"id":2,"name":"TVA 20%","rate":2000}]}
       """
-    When I add "Content-Type" header equal to "application/json"
-    And I send a "POST" request to "/api/zelty/webhook/catalog/1" with body:
+    When I send a Zelty webhook to "/api/zelty/webhook/catalog/1" with body:
       """
       {
         "data": {
@@ -196,8 +194,7 @@ Feature: Zelty catalog push webhook
       """
       {"taxes":[{"id":1,"name":"TVA 10%","rate":1000}]}
       """
-    When I add "Content-Type" header equal to "application/json"
-    And I send a "POST" request to "/api/zelty/webhook/catalog/1" with body:
+    When I send a Zelty webhook to "/api/zelty/webhook/catalog/1" with body:
       """
       {
         "data": {
@@ -313,8 +310,7 @@ Feature: Zelty catalog push webhook
       """
       {"taxes":[{"id":1,"name":"TVA 10%","rate":1000}]}
       """
-    When I add "Content-Type" header equal to "application/json"
-    And I send a "POST" request to "/api/zelty/webhook/catalog/1" with body:
+    When I send a Zelty webhook to "/api/zelty/webhook/catalog/1" with body:
       """
       {
         "data": {
@@ -423,8 +419,7 @@ Feature: Zelty catalog push webhook
       """
       {"taxes":[{"id":1,"name":"TVA 10%","rate":1000}]}
       """
-    When I add "Content-Type" header equal to "application/json"
-    And I send a "POST" request to "/api/zelty/webhook/catalog/1" with body:
+    When I send a Zelty webhook to "/api/zelty/webhook/catalog/1" with body:
       """
       {
         "data": {
@@ -472,8 +467,7 @@ Feature: Zelty catalog push webhook
       }
       """
     Then the response status code should be 202
-    When I add "Content-Type" header equal to "application/json"
-    And I send a "POST" request to "/api/zelty/webhook/catalog/1" with body:
+    When I send a Zelty webhook to "/api/zelty/webhook/catalog/1" with body:
       """
       {
         "data": {
@@ -537,8 +531,7 @@ Feature: Zelty catalog push webhook
       """
       {"taxes":[{"id":1,"name":"TVA 10%","rate":1000}]}
       """
-    When I add "Content-Type" header equal to "application/json"
-    And I send a "POST" request to "/api/zelty/webhook/catalog/1" with body:
+    When I send a Zelty webhook to "/api/zelty/webhook/catalog/1" with body:
       """
       {
         "data": {
@@ -599,8 +592,7 @@ Feature: Zelty catalog push webhook
       }
       """
     Then the response status code should be 202
-    When I add "Content-Type" header equal to "application/json"
-    And I send a "POST" request to "/api/zelty/webhook/catalog/1" with body:
+    When I send a Zelty webhook to "/api/zelty/webhook/catalog/1" with body:
       """
       {
         "data": {
@@ -675,8 +667,7 @@ Feature: Zelty catalog push webhook
       """
       {"taxes":[{"id":1,"name":"TVA 10%","rate":1000}]}
       """
-    When I add "Content-Type" header equal to "application/json"
-    And I send a "POST" request to "/api/zelty/webhook/catalog/1" with body:
+    When I send a Zelty webhook to "/api/zelty/webhook/catalog/1" with body:
       """
       {
         "data": {
@@ -711,8 +702,7 @@ Feature: Zelty catalog push webhook
       """
       {"code": "7001", "enabled": true}
       """
-    When I add "Content-Type" header equal to "application/json"
-    And I send a "POST" request to "/api/zelty/webhook/dish.update" with body:
+    When I send a Zelty webhook to "/api/zelty/webhook/dish.update" with body:
       """
       {
         "event_id": "abc123",
@@ -747,8 +737,7 @@ Feature: Zelty catalog push webhook
       """
       {"taxes":[{"id":1,"name":"TVA 10%","rate":1000}]}
       """
-    When I add "Content-Type" header equal to "application/json"
-    And I send a "POST" request to "/api/zelty/webhook/catalog/1" with body:
+    When I send a Zelty webhook to "/api/zelty/webhook/catalog/1" with body:
       """
       {
         "data": {
@@ -783,8 +772,7 @@ Feature: Zelty catalog push webhook
       """
       {"code": "7002", "enabled": true}
       """
-    When I add "Content-Type" header equal to "application/json"
-    And I send a "POST" request to "/api/zelty/webhook/dish.delete" with body:
+    When I send a Zelty webhook to "/api/zelty/webhook/dish.delete" with body:
       """
       {
         "event_id": "def456",
@@ -819,8 +807,7 @@ Feature: Zelty catalog push webhook
       """
       {"taxes":[{"id":1,"name":"TVA 10%","rate":1000}]}
       """
-    When I add "Content-Type" header equal to "application/json"
-    And I send a "POST" request to "/api/zelty/webhook/catalog/1" with body:
+    When I send a Zelty webhook to "/api/zelty/webhook/catalog/1" with body:
       """
       {
         "data": {
@@ -855,8 +842,7 @@ Feature: Zelty catalog push webhook
       """
       {"code": "7003", "enabled": true}
       """
-    When I add "Content-Type" header equal to "application/json"
-    And I send a "POST" request to "/api/zelty/webhook/dish.availability_update" with body:
+    When I send a Zelty webhook to "/api/zelty/webhook/dish.availability_update" with body:
       """
       {
         "event_id": "ghi789",
@@ -891,8 +877,7 @@ Feature: Zelty catalog push webhook
       """
       {"taxes":[{"id":1,"name":"TVA 10%","rate":1000}]}
       """
-    When I add "Content-Type" header equal to "application/json"
-    And I send a "POST" request to "/api/zelty/webhook/catalog/1" with body:
+    When I send a Zelty webhook to "/api/zelty/webhook/catalog/1" with body:
       """
       {
         "data": {
@@ -944,8 +929,7 @@ Feature: Zelty catalog push webhook
       """
       {"code": "8010", "enabled": true}
       """
-    When I add "Content-Type" header equal to "application/json"
-    And I send a "POST" request to "/api/zelty/webhook/menu.update" with body:
+    When I send a Zelty webhook to "/api/zelty/webhook/menu.update" with body:
       """
       {
         "event_id": "aaa111",
@@ -980,8 +964,7 @@ Feature: Zelty catalog push webhook
       """
       {"taxes":[{"id":1,"name":"TVA 10%","rate":1000}]}
       """
-    When I add "Content-Type" header equal to "application/json"
-    And I send a "POST" request to "/api/zelty/webhook/catalog/1" with body:
+    When I send a Zelty webhook to "/api/zelty/webhook/catalog/1" with body:
       """
       {
         "data": {
@@ -1033,8 +1016,7 @@ Feature: Zelty catalog push webhook
       """
       {"code": "8020", "enabled": true}
       """
-    When I add "Content-Type" header equal to "application/json"
-    And I send a "POST" request to "/api/zelty/webhook/menu.delete" with body:
+    When I send a Zelty webhook to "/api/zelty/webhook/menu.delete" with body:
       """
       {
         "event_id": "bbb222",
@@ -1069,8 +1051,7 @@ Feature: Zelty catalog push webhook
       """
       {"taxes":[{"id":1,"name":"TVA 10%","rate":1000}]}
       """
-    When I add "Content-Type" header equal to "application/json"
-    And I send a "POST" request to "/api/zelty/webhook/catalog/1" with body:
+    When I send a Zelty webhook to "/api/zelty/webhook/catalog/1" with body:
       """
       {
         "data": {
@@ -1122,8 +1103,7 @@ Feature: Zelty catalog push webhook
       """
       {"code": "8030", "enabled": true}
       """
-    When I add "Content-Type" header equal to "application/json"
-    And I send a "POST" request to "/api/zelty/webhook/menu.availability_update" with body:
+    When I send a Zelty webhook to "/api/zelty/webhook/menu.availability_update" with body:
       """
       {
         "event_id": "ccc333",
@@ -1158,8 +1138,7 @@ Feature: Zelty catalog push webhook
       """
       {"taxes":[{"id":1,"name":"TVA 10%","rate":1000}]}
       """
-    When I add "Content-Type" header equal to "application/json"
-    And I send a "POST" request to "/api/zelty/webhook/catalog/1" with body:
+    When I send a Zelty webhook to "/api/zelty/webhook/catalog/1" with body:
       """
       {
         "data": {
@@ -1227,8 +1206,7 @@ Feature: Zelty catalog push webhook
       """
       {"price": 100, "enabled": true}
       """
-    When I add "Content-Type" header equal to "application/json"
-    And I send a "POST" request to "/api/zelty/webhook/option.update" with body:
+    When I send a Zelty webhook to "/api/zelty/webhook/option.update" with body:
       """
       {
         "event_id": "ddd444",
@@ -1277,8 +1255,7 @@ Feature: Zelty catalog push webhook
       """
       {"taxes":[{"id":1,"name":"TVA 10%","rate":1000}]}
       """
-    When I add "Content-Type" header equal to "application/json"
-    And I send a "POST" request to "/api/zelty/webhook/catalog/1" with body:
+    When I send a Zelty webhook to "/api/zelty/webhook/catalog/1" with body:
       """
       {
         "data": {
@@ -1339,8 +1316,7 @@ Feature: Zelty catalog push webhook
       """
     Then the response status code should be 202
     And I see 2 entities "AppBundle\Entity\Sylius\ProductOptionValue"
-    When I add "Content-Type" header equal to "application/json"
-    And I send a "POST" request to "/api/zelty/webhook/option_value.availability_update" with body:
+    When I send a Zelty webhook to "/api/zelty/webhook/option_value.availability_update" with body:
       """
       {
         "event_id": "eee555",
@@ -1378,8 +1354,7 @@ Feature: Zelty catalog push webhook
       | sylius_taxation.yml  |
       | zelty_restaurant.yml |
     And there is a Zelty order with zelty id 55001 in state "accepted"
-    When I add "Content-Type" header equal to "application/json"
-    And I send a "POST" request to "/api/zelty/webhook/order.status.update" with body:
+    When I send a Zelty webhook to "/api/zelty/webhook/order.status.update" with body:
       """
       {
         "event_id": "aaa111",
@@ -1412,8 +1387,7 @@ Feature: Zelty catalog push webhook
       | sylius_taxation.yml  |
       | zelty_restaurant.yml |
     And there is a Zelty order with zelty id 55002 in state "started"
-    When I add "Content-Type" header equal to "application/json"
-    And I send a "POST" request to "/api/zelty/webhook/order.status.update" with body:
+    When I send a Zelty webhook to "/api/zelty/webhook/order.status.update" with body:
       """
       {
         "event_id": "bbb222",
@@ -1449,8 +1423,7 @@ Feature: Zelty catalog push webhook
       """
       {"taxes":[{"id":1,"name":"TVA 10%","rate":1000}]}
       """
-    When I add "Content-Type" header equal to "application/json"
-    And I send a "POST" request to "/api/zelty/webhook/catalog/1" with body:
+    When I send a Zelty webhook to "/api/zelty/webhook/catalog/1" with body:
       """
       {
         "data": {
@@ -1502,8 +1475,7 @@ Feature: Zelty catalog push webhook
       """
       {"code": "10002", "enabled": true}
       """
-    When I add "Content-Type" header equal to "application/json"
-    And I send a "POST" request to "/api/zelty/webhook/catalog/1" with body:
+    When I send a Zelty webhook to "/api/zelty/webhook/catalog/1" with body:
       """
       {
         "data": {
@@ -1556,8 +1528,7 @@ Feature: Zelty catalog push webhook
       """
       {"taxes":[{"id":1,"name":"TVA 10%","rate":1000}]}
       """
-    When I add "Content-Type" header equal to "application/json"
-    And I send a "POST" request to "/api/zelty/webhook/catalog/1" with body:
+    When I send a Zelty webhook to "/api/zelty/webhook/catalog/1" with body:
       """
       {
         "data": {
@@ -1643,8 +1614,7 @@ Feature: Zelty catalog push webhook
   Scenario: Restaurant not found returns 404
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
-    When I add "Content-Type" header equal to "application/json"
-    And I send a "POST" request to "/api/zelty/webhook/catalog/999" with body:
+    When I send a Zelty webhook to "/api/zelty/webhook/catalog/999" with body:
       """
       {
         "data": {
@@ -1666,3 +1636,69 @@ Feature: Zelty catalog push webhook
       """
       {"error":"Restaurant not found"}
       """
+
+  Scenario: An unsigned webhook is rejected and changes nothing
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml  |
+      | zelty_restaurant.yml |
+    And there is a Zelty order with zelty id 55010 in state "started"
+    When I send an unsigned Zelty webhook to "/api/zelty/webhook/order.status.update" with body:
+      """
+      {
+        "event_id": "ccc333",
+        "event_name": "order.status.update",
+        "created_at": "2026-01-01T00:00:00Z",
+        "version": "v2",
+        "brand_id": 1,
+        "restaurant_id": 1,
+        "data": {
+          "id": 55010,
+          "restaurant_id": 1,
+          "status": "ready",
+          "kitchen_status": "ready"
+        }
+      }
+      """
+    Then the response status code should be 403
+    And I see entity "AppBundle\Entity\Sylius\Order" with properties:
+      """
+      {"zeltyOrderId": 55010, "state": "started"}
+      """
+
+  Scenario: A webhook carrying an invalid signature is rejected and changes nothing
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml  |
+      | zelty_restaurant.yml |
+    And there is a Zelty order with zelty id 55011 in state "started"
+    When I send a Zelty webhook to "/api/zelty/webhook/order.status.update" with an invalid signature and body:
+      """
+      {
+        "event_id": "ddd444",
+        "event_name": "order.status.update",
+        "created_at": "2026-01-01T00:00:00Z",
+        "version": "v2",
+        "brand_id": 1,
+        "restaurant_id": 1,
+        "data": {
+          "id": 55011,
+          "restaurant_id": 1,
+          "status": "ready",
+          "kitchen_status": "ready"
+        }
+      }
+      """
+    Then the response status code should be 403
+    And I see entity "AppBundle\Entity\Sylius\Order" with properties:
+      """
+      {"zeltyOrderId": 55011, "state": "started"}
+      """
+
+  Scenario: An unsigned catalog push is rejected
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml  |
+      | zelty_restaurant.yml |
+    When I send an unsigned Zelty webhook to "/api/zelty/webhook/catalog/1" with body:
+      """
+      {"data": {"id": 100, "name": "Forged", "locale": "fr", "currency": "EUR", "tags": [], "items": []}}
+      """
+    Then the response status code should be 403

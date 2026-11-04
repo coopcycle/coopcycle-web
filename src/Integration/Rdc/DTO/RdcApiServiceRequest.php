@@ -164,6 +164,7 @@ final class RdcApiServiceRequest
             postalCode: $address['postalCode'] ?? '',
             city: $address['addressLocality'] ?? '',
             country: $address['addressCountry']['countryCode'] ?? '',
+            name: $this->startLocation['location']['locationName'] ?? '',
         );
     }
 
@@ -177,6 +178,7 @@ final class RdcApiServiceRequest
             postalCode: $address['postalCode'] ?? '',
             city: $address['addressLocality'] ?? '',
             country: $address['addressCountry']['countryCode'] ?? '',
+            name: $this->endLocation['location']['locationName'] ?? '',
         );
     }
 
@@ -200,15 +202,46 @@ final class RdcApiServiceRequest
 
     public function getRecipientContact(): ServiceRequestContact
     {
-        $contact = $this->getContactByRole(ContactRole::RECIPIENT);
-        if ($contact === null) {
+        return $this->buildContact($this->getContactByRole(ContactRole::RECIPIENT));
+    }
+
+    public function getShipperContact(): ServiceRequestContact
+    {
+        return $this->buildContact($this->getContactByRole(ContactRole::SHIPPER));
+    }
+
+    /**
+     * The spec puts the names on `contacts[].persons[]`; the contact-level
+     * `familyName` is kept as a fallback.
+     */
+    private function buildContact(?array $contact): ServiceRequestContact
+    {
+        if (is_null($contact)) {
             return new ServiceRequestContact();
         }
+
+        $person = $contact['persons'][0] ?? [];
+        $name = trim(sprintf('%s %s', $person['givenName'] ?? '', $person['familyName'] ?? ''));
+
         return new ServiceRequestContact(
-            name: $contact['familyName'] ?? '',
-            phone: $contact['telephone'] ?? '',
-            email: $contact['email'] ?? '',
+            name: $name ?: ($contact['familyName'] ?? ''),
+            phone: ($contact['telephone'] ?? '') ?: ($person['telephone'] ?? ''),
+            email: ($contact['email'] ?? '') ?: ($person['email'] ?? ''),
         );
+    }
+
+    /**
+     * Special instructions attached to a location, as opposed to the ones on
+     * the service request itself.
+     */
+    public function getPickupSpecialInstructions(): array
+    {
+        return $this->startLocation['location']['specialInstructions'] ?? [];
+    }
+
+    public function getDropoffSpecialInstructions(): array
+    {
+        return $this->endLocation['location']['specialInstructions'] ?? [];
     }
 
     public function getBarcode(): ?string

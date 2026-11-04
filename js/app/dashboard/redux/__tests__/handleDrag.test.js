@@ -184,19 +184,19 @@ describe('handleDragEnd', () => {
 
     })
 
-    it ('should unassign a task from assigned tour to unassigned tour', () => {
-      const dispatch = jest.fn(),
+    it ('should unassign a task from assigned tour to unassigned tour', async () => {
+      const dispatch = jest.fn(action => action),
         mockModifyTaskList = jest.fn(),
         mockModifyTour = jest.fn(),
         mockUnassignTasks = jest.fn(),
-        mockRemoveTasksFromTour = jest.fn()
+        mockRemoveTasksFromTour = jest.fn(() => ({ '@id': '/api/tours/111' }))
 
       let result = {
         draggableId: '/api/tasks/731',
         source: {droppableId: 'tour:/api/tours/111'}, destination: {droppableId: 'tour:/api/tours/114', index: 1}
       }
 
-      handleDragEnd(result, mockModifyTaskList, mockModifyTour, mockUnassignTasks, mockRemoveTasksFromTour)(dispatch, store.getState)
+      await handleDragEnd(result, mockModifyTaskList, mockModifyTour, mockUnassignTasks, mockRemoveTasksFromTour)(dispatch, store.getState)
 
       expect(mockModifyTaskList).toHaveBeenCalledTimes(0)
 
@@ -221,12 +221,12 @@ describe('handleDragEnd', () => {
 
     })
 
-    it ('should move a task from unassigned tour to assigned tour', () => {
-      const dispatch = jest.fn(),
+    it ('should move a task from unassigned tour to assigned tour', async () => {
+      const dispatch = jest.fn(action => action),
         mockModifyTaskList = jest.fn(),
         mockModifyTour = jest.fn(),
         mockUnassignTasks = jest.fn(),
-        mockRemoveTasksFromTour = jest.fn()
+        mockRemoveTasksFromTour = jest.fn(() => ({ '@id': '/api/tours/114' }))
 
       // tour 111 is assigned, tour 114 is unassigned
       let result = {
@@ -234,7 +234,7 @@ describe('handleDragEnd', () => {
         source: {droppableId: 'tour:/api/tours/114'}, destination: {droppableId: 'tour:/api/tours/111', index: 1}
       }
 
-      handleDragEnd(result, mockModifyTaskList, mockModifyTour, mockUnassignTasks, mockRemoveTasksFromTour)(dispatch, store.getState)
+      await handleDragEnd(result, mockModifyTaskList, mockModifyTour, mockUnassignTasks, mockRemoveTasksFromTour)(dispatch, store.getState)
 
       expect(mockModifyTaskList).toHaveBeenCalledTimes(0)
 
@@ -557,16 +557,16 @@ describe('handleDragEnd - edge cases', () => {
     })
   })
 
-  it('should move a task from a courier tasklist into a tour', () => {
+  it('should move a task from a courier tasklist into a tour', async () => {
     const store = createStoreFromPreloadedState(storeFixture)
-    const dispatch = jest.fn()
+    const dispatch = jest.fn(action => action)
     const mockModifyTaskList = jest.fn()
     const mockModifyTour = jest.fn()
-    const mockUnassignTasks = jest.fn()
+    const mockUnassignTasks = jest.fn(() => ({ username: 'admin' }))
 
     // tasks 737 and 738 are linked (737.next = 738); both assigned to admin, neither in a tour
     // Tour 114 items: [733, 732]; dropping at index 1
-    handleDragEnd(
+    await handleDragEnd(
       {
         draggableId: '/api/tasks/737',
         source: { droppableId: 'assigned:admin', index: 0 },
@@ -592,6 +592,58 @@ describe('handleDragEnd - edge cases', () => {
       ]
     )
     expect(mockModifyTaskList).not.toHaveBeenCalled()
+  })
+
+  // Sent together, the tour's PUT could read the task as still assigned to the
+  // courier and leave it be, then the removal unassigned it: the courier kept
+  // the task through the tour and was refused when completing it.
+  it('should only put a task in a tour once it is off the courier tasklist', async () => {
+    const store = createStoreFromPreloadedState(storeFixture)
+    const dispatch = jest.fn(action => action)
+    const mockModifyTaskList = jest.fn()
+    const mockModifyTour = jest.fn()
+
+    let takenOff
+    const mockUnassignTasks = jest.fn(() => new Promise(resolve => { takenOff = resolve }))
+
+    const dropped = handleDragEnd(
+      {
+        draggableId: '/api/tasks/737',
+        source: { droppableId: 'assigned:admin', index: 0 },
+        destination: { droppableId: 'tour:/api/tours/114', index: 1 },
+      },
+      mockModifyTaskList, mockModifyTour, mockUnassignTasks
+    )(dispatch, store.getState)
+
+    await Promise.resolve()
+    expect(mockUnassignTasks).toHaveBeenCalledTimes(1)
+    expect(mockModifyTour).not.toHaveBeenCalled()
+
+    takenOff({ username: 'admin' })
+    await dropped
+
+    expect(mockModifyTour).toHaveBeenCalledTimes(1)
+  })
+
+  it('should not put a task in a tour when taking it off the courier tasklist failed', async () => {
+    const store = createStoreFromPreloadedState(storeFixture)
+    const dispatch = jest.fn(action => action)
+    const mockModifyTaskList = jest.fn()
+    const mockModifyTour = jest.fn()
+    // `modifyTaskList` resolves to nothing once it has rolled back a failed request
+    const mockUnassignTasks = jest.fn(() => Promise.resolve(undefined))
+
+    await handleDragEnd(
+      {
+        draggableId: '/api/tasks/737',
+        source: { droppableId: 'assigned:admin', index: 0 },
+        destination: { droppableId: 'tour:/api/tours/114', index: 1 },
+      },
+      mockModifyTaskList, mockModifyTour, mockUnassignTasks
+    )(dispatch, store.getState)
+
+    expect(mockUnassignTasks).toHaveBeenCalledTimes(1)
+    expect(mockModifyTour).not.toHaveBeenCalled()
   })
 })
 

@@ -288,6 +288,19 @@ export const selectVisibleTaskIds = createSelector(
   (tasks, filters, date, timezone) => filter(tasks, task => isTaskVisible(task, filters, date, timezone)).map(task => task['@id'])
 )
 
+/**
+ * How many of the day's tasks the current filters are hiding.
+ *
+ * The store only ever holds the selected date's tasks (changing the date is a
+ * full page navigation, see Navbar.js), so the whole task collection is the
+ * right universe to compare the visible ones against.
+ */
+export const selectHiddenTasksCount = createSelector(
+  selectAllTasks,
+  selectVisibleTaskIds,
+  (tasks, visibleTaskIds) => tasks.length - visibleTaskIds.length
+)
+
 export const selectVisibleOnMapTaskIds = createSelector(
   selectVisibleTaskIds,
   selectAssignedTasks,

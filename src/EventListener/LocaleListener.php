@@ -39,11 +39,18 @@ class LocaleListener implements EventSubscriberInterface
             return;
         }
 
-        // try to see if the locale has been set as a _locale routing parameter
-        if ($locale = $request->attributes->get('_locale')) {
-            $request->getSession()->set('_locale', $locale);
-        } elseif ($locale = $request->query->get('_locale')) {
-            $request->getSession()->set('_locale', $locale);
+        // Live components requests (lazy loading, actions…) are not navigation:
+        // their URL contains the locale the page was *rendered* with,
+        // which may come from a cached fragment, so they must not change the user's locale
+        $isLiveComponent = 'ux_live_component' === $request->attributes->get('_route');
+
+        if (!$isLiveComponent) {
+            // try to see if the locale has been set as a _locale routing parameter
+            if ($locale = $request->attributes->get('_locale')) {
+                $request->getSession()->set('_locale', $locale);
+            } elseif ($locale = $request->query->get('_locale')) {
+                $request->getSession()->set('_locale', $locale);
+            }
         }
 
         $locale = $request->getSession()->get('_locale', $this->defaultLocale);

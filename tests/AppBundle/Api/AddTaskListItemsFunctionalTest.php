@@ -836,4 +836,65 @@ class AddTaskListItemsFunctionalTest extends ApiTestCase
 
         $this->assertResponseStatusCodeSame(422);
     }
+
+    /**
+     * Dragging a task from a courier's list into a tour on that same list is
+     * two requests: the tour's PUT, and taking the task's own item off the
+     * list. When the PUT lands first, the task is still on the list through
+     * the tour, so it must stay assigned — otherwise the courier sees it and
+     * is refused when completing it.
+     */
+    public function testATaskMovedIntoATourOfTheSameListStaysAssigned()
+    {
+        [ $admin, $courier ] = $this->bootstrapUsers();
+
+        $date = new \DateTime('today');
+
+        $loose = $this->createTask($date, 1);
+        $inTour = [$this->createTask($date, 2), $this->createTask($date, 3)];
+        $this->entityManager->flush();
+
+        $tour = $this->createTour($date, $inTour);
+        $this->entityManager->flush();
+
+        $this->assignAll([$loose], $courier);
+
+        $taskListId = $this->listFor($courier, $date)->getId();
+        $tourId = $tour->getId();
+        $looseId = $loose->getId();
+        $inTourIris = array_map(fn (Task $t) => '/api/tasks/'.$t->getId(), $inTour);
+
+        $this->entityManager->clear();
+
+        $client = $this->client($admin);
+        $client->request('POST', sprintf('/api/task_lists/%d/items', $taskListId), [
+            'json' => ['items' => ['/api/tours/'.$tourId]],
+        ]);
+        $this->assertResponseStatusCodeSame(201);
+
+        // The tour's PUT lands first: the task is now in the tour, and still
+        // has its own item on the list.
+        $client->request('PUT', '/api/tours/'.$tourId, [
+            'json' => ['tasks' => [$inTourIris[0], '/api/tasks/'.$looseId, $inTourIris[1]]],
+        ]);
+        $this->assertResponseIsSuccessful();
+
+        $client->request('POST', sprintf('/api/task_lists/%d/items/remove', $taskListId), [
+            'json' => ['items' => ['/api/tasks/'.$looseId]],
+        ]);
+        $this->assertResponseStatusCodeSame(200);
+
+        $this->assertSame(
+            ['/api/tours/'.$tourId],
+            $this->readItemIris($taskListId),
+            'the task\'s own item should be gone, the tour left in place'
+        );
+
+        $moved = $this->entityManager->getRepository(Task::class)->find($looseId);
+        $this->assertTrue(
+            $moved->isAssigned(),
+            'the task is still on the courier\'s list through the tour, so it must stay assigned'
+        );
+        $this->assertSame('courier', $moved->getAssignedCourier()->getUsername());
+    }
 }

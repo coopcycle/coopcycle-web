@@ -109,6 +109,32 @@ class DeliveryRepository extends EntityRepository
             ;
     }
     /**
+     * The listings filter by owner themselves, instead of letting KnpPaginator
+     * do it: its WhereWalker crashes (TypeError) on the parenthesized subquery
+     * added by firstPickupOnly().
+     */
+    public function filterByStore(QueryBuilder $qb, int $storeId): QueryBuilder
+    {
+        return $qb
+            ->andWhere('d.store = :owner_store')
+            ->setParameter('owner_store', $storeId)
+            ;
+    }
+
+    /**
+     * @see filterByStore()
+     */
+    public function filterByRestaurant(QueryBuilder $qb, int $restaurantId): QueryBuilder
+    {
+        return $qb
+            ->join('d.order', 'owner_o')
+            ->join('owner_o.vendors', 'owner_v')
+            ->andWhere('owner_v.restaurant = :owner_restaurant')
+            ->setParameter('owner_restaurant', $restaurantId)
+            ;
+    }
+
+    /**
      * Filters on the date the delivery happens, *not* on the date it was
      * created: the listings display & sort t.doneBefore (see today(), past() &
      * upcoming()), so filtering on d.createdAt made deliveries scheduled
@@ -320,12 +346,12 @@ class DeliveryRepository extends EntityRepository
         // (delivery.metadata->'rdc'->>'lo_uri'); deliveries imported before that
         // refactor kept it on the pickup task metadata (task.metadata->>'rdc_lo_uri').
         $sql = "SELECT DISTINCT d.id FROM delivery d
-            JOIN task_collection_item tci ON tci.parent = d.id
+            JOIN task_collection_item tci ON tci.parent_id = d.id
             JOIN task t ON tci.task_id = t.id
             WHERE d.metadata->'rdc'->>'lo_uri' = :loUri
                OR t.metadata->>'rdc_lo_uri' = :loUri";
 
-        $result = $conn->executeQuery($sql, ['lo_uri' => $loUri])->fetchOne();
+        $result = $conn->executeQuery($sql, ['loUri' => $loUri])->fetchOne();
 
         if ($result === false) {
             return null;

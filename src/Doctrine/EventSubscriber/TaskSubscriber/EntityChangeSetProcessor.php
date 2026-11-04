@@ -35,6 +35,7 @@ class EntityChangeSetProcessor
         $this->logger->debug(sprintf('Began processing Task#%d', $task->getId()));
 
         if (!isset($entityChangeSet['assignedTo'])) {
+            $this->moveToTaskListForNewDate($task, $entityChangeSet);
             return;
         }
 
@@ -137,4 +138,56 @@ class EntityChangeSetProcessor
                 }
             }
         }
+
+    /**
+     * When the dates of an assigned task change, the task stays in the task list of its previous day,
+     * so it does not show up on the new day, neither in the dispatch nor in the courier app.
+     * Move it to the task list of the new day.
+     */
+    private function moveToTaskListForNewDate(Task $task, array $entityChangeSet)
+    {
+        if (!isset($entityChangeSet['doneAfter']) && !isset($entityChangeSet['doneBefore'])) {
+            return;
+        }
+
+        $courier = $task->getAssignedCourier();
+        if (is_null($courier)) {
+            return;
+        }
+
+        $taskList = $this->taskListProvider->getTaskList($task, $courier);
+
+        // a task in a tour is moved along with its tour, see TourProcessor
+        $isDirectItem = false;
+        foreach ($taskList->getItems() as $item) {
+            if ($item->getTask() === $task) {
+                $isDirectItem = true;
+                break;
+            }
+        }
+
+        if (!$isDirectItem) {
+            return;
+        }
+
+        $taskListDay = $taskList->getDate()->format('Y-m-d');
+        if ($taskListDay >= $task->getAfter()->format('Y-m-d') && $taskListDay <= $task->getBefore()->format('Y-m-d')) {
+            return;
+        }
+
+        $newTaskList = $this->taskListProvider->getTaskListForAssignmentDate($task, $courier);
+        if ($newTaskList === $taskList) {
+            return;
+        }
+
+        $this->logger->debug(sprintf('Moving Task#%d from TaskList of %s to TaskList of %s',
+            $task->getId(), $taskListDay, $newTaskList->getDate()->format('Y-m-d')));
+
+        $taskList->removeTask($task);
+
+        $item = new Item();
+        $item->setTask($task);
+        $item->setPosition($newTaskList->getItems()->count());
+        $newTaskList->addItem($item);
+    }
 }

@@ -13,6 +13,7 @@ import {
 } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { v4 as uuidv4 } from 'uuid';
+import cloneDeep from 'lodash/cloneDeep';
 import {
   useGetPricingRuleSetQuery,
   useCreatePricingRuleSetMutation,
@@ -27,7 +28,10 @@ import { TaxRateContext } from './price';
 
 import './pricing-rule-set-form.scss';
 import HelpIcon from '../HelpIcon';
-import { isManualSupplement } from './types/PricingRuleType';
+import {
+  isManualSupplement,
+  PricingRuleEditorState,
+} from './types/PricingRuleType';
 import { Uri, PricingRule as PricingRuleType } from '../../api/types';
 
 // Utility function to generate temporary @id for new rules
@@ -53,6 +57,9 @@ const PricingRuleSetForm = ({
   const { t } = useTranslation();
   const [form] = Form.useForm();
   const [rules, setRules] = useState([] as PricingRuleType[]);
+  const [initialEditorStates, setInitialEditorStates] = useState(
+    {} as Record<string, PricingRuleEditorState>,
+  );
   const [ruleValidationErrors, setRuleValidationErrors] = useState(
     {} as {
       [ruleId: string]: string[];
@@ -300,6 +307,33 @@ const PricingRuleSetForm = ({
     // Find the rule by @id and remove it
     const newRules = rules.filter(rule => rule['@id'] !== ruleId);
     setRules(newRules);
+    setInitialEditorStates(previous => {
+      const next = { ...previous };
+      delete next[ruleId];
+      return next;
+    });
+  };
+
+  const duplicateRule = (
+    ruleId: string,
+    editorState: PricingRuleEditorState,
+  ): void => {
+    const originalIndex = rules.findIndex(rule => rule['@id'] === ruleId);
+    if (originalIndex === -1) return;
+
+    const newId = generateTempId();
+    const newRule = cloneDeep({ ...rules[originalIndex], '@id': newId });
+    delete (newRule as Partial<PricingRuleType>).id;
+
+    const newRules = [...rules];
+    newRules.splice(originalIndex + 1, 0, newRule);
+    setRules(newRules);
+    // The ASTs describe the saved rule, while these values include edits in progress.
+    // Keep this state out of the rules submitted to the API.
+    setInitialEditorStates(previous => ({
+      ...previous,
+      [newId]: cloneDeep(editorState),
+    }));
   };
 
   const moveRule = (fromIndex: number, toIndex: number): void => {
@@ -484,6 +518,8 @@ const PricingRuleSetForm = ({
                             getGlobalIndexById={getGlobalIndexById}
                             updateRule={updateRule}
                             removeRule={removeRule}
+                            duplicateRule={duplicateRule}
+                            initialEditorStates={initialEditorStates}
                             moveRuleWithinTarget={moveRuleWithinTarget}
                             ruleValidationErrors={ruleValidationErrors}
                             onAddRule={addRule}
@@ -513,6 +549,8 @@ const PricingRuleSetForm = ({
                             getGlobalIndexById={getGlobalIndexById}
                             updateRule={updateRule}
                             removeRule={removeRule}
+                            duplicateRule={duplicateRule}
+                            initialEditorStates={initialEditorStates}
                             moveRuleWithinTarget={moveRuleWithinTarget}
                             ruleValidationErrors={ruleValidationErrors}
                             onAddRule={addRule}
@@ -539,6 +577,8 @@ const PricingRuleSetForm = ({
                             getGlobalIndexById={getGlobalIndexById}
                             updateRule={updateRule}
                             removeRule={removeRule}
+                            duplicateRule={duplicateRule}
+                            initialEditorStates={initialEditorStates}
                             moveRuleWithinTarget={moveRuleWithinTarget}
                             ruleValidationErrors={ruleValidationErrors}
                             onAddRule={addRule}

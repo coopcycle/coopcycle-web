@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Card, Input, Button, Space, Typography, Row, Col, Alert } from 'antd';
-import { DeleteOutlined } from '@ant-design/icons';
+import { CopyOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import PricingRuleTarget from './PricingRuleTarget';
 import RulePicker from './RulePicker';
@@ -8,6 +8,7 @@ import { PriceChoice } from './PriceChoice';
 import PriceEditor from './PriceEditor';
 import {
   FixedPrice,
+  parseAST,
   parsePriceAST,
   PercentagePrice,
   PricePerPackage,
@@ -15,7 +16,7 @@ import {
 } from '../../../delivery/pricing/pricing-rule-parser';
 import Position from './Position';
 import { DraggableProvidedDragHandleProps } from '@hello-pangea/dnd';
-import { PriceType } from '../types/PricingRuleType';
+import { PriceType, PricingRuleEditorState } from '../types/PricingRuleType';
 import { PricingRule as PricingRuleType } from '../../../api/types';
 import HelpIcon from '../../HelpIcon';
 
@@ -32,6 +33,8 @@ type Props = {
   index: number;
   onUpdate: (rule: PricingRuleType) => void;
   onRemove: () => void;
+  onDuplicate: (editorState: PricingRuleEditorState) => void;
+  initialEditorState?: PricingRuleEditorState;
   validationErrors?: string[];
   dragHandleProps: DraggableProvidedDragHandleProps;
   isManualSupplement: boolean;
@@ -43,6 +46,8 @@ const PricingRule = ({
   index,
   onUpdate,
   onRemove,
+  onDuplicate,
+  initialEditorState,
   validationErrors = [],
   dragHandleProps,
   isManualSupplement,
@@ -52,11 +57,17 @@ const PricingRule = ({
   const [localRule, setLocalRule] = useState(rule);
 
   const [priceObj] = useState(() => {
-    return rule.priceAst
-      ? parsePriceAST(rule.priceAst, rule.price)
-      : new FixedPrice(0);
+    return (
+      initialEditorState?.price ??
+      (rule.priceAst
+        ? parsePriceAST(rule.priceAst, rule.price)
+        : new FixedPrice(0))
+    );
   });
   const [priceType, setPriceType] = useState(() => {
+    if (initialEditorState) {
+      return initialEditorState.priceType;
+    }
     let priceType = 'fixed' as PriceType;
     if (priceObj instanceof PercentagePrice) {
       priceType = 'percentage';
@@ -67,6 +78,13 @@ const PricingRule = ({
     }
     return priceType;
   });
+  const currentPrice = useRef(priceObj);
+  const currentConditions = useRef(
+    initialEditorState?.conditions ??
+      (!isManualSupplement && rule.expressionAst
+        ? parseAST(rule.expressionAst)
+        : []),
+  );
 
   useEffect(() => {
     setLocalRule(rule);
@@ -90,6 +108,7 @@ const PricingRule = ({
 
   const handlePriceTypeChange = (type: PriceType): void => {
     setPriceType(type);
+    currentPrice.current = priceObj;
     let newPrice = '';
 
     switch (type) {
@@ -123,6 +142,20 @@ const PricingRule = ({
       }
       extra={
         <Space>
+          <Button
+            data-testid="rule-duplicate"
+            size="small"
+            icon={<CopyOutlined />}
+            title={t('FORM_PRICING_RULE_DUPLICATE')}
+            aria-label={t('FORM_PRICING_RULE_DUPLICATE')}
+            onClick={() =>
+              onDuplicate({
+                conditions: currentConditions.current,
+                price: currentPrice.current,
+                priceType,
+              })
+            }
+          />
           <Button
             data-testid="rule-remove"
             size="small"
@@ -181,7 +214,9 @@ const PricingRule = ({
               <RulePicker
                 ruleTarget={localRule.target}
                 expressionAST={localRule.expressionAst}
-                onExpressionChange={newExpression => {
+                initialLines={initialEditorState?.conditions}
+                onExpressionChange={(newExpression, lines) => {
+                  currentConditions.current = lines;
                   if (localRule.expression === newExpression) return;
                   handleFieldChange('expression', newExpression);
                 }}
@@ -214,7 +249,8 @@ const PricingRule = ({
             isManualSupplement={isManualSupplement}
             priceType={priceType}
             defaultValue={priceObj}
-            onChange={newPrice => {
+            onChange={(newPrice, price) => {
+              currentPrice.current = price;
               if (localRule.price === newPrice) return;
               handleFieldChange('price', newPrice);
             }}
