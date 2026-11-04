@@ -5,6 +5,13 @@ framework:
                 dsn: 'sync://'
             generate_orders_sync:
                 dsn: 'sync://'
+            # The status updates are delayed by 45s: the RDC tests couldn't
+            # wait for them on the async transport
+            rdc_sync:
+                dsn: 'sync://'
         routing:
             'AppBundle\Message\Zelty\ProcessZeltyCatalog': zelty_catalog_sync
             'AppBundle\Message\GenerateOrdersForDate': generate_orders_sync
+            'AppBundle\Message\RdcMessage': rdc_sync
+            'AppBundle\Message\RdcPickupStatusUpdateMessage': rdc_sync
+            'AppBundle\Message\RdcDropoffStatusUpdateMessage': rdc_sync
