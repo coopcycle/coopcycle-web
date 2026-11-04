@@ -10,6 +10,8 @@ use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Edenred\Authentication as EdenredAuthentication;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Loyalty\LoyaltyPointsEntryRepository;
+use AppBundle\Entity\Loyalty\LoyaltyReward;
 use AppBundle\Entity\Referral\Referral;
 use AppBundle\Entity\Referral\ReferralLevel;
 use AppBundle\Entity\Referral\ReferralRepository;
@@ -27,6 +29,9 @@ use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\TaskCompleteType;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\EmailManager;
+use AppBundle\Service\Loyalty\InsufficientLoyaltyPointsException;
+use AppBundle\Service\Loyalty\LoyaltyPointsManager;
+use AppBundle\Service\Loyalty\LoyaltyProgramStatus;
 use AppBundle\Service\TopBarNotifications;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\TaskManager;
@@ -469,6 +474,83 @@ class ProfileController extends AbstractController
             'successful_referral_count' => $successfulReferralCount,
             'referrals' => $referrals,
         ]));
+    }
+
+    #[Route(path: '/profile/loyalty', name: 'profile_loyalty')]
+    public function loyaltyAction(
+        Request $request,
+        PaginatorInterface $paginator,
+        LoyaltyPointsEntryRepository $pointsEntryRepository,
+        LoyaltyPointsManager $loyaltyPointsManager,
+        LoyaltyProgramStatus $loyaltyProgramStatus)
+    {
+        if (!$loyaltyProgramStatus->isActive()) {
+            throw $this->createNotFoundException();
+        }
+
+        $customer = $this->getUser()->getCustomer();
+        $balance = $loyaltyPointsManager->getBalance($customer);
+
+        $rewards = $this->entityManager->getRepository(LoyaltyReward::class)
+            ->findBy(['enabled' => true], ['pointsCost' => 'ASC']);
+
+        $history = $paginator->paginate(
+            $pointsEntryRepository->createHistoryQueryBuilder($customer),
+            $request->query->getInt('page', 1),
+            self::ITEMS_PER_PAGE
+        );
+
+        return $this->render('profile/loyalty.html.twig', $this->auth([
+            'balance' => $balance,
+            'rewards' => $rewards,
+            'history' => $history,
+            // The soonest points are due to lapse, so the page can say so
+            // rather than letting them quietly disappear.
+            'next_expiry' => $pointsEntryRepository->findNextExpiry($customer),
+        ]));
+    }
+
+    #[Route(path: '/profile/loyalty/redeem/{id}', name: 'profile_loyalty_redeem', methods: ['POST'])]
+    public function loyaltyRedeemAction(
+        int $id,
+        Request $request,
+        LoyaltyPointsManager $loyaltyPointsManager,
+        LoyaltyProgramStatus $loyaltyProgramStatus,
+        TranslatorInterface $translator)
+    {
+        if (!$loyaltyProgramStatus->isActive()) {
+            throw $this->createNotFoundException();
+        }
+
+        if (!$this->isCsrfTokenValid('profile_loyalty_redeem', $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $reward = $this->entityManager->getRepository(LoyaltyReward::class)->find($id);
+
+        // A disabled reward is hidden from the page, so asking for one by id
+        // means a stale page or a hand-made request either way.
+        if (null === $reward || !$reward->isEnabled()) {
+            throw $this->createNotFoundException();
+        }
+
+        try {
+            $entry = $loyaltyPointsManager->redeem($this->getUser()->getCustomer(), $reward);
+        } catch (InsufficientLoyaltyPointsException $e) {
+            $this->addFlash('error', $translator->trans('loyalty.redeem.insufficient', [
+                '%points%' => $e->getPointsCost(),
+                '%balance%' => $e->getBalance(),
+            ]));
+
+            return $this->redirectToRoute('profile_loyalty');
+        }
+
+        $this->addFlash('notice', $translator->trans('loyalty.redeem.success', [
+            '%reward%' => $reward->getName(),
+            '%code%' => $entry->getCoupon()->getCode(),
+        ]));
+
+        return $this->redirectToRoute('profile_loyalty');
     }
 
     #[Route(path: '/profile/referrals/invite', name: 'profile_referrals_invite', methods: ['POST'])]

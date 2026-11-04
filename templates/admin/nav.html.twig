@@ -76,6 +76,7 @@
             <li><a href="{{ path('admin_metrics') }}">{% trans %}adminDashboard.metrics.title{% endtrans %}</a></li>
             {% if rfm_enabled %}<li><a href="{{ path('admin_customer_segmentation') }}">{% trans %}rfm.title{% endtrans %}</a></li>{% endif %}
             {% if referral_program_enabled %}<li><a href="{{ path('admin_referral_program') }}">{% trans %}referral.title{% endtrans %}</a></li>{% endif %}
+            {% if loyalty_program_enabled %}<li><a href="{{ path('admin_loyalty_program') }}">{% trans %}loyalty.title{% endtrans %}</a></li>{% endif %}
             {% endif %}
             {% if odoo_url is not empty %}
             <li><a href="{{ odoo_url }}" target="_blank">Odoo</a></li>
