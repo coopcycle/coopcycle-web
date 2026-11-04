@@ -275,25 +275,6 @@ parameters:
 			identifier: instanceof.alwaysTrue
 			count: 1
 			path: src/Form/Type/MinMaxType.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>serviceAgreementReference" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: src/Integration/Rdc/Api/RdcServiceFacade.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>serviceName" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: src/Integration/Rdc/Api/RdcServiceFacade.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>value" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 3
-			path: src/Integration/Rdc/Api/RdcServiceFacade.php
-
 		-
 			message: '#^Strict comparison using \!\=\= between mixed and null will always evaluate to true\.$#'
 			identifier: notIdentical.alwaysTrue

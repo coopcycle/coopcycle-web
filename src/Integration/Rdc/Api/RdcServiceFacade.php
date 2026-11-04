@@ -339,27 +339,27 @@ class RdcServiceFacade
             [
                 'op' => 'add',
                 'path' => '/serviceAgreementReference',
-                'value' => $apiRequest?->serviceAgreementReference ?? '',
+                'value' => $apiRequest->serviceAgreementReference ?? '',
             ],
             [
                 'op' => 'add',
                 'path' => '/serviceNature',
-                'value' => $apiRequest?->serviceNature?->value ?? '',
+                'value' => $apiRequest->serviceNature->value ?? '',
             ],
             [
                 'op' => 'add',
                 'path' => '/serviceType',
-                'value' => $apiRequest?->serviceType?->value ?? '',
+                'value' => $apiRequest->serviceType->value ?? '',
             ],
             [
                 'op' => 'add',
                 'path' => '/serviceSubtype',
-                'value' => $apiRequest?->serviceSubtype?->value ?? '',
+                'value' => $apiRequest->serviceSubtype->value ?? '',
             ],
             [
                 'op' => 'add',
                 'path' => '/serviceName',
-                'value' => $apiRequest?->serviceName ?? '',
+                'value' => $apiRequest->serviceName ?? '',
             ],
         ];
 
