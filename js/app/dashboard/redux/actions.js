@@ -208,7 +208,8 @@ export function unassignTasks(username, items) {
       return
     }
 
-    await dispatch(removeTaskListItems(username, items))
+    // The updated list, or nothing if the request failed and was rolled back
+    return dispatch(removeTaskListItems(username, items))
   }
 }
 
@@ -1590,37 +1591,91 @@ export function moveTasksToDay(tasks, day) {
 
 export function moveTourToDay(tour, day) {
 
-  return function(dispatch, getState) {
+  return async function(dispatch, getState) {
 
     const { jwt } = getState()
 
     dispatch(toggleTourLoading(tour['@id']))
 
-    createClient(dispatch).request({
-      method: 'put',
-      url: tour['@id'],
-      data: {
-        name: tour.name,
-        date: moment(day).format('YYYY-MM-DD'),
-        tasks: tour.items,
-      },
-      headers: {
-        'Authorization': `Bearer ${jwt}`,
-        'Accept': 'application/ld+json',
-        'Content-Type': 'application/ld+json'
-      }
-    })
-      .then(() => {
-        // The tour now belongs to another day, so it leaves the current view.
-        dispatch(deleteTourSuccess(tour['@id']))
-        dispatch(toggleTourLoading(tour['@id']))
-        dispatch(closeMoveToDayModal())
+    const headers = {
+      'Authorization': `Bearer ${jwt}`,
+      'Accept': 'application/ld+json',
+      'Content-Type': 'application/ld+json'
+    }
+
+    // Moving a tour carries its whole task list over with it, so this request
+    // drops every task it does not mention — the same hazard `modifyTour`
+    // carries, and the reason that one sends a precondition. Say which version
+    // the payload was built from, so a board that has drifted is refused
+    // instead of quietly winning.
+    if (tour.version !== undefined && tour.version !== null) {
+      headers['If-Match'] = `"${tour.version}"`
+    }
+
+    try {
+      await createClient(dispatch).request({
+        method: 'put',
+        url: tour['@id'],
+        data: {
+          name: tour.name,
+          date: moment(day).format('YYYY-MM-DD'),
+          tasks: tour.items,
+        },
+        headers
       })
-      .catch(error => {
+    } catch (error) {
+      dispatch(toggleTourLoading(tour['@id']))
+
+      if (error.response && error.response.status === 409) {
+        // Somebody changed the tour while the modal was open, so the task
+        // list we were about to carry to another day is not the one it holds.
+        // Nothing has moved — put the truth back and let the dispatcher
+        // decide again, rather than replaying a payload that would drop
+        // exactly the work the other write just added.
         // eslint-disable-next-line no-console
-        console.error(error)
-        dispatch(toggleTourLoading(tour['@id']))
-      })
+        console.debug(`Tour ${tour['@id']} changed under us, not moving it`)
+
+        try {
+          const fresh = await createClient(dispatch).request({
+            method: 'get',
+            url: tour['@id'],
+            headers: {
+              'Authorization': `Bearer ${jwt}`,
+              'Accept': 'application/ld+json'
+            }
+          })
+          dispatch(updateTour(fresh.data))
+        } catch (refetchError) {
+          // The usual reason the refetch 404s is that the write we lost to
+          // was a delete. Leaving the tour on the board would strand it:
+          // every later write to it conflicts, and the refetch that would
+          // clear it can never succeed.
+          if (refetchError.response && refetchError.response.status === 404) {
+            dispatch(deleteTourSuccess(tour['@id']))
+            dispatch(closeMoveToDayModal())
+
+            return
+          }
+
+          // eslint-disable-next-line no-console
+          console.error(refetchError)
+        }
+
+        toast.error(i18next.t('ADMIN_DASHBOARD_MOVE_TOUR_CONFLICT'))
+
+        return
+      }
+
+      // eslint-disable-next-line no-console
+      console.error(error)
+
+      return
+    }
+
+    // The tour now belongs to another day, so it leaves the current view.
+    dispatch(deleteTourSuccess(tour['@id']))
+    dispatch(toggleTourLoading(tour['@id']))
+    dispatch(closeMoveToDayModal())
   }
 }
 
@@ -1754,11 +1809,11 @@ export function deleteRecurrenceRule(recurrenceRule) {
   }
 }
 
-export function deleteGroupSuccess(group) {
-  return { type: DELETE_GROUP_SUCCESS, group }
+export function deleteGroupSuccess(group, cancelTasks = false) {
+  return { type: DELETE_GROUP_SUCCESS, group, cancelTasks }
 }
 
-export function deleteGroup(group) {
+export function deleteGroup(group, cancelTasks = false) {
 
   return function(dispatch, getState) {
 
@@ -1768,14 +1823,14 @@ export function deleteGroup(group) {
 
     createClient(dispatch).request({
       method: 'delete',
-      url: resourceId,
+      url: cancelTasks ? `${resourceId}?cancel_tasks=1` : resourceId,
       headers: {
         'Authorization': `Bearer ${jwt}`,
         'Accept': 'application/ld+json',
         'Content-Type': 'application/ld+json'
       }
     })
-      .then(() => dispatch(deleteGroupSuccess(resourceId)))
+      .then(() => dispatch(deleteGroupSuccess(resourceId, cancelTasks)))
       // eslint-disable-next-line no-console
       .catch(error => console.log(error))
   }
@@ -2312,7 +2367,7 @@ export function removeTasksFromTour(tour, tasks, modifyTourAction=modifyTour) {
 
   return function(dispatch) {
     let newTourItems = withoutItemsIRIs(tour.items, tasks.map(t => t['@id']))
-    dispatch(modifyTourAction(tour, newTourItems))
+    return dispatch(modifyTourAction(tour, newTourItems))
   }
 }
 

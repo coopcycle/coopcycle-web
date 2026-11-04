@@ -7,15 +7,20 @@ use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Doctrine\EntityPreloader\LocalBusinessPreloader;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
+use AppBundle\Entity\LocalBusiness\Collection as ShopCollection;
+use AppBundle\Entity\UI\HomepageBlock;
 use AppBundle\Business\Context as BusinessContext;
+use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TimingRegistry;
 use AppBundle\Utils\RestaurantFilter;
 use AppBundle\Utils\SortableRestaurantIterator;
 use Knp\Component\Pager\PaginatorInterface;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use League\Geotools\Geotools;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
@@ -70,7 +75,10 @@ class ShopSearch
         private CacheInterface $appCache,
         private TimingRegistry $timingRegistry,
         private PaginatorInterface $paginator,
-        private LocalBusinessPreloader $preloader)
+        private LocalBusinessPreloader $preloader,
+        private EntityManagerInterface $entityManager,
+        private SettingsManager $settingsManager,
+        private TranslatorInterface $translator)
     {
     }
 
@@ -85,29 +93,148 @@ class ShopSearch
         return $this->pageCount > $this->page;
     }
 
+    /**
+     * The categories shown in the filters bar.
+     *
+     * When the homepage has been customized with the homepage editor, its shop
+     * collections drive the filters bar, so that both pages share the same structure.
+     * Otherwise, a default set of categories is used.
+     */
     public function getCategories(): array
     {
-        $zeroWasteCount = $this->shopRepository->countZeroWaste();
-        $featuredCount = $this->shopRepository->countFeatured();
-        $exclusiveCount = $this->shopRepository->countExclusive();
+        $categories = $this->getHomepageCategories();
 
-        $categories = [
-            [ 'key' => 'new', 'transKey' => 'homepage.shops.new' ],
-        ];
+        return count($categories) > 0 ? $categories : $this->getDefaultCategories();
+    }
 
-        if ($zeroWasteCount > 0) {
-            $categories[] = [ 'key' => 'zerowaste', 'transKey' => 'restaurant.list.tags.zerowaste' ];
+    private function getHomepageCategories(): array
+    {
+        if (!$this->settingsManager->getBoolean('homepage_published')) {
+            return [];
         }
 
-        if ($featuredCount > 0) {
-            $categories[] = [ 'key' => 'featured', 'transKey' =>'homepage.featured' ];
+        $blocks = $this->entityManager->getRepository(HomepageBlock::class)
+            ->findBy([], ['position' => 'ASC']);
+
+        $categories = [];
+
+        foreach ($blocks as $block) {
+
+            if ('shop_collection' !== $block->type) {
+                continue;
+            }
+
+            $component = $block->data['component'] ?? null;
+            // An empty args object round-trips through PHP as a JSON array
+            $args = is_array($block->data['args'] ?? null) ? $block->data['args'] : [];
+
+            $category = match ($component) {
+                'newest' => $this->makeCategory('category', 'new', 'homepage.shops.new'),
+                'featured' => $this->makeCategory('category', 'featured', 'homepage.featured'),
+                'exclusive' => $this->makeCategory('category', 'exclusive', 'homepage.exclusive'),
+                // The homepage banner-like wording is too long for a filter chip
+                'zerowaste' => $this->makeCategory('category', 'zerowaste', 'restaurant.list.tags.zerowaste'),
+                'edenred' => $this->makeCategory('category', 'edenred', 'homepage.edenred'),
+                'cuisine' => isset($args['cuisine']) ?
+                    $this->makeCategory('cuisine', $args['cuisine'], $args['cuisine'], 'cuisines') : null,
+                'type' => isset($args['type']) ? $this->makeTypeCategory($args['type']) : null,
+                'custom' => isset($args['slug']) ? $this->makeCollectionCategory($args['slug']) : null,
+                default => null,
+            };
+
+            if (null !== $category) {
+                $categories[] = $category;
+            }
         }
 
-         if ($exclusiveCount > 0) {
-            $categories[] = [ 'key' => 'exclusive', 'transKey' => 'homepage.exclusive' ];
+        // The same collection may be used by several blocks (with different sort options)
+        return array_values(array_column($categories, null, 'id'));
+    }
+
+    private function getDefaultCategories(): array
+    {
+        $categories = [];
+
+        $types = $this->getTypes();
+        if (count($types) > 1) {
+            foreach ($types as $type) {
+                if ($category = $this->makeTypeCategory(LocalBusiness::getKeyForType($type))) {
+                    $categories[] = $category;
+                }
+            }
+        }
+
+        $categories[] = $this->makeCategory('category', 'new', 'homepage.shops.new');
+
+        if ($this->shopRepository->countZeroWaste() > 0) {
+            $categories[] = $this->makeCategory('category', 'zerowaste', 'restaurant.list.tags.zerowaste');
+        }
+
+        if ($this->shopRepository->countFeatured() > 0) {
+            $categories[] = $this->makeCategory('category', 'featured', 'homepage.featured');
+        }
+
+        if ($this->shopRepository->countExclusive() > 0) {
+            $categories[] = $this->makeCategory('category', 'exclusive', 'homepage.exclusive');
         }
 
         return $categories;
+    }
+
+    private function makeTypeCategory(string $typeKey): ?array
+    {
+        $type = LocalBusiness::getTypeForKey($typeKey);
+
+        if (null === $type) {
+            return null;
+        }
+
+        return $this->makeCategory('type', $typeKey, LocalBusiness::getTransKeyForType($type));
+    }
+
+    private function makeCollectionCategory(string $slug): ?array
+    {
+        $collection = $this->entityManager->getRepository(ShopCollection::class)
+            ->findOneBy(['slug' => $slug]);
+
+        if (null === $collection) {
+            return null;
+        }
+
+        return [
+            'id' => sprintf('collection|%s', $slug),
+            'filter' => 'collection',
+            'value' => $slug,
+            'label' => $collection->getTitle(),
+            'active' => $this->collection === $slug,
+        ];
+    }
+
+    private function makeCategory(string $filter, string $value, string $transKey, ?string $domain = null): array
+    {
+        return [
+            'id' => sprintf('%s|%s', $filter, $value),
+            'filter' => $filter,
+            'value' => $value,
+            'label' => $this->translator->trans($transKey, [], $domain),
+            'active' => $this->isActiveFilter($filter, $value),
+        ];
+    }
+
+    private function isActiveFilter(string $filter, string $value): bool
+    {
+        return match ($filter) {
+            'category' => $this->category === $value,
+            'type' => $this->type === $value,
+            'cuisine' => [$value] === array_values($this->cuisine),
+            'collection' => $this->collection === $value,
+            default => false,
+        };
+    }
+
+    public function hasFilters(): bool
+    {
+        return count($this->getFilters()) > 0;
     }
 
     public function getTypes(): array
@@ -225,18 +352,12 @@ class ShopSearch
     }
 
     #[LiveAction]
-    public function filterByCategory(#[LiveArg] string $key)
+    public function filterBy(#[LiveArg] string $filter, #[LiveArg] string $value)
     {
-        $this->category = $key;
-        $this->type = '';
-        $this->page = 1;
-    }
-
-    #[LiveAction]
-    public function filterByType(#[LiveArg] string $type)
-    {
-        $this->type = $type;
-        $this->category = '';
+        $this->category = 'category' === $filter ? $value : '';
+        $this->type = 'type' === $filter ? $value : '';
+        $this->collection = 'collection' === $filter ? $value : '';
+        $this->cuisine = 'cuisine' === $filter ? [$value] : [];
         $this->page = 1;
     }
 

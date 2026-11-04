@@ -154,4 +154,122 @@ class EntityChangeSetProcessorTest extends TestCase
 
         $this->assertFalse($taskListForBob->containsTask($task));
     }
+
+    public function testAssignedTaskDateChangedToAnotherDay()
+    {
+        $bob = new User();
+        $bob->setUsername('bob');
+
+        $task = new Task();
+        $task->assignTo($bob);
+        $task->setAfter(new \DateTime('2026-10-26 10:00'));
+        $task->setBefore(new \DateTime('2026-10-26 11:45'));
+
+        $taskListOn27 = new TaskList();
+        $taskListOn27->setCourier($bob);
+        $taskListOn27->setDate(new \DateTime('2026-10-27'));
+
+        $item = new Item();
+        $item->setTask($task);
+        $item->setPosition(0);
+        $taskListOn27->addItem($item);
+
+        $taskListOn26 = new TaskList();
+        $taskListOn26->setCourier($bob);
+        $taskListOn26->setDate(new \DateTime('2026-10-26'));
+
+        $this->taskListProvider
+            ->getTaskList($task, $bob)
+            ->willReturn($taskListOn27);
+
+        $this->taskListProvider
+            ->getTaskListForAssignmentDate($task, $bob)
+            ->willReturn($taskListOn26);
+
+        $processor = new EntityChangeSetProcessor($this->taskListProvider->reveal());
+        $processor->process($task, [
+            'doneAfter' => [ new \DateTime('2026-10-27 10:00'), $task->getAfter() ],
+            'doneBefore' => [ new \DateTime('2026-10-27 11:45'), $task->getBefore() ],
+        ]);
+
+        $this->assertCount(0, $processor->recordedMessages);
+
+        $this->assertFalse($taskListOn27->containsTask($task));
+        $this->assertTrue($taskListOn26->containsTask($task));
+    }
+
+    public function testAssignedTaskDateChangedWithinTheSameDay()
+    {
+        $bob = new User();
+        $bob->setUsername('bob');
+
+        $task = new Task();
+        $task->assignTo($bob);
+        $task->setAfter(new \DateTime('2026-10-26 14:00'));
+        $task->setBefore(new \DateTime('2026-10-26 15:00'));
+
+        $taskList = new TaskList();
+        $taskList->setCourier($bob);
+        $taskList->setDate(new \DateTime('2026-10-26'));
+
+        $item = new Item();
+        $item->setTask($task);
+        $item->setPosition(0);
+        $taskList->addItem($item);
+
+        $this->taskListProvider
+            ->getTaskList($task, $bob)
+            ->willReturn($taskList);
+
+        $this->taskListProvider
+            ->getTaskListForAssignmentDate($task, $bob)
+            ->shouldNotBeCalled();
+
+        $processor = new EntityChangeSetProcessor($this->taskListProvider->reveal());
+        $processor->process($task, [
+            'doneAfter' => [ new \DateTime('2026-10-26 10:00'), $task->getAfter() ],
+            'doneBefore' => [ new \DateTime('2026-10-26 11:00'), $task->getBefore() ],
+        ]);
+
+        $this->assertTrue($taskList->containsTask($task));
+    }
+
+    public function testAssignedTaskInTourDateChangedIsNotMoved()
+    {
+        $bob = new User();
+        $bob->setUsername('bob');
+
+        $task = new Task();
+        $task->assignTo($bob);
+        $task->setAfter(new \DateTime('2026-10-26 10:00'));
+        $task->setBefore(new \DateTime('2026-10-26 11:45'));
+
+        $tour = new Tour();
+        $tour->addTask($task);
+
+        $taskListOn27 = new TaskList();
+        $taskListOn27->setCourier($bob);
+        $taskListOn27->setDate(new \DateTime('2026-10-27'));
+
+        $item = new Item();
+        $item->setTour($tour);
+        $item->setPosition(0);
+        $taskListOn27->addItem($item);
+
+        $this->taskListProvider
+            ->getTaskList($task, $bob)
+            ->willReturn($taskListOn27);
+
+        $this->taskListProvider
+            ->getTaskListForAssignmentDate($task, $bob)
+            ->shouldNotBeCalled();
+
+        $processor = new EntityChangeSetProcessor($this->taskListProvider->reveal());
+        $processor->process($task, [
+            'doneAfter' => [ new \DateTime('2026-10-27 10:00'), $task->getAfter() ],
+            'doneBefore' => [ new \DateTime('2026-10-27 11:45'), $task->getBefore() ],
+        ]);
+
+        $this->assertTrue($taskListOn27->containsTask($task));
+    }
 }

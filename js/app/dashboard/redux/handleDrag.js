@@ -260,12 +260,19 @@ export function handleDragEnd(
       const previousTourItems = tour.items
       const newTourItems = [...previousTourItems]
 
+      // Taking the tasks out of where they were has to land *before* they are
+      // put in the tour. Sent at once, the tour's PUT can read a task as already
+      // assigned to the courier holding the tour and leave it be, then the
+      // removal unassigns it: the task ends up in the tour, on the courier's
+      // list, assigned to nobody — and the courier is refused when completing it.
+      let takeOut = null
+
       if (source.droppableId === destination.droppableId) {
         _.remove(newTourItems, t => selectedTasks.find(st => st['@id'] === t))
       } else if (source.droppableId.startsWith('tour:')) {
-        dispatch(removeTasksFromTour(selectTourById(getState(), parseTourId(source.droppableId)), selectedTasks))
+        takeOut = dispatch(removeTasksFromTour(selectTourById(getState(), parseTourId(source.droppableId)), selectedTasks))
       } else if (source.droppableId.startsWith('assigned:')) {
-        dispatch(unassignTasks(parseUsername(source.droppableId), selectedTasks))
+        takeOut = dispatch(unassignTasks(parseUsername(source.droppableId), selectedTasks))
       }
 
       newTourItems.splice(
@@ -273,8 +280,21 @@ export function handleDragEnd(
         0,
         ...selectedTasks.map(t => t['@id'])
       )
-      dispatch(modifyTour(tour, newTourItems))
-      return
+
+      if (!takeOut) {
+        dispatch(modifyTour(tour, newTourItems))
+        return
+      }
+
+      return Promise.resolve(takeOut).then(takenOut => {
+        // The removal failed and was rolled back, the tasks are still where
+        // they were: putting them in the tour too would hold them twice.
+        if (!takenOut) {
+          return
+        }
+
+        return dispatch(modifyTour(tour, newTourItems))
+      })
     }
 
     // destination is assigned:

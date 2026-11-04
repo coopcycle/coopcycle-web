@@ -30,7 +30,13 @@ class TargetPathListener
 
         $request = $event->getRequest();
 
-        if (!$request->hasPreviousSession()) {
+        // Not hasPreviousSession(): the target path is saved by Symfony's
+        // ExceptionListener as soon as a session is *available*, so a request
+        // arriving without a session cookie (an expired session, a tab left
+        // open overnight) stores one in a brand new session. That is precisely
+        // the case we have to clean up, so requiring the incoming cookie here
+        // let /profile/jwt through.
+        if (!$request->hasSession()) {
             return;
         }
 

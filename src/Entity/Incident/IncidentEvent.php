@@ -38,6 +38,7 @@ class IncidentEvent
     const TYPE_TRANSPORTER_REPORT = "transporter_reported";
     const TYPE_ACCEPT_SUGGESTION = "accepted_suggestion";
     const TYPE_REJECT_SUGGESTION = "rejected_suggestion";
+    const TYPE_UPDATE_ADDRESS = "updated_address";
 
     public function getId()
     {

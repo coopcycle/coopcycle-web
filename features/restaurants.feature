@@ -1342,6 +1342,82 @@ Feature: Manage restaurants
     When the user "bob" sends a "DELETE" request to "/api/restaurants/menus/1/sections/4"
     Then the response status code should be 204
 
+  Scenario: Renaming a menu section keeps its products
+    Given the fixtures files are loaded:
+      | sylius_locales.yml  |
+      | products.yml        |
+      | restaurants.yml     |
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    And the restaurant with id "1" has menu:
+      | section | product   |
+      | Pizzas  | PIZZA     |
+      | Burger  | HAMBURGER |
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_RESTAURANT"
+    And the restaurant with id "1" belongs to user "bob"
+    And the user "bob" is authenticated
+    Given I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When the user "bob" sends a "PUT" request to "/api/restaurants/menus/1/sections/2" with body:
+      """
+      {
+        "name": "Pizze",
+        "description": "Napoletane"
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context": "/api/contexts/Menu",
+        "@type": "http://schema.org/Menu",
+        "@id": "/api/restaurants/menus/1/sections/2",
+        "identifier": @string@,
+        "name": "Pizze",
+        "description": "Napoletane",
+        "hasMenuItem": "@array@.count(1)"
+      }
+      """
+    Given I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When the user "bob" sends a "GET" request to "/api/restaurants/1/menu"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context": "/api/contexts/Menu",
+        "@id": "/api/restaurants/menus/1",
+        "@type": "http://schema.org/Menu",
+        "name": "Menu",
+        "identifier": @string@,
+        "hasMenuSection": [
+          {
+            "@id":"/api/restaurants/menus/1/sections/2",
+            "@type":"MenuSection",
+            "identifier":@string@,
+            "name": "Pizze",
+            "description":"Napoletane",
+            "hasMenuItem": "@array@.count(1)"
+          },
+          {
+            "@id":"/api/restaurants/menus/1/sections/3",
+            "@type":"MenuSection",
+            "identifier":@string@,
+            "name": "Burger",
+            "description":null,
+            "hasMenuItem": "@array@.count(1)"
+          }
+        ]
+      }
+      """
+
   Scenario: Reorder menu sections
     Given the fixtures files are loaded:
       | sylius_locales.yml  |

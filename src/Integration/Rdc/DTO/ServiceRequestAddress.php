@@ -15,6 +15,7 @@ class ServiceRequestAddress
         public readonly string $postalCode = '',
         public readonly string $city = '',
         public readonly string $country = '',
+        public readonly string $name = '',
     ) {}
 
     public function isEmpty(): bool

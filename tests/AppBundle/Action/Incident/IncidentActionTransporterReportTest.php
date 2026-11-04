@@ -2,6 +2,7 @@
 
 namespace Tests\AppBundle\Action\Incident;
 
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Action\Incident\IncidentAction;
 use AppBundle\Api\State\DeliveryCreateOrUpdateProcessor;
 use AppBundle\Entity\Delivery;
@@ -11,6 +12,8 @@ use AppBundle\Entity\Incident\IncidentEvent;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\User;
+use AppBundle\Pricing\PricingManager;
+use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\TaskManager;
 use AppBundle\Sylius\Taxation\TaxesHelper;
 use Doctrine\ORM\EntityManagerInterface;
@@ -46,6 +49,9 @@ class IncidentActionTransporterReportTest extends TestCase
             $this->prophesize(DeliveryCreateOrUpdateProcessor::class)->reveal(),
             $this->prophesize(MessageBusInterface::class)->reveal(),
             $this->prophesize(TaxesHelper::class)->reveal(),
+            $this->prophesize(IriConverterInterface::class)->reveal(),
+            $this->prophesize(DeliveryManager::class)->reveal(),
+            $this->prophesize(PricingManager::class)->reveal(),
         );
     }
 

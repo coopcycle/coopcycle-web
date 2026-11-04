@@ -119,6 +119,7 @@ Feature: Incidents
       | telephone | 0033612345678     |
     And the user "bob" is authenticated
     And the tasks with comments matching "#bob" are assigned to "bob"
+    And the tasks with ids "2" are assigned to "bob"
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "POST" request to "/api/incidents" with body:
@@ -207,6 +208,7 @@ Feature: Incidents
       | telephone | 0033612345678     |
     And the user "bob" is authenticated
     And the tasks with comments matching "#bob" are assigned to "bob"
+    And the tasks with ids "2" are assigned to "bob"
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "POST" request to "/api/incidents" with body:
@@ -296,6 +298,7 @@ Feature: Incidents
       | telephone | 0033612345678     |
     And the user "bob" is authenticated
     And the tasks with comments matching "#bob" are assigned to "bob"
+    And the tasks with ids "2" are assigned to "bob"
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "POST" request to "/api/incidents" with body:
@@ -385,6 +388,7 @@ Feature: Incidents
       | telephone | 0033612345678     |
     And the user "bob" is authenticated
     And the tasks with comments matching "#bob" are assigned to "bob"
+    And the tasks with ids "2" are assigned to "bob"
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "POST" request to "/api/incidents" with body:
@@ -433,6 +437,7 @@ Feature: Incidents
       | telephone | 0033612345678     |
     And the user "bob" is authenticated
     And the tasks with comments matching "#bob" are assigned to "bob"
+    And the tasks with ids "2" are assigned to "bob"
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "POST" request to "/api/incidents" with body:
@@ -522,6 +527,7 @@ Feature: Incidents
     And the user "dispatcher" has role "ROLE_DISPATCHER"
     And the user "bob" is authenticated
     And the tasks with comments matching "#bob" are assigned to "bob"
+    And the tasks with ids "2" are assigned to "bob"
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "POST" request to "/api/incidents" with body:
@@ -685,6 +691,7 @@ Feature: Incidents
       | password   | 123456            |
     And the user "dispatcher" has role "ROLE_DISPATCHER"
     And the tasks with comments matching "#bob" are assigned to "bob"
+    And the tasks with ids "2" are assigned to "bob"
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "POST" request to "/api/incidents" with body:
@@ -848,6 +855,7 @@ Feature: Incidents
       | password   | 123456            |
     And the user "dispatcher" has role "ROLE_DISPATCHER"
     And the tasks with comments matching "#bob" are assigned to "bob"
+    And the tasks with ids "2" are assigned to "bob"
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "POST" request to "/api/incidents" with body:
@@ -914,6 +922,168 @@ Feature: Incidents
       }
       """
     And the database should contain an order with a total price 799
+
+  Scenario: Update the address of an ADDRESS_REVIEW_NEEDED incident
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml        |
+      | payment_methods.yml        |
+      | sylius_products.yml        |
+      | store_with_manual_supplements.yml |
+      | package_delivery_order.yml |
+      | pricing_rule_long_distance.yml |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the user "dispatcher" is loaded:
+      | email      | dispatcher@coopcycle.org |
+      | password   | 123456            |
+    And the user "dispatcher" has role "ROLE_DISPATCHER"
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/incidents" with body:
+      """
+      {
+        "description": "No such street",
+        "failureReasonCode": "ADDRESS_REVIEW_NEEDED",
+        "task": "/api/tasks/2"
+      }
+      """
+    Then the response status code should be 201
+    And the database should contain an order with a total price 499
+    Given the user "dispatcher" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "dispatcher" sends a "PUT" request to "/api/incidents/1/action" with body:
+      """
+      {
+        "action": "updated_address",
+        "address": {
+          "streetAddress": "1, Parvis de La Défense, 92800 Puteaux, France",
+          "postalCode": "92800",
+          "addressLocality": "Puteaux",
+          "latitude": 48.8918,
+          "longitude": 2.2380
+        },
+        "close": true
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Incident",
+        "@id":"@string@",
+        "@type":"Incident",
+        "id":@integer@,
+        "title":"@string@",
+        "status":"CLOSED",
+        "priority":@integer@,
+        "task":{"id":2,"status":"@string@","type":"@string@"},
+        "author":{"id":@integer@,"username":@string@},
+        "delivery":{"id":@integer@},
+        "order":{"id":@integer@,"restaurant":{"id":null,"name":null},"customer":{"id":null,"username":null}},
+        "store":{"id":@integer@,"name":@string@},
+        "failureReasonCode":"ADDRESS_REVIEW_NEEDED",
+        "description":"No such street",
+        "images":[],
+        "events":[
+          {
+            "@type": "IncidentEvent",
+            "@id":"@string@",
+            "id":@integer@,
+            "type":"updated_address",
+            "message":null,
+            "metadata":{
+              "address": {
+                "from": "23, Avenue Claude Vellefaux, 75010 Paris, France",
+                "to": "1, Parvis de La Défense, 92800 Puteaux, France"
+              },
+              "price": {
+                "from": 499,
+                "to": 699,
+                "diff_tax_included": 200,
+                "diff_tax_excluded": 200
+              }
+            },
+            "createdBy":"/api/users/3",
+            "createdAt":"@string@.isDateTime()"
+          }
+        ],
+        "createdBy":"/api/users/2",
+        "createdAt":"@string@.isDateTime()",
+        "updatedAt":"@string@.isDateTime()",
+        "tags":[],
+        "metadata": {"@*@": "@*@"}
+      }
+      """
+    When I add "Accept" header equal to "application/ld+json"
+    And the user "dispatcher" sends a "GET" request to "/api/tasks/2"
+    Then the response status code should be 200
+    And the JSON node "address.streetAddress" should be equal to "1, Parvis de La Défense, 92800 Puteaux, France"
+    And the JSON node "address.contactName" should be equal to "John Doe"
+    And the JSON node "address.geo.latitude" should be equal to the number 48.8918
+    And the database should contain an order with a total price 699
+
+  Scenario: Update the address of an ADDRESS_REVIEW_NEEDED incident from the store address book
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml        |
+      | payment_methods.yml        |
+      | sylius_products.yml        |
+      | store_with_manual_supplements.yml |
+      | package_delivery_order.yml |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the user "dispatcher" is loaded:
+      | email      | dispatcher@coopcycle.org |
+      | password   | 123456            |
+    And the user "dispatcher" has role "ROLE_DISPATCHER"
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/incidents" with body:
+      """
+      {
+        "description": "No such street",
+        "failureReasonCode": "ADDRESS_REVIEW_NEEDED",
+        "task": "/api/tasks/2"
+      }
+      """
+    Then the response status code should be 201
+    Given the user "dispatcher" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "dispatcher" sends a "GET" request to "/api/stores/1/addresses"
+    Then the response status code should be 200
+    And the JSON node "hydra:member[0].@id" should be equal to "/api/addresses/1"
+    And the JSON node "hydra:member[0].name" should be equal to "Office"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "dispatcher" sends a "PUT" request to "/api/incidents/1/action" with body:
+      """
+      {
+        "action": "updated_address",
+        "address": "/api/addresses/1"
+      }
+      """
+    Then the response status code should be 200
+    And the JSON node "status" should be equal to "OPEN"
+    And the JSON node "events[0].type" should be equal to "updated_address"
+    And the JSON node "events[0].metadata.address.to" should be equal to "72, Rue Saint-Maur, 75011 Paris, France"
+    And the JSON node "events[0].metadata.price" should not be null
+    When I add "Accept" header equal to "application/ld+json"
+    And the user "dispatcher" sends a "GET" request to "/api/tasks/2"
+    Then the response status code should be 200
+    # A copy, the store address book entry is left untouched
+    And the JSON node "address.@id" should match "/^\/api\/addresses\/(?!1$)\d+$/"
+    And the JSON node "address.streetAddress" should be equal to "72, Rue Saint-Maur, 75011 Paris, France"
+    And the JSON node "address.contactName" should be equal to "Jane smith"
 
   Scenario: Report incident: pre-fill missing manual supplements in suggestion
     Given the fixtures files are loaded:
@@ -1217,6 +1387,7 @@ Feature: Incidents
       | password  | 123456            |
       | telephone | 0033612345678     |
     And the user "bob" is authenticated
+    And the tasks with comments matching "#bob" are assigned to "bob"
     Given I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "POST" request to "/api/incidents" with body:
@@ -1291,6 +1462,7 @@ Feature: Incidents
       | password  | 123456            |
       | telephone | 0033612345678     |
     And the user "bob" is authenticated
+    And the tasks with comments matching "#bob" are assigned to "bob"
     Given I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "POST" request to "/api/incidents" with body:
@@ -1409,6 +1581,7 @@ Feature: Incidents
     And the user "dispatcher" has role "ROLE_DISPATCHER"
     And the user "bob" is authenticated
     And the tasks with comments matching "#bob" are assigned to "bob"
+    And the tasks with ids "2" are assigned to "bob"
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "POST" request to "/api/incidents" with body:
@@ -1454,3 +1627,150 @@ Feature: Incidents
     Then the response status code should be 200
     # Base: 499, weight: 250
     And the database should contain an order with a total price 749
+
+  Scenario: Courier can't report an incident on a task they are not assigned to
+    Given the fixtures files are loaded:
+      | tasks.yml |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/incidents" with body:
+      """
+      {
+        "description": "NOT MY TASK",
+        "failureReasonCode": "DAMAGED",
+        "task": "/api/tasks/1"
+      }
+      """
+    Then the response status code should be 403
+
+  Scenario: Courier can't read or modify the incident of another courier
+    Given the fixtures files are loaded:
+      | tasks.yml |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the courier "alice" is loaded:
+      | email     | alice@coopcycle.org |
+      | password  | 123456              |
+      | telephone | 0033612345679       |
+    And the user "bob" is authenticated
+    And the user "alice" is authenticated
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/incidents" with body:
+      """
+      {
+        "description": "PACKAGE WET",
+        "failureReasonCode": "DAMAGED",
+        "task": "/api/tasks/2"
+      }
+      """
+    Then the response status code should be 201
+    # alice is a courier of the same instance, but task 2 is not hers
+    Given I add "Content-Type" header equal to "application/ld+json"
+    And the user "alice" sends a "GET" request to "/api/incidents/1"
+    Then the response status code should be 403
+    Given I add "Content-Type" header equal to "application/ld+json"
+    And the user "alice" sends a "PUT" request to "/api/incidents/1/action" with body:
+      """
+      {
+        "action": "cancelled"
+      }
+      """
+    Then the response status code should be 403
+    Given I add "Content-Type" header equal to "application/ld+json"
+    And the user "alice" sends a "PUT" request to "/api/incidents/1" with body:
+      """
+      {
+        "status": "CLOSED"
+      }
+      """
+    Then the response status code should be 403
+    Given I add "Content-Type" header equal to "application/ld+json"
+    And the user "alice" sends a "POST" request to "/api/incidents/1/comments" with body:
+      """
+      {
+        "comment": "I should not be able to write this"
+      }
+      """
+    Then the response status code should be 403
+    Given I add "Content-Type" header equal to "application/ld+json"
+    And the user "alice" sends a "POST" request to "/api/incidents/1/metadata" with body:
+      """
+      {
+        "metadata": [{"foo": "bar"}]
+      }
+      """
+    Then the response status code should be 403
+    Given I add "Content-Type" header equal to "multipart/form-data"
+    And I add "X-Attach-To" header equal to "/api/incidents/1"
+    And the user "alice" sends a "POST" request to "/api/incident_images" with parameters:
+      | key      | value     |
+      | file     | @beer.jpg |
+    Then the response status code should be 403
+    # bob is assigned to the task, so he keeps full access to his incident
+    Given I add "Content-Type" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/incidents/1"
+    Then the response status code should be 200
+    Given I add "Content-Type" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/incidents/1/comments" with body:
+      """
+      {
+        "comment": "On my way"
+      }
+      """
+    Then the response status code should be 201
+
+  Scenario: Courier only lists the incidents they are concerned with
+    Given the fixtures files are loaded:
+      | tasks.yml |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the courier "alice" is loaded:
+      | email     | alice@coopcycle.org |
+      | password  | 123456              |
+      | telephone | 0033612345679       |
+    And the user "dispatcher" is loaded:
+      | email    | dispatcher@coopcycle.org |
+      | password | 123456                   |
+    And the user "dispatcher" has role "ROLE_DISPATCHER"
+    And the user "bob" is authenticated
+    And the user "alice" is authenticated
+    And the user "dispatcher" is authenticated
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/incidents" with body:
+      """
+      {
+        "description": "PACKAGE WET",
+        "failureReasonCode": "DAMAGED",
+        "task": "/api/tasks/2"
+      }
+      """
+    Then the response status code should be 201
+    Given I add "Content-Type" header equal to "application/ld+json"
+    And the user "alice" sends a "GET" request to "/api/incidents"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON node "hydra:member" should have 0 elements
+    Given I add "Content-Type" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/incidents"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON node "hydra:member" should have 1 element
+    Given I add "Content-Type" header equal to "application/ld+json"
+    And the user "dispatcher" sends a "GET" request to "/api/incidents"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON node "hydra:member" should have 1 element

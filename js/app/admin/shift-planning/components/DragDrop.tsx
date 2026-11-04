@@ -100,7 +100,7 @@ export function DraggableCard({ data, children }: DraggableCardProps) {
  * themselves — this hook is agnostic to what they contain.
  */
 export function useCellDropMonitor(
-  onMove: (source: CellData, destination: CellData) => void,
+  onMove: (source: CellData, destination: CellData, duplicate: boolean) => void,
 ) {
   useEffect(() => {
     return monitorForElements({
@@ -111,7 +111,11 @@ export function useCellDropMonitor(
         if (!destination) {
           return;
         }
-        onMove(source.data as CellData, destination);
+        onMove(
+          source.data as CellData,
+          destination,
+          location.current.input.shiftKey || location.current.input.altKey,
+        );
       },
     });
   }, [onMove]);

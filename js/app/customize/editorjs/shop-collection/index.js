@@ -155,6 +155,11 @@ const SortSelect = ({ defaultValue, onChange }) => {
   )
 }
 
+// An empty args object round-trips through PHP as a JSON array ([]), so only
+// plain objects are trusted here: reading `.sort` off an array would otherwise
+// yield Array.prototype.sort.
+const parseArgs = (args) => (_.isPlainObject(args) ? args : {})
+
 function showSkeleton(wrapper) {
   const container = document.createElement('div');
   createRoot(container).render(
@@ -245,7 +250,7 @@ export default class ShopCollection {
       ];
 
       // sort is handled by its own control, not part of the Cascader's value
-      const args = _.isObject(this.data.args) ? _.omit(this.data.args, 'sort') : {}
+      const args = _.omit(parseArgs(this.data.args), 'sort')
 
       if (_.size(args) > 0) {
         value.push(qs.stringify(args))
@@ -270,8 +275,8 @@ export default class ShopCollection {
     // since the two controls (Cascader + sort Select) are mounted as separate
     // React roots and both need to contribute to the same preview + saved data.
     let currentComponent = this.data ? this.data.component : undefined
-    let currentArgs = (this.data && _.isObject(this.data.args)) ? _.omit(this.data.args, 'sort') : {}
-    let currentSort = (this.data && this.data.args) ? this.data.args.sort : undefined
+    let currentArgs = _.omit(parseArgs(this.data && this.data.args), 'sort')
+    let currentSort = parseArgs(this.data && this.data.args).sort
 
     const updatePreviewAndData = () => {
       if (!currentComponent) {

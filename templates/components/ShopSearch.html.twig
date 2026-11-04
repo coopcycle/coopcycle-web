@@ -16,20 +16,13 @@
     <div class="swiper filters categories mb-4">
       <ul class="swiper-wrapper">
         <li class="swiper-slide">
-          <a class="py-2 px-4 cursor-pointer {% if this.category is empty and this.type is empty %}font-semibold{% endif %}" href="{{ path('shops') }}">
+          <a class="py-2 px-4 cursor-pointer {% if not this.hasFilters %}font-semibold{% endif %}" href="{{ path('shops') }}">
             <i class="fa fa-lg fa-home" aria-hidden="true"></i>
           </a>
         </li>
-        {% if this.types|length > 1 %}
-        {% for type in this.types %}
-        <li class="swiper-slide">
-          <a class="py-2 px-4 cursor-pointer {% if this.type == type|local_business_type_key %}font-semibold{% endif %}" {{ live_action('filterByType', { type: type|local_business_type_key }) }}>{{ type|local_business_type }}</a>
-        </li>
-        {% endfor %}
-        {% endif %}
         {% for category in this.categories %}
         <li class="swiper-slide">
-          <a class="py-2 px-4 cursor-pointer {% if category.key == this.category %}font-semibold{% endif %}" {{ live_action('filterByCategory', { key: category.key }) }}>{{ category.transKey|trans }}</a>
+          <a class="py-2 px-4 cursor-pointer {% if category.active %}font-semibold{% endif %}" {{ live_action('filterBy', { filter: category.filter, value: category.value }) }}>{{ category.label }}</a>
         </li>
         {% endfor %}
       </ul>
