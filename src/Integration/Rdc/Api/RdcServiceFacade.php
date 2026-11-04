@@ -121,12 +121,19 @@ class RdcServiceFacade
         array $dropoffTimeSlot = [],
     ): array
     {
+        // The service is done for whoever requested it: a service request
+        // without requestor means the provider is misconfigured.
+        $requestor = $apiRequest?->getRequestorName();
+        if (is_null($requestor)) {
+            throw new \InvalidArgumentException('The service request has no requestor');
+        }
+
         $serviceData = [
             'id' => $serviceId,
             'serviceType' => ServiceType::TRANSPORT->value,
             'serviceStatus' => ServiceStatus::PROPOSED->value,
             'serviceSubtype' => ServiceSubtype::CARGOBIKE_TRANSPORT->value,
-            'serviceName' => sprintf('livraison APPLICOLIS n° %s', $contractRef ?? $serviceId),
+            'serviceName' => sprintf('livraison %s n° %s', $requestor, $contractRef ?? $serviceId),
             'executionStatus' => ExecutionStatus::SCHEDULED->value,
             'serviceNature' => ServiceNature::LOGISTICS->value,
             'isDangerous' => $apiRequest?->isDangerous ?? false,
@@ -135,8 +142,7 @@ class RdcServiceFacade
             'externalReferences' => $this->mapExternalReferences($barcode, $contractRef),
         ];
 
-        //FIXME: Add legal requestor here.
-        $serviceData['requestor'] = ['legalEntityName' => 'APPLICOLIS'];
+        $serviceData['requestor'] = ['legalEntityName' => $requestor];
 
         if ($serviceRequestUri !== null) {
             $serviceData['serviceRequests'] = [['uri' => $serviceRequestUri]];

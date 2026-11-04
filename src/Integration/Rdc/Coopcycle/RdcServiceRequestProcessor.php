@@ -26,6 +26,12 @@ class RdcServiceRequestProcessor
 
     public function process(RdcApiServiceRequest $apiRequest, Store $store, ?string $originNodeUri = null, ?int $loRevision = null): Delivery
     {
+        // The BOL service is done for the requestor: without one, fail before
+        // creating a delivery that could never be answered.
+        if (is_null($apiRequest->getRequestorName())) {
+            throw new \InvalidArgumentException('The service request has no requestor');
+        }
+
         // When a BOL call failed, Messenger retries the whole message: reuse the
         // delivery saved by the previous attempt instead of creating another one.
         $delivery = $this->findDelivery($originNodeUri ?? $apiRequest->getUri());

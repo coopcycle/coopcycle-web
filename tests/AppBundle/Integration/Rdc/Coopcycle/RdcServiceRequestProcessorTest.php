@@ -66,7 +66,7 @@ class RdcServiceRequestProcessorTest extends TestCase
         $this->serviceFacade->expects($this->once())->method('linkActivityToService')->with('svc-1', 'act-1');
         $this->serviceFacade->expects($this->once())->method('notifyOriginNode');
 
-        $result = $this->processor->process(new RdcApiServiceRequest(), new Store(), self::LO_URI, 1);
+        $result = $this->processor->process($this->apiRequest(), new Store(), self::LO_URI, 1);
 
         $this->assertSame($delivery, $result);
         $this->assertSame('svc-1', $delivery->getMetadata()['rdc']['service_id']);
@@ -86,7 +86,7 @@ class RdcServiceRequestProcessorTest extends TestCase
         $this->serviceFacade->expects($this->once())->method('linkActivityToService')->with('svc-1', 'act-1');
         $this->serviceFacade->expects($this->once())->method('notifyOriginNode');
 
-        $result = $this->processor->process(new RdcApiServiceRequest(), new Store(), self::LO_URI, 1);
+        $result = $this->processor->process($this->apiRequest(), new Store(), self::LO_URI, 1);
 
         $this->assertSame($delivery, $result);
         $this->assertSame('act-1', $delivery->getMetadata()['rdc']['activity_id']);
@@ -104,7 +104,7 @@ class RdcServiceRequestProcessorTest extends TestCase
         $this->serviceFacade->expects($this->once())->method('linkActivityToService')->with('svc-1', 'act-1');
         $this->serviceFacade->expects($this->once())->method('notifyOriginNode');
 
-        $this->processor->process(new RdcApiServiceRequest(), new Store(), self::LO_URI, 1);
+        $this->processor->process($this->apiRequest(), new Store(), self::LO_URI, 1);
     }
 
     public function testFailureAfterServiceCreationKeepsItsIdForTheRetry(): void
@@ -117,7 +117,7 @@ class RdcServiceRequestProcessorTest extends TestCase
         $this->serviceFacade->method('createActivity')->willThrowException(new \RuntimeException('BOL is down'));
 
         try {
-            $this->processor->process(new RdcApiServiceRequest(), new Store(), self::LO_URI, 1);
+            $this->processor->process($this->apiRequest(), new Store(), self::LO_URI, 1);
             $this->fail('The BOL failure should be rethrown, so that Messenger retries');
         } catch (\RuntimeException $e) {
             $this->assertSame('BOL is down', $e->getMessage());
@@ -155,6 +155,22 @@ class RdcServiceRequestProcessorTest extends TestCase
         $connectionFacade->expects($this->once())->method('linkActivityToService')->with('svc-1', 'act-1');
         $connectionFacade->expects($this->once())->method('notifyOriginNode');
 
-        $this->processor->process(new RdcApiServiceRequest(), $store, self::LO_URI, 1);
+        $this->processor->process($this->apiRequest(), $store, self::LO_URI, 1);
+    }
+
+    public function testRejectsAServiceRequestWithoutRequestor(): void
+    {
+        // A misconfigured provider: no delivery must be created.
+        $this->mapper->expects($this->never())->method('mapToDelivery');
+        $this->serviceFacade->expects($this->never())->method('createService');
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        $this->processor->process(new RdcApiServiceRequest(), new Store(), self::LO_URI, 1);
+    }
+
+    private function apiRequest(): RdcApiServiceRequest
+    {
+        return new RdcApiServiceRequest(requestor: ['legalEntityName' => 'NOWASTEPHARMA']);
     }
 }

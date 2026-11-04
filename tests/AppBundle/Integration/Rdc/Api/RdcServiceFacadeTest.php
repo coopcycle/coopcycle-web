@@ -7,6 +7,7 @@ namespace Tests\AppBundle\Integration\Rdc\Api;
 use AppBundle\Integration\Rdc\Api\RdcClientFactory;
 use AppBundle\Integration\Rdc\Api\RdcClientInterface;
 use AppBundle\Integration\Rdc\Api\RdcServiceFacade;
+use AppBundle\Integration\Rdc\DTO\RdcApiServiceRequest;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 
@@ -47,5 +48,27 @@ class RdcServiceFacadeTest extends TestCase
         $facade = new RdcServiceFacade($factory, new NullLogger(), '');
 
         $this->assertSame($client, $facade->getRdcClient());
+    }
+
+    public function testBuildServiceDataUsesTheServiceRequestRequestor(): void
+    {
+        $facade = new RdcServiceFacade($this->createMock(RdcClientFactory::class), new NullLogger(), '');
+        $apiRequest = RdcApiServiceRequest::parse([
+            'requestor' => ['legalEntityName' => 'NOWASTEPHARMA'],
+        ]);
+
+        $serviceData = $facade->buildServiceData('42', $apiRequest, 'C-26-1234-1');
+
+        $this->assertSame(['legalEntityName' => 'NOWASTEPHARMA'], $serviceData['requestor']);
+        $this->assertSame('livraison NOWASTEPHARMA n° 42', $serviceData['serviceName']);
+    }
+
+    public function testBuildServiceDataRequiresARequestor(): void
+    {
+        $facade = new RdcServiceFacade($this->createMock(RdcClientFactory::class), new NullLogger(), '');
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        $facade->buildServiceData('42', RdcApiServiceRequest::parse([]));
     }
 }
