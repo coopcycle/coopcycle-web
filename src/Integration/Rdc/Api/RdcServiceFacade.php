@@ -334,7 +334,7 @@ class RdcServiceFacade
             [
                 'op' => 'add',
                 'path' => '/isDangerous',
-                'value' => $apiRequest?->isDangerous ?? false,
+                'value' => $apiRequest->isDangerous ?? false,
             ],
             [
                 'op' => 'add',

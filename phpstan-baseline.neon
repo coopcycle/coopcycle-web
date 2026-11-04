@@ -277,12 +277,6 @@ parameters:
 			path: src/Form/Type/MinMaxType.php
 
 		-
-			message: '#^Using nullsafe property access "\?\-\>isDangerous" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: src/Integration/Rdc/Api/RdcServiceFacade.php
-
-		-
 			message: '#^Using nullsafe property access "\?\-\>serviceAgreementReference" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 1
