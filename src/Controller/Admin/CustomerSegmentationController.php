@@ -16,6 +16,16 @@ class CustomerSegmentationController extends AbstractController
 {
     private const ITEMS_PER_PAGE = 20;
 
+    /**
+     * The customers of a segment are rows (arrays), sorted by KnpPaginator
+     * using property paths, e.g. ?sort=[monetary]&direction=desc
+     */
+    private const SORTABLE_FIELDS = [
+        '[last_order_at]',
+        '[frequency]',
+        '[monetary]',
+    ];
+
     public function __construct(
         private readonly bool                 $rfmEnabled,
         private readonly SettingsManager      $settingsManager,
@@ -69,7 +79,10 @@ class CustomerSegmentationController extends AbstractController
         $customers = $paginator->paginate(
             $activeSegment !== null ? ($segments[$activeSegment] ?? []) : [],
             $request->query->getInt('page', 1),
-            self::ITEMS_PER_PAGE
+            self::ITEMS_PER_PAGE,
+            [
+                PaginatorInterface::SORT_FIELD_ALLOW_LIST => self::SORTABLE_FIELDS,
+            ]
         );
 
         return $this->render('admin/customer_segmentation.html.twig', [
