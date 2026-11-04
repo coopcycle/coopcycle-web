@@ -68,10 +68,24 @@ class EmailManager
         );
     }
 
-    private function getReplyTo(): Address
+    /**
+     * The administrator email is an optional setting, so an instance that has
+     * never saved the settings form has none. Omit the Reply-To header in that
+     * case -- replies then go to the From address -- rather than building an
+     * Address from an empty string, which throws RfcComplianceException and
+     * takes down every page that sends a transactional email.
+     */
+    private function getReplyTo(): ?Address
     {
+        $administratorEmail = $this->settingsManager->get('administrator_email');
+
+        if (empty($administratorEmail)) {
+
+            return null;
+        }
+
         return Address::create(
-            sprintf('%s <%s>', $this->settingsManager->get('brand_name'), $this->settingsManager->get('administrator_email'))
+            sprintf('%s <%s>', $this->settingsManager->get('brand_name'), $administratorEmail)
         );
     }
 
@@ -95,9 +109,16 @@ class EmailManager
 
     public function createHtmlMessageWithReplyTo($subject = null, $body = null): Email
     {
+        $message = $this->createHtmlMessage($subject, $body);
+
         // Allow replying to the administrator
-        return $this->createHtmlMessage($subject, $body)
-            ->replyTo($this->getReplyTo());
+        $replyTo = $this->getReplyTo();
+
+        if (null !== $replyTo) {
+            $message->replyTo($replyTo);
+        }
+
+        return $message;
     }
 
     public function send(Email $message)
