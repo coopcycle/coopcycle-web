@@ -180,7 +180,8 @@
         "scheb/2fa-bundle": "^7.0",
         "scheb/2fa-email": "^7.0",
         "islesurlasorguetourisme/daisyui-form-bundle": "dev-main",
-        "rezozero/canonical-email": "^1.1"
+        "rezozero/canonical-email": "^1.1",
+        "symfony/postmark-mailer": "6.4.*"
     },
     "require-dev": {
         "symfony/debug-bundle": "*",

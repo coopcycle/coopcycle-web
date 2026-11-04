@@ -1,0 +1,126 @@
+{% extends "admin.html.twig" %}
+
+{% block prepare_title %}
+  {{ add_title_prefix('marketing.title'|trans) }}
+{% endblock %}
+
+{% block breadcrumb %}
+<li><a href="{{ path('admin_marketing') }}">{% trans %}marketing.title{% endtrans %}</a></li>
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('admin-marketing') }}
+{% endblock %}
+
+{% block content %}
+
+{% form_theme active_form 'bootstrap_3_layout.html.twig' %}
+<div class="panel panel-default" style="margin-bottom:16px;">
+  <div class="panel-body">
+    {{ form_start(active_form, { attr: { id: 'marketing-active-form' } }) }}
+      <div class="d-flex align-items-center" style="gap:8px;">
+        {{ form_widget(active_form.active) }}
+        <strong>{% trans %}marketing.program.active_label{% endtrans %}</strong>
+      </div>
+      <p class="text-muted" style="margin:4px 0 0;">{% trans %}marketing.program.active_help{% endtrans %}</p>
+    {{ form_end(active_form) }}
+  </div>
+</div>
+
+{% if not is_configured %}
+<div class="alert alert-warning" role="alert">
+  <i class="fa fa-exclamation-triangle"></i>
+  {% trans %}marketing.not_configured_here{% endtrans %}
+</div>
+{% elseif not is_active %}
+<div class="alert alert-warning" role="alert">
+  <i class="fa fa-exclamation-triangle"></i> {% trans %}marketing.program.inactive_warning{% endtrans %}
+</div>
+{% endif %}
+
+{% form_theme postmark_form 'bootstrap_3_layout.html.twig' %}
+<div class="panel panel-default">
+  <div class="panel-heading" style="cursor:pointer;" data-toggle="collapse" data-target="#postmark-panel">
+    <i class="fa fa-cog"></i> {% trans %}marketing.postmark.title{% endtrans %}
+    <span class="pull-right"><i class="fa fa-chevron-down"></i></span>
+  </div>
+  <div id="postmark-panel" class="panel-collapse collapse{{ is_configured ? '' : ' in' }}">
+    <div class="panel-body">
+      <div class="alert alert-info" role="alert">
+        <h4><i class="fa fa-info-circle"></i> {% trans %}marketing.postmark.info.title{% endtrans %}</h4>
+        <p style="margin:0;">{% trans %}marketing.postmark.info.body{% endtrans %}</p>
+      </div>
+      {{ form_start(postmark_form) }}
+        {{ form_widget(postmark_form) }}
+        <button type="submit" class="btn btn-primary">{% trans %}basics.save{% endtrans %}</button>
+      {{ form_end(postmark_form) }}
+    </div>
+  </div>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <i class="fa fa-paper-plane"></i> {% trans %}marketing.campaign.new{% endtrans %}
+  </div>
+  <div class="panel-body">
+    <p class="text-muted">{% trans %}marketing.campaign.new.help{% endtrans %}</p>
+    <div class="row">
+      {% for segment in segments %}
+      <div class="col-md-4" style="margin-bottom:12px;">
+        <form method="post" action="{{ path('admin_marketing_campaign_new', { segment: segment }) }}">
+          <button type="submit" class="btn btn-default btn-block text-left">
+            <strong>{{ ('rfm.segment.' ~ segment)|trans }}</strong>
+            {% if segment in segments_with_strategy %}
+              <span class="label label-info pull-right">{% trans %}marketing.campaign.new.has_strategy{% endtrans %}</span>
+            {% endif %}
+            <br>
+            <small class="text-muted">{{ ('rfm.segment.' ~ segment ~ '.description')|trans }}</small>
+          </button>
+        </form>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% if campaigns.totalItemCount > 0 %}
+<table class="table">
+  <thead>
+    <tr>
+      <th>{% trans %}marketing.campaign.column.name{% endtrans %}</th>
+      <th>{% trans %}marketing.campaign.column.segment{% endtrans %}</th>
+      <th>{% trans %}marketing.campaign.column.status{% endtrans %}</th>
+      <th class="text-right">{% trans %}marketing.campaign.column.sent{% endtrans %}</th>
+      <th class="text-right">{% trans %}marketing.campaign.column.date{% endtrans %}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for campaign in campaigns %}
+    <tr>
+      <td><a href="{{ path('admin_marketing_campaign', { id: campaign.id }) }}">{{ campaign.name }}</a></td>
+      <td>{{ ('rfm.segment.' ~ campaign.segment)|trans }}</td>
+      <td>
+        <span class="label label-{{ campaign.status == 'sent' ? 'success' : (campaign.status == 'sending' ? 'info' : 'default') }}">
+          {{ ('marketing.campaign.status.' ~ campaign.status)|trans }}
+        </span>
+      </td>
+      <td class="text-right">{{ stats[campaign.id]['sent']|default(0) }}</td>
+      <td class="text-right">
+        {% if campaign.sentAt %}{{ campaign.sentAt|ago }}
+        {% elseif campaign.scheduledAt %}{{ 'marketing.campaign.scheduled_for'|trans({'%date%': campaign.scheduledAt|format_datetime('short', 'short')}) }}
+        {% else %}&mdash;{% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<nav class="text-center">{{ knp_pagination_render(campaigns) }}</nav>
+{% else %}
+<div class="alert alert-info">{% trans %}marketing.campaign.none_yet{% endtrans %}</div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+  {{ encore_entry_script_tags('admin-marketing') }}
+{% endblock %}
