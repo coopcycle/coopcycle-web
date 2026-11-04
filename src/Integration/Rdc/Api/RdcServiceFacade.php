@@ -136,7 +136,7 @@ class RdcServiceFacade
             'serviceName' => sprintf('livraison %s n° %s', $requestor, $contractRef ?? $serviceId),
             'executionStatus' => ExecutionStatus::SCHEDULED->value,
             'serviceNature' => ServiceNature::LOGISTICS->value,
-            'isDangerous' => $apiRequest?->isDangerous ?? false,
+            'isDangerous' => $apiRequest->isDangerous,
             'invoiceStatus' => InvoiceStatus::NOT_INVOICED->value,
             'serviceAgreementReference' => $contractRef,
             'externalReferences' => $this->mapExternalReferences($barcode, $contractRef),

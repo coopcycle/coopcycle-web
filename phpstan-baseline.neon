@@ -279,7 +279,7 @@ parameters:
 		-
 			message: '#^Using nullsafe property access "\?\-\>isDangerous" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
-			count: 2
+			count: 1
 			path: src/Integration/Rdc/Api/RdcServiceFacade.php
 
 		-
