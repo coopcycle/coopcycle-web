@@ -6,6 +6,7 @@ use ApiPlatform\Problem\Serializer\ConstraintViolationListNormalizer;
 use ApiPlatform\Validator\ValidatorInterface;
 use ApiPlatform\Validator\Exception\ValidationException;
 use AppBundle\Entity\User;
+use AppBundle\Service\Referral\ReferralManager;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use Nucleos\ProfileBundle\Form\Type\RegistrationFormType;
 use Nucleos\ProfileBundle\Mailer\RegistrationMailer;
@@ -45,7 +46,8 @@ class Register
         ValidatorInterface $validator,
         private ConstraintViolationListNormalizer $constraintViolationListNormalizer,
         bool $confirmationEnabled,
-        private RepositoryInterface $customerRepository)
+        private RepositoryInterface $customerRepository,
+        private ReferralManager $referralManager)
     {
         $this->userManager = $userManager;
         $this->jwtManager = $jwtManager;
@@ -67,6 +69,7 @@ class Register
         $givenName = $request->request->get('_givenName');
         $familyName = $request->request->get('_familyName');
         $fullName = $request->request->get('_fullName');
+        $referralCode = $request->request->get('_referralCode');
 
         $data = [
             'email' => $email,
@@ -111,6 +114,8 @@ class Register
         $user->setEnabled($this->confirmationEnabled ? false : true);
 
         $this->userManager->updateUser($user);
+
+        $this->referralManager->registerPendingReferral($user, $referralCode);
 
         // @see FOS\UserBundle\EventListener\EmailConfirmationListener
         if ($this->confirmationEnabled) {

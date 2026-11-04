@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "49dbd1e7a1b0249dc5b30163aea892f7",
+    "content-hash": "d52806aea68922097c480792d1fe7135",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -648,6 +648,73 @@
                 }
             ],
             "time": "2025-11-29T13:01:51+00:00"
+        },
+        {
+            "name": "beberlei/assert",
+            "version": "v3.3.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/beberlei/assert.git",
+                "reference": "f193f4613c7d7fbcee2c05e4daff4061d49c040e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/beberlei/assert/zipball/f193f4613c7d7fbcee2c05e4daff4061d49c040e",
+                "reference": "f193f4613c7d7fbcee2c05e4daff4061d49c040e",
+                "shasum": ""
+            },
+            "require": {
+                "ext-ctype": "*",
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "ext-simplexml": "*",
+                "php": "^7.1 || ^8.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "*",
+                "phpstan/phpstan": "*",
+                "phpunit/phpunit": ">=6.0.0",
+                "yoast/phpunit-polyfills": "^0.1.0"
+            },
+            "suggest": {
+                "ext-intl": "Needed to allow Assertion::count(), Assertion::isCountable(), Assertion::minCount(), and Assertion::maxCount() to operate on ResourceBundles"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "lib/Assert/functions.php"
+                ],
+                "psr-4": {
+                    "Assert\\": "lib/Assert"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-2-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Benjamin Eberlei",
+                    "email": "kontakt@beberlei.de",
+                    "role": "Lead Developer"
+                },
+                {
+                    "name": "Richard Quadling",
+                    "email": "rquadling@gmail.com",
+                    "role": "Collaborator"
+                }
+            ],
+            "description": "Thin assertion library for input validation in business models.",
+            "keywords": [
+                "assert",
+                "assertion",
+                "validation"
+            ],
+            "support": {
+                "issues": "https://github.com/beberlei/assert/issues",
+                "source": "https://github.com/beberlei/assert/tree/v3.3.4"
+            },
+            "time": "2026-06-10T19:47:05+00:00"
         },
         {
             "name": "beberlei/doctrineextensions",
@@ -14480,6 +14547,52 @@
                 }
             ],
             "time": "2025-08-19T18:57:03+00:00"
+        },
+        {
+            "name": "rezozero/canonical-email",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rezozero/canonical-email.git",
+                "reference": "96b407f01555039508a14d146d4c8d103790d652"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rezozero/canonical-email/zipball/96b407f01555039508a14d146d4c8d103790d652",
+                "reference": "96b407f01555039508a14d146d4c8d103790d652",
+                "shasum": ""
+            },
+            "require": {
+                "beberlei/assert": "^3.3",
+                "php": ">=7.4"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.64",
+                "phpstan/phpstan": "^1.12.12",
+                "phpunit/phpunit": "^9"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "RZ\\CanonicalEmail\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ambroise Maupate",
+                    "email": "ambroise@rezo-zero.com"
+                }
+            ],
+            "description": "Simple PHP library to canonize emails address from gmail.com or other providers that allow several forms of email.",
+            "support": {
+                "issues": "https://github.com/rezozero/canonical-email/issues",
+                "source": "https://github.com/rezozero/canonical-email/tree/1.1.0"
+            },
+            "time": "2024-12-02T20:31:39+00:00"
         },
         {
             "name": "rize/uri-template",
@@ -30448,17 +30561,17 @@
     ],
     "minimum-stability": "dev",
     "stability-flags": {
-        "behatch/contexts": 20,
-        "coopcycle/transporter": 20,
         "drupal/core-vendor-hardening": 20,
+        "shahonseven/php-color-hash": 20,
+        "coopcycle/transporter": 20,
         "islesurlasorguetourisme/daisyui-form-bundle": 20,
-        "shahonseven/php-color-hash": 20
+        "behatch/contexts": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": ">=8.2"
     },
-    "platform-dev": {},
-    "plugin-api-version": "2.9.0"
+    "platform-dev": [],
+    "plugin-api-version": "2.3.0"
 }
