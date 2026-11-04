@@ -10,6 +10,8 @@ use AppBundle\Form\IncidentImageType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
@@ -21,7 +23,8 @@ class CreateImage
         private EntityManagerInterface $entityManager,
         protected FormFactoryInterface $formFactory,
         protected IriConverterInterface $iriConverter,
-        protected ValidatorInterface $validator)
+        protected ValidatorInterface $validator,
+        protected AuthorizationCheckerInterface $authorizationChecker)
     {}
 
     public function __invoke(Request $request): IncidentImage
@@ -40,6 +43,14 @@ class CreateImage
                     fn(string $incident): Incident => $this->iriConverter->getResourceFromIri($incident),
                     array_filter(array_map('trim', explode(';', $request->headers->get('X-Attach-To'))))
                 );
+            }
+
+            // The operation itself only checks the role, so the incidents
+            // named in the header have to be authorized one by one.
+            foreach ($incidents as $incident) {
+                if (!$this->authorizationChecker->isGranted('edit', $incident)) {
+                    throw new AccessDeniedHttpException();
+                }
             }
 
             // Persisted first: Vich fills imageName on prePersist, and the

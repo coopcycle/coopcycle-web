@@ -110,6 +110,7 @@ services:
       $shopifyApiSecret: '%shopify_api_secret%'
       $shopifyGatewaySecret: '%shopify_gateway_secret%'
       $shopifyThemeExtensionUuid: '%shopify_theme_extension_uuid%'
+      $zeltyWebhookSecret: '%zelty_webhook_secret%'
 
   # For some cache pools, want *STABLE* cache keys between deploys.
   # To achieve this, we *EXPLICITLY* set a namespace,
@@ -447,6 +448,8 @@ services:
   # IMPORTANT
   # OrderOptionsProcessor MUST be invoked BEFORE OrderFeeProcessor
   # Otherwise, fee calculation may be wrong
+  # Promotions are applied by OrderFeeProcessor, after the delivery amount & the tip,
+  # and before the platform fee, there is no dedicated order processor for promotions
   # We don't tag those services directly, but we use OrderOptionsFeeProcessor
   # We also need to disable auto configuration for these services
   # Otherwise, they will be still added automatically by Sylius; https://github.com/Sylius/Sylius/issues/12389
@@ -462,6 +465,7 @@ services:
     autoconfigure: false # see comment above
     arguments:
       $adjustmentFactory: "@sylius.factory.adjustment"
+      $promotionProcessor: "@sylius.promotion_processor"
     tags:
       - { name: monolog.logger, channel: fee_calculation }
 
@@ -487,14 +491,6 @@ services:
     autoconfigure: false # autoconfigure here duplicates the function of tags, see the comment above
     tags:
       - { name: sylius.order_processor, priority: 96 }
-
-  sylius.order_processing.order_promotion_processor:
-    class: AppBundle\Sylius\OrderProcessing\OrderPromotionProcessor
-    autoconfigure: false # autoconfigure here duplicates the function of tags, see the comment above
-    arguments:
-      - "@sylius.promotion_processor"
-    tags:
-      - { name: sylius.order_processor, priority: 64 }
 
   # Coupon code generation: replace Sylius' hex generator (16 symbols) with an
   # unambiguous 31-symbol alphabet so codes are shorter and human-readable.
@@ -1205,6 +1201,10 @@ services:
     tags:
       - { name: 'api_platform.doctrine.orm.query_extension.collection', priority: -18 }
 
+  AppBundle\Api\DataProvider\IncidentCollectionExtension:
+    tags:
+      - { name: 'api_platform.doctrine.orm.query_extension.collection', priority: -18 }
+
   AppBundle\Api\State\InvoiceLineItemsGroupedByOrganizationProvider:
     arguments:
       $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
@@ -1259,6 +1259,7 @@ services:
   AppBundle\EventSubscriber\ClearTwigCacheSubscriber:
     arguments:
       $annotation: '%restaurant_menu_cache_annotation%'
+      $localeRegex: '%locale_regex%'
 
   AppBundle\EventListener\Upload\UploadListener:
     arguments:

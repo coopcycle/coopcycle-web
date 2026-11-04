@@ -23,7 +23,7 @@ class TaskMapper
      */
     public function getPackages(Task $task, array $tasksInTheSameDelivery): array {
 
-        $otherTasks = array_filter($tasksInTheSameDelivery, fn($t) => $t !== $task);
+        $otherTasks = array_filter($tasksInTheSameDelivery, fn($t) => $t !== $task && !$t->isCancelled());
 
         $type = Delivery::getType($tasksInTheSameDelivery);
 
@@ -125,7 +125,7 @@ class TaskMapper
      */
     public function getWeight(Task $task, array $tasksInTheSameDelivery): int|null
     {
-        $otherTasks = array_filter($tasksInTheSameDelivery, fn($t) => $t !== $task);
+        $otherTasks = array_filter($tasksInTheSameDelivery, fn($t) => $t !== $task && !$t->isCancelled());
 
         $type = Delivery::getType($tasksInTheSameDelivery);
 

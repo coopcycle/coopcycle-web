@@ -305,6 +305,14 @@ class TaskListManager {
             // not on — the "invisible task" state that #874 and
             // `Version20260901090000` had to repair.
             foreach ($this->tasksOf($taskOrTour) as $task) {
+                // Dragging a task into a tour of the same list takes its own
+                // item off the list, but the task is still on it through the
+                // tour: unassigning it leaves the courier with a task they
+                // see and are refused to complete.
+                if ($taskOrTour instanceof Task && $this->isHeldByATour($ordered, $task)) {
+                    continue;
+                }
+
                 $task->unassign();
             }
 
@@ -344,6 +352,24 @@ class TaskListManager {
      */
     private function assertNotHeldByATour(array $items, Task $task): void
     {
+        $tour = $this->findTourHolding($items, $task);
+
+        if (!is_null($tour)) {
+            throw new ItemBelongsToTourException(sprintf(
+                'Task %d is on this list through tour %d; change the tour instead',
+                $task->getId(),
+                $tour->getId()
+            ));
+        }
+    }
+
+    private function isHeldByATour(array $items, Task $task): bool
+    {
+        return !is_null($this->findTourHolding($items, $task));
+    }
+
+    private function findTourHolding(array $items, Task $task): ?Tour
+    {
         foreach ($items as $item) {
             $tour = $item->getTour();
 
@@ -352,13 +378,11 @@ class TaskListManager {
             }
 
             if (in_array($task, $tour->getTasks(), true)) {
-                throw new ItemBelongsToTourException(sprintf(
-                    'Task %d is on this list through tour %d; change the tour instead',
-                    $task->getId(),
-                    $tour->getId()
-                ));
+                return $tour;
             }
         }
+
+        return null;
     }
 
     /**

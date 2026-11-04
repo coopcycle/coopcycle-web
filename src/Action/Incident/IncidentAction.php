@@ -2,16 +2,24 @@
 
 namespace AppBundle\Action\Incident;
 
+use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\Metadata\Put;
 use AppBundle\Action\Base;
 use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Api\Dto\DeliveryOrderDto;
 use AppBundle\Api\State\DeliveryCreateOrUpdateProcessor;
 use AppBundle\Domain\Order\Event\OrderPriceUpdated;
+use AppBundle\Entity\Address;
+use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\Incident\IncidentEvent;
 use AppBundle\Entity\Store;
+use AppBundle\Entity\Sylius\ArbitraryPrice;
+use AppBundle\Entity\Sylius\CalculateUsingPricingRules;
+use AppBundle\Entity\Task;
+use AppBundle\Pricing\PricingManager;
+use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\TaskManager;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Taxation\TaxesHelper;
@@ -39,6 +47,9 @@ class IncidentAction extends Base
         private readonly DeliveryCreateOrUpdateProcessor $deliveryProcessor,
         private readonly MessageBusInterface $eventBus,
         private readonly TaxesHelper $taxesHelper,
+        private readonly IriConverterInterface $iriConverter,
+        private readonly DeliveryManager $deliveryManager,
+        private readonly PricingManager $pricingManager,
     )
     {
     }
@@ -55,7 +66,8 @@ class IncidentAction extends Base
             IncidentEvent::TYPE_CANCEL_TASK,
             IncidentEvent::TYPE_TRANSPORTER_REPORT,
             IncidentEvent::TYPE_ACCEPT_SUGGESTION,
-            IncidentEvent::TYPE_REJECT_SUGGESTION
+            IncidentEvent::TYPE_REJECT_SUGGESTION,
+            IncidentEvent::TYPE_UPDATE_ADDRESS,
         ];
 
         if (empty($action)) {
@@ -88,6 +100,9 @@ class IncidentAction extends Base
                 break;
             case IncidentEvent::TYPE_REJECT_SUGGESTION:
                 $this->rejectSuggestion($data, $event, $params);
+                break;
+            case IncidentEvent::TYPE_UPDATE_ADDRESS:
+                $this->updateAddress($data, $event, $params);
                 break;
         }
 
@@ -131,6 +146,135 @@ class IncidentAction extends Base
         if ($params->getBoolean('close')) {
             $data->setStatus(Incident::STATUS_CLOSED);
         }
+    }
+
+    private function updateAddress(Incident &$data, IncidentEvent &$event, InputBag $params): void
+    {
+        if ($data->getFailureReasonCode() !== 'ADDRESS_REVIEW_NEEDED') {
+            throw new \InvalidArgumentException("Address can only be updated on an ADDRESS_REVIEW_NEEDED incident");
+        }
+
+        // Either the IRI of an address from the store address book, or a geocoded location
+        $newAddress = $params->all()['address'] ?? null;
+
+        $task = $data->getTask();
+        $oldAddress = $task->getAddress();
+
+        $address = is_string($newAddress)
+            ? $this->addressFromStore($task, $newAddress)
+            : $this->addressFromLocation($oldAddress, $newAddress);
+
+        $task->setAddress($address);
+
+        $event->setType(IncidentEvent::TYPE_UPDATE_ADDRESS);
+        $event->setMetadata([
+            'address' => [
+                'from' => $oldAddress->getStreetAddress(),
+                'to' => $address->getStreetAddress(),
+            ],
+            'price' => $this->recalculatePrice($task),
+        ]);
+
+        if ($params->getBoolean('close')) {
+            $data->setStatus(Incident::STATUS_CLOSED);
+        }
+    }
+
+    private function addressFromStore(Task $task, string $iri): Address
+    {
+        /** @var ?Store $store */
+        $store = $task->getDelivery()?->getStore();
+        if (is_null($store)) {
+            throw new \InvalidArgumentException("There is no store linked to this task");
+        }
+
+        $address = $this->iriConverter->getResourceFromIri($iri);
+        if (!$address instanceof Address || !$store->getAddresses()->contains($address)) {
+            throw new \InvalidArgumentException(sprintf("Address %s does not belong to the store", $iri));
+        }
+
+        // The address book entry is shared, the task gets a copy
+        return $address->clone();
+    }
+
+    private function addressFromLocation(Address $oldAddress, ?array $location): Address
+    {
+        if (empty($location['streetAddress']) || !isset($location['latitude'], $location['longitude'])) {
+            throw new \InvalidArgumentException("address.streetAddress, address.latitude and address.longitude are required");
+        }
+
+        // The address may be shared (i.e store address book), so the task gets a copy.
+        // Keeps the contact details, only the location is wrong.
+        $address = $oldAddress->clone();
+        $address->setStreetAddress($location['streetAddress']);
+        $address->setPostalCode($location['postalCode'] ?? null);
+        $address->setAddressLocality($location['addressLocality'] ?? null);
+        $address->setGeo(new GeoCoordinates($location['latitude'], $location['longitude']));
+
+        return $address;
+    }
+
+    /**
+     * Same rules as when a task is cancelled (see ProcessOrderAfterTaskCancellationHandler),
+     * but synchronously, so that the dispatcher sees the new price once the page reloads.
+     *
+     * @return array<string,int>|null The price before and after, null when the price was kept
+     */
+    private function recalculatePrice(Task $task): ?array
+    {
+        $delivery = $task->getDelivery();
+        if (is_null($delivery)) {
+            return null;
+        }
+
+        // The distance depends on the address
+        $this->deliveryManager->calculateRoute($delivery);
+
+        $order = $delivery->getOrder();
+        if (is_null($order) || $order->isFoodtech() || is_null($delivery->getStore())) {
+            return null;
+        }
+
+        try {
+            $deliveryPrice = $order->getDeliveryPrice();
+        } catch (\Exception $e) {
+            return null;
+        }
+
+        // A price set by hand is kept as is
+        if ($deliveryPrice instanceof ArbitraryPrice) {
+            return null;
+        }
+
+        $oldTotal = $order->getTotal();
+        $oldTaxTotal = $order->getTaxTotal();
+
+        $productVariants = $this->pricingManager->getProductVariantsWithPricingStrategy(
+            $delivery,
+            new CalculateUsingPricingRules($order->getManualSupplements())
+        );
+        $this->pricingManager->processDeliveryOrder($order, $productVariants);
+
+        if ($oldTotal !== $order->getTotal() || $oldTaxTotal !== $order->getTaxTotal()) {
+            $this->eventBus->dispatch(new OrderPriceUpdated($order,
+                $order->getTotal(),
+                $order->getTaxTotal(),
+                $oldTotal,
+                $oldTaxTotal
+            ));
+        }
+
+        $this->entityManager->persist($order);
+
+        $diff = $order->getTotal() - $oldTotal;
+        $diffTax = $order->getTaxTotal() - $oldTaxTotal;
+
+        return [
+            'from' => $oldTotal,
+            'to' => $order->getTotal(),
+            'diff_tax_included' => $diff,
+            'diff_tax_excluded' => $diff - $diffTax,
+        ];
     }
 
     private function cancelTask(Incident &$data, IncidentEvent &$event): void

@@ -29,6 +29,15 @@ class RdcServiceFacade
         private readonly string $connectionId = '', //FIXME: Should use sort of ctx resolver instead.
     ) {}
 
+    /**
+     * A facade bound to the given connection: each provider has its own BOL
+     * instance and credentials.
+     */
+    public function forConnection(string $connectionId): self
+    {
+        return new self($this->rdcClientFactory, $this->logger, $connectionId);
+    }
+
     public function getConnectionId(): string
     {
         return $this->connectedConnectionId ?? $this->connectionId ?: '';

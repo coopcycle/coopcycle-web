@@ -2,13 +2,23 @@ import PercentageEditor from './PercentageEditor';
 import PriceRangeEditor from './PriceRangeEditor';
 import PricePerPackageEditor from './PricePerPackageEditor';
 import PriceFixedEditor from './PriceFixedEditor';
-import { PriceObject, PriceType } from '../types/PricingRuleType';
+import {
+  PriceObject,
+  PriceType,
+  PricingRuleEditorState,
+} from '../types/PricingRuleType';
+import {
+  FixedPrice,
+  PercentagePrice,
+  PricePerPackage,
+  PriceRange,
+} from '../../../delivery/pricing/pricing-rule-parser';
 
 type Props = {
   isManualSupplement: boolean;
   priceType: PriceType;
   defaultValue: PriceObject;
-  onChange: (value: string) => void;
+  onChange: (value: string, price: PricingRuleEditorState['price']) => void;
 };
 
 export default function PriceEditor({
@@ -23,7 +33,10 @@ export default function PriceEditor({
         <PercentageEditor
           defaultValue={defaultValue}
           onChange={({ percentage }) => {
-            onChange(`price_percentage(${percentage})`);
+            onChange(
+              `price_percentage(${percentage})`,
+              new PercentagePrice(percentage),
+            );
           }}
         />
       );
@@ -37,6 +50,7 @@ export default function PriceEditor({
               multiplier
                 ? `price_range(${attribute}, ${price}, ${step}, ${threshold}, ${multiplier})`
                 : `price_range(${attribute}, ${price}, ${step}, ${threshold})`,
+              new PriceRange(attribute, price, step, threshold, multiplier),
             );
           }}
         />
@@ -48,6 +62,12 @@ export default function PriceEditor({
           onChange={({ packageName, unitPrice, offset, discountPrice }) => {
             onChange(
               `price_per_package(packages, "${packageName}", ${unitPrice}, ${offset}, ${discountPrice})`,
+              new PricePerPackage(
+                packageName,
+                unitPrice,
+                offset,
+                discountPrice,
+              ),
             );
           }}
         />
@@ -57,7 +77,7 @@ export default function PriceEditor({
       return (
         <PriceFixedEditor
           defaultValue={defaultValue}
-          onChange={value => onChange(value)}
+          onChange={value => onChange(value, new FixedPrice(value))}
         />
       );
   }

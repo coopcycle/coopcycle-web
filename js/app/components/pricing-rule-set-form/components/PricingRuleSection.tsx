@@ -3,6 +3,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import DraggableRulesList from './DraggableRulesList';
 import { PricingRule as PricingRuleType } from '../../../api/types';
+import { PricingRuleEditorState } from '../types/PricingRuleType';
 
 const { Title } = Typography;
 
@@ -14,6 +15,8 @@ type Props = {
   getGlobalIndexById: (ruleId: string) => number;
   updateRule: (ruleId: string, updatedRule: PricingRuleType) => void;
   removeRule: (ruleId: string) => void;
+  duplicateRule: (ruleId: string, editorState: PricingRuleEditorState) => void;
+  initialEditorStates: Record<string, PricingRuleEditorState>;
   moveRuleWithinTarget: (
     fromRuleId: string,
     toRuleId: string,
@@ -32,6 +35,8 @@ const PricingRuleSection = ({
   getGlobalIndexById,
   updateRule,
   removeRule,
+  duplicateRule,
+  initialEditorStates,
   moveRuleWithinTarget,
   ruleValidationErrors,
   onAddRule,
@@ -55,6 +60,8 @@ const PricingRuleSection = ({
         getGlobalIndexById={getGlobalIndexById}
         updateRule={updateRule}
         removeRule={removeRule}
+        duplicateRule={duplicateRule}
+        initialEditorStates={initialEditorStates}
         ruleValidationErrors={ruleValidationErrors}
         isManualSupplement={false}
       />
@@ -90,6 +97,8 @@ const PricingRuleSection = ({
             getGlobalIndexById={getGlobalIndexById}
             updateRule={updateRule}
             removeRule={removeRule}
+            duplicateRule={duplicateRule}
+            initialEditorStates={initialEditorStates}
             ruleValidationErrors={ruleValidationErrors}
             isManualSupplement={true}
           />

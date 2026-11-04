@@ -11,7 +11,7 @@ import clsx from 'clsx'
 import Task from './Task'
 
 import Avatar from '../../components/Avatar'
-import { unassignTasks, togglePolyline, optimizeTaskList, onlyFilter, toggleTaskListPanelExpanded, reorderTaskList } from '../redux/actions'
+import { unassignTasks, togglePolyline, optimizeTaskList, toggleTaskListPanelExpanded, reorderTaskList } from '../redux/actions'
 import { selectExpandedTaskListPanelsIds, selectLastOptimResult, selectOptimLoading, selectPolylineEnabledByUsername, selectVisibleTaskIds } from '../redux/selectors'
 import Tour from './Tour'
 import { getDroppableListStyle } from '../utils'
@@ -192,10 +192,7 @@ export const TaskList = ({ username, distance, duration, taskListsLoading }) => 
                 />
             </span>
             ) }
-            {incidentReported.length > 0 && <span className="ml-2" style={{ display: 'inline-block' }} onClick={(e) => {
-              dispatch(onlyFilter('showIncidentReportedTasks'))
-              e.stopPropagation()
-            }}>
+            {incidentReported.length > 0 && <span className="ml-2" style={{ display: 'inline-block' }}>
             <Tooltip title="Incident(s)" placement="left">
               <span className='fa fa-warning text-warning' /> <span className="text-secondary">({incidentReported.length})</span>
             </Tooltip>
