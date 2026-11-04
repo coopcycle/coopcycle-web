@@ -6,6 +6,7 @@ use AppBundle\Integration\Rdc\Api\RdcClientFactory;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -23,7 +24,8 @@ class DebugRdcGetCommand extends Command
         $this
             ->setName('debug:rdc-get')
             ->setDescription('Debug: GET a remote URL via RdcClient and output headers and body')
-            ->addArgument('url', InputArgument::REQUIRED, 'The remote URL to GET');
+            ->addArgument('url', InputArgument::REQUIRED, 'The remote URL to GET')
+            ->addOption('connection', 'c', InputOption::VALUE_REQUIRED, 'The RDC connection to GET with, e.g. BOL.MEMBER.NOWASTEPHARMA (defaults to the first one)');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -40,9 +42,15 @@ class DebugRdcGetCommand extends Command
 
         $io->title(sprintf('GET %s', $url));
 
-        $rdcClient = $this->rdcClientFactory->getDefaultClient();
+        $connectionId = $input->getOption('connection');
+        $rdcClient = is_null($connectionId)
+            ? $this->rdcClientFactory->getDefaultClient()
+            : $this->rdcClientFactory->create($connectionId);
         if (is_null($rdcClient)) {
-            $io->error('No RDC client available');
+            $io->error(sprintf(
+                'No RDC client available, configured connections: %s',
+                implode(', ', $this->rdcClientFactory->getConnectionIds()) ?: 'none'
+            ));
 
             return Command::FAILURE;
         }
