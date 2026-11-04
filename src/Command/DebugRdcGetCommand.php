@@ -25,7 +25,7 @@ class DebugRdcGetCommand extends Command
             ->setName('debug:rdc-get')
             ->setDescription('Debug: GET a remote URL via RdcClient and output headers and body')
             ->addArgument('url', InputArgument::REQUIRED, 'The remote URL to GET')
-            ->addOption('connection', 'c', InputOption::VALUE_REQUIRED, 'The RDC connection to GET with, e.g. BOL.MEMBER.NOWASTEPHARMA (defaults to the first one)');
+            ->addOption('connection', 'c', InputOption::VALUE_REQUIRED, 'The RDC connection to GET with, e.g. BOL.MEMBER.NOWASTEPHARMA');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -42,13 +42,12 @@ class DebugRdcGetCommand extends Command
 
         $io->title(sprintf('GET %s', $url));
 
+        // Each connection has its own credentials: no default one
         $connectionId = $input->getOption('connection');
-        $rdcClient = is_null($connectionId)
-            ? $this->rdcClientFactory->getDefaultClient()
-            : $this->rdcClientFactory->create($connectionId);
+        $rdcClient = is_null($connectionId) ? null : $this->rdcClientFactory->create($connectionId);
         if (is_null($rdcClient)) {
             $io->error(sprintf(
-                'No RDC client available, configured connections: %s',
+                'Pass an enabled connection with --connection, configured ones: %s',
                 implode(', ', $this->rdcClientFactory->getConnectionIds()) ?: 'none'
             ));
 

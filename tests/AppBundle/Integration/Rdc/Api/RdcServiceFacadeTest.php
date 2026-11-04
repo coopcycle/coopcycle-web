@@ -34,20 +34,29 @@ class RdcServiceFacadeTest extends TestCase
         $this->assertSame('', $facade->getConnectionId());
     }
 
-    public function testFallsBackToTheFirstConnectionWithoutOne(): void
+    public function testTheSharedFacadeHasNoConnectionToFallBackOn(): void
     {
-        $client = $this->createMock(RdcClientInterface::class);
-
         $factory = $this->createMock(RdcClientFactory::class);
-        $factory->method('getConnectionIds')->willReturn(['BOL.MEMBER.APPLICOLIS', 'BOL.MEMBER.OTHER_PROVIDER']);
-        $factory->expects($this->once())
-            ->method('create')
-            ->with('BOL.MEMBER.APPLICOLIS')
-            ->willReturn($client);
+        $factory->expects($this->never())->method('create');
 
         $facade = new RdcServiceFacade($factory, new NullLogger(), '');
 
-        $this->assertSame($client, $facade->getRdcClient());
+        $this->expectException(\LogicException::class);
+
+        $facade->getRdcClient();
+    }
+
+    public function testReusesTheClientOfItsConnection(): void
+    {
+        $factory = $this->createMock(RdcClientFactory::class);
+        $factory->expects($this->once())
+            ->method('create')
+            ->with('BOL.MEMBER.APPLICOLIS')
+            ->willReturn($this->createMock(RdcClientInterface::class));
+
+        $facade = new RdcServiceFacade($factory, new NullLogger(), 'BOL.MEMBER.APPLICOLIS');
+
+        $this->assertSame($facade->getRdcClient(), $facade->getRdcClient());
     }
 
     public function testBuildServiceDataUsesTheServiceRequestRequestor(): void

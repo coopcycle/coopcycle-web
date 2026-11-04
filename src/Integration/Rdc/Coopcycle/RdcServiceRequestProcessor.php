@@ -32,6 +32,13 @@ class RdcServiceRequestProcessor
             throw new \InvalidArgumentException('The service request has no requestor');
         }
 
+        // The BOL calls must go through the connection the service request came
+        // from, which is also the one status updates use (see RdcTaskContextResolver).
+        $connectionId = $store->getRdcConnectionId();
+        if (empty($connectionId)) {
+            throw new \InvalidArgumentException(sprintf('Store "%s" has no RDC connection', $store->getId()));
+        }
+
         // When a BOL call failed, Messenger retries the whole message: reuse the
         // delivery saved by the previous attempt instead of creating another one.
         $delivery = $this->findDelivery($originNodeUri ?? $apiRequest->getUri());
@@ -44,7 +51,7 @@ class RdcServiceRequestProcessor
             ]);
         }
 
-        $serviceFacade = $this->resolveServiceFacade($store);
+        $serviceFacade = $this->serviceFacade->forConnection($connectionId);
 
         try {
             $pickupAddress = $this->mapper->mapPickupAddress($apiRequest);
@@ -111,24 +118,6 @@ class RdcServiceRequestProcessor
         }
 
         return $delivery;
-    }
-
-    /**
-     * The BOL calls must go through the connection the service request came
-     * from, which is also the one status updates use (see RdcTaskContextResolver).
-     */
-    private function resolveServiceFacade(Store $store): RdcServiceFacade
-    {
-        $connectionId = $store->getRdcConnectionId();
-        if (empty($connectionId)) {
-            $this->logger->warning('Store has no RDC connection, using the default one', [
-                'store_id' => $store->getId(),
-            ]);
-
-            return $this->serviceFacade;
-        }
-
-        return $this->serviceFacade->forConnection($connectionId);
     }
 
     private function findDelivery(?string $loUri): ?Delivery

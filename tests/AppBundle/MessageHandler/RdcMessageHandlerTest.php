@@ -19,6 +19,7 @@ class RdcMessageHandlerTest extends TestCase
 {
     private RdcServiceRequestProcessor&MockObject $processor;
     private Redis&MockObject $redis;
+    private RdcStoreResolver&MockObject $storeResolver;
     private RdcMessageHandler $handler;
 
     protected function setUp(): void
@@ -26,12 +27,11 @@ class RdcMessageHandlerTest extends TestCase
         $this->processor = $this->createMock(RdcServiceRequestProcessor::class);
         $this->redis = $this->createMock(Redis::class);
 
-        $storeResolver = $this->createMock(RdcStoreResolver::class);
-        $storeResolver->method('resolveStore')->willReturn(new Store());
+        $this->storeResolver = $this->createMock(RdcStoreResolver::class);
 
         $this->handler = new RdcMessageHandler(
             $this->processor,
-            $storeResolver,
+            $this->storeResolver,
             $this->redis,
             new NullLogger(),
             true,
@@ -40,6 +40,7 @@ class RdcMessageHandlerTest extends TestCase
 
     public function testReleasesClaimWhenProcessingFails(): void
     {
+        $this->storeResolver->method('resolveStore')->willReturn(new Store());
         $this->redis->method('set')->willReturn(true);
         $this->processor->method('process')->willThrowException(new \RuntimeException('BOL is down'));
 
@@ -55,10 +56,28 @@ class RdcMessageHandlerTest extends TestCase
 
     public function testKeepsClaimWhenProcessingSucceeds(): void
     {
+        $this->storeResolver->method('resolveStore')->willReturn(new Store());
         $this->redis->method('set')->willReturn(true);
         $this->processor->method('process')->willReturn(new Delivery());
 
         $this->redis->expects($this->never())->method('del');
+
+        ($this->handler)($this->buildMessage());
+    }
+
+    public function testFailsAndReleasesClaimWhenNoStoreIsLinked(): void
+    {
+        $this->storeResolver->method('resolveStore')->with('BOL.MEMBER.APPLICOLIS')->willReturn(null);
+        $this->redis->method('set')->willReturn(true);
+
+        // So that it can be replayed from the failure transport once the store is linked
+        $this->processor->expects($this->never())->method('process');
+        $this->redis->expects($this->once())
+            ->method('del')
+            ->with($this->stringStartsWith('rdc_webhook_event:'));
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('BOL.MEMBER.APPLICOLIS');
 
         ($this->handler)($this->buildMessage());
     }

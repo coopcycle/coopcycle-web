@@ -46,17 +46,15 @@ final class RdcMessageHandler
 
         $dto = RdcApiServiceRequest::parse($message->loPayload);
 
-        $store = $this->storeResolver->resolveStore($message->loMember);
-        if (is_null($store)) {
-            $this->logger->error('Store not found for RDC servicerequest', [
-                'event_hash' => $eventHash,
-                'lo_uri' => $message->loUri,
-                'lo_member' => $message->loMember,
-            ]);
-            return;
-        }
-
         try {
+            // A connection without store is misconfigured: fail, so that the
+            // message lands in the failure transport and can be replayed once
+            // the store is linked.
+            $store = $this->storeResolver->resolveStore($message->loMember);
+            if (is_null($store)) {
+                throw new \RuntimeException(sprintf('No store is linked to the RDC connection "%s"', $message->loMember));
+            }
+
             $delivery = $this->processor->process($dto, $store, $message->loUri, $message->loRevision);
         } catch (\Throwable $e) {
             // Release the claim, otherwise Messenger's retries would be skipped

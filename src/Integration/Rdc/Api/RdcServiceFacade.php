@@ -21,12 +21,15 @@ use Psr\Log\LoggerInterface;
 class RdcServiceFacade
 {
     private ?RdcClientInterface $client = null;
-    private ?string $connectedConnectionId = null;
 
+    /**
+     * The shared service has no connection: use forConnection() to get a
+     * facade that can call the BOL.
+     */
     public function __construct(
         private readonly RdcClientFactory $rdcClientFactory,
         private readonly LoggerInterface $logger,
-        private readonly string $connectionId = '', //FIXME: Should use sort of ctx resolver instead.
+        private readonly string $connectionId = '',
     ) {}
 
     /**
@@ -40,7 +43,7 @@ class RdcServiceFacade
 
     public function getConnectionId(): string
     {
-        return $this->connectedConnectionId ?? $this->connectionId ?: '';
+        return $this->connectionId;
     }
 
     public function getRdcClient(): RdcClientInterface
@@ -406,31 +409,22 @@ class RdcServiceFacade
 
     private function getClient(): RdcClientInterface
     {
-        //FIXME: This must use context
-        if (!is_null($this->client) && $this->connectedConnectionId === $this->connectionId) {
+        if (!is_null($this->client)) {
             return $this->client;
         }
 
-        $connectionId = $this->connectionId;
-
-        if (empty($connectionId)) {
-            $ids = $this->rdcClientFactory->getConnectionIds();
-            if ($ids !== []) {
-                $connectionId = $ids[0];
-            } else {
-                $connectionId = 'default';
-            }
+        // No fallback on another connection: its credentials and node would
+        // answer for the wrong requestor.
+        if ($this->connectionId === '') {
+            throw new \LogicException('The RDC facade has no connection, use forConnection()');
         }
 
-        $client = $this->rdcClientFactory->create($connectionId);
-        if ($client === null) {
-            throw new \RuntimeException(sprintf('RDC connection "%s" not found or disabled', $connectionId));
+        $client = $this->rdcClientFactory->create($this->connectionId);
+        if (is_null($client)) {
+            throw new \RuntimeException(sprintf('RDC connection "%s" not found or disabled', $this->connectionId));
         }
 
-        $this->client = $client;
-        $this->connectedConnectionId = $connectionId;
-
-        return $this->client;
+        return $this->client = $client;
     }
 
     private function getCountryName(string $countryCode): string
