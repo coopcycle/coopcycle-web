@@ -46,4 +46,11 @@
 		</div>
 
 	</a>
+	{% if id is defined %}
+		<button type="button" class="restaurant-item__bookmark btn btn-circle btn-sm" hidden
+			data-shop-bookmark-id="{{ id }}" data-shop-bookmark-name="{{ name|default('') }}"
+			aria-label="{{ 'restaurants.bookmark'|trans }}: {{ name|default('') }}" aria-pressed="false">
+			<span aria-hidden="true">♥</span>
+		</button>
+	{% endif %}
 </div>

@@ -119,3 +119,34 @@
     }
   }
 }
+
+.restaurant-item {
+  position: relative;
+
+  .restaurant-item__bookmark {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 1;
+    color: #6b7280;
+    background: white;
+
+    &[aria-pressed="true"] {
+      color: #b91c1c;
+    }
+  }
+}
+
+.shop-bookmarks ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
