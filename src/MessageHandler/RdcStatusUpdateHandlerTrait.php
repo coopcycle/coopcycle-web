@@ -186,23 +186,31 @@ trait RdcStatusUpdateHandlerTrait
     {
         try {
             $response = $rdcClient->getRemote($loUri);
-            $loRevision = $response->getHeaders(false)['x-revision'][0] ?? null;
 
-            if (is_null($loRevision)) {
-                $this->logger->warning('No revision found in remote response', [
-                    'lo_uri' => $loUri,
-                ]);
+            // A refused read (e.g. a 403 when the ACL doesn't cover us) must
+            // fail the message like the change-request does, so that it's
+            // retried instead of skipping the cancellation.
+            $statusCode = $response->getStatusCode();
+            if ($statusCode >= 400) {
+                throw new \RuntimeException(sprintf('Remote revision read failed: HTTP %d', $statusCode));
             }
-
-            return $loRevision;
         } catch (\Throwable $e) {
             $this->logger->error('Failed to fetch remote revision', [
                 'lo_uri' => $loUri,
                 'error' => $e->getMessage(),
             ]);
-
-            return null;
+            throw $e;
         }
+
+        $loRevision = $response->getHeaders(false)['x-revision'][0] ?? null;
+
+        if (is_null($loRevision)) {
+            $this->logger->warning('No revision found in remote response', [
+                'lo_uri' => $loUri,
+            ]);
+        }
+
+        return $loRevision;
     }
 
     private function buildCancellationChangeRequest(string $loRevision, string $memberIdentifier): array
