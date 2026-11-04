@@ -941,6 +941,7 @@ Feature: Incidents
       | password   | 123456            |
     And the user "dispatcher" has role "ROLE_DISPATCHER"
     And the tasks with comments matching "#bob" are assigned to "bob"
+    And the tasks with ids "2" are assigned to "bob"
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "POST" request to "/api/incidents" with body:
@@ -1045,6 +1046,7 @@ Feature: Incidents
       | password   | 123456            |
     And the user "dispatcher" has role "ROLE_DISPATCHER"
     And the tasks with comments matching "#bob" are assigned to "bob"
+    And the tasks with ids "2" are assigned to "bob"
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "POST" request to "/api/incidents" with body:
