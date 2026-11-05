@@ -12,6 +12,7 @@ class RdcClient implements RdcClientInterface
     private const RETRY_DELAY_MS = 1000;
 
     private ?string $traceparent = null;
+    private ?TokenManagerInterface $remoteTokenManager = null;
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,
@@ -54,6 +55,47 @@ class RdcClient implements RdcClientInterface
     public function getMemberIdentifier(): string
     {
         return sprintf('BOL.MEMBER.%s', $this->config->memberProvider);
+    }
+
+    /**
+     * Configured with or without the `BOL.MEMBER.` prefix, which the .env.dist
+     * example used to include.
+     */
+    private function getRemoteMemberIdentifier(): string
+    {
+        $member = (string) $this->config->remoteMemberProvider;
+
+        return str_starts_with($member, 'BOL.MEMBER.') ? $member : sprintf('BOL.MEMBER.%s', $member);
+    }
+
+    private function getRemoteTokenManager(): TokenManagerInterface
+    {
+        if (is_null($this->remoteTokenManager)) {
+            if (
+                is_null($this->config->remoteKeycloakRealm) ||
+                is_null($this->config->remoteKeycloakUsername) ||
+                is_null($this->config->remoteKeycloakPassword) ||
+                is_null($this->config->remoteKeycloakClientId) ||
+                is_null($this->config->remoteKeycloakClientSecret) ||
+                is_null($this->config->remoteMemberProvider)
+            ) {
+                throw new \RuntimeException('Remote credentials not configured for notifyRemote');
+            }
+
+            $this->remoteTokenManager = new TokenManager(
+                $this->httpClient,
+                $this->logger,
+                new KeycloakTokenConfig(
+                    keycloakBaseUrl: $this->config->keycloakBaseUrl,
+                    keycloakRealm: $this->config->remoteKeycloakRealm,
+                    keycloakClientId: $this->config->remoteKeycloakClientId,
+                    keycloakClientSecret: $this->config->remoteKeycloakClientSecret,
+                    keycloakUsername: $this->config->remoteKeycloakUsername,
+                    keycloakPassword: $this->config->remoteKeycloakPassword,
+                ),
+            );
+        }
+        return $this->remoteTokenManager;
     }
 
     private function request(
@@ -135,15 +177,16 @@ class RdcClient implements RdcClientInterface
         string $url,
         ?array $body = null,
     ): \Symfony\Contracts\HttpClient\ResponseInterface {
-        // The service request lives on the requestor's node, but we act on it
-        // as ourselves: its ACL grants our member the rights we need.
         $headers = [
-            'Authorization' => sprintf('Bearer %s', $this->tokenManager->getValidToken()),
-            'X-BOL-Member-Identifier' => $this->getMemberIdentifier(),
             'traceparent' => $this->getTraceparent(),
             'Content-Type' => 'application/json',
             'Accept' => 'application/json',
         ];
+
+        $tokenManager = $this->getRemoteTokenManager();
+        $token = $tokenManager->getValidToken();
+        $headers['Authorization'] = sprintf('Bearer %s', $token);
+        $headers['X-BOL-Member-Identifier'] = $this->getRemoteMemberIdentifier();
 
         $options = ['headers' => $headers];
 

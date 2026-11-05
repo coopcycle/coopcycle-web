@@ -29,9 +29,10 @@ final class FakeBol
         $body = $options['body'] ?? null;
         $decoded = is_string($body) ? json_decode($body, true) : null;
 
-        if (str_ends_with((string) parse_url($url, PHP_URL_PATH), '/protocol/openid-connect/token')) {
+        // One token per realm, to tell which login a call was made with
+        if (preg_match('#/realms/([^/]+)/protocol/openid-connect/token$#', (string) parse_url($url, PHP_URL_PATH), $matches)) {
             return new MockResponse((string) json_encode([
-                'access_token' => 'bol-token',
+                'access_token' => sprintf('token-%s', $matches[1]),
                 'expires_in' => 300,
                 'refresh_token' => 'bol-refresh-token',
                 'refresh_expires_in' => 1800,

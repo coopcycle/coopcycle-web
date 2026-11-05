@@ -64,6 +64,13 @@ class RdcWorkflowTest extends WebTestCase
                 'keycloakUsername' => 'coopcycle',
                 'keycloakPassword' => 'password',
                 'aclAuthorizations' => [['memberIdentifier' => self::CONNECTION, 'mode' => 'READ']],
+                // Our login on the requestor's node, to answer its service requests
+                'remoteKeycloakRealm' => 'REQUESTOR',
+                'remoteKeycloakClientId' => 'COOPCYCLE',
+                'remoteKeycloakClientSecret' => 'secret',
+                'remoteKeycloakUsername' => 'coopcycle',
+                'remoteKeycloakPassword' => 'password',
+                'remoteMemberProvider' => 'COOPCYCLE',
             ],
         ]));
 
@@ -144,11 +151,7 @@ class RdcWorkflowTest extends WebTestCase
             sprintf('POST %s/change-requests', $this->loPath()),
         ], $this->bol->summary());
 
-        // Every call is made as our member, with our own token
-        foreach ($this->bol->calls() as $call) {
-            $this->assertSame(['Authorization: Bearer bol-token'], $call['headers']['authorization']);
-            $this->assertSame([sprintf('X-BOL-Member-Identifier: %s', self::OUR_MEMBER)], $call['headers']['x-bol-member-identifier']);
-        }
+        $this->assertCallsUseTheLoginOfTheirNode();
 
         [$service, $activity, $link, $changeRequest] = $this->bol->calls();
 
@@ -209,6 +212,7 @@ class RdcWorkflowTest extends WebTestCase
         $this->assertSame(FakeBol::REVISION, $changeRequest['body']['logisticsObjectRevision']);
         $this->assertSame(self::OUR_MEMBER, $changeRequest['body']['requestorMemberIdentifier']);
         $this->assertSame('CANCELLED', $this->operationsByPath($changeRequest['body'])['/responseStatus']);
+        $this->assertCallsUseTheLoginOfTheirNode();
     }
 
     public function testADeliveredDeliveryFinishesTheServiceWithItsProofOfDelivery(): void
@@ -261,6 +265,7 @@ class RdcWorkflowTest extends WebTestCase
         foreach ($this->bol->calls() as $call) {
             $this->assertStringStartsWith(self::OUR_NODE, $call['url']);
         }
+        $this->assertCallsUseTheLoginOfTheirNode();
     }
 
     private function receiveServiceRequest(): Delivery
@@ -300,6 +305,20 @@ class RdcWorkflowTest extends WebTestCase
         $this->assertNotNull($delivery, 'The service request should have become a delivery');
 
         return $delivery;
+    }
+
+    /**
+     * Our node with our login, the requestor's node with our login in its
+     * realm: both as our member.
+     */
+    private function assertCallsUseTheLoginOfTheirNode(): void
+    {
+        foreach ($this->bol->calls() as $call) {
+            $token = str_starts_with($call['url'], self::OUR_NODE) ? 'token-COOPCYCLE' : 'token-REQUESTOR';
+
+            $this->assertSame([sprintf('Authorization: Bearer %s', $token)], $call['headers']['authorization'], $call['url']);
+            $this->assertSame([sprintf('X-BOL-Member-Identifier: %s', self::OUR_MEMBER)], $call['headers']['x-bol-member-identifier'], $call['url']);
+        }
     }
 
     private function loPath(): string
