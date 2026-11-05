@@ -151,6 +151,14 @@ trait RdcStatusUpdateHandlerTrait
             return;
         }
 
+        // The requestor cancelled it on its node: nothing to send back
+        if ($task->getDelivery()?->getMetadata()['rdc']['cancelled_by_requestor'] ?? false) {
+            $this->logger->info('Delivery cancelled by its requestor, its service request is left as is', [
+                'lo_uri' => $loUri,
+            ]);
+            return;
+        }
+
         $loRevision = $this->fetchLoRevision($rdcClient, $loUri);
         if (is_null($loRevision)) {
             return;

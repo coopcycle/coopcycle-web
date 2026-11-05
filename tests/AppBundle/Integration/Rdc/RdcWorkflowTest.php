@@ -229,6 +229,45 @@ class RdcWorkflowTest extends WebTestCase
         $this->assertCallsUseTheLoginOfTheirNode();
     }
 
+    public function testARequestorCancellationCancelsTheDelivery(): void
+    {
+        $delivery = $this->receiveServiceRequest();
+        $serviceId = (string) $delivery->getId();
+        $activityId = sprintf('%d.transport', $delivery->getPickup()->getId());
+        $this->bol->forget();
+
+        // The requestor cancels its service request on its node
+        $results = $this->sendServiceRequestEvent('update', 2, 'CANCELLED');
+        $this->assertSame(['queued'], array_column($results, 'status'));
+
+        $delivery = $this->findDelivery();
+        $this->assertSame('cancelled', $delivery->getOrder()->getState());
+        foreach ($delivery->getTasks() as $task) {
+            $this->assertSame(Task::STATUS_CANCELLED, $task->getStatus());
+        }
+
+        // Our service and activity follow...
+        $this->assertSame('CANCELLED', $this->bol->find('PATCH', sprintf('/services/%s', $serviceId))[0]['body']['executionStatus']);
+        $this->assertSame('CANCELLED', $this->bol->find('PATCH', sprintf('/activities/%s', $activityId))[0]['body']['executionStatus']);
+
+        // ...but the requestor's node isn't called: it made the cancellation
+        foreach ($this->bol->calls() as $call) {
+            $this->assertStringStartsWith(self::OUR_NODE, $call['url']);
+        }
+    }
+
+    public function testOtherServiceRequestUpdatesAreIgnored(): void
+    {
+        $delivery = $this->receiveServiceRequest();
+        $this->bol->forget();
+
+        $this->sendServiceRequestEvent('update', 2, 'REQUESTED');
+
+        $delivery = $this->findDelivery();
+        $this->assertNotSame('cancelled', $delivery->getOrder()->getState());
+        $this->assertSame([], $this->bol->calls());
+    }
+
     public function testADeliveredDeliveryFinishesTheServiceWithItsProofOfDelivery(): void
     {
         $delivery = $this->receiveServiceRequest();
@@ -288,8 +327,31 @@ class RdcWorkflowTest extends WebTestCase
     {
         // Shaped like the webhooks the BOL sends in production: the service
         // request has its id but no uri, and comes twice in the same call.
+        $results = $this->sendServiceRequestEvent('create', 1, 'REQUESTED', twice: true);
+        $this->assertSame(['queued', 'queued'], array_column($results, 'status'));
+
+        $delivery = $this->findDelivery();
+        $this->assertNotNull($delivery, 'The service request should have become a delivery');
+
+        return $delivery;
+    }
+
+    /**
+     * Fetched again: each webhook request resets the entity manager.
+     */
+    private function findDelivery(): ?Delivery
+    {
+        /** @var DeliveryRepository $repository */
+        $repository = static::getContainer()->get(EntityManagerInterface::class)->getRepository(Delivery::class);
+
+        return $repository->findByLoUri($this->loUri);
+    }
+
+    private function sendServiceRequestEvent(string $triggerType, int $revision, string $requestStatus, bool $twice = false): array
+    {
         $serviceRequest = json_decode((string) file_get_contents(__DIR__.'/../../Resources/rdc/service_request.json'), true);
         $serviceRequest['id'] = basename($this->loUri);
+        $serviceRequest['requestStatus'] = $requestStatus;
 
         $event = [
             'notificationMetadata' => [
@@ -297,8 +359,8 @@ class RdcWorkflowTest extends WebTestCase
                 'resourceType' => 'ServiceRequest',
                 'loUri' => $this->loUri,
                 'loMemberIdentifier' => self::CONNECTION,
-                'loRevision' => 1,
-                'triggerType' => 'create',
+                'loRevision' => $revision,
+                'triggerType' => $triggerType,
                 'triggerMemberIdentifier' => self::CONNECTION,
                 'triggerDate' => (new \DateTimeImmutable())->format(\DateTimeInterface::RFC3339_EXTENDED),
             ],
@@ -309,18 +371,11 @@ class RdcWorkflowTest extends WebTestCase
             'CONTENT_TYPE' => 'application/json',
             'HTTP_X_WEBHOOK_SECRET' => self::SECRET,
             'HTTP_X_WEBHOOK_SOURCE' => self::CONNECTION,
-        ], content: (string) json_encode([$event, $event]));
+        ], content: (string) json_encode($twice ? [$event, $event] : [$event]));
 
         $this->assertResponseStatusCodeSame(202);
-        $results = json_decode((string) $this->client->getResponse()->getContent(), true)['results'];
-        $this->assertSame(['queued', 'queued'], array_column($results, 'status'));
 
-        /** @var DeliveryRepository $repository */
-        $repository = $this->entityManager->getRepository(Delivery::class);
-        $delivery = $repository->findByLoUri($this->loUri);
-        $this->assertNotNull($delivery, 'The service request should have become a delivery');
-
-        return $delivery;
+        return json_decode((string) $this->client->getResponse()->getContent(), true)['results'];
     }
 
     /**

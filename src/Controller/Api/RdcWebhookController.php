@@ -120,7 +120,8 @@ class RdcWebhookController extends AbstractController
 
     private function isSkippedTrigger(string $resourceType, string $triggerType): bool
     {
-        return $resourceType === 'servicerequest' && $triggerType !== 'create';
+        // Created: becomes a delivery. Updated: the requestor may have cancelled it.
+        return $resourceType === 'servicerequest' && !in_array($triggerType, ['create', 'update'], true);
     }
 
     private function isValidSecret(Request $request): bool

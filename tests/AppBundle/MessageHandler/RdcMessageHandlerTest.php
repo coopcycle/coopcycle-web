@@ -7,6 +7,7 @@ namespace Tests\AppBundle\MessageHandler;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Store;
 use AppBundle\Integration\Rdc\Coopcycle\RdcServiceRequestProcessor;
+use AppBundle\Integration\Rdc\Coopcycle\RdcServiceRequestUpdater;
 use AppBundle\Integration\Rdc\RdcStoreResolver;
 use AppBundle\Message\RdcMessage;
 use AppBundle\MessageHandler\RdcMessageHandler;
@@ -18,6 +19,7 @@ use Redis;
 class RdcMessageHandlerTest extends TestCase
 {
     private RdcServiceRequestProcessor&MockObject $processor;
+    private RdcServiceRequestUpdater&MockObject $updater;
     private Redis&MockObject $redis;
     private RdcStoreResolver&MockObject $storeResolver;
     private RdcMessageHandler $handler;
@@ -25,12 +27,14 @@ class RdcMessageHandlerTest extends TestCase
     protected function setUp(): void
     {
         $this->processor = $this->createMock(RdcServiceRequestProcessor::class);
+        $this->updater = $this->createMock(RdcServiceRequestUpdater::class);
         $this->redis = $this->createMock(Redis::class);
 
         $this->storeResolver = $this->createMock(RdcStoreResolver::class);
 
         $this->handler = new RdcMessageHandler(
             $this->processor,
+            $this->updater,
             $this->storeResolver,
             $this->redis,
             new NullLogger(),
@@ -82,6 +86,18 @@ class RdcMessageHandlerTest extends TestCase
         ($this->handler)($this->buildMessage());
     }
 
+    public function testAnUpdateGoesToTheUpdater(): void
+    {
+        $this->redis->method('set')->willReturn(true);
+
+        $this->processor->expects($this->never())->method('process');
+        $this->updater->expects($this->once())
+            ->method('update')
+            ->with($this->isInstanceOf(\AppBundle\Integration\Rdc\DTO\RdcApiServiceRequest::class), 'https://bol-api.example.com/service-requests/f9b10095');
+
+        ($this->handler)($this->buildMessage('update'));
+    }
+
     public function testSkipsAlreadyClaimedEvent(): void
     {
         $this->redis->method('set')->willReturn(false);
@@ -91,7 +107,7 @@ class RdcMessageHandlerTest extends TestCase
         ($this->handler)($this->buildMessage());
     }
 
-    private function buildMessage(): RdcMessage
+    private function buildMessage(string $triggerType = 'create'): RdcMessage
     {
         $loUri = 'https://bol-api.example.com/service-requests/f9b10095';
 
@@ -104,7 +120,7 @@ class RdcMessageHandlerTest extends TestCase
                 'loUri' => $loUri,
                 'loRevision' => 1,
                 'notificationType' => 'UPDATES',
-                'triggerType' => 'create',
+                'triggerType' => $triggerType,
                 'triggerDate' => '2026-10-21T14:18:57.355Z',
             ],
         );

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace AppBundle\MessageHandler;
 
 use AppBundle\Integration\Rdc\Coopcycle\RdcServiceRequestProcessor;
+use AppBundle\Integration\Rdc\Coopcycle\RdcServiceRequestUpdater;
 use AppBundle\Integration\Rdc\DTO\RdcApiServiceRequest;
 use AppBundle\Integration\Rdc\RdcStoreResolver;
 use AppBundle\Message\RdcMessage;
@@ -20,6 +21,7 @@ final class RdcMessageHandler
 
     public function __construct(
         private readonly RdcServiceRequestProcessor $processor,
+        private readonly RdcServiceRequestUpdater $updater,
         private readonly RdcStoreResolver $storeResolver,
         private readonly Redis $redis,
         private readonly LoggerInterface $logger,
@@ -45,6 +47,17 @@ final class RdcMessageHandler
         }
 
         $dto = RdcApiServiceRequest::parse($message->loPayload);
+
+        if ('update' === strtolower($message->notificationMetadata['triggerType'] ?? '')) {
+            try {
+                $this->updater->update($dto, $message->loUri);
+            } catch (\Throwable $e) {
+                $this->redis->del($key);
+                throw $e;
+            }
+
+            return;
+        }
 
         try {
             // A connection without store is misconfigured: fail, so that the

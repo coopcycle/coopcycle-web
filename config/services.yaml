@@ -1872,6 +1872,11 @@ services:
       $mapper: '@AppBundle\Integration\Rdc\Coopcycle\RdcServiceRequestMapper'
       $logger: '@logger'
 
+  AppBundle\Integration\Rdc\Coopcycle\RdcServiceRequestUpdater:
+    arguments:
+      $entityManager: '@doctrine.orm.entity_manager'
+      $logger: '@logger'
+
   AppBundle\Controller\Api\RdcWebhookController:
     arguments:
       $logger: '@logger'
