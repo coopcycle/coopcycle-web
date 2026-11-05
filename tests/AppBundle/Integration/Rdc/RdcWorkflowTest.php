@@ -11,6 +11,7 @@ use AppBundle\Entity\DeliveryRepository;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskImage;
+use AppBundle\Fixtures\DatabasePurger;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Service\TaskManager;
@@ -103,6 +104,19 @@ class RdcWorkflowTest extends WebTestCase
         $container->set('routing_service', $routing);
 
         $this->entityManager = $container->get(EntityManagerInterface::class);
+
+        // What creating a delivery order needs: the settings, the channels, the
+        // taxes and the on-demand delivery product
+        $purger = $container->get(DatabasePurger::class);
+        $purger->purge();
+        $purger->resetSequences();
+        $container->get('fidry_alice_data_fixtures.loader.doctrine')->load([
+            __DIR__.'/../../../../fixtures/ORM/settings_mandatory.yml',
+            __DIR__.'/../../../../fixtures/ORM/sylius_channels.yml',
+            __DIR__.'/../../../../fixtures/ORM/sylius_taxation.yml',
+            __DIR__.'/../../../../fixtures/ORM/sylius_products.yml',
+        ], $_SERVER);
+
         $this->entityManager->getConnection()->beginTransaction();
 
         $this->store = new Store();
@@ -238,6 +252,8 @@ class RdcWorkflowTest extends WebTestCase
         $dropoff = $delivery->getDropoff();
         $image = new TaskImage();
         $image->setImageName('proof-of-delivery.jpg');
+        // Both sides, as the upload does: addImage() alone saves an image without task
+        $image->setTask($dropoff);
         $dropoff->addImage($image);
         // Uploaded before the dropoff is marked as done, as in the app
         $this->entityManager->persist($image);
