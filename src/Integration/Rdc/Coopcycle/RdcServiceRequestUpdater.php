@@ -33,7 +33,10 @@ class RdcServiceRequestUpdater
         private readonly LoggerInterface $logger,
     ) {}
 
-    public function update(RdcApiServiceRequest $apiRequest, string $loUri): void
+    /**
+     * @param string $connectionId The connection the update came from
+     */
+    public function update(RdcApiServiceRequest $apiRequest, string $loUri, string $connectionId): void
     {
         if (ServiceStatus::CANCELLED !== $apiRequest->requestStatus) {
             $this->logger->info('RDC service request update ignored: only cancellations are supported', [
@@ -50,6 +53,20 @@ class RdcServiceRequestUpdater
         if (is_null($delivery)) {
             $this->logger->warning('RDC service request cancelled, but no delivery was created for it', [
                 'lo_uri' => $loUri,
+            ]);
+
+            return;
+        }
+
+        // The webhook secret is shared by every connection: a requestor may only
+        // cancel the deliveries of its own store
+        $deliveryConnectionId = $delivery->getStore()?->getRdcConnectionId();
+        if ($deliveryConnectionId !== $connectionId) {
+            $this->logger->error('RDC service request cancelled by another connection than its delivery\'s, ignored', [
+                'lo_uri' => $loUri,
+                'delivery_id' => $delivery->getId(),
+                'connection_id' => $connectionId,
+                'delivery_connection_id' => $deliveryConnectionId,
             ]);
 
             return;

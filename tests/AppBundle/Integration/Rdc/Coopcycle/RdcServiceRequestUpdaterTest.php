@@ -6,6 +6,7 @@ namespace Tests\AppBundle\Integration\Rdc\Coopcycle;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryRepository;
+use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Exception\OrderNotCancellableException;
 use AppBundle\Integration\Rdc\Coopcycle\RdcServiceRequestUpdater;
@@ -23,6 +24,7 @@ use Symfony\Component\Messenger\Exception\HandlerFailedException;
 class RdcServiceRequestUpdaterTest extends TestCase
 {
     private const LO_URI = 'https://bol-api.requestor.example.com/service-requests/sr-1';
+    private const CONNECTION = 'BOL.MEMBER.PROVIDER';
 
     private DeliveryRepository&MockObject $deliveryRepository;
     private OrderManager&MockObject $orderManager;
@@ -47,10 +49,19 @@ class RdcServiceRequestUpdaterTest extends TestCase
 
         $this->orderManager->expects($this->once())->method('cancel')->with($delivery->getOrder());
 
-        $this->updater->update($this->serviceRequest(ServiceStatus::CANCELLED), self::LO_URI);
+        $this->updater->update($this->serviceRequest(ServiceStatus::CANCELLED), self::LO_URI, self::CONNECTION);
 
         // So that the cancellation isn't sent back to the requestor
         $this->assertTrue($delivery->getMetadata()['rdc']['cancelled_by_requestor']);
+    }
+
+    public function testIgnoresACancellationFromAnotherConnection(): void
+    {
+        // Every connection shares the webhook secret
+        $this->deliveryRepository->method('findByLoUri')->willReturn($this->deliveryWithOrder(OrderInterface::STATE_NEW));
+        $this->orderManager->expects($this->never())->method('cancel');
+
+        $this->updater->update($this->serviceRequest(ServiceStatus::CANCELLED), self::LO_URI, 'BOL.MEMBER.OTHER_PROVIDER');
     }
 
     public function testIgnoresTheOtherUpdates(): void
@@ -58,7 +69,7 @@ class RdcServiceRequestUpdaterTest extends TestCase
         $this->deliveryRepository->expects($this->never())->method('findByLoUri');
         $this->orderManager->expects($this->never())->method('cancel');
 
-        $this->updater->update($this->serviceRequest(null), self::LO_URI);
+        $this->updater->update($this->serviceRequest(null), self::LO_URI, self::CONNECTION);
     }
 
     public function testIgnoresAServiceRequestThatNeverBecameADelivery(): void
@@ -66,7 +77,7 @@ class RdcServiceRequestUpdaterTest extends TestCase
         $this->deliveryRepository->method('findByLoUri')->willReturn(null);
         $this->orderManager->expects($this->never())->method('cancel');
 
-        $this->updater->update($this->serviceRequest(ServiceStatus::CANCELLED), self::LO_URI);
+        $this->updater->update($this->serviceRequest(ServiceStatus::CANCELLED), self::LO_URI, self::CONNECTION);
     }
 
     public function testLeavesAnAlreadyCancelledDeliveryAlone(): void
@@ -74,7 +85,7 @@ class RdcServiceRequestUpdaterTest extends TestCase
         $this->deliveryRepository->method('findByLoUri')->willReturn($this->deliveryWithOrder(OrderInterface::STATE_CANCELLED));
         $this->orderManager->expects($this->never())->method('cancel');
 
-        $this->updater->update($this->serviceRequest(ServiceStatus::CANCELLED), self::LO_URI);
+        $this->updater->update($this->serviceRequest(ServiceStatus::CANCELLED), self::LO_URI, self::CONNECTION);
     }
 
     public function testADeliveryThatCanNoLongerBeCancelledIsOnlyLogged(): void
@@ -87,7 +98,7 @@ class RdcServiceRequestUpdaterTest extends TestCase
             [new OrderNotCancellableException('Order #1 cannot be cancelled')]
         ));
 
-        $this->updater->update($this->serviceRequest(ServiceStatus::CANCELLED), self::LO_URI);
+        $this->updater->update($this->serviceRequest(ServiceStatus::CANCELLED), self::LO_URI, self::CONNECTION);
 
         $this->assertArrayNotHasKey('cancelled_by_requestor', $delivery->getMetadata()['rdc'] ?? []);
     }
@@ -102,7 +113,11 @@ class RdcServiceRequestUpdaterTest extends TestCase
         $order = new Order();
         $order->setState($state);
 
+        $store = new Store();
+        $store->setRdcConnectionId(self::CONNECTION);
+
         $delivery = new Delivery();
+        $delivery->setStore($store);
         $delivery->setOrder($order);
 
         return $delivery;

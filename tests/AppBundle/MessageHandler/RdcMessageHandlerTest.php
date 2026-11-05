@@ -93,7 +93,7 @@ class RdcMessageHandlerTest extends TestCase
         $this->processor->expects($this->never())->method('process');
         $this->updater->expects($this->once())
             ->method('update')
-            ->with($this->isInstanceOf(\AppBundle\Integration\Rdc\DTO\RdcApiServiceRequest::class), 'https://bol-api.example.com/service-requests/f9b10095');
+            ->with($this->isInstanceOf(\AppBundle\Integration\Rdc\DTO\RdcApiServiceRequest::class), 'https://bol-api.example.com/service-requests/f9b10095', 'BOL.MEMBER.PROVIDER');
 
         ($this->handler)($this->buildMessage('update'));
     }

@@ -50,7 +50,7 @@ final class RdcMessageHandler
 
         if ('update' === strtolower($message->notificationMetadata['triggerType'] ?? '')) {
             try {
-                $this->updater->update($dto, $message->loUri);
+                $this->updater->update($dto, $message->loUri, $message->loMember);
             } catch (\Throwable $e) {
                 $this->redis->del($key);
                 throw $e;
