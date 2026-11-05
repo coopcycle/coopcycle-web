@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\AppBundle\Integration\Rdc;
 
+use AppBundle\Action\Incident\CreateIncident;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryRepository;
+use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskImage;
@@ -28,7 +30,8 @@ use Symfony\Component\HttpClient\MockHttpClient;
  *   activity, then the requestor's service request is approved;
  * - a cancelled delivery cancels the service and the activity, then the
  *   requestor's service request;
- * - a delivered delivery finishes them with its proof of delivery.
+ * - a delivered delivery finishes them with its proof of delivery;
+ * - an incident is reported on them with its reason.
  *
  * Run on a collection: the courier picks goods up at a third party (with its
  * SHIPPER contact) and brings them to the requestor's partner. The other
@@ -330,6 +333,90 @@ class RdcWorkflowTest extends WebTestCase
         $this->assertCallsUseTheLoginOfTheirNode();
     }
 
+    public function testAnIncidentIsReportedOnTheServiceAndItsActivityWithItsReason(): void
+    {
+        $delivery = $this->receiveServiceRequest();
+        $serviceId = (string) $delivery->getId();
+        $activityId = sprintf('%d.transport', $delivery->getPickup()->getId());
+        $this->bol->forget();
+
+        // The courier found the parcel damaged, and took a photo of it
+        $dropoff = $delivery->getDropoff();
+        $this->attachPhoto($dropoff, 'damaged-parcel.jpg');
+        $this->reportIncident($dropoff, 'DAMAGED');
+
+        $this->assertSame([
+            sprintf('POST /services/%s/events', $serviceId),
+            sprintf('POST /activities/%s/events', $activityId),
+        ], $this->bol->summary());
+
+        foreach ($this->bol->calls() as $call) {
+            $this->assertSame('ISSUE', $call['body']['domain']);
+            $this->assertSame('ITEM_DAMAGED', $call['body']['code']);
+            $this->assertSame('TRANSPORT_DAMAGE', $call['body']['reasonCode']);
+            $this->assertCount(1, $call['body']['documents']);
+            $this->assertStringEndsWith('/damaged-parcel.jpg', $call['body']['documents'][0]['cmsUri']);
+        }
+        $this->assertCallsUseTheLoginOfTheirNode();
+    }
+
+    public function testABackOfficeReviewIsKeptFromTheRequestor(): void
+    {
+        $delivery = $this->receiveServiceRequest();
+        $this->bol->forget();
+
+        // It isn't about the execution: the requestor would read it as a failed delivery
+        $this->reportIncident($delivery->getPickup(), 'PRICE_REVIEW_NEEDED');
+
+        $this->assertSame([], $this->bol->calls());
+    }
+
+    public function testAnIncidentOnThePickupSaysTheGoodsWereNotCollected(): void
+    {
+        $delivery = $this->receiveServiceRequest();
+        $serviceId = (string) $delivery->getId();
+        $activityId = sprintf('%d.transport', $delivery->getPickup()->getId());
+        $this->bol->forget();
+
+        // A reason with no incident code of its own: the code says what didn't happen
+        $this->reportIncident($delivery->getPickup(), 'WEATHER');
+
+        $this->assertSame([
+            sprintf('POST /services/%s/events', $serviceId),
+            sprintf('POST /activities/%s/events', $activityId),
+        ], $this->bol->summary());
+
+        foreach ($this->bol->calls() as $call) {
+            $this->assertSame('NOT_COLLECTED', $call['body']['code']);
+            $this->assertSame('WEATHER', $call['body']['reasonCode']);
+        }
+    }
+
+    public function testAnIncidentOnADeliveryOutsideRdcStaysHere(): void
+    {
+        // A delivery of a store without RDC connection: there's no BOL service to report it on
+        $store = new Store();
+        $store->setName('Without RDC');
+        $this->entityManager->persist($store);
+
+        $delivery = new Delivery();
+        $delivery->setStore($store);
+        foreach ($delivery->getTasks() as $task) {
+            $address = new Address();
+            $address->setStreetAddress('1 place Bellecour, 69002 Lyon');
+            $address->setGeo(new GeoCoordinates(45.757, 4.832));
+            $task->setAddress($address);
+            $task->setAfter(new \DateTime('2026-11-06 08:00:00'));
+            $task->setBefore(new \DateTime('2026-11-06 18:00:00'));
+        }
+        $this->entityManager->persist($delivery);
+        $this->entityManager->flush();
+
+        $this->reportIncident($delivery->getDropoff(), 'DAMAGED');
+
+        $this->assertSame([], $this->bol->calls());
+    }
+
     protected function serviceRequestFixture(): string
     {
         return 'service_request_collection.json';
@@ -346,6 +433,29 @@ class RdcWorkflowTest extends WebTestCase
         $this->assertNotNull($delivery, 'The service request should have become a delivery');
 
         return $delivery;
+    }
+
+    /**
+     * As POST /api/incidents does
+     */
+    private function reportIncident(Task $task, string $failureReasonCode): void
+    {
+        $incident = new Incident();
+        $incident->setTask($task);
+        $incident->setFailureReasonCode($failureReasonCode);
+
+        static::getContainer()->get(CreateIncident::class)($incident, null);
+    }
+
+    private function attachPhoto(Task $task, string $name): void
+    {
+        $image = new TaskImage();
+        $image->setImageName($name);
+        // Both sides, as the upload does: addImage() alone saves an image without task
+        $image->setTask($task);
+        $task->addImage($image);
+        $this->entityManager->persist($image);
+        $this->entityManager->flush();
     }
 
     /**

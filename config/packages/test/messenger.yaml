@@ -5,8 +5,8 @@ framework:
                 dsn: 'sync://'
             generate_orders_sync:
                 dsn: 'sync://'
-            # The status updates are delayed by 45s: the RDC tests couldn't
-            # wait for them on the async transport
+            # The status updates and incidents are delayed by 45s: the RDC
+            # tests couldn't wait for them on the async transport
             rdc_sync:
                 dsn: 'sync://'
         routing:
@@ -15,3 +15,4 @@ framework:
             'AppBundle\Message\RdcMessage': rdc_sync
             'AppBundle\Message\RdcPickupStatusUpdateMessage': rdc_sync
             'AppBundle\Message\RdcDropoffStatusUpdateMessage': rdc_sync
+            'AppBundle\Message\IncidentRdcMessage': rdc_sync
