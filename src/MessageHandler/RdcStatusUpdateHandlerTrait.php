@@ -8,6 +8,7 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskImage;
 use AppBundle\Integration\Rdc\Api\RdcClientFactory;
+use AppBundle\Integration\Rdc\Api\RdcException;
 use AppBundle\Integration\Rdc\Enum\ResponseStatus;
 use AppBundle\Message\RdcDropoffStatusUpdateMessage;
 use AppBundle\Message\RdcPickupStatusUpdateMessage;
@@ -284,7 +285,13 @@ trait RdcStatusUpdateHandlerTrait
             $payload['documents'] = $documents;
         }
 
-        $rdcClient->patch(sprintf('/%s/%s', $resourceType, $resourceId), $payload);
+        // A refused update (the BOL down, a bad payload) must fail the message,
+        // or Messenger considers it delivered and it's lost
+        $path = sprintf('/%s/%s', $resourceType, $resourceId);
+        $response = $rdcClient->patch($path, $payload);
+        if ($response->getStatusCode() >= 400) {
+            throw RdcException::refused(sprintf('PATCH %s', $path), $response);
+        }
     }
 
     private function postEvents(
