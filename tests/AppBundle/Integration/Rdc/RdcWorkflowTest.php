@@ -58,11 +58,11 @@ class RdcWorkflowTest extends WebTestCase
         parent::setUp();
 
         $this->setEnv('RDC_ENABLED', '1');
-        $this->setEnv('RDC_WEBHOOK_SECRET', self::SECRET);
         $this->setEnv('RDC_CONNECTIONS', (string) json_encode([
             self::CONNECTION => [
                 'enabled' => true,
                 'name' => 'Provider',
+                'webhookSecret' => self::SECRET,
                 'instanceBaseUrl' => self::OUR_NODE,
                 'memberProvider' => 'COOPCYCLE',
                 'keycloakBaseUrl' => 'https://keycloak.coopcycle.test',
