@@ -29,6 +29,10 @@ use Symfony\Component\HttpClient\MockHttpClient;
  * - a cancelled delivery cancels the service and the activity, then the
  *   requestor's service request;
  * - a delivered delivery finishes them with its proof of delivery.
+ *
+ * Run on a collection: the courier picks goods up at a third party (with its
+ * SHIPPER contact) and brings them to the requestor's partner. The other
+ * shapes of service request extend this test with their own fixture.
  */
 class RdcWorkflowTest extends WebTestCase
 {
@@ -36,6 +40,9 @@ class RdcWorkflowTest extends WebTestCase
     private const OUR_NODE = 'https://bol-api.coopcycle.test';
     private const OUR_MEMBER = 'BOL.MEMBER.COOPCYCLE';
     private const SECRET = 'rdc-test-secret';
+
+    /** The REQUESTOR_LABEL_ID of the fixture, which becomes the external reference */
+    protected const LABEL = 'C-26-1234-1';
 
     private KernelBrowser $client;
     private EntityManagerInterface $entityManager;
@@ -155,7 +162,7 @@ class RdcWorkflowTest extends WebTestCase
         $this->assertSame($this->store, $delivery->getStore());
         $this->assertSame($serviceId, $delivery->getMetadata()['rdc']['service_id']);
         $this->assertSame($activityId, $delivery->getMetadata()['rdc']['activity_id']);
-        $this->assertSame('C-26-1234-1', $delivery->getExternalReference());
+        $this->assertSame(static::LABEL, $delivery->getExternalReference());
 
         // The duplicate event is skipped: one service, one activity
         $this->assertSame([
@@ -323,7 +330,12 @@ class RdcWorkflowTest extends WebTestCase
         $this->assertCallsUseTheLoginOfTheirNode();
     }
 
-    private function receiveServiceRequest(): Delivery
+    protected function serviceRequestFixture(): string
+    {
+        return 'service_request_collection.json';
+    }
+
+    protected function receiveServiceRequest(): Delivery
     {
         // Shaped like the webhooks the BOL sends in production: the service
         // request has its id but no uri, and comes twice in the same call.
@@ -349,7 +361,7 @@ class RdcWorkflowTest extends WebTestCase
 
     private function sendServiceRequestEvent(string $triggerType, int $revision, string $requestStatus, bool $twice = false): array
     {
-        $serviceRequest = json_decode((string) file_get_contents(__DIR__.'/../../Resources/rdc/service_request.json'), true);
+        $serviceRequest = json_decode((string) file_get_contents(__DIR__.'/../../Resources/rdc/'.$this->serviceRequestFixture()), true);
         $serviceRequest['id'] = basename($this->loUri);
         $serviceRequest['requestStatus'] = $requestStatus;
 
