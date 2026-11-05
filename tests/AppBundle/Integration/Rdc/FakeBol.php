@@ -10,6 +10,9 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 /**
  * Answers for the BOL nodes and their Keycloak, as the response factory of the
  * test environment's `rdc_client_mock`, and records the calls the RDC code makes.
+ *
+ * The status codes are the ones the BOL returns in production: 200 for the
+ * creations, the patches and the change-requests, 201 for the events.
  */
 final class FakeBol
 {
@@ -53,16 +56,26 @@ final class FakeBol
             ]);
         }
 
-        // Creating a service or an activity echoes the id it was given
+        // Production refused every service linked to a single activity, instead
+        // of a list of them
+        if ('PATCH' === $method && is_array($decoded) && isset($decoded['scheduledActivities'])
+            && !array_is_list($decoded['scheduledActivities'])) {
+            return new MockResponse('{"message":"Bad Request"}', [
+                'http_code' => 400,
+                'response_headers' => ['content-type' => 'application/json'],
+            ]);
+        }
+
+        // Creating a service or an activity returns it, with the id it was given
         if ('POST' === $method && isset($query['id'])) {
-            return new MockResponse((string) json_encode(['id' => $query['id']]), [
-                'http_code' => 201,
+            return new MockResponse((string) json_encode(['id' => $query['id']] + (is_array($decoded) ? $decoded : [])), [
+                'http_code' => 200,
                 'response_headers' => ['content-type' => 'application/json'],
             ]);
         }
 
         return new MockResponse('{}', [
-            'http_code' => 'POST' === $method ? 201 : 200,
+            'http_code' => str_ends_with((string) parse_url($url, PHP_URL_PATH), '/events') ? 201 : 200,
             'response_headers' => ['content-type' => 'application/json'],
         ]);
     }

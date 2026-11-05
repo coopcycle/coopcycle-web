@@ -9,7 +9,9 @@ use AppBundle\Integration\Rdc\Api\RdcClientInterface;
 use AppBundle\Integration\Rdc\Api\RdcServiceFacade;
 use AppBundle\Integration\Rdc\DTO\RdcApiServiceRequest;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use Symfony\Contracts\HttpClient\ResponseInterface;
 
 class RdcServiceFacadeTest extends TestCase
 {
@@ -79,5 +81,49 @@ class RdcServiceFacadeTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
 
         $facade->buildServiceData('42', RdcApiServiceRequest::parse([]));
+    }
+
+    public function testLinksTheActivityAsAListOfLinks(): void
+    {
+        $client = $this->clientRespondingWith(200);
+        $client->expects($this->once())
+            ->method('patch')
+            ->with('/services/42', ['scheduledActivities' => [['uri' => 'https://bol-api.coopcycle.example.com/activities/7.transport']]]);
+
+        $this->facadeFor($client, new NullLogger())->linkActivityToService('42', '7.transport');
+    }
+
+    public function testARefusedLinkIsLoggedWithoutFailing(): void
+    {
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects($this->once())
+            ->method('error')
+            ->with('Failed to link activity to service', $this->callback(
+                fn (array $context) => 400 === $context['status'] && '{"message":"Bad Request"}' === $context['response_body']
+            ));
+
+        $this->facadeFor($this->clientRespondingWith(400, '{"message":"Bad Request"}'), $logger)
+            ->linkActivityToService('42', '7.transport');
+    }
+
+    private function clientRespondingWith(int $statusCode, string $body = '{}'): RdcClientInterface
+    {
+        $response = $this->createMock(ResponseInterface::class);
+        $response->method('getStatusCode')->willReturn($statusCode);
+        $response->method('getContent')->willReturn($body);
+
+        $client = $this->createMock(RdcClientInterface::class);
+        $client->method('getBaseUrl')->willReturn('https://bol-api.coopcycle.example.com');
+        $client->method('patch')->willReturn($response);
+
+        return $client;
+    }
+
+    private function facadeFor(RdcClientInterface $client, LoggerInterface $logger): RdcServiceFacade
+    {
+        $factory = $this->createMock(RdcClientFactory::class);
+        $factory->method('create')->willReturn($client);
+
+        return new RdcServiceFacade($factory, $logger, 'BOL.MEMBER.PROVIDER');
     }
 }

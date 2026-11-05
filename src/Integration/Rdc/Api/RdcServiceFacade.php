@@ -233,9 +233,25 @@ class RdcServiceFacade
     {
         $activityUri = sprintf('%s/activities/%s', $this->getClient()->getBaseUrl(), $activityId);
 
-        $this->getClient()->patch(sprintf('/services/%s', $serviceId), [
-            'scheduledActivities' => ['uri' => $activityUri],
+        // A list of links, like `serviceRequests`: the BOL refused a single link
+        // with a 400 on every service.
+        $response = $this->getClient()->patch(sprintf('/services/%s', $serviceId), [
+            'scheduledActivities' => [['uri' => $activityUri]],
         ]);
+
+        // Logged rather than thrown: the delivery and the service exist, a
+        // missing link must not keep the service request from being answered.
+        $statusCode = $response->getStatusCode();
+        if ($statusCode >= 400) {
+            $this->logger->error('Failed to link activity to service', [
+                'service_id' => $serviceId,
+                'activity_id' => $activityId,
+                'status' => $statusCode,
+                'response_body' => $response->getContent(false),
+            ]);
+
+            return;
+        }
 
         $this->logger->info('Linked activity to service', [
             'service_id' => $serviceId,

@@ -136,6 +136,7 @@ class RdcWorkflowTest extends WebTestCase
         $this->assertSame($activityId, $delivery->getMetadata()['rdc']['activity_id']);
         $this->assertSame('C-26-1234-1', $delivery->getExternalReference());
 
+        // The duplicate event is skipped: one service, one activity
         $this->assertSame([
             'POST /services',
             'POST /activities',
@@ -167,7 +168,7 @@ class RdcWorkflowTest extends WebTestCase
 
         // The service references the activity
         $this->assertSame(
-            ['uri' => sprintf('%s/activities/%s', self::OUR_NODE, $activityId)],
+            [['uri' => sprintf('%s/activities/%s', self::OUR_NODE, $activityId)]],
             $link['body']['scheduledActivities']
         );
 
@@ -234,7 +235,9 @@ class RdcWorkflowTest extends WebTestCase
         $image = new TaskImage();
         $image->setImageName('proof-of-delivery.jpg');
         $dropoff->addImage($image);
+        // Uploaded before the dropoff is marked as done, as in the app
         $this->entityManager->persist($image);
+        $this->entityManager->flush();
 
         $this->taskManager()->markAsDone($dropoff);
         $this->entityManager->flush();
@@ -262,27 +265,34 @@ class RdcWorkflowTest extends WebTestCase
 
     private function receiveServiceRequest(): Delivery
     {
+        // Shaped like the webhooks the BOL sends in production: the service
+        // request has its id but no uri, and comes twice in the same call.
         $serviceRequest = json_decode((string) file_get_contents(__DIR__.'/../../Resources/rdc/service_request.json'), true);
-        $serviceRequest['uri'] = $this->loUri;
+        $serviceRequest['id'] = basename($this->loUri);
+
+        $event = [
+            'notificationMetadata' => [
+                'notificationType' => 'UPDATES',
+                'resourceType' => 'ServiceRequest',
+                'loUri' => $this->loUri,
+                'loMemberIdentifier' => self::CONNECTION,
+                'loRevision' => 1,
+                'triggerType' => 'create',
+                'triggerMemberIdentifier' => self::CONNECTION,
+                'triggerDate' => (new \DateTimeImmutable())->format(\DateTimeInterface::RFC3339_EXTENDED),
+            ],
+            'lo' => $serviceRequest,
+        ];
 
         $this->client->request('POST', '/api/v1/webhooks/rdc', server: [
             'CONTENT_TYPE' => 'application/json',
             'HTTP_X_WEBHOOK_SECRET' => self::SECRET,
             'HTTP_X_WEBHOOK_SOURCE' => self::CONNECTION,
-        ], content: (string) json_encode([[
-            'notificationMetadata' => [
-                'loUri' => $this->loUri,
-                'loRevision' => 1,
-                'notificationType' => 'UPDATES',
-                'triggerType' => 'CREATE',
-                'resourceType' => 'ServiceRequest',
-                'triggerDate' => (new \DateTimeImmutable())->format(\DateTimeInterface::RFC3339_EXTENDED),
-            ],
-            'lo' => $serviceRequest,
-        ]]));
+        ], content: (string) json_encode([$event, $event]));
 
         $this->assertResponseStatusCodeSame(202);
-        $this->assertSame('queued', json_decode((string) $this->client->getResponse()->getContent(), true)['results'][0]['status']);
+        $results = json_decode((string) $this->client->getResponse()->getContent(), true)['results'];
+        $this->assertSame(['queued', 'queued'], array_column($results, 'status'));
 
         /** @var DeliveryRepository $repository */
         $repository = $this->entityManager->getRepository(Delivery::class);
