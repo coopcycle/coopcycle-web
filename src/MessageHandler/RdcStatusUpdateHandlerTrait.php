@@ -78,8 +78,8 @@ trait RdcStatusUpdateHandlerTrait
         match ([$message->coopcycleStatus, $task->getType()]) {
             [Task::STATUS_DONE, Task::TYPE_PICKUP] => $this->handleStatusDoing($rdcClient, $serviceId, $activityId, $location, $actionTime, $config, $task),
             [Task::STATUS_DONE, Task::TYPE_DROPOFF] => $this->handleStatusDone($rdcClient, $serviceId, $activityId, $location, $actionTime, $config, $task),
-            [Task::STATUS_CANCELLED, Task::TYPE_PICKUP] => $this->handleStatusCancelled($rdcClient, $serviceId, $activityId, $location, $actionTime, $config, $task),
-            [Task::STATUS_CANCELLED, Task::TYPE_DROPOFF] => $this->handleStatusCancelled($rdcClient, $serviceId, $activityId, $location, $actionTime, $config, $task),
+            [Task::STATUS_CANCELLED, Task::TYPE_PICKUP],
+            [Task::STATUS_CANCELLED, Task::TYPE_DROPOFF] => $this->handleStatusCancelled($rdcClient, $serviceId, $activityId, $task),
             default => null
         };
 
@@ -127,13 +127,13 @@ trait RdcStatusUpdateHandlerTrait
         RdcClientInterface $rdcClient,
         string $serviceId,
         string $activityId,
-        array $location,
-        \DateTimeImmutable $actionTime,
-        array $config,
         Task $task
     ): void {
-        $this->patchExecution($rdcClient, 'services', $serviceId, ExecutionStatus::CANCELLED->value, $location, true);
-        $this->patchExecution($rdcClient, 'activities', $activityId, ExecutionStatus::CANCELLED->value, $location, true);
+        // Nothing happened on the spot: only the status changes, without a
+        // location or its timestamps
+        $cancelled = ['executionStatus' => ExecutionStatus::CANCELLED->value];
+        $this->sendPatch($rdcClient, 'services', $serviceId, $cancelled);
+        $this->sendPatch($rdcClient, 'activities', $activityId, $cancelled);
         $this->notifyRemoteCancellation($rdcClient, $task);
     }
 
@@ -165,7 +165,11 @@ trait RdcStatusUpdateHandlerTrait
             return;
         }
 
-        $changeRequest = $this->buildCancellationChangeRequest($loRevision, $rdcClient->getMemberIdentifier());
+        $changeRequest = $this->buildCancellationChangeRequest(
+            $loRevision,
+            $rdcClient->getMemberIdentifier(),
+            sprintf('Service livraison %s annulé', $task->getDelivery()->getId())
+        );
         $this->postCancellationChangeRequest($rdcClient, $loUri, $changeRequest);
     }
 
@@ -222,16 +226,17 @@ trait RdcStatusUpdateHandlerTrait
         return $loRevision;
     }
 
-    private function buildCancellationChangeRequest(string $loRevision, string $memberIdentifier): array
+    private function buildCancellationChangeRequest(string $loRevision, string $memberIdentifier, string $description): array
     {
         return [
             'logisticsObjectRevision' => $loRevision,
+            'description' => $description,
             'operations' => [
-    [
-                'op' => 'add',
-                'path' => '/responseStatus',
-                'value' => ResponseStatus::CANCELLED->value,
-    ]
+                [
+                    'op' => 'add',
+                    'path' => '/responseStatus',
+                    'value' => ResponseStatus::CANCELLED->value,
+                ],
             ],
             'requestorMemberIdentifier' => $memberIdentifier,
         ];
@@ -285,6 +290,11 @@ trait RdcStatusUpdateHandlerTrait
             $payload['documents'] = $documents;
         }
 
+        $this->sendPatch($rdcClient, $resourceType, $resourceId, $payload);
+    }
+
+    private function sendPatch(RdcClientInterface $rdcClient, string $resourceType, string $resourceId, array $payload): void
+    {
         // A refused update (the BOL down, a bad payload) must fail the message,
         // or Messenger considers it delivered and it's lost
         $path = sprintf('/%s/%s', $resourceType, $resourceId);

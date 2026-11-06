@@ -203,6 +203,7 @@ class RdcWorkflowTest extends WebTestCase
         $this->assertSame(sprintf('%s/change-requests?source=true', $this->loUri), $changeRequest['url']);
         $this->assertSame(1, $changeRequest['body']['logisticsObjectRevision']);
         $this->assertSame(self::OUR_MEMBER, $changeRequest['body']['requestorMemberIdentifier']);
+        $this->assertSame(sprintf('Service livraison %s accepté', $serviceId), $changeRequest['body']['description']);
         $operations = $this->operationsByPath($changeRequest['body']);
         $this->assertSame('APPROVED', $operations['/responseStatus']);
         $this->assertSame(['uri' => $serviceUri], $operations['/service']);
@@ -227,8 +228,9 @@ class RdcWorkflowTest extends WebTestCase
 
         [$service, $activity, $read, $changeRequest] = $this->bol->calls();
 
-        $this->assertSame('CANCELLED', $service['body']['executionStatus']);
-        $this->assertSame('CANCELLED', $activity['body']['executionStatus']);
+        // Only the status: nothing happened on the spot, so no location nor time
+        $this->assertSame(['executionStatus' => 'CANCELLED'], $service['body']);
+        $this->assertSame(['executionStatus' => 'CANCELLED'], $activity['body']);
 
         // The requestor's service request is cancelled at the revision just read
         $this->assertSame($this->loUri, $read['url']);
@@ -236,6 +238,7 @@ class RdcWorkflowTest extends WebTestCase
         $this->assertSame(FakeBol::REVISION, $changeRequest['body']['logisticsObjectRevision']);
         $this->assertSame(self::OUR_MEMBER, $changeRequest['body']['requestorMemberIdentifier']);
         $this->assertSame('CANCELLED', $this->operationsByPath($changeRequest['body'])['/responseStatus']);
+        $this->assertSame(sprintf('Service livraison %s annulé', $serviceId), $changeRequest['body']['description']);
         $this->assertCallsUseTheLoginOfTheirNode();
     }
 
@@ -257,8 +260,8 @@ class RdcWorkflowTest extends WebTestCase
         }
 
         // Our service and activity follow...
-        $this->assertSame('CANCELLED', $this->bol->find('PATCH', sprintf('/services/%s', $serviceId))[0]['body']['executionStatus']);
-        $this->assertSame('CANCELLED', $this->bol->find('PATCH', sprintf('/activities/%s', $activityId))[0]['body']['executionStatus']);
+        $this->assertSame(['executionStatus' => 'CANCELLED'], $this->bol->find('PATCH', sprintf('/services/%s', $serviceId))[0]['body']);
+        $this->assertSame(['executionStatus' => 'CANCELLED'], $this->bol->find('PATCH', sprintf('/activities/%s', $activityId))[0]['body']);
 
         // ...but the requestor's node isn't called: it made the cancellation
         foreach ($this->bol->calls() as $call) {

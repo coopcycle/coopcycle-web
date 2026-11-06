@@ -388,6 +388,7 @@ class RdcServiceFacade
 
         $changeRequest = [
             'logisticsObjectRevision' => $loRevision,
+            'description' => sprintf('Service livraison %s accepté', $serviceId),
             'operations' => $operations,
             'requestorMemberIdentifier' => $this->getClient()->getMemberIdentifier(),
         ];
