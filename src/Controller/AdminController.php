@@ -1489,13 +1489,17 @@ class AdminController extends AbstractController
     {
         $query = new TypesenseQuery($request->query->get('q'), 'name');
 
-        $results = $this->typesenseShopsFinder->rawQuery($query)->getResults();
+        // Load the matching restaurants from the database rather than using the raw
+        // Typesense documents: the index may still contain soft-deleted restaurants,
+        // which are filtered out here (see SoftDeletedSubscriber, enabling the
+        // "soft_deleteable" filter for this route).
+        $results = $this->typesenseShopsFinder->query($query)->getResults();
 
         if ($request->query->has('format') && 'json' === $request->query->get('format')) {
-            $data = array_map(function ($hit) {
+            $data = array_map(function (LocalBusiness $restaurant) {
                 return [
-                    'id' => $hit['document']['id'],
-                    'name' => $hit['document']['name'],
+                    'id' => $restaurant->getId(),
+                    'name' => $restaurant->getName(),
                 ];
             }, $results);
 
