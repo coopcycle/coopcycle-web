@@ -17,42 +17,30 @@ class RdcStoreResolver
     ) {
     }
 
-    public function resolveStore(?string $rdcConnectionId = null): ?Store
+    /**
+     * The store linked to the connection the service request came from. Each
+     * connection has its own store: there's no fallback, which would put a
+     * requestor's deliveries in another requestor's store.
+     */
+    public function resolveStore(string $rdcConnectionId): ?Store
     {
         /** @var StoreRepository $repo */
         $repo = $this->entityManager->getRepository(Store::class);
 
-        // 1. If RDC connection ID provided, find by that ID
-        if ($rdcConnectionId !== null) {
-            $store = $repo->findOneByRdcConnectionId($rdcConnectionId);
-            if ($store !== null) {
-                $this->logger->info('Resolved store by RDC connection ID', [
-                    'rdc_connection_id' => $rdcConnectionId,
-                    'store_id' => $store->getId(),
-                ]);
-                return $store;
-            }
-        }
-
-        // 2. If exactly one store has RDC connection, use that
-        $storesWithRdc = $repo->findStoresWithRdcConnection();
-        if (count($storesWithRdc) === 1) {
-            $this->logger->info('Resolved single store with RDC connection', [
-                'store_id' => $storesWithRdc[0]->getId(),
+        $store = $repo->findOneByRdcConnectionId($rdcConnectionId);
+        if (is_null($store)) {
+            $this->logger->error('No store is linked to the RDC connection', [
+                'rdc_connection_id' => $rdcConnectionId,
             ]);
-            return $storesWithRdc[0];
+
+            return null;
         }
 
-        // 3. If exactly one store exists total, use that
-        $store = $repo->findSingleStore();
-        if ($store !== null) {
-            $this->logger->info('Resolved single store as fallback', [
-                'store_id' => $store->getId(),
-            ]);
-            return $store;
-        }
+        $this->logger->info('Resolved store by RDC connection ID', [
+            'rdc_connection_id' => $rdcConnectionId,
+            'store_id' => $store->getId(),
+        ]);
 
-        $this->logger->error('Cannot resolve store for RDC');
-        return null;
+        return $store;
     }
 }
