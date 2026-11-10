@@ -13,13 +13,11 @@ use AppBundle\Entity\Sylius\CalculateUsingPricingRules;
 use AppBundle\Entity\Task;
 use AppBundle\Messenger\TransactionalMessages;
 use AppBundle\Service\DeliveryOrderManager;
+use AppBundle\Service\PackageMappingResolver;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Transporter\ImportFromPoint;
 use AppBundle\Transporter\ReportFromCC;
 use AppBundle\Transporter\TransporterHelpers;
-use ApiPlatform\Api\IriConverterInterface;
-use ApiPlatform\Exception\InvalidArgumentException;
-use ApiPlatform\Exception\ItemNotFoundException;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -80,7 +78,7 @@ class SyncTransportersCommand extends Command {
         private ReportFromCC $reportFromCC,
         private Filesystem $edifactFs,
         private DeliveryOrderManager $deliveryOrderManager,
-        private IriConverterInterface $iriConverter,
+        private PackageMappingResolver $packageMappingResolver,
         private TransactionalMessages $transactionalMessages,
         private ManagerRegistry $doctrine,
     )
@@ -189,7 +187,7 @@ class SyncTransportersCommand extends Command {
 
             $this->packageMapping = $config['package_mapping'] ?? [];
             $this->importFromPoint->setPackageMapping(
-                $this->resolvePackageMapping($this->packageMapping)
+                $this->resolvePackageMapping($this->packageMapping, $this->transporter, $this->store)
             );
             $this->postalCodes = array_map(fn($c) => (string) $c, $config['postal_codes'] ?? []);
             if (!empty($this->postalCodes)) {
@@ -563,7 +561,7 @@ class SyncTransportersCommand extends Command {
         $this->HQAddress = $store->getAddress();
 
         $this->importFromPoint->setPackageMapping(
-            $this->resolvePackageMapping($this->packageMapping)
+            $this->resolvePackageMapping($this->packageMapping, $this->transporter, $this->store)
         );
     }
 
@@ -731,53 +729,20 @@ class SyncTransportersCommand extends Command {
     }
 
     /**
-     * Resolves the `package_mapping` config (Transporter\Enum\ProductType
-     * case name => Package IRI, e.g. "/api/packages/1") into actual Package
-     * entities. IRIs are used rather than short codes because short codes are
-     * not unique (several packages can share the same one), which made the
-     * mapping ambiguous.
+     * The `package_mapping` config: Transporter\Enum\ProductType case name
+     * => Package IRI, e.g. "/api/packages/1".
      *
      * @param array<string,string> $mapping
      * @return array<string,Package>
      */
-    private function resolvePackageMapping(array $mapping): array
+    private function resolvePackageMapping(array $mapping, string $transporter, Store $store): array
     {
-        if (empty($mapping)) {
-            return [];
-        }
-
-        $resolved = [];
-        foreach ($mapping as $productType => $iri) {
-            try {
-                $package = $this->iriConverter->getResourceFromIri($iri);
-            } catch (InvalidArgumentException|ItemNotFoundException $e) {
-                $this->transporterLogger->warning(
-                    sprintf(
-                        'Package mapping references unknown package IRI "%s" for product type "%s"',
-                        $iri,
-                        $productType
-                    ),
-                    ['transporter' => $this->transporter]
-                );
-                continue;
-            }
-
-            if (!$package instanceof Package) {
-                $this->transporterLogger->warning(
-                    sprintf(
-                        'Package mapping IRI "%s" for product type "%s" does not resolve to a Package',
-                        $iri,
-                        $productType
-                    ),
-                    ['transporter' => $this->transporter]
-                );
-                continue;
-            }
-
-            $resolved[$productType] = $package;
-        }
-
-        return $resolved;
+        return $this->packageMappingResolver->resolve(
+            $mapping,
+            $this->transporterLogger,
+            ['transporter' => $transporter],
+            $store->getPackageSet()
+        );
     }
 
     /**

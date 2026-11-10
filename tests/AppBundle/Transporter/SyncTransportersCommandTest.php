@@ -15,6 +15,7 @@ use AppBundle\Entity\TaskImage;
 use AppBundle\Enum\TaskImageType;
 use AppBundle\Messenger\TransactionalMessages;
 use AppBundle\Service\DeliveryOrderManager;
+use AppBundle\Service\PackageMappingResolver;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TaskManager;
 use AppBundle\Transporter\ImportFromPoint;
@@ -237,7 +238,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs,
             $this->deliveryOrderManager,
-            self::getContainer()->get(IriConverterInterface::class),
+            self::getContainer()->get(PackageMappingResolver::class),
             self::getContainer()->get(TransactionalMessages::class),
             self::getContainer()->get('doctrine')
         );
@@ -281,7 +282,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs,
             $this->deliveryOrderManager,
-            self::getContainer()->get(IriConverterInterface::class),
+            self::getContainer()->get(PackageMappingResolver::class),
             self::getContainer()->get(TransactionalMessages::class),
             self::getContainer()->get('doctrine')
         );
@@ -328,7 +329,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs,
             $this->deliveryOrderManager,
-            self::getContainer()->get(IriConverterInterface::class),
+            self::getContainer()->get(PackageMappingResolver::class),
             self::getContainer()->get(TransactionalMessages::class),
             self::getContainer()->get('doctrine')
         );
@@ -375,7 +376,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs,
             $this->deliveryOrderManager,
-            self::getContainer()->get(IriConverterInterface::class),
+            self::getContainer()->get(PackageMappingResolver::class),
             self::getContainer()->get(TransactionalMessages::class),
             self::getContainer()->get('doctrine')
         );
@@ -422,7 +423,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs,
             $this->deliveryOrderManager,
-            self::getContainer()->get(IriConverterInterface::class),
+            self::getContainer()->get(PackageMappingResolver::class),
             self::getContainer()->get(TransactionalMessages::class),
             self::getContainer()->get('doctrine')
         );
@@ -465,7 +466,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs,
             $this->deliveryOrderManager,
-            self::getContainer()->get(IriConverterInterface::class),
+            self::getContainer()->get(PackageMappingResolver::class),
             self::getContainer()->get(TransactionalMessages::class),
             self::getContainer()->get('doctrine')
         );
@@ -734,7 +735,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs,
             $failingOrderManager->reveal(),
-            self::getContainer()->get(IriConverterInterface::class),
+            self::getContainer()->get(PackageMappingResolver::class),
             self::getContainer()->get(TransactionalMessages::class),
             self::getContainer()->get('doctrine')
         );
@@ -2830,7 +2831,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs,
             $this->deliveryOrderManager,
-            self::getContainer()->get(IriConverterInterface::class),
+            self::getContainer()->get(PackageMappingResolver::class),
             self::getContainer()->get(TransactionalMessages::class),
             self::getContainer()->get('doctrine')
         );

@@ -1938,6 +1938,10 @@ services:
       $logger: '@logger'
       $connectionId: ''
 
+  AppBundle\Service\PackageMappingResolver:
+    arguments:
+      $iriConverter: '@api_platform.iri_converter'
+
   AppBundle\Integration\Rdc\Coopcycle\RdcServiceRequestMapper:
     arguments:
       $deliveryManager: '@AppBundle\Service\DeliveryManager'
