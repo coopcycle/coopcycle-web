@@ -35,7 +35,6 @@ parameters:
   database_user:     "%env(COOPCYCLE_DB_USER)%"
   database_password: "%env(COOPCYCLE_DB_PASSWORD)%"
   locale_regex: an|ca|fr|en|es|eu|de|hu|it|pl|pt_BR|pt_PT|da
-  rdc_webhook_secret: '%env(default::RDC_WEBHOOK_SECRET)%'
   router.request_context.scheme: 'http'
   router.request_context.host: "%env(APP_HOST)%"
   loopeat_enabled: '%env(bool:LOOPEAT_ENABLED)%'
@@ -1920,10 +1919,16 @@ services:
       $mapper: '@AppBundle\Integration\Rdc\Coopcycle\RdcServiceRequestMapper'
       $logger: '@logger'
 
+  AppBundle\Integration\Rdc\Coopcycle\RdcServiceRequestUpdater:
+    arguments:
+      $entityManager: '@doctrine.orm.entity_manager'
+      $logger: '@logger'
+
   AppBundle\Controller\Api\RdcWebhookController:
     arguments:
       $logger: '@logger'
       $messageBus: '@messenger.default_bus'
+      $rdcConnections: '%rdc_connections%'
       $rdcEnabled: '%env(bool:RDC_ENABLED)%'
     tags:
       - { name: monolog.logger, channel: rdc }

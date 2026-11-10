@@ -21,12 +21,15 @@ use Psr\Log\LoggerInterface;
 class RdcServiceFacade
 {
     private ?RdcClientInterface $client = null;
-    private ?string $connectedConnectionId = null;
 
+    /**
+     * The shared service has no connection: use forConnection() to get a
+     * facade that can call the BOL.
+     */
     public function __construct(
         private readonly RdcClientFactory $rdcClientFactory,
         private readonly LoggerInterface $logger,
-        private readonly string $connectionId = '', //FIXME: Should use sort of ctx resolver instead.
+        private readonly string $connectionId = '',
     ) {}
 
     /**
@@ -40,7 +43,7 @@ class RdcServiceFacade
 
     public function getConnectionId(): string
     {
-        return $this->connectedConnectionId ?? $this->connectionId ?: '';
+        return $this->connectionId;
     }
 
     public function getRdcClient(): RdcClientInterface
@@ -121,22 +124,28 @@ class RdcServiceFacade
         array $dropoffTimeSlot = [],
     ): array
     {
+        // The service is done for whoever requested it: a service request
+        // without requestor means the provider is misconfigured.
+        $requestor = $apiRequest?->getRequestorName();
+        if (is_null($requestor)) {
+            throw new \InvalidArgumentException('The service request has no requestor');
+        }
+
         $serviceData = [
             'id' => $serviceId,
             'serviceType' => ServiceType::TRANSPORT->value,
             'serviceStatus' => ServiceStatus::PROPOSED->value,
             'serviceSubtype' => ServiceSubtype::CARGOBIKE_TRANSPORT->value,
-            'serviceName' => sprintf('livraison APPLICOLIS n° %s', $contractRef ?? $serviceId),
+            'serviceName' => sprintf('livraison %s n° %s', $requestor, $contractRef ?? $serviceId),
             'executionStatus' => ExecutionStatus::SCHEDULED->value,
             'serviceNature' => ServiceNature::LOGISTICS->value,
-            'isDangerous' => $apiRequest?->isDangerous ?? false,
+            'isDangerous' => $apiRequest->isDangerous,
             'invoiceStatus' => InvoiceStatus::NOT_INVOICED->value,
             'serviceAgreementReference' => $contractRef,
             'externalReferences' => $this->mapExternalReferences($barcode, $contractRef),
         ];
 
-        //FIXME: Add legal requestor here.
-        $serviceData['requestor'] = ['legalEntityName' => 'APPLICOLIS'];
+        $serviceData['requestor'] = ['legalEntityName' => $requestor];
 
         if ($serviceRequestUri !== null) {
             $serviceData['serviceRequests'] = [['uri' => $serviceRequestUri]];
@@ -224,9 +233,25 @@ class RdcServiceFacade
     {
         $activityUri = sprintf('%s/activities/%s', $this->getClient()->getBaseUrl(), $activityId);
 
-        $this->getClient()->patch(sprintf('/services/%s', $serviceId), [
-            'scheduledActivities' => ['uri' => $activityUri],
+        // A list of links, like `serviceRequests`: the BOL refused a single link
+        // with a 400 on every service.
+        $response = $this->getClient()->patch(sprintf('/services/%s', $serviceId), [
+            'scheduledActivities' => [['uri' => $activityUri]],
         ]);
+
+        // Logged rather than thrown: the delivery and the service exist, a
+        // missing link must not keep the service request from being answered.
+        $statusCode = $response->getStatusCode();
+        if ($statusCode >= 400) {
+            $this->logger->error('Failed to link activity to service', [
+                'service_id' => $serviceId,
+                'activity_id' => $activityId,
+                'status' => $statusCode,
+                'response_body' => $response->getContent(false),
+            ]);
+
+            return;
+        }
 
         $this->logger->info('Linked activity to service', [
             'service_id' => $serviceId,
@@ -328,32 +353,32 @@ class RdcServiceFacade
             [
                 'op' => 'add',
                 'path' => '/isDangerous',
-                'value' => $apiRequest?->isDangerous ?? false,
+                'value' => $apiRequest->isDangerous ?? false,
             ],
             [
                 'op' => 'add',
                 'path' => '/serviceAgreementReference',
-                'value' => $apiRequest?->serviceAgreementReference ?? '',
+                'value' => $apiRequest->serviceAgreementReference ?? '',
             ],
             [
                 'op' => 'add',
                 'path' => '/serviceNature',
-                'value' => $apiRequest?->serviceNature?->value ?? '',
+                'value' => $apiRequest->serviceNature->value ?? '',
             ],
             [
                 'op' => 'add',
                 'path' => '/serviceType',
-                'value' => $apiRequest?->serviceType?->value ?? '',
+                'value' => $apiRequest->serviceType->value ?? '',
             ],
             [
                 'op' => 'add',
                 'path' => '/serviceSubtype',
-                'value' => $apiRequest?->serviceSubtype?->value ?? '',
+                'value' => $apiRequest->serviceSubtype->value ?? '',
             ],
             [
                 'op' => 'add',
                 'path' => '/serviceName',
-                'value' => $apiRequest?->serviceName ?? '',
+                'value' => $apiRequest->serviceName ?? '',
             ],
         ];
 
@@ -363,6 +388,7 @@ class RdcServiceFacade
 
         $changeRequest = [
             'logisticsObjectRevision' => $loRevision,
+            'description' => sprintf('Service livraison %s accepté', $serviceId),
             'operations' => $operations,
             'requestorMemberIdentifier' => $this->getClient()->getMemberIdentifier(),
         ];
@@ -400,31 +426,22 @@ class RdcServiceFacade
 
     private function getClient(): RdcClientInterface
     {
-        //FIXME: This must use context
-        if (!is_null($this->client) && $this->connectedConnectionId === $this->connectionId) {
+        if (!is_null($this->client)) {
             return $this->client;
         }
 
-        $connectionId = $this->connectionId;
-
-        if (empty($connectionId)) {
-            $ids = $this->rdcClientFactory->getConnectionIds();
-            if ($ids !== []) {
-                $connectionId = $ids[0];
-            } else {
-                $connectionId = 'default';
-            }
+        // No fallback on another connection: its credentials and node would
+        // answer for the wrong requestor.
+        if ($this->connectionId === '') {
+            throw new \LogicException('The RDC facade has no connection, use forConnection()');
         }
 
-        $client = $this->rdcClientFactory->create($connectionId);
-        if ($client === null) {
-            throw new \RuntimeException(sprintf('RDC connection "%s" not found or disabled', $connectionId));
+        $client = $this->rdcClientFactory->create($this->connectionId);
+        if (is_null($client)) {
+            throw new \RuntimeException(sprintf('RDC connection "%s" not found or disabled', $this->connectionId));
         }
 
-        $this->client = $client;
-        $this->connectedConnectionId = $connectionId;
-
-        return $this->client;
+        return $this->client = $client;
     }
 
     private function getCountryName(string $countryCode): string

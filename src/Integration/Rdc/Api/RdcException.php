@@ -2,6 +2,8 @@
 
 namespace AppBundle\Integration\Rdc\Api;
 
+use Symfony\Contracts\HttpClient\ResponseInterface;
+
 class RdcException extends \RuntimeException
 {
     public const ERROR_REQUEST_FAILED = 1;
@@ -28,6 +30,18 @@ class RdcException extends \RuntimeException
             $message,
             self::ERROR_REQUEST_FAILED,
             $previous
+        );
+    }
+
+    /**
+     * The BOL answered, but refused or failed the call: the caller must fail,
+     * so that Messenger retries the message.
+     */
+    public static function refused(string $call, ResponseInterface $response): self
+    {
+        return new self(
+            sprintf('%s refused by the BOL: HTTP %d %s', $call, $response->getStatusCode(), mb_substr($response->getContent(false), 0, 500)),
+            self::ERROR_REQUEST_FAILED
         );
     }
 

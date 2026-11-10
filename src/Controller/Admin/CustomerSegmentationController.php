@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CustomerSegmentationController extends AbstractController
 {
@@ -23,7 +24,7 @@ class CustomerSegmentationController extends AbstractController
     ) {}
 
     #[Route('/admin/customers/segmentation', name: 'admin_customer_segmentation', methods: ['GET', 'POST'])]
-    public function __invoke(Request $request, EntityManagerInterface $entityManager, PaginatorInterface $paginator): Response
+    public function __invoke(Request $request, EntityManagerInterface $entityManager, PaginatorInterface $paginator, TranslatorInterface $translator): Response
     {
         if (!$this->rfmEnabled) {
             throw $this->createNotFoundException();
@@ -40,7 +41,7 @@ class CustomerSegmentationController extends AbstractController
                 $this->settingsManager->set($key, (string) $value);
             }
             $this->settingsManager->flush();
-            $this->addFlash('notice', 'rfm.thresholds.saved');
+            $this->addFlash('notice', $translator->trans('rfm.thresholds.saved'));
 
             return $this->redirectToRoute('admin_customer_segmentation');
         }
