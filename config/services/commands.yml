@@ -35,6 +35,34 @@ services:
     tags:
       - { name: 'console.command', command: 'sylius:promotion:generate-coupons' }
 
+  AppBundle\Command\ExpireReferralsCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:referral:expire' }
+
+  AppBundle\Command\BackfillReferralCodesCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:referral:backfill-codes' }
+
+  AppBundle\Command\BackfillReferralCanonicalEmailsCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:referral:backfill-canonical-emails' }
+
+  AppBundle\Command\ExpireLoyaltyPointsCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:loyalty:expire-points' }
+
+  AppBundle\Command\SyncPostmarkSuppressionsCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:marketing:sync-suppressions' }
+
+  AppBundle\Command\SendTestMarketingEmailCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:marketing:send-test-email' }
+
+  AppBundle\Command\SendDueCampaignsCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:marketing:send-due-campaigns' }
+
   AppBundle\Command\BotCommand:
     parent: M6Web\Bundle\DaemonBundle\Command\DaemonCommand
     autowire: false

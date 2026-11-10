@@ -23,4 +23,6 @@ form.registration.username.help: 'Votre nom d''utilisateur ne peut pas dépasser
 
   '
 
+form.registration.referralCode.label: Code de parrainage (facultatif)
+
 form.email.help: Pour vous informer de l'avancement de votre commande

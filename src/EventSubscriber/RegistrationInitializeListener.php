@@ -2,7 +2,10 @@
 
 namespace AppBundle\EventSubscriber;
 
+use AppBundle\Entity\User;
+use AppBundle\Service\Referral\ReferralManager;
 use Nucleos\ProfileBundle\NucleosProfileEvents;
+use Nucleos\UserBundle\Event\FilterUserResponseEvent;
 use Nucleos\UserBundle\Event\FormEvent;
 use Nucleos\ProfileBundle\Event\GetResponseRegistrationEvent;
 use Nucleos\ProfileBundle\Event\UserFormEvent;
@@ -26,7 +29,8 @@ class RegistrationInitializeListener implements EventSubscriberInterface
         RepositoryInterface $orderRepository,
         RepositoryInterface $customerRepository,
         CanonicalizerInterface $canonicalizer,
-        string $secret)
+        string $secret,
+        private ReferralManager $referralManager)
     {
         $this->orderRepository = $orderRepository;
         $this->customerRepository = $customerRepository;
@@ -42,6 +46,7 @@ class RegistrationInitializeListener implements EventSubscriberInterface
         return array(
             NucleosProfileEvents::REGISTRATION_INITIALIZE => 'onRegistrationInitialize',
             NucleosProfileEvents::REGISTRATION_SUCCESS => 'onRegistrationSuccess',
+            NucleosProfileEvents::REGISTRATION_COMPLETED => 'onRegistrationCompleted',
         );
     }
 
@@ -66,6 +71,14 @@ class RegistrationInitializeListener implements EventSubscriberInterface
         $form = $event->getForm();
         $user = $event->getUser();
 
+        // Stashed on the request so onRegistrationCompleted() can read it
+        // once the user/customer are actually persisted -- the referral
+        // code field isn't mapped to User/Customer, and at this point in
+        // the registration flow updateUser() hasn't run yet.
+        if ($form->has('referralCode')) {
+            $request->attributes->set('_referral_code', $form->get('referralCode')->getData());
+        }
+
         $customer = $this->getCustomerFromSource($request);
 
         if (null !== $customer) {
@@ -79,6 +92,19 @@ class RegistrationInitializeListener implements EventSubscriberInterface
         if (null !== $customer) {
             $user->setCustomer($customer);
         }
+    }
+
+    public function onRegistrationCompleted(FilterUserResponseEvent $event): void
+    {
+        $user = $event->getUser();
+
+        if (!$user instanceof User) {
+            return;
+        }
+
+        $referralCode = $event->getRequest()?->attributes->get('_referral_code');
+
+        $this->referralManager->registerPendingReferral($user, $referralCode);
     }
 
     private function getCustomerFromSource(Request $request)
