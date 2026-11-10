@@ -48,7 +48,7 @@ class CampaignSender
         // Fails here rather than once a few hundred messages are already on
         // the queue, each about to fail identically.
         if (!$this->marketingMailer->isConfigured()) {
-            throw MarketingMailerNotConfiguredException::missing('the Postmark server token or sender address');
+            throw MarketingMailerNotConfiguredException::missingServerTokenOrSenderAddress();
         }
 
         $audience = $this->audienceResolver->resolve($campaign->getSegment());

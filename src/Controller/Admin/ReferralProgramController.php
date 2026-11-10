@@ -17,6 +17,7 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ReferralProgramController extends AbstractController
 {
@@ -31,7 +32,7 @@ class ReferralProgramController extends AbstractController
     ) {}
 
     #[Route('/admin/referral-program', name: 'admin_referral_program', methods: ['GET', 'POST'])]
-    public function __invoke(Request $request, PaginatorInterface $paginator): Response
+    public function __invoke(Request $request, PaginatorInterface $paginator, TranslatorInterface $translator): Response
     {
         if (!$this->referralProgramEnabled) {
             throw $this->createNotFoundException();
@@ -59,7 +60,7 @@ class ReferralProgramController extends AbstractController
             $active = (bool) $activeForm->get('active')->getData();
             $this->settingsManager->set('referral_program_active', $active ? '1' : '0');
             $this->settingsManager->flush();
-            $this->addFlash('notice', $active ? 'referral.program.activated' : 'referral.program.deactivated');
+            $this->addFlash('notice', $translator->trans($active ? 'referral.program.activated' : 'referral.program.deactivated'));
 
             return $this->redirectToRoute('admin_referral_program');
         }
@@ -78,7 +79,7 @@ class ReferralProgramController extends AbstractController
 
         if ($levelsForm->isSubmitted() && $levelsForm->isValid()) {
             $this->entityManager->flush();
-            $this->addFlash('notice', 'referral.levels.saved');
+            $this->addFlash('notice', $translator->trans('referral.levels.saved'));
 
             return $this->redirectToRoute('admin_referral_program');
         }
@@ -97,7 +98,7 @@ class ReferralProgramController extends AbstractController
                 $this->settingsManager->set($key, (string) $value);
             }
             $this->settingsManager->flush();
-            $this->addFlash('notice', 'referral.welcome_settings.saved');
+            $this->addFlash('notice', $translator->trans('referral.welcome_settings.saved'));
 
             return $this->redirectToRoute('admin_referral_program');
         }

@@ -15,6 +15,7 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LoyaltyProgramController extends AbstractController
 {
@@ -25,7 +26,7 @@ class LoyaltyProgramController extends AbstractController
     ) {}
 
     #[Route('/admin/loyalty-program', name: 'admin_loyalty_program', methods: ['GET', 'POST'])]
-    public function __invoke(Request $request): Response
+    public function __invoke(Request $request, TranslatorInterface $translator): Response
     {
         if (!$this->loyaltyProgramEnabled) {
             throw $this->createNotFoundException();
@@ -52,7 +53,7 @@ class LoyaltyProgramController extends AbstractController
             $active = (bool) $activeForm->get('active')->getData();
             $this->settingsManager->set('loyalty_program_active', $active ? '1' : '0');
             $this->settingsManager->flush();
-            $this->addFlash('notice', $active ? 'loyalty.program.activated' : 'loyalty.program.deactivated');
+            $this->addFlash('notice', $translator->trans($active ? 'loyalty.program.activated' : 'loyalty.program.deactivated'));
 
             return $this->redirectToRoute('admin_loyalty_program');
         }
@@ -70,7 +71,7 @@ class LoyaltyProgramController extends AbstractController
                 $this->settingsManager->set($key, (string) $value);
             }
             $this->settingsManager->flush();
-            $this->addFlash('notice', 'loyalty.settings.saved');
+            $this->addFlash('notice', $translator->trans('loyalty.settings.saved'));
 
             return $this->redirectToRoute('admin_loyalty_program');
         }
@@ -106,7 +107,7 @@ class LoyaltyProgramController extends AbstractController
             }
 
             $this->entityManager->flush();
-            $this->addFlash('notice', 'loyalty.rewards.saved');
+            $this->addFlash('notice', $translator->trans('loyalty.rewards.saved'));
 
             return $this->redirectToRoute('admin_loyalty_program');
         }

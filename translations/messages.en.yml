@@ -2217,7 +2217,6 @@ marketing.campaign.field.promotionCoupon: Coupon
 marketing.campaign.field.promotionCoupon.help: "Optional. Type the code of an existing promotion to mention in the message; remember to include it in the text too. You can look codes up under Promotions."
 marketing.campaign.field.scheduledAt: Schedule for
 marketing.campaign.field.scheduledAt.help: Leave empty to keep the campaign as a draft and send it by hand.
-marketing.campaign.field.scheduledAt.in_the_past: Pick a time in the future.
 marketing.campaign.audience.title: Who this reaches
 marketing.campaign.audience.of_segment: "of %total% in %segment%"
 marketing.campaign.audience.excluded: "Not included:"
@@ -2232,6 +2231,11 @@ marketing.campaign.send.help: The audience is worked out again at the moment of 
 marketing.campaign.send.confirm: "Send this campaign to %count% customer(s)?"
 marketing.campaign.send.queued: "Campaign queued for %count% customer(s)."
 marketing.campaign.send.program_inactive: Turn marketing campaigns on before sending.
+marketing.campaign.send.already_started: "This campaign has already been sent, or is being sent — it cannot be sent again."
+marketing.campaign.send.incomplete: Give the campaign a subject and a message before sending it.
+marketing.mailer.not_configured.sender_address: "Marketing email is not configured: the sender address is missing. Set it under Settings > Marketing emails."
+marketing.mailer.not_configured.server_token: "Marketing email is not configured: the Postmark server token is missing. Set it under Settings > Marketing emails."
+marketing.mailer.not_configured.any: "Marketing email is not configured: the Postmark server token or sender address is missing. Set it under Settings > Marketing emails."
 marketing.campaign.delete.confirm: Delete this campaign?
 marketing.campaign.delete.already_sent: A campaign that has been sent cannot be deleted, because it records who was emailed.
 marketing.campaign.template.champions.name: "Thank you - %segment%"

@@ -82,3 +82,4 @@ store.packages_required.package_set_required: Un ensemble de paquets doit être 
 
 failure_reason.code.unique: Ce code est déjà utilisé
 marketing.campaign.field.promotionCoupon.unknown: "Aucune promotion avec ce code. Vérifiez-le dans Promotions."
+marketing.campaign.field.scheduledAt.in_the_past: Choisissez une date future.

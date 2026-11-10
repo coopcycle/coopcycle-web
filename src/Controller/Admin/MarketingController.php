@@ -46,7 +46,7 @@ class MarketingController extends AbstractController
     ) {}
 
     #[Route('/admin/marketing', name: 'admin_marketing', methods: ['GET', 'POST'])]
-    public function indexAction(Request $request, PaginatorInterface $paginator): Response
+    public function indexAction(Request $request, PaginatorInterface $paginator, TranslatorInterface $translator): Response
     {
         $this->denyAccess();
 
@@ -64,7 +64,7 @@ class MarketingController extends AbstractController
             $active = (bool) $activeForm->get('active')->getData();
             $this->settingsManager->set('marketing_automation_active', $active ? '1' : '0');
             $this->settingsManager->flush();
-            $this->addFlash('notice', $active ? 'marketing.program.activated' : 'marketing.program.deactivated');
+            $this->addFlash('notice', $translator->trans($active ? 'marketing.program.activated' : 'marketing.program.deactivated'));
 
             return $this->redirectToRoute('admin_marketing');
         }
@@ -91,7 +91,7 @@ class MarketingController extends AbstractController
             }
 
             $this->settingsManager->flush();
-            $this->addFlash('notice', 'marketing.postmark.saved');
+            $this->addFlash('notice', $translator->trans('marketing.postmark.saved'));
 
             return $this->redirectToRoute('admin_marketing');
         }
@@ -214,7 +214,7 @@ class MarketingController extends AbstractController
         try {
             $audience = $campaignSender->send($campaign);
         } catch (CampaignNotSendableException | MarketingMailerNotConfiguredException $e) {
-            $this->addFlash('error', $e->getMessage());
+            $this->addFlash('error', $translator->trans($e->getTranslationKey(), $e->getTranslationParameters()));
 
             return $this->redirectToRoute('admin_marketing_campaign', ['id' => $id]);
         }
@@ -262,7 +262,7 @@ class MarketingController extends AbstractController
             // the frequency rule.
             $sent = $this->marketingMailer->send($emailFactory->create($campaign, $recipient));
         } catch (MarketingMailerNotConfiguredException $e) {
-            $this->addFlash('error', $e->getMessage());
+            $this->addFlash('error', $translator->trans($e->getTranslationKey(), $e->getTranslationParameters()));
 
             return $this->redirectToRoute('admin_marketing_campaign', ['id' => $id]);
         } catch (TransportExceptionInterface $e) {

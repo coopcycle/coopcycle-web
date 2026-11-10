@@ -2155,7 +2155,6 @@ marketing.campaign.field.promotionCoupon: Coupon
 marketing.campaign.field.promotionCoupon.help: "Facultatif. Saisissez le code d'une promotion existante à mentionner dans le message ; pensez à l'inclure aussi dans le texte. Vous pouvez retrouver les codes dans Promotions."
 marketing.campaign.field.scheduledAt: Programmer pour
 marketing.campaign.field.scheduledAt.help: Laissez vide pour conserver la campagne en brouillon et l'envoyer manuellement.
-marketing.campaign.field.scheduledAt.in_the_past: Choisissez une date future.
 marketing.campaign.audience.title: Qui sera touché
 marketing.campaign.audience.of_segment: "sur %total% dans %segment%"
 marketing.campaign.audience.excluded: "Non inclus :"
@@ -2170,6 +2169,11 @@ marketing.campaign.send.help: L'audience est recalculée au moment de l'envoi, a
 marketing.campaign.send.confirm: "Envoyer cette campagne à %count% client(s) ?"
 marketing.campaign.send.queued: "Campagne mise en file pour %count% client(s)."
 marketing.campaign.send.program_inactive: Activez les campagnes marketing avant d'envoyer.
+marketing.campaign.send.already_started: "Cette campagne a déjà été envoyée, ou est en cours d'envoi — elle ne peut pas être envoyée de nouveau."
+marketing.campaign.send.incomplete: Donnez un objet et un message à la campagne avant de l'envoyer.
+marketing.mailer.not_configured.sender_address: "Les e-mails marketing ne sont pas configurés : l'adresse d'expéditeur est manquante. Renseignez-la dans Réglages > E-mails marketing."
+marketing.mailer.not_configured.server_token: "Les e-mails marketing ne sont pas configurés : le jeton de serveur Postmark est manquant. Renseignez-le dans Réglages > E-mails marketing."
+marketing.mailer.not_configured.any: "Les e-mails marketing ne sont pas configurés : le jeton de serveur Postmark ou l'adresse d'expéditeur est manquant. Renseignez-le dans Réglages > E-mails marketing."
 marketing.campaign.delete.confirm: Supprimer cette campagne ?
 marketing.campaign.delete.already_sent: Une campagne déjà envoyée ne peut pas être supprimée, car elle conserve la trace des personnes contactées.
 marketing.campaign.template.champions.name: "Remerciements - %segment%"

@@ -45,7 +45,7 @@ class MarketingMailer
         $email = $this->getSenderEmail();
 
         if (empty($email)) {
-            throw MarketingMailerNotConfiguredException::missing('the sender address');
+            throw MarketingMailerNotConfiguredException::missingSenderAddress();
         }
 
         $name = $this->settingsManager->get('postmark_sender_name')
@@ -117,7 +117,7 @@ class MarketingMailer
         $token = (string) $this->settingsManager->get('postmark_server_token');
 
         if (empty($token)) {
-            throw MarketingMailerNotConfiguredException::missing('the Postmark server token');
+            throw MarketingMailerNotConfiguredException::missingServerToken();
         }
 
         $stream = $this->postmarkClient->getBroadcastStream();
