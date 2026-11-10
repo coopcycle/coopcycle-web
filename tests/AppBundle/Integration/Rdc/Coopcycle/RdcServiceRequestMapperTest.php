@@ -31,7 +31,7 @@ class RdcServiceRequestMapperTest extends TestCase
             "legalEntityName": "COOPCYCLE"
         },
         "requestor": {
-            "legalEntityName": "NOWASTEPHARMA"
+            "legalEntityName": "REQUESTOR"
         },
         "incoterm": "DDP",
         "isDangerous": false,
@@ -70,7 +70,7 @@ class RdcServiceRequestMapperTest extends TestCase
         ],
         "externalReferences": [
             {
-                "description": "Collecte NoWaste n° C-26-1234-1",
+                "description": "Collecte n° C-26-1234-1",
                 "reference": "C-26-1234-1",
                 "externalReferenceType": "REQUESTOR_ID"
             },
@@ -757,9 +757,9 @@ class RdcServiceRequestMapperTest extends TestCase
         return $method->invoke($this->mapper, $specialInstructions);
     }
 
-    public function testMapToDeliveryUsesLocationNamesFromApplicolisPayload(): void
+    public function testMapToDeliveryUsesLocationNamesWhenContactsHaveNone(): void
     {
-        // Shaped like what Applicolis sends: the RECIPIENT contact has no name,
+        // Some requestors send a RECIPIENT contact without name:
         // the names are on the locations.
         $apiRequest = \AppBundle\Integration\Rdc\DTO\RdcApiServiceRequest::parse([
             'startLocation' => [

@@ -1,0 +1,163 @@
+{
+  "requestStatus": "REQUESTED",
+  "requestDateTime": "2026-11-02T09:00:00.000Z",
+  "provider": {
+    "legalEntityName": "COOPCYCLE"
+  },
+  "requestor": {
+    "legalEntityName": "REQUESTOR"
+  },
+  "incoterm": "DDP",
+  "isDangerous": false,
+  "contacts": [
+    {
+      "role": "CUSTOMER_DISPATCH",
+      "telephone": "0600000003",
+      "email": "contact@requestor.example"
+    },
+    {
+      "role": "SHIPPER",
+      "telephone": "0600000001",
+      "email": "contact@example.org",
+      "persons": [
+        {
+          "familyName": "Martin",
+          "givenName": "Claire",
+          "email": "contact@example.org",
+          "telephone": "0600000001"
+        }
+      ]
+    },
+    {
+      "role": "RECIPIENT",
+      "telephone": "0600000002",
+      "email": "logistique@association-exemple.org",
+      "persons": [
+        {
+          "familyName": "Bernard",
+          "givenName": "Hugo",
+          "email": "logistique@association-exemple.org",
+          "telephone": "0600000002"
+        }
+      ]
+    }
+  ],
+  "externalReferences": [
+    {
+      "description": "Collecte n° C-26-1234-1",
+      "reference": "C-26-1234-1",
+      "externalReferenceType": "REQUESTOR_ID"
+    },
+    {
+      "description": "Étiquette livraison",
+      "reference": "C-26-1234-1",
+      "externalReferenceType": "REQUESTOR_LABEL_ID"
+    }
+  ],
+  "specialCharacteristics": [
+    {
+      "characteristicReference": "CUSTOMER_ORDER_DESCRIPTION",
+      "stringValue": "6 cartons de produits pharmaceutiques (collecte C-26-1234-1)"
+    }
+  ],
+  "startLocation": {
+    "location": {
+      "locationName": "Pharmacie du Marché",
+      "address": {
+        "addressCountry": {
+          "countryCode": "FR",
+          "countryName": "France"
+        },
+        "addressLocality": "Lyon",
+        "postalCode": "69002",
+        "addressLines": [
+          "12 place du Marché"
+        ]
+      }
+    },
+    "requestedStartTimeRange": {
+      "earliestDateTime": "2026-11-06T07:30:00.000Z",
+      "latestDateTime": "2026-11-06T18:30:00.000Z"
+    },
+    "requestedEndTimeRange": {
+      "earliestDateTime": "2026-11-06T07:30:00.000Z",
+      "latestDateTime": "2026-11-06T18:30:00.000Z"
+    },
+    "actions": [
+      {
+        "actionName": "Chargement",
+        "actionState": "REQUESTED",
+        "actionType": "HANDLING",
+        "actionSubtype": "LOADING",
+        "sequenceNumber": 1,
+        "compositionMovements": [
+          {
+            "containedBatchesOfGoods": [
+              {
+                "containerType": "PARCEL",
+                "containerSubtype": "CARDBOARD",
+                "quantity": {
+                  "value": 6,
+                  "unit": "CONTAINER"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "endLocation": {
+    "location": {
+      "locationName": "Association Exemple",
+      "address": {
+        "addressCountry": {
+          "countryCode": "FR",
+          "countryName": "France"
+        },
+        "addressLocality": "Villeurbanne",
+        "postalCode": "69100",
+        "addressLines": [
+          "8 rue de la Solidarité",
+          "Bâtiment B"
+        ]
+      },
+      "specialInstructions": [
+        {
+          "description": "Livraison par la cour, sonner au local du rez-de-chaussée."
+        }
+      ]
+    },
+    "requestedStartTimeRange": {
+      "earliestDateTime": "2026-11-06T08:00:00.000Z",
+      "latestDateTime": "2026-11-06T16:00:00.000Z"
+    },
+    "requestedEndTimeRange": {
+      "earliestDateTime": "2026-11-06T08:00:00.000Z",
+      "latestDateTime": "2026-11-06T16:00:00.000Z"
+    },
+    "actions": [
+      {
+        "actionName": "Déchargement",
+        "actionState": "REQUESTED",
+        "actionType": "HANDLING",
+        "actionSubtype": "UNLOADING",
+        "sequenceNumber": 1,
+        "compositionMovements": [
+          {
+            "containedBatchesOfGoods": [
+              {
+                "containerType": "PARCEL",
+                "containerSubtype": "CARDBOARD",
+                "quantity": {
+                  "value": 6,
+                  "unit": "CONTAINER"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -96,18 +96,6 @@ class RdcClientFactory
         );
     }
 
-    public function getDefaultClient(): ?RdcClientInterface
-    {
-        $connectionIds = $this->getConnectionIds();
-
-        if (empty($connectionIds)) {
-            $this->logger->warning('No RDC connections configured');
-            return null;
-        }
-
-        return $this->create($connectionIds[0]);
-    }
-
     /**
      * @return string[]
      */

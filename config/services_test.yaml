@@ -45,6 +45,17 @@ services:
 
     Symfony\Contracts\HttpClient\HttpClientInterface $urbantzClient: '@urbantz_client_mock'
 
+    # The BOL (logist-x) and its Keycloak: the RDC tests answer for them,
+    # see Tests\AppBundle\Integration\Rdc\FakeBol
+    rdc_client_mock:
+        class: Symfony\Component\HttpClient\MockHttpClient
+        public: true
+
+    AppBundle\Integration\Rdc\Api\RdcClientFactory:
+        arguments:
+            $httpClient: '@rdc_client_mock'
+            $rdcConnections: '%rdc_connections%'
+
     # Push notifications should never actually be sent in the test environment
     # (no FIREBASE_CREDENTIALS is configured, and it would flood the logs with
     # Messenger retry errors otherwise; see also the "the async messages are
