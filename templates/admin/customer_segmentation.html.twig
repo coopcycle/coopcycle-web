@@ -180,9 +180,10 @@
     <tr>
       <th>{% trans %}profile.email{% endtrans %}</th>
       <th>{% trans %}profile.fullName{% endtrans %}</th>
-      <th class="text-right">{% trans %}rfm.column.last_order{% endtrans %}</th>
-      <th class="text-right">{% trans %}rfm.column.frequency{% endtrans %}</th>
-      <th class="text-right">{% trans %}rfm.column.monetary{% endtrans %}</th>
+      {% set sortable_link_template = '@KnpPaginator/Pagination/twitter_bootstrap_v3_sortable_link.html.twig' %}
+      <th class="text-right">{{ knp_pagination_sortable(customers, 'rfm.column.last_order'|trans, '[last_order_at]', { defaultDirection: 'desc' }, {}, sortable_link_template) }}</th>
+      <th class="text-right">{{ knp_pagination_sortable(customers, 'rfm.column.frequency'|trans, '[frequency]', { defaultDirection: 'desc' }, {}, sortable_link_template) }}</th>
+      <th class="text-right">{{ knp_pagination_sortable(customers, 'rfm.column.monetary'|trans, '[monetary]', { defaultDirection: 'desc' }, {}, sortable_link_template) }}</th>
       <th class="text-right">R</th>
       <th class="text-right">F</th>
       <th class="text-right">M</th>
