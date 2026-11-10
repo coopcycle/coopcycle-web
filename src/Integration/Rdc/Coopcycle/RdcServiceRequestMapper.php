@@ -266,7 +266,8 @@ class RdcServiceRequestMapper
                     if (!is_numeric($value)) {
                         continue;
                     }
-                    $totalKg += (float) $value;
+                    // The weight of each container of the batch
+                    $totalKg += (float) $value * (BatchOfGoods::parse($batch)->quantity ?? 1);
                     $foundAny = true;
                 }
             }

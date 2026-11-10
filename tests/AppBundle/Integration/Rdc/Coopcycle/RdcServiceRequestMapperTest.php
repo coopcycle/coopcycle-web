@@ -882,6 +882,17 @@ class RdcServiceRequestMapperTest extends TestCase
         );
     }
 
+    public function testExtractWeightFromLocationCountsEachContainerOfTheBatch(): void
+    {
+        // The weight of a batch is the weight of each of its containers
+        $location = $this->locationWithGoods([
+            ['quantity' => ['value' => 6, 'unit' => 'CONTAINER'], 'weight' => ['value' => 2, 'unit' => 'KG']],
+            ['quantity' => ['value' => 3, 'unit' => 'KG'], 'weight' => ['value' => 1.5, 'unit' => 'KG']],
+        ]);
+
+        $this->assertSame(13500, $this->invokeExtractWeight($location));
+    }
+
     public function testMapToDeliveryAddsTheMappedGoodsToTheDropoff(): void
     {
         $carton = $this->package('Carton');
