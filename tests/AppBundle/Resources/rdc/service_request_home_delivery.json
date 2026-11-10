@@ -1,0 +1,128 @@
+{
+  "requestStatus": "REQUESTED",
+  "requestDateTime": "2026-11-02T09:00:00.000Z",
+  "serviceAgreementReference": "n/a",
+  "provider": {
+    "legalEntityName": "COOPCYCLE"
+  },
+  "requestor": {
+    "legalEntityName": "REQUESTOR"
+  },
+  "isDangerous": false,
+  "contacts": [
+    {
+      "role": "CUSTOMER_DISPATCH",
+      "telephone": "0600000003"
+    },
+    {
+      "role": "PROVIDER_DISPATCH",
+      "telephone": "0600000004"
+    },
+    {
+      "role": "RECIPIENT",
+      "telephone": "0600000002"
+    }
+  ],
+  "externalReferences": [
+    {
+      "description": "Position n° 4521",
+      "reference": "4521",
+      "externalReferenceType": "REQUESTOR_ID"
+    },
+    {
+      "description": "Étiquette livraison",
+      "reference": "637900000",
+      "externalReferenceType": "REQUESTOR_LABEL_ID"
+    }
+  ],
+  "startLocation": {
+    "location": {
+      "locationName": "Boutique Exemple",
+      "address": {
+        "addressCountry": {
+          "countryCode": "FR",
+          "countryName": "France"
+        },
+        "addressLines": [
+          "Place des Grands Hommes, Bordeaux, France"
+        ]
+      }
+    },
+    "requestedStartTimeRange": {
+      "earliestDateTime": "2026-11-06T07:00:00Z",
+      "latestDateTime": "2026-11-06T15:00:00Z"
+    },
+    "requestedEndTimeRange": {
+      "earliestDateTime": "2026-11-06T07:00:00Z",
+      "latestDateTime": "2026-11-06T15:00:00Z"
+    },
+    "actions": [
+      {
+        "actionName": "Chargement",
+        "actionState": "REQUESTED",
+        "actionType": "HANDLING",
+        "actionSubtype": "LOADING",
+        "sequenceNumber": 1,
+        "compositionMovements": [
+          {
+            "containedBatchesOfGoods": [
+              {
+                "containerType": "PARCEL",
+                "containerSubtype": "CARDBOARD",
+                "quantity": {
+                  "value": 1,
+                  "unit": "CONTAINER"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "endLocation": {
+    "location": {
+      "locationName": "JANE DOE",
+      "address": {
+        "addressCountry": {
+          "countryCode": "FR",
+          "countryName": "France"
+        },
+        "addressLines": [
+          "Rue d'Aviau 1 33000 Bordeaux France"
+        ]
+      }
+    },
+    "requestedStartTimeRange": {
+      "earliestDateTime": "2026-11-06T07:00:00Z",
+      "latestDateTime": "2026-11-06T15:00:00Z"
+    },
+    "requestedEndTimeRange": {
+      "earliestDateTime": "2026-11-06T07:00:00Z",
+      "latestDateTime": "2026-11-06T15:00:00Z"
+    },
+    "actions": [
+      {
+        "actionName": "Déchargement",
+        "actionState": "REQUESTED",
+        "actionType": "HANDLING",
+        "actionSubtype": "UNLOADING",
+        "sequenceNumber": 1,
+        "compositionMovements": [
+          {
+            "containedBatchesOfGoods": [
+              {
+                "containerType": "PARCEL",
+                "containerSubtype": "CARDBOARD",
+                "quantity": {
+                  "value": 1,
+                  "unit": "CONTAINER"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

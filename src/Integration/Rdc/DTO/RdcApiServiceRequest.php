@@ -256,6 +256,11 @@ final class RdcApiServiceRequest
         return $ref['reference'] ?? null;
     }
 
+    public function getRequestorName(): ?string
+    {
+        return ($this->requestor['legalEntityName'] ?? '') ?: null;
+    }
+
     public function getContractRef(): ?string
     {
         return $this->serviceAgreementReference;

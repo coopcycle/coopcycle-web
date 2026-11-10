@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace AppBundle\MessageHandler;
 
 use AppBundle\Integration\Rdc\Coopcycle\RdcServiceRequestProcessor;
+use AppBundle\Integration\Rdc\Coopcycle\RdcServiceRequestUpdater;
 use AppBundle\Integration\Rdc\DTO\RdcApiServiceRequest;
 use AppBundle\Integration\Rdc\RdcStoreResolver;
 use AppBundle\Message\RdcMessage;
@@ -20,6 +21,7 @@ final class RdcMessageHandler
 
     public function __construct(
         private readonly RdcServiceRequestProcessor $processor,
+        private readonly RdcServiceRequestUpdater $updater,
         private readonly RdcStoreResolver $storeResolver,
         private readonly Redis $redis,
         private readonly LoggerInterface $logger,
@@ -46,17 +48,26 @@ final class RdcMessageHandler
 
         $dto = RdcApiServiceRequest::parse($message->loPayload);
 
-        $store = $this->storeResolver->resolveStore($message->loMember);
-        if (is_null($store)) {
-            $this->logger->error('Store not found for RDC servicerequest', [
-                'event_hash' => $eventHash,
-                'lo_uri' => $message->loUri,
-                'lo_member' => $message->loMember,
-            ]);
+        if ('update' === strtolower($message->notificationMetadata['triggerType'] ?? '')) {
+            try {
+                $this->updater->update($dto, $message->loUri, $message->loMember);
+            } catch (\Throwable $e) {
+                $this->redis->del($key);
+                throw $e;
+            }
+
             return;
         }
 
         try {
+            // A connection without store is misconfigured: fail, so that the
+            // message lands in the failure transport and can be replayed once
+            // the store is linked.
+            $store = $this->storeResolver->resolveStore($message->loMember);
+            if (is_null($store)) {
+                throw new \RuntimeException(sprintf('No store is linked to the RDC connection "%s"', $message->loMember));
+            }
+
             $delivery = $this->processor->process($dto, $store, $message->loUri, $message->loRevision);
         } catch (\Throwable $e) {
             // Release the claim, otherwise Messenger's retries would be skipped

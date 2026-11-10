@@ -65,8 +65,14 @@ framework:
                     delay: 1000
                     multiplier: 2
                     max_delay: 10000
+            # Not the async stream: the worker would consume the failed messages
+            # again, then drop them. In the database, they can be listed and
+            # replayed with messenger:failed:show / messenger:failed:retry.
             failed:
-                dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
+                dsn: 'doctrine://default?queue_name=failed'
+                options:
+                    # Nothing consumes it continuously, no need for LISTEN/NOTIFY
+                    use_notify: false
         routing:
             'AppBundle\Message\CalculateRoute': async
             'AppBundle\Message\DeliveryCreated': async
@@ -95,3 +101,7 @@ framework:
             'AppBundle\Message\Zelty\ProcessZeltyCatalog': async
             'AppBundle\Message\RdcMessage': async
             'AppBundle\Message\IncidentRdcMessage': async
+            # They call the BOL, which must neither slow down nor fail the
+            # task update that sent them
+            'AppBundle\Message\RdcPickupStatusUpdateMessage': async
+            'AppBundle\Message\RdcDropoffStatusUpdateMessage': async
