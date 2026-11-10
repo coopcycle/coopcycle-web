@@ -14,6 +14,8 @@ class RdcHomeDeliveryWorkflowTest extends RdcWorkflowTest
 {
     protected const LABEL = '637900000';
 
+    protected const CARTONS = 1;
+
     protected function serviceRequestFixture(): string
     {
         return 'service_request_home_delivery.json';

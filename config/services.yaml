@@ -1948,6 +1948,7 @@ services:
       $geocoder: '@AppBundle\Service\Geocoder'
       $phoneUtil: '@libphonenumber\PhoneNumberUtil'
       $logger: '@logger'
+      $rdcConnections: '%rdc_connections%'
 
   AppBundle\Integration\Rdc\Coopcycle\RdcServiceRequestProcessor:
     arguments:

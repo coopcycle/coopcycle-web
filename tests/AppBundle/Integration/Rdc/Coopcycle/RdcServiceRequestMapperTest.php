@@ -2,15 +2,19 @@
 
 namespace Tests\AppBundle\Integration\Rdc\Coopcycle;
 
+use AppBundle\Entity\Package;
+use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
 use AppBundle\Integration\Rdc\Coopcycle\RdcServiceRequestMapper;
 use AppBundle\Integration\Rdc\DTO\TimeSlot;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\Geocoder;
+use AppBundle\Service\PackageMappingResolver;
 use Carbon\Carbon;
 use libphonenumber\PhoneNumberFormat;
 use libphonenumber\PhoneNumberUtil;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
 use ReflectionMethod;
@@ -189,6 +193,8 @@ class RdcServiceRequestMapperTest extends TestCase
     }
     JSON;
 
+    private const CONNECTION = 'BOL.MEMBER.PROVIDER';
+
     private RdcServiceRequestMapper $mapper;
 
     protected function setUp(): void
@@ -196,12 +202,7 @@ class RdcServiceRequestMapperTest extends TestCase
         $previousTz = date_default_timezone_get();
         date_default_timezone_set(self::INSTANCE_TZ);
 
-        $this->mapper = new RdcServiceRequestMapper(
-            $this->prophesize(DeliveryManager::class)->reveal(),
-            $this->prophesize(Geocoder::class)->reveal(),
-            $this->prophesize(PhoneNumberUtil::class)->reveal(),
-            new NullLogger(),
-        );
+        $this->mapper = $this->mapperWithPackages([]);
 
         // Restore on tearDown
         register_shutdown_function(static fn () => date_default_timezone_set($previousTz));
@@ -836,6 +837,7 @@ class RdcServiceRequestMapperTest extends TestCase
             $geocoder->reveal(),
             $phoneUtil,
             new NullLogger(),
+            $this->prophesize(PackageMappingResolver::class)->reveal(),
         );
 
         $delivery = $mapper->mapToDelivery($apiRequest, new \AppBundle\Entity\Store());
@@ -877,6 +879,146 @@ class RdcServiceRequestMapperTest extends TestCase
                 ['characteristicReference' => 'VOLUME', 'numericalValue' => ['value' => 0.5, 'unit' => 'M3']],
                 ['stringValue' => 'Sans libellé'],
             ])
+        );
+    }
+
+    public function testMapToDeliveryAddsTheMappedGoodsToTheDropoff(): void
+    {
+        $carton = $this->package('Carton');
+        $pallet = $this->package('Palette');
+        $mapper = $this->mapperWithPackages(['PARCEL/CARDBOARD' => $carton, 'PALLET' => $pallet]);
+
+        $goods = [
+            ['containerType' => 'PARCEL', 'containerSubtype' => 'CARDBOARD', 'quantity' => ['value' => 4, 'unit' => 'CONTAINER']],
+            // No PALLET/EUR in the mapping: the container type alone is used
+            ['containerType' => 'PALLET', 'containerSubtype' => 'EUR', 'quantity' => ['value' => 2, 'unit' => 'CONTAINER']],
+            // Nothing for it in the mapping
+            ['containerType' => 'BAG', 'quantity' => ['value' => 1, 'unit' => 'CONTAINER']],
+        ];
+        $delivery = $mapper->mapToDelivery($this->apiRequestWithGoods($this->locationWithGoods($goods)), $this->rdcStore());
+
+        $dropoff = $delivery->getDropoff();
+        $this->assertSame(4, $dropoff->getQuantityForPackage($carton));
+        $this->assertSame(2, $dropoff->getQuantityForPackage($pallet));
+        $this->assertCount(2, $dropoff->getPackages());
+        $this->assertFalse($delivery->getPickup()->hasPackages());
+
+        // All the goods are kept as they were sent, the unmapped ones too
+        $this->assertSame([
+            ['containerType' => 'PARCEL', 'containerSubtype' => 'CARDBOARD', 'quantity' => 4],
+            ['containerType' => 'PALLET', 'containerSubtype' => 'EUR', 'quantity' => 2],
+            ['containerType' => 'BAG', 'containerSubtype' => null, 'quantity' => 1],
+        ], $delivery->getMetadata()['rdc']['goods']);
+    }
+
+    public function testMapToDeliveryReadsTheGoodsOnTheDropoffWhenThePickupListsNone(): void
+    {
+        $carton = $this->package('Carton');
+        $mapper = $this->mapperWithPackages(['PARCEL' => $carton]);
+
+        $goods = $this->locationWithGoods([
+            ['containerType' => 'PARCEL', 'quantity' => ['value' => 3, 'unit' => 'CONTAINER']],
+        ]);
+        $delivery = $mapper->mapToDelivery($this->apiRequestWithGoods(null, $goods), $this->rdcStore());
+
+        $this->assertSame(3, $delivery->getDropoff()->getQuantityForPackage($carton));
+    }
+
+    public function testMapToDeliveryDoesNotCountTheGoodsTwice(): void
+    {
+        $carton = $this->package('Carton');
+        $mapper = $this->mapperWithPackages(['PARCEL' => $carton]);
+
+        // The dropoff unloads what the pickup loads
+        $goods = $this->locationWithGoods([
+            ['containerType' => 'PARCEL', 'quantity' => ['value' => 6, 'unit' => 'CONTAINER']],
+        ]);
+        $delivery = $mapper->mapToDelivery($this->apiRequestWithGoods($goods, $goods), $this->rdcStore());
+
+        $this->assertSame(6, $delivery->getDropoff()->getQuantityForPackage($carton));
+    }
+
+    public function testMapToDeliveryDoesNotAddGoodsNotCountedInContainers(): void
+    {
+        $carton = $this->package('Carton');
+        $mapper = $this->mapperWithPackages(['PARCEL' => $carton]);
+
+        $goods = $this->locationWithGoods([
+            ['containerType' => 'PARCEL', 'quantity' => ['value' => 12, 'unit' => 'KG']],
+            ['containerType' => 'PARCEL', 'quantity' => ['value' => 1.5, 'unit' => 'CONTAINER']],
+        ]);
+        $delivery = $mapper->mapToDelivery($this->apiRequestWithGoods($goods), $this->rdcStore());
+
+        $this->assertFalse($delivery->getDropoff()->hasPackages());
+        $this->assertSame([null, null], array_column($delivery->getMetadata()['rdc']['goods'], 'quantity'));
+    }
+
+    public function testMapToDeliveryWithoutGoodsKeepsNoGoods(): void
+    {
+        $delivery = $this->mapper->mapToDelivery($this->apiRequestWithGoods(), $this->rdcStore());
+
+        $this->assertFalse($delivery->getDropoff()->hasPackages());
+        $this->assertArrayNotHasKey('goods', $delivery->getMetadata()['rdc']);
+    }
+
+    /**
+     * @param array<string,Package> $packages What the connection's packageMapping resolves to
+     */
+    private function mapperWithPackages(array $packages): RdcServiceRequestMapper
+    {
+        $mapping = array_map(fn () => '/api/packages/1', $packages);
+
+        $resolver = $this->prophesize(PackageMappingResolver::class);
+        $resolver->resolve($mapping, Argument::cetera())->willReturn($packages);
+
+        return new RdcServiceRequestMapper(
+            $this->prophesize(DeliveryManager::class)->reveal(),
+            $this->prophesize(Geocoder::class)->reveal(),
+            $this->prophesize(PhoneNumberUtil::class)->reveal(),
+            new NullLogger(),
+            $resolver->reveal(),
+            [self::CONNECTION => ['packageMapping' => $mapping]],
+        );
+    }
+
+    private function package(string $name): Package
+    {
+        $package = new Package();
+        $package->setName($name);
+
+        return $package;
+    }
+
+    private function rdcStore(): Store
+    {
+        $store = new Store();
+        $store->setRdcConnectionId(self::CONNECTION);
+
+        return $store;
+    }
+
+    private function locationWithGoods(array $goods): array
+    {
+        return [
+            'actions' => [
+                ['compositionMovements' => [['containedBatchesOfGoods' => $goods]]],
+            ],
+        ];
+    }
+
+    private function apiRequestWithGoods(?array $pickupGoods = null, ?array $dropoffGoods = null): \AppBundle\Integration\Rdc\DTO\RdcApiServiceRequest
+    {
+        return new \AppBundle\Integration\Rdc\DTO\RdcApiServiceRequest(
+            uri: 'https://rdc.example.com/lo/123',
+            externalReferences: [
+                ['externalReferenceType' => 'REQUESTOR_LABEL_ID', 'reference' => 'TEST-BARCODE'],
+            ],
+            startLocation: [
+                'location' => ['address' => ['addressLines' => ['1 rue de Rivoli']]],
+            ] + ($pickupGoods ?? []),
+            endLocation: [
+                'location' => ['address' => ['addressLines' => ['1 place Bellecour']]],
+            ] + ($dropoffGoods ?? []),
         );
     }
 

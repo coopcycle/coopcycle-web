@@ -2,6 +2,7 @@
 
 namespace Tests\AppBundle\Integration\Rdc\DTO;
 
+use AppBundle\Integration\Rdc\DTO\BatchOfGoods;
 use AppBundle\Integration\Rdc\DTO\RdcApiServiceRequest;
 use PHPUnit\Framework\TestCase;
 
@@ -116,5 +117,73 @@ class RdcApiServiceRequestTest extends TestCase
 
         $this->assertSame([], $request->getPickupSpecialInstructions());
         $this->assertSame([['description' => 'Livraison par la cour']], $request->getDropoffSpecialInstructions());
+    }
+
+    public function testBatchesOfGoodsAreReadOnThePickup(): void
+    {
+        $request = RdcApiServiceRequest::parse([
+            'startLocation' => ['actions' => [
+                ['compositionMovements' => [['containedBatchesOfGoods' => [
+                    ['containerType' => 'PARCEL', 'containerSubtype' => 'CARDBOARD', 'quantity' => ['value' => 4, 'unit' => 'CONTAINER']],
+                ]]]],
+                ['compositionMovements' => [['containedBatchesOfGoods' => [
+                    ['containerType' => 'PALLET', 'quantity' => ['value' => 1]],
+                    null,
+                ]]]],
+            ]],
+            'endLocation' => ['actions' => [
+                ['compositionMovements' => [['containedBatchesOfGoods' => [
+                    ['containerType' => 'PARCEL', 'containerSubtype' => 'CARDBOARD', 'quantity' => ['value' => 4, 'unit' => 'CONTAINER']],
+                ]]]],
+            ]],
+        ]);
+
+        $this->assertEquals([
+            new BatchOfGoods('PARCEL', 'CARDBOARD', 4),
+            new BatchOfGoods('PALLET', null, 1),
+        ], $request->getBatchesOfGoods());
+    }
+
+    public function testBatchesOfGoodsAreReadOnTheDropoffWhenThePickupListsNone(): void
+    {
+        $request = RdcApiServiceRequest::parse([
+            'startLocation' => ['location' => []],
+            'endLocation' => ['actions' => [
+                ['compositionMovements' => [['containedBatchesOfGoods' => [
+                    ['containerType' => 'PARCEL', 'quantity' => ['value' => 2, 'unit' => 'CONTAINER']],
+                ]]]],
+            ]],
+        ]);
+
+        $this->assertEquals([new BatchOfGoods('PARCEL', null, 2)], $request->getBatchesOfGoods());
+        $this->assertSame([], RdcApiServiceRequest::parse([])->getBatchesOfGoods());
+    }
+
+    /**
+     * @dataProvider quantities
+     */
+    public function testTheQuantityIsANumberOfContainers(mixed $quantity, ?int $expected): void
+    {
+        $this->assertSame($expected, BatchOfGoods::parse(['quantity' => $quantity])->quantity);
+    }
+
+    public function quantities(): iterable
+    {
+        yield 'containers' => [['value' => 6, 'unit' => 'CONTAINER'], 6];
+        yield 'no unit' => [['value' => 6], 6];
+        yield 'a whole float' => [['value' => 6.0, 'unit' => 'CONTAINER'], 6];
+        yield 'a numeric string' => [['value' => '3', 'unit' => 'CONTAINER'], 3];
+        yield 'another unit' => [['value' => 6, 'unit' => 'KG'], null];
+        yield 'not whole' => [['value' => 1.5, 'unit' => 'CONTAINER'], null];
+        yield 'zero' => [['value' => 0, 'unit' => 'CONTAINER'], null];
+        yield 'no value' => [['unit' => 'CONTAINER'], null];
+        yield 'no quantity' => [null, null];
+    }
+
+    public function testTheMappingKeysGoFromTheMostPreciseToTheContainerType(): void
+    {
+        $this->assertSame(['PARCEL/CARDBOARD', 'PARCEL'], (new BatchOfGoods('PARCEL', 'CARDBOARD'))->getMappingKeys());
+        $this->assertSame(['PALLET'], BatchOfGoods::parse(['containerType' => 'PALLET', 'containerSubtype' => ' '])->getMappingKeys());
+        $this->assertSame([], BatchOfGoods::parse(['containerSubtype' => 'CARDBOARD'])->getMappingKeys());
     }
 }

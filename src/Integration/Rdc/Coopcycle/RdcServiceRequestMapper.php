@@ -8,12 +8,14 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
+use AppBundle\Integration\Rdc\DTO\BatchOfGoods;
 use AppBundle\Integration\Rdc\DTO\RdcApiServiceRequest;
 use AppBundle\Integration\Rdc\DTO\ServiceRequestAddress;
 use AppBundle\Integration\Rdc\DTO\ServiceRequestContact;
 use AppBundle\Integration\Rdc\DTO\TimeSlot;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\Geocoder;
+use AppBundle\Service\PackageMappingResolver;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use libphonenumber\PhoneNumberUtil;
@@ -28,6 +30,8 @@ class RdcServiceRequestMapper
         private Geocoder $geocoder,
         private PhoneNumberUtil $phoneUtil,
         private LoggerInterface $logger,
+        private PackageMappingResolver $packageMappingResolver,
+        private array $rdcConnections = [],
     ) {}
 
     public function mapToDelivery(
@@ -85,6 +89,8 @@ class RdcServiceRequestMapper
         if (!is_null($weightGrams)) {
             $pickup->setWeight($weightGrams);
         }
+
+        $this->mapGoodsToPackages($apiRequest->getBatchesOfGoods(), $store, $delivery);
 
         // The label number is printed on the parcel: riders look for it.
         $reference = is_null($externalRef) ? null : sprintf('🏷️ Reference: %s', $externalRef);
@@ -189,6 +195,48 @@ class RdcServiceRequestMapper
         }
         if ($timeSlot->end !== null) {
             $task->setDoneBefore(Carbon::instance($timeSlot->end)->tz($tz)->toDateTime());
+        }
+    }
+
+    /**
+     * Adds the goods to the dropoff as the packages the store's RDC connection
+     * maps them to (`packageMapping`), before the order is priced.
+     *
+     * @param BatchOfGoods[] $batches
+     */
+    private function mapGoodsToPackages(array $batches, Store $store, Delivery $delivery): void
+    {
+        if (empty($batches)) {
+            return;
+        }
+
+        // The goods as the requestor sent them: a type without a package
+        // would otherwise only be in the logs
+        $delivery->setMetadata('rdc.goods', array_map(fn (BatchOfGoods $batch) => $batch->toArray(), $batches));
+
+        $connectionId = $store->getRdcConnectionId();
+        $mapping = $this->rdcConnections[$connectionId]['packageMapping'] ?? [];
+        $context = ['rdc_connection' => $connectionId];
+        $packages = is_array($mapping) && !empty($mapping)
+            ? $this->packageMappingResolver->resolve($mapping, $this->logger, $context, $store->getPackageSet())
+            : [];
+
+        foreach ($batches as $batch) {
+            $key = current(array_filter($batch->getMappingKeys(), fn (string $key) => isset($packages[$key])));
+            if ($key === false) {
+                $this->logger->warning('RDC goods with no package in the mapping, they are not added to the delivery', $context + [
+                    'goods' => $batch->toArray(),
+                ]);
+                continue;
+            }
+            if (is_null($batch->quantity)) {
+                $this->logger->warning('RDC goods without a number of containers, they are not added to the delivery', $context + [
+                    'goods' => $batch->toArray(),
+                ]);
+                continue;
+            }
+
+            $delivery->getDropoff()->addPackageWithQuantity($packages[$key], $batch->quantity);
         }
     }
 
