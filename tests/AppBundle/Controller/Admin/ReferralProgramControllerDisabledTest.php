@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ReferralProgramControllerDisabledTest extends TestCase
 {
@@ -29,6 +30,10 @@ class ReferralProgramControllerDisabledTest extends TestCase
 
         $this->expectException(NotFoundHttpException::class);
 
-        $controller(Request::create('/admin/referral-program'), $this->prophesize(PaginatorInterface::class)->reveal());
+        $controller(
+            Request::create('/admin/referral-program'),
+            $this->prophesize(PaginatorInterface::class)->reveal(),
+            $this->prophesize(TranslatorInterface::class)->reveal(),
+        );
     }
 }
