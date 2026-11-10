@@ -1531,6 +1531,11 @@ services:
     tags:
       - { name: "kernel.event_listener", event: "kernel.response" }
 
+  AppBundle\Payment\StripeAvailability:
+    arguments:
+      $craueConfig: '@craue_config'
+      $stripeConnectRequired: "%env(bool:STRIPE_CONNECT_REQUIRED)%"
+
   AppBundle\Payment\GatewayResolver:
     arguments:
       $country: '%country_iso%'
@@ -1543,6 +1548,7 @@ services:
         - co
       $forceStripe: "%env(bool:FORCE_STRIPE)%"
       $paygreenEnabled: "%env(bool:PAYGREEN_ENABLED)%"
+      $stripeAvailability: '@AppBundle\Payment\StripeAvailability'
 
   AppBundle\Payment\Gateway\Stripe: ~
   AppBundle\Payment\Gateway\Edenred: ~

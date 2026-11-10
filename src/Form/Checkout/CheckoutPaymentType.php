@@ -64,21 +64,22 @@ class CheckoutPaymentType extends AbstractType
                 }
             }
 
+            // Meal vouchers do not depend on the gateway used for cards:
+            // a shop may process cards with Stripe & meal vouchers with Paygreen
+            if ($order->supportsPaygreen()) {
+                $paygreenPlatforms = $this->paygreenManager->getEnabledPlatforms($order->getRestaurant()->getPaygreenShopId());
+                if (in_array('restoflash', $paygreenPlatforms)) {
+                    $choices['Restoflash'] = 'restoflash';
+                }
+                if (in_array('conecs', $paygreenPlatforms)) {
+                    $choices['Conecs'] = 'conecs';
+                }
+                if (in_array('swile', $paygreenPlatforms)) {
+                    $choices['Swile'] = 'swile';
+                }
+            }
+
             switch ($this->gatewayResolver->resolveForOrder($order)) {
-                case 'paygreen':
-                    if (!$order->isMultiVendor()) {
-                        $paygreenPlatforms = $this->paygreenManager->getEnabledPlatforms($order->getRestaurant()->getPaygreenShopId());
-                        if (in_array('restoflash', $paygreenPlatforms)) {
-                            $choices['Restoflash'] = 'restoflash';
-                        }
-                        if (in_array('conecs', $paygreenPlatforms)) {
-                            $choices['Conecs'] = 'conecs';
-                        }
-                        if (in_array('swile', $paygreenPlatforms)) {
-                            $choices['Swile'] = 'swile';
-                        }
-                    }
-                    break;
                 case 'mercadopago':
                     // @see https://www.mercadopago.com.br/developers/en/guides/payments/api/receiving-payment-by-card/
                     $form

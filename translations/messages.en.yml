@@ -1795,7 +1795,7 @@ form.store.cyke_time_slot.placeholder: 'Mo-Fr 09:00-18:00, Sa 09:00-16:00'
 form.store.cyke_time_slot.invalid: 'This value should match the schema.org opening hours format, e.g. "Mo-Fr 09:00-18:00, Sa 09:00-16:00"'
 store.form.section.cyke: Cyke
 form.payment.edenred.refund_amount.help: Edenred does not support partial refunds.
-restaurant.form.use_paygreen.label: Use Paygreen for this shop
+restaurant.form.use_paygreen.label: Use Paygreen for this shop (meal vouchers; credit cards are processed by Stripe when available)
 restaurant.meal_vouchers_transactions.emitter: Emitter
 form.settings.version: Version
 restaurant.stats.show_only_meal_vouchers: Show only orders paid with meal vouchers
