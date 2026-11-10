@@ -123,7 +123,10 @@
         <h4><i class="fa fa-info-circle"></i> {% trans %}referral.welcome_settings.info.title{% endtrans %}</h4>
         <p style="margin:0;">{% trans %}referral.welcome_settings.info.body{% endtrans %}</p>
       </div>
-      {{ form(welcome_settings_form) }}
+      {{ form_start(welcome_settings_form) }}
+      {{ form_widget(welcome_settings_form) }}
+      <button type="submit" class="btn btn-primary">{% trans %}basics.save{% endtrans %}</button>
+      {{ form_end(welcome_settings_form) }}
     </div>
   </div>
 </div>
