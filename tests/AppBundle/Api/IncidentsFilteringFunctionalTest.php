@@ -110,6 +110,75 @@ class IncidentsFilteringFunctionalTest extends ApiTestCase
         $this->assertSame(0, $response->toArray()['hydra:totalItems']);
     }
 
+    public function testOrderNumberFilterMatchesTheOrderOfTheIncidentTask(): void
+    {
+        $userManipulator = self::getContainer()->get(UserManipulator::class);
+        $userManager = self::getContainer()->get(UserManagerInterface::class);
+        $jwtManager = self::getContainer()->get(JWTTokenManagerInterface::class);
+        $fixturesLoader = self::getContainer()->get('fidry_alice_data_fixtures.loader.doctrine');
+
+        $fixturesLoader->load([
+            __DIR__.'/../../../fixtures/ORM/sylius_taxation.yml',
+            __DIR__.'/../../../fixtures/ORM/payment_methods.yml',
+            __DIR__.'/../../../fixtures/ORM/sylius_products.yml',
+            __DIR__.'/../../../fixtures/ORM/store_basic.yml',
+            __DIR__.'/../../../fixtures/ORM/package_delivery_order.yml',
+        ]);
+
+        $userManipulator->create('dispatcher', 'password123', 'dispatcher@coopcycle.org', true, false);
+        $userManipulator->addRole('dispatcher', 'ROLE_DISPATCHER');
+        $dispatcher = $userManager->findUserByUsername('dispatcher');
+
+        /** @var Order $order */
+        $order = $this->entityManager->getRepository(Order::class)->findOneBy(['number' => 'A1']);
+
+        $incident = new Incident();
+        $incident->setTask($order->getDelivery()->getDropoff());
+        $incident->setTitle('Package was damaged');
+        $incident->setCreatedBy($dispatcher);
+
+        // An incident on a task which is not part of an order
+        $taskWithoutOrder = new \AppBundle\Entity\Task();
+        $taskWithoutOrder->setAddress($order->getDelivery()->getDropoff()->getAddress());
+        $taskWithoutOrder->setAfter(new \DateTime('today 10:00'));
+        $taskWithoutOrder->setBefore(new \DateTime('today 18:00'));
+
+        $otherIncident = new Incident();
+        $otherIncident->setTask($taskWithoutOrder);
+        $otherIncident->setTitle('Closed store');
+        $otherIncident->setCreatedBy($dispatcher);
+
+        $this->entityManager->persist($taskWithoutOrder);
+        $this->entityManager->persist($incident);
+        $this->entityManager->persist($otherIncident);
+        $this->entityManager->flush();
+
+        $token = $jwtManager->create($dispatcher);
+        $client = static::createClient(defaultOptions: [
+            'headers' => [
+                'authorization' => 'Bearer '.$token,
+            ],
+        ]);
+
+        $response = $client->request('GET', '/api/incidents');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSame(2, $response->toArray()['hydra:totalItems']);
+
+        // Order numbers are case-insensitive, and may be pasted with surrounding spaces
+        foreach (['A1', 'a1', ' A1 '] as $orderNumber) {
+            $response = $client->request('GET', '/api/incidents?orderNumber='.urlencode($orderNumber));
+            $this->assertResponseStatusCodeSame(200);
+            $data = $response->toArray();
+            $this->assertSame(1, $data['hydra:totalItems']);
+            $this->assertSame($incident->getId(), $data['hydra:member'][0]['id']);
+            $this->assertSame('A1', $data['hydra:member'][0]['order']['number']);
+        }
+
+        $response = $client->request('GET', '/api/incidents?orderNumber=B2');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSame(0, $response->toArray()['hydra:totalItems']);
+    }
+
     public function testFailureReasonCodeFilterSupportsMultipleValues(): void
     {
         $userManipulator = self::getContainer()->get(UserManipulator::class);

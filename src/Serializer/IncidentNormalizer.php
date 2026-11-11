@@ -65,6 +65,7 @@ class IncidentNormalizer implements NormalizerInterface
         }
         $data['order'] = [
             'id' => $order?->getId(),
+            'number' => $order?->getNumber(),
             'restaurant' => [
                 'id' => $restaurant?->getId(),
                 'name' => $restaurant?->getName()
