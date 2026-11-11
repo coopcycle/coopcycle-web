@@ -14,6 +14,7 @@ import { I18nextProvider } from 'react-i18next'
 import axios from 'axios'
 
 import i18n, { getCurrencySymbol } from '../i18n'
+import { startPrecogPingIfEnabled } from '../precog/ping'
 import LoopeatModal from './LoopeatModal'
 
 import './index.scss'
@@ -366,3 +367,7 @@ root.render(
     </I18nextProvider>
   </Provider>
 )
+
+// Dispatch board "precognition": the server decides whether this cart is merely
+// open at checkout or actually ready to be paid for.
+startPrecogPingIfEnabled('checkout', document.querySelector('#js-order-data'))

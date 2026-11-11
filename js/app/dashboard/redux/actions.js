@@ -2673,3 +2673,16 @@ export function removeTagFromTasks(slug, tasks) {
       .catch(error => dispatch(startTaskFailure(error)))
   }
 }
+
+/**
+ * Dispatch board "precognition": carts moving through checkout, drawn as
+ * halos where an order is about to land.
+ *
+ * `precogSynced` replaces the whole set -- used on load and on every Centrifugo
+ * (re)connect, since a board that was disconnected has no way of knowing which
+ * ghosts appeared or expired while it was away.
+ */
+export const precogUpdated = createAction('PRECOG_UPDATED')
+export const precogGone = createAction('PRECOG_GONE')
+export const precogSynced = createAction('PRECOG_SYNCED')
+export const precogExpired = createAction('PRECOG_EXPIRED')

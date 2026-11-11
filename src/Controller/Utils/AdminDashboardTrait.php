@@ -17,6 +17,7 @@ use AppBundle\Entity\Tour;
 use AppBundle\Form\TaskExportType;
 use AppBundle\Form\TaskGroupType;
 use AppBundle\Form\TaskUploadType;
+use AppBundle\Service\Precog\PrecogTracker;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TagManager;
 use AppBundle\Service\TaskListManager;
@@ -68,10 +69,11 @@ trait AdminDashboardTrait
         IriConverterInterface $iriConverter,
         TagManager $tagManager,
         NormalizerInterface $normalizer,
-        SettingsManager $settingsManager)
+        SettingsManager $settingsManager,
+        PrecogTracker $precogTracker)
     {
         return $this->dashboardFullscreenAction((new \DateTime())->format('Y-m-d'),
-            $request, $taskManager, $jwtManager, $centrifugoClient, $tile38, $iriConverter, $tagManager, $normalizer, $settingsManager);
+            $request, $taskManager, $jwtManager, $centrifugoClient, $tile38, $iriConverter, $tagManager, $normalizer, $settingsManager, $precogTracker);
     }
 
     #[Route("/admin/dashboard/fullscreen/{date}", name: "admin_dashboard_fullscreen", requirements: ["date" => "[0-9]{4}-[0-9]{2}-[0-9]{2}"])]
@@ -83,7 +85,8 @@ trait AdminDashboardTrait
         IriConverterInterface $iriConverter,
         TagManager $tagManager,
         NormalizerInterface $normalizer,
-        SettingsManager $settingsManager)
+        SettingsManager $settingsManager,
+        PrecogTracker $precogTracker)
     {
         new Hashids($this->getParameter('secret'), 8);
 
@@ -184,6 +187,8 @@ trait AdminDashboardTrait
             'pickup_cluster_addresses' => $addressIris,
             'export_enabled' => $this->isGranted('ROLE_ADMIN') ? 'on' : 'off',
             'initial_task' => $request->query->get('task'),
+            'precog_enabled' => $precogTracker->isEnabled(),
+            'precog' => $precogTracker->all(),
         ]));
     }
 

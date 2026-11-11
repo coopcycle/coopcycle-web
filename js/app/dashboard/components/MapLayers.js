@@ -3,7 +3,8 @@ import { connect } from 'react-redux'
 import _ from 'lodash'
 
 import { selectVisibleOnMapTaskIds, selectHiddenOnMapTaskIds, selectPolylines, selectAsTheCrowFlies,
-  selectPositions, selectSelectedTasks, selectRestaurantAddressIds, selectTourIdToColorMap, selectSettings } from '../redux/selectors'
+  selectPositions, selectSelectedTasks, selectRestaurantAddressIds, selectTourIdToColorMap, selectSettings,
+  selectPrecogGhosts, selectPrecogEnabled } from '../redux/selectors'
 import { selectAllTasks } from '../../coopcycle-frontend-js/logistics/redux'
 import { selectAllWarehouses } from '../../../shared/src/logistics/redux/selectors'
 
@@ -145,6 +146,24 @@ function mapStateToPropsClusters(state) {
   }
 }
 
+/**
+ * Carts on their way to becoming orders.
+ *
+ * Nothing here is clickable or assignable, by design: a ghost is a forecast of
+ * where work is about to appear, and acting on one that never converts costs
+ * real money. It informs; it does not offer anything to do.
+ */
+const PrecogLayer = ({ ghosts, precogEnabled }) => {
+
+  const map = useMap()
+
+  React.useEffect(() => {
+    map.setPrecog(ghosts, precogEnabled)
+  }, [ ghosts, precogEnabled ])
+
+  return null
+}
+
 const WarehouseLayer = ({ warehouses }) => {
   const map = useMap()
 
@@ -160,3 +179,7 @@ export const PolylineMapLayer = connect(mapStateToPropsPolyline)(PolylineLayer)
 export const TaskMapLayer = connect(mapStateToPropsTask)(TaskLayer)
 export const ClustersMapToggle = connect(mapStateToPropsClusters)(ClustersToggle)
 export const WarehouseMapLayer = connect(state => ({ warehouses: selectAllWarehouses(state) }))(WarehouseLayer)
+export const PrecogMapLayer = connect(state => ({
+  ghosts: selectPrecogGhosts(state),
+  precogEnabled: selectPrecogEnabled(state),
+}))(PrecogLayer)

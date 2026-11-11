@@ -92,10 +92,17 @@ async function start(tasksRequest, tasksListsRequest, toursRequest) {
       pickupClusterAddresses: JSON.parse(dashboardEl.dataset.pickupClusterAddresses),
       exportEnabled: dashboardEl.dataset.exportEnabled,
       initialTask: initialTask,
+      precogEnabled: dashboardEl.dataset.precogEnabled === 'true',
     },
     tracking: {
       positions,
     },
+    // Carts already in flight when the board opened. Centrifugo only carries
+    // what happens from now on, so without this the first minute and a half of
+    // a freshly loaded board would be blank for no reason.
+    precog: Object.fromEntries(
+      JSON.parse(dashboardEl.dataset.precog || '[]').map(ghost => [ ghost.id, ghost ])
+    ),
     settings: settingsInitialState,
   }
 

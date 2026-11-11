@@ -16,6 +16,7 @@ import {
 } from './redux/actions'
 import storage from '../search/address-storage'
 import { initLoopeatContext } from './loopeat'
+import { startPrecogPingIfEnabled } from '../precog/ping'
 
 import './item.scss'
 import './header.scss'
@@ -192,3 +193,7 @@ function init() {
 }
 
 init()
+
+// Dispatch board "precognition": the faintest rung. The server drops the ping on
+// the floor unless this cart already has a delivery address on it.
+startPrecogPingIfEnabled('cart', document.querySelector('#js-restaurant-data'))
