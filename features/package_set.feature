@@ -28,7 +28,7 @@ Feature: Package set
               },
               {
                 "entity": "AppBundle\\Entity\\DeliveryForm",
-                "name": @string@,
+                "name": "Contact form",
                 "id": @integer@
              }
           ],

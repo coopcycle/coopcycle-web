@@ -4,6 +4,7 @@
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
+    <field name="name" type="string" column="name" nullable="true"/>
     <field name="withVehicle" type="boolean" column="with_vehicle"/>
     <field name="withWeight" type="boolean" column="with_weight"/>
     <field name="showHomepage" type="boolean" column="show_homepage"/>
