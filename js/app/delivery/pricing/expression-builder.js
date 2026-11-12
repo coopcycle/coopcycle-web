@@ -6,6 +6,8 @@ export const numericTypes = [
   'diff_days(pickup)',
   'diff_hours(pickup)',
   'order.itemsTotal',
+  'task.pickupRank',
+  'task.dropoffRank',
 ]
 
 export const isNum = (type) => _.includes(numericTypes, type)

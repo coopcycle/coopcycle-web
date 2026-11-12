@@ -188,6 +188,23 @@ const traverseNode = (node, accumulator) => {
           right: $right,
         })
 
+      } else if (node.nodes.left.nodes.node?.attributes.name === 'task' && ['pickupRank', 'dropoffRank'].includes(node.nodes.left.nodes.attribute?.attributes.value)) {
+        let $right
+        if ('in' === node.attributes.operator) {
+          $right = [
+            node.nodes.right.nodes.left.attributes.value,
+            node.nodes.right.nodes.right.attributes.value
+          ]
+        } else {
+          $right = node.nodes.right.attributes.value
+        }
+
+        accumulator.push({
+          left:     `task.${node.nodes.left.nodes.attribute.attributes.value}`,
+          operator: node.attributes.operator,
+          right:    $right,
+        })
+
       } else if (node.nodes.left.attributes.name === 'diff_hours' || node.nodes.left.attributes.name === 'diff_days') {
         accumulator.push({
           left:     `${node.nodes.left.attributes.name}(${node.nodes.left.nodes.arguments.nodes[0].attributes.name})`,

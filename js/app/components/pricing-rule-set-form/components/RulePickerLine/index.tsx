@@ -47,6 +47,8 @@ const typeToOperators = {
   "time_range_length(pickup, 'hours')": ['<', '>', 'in'],
   "time_range_length(dropoff, 'hours')": ['<', '>', 'in'],
   'task.type': ['=='],
+  'task.pickupRank': ['==', '<', '>', 'in'],
+  'task.dropoffRank': ['==', '<', '>', 'in'],
   time_slot: ['==', '!='],
 };
 
@@ -75,7 +77,9 @@ const getStepForType = (type: string): string => {
   // https://github.com/coopcycle/coopcycle-web/issues/5002
   if (
     type === 'packages.totalVolumeUnits()' ||
-    type === 'delivery.packages.totalVolumeUnits()'
+    type === 'delivery.packages.totalVolumeUnits()' ||
+    type === 'task.pickupRank' ||
+    type === 'task.dropoffRank'
   ) {
     return '1';
   }
