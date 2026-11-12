@@ -142,7 +142,14 @@
         <!-- React component will be inserted here -->
         <div id="order__fulfilment_time_range__container">
         </div>
-        <div>
+        <div class="flex flex-row items-center">
+          <a class="btn btn-ghost mr-2" href="{{ path((order.isMultiVendor() ? 'hub' : 'restaurant'), {
+              id:   order.vendor.id,
+              slug: order.vendor.name|slugify
+            }) }}" title="{{ 'checkout.previous'|trans }}">
+            <i class="fa fa-arrow-left"></i>
+            <span class="hidden md:inline">{{ 'checkout.previous'|trans }}</span>
+          </a>
           {% if form.quote is defined %}
             {{ form_widget(form.quote, { attr: { class: 'btn-lg btn-default mr-2' } }) }}
           {% endif %}

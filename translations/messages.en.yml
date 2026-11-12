@@ -443,6 +443,7 @@ cart.title: Cart
 checkout.breadcrumb.address: Address
 checkout.breadcrumb.payment: Payment
 checkout.breadcrumb.confirm: Confirmation
+checkout.previous: Previous
 form.geojson_upload.file: File
 form.store_type.pricing_rule_set.label: Pricing
 form.store_type.pricing_rule_set.warning: Without pricing,
