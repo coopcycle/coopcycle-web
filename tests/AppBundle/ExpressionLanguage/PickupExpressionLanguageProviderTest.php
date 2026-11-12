@@ -180,6 +180,124 @@ class PickupExpressionLanguageProviderTest extends TestCase
         $this->assertEquals($expectedValue, $value);
     }
 
+    private function createTaskObject(string $type, ?string $before): \stdClass
+    {
+        $task = new \stdClass();
+        $task->type = $type;
+        $task->createdAt = null;
+        $task->after = null;
+        $task->before = null === $before ? null : new \DateTime($before);
+
+        return $task;
+    }
+
+    /**
+     * Mirrors the values built by TaskExpressionLanguageVisitor, where 'task' is the
+     * point being priced, and only one of 'pickup' or 'dropoff' is that point;
+     * the other one is an object with no dates.
+     */
+    private function createPointValues(string $type, string $before): array
+    {
+        $point = $this->createTaskObject($type, $before);
+        $empty = $this->createTaskObject('', null);
+
+        return [
+            'pickup' => $type === 'PICKUP' ? $point : $empty,
+            'dropoff' => $type === 'DROPOFF' ? $point : $empty,
+            'task' => $point,
+        ];
+    }
+
+    public function onPointProvider()
+    {
+        return [
+            [ 'PICKUP',  'diff_days(pickup, "< 1")',   true  ],
+            [ 'PICKUP',  'diff_days(dropoff, "< 1")',  false ],
+            [ 'DROPOFF', 'diff_days(pickup, "< 1")',   false ],
+            [ 'DROPOFF', 'diff_days(dropoff, "< 1")',  true  ],
+            [ 'PICKUP',  'diff_hours(pickup, "< 3")',  true  ],
+            [ 'PICKUP',  'diff_hours(dropoff, "< 3")', false ],
+            [ 'DROPOFF', 'diff_hours(pickup, "< 3")',  false ],
+            [ 'DROPOFF', 'diff_hours(dropoff, "< 3")', true  ],
+        ];
+    }
+
+    /**
+     * @dataProvider onPointProvider
+     */
+    public function testOnPoint($type, $expression, $expectedValue)
+    {
+        Carbon::setTestNow(Carbon::parse('2019-08-19 09:00:00'));
+
+        $this->language->registerProvider(new PickupExpressionLanguageProvider());
+
+        $values = $this->createPointValues($type, '2019-08-19 10:30:00');
+
+        $this->assertSame($expectedValue, $this->language->evaluate($expression, $values));
+    }
+
+    public function onPointWithoutOperatorProvider()
+    {
+        return [
+            [ 'PICKUP',  'diff_days(pickup)',   0  ],
+            [ 'PICKUP',  'diff_days(dropoff)',  -1 ],
+            [ 'DROPOFF', 'diff_days(pickup)',   -1 ],
+            [ 'DROPOFF', 'diff_days(dropoff)',  0  ],
+            [ 'PICKUP',  'diff_hours(dropoff)', -1 ],
+            [ 'DROPOFF', 'diff_hours(pickup)',  -1 ],
+        ];
+    }
+
+    /**
+     * The deprecated form, without an operator, returns -1 for the other point.
+     *
+     * @dataProvider onPointWithoutOperatorProvider
+     */
+    public function testOnPointWithoutOperator($type, $expression, $expectedValue)
+    {
+        Carbon::setTestNow(Carbon::parse('2019-08-19 09:00:00'));
+
+        $this->language->registerProvider(new PickupExpressionLanguageProvider());
+
+        $values = $this->createPointValues($type, '2019-08-19 10:30:00');
+
+        $this->assertEquals($expectedValue, @$this->language->evaluate($expression, $values));
+    }
+
+    public function onDeliveryProvider()
+    {
+        return [
+            [ 'diff_days(pickup, "< 1")',   true  ],
+            [ 'diff_days(dropoff, "< 1")',  false ],
+            [ 'diff_hours(pickup, "< 3")',  true  ],
+            [ 'diff_hours(dropoff, "< 3")', false ],
+        ];
+    }
+
+    /**
+     * Mirrors the values built by DeliveryExpressionLanguageVisitor, where 'task'
+     * has an empty type, so both 'pickup' and 'dropoff' are evaluated.
+     *
+     * @dataProvider onDeliveryProvider
+     */
+    public function testOnDelivery($expression, $expectedValue)
+    {
+        Carbon::setTestNow(Carbon::parse('2019-08-19 09:00:00'));
+
+        $this->language->registerProvider(new PickupExpressionLanguageProvider());
+
+        $empty = new \stdClass();
+        $empty->type = '';
+
+        $values = [
+            'pickup' => $this->createTaskObject('PICKUP', '2019-08-19 10:30:00'),
+            'dropoff' => $this->createTaskObject('DROPOFF', '2019-08-20 18:00:00'),
+            'task' => $empty,
+        ];
+
+        $this->assertSame($expectedValue, $this->language->evaluate($expression, $values));
+    }
+
     public function timeRangeLengthProvider()
     {
         return [

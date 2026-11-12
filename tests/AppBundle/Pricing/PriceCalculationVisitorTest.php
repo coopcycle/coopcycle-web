@@ -801,6 +801,170 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $this->assertEquals(100, $output->getPrice());
     }
 
+    public function testMultiPointGetPriceWithDiffDaysOfPickupOnEachTask()
+    {
+        Carbon::setTestNow(Carbon::parse('2024-06-17 12:00:00'));
+
+        $rule1 = new PricingRule();
+        $rule1->setExpression('diff_days(pickup, "< 1")');
+        $rule1->setPrice(100);
+        $rule1->setTarget(PricingRule::TARGET_TASK);
+        $rule1->setPosition(0);
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([
+            $rule1,
+        ]));
+
+        $pickup = $this->createPickupTask();
+        $pickup->setBefore(new \DateTime('2024-06-17 13:30:00'));
+
+        $dropoff1 = $this->createDropoffTask();
+        $dropoff1->setBefore(new \DateTime('2024-06-17 15:30:00'));
+
+        $dropoff2 = $this->createDropoffTask();
+        $dropoff2->setBefore(new \DateTime('2024-06-17 17:30:00'));
+
+        $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
+
+        // Only the pickup matches, the dropoffs see an empty 'pickup'
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(100, $output->getPrice());
+    }
+
+    public function testLegacyMultiPointGetPriceWithDiffDaysOfPickup()
+    {
+        Carbon::setTestNow(Carbon::parse('2024-06-17 12:00:00'));
+
+        $rule1 = new PricingRule();
+        $rule1->setExpression('diff_days(pickup, "< 1")');
+        $rule1->setPrice(100);
+        $rule1->setTarget(PricingRule::LEGACY_TARGET_DYNAMIC);
+        $rule1->setPosition(0);
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([
+            $rule1,
+        ]));
+
+        $pickup = $this->createPickupTask();
+        $pickup->setBefore(new \DateTime('2024-06-17 13:30:00'));
+
+        $dropoff1 = $this->createDropoffTask();
+        $dropoff1->setBefore(new \DateTime('2024-06-17 15:30:00'));
+
+        $dropoff2 = $this->createDropoffTask();
+        $dropoff2->setBefore(new \DateTime('2024-06-17 17:30:00'));
+
+        $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
+
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(100, $output->getPrice());
+    }
+
+    public function testMultiPointGetPriceWithDiffDaysOfDropoffOnEachTask()
+    {
+        Carbon::setTestNow(Carbon::parse('2024-06-17 12:00:00'));
+
+        $rule1 = new PricingRule();
+        $rule1->setExpression('distance > 0');
+        $rule1->setPrice(1000);
+        $rule1->setTarget(PricingRule::TARGET_DELIVERY);
+        $rule1->setPosition(0);
+
+        $rule2 = new PricingRule();
+        $rule2->setExpression('diff_days(dropoff, "< 1")');
+        $rule2->setPrice(100);
+        $rule2->setTarget(PricingRule::TARGET_TASK);
+        $rule2->setPosition(1);
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([
+            $rule1,
+            $rule2,
+        ]));
+
+        $pickup = $this->createPickupTask();
+        $pickup->setBefore(new \DateTime('2024-06-17 13:30:00'));
+
+        $dropoff1 = $this->createDropoffTask();
+        $dropoff1->setBefore(new \DateTime('2024-06-17 15:30:00'));
+
+        $dropoff2 = $this->createDropoffTask();
+        $dropoff2->setBefore(new \DateTime('2024-06-17 17:30:00'));
+
+        $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
+        $delivery->setDistance(1500);
+
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(1200, $output->getPrice());
+    }
+
+    public function testMultiPointGetPriceWithDiffDaysOfDropoffSkipsLaterDropoffs()
+    {
+        Carbon::setTestNow(Carbon::parse('2024-06-17 12:00:00'));
+
+        $rule1 = new PricingRule();
+        $rule1->setExpression('diff_days(dropoff, "< 1")');
+        $rule1->setPrice(100);
+        $rule1->setTarget(PricingRule::TARGET_TASK);
+        $rule1->setPosition(0);
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([
+            $rule1,
+        ]));
+
+        $pickup = $this->createPickupTask();
+        $pickup->setBefore(new \DateTime('2024-06-17 13:30:00'));
+
+        $dropoff1 = $this->createDropoffTask();
+        $dropoff1->setBefore(new \DateTime('2024-06-17 15:30:00'));
+
+        $dropoff2 = $this->createDropoffTask();
+        $dropoff2->setBefore(new \DateTime('2024-06-18 10:00:00'));
+
+        $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
+
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(100, $output->getPrice());
+    }
+
+    public function testMultiPointGetPriceWithDiffHoursOfDropoffOnEachTask()
+    {
+        Carbon::setTestNow(Carbon::parse('2024-06-17 12:00:00'));
+
+        $rule1 = new PricingRule();
+        $rule1->setExpression('diff_hours(dropoff, "< 3")');
+        $rule1->setPrice(100);
+        $rule1->setTarget(PricingRule::TARGET_TASK);
+        $rule1->setPosition(0);
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([
+            $rule1,
+        ]));
+
+        $pickup = $this->createPickupTask();
+        $pickup->setBefore(new \DateTime('2024-06-17 12:30:00'));
+
+        $dropoff1 = $this->createDropoffTask();
+        $dropoff1->setBefore(new \DateTime('2024-06-17 13:30:00'));
+
+        $dropoff2 = $this->createDropoffTask();
+        $dropoff2->setBefore(new \DateTime('2024-06-17 17:00:00'));
+
+        $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
+
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(100, $output->getPrice());
+    }
+
     public function testMultiPointGetPriceWithTaskTypeCondition()
     {
         $rule1 = new PricingRule();

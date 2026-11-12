@@ -220,6 +220,24 @@ class RuleHumanizerTest extends KernelTestCase
         $this->assertEquals('Délai de préavis pour retrait entre 1 jour et 2 jours - €1.00', $this->humanizer->humanize($rule));
     }
 
+    public function testDiffDaysOfDropoff()
+    {
+        $rule = new PricingRule();
+        $rule->setExpression('diff_days(dropoff, \'< 1\')');
+        $rule->setPrice('100');
+
+        $this->assertEquals('Délai de préavis pour dépôt moins de 1 jour - €1.00', $this->humanizer->humanize($rule));
+    }
+
+    public function testDiffHoursOfDropoff()
+    {
+        $rule = new PricingRule();
+        $rule->setExpression('diff_hours(dropoff, \'< 12\')');
+        $rule->setPrice('100');
+
+        $this->assertEquals('Délai de préavis pour dépôt moins de 12 heures - €1.00', $this->humanizer->humanize($rule));
+    }
+
     public function testOrderItemsTotal()
     {
         $rule = new PricingRule();
