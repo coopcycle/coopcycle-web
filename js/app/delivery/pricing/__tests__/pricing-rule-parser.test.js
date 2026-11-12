@@ -26,6 +26,11 @@ import withTimeRangeLength from './with-time-range-length.json'
 import withDropoffTimeRangeLength from './with-time-range-length-dropoff.json'
 import withDropoffTimeRangeLengthWithRange from './with-time-range-length-dropoff-in.json'
 import withTimeSlot from './with-time-slot.json'
+import withDropoffRank from './with-dropoff-rank.json'
+import withDropoffRankRange from './with-dropoff-rank-range.json'
+import withTaskTypeAndDropoffRank from './with-task-type-and-dropoff-rank.json'
+import withPickupRank from './with-pickup-rank.json'
+import withPickupRankRange from './with-pickup-rank-range.json'
 
 import fixedPrice from './fixed-price.json'
 import pricePercentage from './price-percentage.json'
@@ -343,6 +348,62 @@ describe('Pricing rule parser (AST)', function() {
     expect(result).toEqual(
       [
         { left: 'order.itemsTotal', operator: 'in', right: [ 2300, 2599 ] }
+      ]
+    )
+  })
+
+  it('should parse AST with dropoff rank', function() {
+
+    const result = parseAST(withDropoffRank)
+
+    expect(result).toEqual(
+      [
+        { left: 'task.dropoffRank', operator: '>', right: 1 }
+      ]
+    )
+  })
+
+  it('should parse AST with dropoff rank (range)', function() {
+
+    const result = parseAST(withDropoffRankRange)
+
+    expect(result).toEqual(
+      [
+        { left: 'task.dropoffRank', operator: 'in', right: [ 2, 3 ] }
+      ]
+    )
+  })
+
+  it('should parse AST with task type and dropoff rank', function() {
+
+    const result = parseAST(withTaskTypeAndDropoffRank)
+
+    expect(result).toEqual(
+      [
+        { left: 'task.type', operator: '==', right: 'DROPOFF' },
+        { left: 'task.dropoffRank', operator: '==', right: 2 }
+      ]
+    )
+  })
+
+  it('should parse AST with pickup rank', function() {
+
+    const result = parseAST(withPickupRank)
+
+    expect(result).toEqual(
+      [
+        { left: 'task.pickupRank', operator: '>', right: 1 }
+      ]
+    )
+  })
+
+  it('should parse AST with pickup rank (range)', function() {
+
+    const result = parseAST(withPickupRankRange)
+
+    expect(result).toEqual(
+      [
+        { left: 'task.pickupRank', operator: 'in', right: [ 2, 3 ] }
       ]
     )
   })

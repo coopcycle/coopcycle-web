@@ -489,6 +489,8 @@
         "ADMIN_DASHBOARD_RECURRENCE_RULE_LEGACY_WARNING": "Il s'agit d'une méthode obsolète de création de règles de récurrence, veuillez configurer la récurrence via un formulaire de livraison à la place.",
         "ADMIN_RECURRENCE_RULE_NAME_PLACEHOLDER": "Nom de la règle",
         "RULE_PICKER_LINE_TASK_TYPE": "Type de tâche",
+        "RULE_PICKER_LINE_TASK_PICKUP_RANK": "Rang du retrait (1 = premier retrait)",
+        "RULE_PICKER_LINE_TASK_DROPOFF_RANK": "Rang du dépôt (1 = premier dépôt)",
         "RECURRENCE_RULE_ADD": "Ajouter une règle de récurrence",
         "RECURRENCE_RULE_DAYS_REQUIRED": "Veuillez choisir au moins un jour",
         "RECURRENCE_RULE_INVALID": "Veuillez vérifier la règle de récurrence",

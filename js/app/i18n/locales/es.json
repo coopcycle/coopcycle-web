@@ -541,6 +541,8 @@
         "COPY": "Copiar",
         "COPIED": "Copiado",
         "RULE_PICKER_LINE_TASK_TYPE": "Tipo de tarea",
+        "RULE_PICKER_LINE_TASK_PICKUP_RANK": "Orden de la recogida (1 = primera recogida)",
+        "RULE_PICKER_LINE_TASK_DROPOFF_RANK": "Orden de la entrega (1 = primera entrega)",
         "CART_ENABLE_ZERO_WASTE": "Activar la opción de cero residuos",
         "CART_ZERO_WASTE_POPUP_TEXT": "Enhorabuena, su cesta contiene un plato elegible para la entrega de cero residuos con nuestro socio« {{name}} ». Haga que se lo entreguen en cajas retornables y devuélvalas en cualquier lugar del « {{name}} » o a su servicio de mensajería con su próximo pedido. Puede desactivar esta opción en cualquier momento.",
         "CART_LOOPEAT_RETURNS_VALIDATE": "Validar y volver al carrito",

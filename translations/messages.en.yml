@@ -1824,6 +1824,8 @@ pricing.rule.humanizer.task_type_is: '%value% point'
 pricing.rule.humanizer.time_range_length: '%task_type% time window %operator% %value%'
 pricing.rule.humanizer.diff: '%task_type% prior notice %operator% %value%'
 pricing.rule.humanizer.order_items_total: cart total %operator% %value%
+pricing.rule.humanizer.pickup_rank: 'pickup rank %operator% %value%'
+pricing.rule.humanizer.dropoff_rank: 'dropoff rank %operator% %value%'
 pricing.rule.humanizer.packages_volume_units: package volume %operator% %value%
 pricing.rule.humanizer.delivery_packages_volume_units: total volume of the delivery %operator% %value%
 pricing.rule.humanizer.packages_contains_at_least_one: packages %package_name%

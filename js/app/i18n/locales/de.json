@@ -409,6 +409,8 @@
         "RULE_PICKER_LINE_DISTANCE": "Distanz (km)",
         "RULE_PICKER_LINE_PICKUP_ADDRESS": "Abholadresse",
         "RULE_PICKER_LINE_DROPOFF_ADDRESS": "Lieferadresse",
+        "RULE_PICKER_LINE_TASK_PICKUP_RANK": "Position der Abholung (1 = erste Abholung)",
+        "RULE_PICKER_LINE_TASK_DROPOFF_RANK": "Position der Lieferung (1 = erste Lieferung)",
         "RULE_PICKER_LINE_PICKUP_DIFF_HOURS": "Differenz (Stunden)",
         "RULE_PICKER_LINE_DROPOFF_DOORSTEP": "Türschwellenlieferung",
         "RULE_PICKER_LINE_PACKAGES": "Pakete",
