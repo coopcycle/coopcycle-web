@@ -840,6 +840,243 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $this->assertEquals(500, $output->getPrice());
     }
 
+    /**
+     * @return bool[] whether the rule at $position matched, for each point of the delivery, in order
+     */
+    private function getMatchedPerTask($output, int $position): array
+    {
+        $resultsPerTask = array_filter(
+            $output->calculation->resultsPerEntity,
+            fn($result) => !is_null($result->task)
+        );
+
+        return array_values(array_map(
+            fn($result) => $result->ruleResults[$position]->matched,
+            $resultsPerTask
+        ));
+    }
+
+    public function testMultiPointGetPriceWithDropoffRankGreaterThan()
+    {
+        $rule = new PricingRule();
+        $rule->setExpression('task.dropoffRank > 1');
+        $rule->setPrice(200);
+        $rule->setPosition(0);
+        $rule->setTarget(PricingRule::TARGET_TASK);
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([
+            $rule,
+        ]));
+
+        $pickup = $this->createPickupTask();
+        $dropoff1 = $this->createDropoffTask();
+        $dropoff2 = $this->createDropoffTask();
+        $dropoff3 = $this->createDropoffTask();
+
+        $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2, $dropoff3]);
+
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+
+        // Charged for the 2nd and 3rd dropoffs only
+        $this->assertEquals(400, $output->getPrice());
+        $this->assertEquals([false, false, true, true], $this->getMatchedPerTask($output, 0));
+    }
+
+    public function testMultiPointGetPriceWithDropoffRankInRange()
+    {
+        $rule = new PricingRule();
+        $rule->setExpression('task.dropoffRank in 2..2');
+        $rule->setPrice(200);
+        $rule->setPosition(0);
+        $rule->setTarget(PricingRule::TARGET_TASK);
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([
+            $rule,
+        ]));
+
+        $pickup = $this->createPickupTask();
+        $dropoff1 = $this->createDropoffTask();
+        $dropoff2 = $this->createDropoffTask();
+        $dropoff3 = $this->createDropoffTask();
+
+        $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2, $dropoff3]);
+
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+
+        // Charged for the 2nd dropoff only
+        $this->assertEquals(200, $output->getPrice());
+        $this->assertEquals([false, false, true, false], $this->getMatchedPerTask($output, 0));
+    }
+
+    public function testGetPriceWithDropoffRankOnSingleDropoff()
+    {
+        $rule = new PricingRule();
+        $rule->setExpression('task.dropoffRank > 1');
+        $rule->setPrice(200);
+        $rule->setPosition(0);
+        $rule->setTarget(PricingRule::TARGET_TASK);
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([
+            $rule,
+        ]));
+
+        $pickup = $this->createPickupTask();
+        $dropoff = $this->createDropoffTask();
+
+        $delivery = Delivery::createWithTasks(...[$pickup, $dropoff]);
+
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+
+        // No rule matched
+        $this->assertNull($output->getPrice());
+        $this->assertEquals([false, false], $this->getMatchedPerTask($output, 0));
+    }
+
+    public function testMultiPointGetPriceWithDropoffRankAndExtraDropoffFee()
+    {
+        // The use case from the coops: a fee for each dropoff, plus a fee from the 2nd dropoff on
+        $rule1 = new PricingRule();
+        $rule1->setExpression('task.type == "DROPOFF"');
+        $rule1->setPrice(500);
+        $rule1->setPosition(0);
+
+        $rule2 = new PricingRule();
+        $rule2->setExpression('task.type == "DROPOFF" and task.dropoffRank > 1');
+        $rule2->setPrice(200);
+        $rule2->setPosition(1);
+
+        foreach ([
+                     $rule1,
+                     $rule2,
+                 ] as $rule) {
+            $rule->setTarget(PricingRule::TARGET_TASK);
+        }
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([
+            $rule1,
+            $rule2,
+        ]));
+
+        $pickup = $this->createPickupTask();
+        $dropoff1 = $this->createDropoffTask();
+        $dropoff2 = $this->createDropoffTask();
+        $dropoff3 = $this->createDropoffTask();
+
+        $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2, $dropoff3]);
+
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+
+        $this->assertEquals(3 * 500 + 2 * 200, $output->getPrice());
+        $this->assertEquals([false, true, true, true], $this->getMatchedPerTask($output, 0));
+        $this->assertEquals([false, false, true, true], $this->getMatchedPerTask($output, 1));
+    }
+
+    public function testMultiPointGetPriceWithDropoffRankSkipsCancelledDropoffs()
+    {
+        $rule = new PricingRule();
+        $rule->setExpression('task.dropoffRank > 1');
+        $rule->setPrice(200);
+        $rule->setPosition(0);
+        $rule->setTarget(PricingRule::TARGET_TASK);
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([
+            $rule,
+        ]));
+
+        $pickup = $this->createPickupTask();
+        $dropoff1 = $this->createDropoffTask();
+        $dropoff1->setStatus(Task::STATUS_CANCELLED);
+        $dropoff2 = $this->createDropoffTask();
+        $dropoff3 = $this->createDropoffTask();
+
+        $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2, $dropoff3]);
+
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+
+        // The cancelled dropoff is not priced and not counted: the 3rd dropoff is the 2nd one delivered
+        $this->assertEquals(200, $output->getPrice());
+        $this->assertEquals([false, false, true], $this->getMatchedPerTask($output, 0));
+    }
+
+    public function testMultiPointGetPriceWithPickupRankGreaterThan()
+    {
+        $rule = new PricingRule();
+        $rule->setExpression('task.pickupRank > 1');
+        $rule->setPrice(200);
+        $rule->setPosition(0);
+        $rule->setTarget(PricingRule::TARGET_TASK);
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([
+            $rule,
+        ]));
+
+        $pickup1 = $this->createPickupTask();
+        $pickup2 = $this->createPickupTask();
+        $pickup3 = $this->createPickupTask();
+        $dropoff = $this->createDropoffTask();
+
+        $delivery = Delivery::createWithTasks(...[$pickup1, $pickup2, $pickup3, $dropoff]);
+
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+
+        // Charged for the 2nd and 3rd pickups only
+        $this->assertEquals(400, $output->getPrice());
+        $this->assertEquals([false, true, true, false], $this->getMatchedPerTask($output, 0));
+    }
+
+    public function testMultiPointGetPriceWithPickupAndDropoffRanks()
+    {
+        // In a delivery with several pickups and several dropoffs, each type is ranked on its own
+        $rule1 = new PricingRule();
+        $rule1->setExpression('task.pickupRank == 2');
+        $rule1->setPrice(100);
+        $rule1->setPosition(0);
+
+        $rule2 = new PricingRule();
+        $rule2->setExpression('task.dropoffRank == 2');
+        $rule2->setPrice(200);
+        $rule2->setPosition(1);
+
+        foreach ([
+                     $rule1,
+                     $rule2,
+                 ] as $rule) {
+            $rule->setTarget(PricingRule::TARGET_TASK);
+        }
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([
+            $rule1,
+            $rule2,
+        ]));
+
+        $pickup1 = $this->createPickupTask();
+        $pickup2 = $this->createPickupTask();
+        $dropoff1 = $this->createDropoffTask();
+        $dropoff2 = $this->createDropoffTask();
+
+        $delivery = Delivery::createWithTasks(...[$pickup1, $pickup2, $dropoff1, $dropoff2]);
+
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+
+        $this->assertEquals(300, $output->getPrice());
+        $this->assertEquals([false, true, false, false], $this->getMatchedPerTask($output, 0));
+        $this->assertEquals([false, false, false, true], $this->getMatchedPerTask($output, 1));
+    }
+
     public function testLegacyMultiPointGetPriceWithTaskTypeCondition()
     {
         $rule1 = new PricingRule();

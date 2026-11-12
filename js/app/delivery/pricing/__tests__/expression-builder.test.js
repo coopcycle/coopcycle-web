@@ -1,4 +1,4 @@
-import { numericTypes, isNum, lineToString } from '../expression-builder'
+import { numericTypes, isNum, lineToString, linesToString } from '../expression-builder'
 
 describe('isNum', () => {
   it('should return true for numeric types', () => {
@@ -153,6 +153,53 @@ describe('lineToString', () => {
     it('should handle in operator with range', () => {
       const result = lineToString({ left: 'order.itemsTotal', operator: 'in', right: [20, 50] })
       expect(result).toEqual('order.itemsTotal in 20..50')
+    })
+  })
+
+  describe('task.dropoffRank', () => {
+    it('should handle == operator', () => {
+      const result = lineToString({ left: 'task.dropoffRank', operator: '==', right: 2 })
+      expect(result).toEqual('task.dropoffRank == 2')
+    })
+
+    it('should handle < operator', () => {
+      const result = lineToString({ left: 'task.dropoffRank', operator: '<', right: 3 })
+      expect(result).toEqual('task.dropoffRank < 3')
+    })
+
+    it('should handle > operator', () => {
+      const result = lineToString({ left: 'task.dropoffRank', operator: '>', right: 1 })
+      expect(result).toEqual('task.dropoffRank > 1')
+    })
+
+    it('should handle in operator with range', () => {
+      const result = lineToString({ left: 'task.dropoffRank', operator: 'in', right: ['2', '3'] })
+      expect(result).toEqual('task.dropoffRank in 2..3')
+    })
+
+    it('should be combined with the task type', () => {
+      const result = linesToString([
+        { left: 'task.type', operator: '==', right: 'DROPOFF' },
+        { left: 'task.dropoffRank', operator: '>', right: 1 },
+      ])
+      expect(result).toEqual('task.type == "DROPOFF" and task.dropoffRank > 1')
+    })
+  })
+
+  describe('task.pickupRank', () => {
+    it('should handle == operator', () => {
+      const result = lineToString({ left: 'task.pickupRank', operator: '==', right: 2 })
+      expect(result).toEqual('task.pickupRank == 2')
+    })
+
+    it('should handle > operator', () => {
+      const result = lineToString({ left: 'task.pickupRank', operator: '>', right: 1 })
+      expect(result).toEqual('task.pickupRank > 1')
+    })
+
+    it('should handle in operator with range', () => {
+      const result = lineToString({ left: 'task.pickupRank', operator: 'in', right: ['2', '3'] })
+      expect(result).toEqual('task.pickupRank in 2..3')
     })
   })
 
