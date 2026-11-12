@@ -35,6 +35,8 @@
     data-export-enabled="{{ export_enabled }}"
     data-initial-task="{{ initial_task|json_encode|e('html_attr') }}"
     data-shift-planning-enabled="{{ shift_planning_enabled ? 'true' : 'false' }}"
+    data-precog-enabled="{{ precog_enabled ? 'true' : 'false' }}"
+    data-precog="{{ precog|json_encode|e('html_attr') }}"
 >
   </div>
   <div class="dashboard__loader">

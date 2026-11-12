@@ -22,6 +22,7 @@ import vehicleEntityReducers from './vehicleEntityReducers';
 import trailerEntityReducers from './trailerEntityReducers';
 import warehouseEntityReducers from './warehouseEntityReducers';
 import optimReducers from './optimReducers';
+import precogReducers from './precogReducers';
 import { accountSlice } from '../../entities/account/reduxSlice'
 import { apiSlice } from '../../api/slice'
 
@@ -51,6 +52,7 @@ const reducer = combineReducers({
   config: configReducers,
   settings: settingsReducers,
   tracking: trackingReducers,
+  precog: precogReducers,
   [accountSlice.name]: accountSlice.reducer,
   [apiSlice.reducerPath]: apiSlice.reducer,
   optimization: optimReducers

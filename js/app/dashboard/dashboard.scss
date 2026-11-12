@@ -662,3 +662,156 @@ $pulse-color: #2ECC40;
     overflow-x: hidden;
   }
 }
+
+//
+// "Precognition": carts moving through checkout, drawn where the order is
+// about to land.
+//
+// Five rungs. Each one moves the pulse rate, the opacity and the core size
+// together, so intensity reads the same way whether you are looking at one
+// halo or at the shape of the whole board. Hue stays cool for the first three
+// and turns amber on the payment page: that one change is the only signal
+// worth interrupting a dispatcher for, so nothing else is allowed to use it.
+//
+// The uncertainty around the position is drawn by a Leaflet circle in metres
+// (see MapProxy#setPrecog), not here, because a radius in pixels would lie
+// about it at every zoom but one.
+//
+
+$precog-cool: #1FA8BD;
+$precog-warm: #E0A81A;
+
+.precog {
+  position: relative;
+  // The div icon is sized 0x0, so the halo centres itself on the point
+  // rather than hanging off its top-left corner.
+  width: 0;
+  height: 0;
+
+  &__ring {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 72px;
+    height: 72px;
+    margin: -36px 0 0 -36px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--precog-hue) 0%, transparent 70%);
+    opacity: 0;
+    animation: precog-ripple var(--precog-period) cubic-bezier(.2, .6, .3, 1) infinite;
+    will-change: transform, opacity;
+
+    &--delayed {
+      animation-delay: calc(var(--precog-period) / 2);
+    }
+  }
+
+  &__core {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: var(--precog-core);
+    height: var(--precog-core);
+    margin: calc(var(--precog-core) / -2) 0 0 calc(var(--precog-core) / -2);
+    border-radius: 50%;
+    background: var(--precog-hue);
+    opacity: var(--precog-peak);
+  }
+
+  &--rank-1 {
+    --precog-hue: #{$precog-cool};
+    --precog-period: 3.2s;
+    --precog-peak: 0.26;
+    --precog-core: 6px;
+  }
+
+  &--rank-2 {
+    --precog-hue: #{$precog-cool};
+    --precog-period: 2.4s;
+    --precog-peak: 0.38;
+    --precog-core: 7px;
+  }
+
+  &--rank-3 {
+    --precog-hue: #{$precog-cool};
+    --precog-period: 1.7s;
+    --precog-peak: 0.54;
+    --precog-core: 8px;
+  }
+
+  &--rank-4 {
+    --precog-hue: #{$precog-warm};
+    --precog-period: 1.1s;
+    --precog-peak: 0.74;
+    --precog-core: 10px;
+  }
+
+  &--rank-5 {
+    --precog-hue: #{$precog-warm};
+    --precog-period: 0.75s;
+    --precog-peak: 0.95;
+    --precog-core: 12px;
+  }
+}
+
+@keyframes precog-ripple {
+  0% {
+    transform: scale(.18);
+    opacity: var(--precog-peak);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+// The disc is the precision the server was willing to publish at, to scale.
+.precog-disc {
+  fill: $precog-cool;
+  fill-opacity: 0.05;
+  stroke: $precog-cool;
+  stroke-opacity: 0.3;
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+
+  &--rank-4,
+  &--rank-5 {
+    fill: $precog-warm;
+    stroke: $precog-warm;
+  }
+}
+
+// A map covered in strobing dots is a reason to stop using the board. The rung
+// still reads, from opacity and size; only the motion goes.
+@media (prefers-reduced-motion: reduce) {
+  .precog__ring {
+    animation: none;
+    transform: scale(.55);
+    opacity: calc(var(--precog-peak) * 0.45);
+  }
+}
+
+.precog-counter {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
+  font-size: 12px;
+  line-height: 1;
+
+  &__dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: $precog-cool;
+
+    &--warm {
+      background: $precog-warm;
+    }
+  }
+
+  &__n {
+    font-variant-numeric: tabular-nums;
+  }
+}

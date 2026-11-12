@@ -15,6 +15,7 @@ import { buildGuestInitialState } from '../../entities/guest/utils'
 import { orderSlice } from '../../entities/order/reduxSlice'
 import { timeRangeSlice } from '../../components/order/timeRange/reduxSlice'
 import { createStoreFromPreloadedState } from './redux/store'
+import { startPrecogPingIfEnabled } from '../../precog/ping'
 
 import '../../components/order/index.scss'
 
@@ -61,3 +62,15 @@ root.render(
     </I18nextProvider>
   </Provider>
 )
+
+// Dispatch board "precognition": this is the brightest rung of the funnel, and
+// the form submit is the moment it goes brighter still.
+const precog = startPrecogPingIfEnabled('payment', orderDataElement)
+
+if (precog) {
+  const paymentForm = document.querySelector('form[name="checkout_payment"]')
+
+  if (paymentForm) {
+    paymentForm.addEventListener('submit', () => precog.submitted())
+  }
+}

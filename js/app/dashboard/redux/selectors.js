@@ -526,3 +526,29 @@ export const selectTourIdToColorMap = createSelector(
     })
     return toColorMap
   })
+
+/**
+ * Whether the "precognition" layer should be drawn at all.
+ *
+ * Two gates, deliberately. The deployment flag says the tenant has decided this
+ * is acceptable to show at all -- which is a privacy call, not a preference.
+ * The setting is the individual dispatcher's escape hatch from a busier board.
+ */
+export const selectPrecogEnabled = state =>
+  Boolean(state.config.precogEnabled) && Boolean(state.settings.precogEnabled)
+
+export const selectPrecogGhosts = createSelector(
+  state => state.precog,
+  precog => Object.values(precog)
+)
+
+/**
+ * How many carts are in flight, by rung -- an array indexed 0..4 for ranks 1..5.
+ */
+export const selectPrecogCountsByRank = createSelector(
+  selectPrecogGhosts,
+  ghosts => ghosts.reduce((counts, ghost) => {
+    counts[ghost.rank - 1] += 1
+    return counts
+  }, [ 0, 0, 0, 0, 0 ])
+)

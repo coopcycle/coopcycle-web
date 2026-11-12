@@ -369,6 +369,12 @@ services:
       $platformLocale: '%env(COOPCYCLE_LOCALE)%'
       $rdcEnabled: '%env(bool:RDC_ENABLED)%'
 
+  AppBundle\Service\Precog\PrecogTracker:
+    arguments:
+      $redis:   '@snc_redis.default'
+      $secret:  '%env(APP_SECRET)%'
+      $enabled: '%env(bool:PRECOG_ENABLED)%'
+
   AppBundle\Controller\Admin\CustomerSegmentationController:
     arguments:
       $rfmEnabled:      '%env(bool:RFM_ENABLED)%'

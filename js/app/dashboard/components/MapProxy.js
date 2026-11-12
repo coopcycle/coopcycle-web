@@ -80,6 +80,18 @@ export default class MapProxy {
     this.toggleTaskOnMarkerClick = options.toggleTaskOnMarkerClick
     this.onPickupClusterClick = options.onPickupClusterClick
 
+    // "Precognition": carts that are moving through checkout, drawn where the
+    // order is about to land. Its own pane, below the marker pane, so a halo
+    // can never sit on top of real work; and pointer-events off, so it can
+    // never take a click meant for a task. A ghost is weather, not a work item.
+    const precogPane = this.map.createPane('precog')
+    precogPane.style.zIndex = 550
+    precogPane.style.pointerEvents = 'none'
+
+    this.precogLayerGroup = new L.LayerGroup()
+    this.precogMarkers = new Map()
+    this.precogEnabled = false
+
     this.tasksLayerGroup = new L.LayerGroup()
     this.tasksLayerGroup.addTo(this.map)
 
@@ -686,6 +698,133 @@ export default class MapProxy {
 
   testSwoopyCount() {
     return this.swoopyLayerGroup.getLayers().length
+  }
+
+  /**
+   * Draws the carts currently in flight.
+   *
+   * Each ghost is two layers: a circle whose radius is the precision the server
+   * was willing to publish at that stage -- so the uncertainty is drawn to
+   * scale and shrinks honestly as the customer commits -- and a div icon
+   * carrying the pulse, whose rate and intensity come from the rung.
+   *
+   * @param {Object[]} ghosts
+   * @param {boolean} enabled
+   */
+  setPrecog(ghosts, enabled) {
+
+    if (!enabled) {
+      if (this.precogEnabled) {
+        this.clearPrecog()
+      }
+      return
+    }
+
+    if (!this.map.hasLayer(this.precogLayerGroup)) {
+      this.precogLayerGroup.addTo(this.map)
+    }
+    this.precogEnabled = true
+
+    const seen = new Set()
+
+    ghosts.forEach(ghost => {
+      seen.add(ghost.id)
+
+      const latLng = L.latLng(ghost.latitude, ghost.longitude)
+      const existing = this.precogMarkers.get(ghost.id)
+
+      if (!existing) {
+        const circle = L.circle(latLng, {
+          pane: 'precog',
+          radius: ghost.precision,
+          interactive: false,
+          className: `precog-disc precog-disc--rank-${ghost.rank}`,
+        })
+        const marker = L.marker(latLng, {
+          pane: 'precog',
+          interactive: false,
+          keyboard: false,
+          icon: this._precogIcon(ghost),
+        })
+
+        this.precogLayerGroup.addLayer(circle)
+        this.precogLayerGroup.addLayer(marker)
+
+        this.precogMarkers.set(ghost.id, { circle, marker, rank: ghost.rank })
+
+        return
+      }
+
+      if (!existing.marker.getLatLng().equals(latLng)) {
+        existing.marker.setLatLng(latLng)
+        existing.circle.setLatLng(latLng)
+      }
+
+      // Rebuilding the icon is the expensive part, so it only happens when the
+      // cart has actually moved up or down the funnel.
+      if (existing.rank !== ghost.rank) {
+        existing.marker.setIcon(this._precogIcon(ghost))
+        existing.circle.setRadius(ghost.precision)
+        this._setPrecogDiscRank(existing.circle, ghost.rank)
+        existing.rank = ghost.rank
+      }
+    })
+
+    this.precogMarkers.forEach((layers, id) => {
+      if (!seen.has(id)) {
+        this.precogLayerGroup.removeLayer(layers.circle)
+        this.precogLayerGroup.removeLayer(layers.marker)
+        this.precogMarkers.delete(id)
+      }
+    })
+  }
+
+  clearPrecog() {
+    this.precogLayerGroup.clearLayers()
+    this.precogMarkers.clear()
+    this.precogEnabled = false
+
+    if (this.map.hasLayer(this.precogLayerGroup)) {
+      this.map.removeLayer(this.precogLayerGroup)
+    }
+  }
+
+  /**
+   * Repaints the uncertainty disc for a new rung.
+   *
+   * Not setStyle(): Leaflet applies `className` once, when it first builds the
+   * path, and silently ignores it afterwards -- so a cart that reached the
+   * payment page kept the colour it had at the menu while its radius shrank
+   * correctly, which is the one combination that reads as a bug rather than a
+   * stage change.
+   */
+  _setPrecogDiscRank(circle, rank) {
+    const el = circle.getElement()
+
+    if (el) {
+      el.setAttribute('class', `precog-disc precog-disc--rank-${rank}`)
+    }
+  }
+
+  _precogIcon(ghost) {
+    return L.divIcon({
+      className: '',
+      iconSize: [ 0, 0 ],
+      html:
+        `<div class="precog precog--rank-${ghost.rank}" data-stage="${ghost.stage}">` +
+          '<span class="precog__ring"></span>' +
+          '<span class="precog__ring precog__ring--delayed"></span>' +
+          '<span class="precog__core"></span>' +
+        '</div>',
+    })
+  }
+
+  testPrecog() {
+    return Array.from(this.precogMarkers.entries()).map(([ id, layers ]) => ({
+      id,
+      rank: layers.rank,
+      radius: layers.circle.getRadius(),
+    }))
   }
 
   testContainer() {

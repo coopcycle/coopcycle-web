@@ -179,6 +179,8 @@
         "ADMIN_DASHBOARD_SETTINGS_YES": "Yes",
         "ADMIN_DASHBOARD_SETTINGS_NO": "No",
         "ADMIN_DASHBOARD_SETTINGS_CLUSTERS_ENABLED": "Enabled map clusters",
+        "ADMIN_DASHBOARD_SETTINGS_PRECOG_ENABLED": "Show incoming carts on the map",
+        "ADMIN_DASHBOARD_PRECOG_TOOLTIP": "Carts in checkout, and carts at the payment step. A forecast, not work to assign.",
         "ADMIN_DASHBOARD_SETTINGS_SHOW_WEIGHT": "Show volume and weight",
         "ADMIN_DASHBOARD_SETTINGS_SHOW_DISTANCE_AND_TIME": "Show distance and time",
         "ADMIN_DASHBOARD_PACKAGES": "Packages",

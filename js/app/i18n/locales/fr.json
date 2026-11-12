@@ -279,6 +279,8 @@
         "ENTER_YOUR_POSTCODE": "Entrez votre code postal",
         "RULE_PICKER_LINE_PACKAGES": "Paquets",
         "ADMIN_DASHBOARD_SETTINGS_CLUSTERS_ENABLED": "Activer les clusters",
+        "ADMIN_DASHBOARD_SETTINGS_PRECOG_ENABLED": "Afficher les paniers en cours sur la carte",
+        "ADMIN_DASHBOARD_PRECOG_TOOLTIP": "Paniers en cours de commande, et paniers \u00e0 l'\u00e9tape du paiement. Une pr\u00e9vision, pas des t\u00e2ches \u00e0 assigner.",
         "ADMIN_DASHBOARD_SETTINGS_SHOW_WEIGHT": "Montrer les volumes et les poids",
         "ADMIN_DASHBOARD_SETTINGS_SHOW_DISTANCE_AND_TIME": "Montrer les distances et temps indicatifs",
         "ADMIN_DASHBOARD_SETTINGS_YES": "Oui",

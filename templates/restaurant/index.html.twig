@@ -263,7 +263,8 @@
   data-cart-timing="{{ cart_timing|json_encode|e('html_attr') }}"
   data-order-access-token="{{ order_access_token is defined ? order_access_token }}"
   data-is-player="{{ (is_player is defined ? is_player : false)|json_encode|e('html_attr') }}"
-  data-is-group-orders-enabled="{{ group_orders_enabled|json_encode|e('html_attr') }}"></div>
+  data-is-group-orders-enabled="{{ group_orders_enabled|json_encode|e('html_attr') }}"
+  data-precog-enabled="{{ precog_enabled ? 'true' : 'false' }}"></div>
 
 <div id="js-addresses-data"
   data-addresses="{{ addresses_normalized()|json_encode|e('html_attr') }}"></div>
