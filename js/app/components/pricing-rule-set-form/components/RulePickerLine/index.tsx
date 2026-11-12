@@ -39,6 +39,8 @@ const typeToOperators = {
   'dropoff.address': ['in_zone', 'out_zone'],
   'diff_days(pickup)': ['==', '<', '>', 'in'],
   'diff_hours(pickup)': ['==', '<', '>'],
+  'diff_days(dropoff)': ['==', '<', '>', 'in'],
+  'diff_hours(dropoff)': ['==', '<', '>'],
   'dropoff.doorstep': ['=='],
   packages: ['containsAtLeastOne'],
   'order.itemsTotal': ['==', '<', '>', 'in'],
@@ -306,7 +308,7 @@ class RulePickerLine extends React.Component<Props, State> {
           isK(this.state.type),
           isDecimals(this.state.type),
         );
-      // weight, distance, diff_days(pickup)
+      // weight, distance, diff_days(pickup), diff_days(dropoff)
       case 'in':
         return (
           <div className="d-flex justify-content-between">

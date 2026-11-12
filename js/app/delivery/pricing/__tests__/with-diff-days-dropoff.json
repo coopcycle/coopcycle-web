@@ -1,0 +1,27 @@
+{
+  "nodes": {
+    "nodes": {
+      "arguments": {
+        "nodes": [
+          {
+            "nodes": [],
+            "attributes": {
+              "name": "dropoff"
+            }
+          },
+          {
+            "isNullSafe": false,
+            "nodes": [],
+            "attributes": {
+              "value": "< 1"
+            }
+          }
+        ],
+        "attributes": []
+      }
+    },
+    "attributes": {
+      "name": "diff_days"
+    }
+  }
+}

@@ -1,4 +1,9 @@
-import { numericTypes, isNum, lineToString } from '../expression-builder'
+import { numericTypes, isNum, lineToString, linesToString } from '../expression-builder'
+import { parseAST } from '../pricing-rule-parser'
+import withDiffDaysPickup from './with-diff-days-pickup.json'
+import withDiffDaysDropoff from './with-diff-days-dropoff.json'
+import withDiffDaysDropoffWithRange from './with-diff-days-dropoff-in.json'
+import withDiffHoursDropoff from './with-diff-hours-dropoff.json'
 
 describe('isNum', () => {
   it('should return true for numeric types', () => {
@@ -117,6 +122,37 @@ describe('lineToString', () => {
     it('should handle > operator', () => {
       const result = lineToString({ left: 'diff_hours(pickup)', operator: '>', right: 6 })
       expect(result).toEqual('diff_hours(pickup, \'> 6\')')
+    })
+  })
+
+  describe('diff_days(dropoff)', () => {
+    it('should handle < operator', () => {
+      const result = lineToString({ left: 'diff_days(dropoff)', operator: '<', right: 1 })
+      expect(result).toEqual('diff_days(dropoff, \'< 1\')')
+    })
+
+    it('should handle in operator with range', () => {
+      const result = lineToString({ left: 'diff_days(dropoff)', operator: 'in', right: [0, 1] })
+      expect(result).toEqual('diff_days(dropoff, \'in 0..1\')')
+    })
+  })
+
+  describe('diff_hours(dropoff)', () => {
+    it('should handle < operator', () => {
+      const result = lineToString({ left: 'diff_hours(dropoff)', operator: '<', right: 3 })
+      expect(result).toEqual('diff_hours(dropoff, \'< 3\')')
+    })
+  })
+
+  describe('round trip from the AST sent by the server', () => {
+    // A rule saved again without being edited must keep its expression
+    it.each([
+      [ withDiffDaysPickup, 'diff_days(pickup, \'< 1\')' ],
+      [ withDiffDaysDropoff, 'diff_days(dropoff, \'< 1\')' ],
+      [ withDiffDaysDropoffWithRange, 'diff_days(dropoff, \'in 0..1\')' ],
+      [ withDiffHoursDropoff, 'diff_hours(dropoff, \'< 3\')' ],
+    ])('should rebuild %#', (ast, expression) => {
+      expect(linesToString(parseAST(ast))).toEqual(expression)
     })
   })
 

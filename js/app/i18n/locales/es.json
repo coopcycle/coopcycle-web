@@ -265,6 +265,8 @@
         "ADMIN_DASHBOARD_VIEW_MODE_CLASSIC": "Mostrar todo",
         "ADMIN_DASHBOARD_VIEW_MODE_BY_GROUP": "Mostrar por grupos",
         "RULE_PICKER_LINE_PICKUP_DIFF_DAYS": "Diferencia (días)",
+        "RULE_PICKER_LINE_DROPOFF_DIFF_DAYS": "Diferencia en la entrega (días)",
+        "RULE_PICKER_LINE_DROPOFF_DIFF_HOURS": "Diferencia en la entrega (horas)",
         "RULE_PICKER_LINE_DROPOFF_DOORSTEP": "Entrega a domicilio",
         "CART_ADDRESS_MODAL_NO_THANKS_TAKEAWAY": "Iré a recoger el pedido yo mismo",
         "CART_TAKE_AWAY": "Recogida en el sitio",
