@@ -24,6 +24,8 @@ const TASK_TYPES = [
   { name: 'dropoff.address' },
   { name: "time_range_length(pickup, 'hours')" },
   { name: "time_range_length(dropoff, 'hours')" },
+  { name: 'diff_hours(dropoff)' },
+  { name: 'diff_days(dropoff)' },
   { name: 'weight' },
   { name: 'packages' },
   { name: 'packages.totalVolumeUnits()' },
@@ -72,6 +74,10 @@ function RulePickerType({ ruleTarget, type }: RulePickerTypeProps) {
         return t('RULE_PICKER_LINE_PICKUP_DIFF_HOURS');
       case 'diff_days(pickup)':
         return t('RULE_PICKER_LINE_PICKUP_DIFF_DAYS');
+      case 'diff_hours(dropoff)':
+        return t('RULE_PICKER_LINE_DROPOFF_DIFF_HOURS');
+      case 'diff_days(dropoff)':
+        return t('RULE_PICKER_LINE_DROPOFF_DIFF_DAYS');
       case "time_range_length(pickup, 'hours')":
         return t('RULE_PICKER_LINE_PICKUP_TIME_RANGE_LENGTH_HOURS');
       case "time_range_length(dropoff, 'hours')":

@@ -5,6 +5,8 @@ export const numericTypes = [
   'weight',
   'diff_days(pickup)',
   'diff_hours(pickup)',
+  'diff_days(dropoff)',
+  'diff_hours(dropoff)',
   'order.itemsTotal',
 ]
 
@@ -36,6 +38,14 @@ export function lineToString(line) {
 
   if (line.left === 'diff_hours(pickup)') {
     return `diff_hours(pickup, '${line.operator} ${convertToRange(line.right)}')`
+  }
+
+  if (line.left === 'diff_days(dropoff)') {
+    return `diff_days(dropoff, '${line.operator} ${convertToRange(line.right)}')`
+  }
+
+  if (line.left === 'diff_hours(dropoff)') {
+    return `diff_hours(dropoff, '${line.operator} ${convertToRange(line.right)}')`
   }
 
   if (line.left === `time_range_length(pickup, 'hours')`) {

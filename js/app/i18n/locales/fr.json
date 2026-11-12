@@ -245,6 +245,8 @@
         "CART_DYNAMIC_DELIVERY_FEE": "Les frais de livraison sont calculés en fonction de votre adresse",
         "RULE_PICKER_LINE_PICKUP_DIFF_HOURS": "Différence (heures)",
         "RULE_PICKER_LINE_PICKUP_DIFF_DAYS": "Différence (jours)",
+        "RULE_PICKER_LINE_DROPOFF_DIFF_DAYS": "Différence au dépôt (jours)",
+        "RULE_PICKER_LINE_DROPOFF_DIFF_HOURS": "Différence au dépôt (heures)",
         "ADMIN_DASHBOARD_VIEW_MODE_DROPOFF_DESC": "Afficher par dépôt décroissant",
         "ADMIN_DASHBOARD_VIEW_MODE_PICKUP_ASC": "Afficher par retrait croissant",
         "ADMIN_DASHBOARD_VIEW_MODE_PICKUP_DESC": "Afficher par retrait décroissant",

@@ -353,6 +353,8 @@
         "RULE_PICKER_LINE_PICKUP_ADDRESS": "Pickup address",
         "RULE_PICKER_LINE_DROPOFF_ADDRESS": "Dropoff address",
         "RULE_PICKER_LINE_PICKUP_DIFF_DAYS": "Difference (days)",
+        "RULE_PICKER_LINE_DROPOFF_DIFF_DAYS": "Dropoff difference (days)",
+        "RULE_PICKER_LINE_DROPOFF_DIFF_HOURS": "Dropoff difference (hours)",
         "RULE_PICKER_LINE_PICKUP_DIFF_HOURS": "Difference (hours)",
         "RULE_PICKER_LINE_DROPOFF_DOORSTEP": "Doorstep dropoff",
         "RULE_PICKER_LINE_PACKAGES": "Packages",
