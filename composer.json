@@ -13,6 +13,7 @@
     "autoload": {
         "psr-4": {
             "AppBundle\\": "src/",
+            "CoopCycle\\Integrations\\": "private/src/",
             "Application\\Migrations\\": "app/DoctrineMigrations"
         }
     },

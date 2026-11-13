@@ -16,6 +16,9 @@
 /vendor-shared/
 /.phpunit.result.cache
 
+# Private integrations (coopcycle/coopcycle-integrations), added at deploy
+/private/
+
 # Build with webpack
 /web/build/
 /web/build-cypress/

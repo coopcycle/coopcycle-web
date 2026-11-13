@@ -1,0 +1,5 @@
+# Integrations that can't be public (client-specific importers, …) live in a
+# private repo, coopcycle/coopcycle-integrations, copied into private/ at deploy.
+# Without it (local dev, CI, forks) this import does nothing.
+imports:
+  - { resource: '../../private/config/services.yaml', ignore_errors: not_found }
