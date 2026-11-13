@@ -2040,14 +2040,6 @@ services:
     decorates: session.storage.factory.native
     arguments: ['@.inner']
 
-  AppBundle\Transporter\Proximus\ProximusImporter:
-    lazy: true
-    arguments:
-      - "%env(PROXIMUS_SYNC_URI)%"
-
-  AppBundle\Transporter\Proximus\ProximusTransformer:
-    lazy: true
-
   sentry.callback.before_send:
     class: 'AppBundle\Service\Sentry'
     factory: ['@AppBundle\Service\Sentry', "getBeforeSend"]
