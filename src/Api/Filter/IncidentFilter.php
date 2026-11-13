@@ -49,6 +49,7 @@ final class IncidentFilter extends AbstractFilter
             'restaurant' => $this->restaurantIri = array_merge($this->restaurantIri, $values),
             'customer' => $this->customerIri = array_merge($this->customerIri, $values),
             'createdBy' => $this->addEntityFilter($queryBuilder, 'createdBy', $queryNameGenerator->generateParameterName('createdBy'), $values),
+            'orderNumber' => $this->addOrderNumberFilter($queryBuilder, $queryNameGenerator, $value),
             default => null,
         };
     }
@@ -59,6 +60,29 @@ final class IncidentFilter extends AbstractFilter
         $priorityValue = self::PRIORITY_MAP[strtoupper($value)] ?? (int) $value;
         $queryBuilder->andWhere(sprintf('o.priority = :%s', $param));
         $queryBuilder->setParameter($param, $priorityValue);
+    }
+
+    /**
+     * Order numbers are encoded in Crockford's Base32, which is case-insensitive.
+     * The joins use generated aliases, so that they don't clash with the ones added in apply().
+     */
+    private function addOrderNumberFilter(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, mixed $value): void
+    {
+        if (!is_string($value) || '' === trim($value)) {
+            return;
+        }
+
+        $taskAlias = $queryNameGenerator->generateJoinAlias('task');
+        $deliveryAlias = $queryNameGenerator->generateJoinAlias('delivery');
+        $orderAlias = $queryNameGenerator->generateJoinAlias('order');
+        $param = $queryNameGenerator->generateParameterName('orderNumber');
+
+        $queryBuilder
+            ->join('o.task', $taskAlias)
+            ->join(sprintf('%s.delivery', $taskAlias), $deliveryAlias)
+            ->join(sprintf('%s.order', $deliveryAlias), $orderAlias)
+            ->andWhere(sprintf('UPPER(%s.number) = :%s', $orderAlias, $param))
+            ->setParameter($param, strtoupper(trim($value)));
     }
 
     public function apply(
@@ -184,6 +208,11 @@ final class IncidentFilter extends AbstractFilter
             ],
             'createdBy' => [
                 'property' => 'createdBy',
+                'type' => 'string',
+                'required' => false,
+            ],
+            'orderNumber' => [
+                'property' => 'orderNumber',
                 'type' => 'string',
                 'required' => false,
             ],
