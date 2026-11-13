@@ -152,14 +152,7 @@
   {% elseif isEnBoiteLePlat %}
     <div>
       <div class="alert alert-en-boite-le-plat py-0 m-0">
-        {# FIXME #}
-        {# label_html does not work with checkboxes #}
-        <div class="checkbox">
-          <label>
-            {{ block('checkbox_widget', 'form_div_layout.html.twig') }}
-            <span>{{ label|trans|raw }}</span>
-          </label>
-        </div>
+        {{ form_widget(form) }}
         <span class="en-boite-le-plat-logo-orange my-3"></span>
       </div>
     </div>
