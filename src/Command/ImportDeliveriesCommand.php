@@ -11,6 +11,7 @@ use AppBundle\Transporter\TransporterTransformerInterface;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
+use League\Csv\Reader;
 use League\Flysystem\Filesystem;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -111,11 +112,13 @@ class ImportDeliveriesCommand extends Command {
             throw new \InvalidArgumentException('No CSV content or importer specified');
         }
 
-        foreach ($csvs as $csv) {
+        // Transform everything before queuing anything, so a bad file
+        // doesn't leave the import half done (and re-imported on next run)
+        if ($this->transformer instanceof TransporterTransformerInterface) {
+            $csvs = array_map(fn($content): string => $this->transformer->transform($content), $csvs);
+        }
 
-            if ($this->transformer instanceof TransporterTransformerInterface) {
-                $csv = $this->transformer->transform($csv);
-            }
+        foreach ($csvs as $csv) {
 
             // Dry run, console output then continue
             if ($this->dryRun) {
@@ -136,7 +139,8 @@ class ImportDeliveriesCommand extends Command {
         // Count deliveries
         $deliveries_count = array_sum(
             array_map(
-                fn($csv) => substr_count($csv, "\n") - 1,
+                // Not a line count: quoted fields may span several lines
+                fn(string $csv): int => count(Reader::fromString($csv)->setHeaderOffset(0)),
                 $csvs
             )
         );
