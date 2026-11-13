@@ -2,12 +2,26 @@
 
 namespace AppBundle;
 
+use AppBundle\Transporter\TransporterImporterInterface;
+use AppBundle\Transporter\TransporterTransformerInterface;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 
 class Kernel extends BaseKernel
 {
     use MicroKernelTrait;
+
+    protected function build(ContainerBuilder $container): void
+    {
+        // Here rather than with #[AutoconfigureTag] on the interfaces: Symfony only reads
+        // it from an interface found while scanning a `resource:` directory, which
+        // src/Transporter isn't, and the private integrations' services must get it too.
+        $container->registerForAutoconfiguration(TransporterImporterInterface::class)
+            ->addTag(TransporterImporterInterface::TAG);
+        $container->registerForAutoconfiguration(TransporterTransformerInterface::class)
+            ->addTag(TransporterTransformerInterface::TAG);
+    }
 
     /**
      * {@inheritdoc}

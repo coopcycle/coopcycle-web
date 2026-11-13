@@ -11,6 +11,7 @@ use AppBundle\Transporter\TransporterTransformerInterface;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
+use League\Csv\Reader;
 use League\Flysystem\Filesystem;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -20,6 +21,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
+use Symfony\Contracts\Service\ServiceProviderInterface;
 
 class ImportDeliveriesCommand extends Command {
 
@@ -38,8 +40,10 @@ class ImportDeliveriesCommand extends Command {
         private readonly Hashids $hashids8,
         private readonly MessageBusInterface $messageBus,
         private readonly Filesystem $deliveryImportsFilesystem,
-        private readonly array $importers,
-        private readonly array $transformers
+        /** @var ServiceProviderInterface<TransporterImporterInterface> */
+        private readonly ServiceProviderInterface $importers,
+        /** @var ServiceProviderInterface<TransporterTransformerInterface> */
+        private readonly ServiceProviderInterface $transformers
     )
     {
         parent::__construct();
@@ -69,27 +73,27 @@ class ImportDeliveriesCommand extends Command {
         }
 
         if (!is_null($importer)) {
-            if (!isset($this->importers[$importer])) {
+            if (!$this->importers->has($importer)) {
                 throw new \InvalidArgumentException(
                     sprintf(
                         'Unknown importer "%s", available importers: "%s"',
-                        $importer, implode('", "', array_keys($this->importers))
+                        $importer, implode('", "', array_keys($this->importers->getProvidedServices()))
                     )
                 );
             }
-            $this->importer = $this->importers[$importer];
+            $this->importer = $this->importers->get($importer);
         }
 
         if (!is_null($transformer)) {
-            if (!isset($this->transformers[$transformer])) {
+            if (!$this->transformers->has($transformer)) {
                 throw new \InvalidArgumentException(
                     sprintf(
                         'Unknown transformer "%s", available transformers: "%s"',
-                        $transformer, implode('", "', array_keys($this->transformers))
+                        $transformer, implode('", "', array_keys($this->transformers->getProvidedServices()))
                     )
                 );
             }
-            $this->transformer = $this->transformers[$transformer];
+            $this->transformer = $this->transformers->get($transformer);
         }
 
     }
@@ -111,11 +115,13 @@ class ImportDeliveriesCommand extends Command {
             throw new \InvalidArgumentException('No CSV content or importer specified');
         }
 
-        foreach ($csvs as $csv) {
+        // Transform everything before queuing anything, so a bad file
+        // doesn't leave the import half done (and re-imported on next run)
+        if ($this->transformer instanceof TransporterTransformerInterface) {
+            $csvs = array_map(fn($content): string => $this->transformer->transform($content), $csvs);
+        }
 
-            if ($this->transformer instanceof TransporterTransformerInterface) {
-                $csv = $this->transformer->transform($csv);
-            }
+        foreach ($csvs as $csv) {
 
             // Dry run, console output then continue
             if ($this->dryRun) {
@@ -136,7 +142,8 @@ class ImportDeliveriesCommand extends Command {
         // Count deliveries
         $deliveries_count = array_sum(
             array_map(
-                fn($csv) => substr_count($csv, "\n") - 1,
+                // Not a line count: quoted fields may span several lines
+                fn(string $csv): int => count(Reader::fromString($csv)->setHeaderOffset(0)),
                 $csvs
             )
         );
