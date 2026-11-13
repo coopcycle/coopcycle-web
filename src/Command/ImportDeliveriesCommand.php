@@ -21,6 +21,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
+use Symfony\Contracts\Service\ServiceProviderInterface;
 
 class ImportDeliveriesCommand extends Command {
 
@@ -39,8 +40,10 @@ class ImportDeliveriesCommand extends Command {
         private readonly Hashids $hashids8,
         private readonly MessageBusInterface $messageBus,
         private readonly Filesystem $deliveryImportsFilesystem,
-        private readonly array $importers,
-        private readonly array $transformers
+        /** @var ServiceProviderInterface<TransporterImporterInterface> */
+        private readonly ServiceProviderInterface $importers,
+        /** @var ServiceProviderInterface<TransporterTransformerInterface> */
+        private readonly ServiceProviderInterface $transformers
     )
     {
         parent::__construct();
@@ -70,27 +73,27 @@ class ImportDeliveriesCommand extends Command {
         }
 
         if (!is_null($importer)) {
-            if (!isset($this->importers[$importer])) {
+            if (!$this->importers->has($importer)) {
                 throw new \InvalidArgumentException(
                     sprintf(
                         'Unknown importer "%s", available importers: "%s"',
-                        $importer, implode('", "', array_keys($this->importers))
+                        $importer, implode('", "', array_keys($this->importers->getProvidedServices()))
                     )
                 );
             }
-            $this->importer = $this->importers[$importer];
+            $this->importer = $this->importers->get($importer);
         }
 
         if (!is_null($transformer)) {
-            if (!isset($this->transformers[$transformer])) {
+            if (!$this->transformers->has($transformer)) {
                 throw new \InvalidArgumentException(
                     sprintf(
                         'Unknown transformer "%s", available transformers: "%s"',
-                        $transformer, implode('", "', array_keys($this->transformers))
+                        $transformer, implode('", "', array_keys($this->transformers->getProvidedServices()))
                     )
                 );
             }
-            $this->transformer = $this->transformers[$transformer];
+            $this->transformer = $this->transformers->get($transformer);
         }
 
     }

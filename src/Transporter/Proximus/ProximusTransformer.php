@@ -3,12 +3,14 @@
 namespace AppBundle\Transporter\Proximus;
 
 use AppBundle\Transporter\TransporterTransformerInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 use DateTime;
 use League\Csv\Reader;
 use League\Csv\Writer;
 use Symfony\Component\Yaml\Parser as YamlParser;
 use Symfony\Component\Yaml\Yaml;
 
+#[AsTaggedItem('proximus')]
 class ProximusTransformer implements TransporterTransformerInterface {
 
     private readonly array $addresses;

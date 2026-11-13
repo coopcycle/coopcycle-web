@@ -5,7 +5,9 @@ namespace AppBundle\Transporter\Proximus;
 use League\Flysystem\Filesystem;
 use AppBundle\Transporter\TransporterHelpers;
 use AppBundle\Transporter\TransporterImporterInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 
+#[AsTaggedItem('proximus')]
 class ProximusImporter implements TransporterImporterInterface
 {
 
