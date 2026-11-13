@@ -808,6 +808,8 @@ form.credit_note.name.help: The name of the promotion that will be displayed in 
 form.credit_note.restaurant.help: The promotion will only be usable when ordering
   at this restaurant. Leave blank to apply to all restaurants.
 form.resend_confirmation_email.submit.label: Send email again
+form.embed_settings.name.label: Name
+form.embed_settings.name.help: Only visible to administrators, to tell the forms apart
 form.embed_settings.with_vehicle.label: Add vehicle choice
 form.embed_settings.with_weight.label: Ask for weight of goods
 form.embed_settings.show_home_page.label: Show on Home Page

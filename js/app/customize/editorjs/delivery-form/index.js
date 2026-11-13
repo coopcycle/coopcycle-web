@@ -105,12 +105,13 @@ export default class DeliveryForm {
     selectEl.classList.add('mb-3')
     createRoot(selectEl).render(<Select
       defaultValue={this.form}
-      style={{ width: 120 }}
+      style={{ minWidth: 120 }}
+      popupMatchSelectWidth={false}
       onChange={(value) => {
         this.form = value
         this.showPreview(wrapper)
       }}
-      options={this.config.forms.map((f, i) => ({ value: f['@id'], label: `Form #${i + 1}` }))}
+      options={this.config.forms.map((f, i) => ({ value: f['@id'], label: f.name || `Form #${i + 1}` }))}
     />);
     wrapper.appendChild(selectEl)
 
