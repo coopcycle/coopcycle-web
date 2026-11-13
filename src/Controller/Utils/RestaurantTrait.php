@@ -45,6 +45,7 @@ use AppBundle\Message\CopyProducts;
 use AppBundle\Pixabay\Client as PixabayClient;
 use AppBundle\Service\MercadopagoManager;
 use AppBundle\Service\SettingsManager;
+use AppBundle\Spreadsheet\ProductDataExporter;
 use AppBundle\Sylius\Payment\MealVoucherPaymentMethods;
 use AppBundle\Sylius\Product\ProductInterface;
 use AppBundle\Sylius\Taxation\TaxesHelper;
@@ -621,13 +622,31 @@ trait RestaurantTrait
         IriConverterInterface $iriConverter,
         PaginatorInterface $paginator,
         TranslatorInterface $translator,
-        MessageBusInterface $messageBus)
+        MessageBusInterface $messageBus,
+        ProductDataExporter $productDataExporter,
+        SlugifyInterface $slugify)
     {
         $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($id);
 
         $this->accessControl($restaurant);
+
+        if ('csv' === $request->query->get('format')) {
+
+            $products = $this->entityManager
+                ->getRepository(Product::class)
+                ->findBy(['restaurant' => $restaurant], ['id' => 'ASC']);
+
+            $response = new Response($productDataExporter->export($products));
+            $response->headers->set('Content-Type', 'text/csv');
+            $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
+                ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+                sprintf('%s-products.csv', $slugify->slugify($restaurant->getName()))
+            ));
+
+            return $response;
+        }
 
         $qb = $this->entityManager
             ->getRepository(Product::class)

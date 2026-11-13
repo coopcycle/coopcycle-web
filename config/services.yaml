@@ -1682,6 +1682,7 @@ services:
 
   AppBundle\Spreadsheet\DeliveryDataExporter: ~
   AppBundle\Spreadsheet\DV4CULDataExporter: ~
+  AppBundle\Spreadsheet\ProductDataExporter: ~
 
   colisactiv:
     class: AppBundle\Spreadsheet\ColisActivDataExporter
