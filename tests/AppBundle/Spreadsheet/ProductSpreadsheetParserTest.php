@@ -3,6 +3,8 @@
 namespace Tests\AppBundle\Spreadsheet;
 
 use AppBundle\Entity\Sylius\Product;
+use AppBundle\Entity\Sylius\ProductVariant;
+use AppBundle\Spreadsheet\ProductDataExporter;
 use AppBundle\Spreadsheet\ProductSpreadsheetParser;
 use AppBundle\Utils\TaskSpreadsheetParser;
 use League\Flysystem\Filesystem;
@@ -11,6 +13,7 @@ use Oneup\UploaderBundle\Uploader\File\FlysystemFile;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
+use Sylius\Component\Product\Resolver\ProductVariantResolverInterface;
 use Sylius\Component\Taxation\Model\TaxCategory;
 use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -141,5 +144,55 @@ class ProductSpreadsheetParserTest extends KernelTestCase
         $results = $this->parser->parseData($this->parser->getExampleData());
 
         $this->assertNotEmpty($results);
+    }
+
+    public function testCanParseExportedData()
+    {
+        $baseStandard = $this->taxCategoryRepository->reveal()->findOneBy(['name' => 'tax_category.base_standard']);
+        $baseIntermediary = $this->taxCategoryRepository->reveal()->findOneBy(['name' => 'tax_category.base_intermediary']);
+
+        $margherita = new Product();
+        $margherita->setCurrentLocale('en');
+        $margherita->setName('Pizza "Margherita", large');
+        $margherita->setDescription("Tomato, mozzarella\nand basil");
+
+        $margheritaVariant = new ProductVariant();
+        $margheritaVariant->setPrice(1250);
+        $margheritaVariant->setTaxCategory($baseStandard);
+
+        $water = new Product();
+        $water->setCurrentLocale('en');
+        $water->setName('Sparkling water');
+
+        $waterVariant = new ProductVariant();
+        $waterVariant->setPrice(250);
+        $waterVariant->setTaxCategory($baseIntermediary);
+
+        $variantResolver = $this->prophesize(ProductVariantResolverInterface::class);
+        $variantResolver->getVariant($margherita)->willReturn($margheritaVariant);
+        $variantResolver->getVariant($water)->willReturn($waterVariant);
+
+        $exporter = new ProductDataExporter($variantResolver->reveal());
+
+        $filename = tempnam(sys_get_temp_dir(), 'coopcycle_products_export_');
+        file_put_contents($filename, $exporter->export([$margherita, $water]));
+
+        try {
+            $products = $this->parser->parse($filename);
+        } finally {
+            unlink($filename);
+        }
+
+        $this->assertCount(2, $products);
+
+        $this->assertEquals('Pizza "Margherita", large', $products[0]->getName());
+        $this->assertEquals("Tomato, mozzarella\nand basil", $products[0]->getDescription());
+        $this->assertEquals(1250, $products[0]->getVariants()->first()->getPrice());
+        $this->assertSame($baseStandard, $products[0]->getVariants()->first()->getTaxCategory());
+
+        $this->assertEquals('Sparkling water', $products[1]->getName());
+        $this->assertEmpty($products[1]->getDescription());
+        $this->assertEquals(250, $products[1]->getVariants()->first()->getPrice());
+        $this->assertSame($baseIntermediary, $products[1]->getVariants()->first()->getTaxCategory());
     }
 }

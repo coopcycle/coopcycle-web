@@ -21,6 +21,9 @@
     <a href="#" class="btn btn-success mr-2" data-toggle="modal" data-target="#products-import-modal">
       <i class="fa fa-upload"></i> {% trans %}basics.import{% endtrans %}
     </a>
+    <a href="{{ path(products_route, { id: restaurant.id, format: 'csv' }) }}" class="btn btn-success mr-2">
+      <i class="fa fa-download"></i> {% trans %}basics.export{% endtrans %}
+    </a>
     <a href="{{ path(new_product_route, { id: restaurant.id }) }}"
       class="btn btn-success"><i class="fa fa-plus"></i> {{ 'basics.add'|trans }}</a>
   </div>
