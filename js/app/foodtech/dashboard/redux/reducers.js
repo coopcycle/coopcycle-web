@@ -36,6 +36,7 @@ import {
   SET_LOOPEAT_FORMATS,
   UPDATE_LOOPEAT_FORMATS_SUCCESS,
   COLUMN_TOGGLED,
+  CLOSE_RESTAURANT_REQUEST_SUCCESS,
 } from './actions'
 
 export const initialState = {
@@ -302,6 +303,16 @@ export default (state = initialState, action = {}) => {
       ...state,
       orders: replaceOrder(state.orders, action.payload),
       order: action.payload,
+    }
+
+  case CLOSE_RESTAURANT_REQUEST_SUCCESS:
+
+    return {
+      ...state,
+      restaurant: {
+        ...state.restaurant,
+        specialOpeningHoursSpecification: action.payload.specialOpeningHoursSpecification,
+      },
     }
 
   case COLUMN_TOGGLED: {

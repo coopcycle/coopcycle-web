@@ -2,8 +2,8 @@ import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import Modal from 'react-modal'
-import { Button, DatePicker, Slider, Col, Row, Space, Switch, Tooltip } from 'antd'
-import { LeftOutlined, RightOutlined } from '@ant-design/icons'
+import { Button, DatePicker, Popconfirm, Slider, Col, Row, Space, Switch, Tag, Tooltip } from 'antd'
+import { LeftOutlined, PoweroffOutlined, RightOutlined } from '@ant-design/icons'
 import moment from 'moment'
 
 import Column from './Column'
@@ -16,6 +16,7 @@ import {
   setPreparationDelay,
   changeStatus,
   setActiveTab,
+  closeRestaurant,
 } from '../redux/actions'
 import {
   selectNewOrders,
@@ -24,6 +25,7 @@ import {
   selectCancelledOrders,
   selectStartedOrders,
   selectReadyOrders,
+  selectIsRestaurantClosedUntilTomorrow,
 } from '../redux/selectors'
 import { AntdConfigProvider } from '../../../utils/antd'
 
@@ -41,6 +43,7 @@ export default function Dashboard({ onDateChange }) {
   const showSettings = useSelector(state => state.showSettings)
   const showSearch = useSelector(state => state.showSearch)
   const initialOrder = useSelector(state => state.initialOrder)
+  const isClosedUntilTomorrow = useSelector(selectIsRestaurantClosedUntilTomorrow)
 
   const activeTab = useSelector(state => state.activeTab)
   const modalIsOpen = useSelector(state => state.order !== null)
@@ -124,6 +127,24 @@ export default function Dashboard({ onDateChange }) {
                  data-placement="right"
                  title={ t('RESTAURANT_DASHBOARD_INFO_RUSH') }>
             </div>
+            <AntdConfigProvider>
+              { isClosedUntilTomorrow ? (
+                <Tag color="red" className="ml-3">
+                  { t('RESTAURANT_DASHBOARD_CLOSED_UNTIL_TOMORROW') }
+                </Tag>
+              ) : (
+                <Popconfirm
+                  title={ t('RESTAURANT_DASHBOARD_CLOSE_UNTIL_TOMORROW') }
+                  description={ t('RESTAURANT_DASHBOARD_CLOSE_UNTIL_TOMORROW_CONFIRM') }
+                  onConfirm={ () => dispatch(closeRestaurant(restaurant)) }
+                  okText={ t('YES') }
+                  cancelText={ t('NO') }>
+                  <Button className="ml-3" icon={ <PoweroffOutlined /> }>
+                    { t('RESTAURANT_DASHBOARD_CLOSE_UNTIL_TOMORROW') }
+                  </Button>
+                </Popconfirm>
+              ) }
+            </AntdConfigProvider>
           </div>
         ) }
         <div>
