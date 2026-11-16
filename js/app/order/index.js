@@ -350,6 +350,14 @@ form.addEventListener('submit', async function(event) {
   form.submit()
 })
 
+// When navigating back from the payment page, the browser may restore this page
+// from the back/forward cache, with the loading overlay still visible
+window.addEventListener('pageshow', (event) => {
+  if (event.persisted) {
+    setLoading(false)
+  }
+})
+
 const container = document.getElementById('react-root')
 
 const fulfilmentTimeRangeContainer = document.getElementById('order__fulfilment_time_range__container')
