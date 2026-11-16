@@ -3,6 +3,7 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\HolidayRequestRepository;
+use AppBundle\Entity\SchedulePublication;
 use AppBundle\Entity\Shift;
 use AppBundle\Entity\ShiftActivity;
 use AppBundle\Entity\ShiftActivityRepository;
@@ -189,7 +190,8 @@ class ShiftManager
 
         $this->entityManager->flush();
 
-        if (count($assignedUsers) > 0) {
+        // On a draft week, couriers are notified when the week gets published
+        if (count($assignedUsers) > 0 && $this->isWeekPublished($targetMonday)) {
             $this->notify(
                 $this->translator->trans('notifications.shifts.week_assigned', [
                     '%date%' => $targetMonday->format('Y-m-d'),
@@ -304,7 +306,8 @@ class ShiftManager
 
         $this->entityManager->flush();
 
-        if (count($assignedUsers) > 0) {
+        // On a draft week, couriers are notified when the week gets published
+        if (count($assignedUsers) > 0 && $this->isWeekPublished($targetMonday)) {
             $this->notify(
                 $this->translator->trans('notifications.shifts.week_assigned', [
                     '%date%' => $targetMonday->format('Y-m-d'),
@@ -337,6 +340,11 @@ class ShiftManager
         $this->entityManager->flush();
 
         return count($shifts);
+    }
+
+    public function isWeekPublished(\DateTimeInterface $date): bool
+    {
+        return $this->entityManager->getRepository(SchedulePublication::class)->isWeekPublished($date);
     }
 
     /**

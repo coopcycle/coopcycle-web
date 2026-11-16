@@ -159,6 +159,24 @@ class DeliverySpreadsheetParserTest extends TestCase
         $this->assertEquals($delivery->getDropoff()->getMetadata()['foo'], 'bar');
     }
 
+    public function testWithExternalReference()
+    {
+        $filename = realpath(__DIR__ . '/../Resources/spreadsheet/deliveries_with_external_reference.csv');
+        $parseResult = $this->parser->parse($filename);
+        $data = $parseResult->getData();
+
+        /** @var Delivery */
+        $delivery = array_shift($data)['delivery'];
+        $this->assertEquals('5392609', $delivery->getExternalReference());
+        // Mirrored to the tasks, next to their own metadata
+        $this->assertEquals('5392609', $delivery->getDropoff()->getMetadata()['external_reference']);
+        $this->assertEquals('bar', $delivery->getDropoff()->getMetadata()['foo']);
+
+        /** @var Delivery */
+        $delivery = array_shift($data)['delivery'];
+        $this->assertNull($delivery->getExternalReference());
+    }
+
     public function testWithTour()
     {
         $filename = realpath(__DIR__ . '/../Resources/spreadsheet/deliveries_with_tour.csv');
