@@ -128,10 +128,32 @@ Feature: Shifts
       }
       """
     Then the response status code should be 201
+    # Shift of a week that stays a draft: it must not be visible to the courier
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/shifts" with body:
+      """
+      {
+        "activity": "delivery",
+        "startsAt": "2026-07-06T09:00:00",
+        "endsAt": "2026-07-06T17:00:00",
+        "users": ["/api/users/1"]
+      }
+      """
+    Then the response status code should be 201
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/shifts/publish_week" with body:
+      """
+      {
+        "week": "2026-06-29"
+      }
+      """
+    Then the response status code should be 204
     Given the user "sarah" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "sarah" sends a "GET" request to "/api/me/shifts?date[after]=2026-06-29&date[before]=2026-07-05"
+    And the user "sarah" sends a "GET" request to "/api/me/shifts?date[after]=2026-06-29&date[before]=2026-07-12"
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
@@ -1078,6 +1100,28 @@ Feature: Shifts
       }
       """
     Then the response status code should be 201
+    # Shift of a week that stays a draft: it must not be in the feed
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/shifts" with body:
+      """
+      {
+        "activity": "delivery",
+        "startsAt": "2026-07-20T09:00:00",
+        "endsAt": "2026-07-20T17:00:00",
+        "users": ["/api/users/1"]
+      }
+      """
+    Then the response status code should be 201
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/shifts/publish_week" with body:
+      """
+      {
+        "week": "2026-07-13"
+      }
+      """
+    Then the response status code should be 204
     Given the user "sarah" is authenticated
     When I add "Accept" header equal to "application/ld+json"
     And the user "sarah" sends a "GET" request to "/api/me/shift_calendar"
@@ -1098,6 +1142,7 @@ Feature: Shifts
     And the response should contain "BEGIN:VEVENT"
     And the response should contain "DTSTART:20260713T"
     And the response should contain "Bring your bike\; and a lock"
+    And the response should not contain "DTSTART:20260720T"
     When the user "sarah" requests their shift calendar feed with an invalid token
     Then the response status code should be 404
 

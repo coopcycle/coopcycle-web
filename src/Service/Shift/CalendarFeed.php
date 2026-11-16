@@ -2,6 +2,7 @@
 
 namespace AppBundle\Service\Shift;
 
+use AppBundle\Entity\SchedulePublication;
 use AppBundle\Entity\Shift;
 use AppBundle\Entity\ShiftActivity;
 use AppBundle\Entity\User;
@@ -65,6 +66,9 @@ final class CalendarFeed
             Carbon::now()->modify(self::PAST),
             Carbon::now()->modify(self::FUTURE)
         );
+
+        // Draft (unpublished) weeks stay invisible to couriers
+        $shifts = $this->entityManager->getRepository(SchedulePublication::class)->filterPublished($shifts);
 
         $brandName = $this->settingsManager->get('brand_name') ?: 'CoopCycle';
         $host = $this->urlGenerator->getContext()->getHost();

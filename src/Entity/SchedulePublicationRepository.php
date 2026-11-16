@@ -33,4 +33,40 @@ class SchedulePublicationRepository extends EntityRepository
 
         return array_map(fn (array $row) => $row['weekStart']->format('Y-m-d'), $rows);
     }
+
+    public function isWeekPublished(\DateTimeInterface $date): bool
+    {
+        $weekStart = \DateTimeImmutable::createFromInterface($date)->modify('monday this week');
+
+        return null !== $this->findOneByWeekStart($weekStart);
+    }
+
+    /**
+     * Keeps only the shifts whose week (the week they start in) is published.
+     * Draft weeks must stay invisible to couriers.
+     *
+     * @param Shift[] $shifts
+     * @return Shift[]
+     */
+    public function filterPublished(array $shifts): array
+    {
+        if (0 === count($shifts)) {
+            return [];
+        }
+
+        $weekStartOf = fn (Shift $shift) => \DateTimeImmutable::createFromInterface($shift->getStartsAt())
+            ->modify('monday this week')
+            ->format('Y-m-d');
+
+        $weekStarts = array_map($weekStartOf, $shifts);
+        sort($weekStarts);
+
+        $publishedWeeks = $this->findWeekStartsBetween(
+            new \DateTimeImmutable($weekStarts[0]),
+            new \DateTimeImmutable(end($weekStarts))
+        );
+
+        return array_values(array_filter($shifts,
+            fn (Shift $shift) => in_array($weekStartOf($shift), $publishedWeeks, true)));
+    }
 }
