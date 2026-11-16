@@ -136,6 +136,10 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 $delivery->setWeight(floatval($record['weight']) * 1000);
             }
 
+            if (isset($record['external_reference']) && !empty(trim($record['external_reference']))) {
+                $delivery->setExternalReference(trim($record['external_reference']));
+            }
+
             if (isset($record['dropoff.packages']) && !empty($record['dropoff.packages'])) {
                 $this->parseAndApplyPackages($delivery->getDropoff(), $record['dropoff.packages']);
             }
@@ -269,7 +273,8 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 'dropoff.tags' => 'warn heavy',
                 'dropoff.metadata' => 'external_system_id=10',
                 'weight' => '5.5',
-                'tour.name' => 'my tour name'
+                'tour.name' => 'my tour name',
+                'external_reference' => 'ORDER-1234',
             ],
             [
                 'pickup.address' => '24 rue de rivoli paris',
