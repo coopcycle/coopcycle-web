@@ -1,17 +1,31 @@
-import { precogUpdated, precogGone, precogSynced, precogExpired } from './actions'
+import {
+  precogUpdated,
+  precogGone,
+  precogSynced,
+  precogExpired,
+  precogCompleted,
+  precogCompletionEnded,
+} from './actions'
 
 /**
- * Carts that are on their way to becoming orders, keyed by the opaque id the
- * server assigns them.
+ * Two sets, because a halo and its disappearance are different things.
  *
- * Deliberately a plain map and not an entity adapter: a ghost has no identity
- * beyond that id, nothing sorts or selects it, and it is replaced wholesale on
- * every update rather than patched.
+ * `ghosts` are carts still moving through checkout, keyed by the opaque id the
+ * server assigns them. Deliberately a plain map and not an entity adapter: a
+ * ghost has no identity beyond that id, nothing sorts or selects it, and it is
+ * replaced wholesale on every update rather than patched.
+ *
+ * `completions` are the two and a half seconds after a cart was paid for. The
+ * ghost is gone by then, but the board still needs its position to mark the
+ * spot, so it moves here rather than simply being deleted.
  */
-export const initialState = {}
+export const initialState = {
+  ghosts: {},
+  completions: {},
+}
 
-const without = (state, ids) => {
-  const next = { ...state }
+const without = (map, ids) => {
+  const next = { ...map }
   ids.forEach(id => delete next[id])
   return next
 }
@@ -22,19 +36,34 @@ export default (state = initialState, action) => {
   case precogUpdated.type:
     return {
       ...state,
-      [action.payload.id]: action.payload,
+      ghosts: { ...state.ghosts, [action.payload.id]: action.payload },
     }
 
   case precogGone.type:
-    return without(state, [ action.payload.id ])
+    return { ...state, ghosts: without(state.ghosts, [ action.payload.id ]) }
 
   case precogExpired.type:
-    return without(state, action.payload)
+    return { ...state, ghosts: without(state.ghosts, action.payload) }
 
   case precogSynced.type:
     // A replacement, not a merge: anything the server no longer lists has
-    // expired, and merging would keep it on the map forever.
-    return Object.fromEntries(action.payload.map(ghost => [ ghost.id, ghost ]))
+    // expired, and merging would keep it on the map forever. Completions are
+    // left alone — they are not carts and the server does not track them.
+    return {
+      ...state,
+      ghosts: Object.fromEntries(action.payload.map(ghost => [ ghost.id, ghost ])),
+    }
+
+  case precogCompleted.type:
+    // The ghost leaves and the mark takes its place in one step, so the board
+    // never shows both at once.
+    return {
+      ghosts: without(state.ghosts, [ action.payload.id ]),
+      completions: { ...state.completions, [action.payload.id]: action.payload },
+    }
+
+  case precogCompletionEnded.type:
+    return { ...state, completions: without(state.completions, [ action.payload ]) }
   }
 
   return state

@@ -9,7 +9,7 @@ import moment from 'moment'
 import clsx from 'clsx'
 
 import { setCurrentTask, assignAfter, selectTask, selectTasksByIds, toggleTask } from '../redux/actions'
-import { CourierMapLayer, TaskMapLayer, PolylineMapLayer, ClustersMapToggle, WarehouseMapLayer, PrecogMapLayer } from './MapLayers'
+import { CourierMapLayer, TaskMapLayer, PolylineMapLayer, ClustersMapToggle, WarehouseMapLayer, PrecogMapLayer, PrecogCompletionMapLayer } from './MapLayers'
 
 
 const sortByBefore = task => moment(task.before)
@@ -255,6 +255,7 @@ class LeafletMap extends Component {
       >
         <CourierMapLayer />
         <PrecogMapLayer />
+        <PrecogCompletionMapLayer />
         <WarehouseMapLayer />
         <TaskMapLayer />
         <PolylineMapLayer />

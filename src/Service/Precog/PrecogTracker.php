@@ -34,6 +34,17 @@ class PrecogTracker
     private const ITEM_KEY  = 'precog:item:%s';
 
     /**
+     * Why a ghost left the board.
+     *
+     * A cart that was paid for and a cart that was abandoned both end as the
+     * same thing -- a halo that is no longer there -- so the board has no way to
+     * tell a sale from a lost cart unless it is told. Without this it would have
+     * to stay silent about both, and the moment of payment is the one moment in
+     * the whole funnel worth marking.
+     */
+    public const REASON_ORDER_PLACED = 'order_placed';
+
+    /**
      * How big a grid cell is, relative to the disc radius drawn around it.
      *
      * The address can be anywhere in its cell while the board only draws the
@@ -129,7 +140,7 @@ class PrecogTracker
      * joined late may be holding one this process never wrote, and a `precog:gone`
      * for an id nobody has is free.
      */
-    public function forget(int $cartId): void
+    public function forget(int $cartId, string $reason = self::REASON_ORDER_PLACED): void
     {
         if (!$this->enabled) {
             return;
@@ -140,7 +151,9 @@ class PrecogTracker
         $this->redis->del(sprintf(self::ITEM_KEY, $id));
         $this->redis->zRem(self::INDEX_KEY, $id);
 
-        $this->liveUpdates->toDispatchers('precog:gone', ['precog' => ['id' => $id]]);
+        $this->liveUpdates->toDispatchers('precog:gone', [
+            'precog' => ['id' => $id, 'reason' => $reason],
+        ]);
     }
 
     /**

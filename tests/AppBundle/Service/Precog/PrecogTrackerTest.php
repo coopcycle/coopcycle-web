@@ -370,7 +370,12 @@ class PrecogTrackerTest extends TestCase
         $this->tracker()->ping($this->cart(), PrecogTracker::PAGE_PAYMENT);
     }
 
-    public function testForgettingACartTellsTheBoardAndClearsRedis()
+    /**
+     * The board cannot tell a sale from an abandoned cart otherwise: both end as
+     * a halo that is no longer there. The reason is what lets it mark one and
+     * stay quiet about the other.
+     */
+    public function testForgettingACartTellsTheBoardWhyAndClearsRedis()
     {
         $tracker = $this->tracker();
         $id = $tracker->idFor(42);
@@ -378,10 +383,27 @@ class PrecogTrackerTest extends TestCase
         $this->redis->del('precog:item:' . $id)->shouldBeCalled()->willReturn(1);
         $this->redis->zRem('precog:index', $id)->shouldBeCalled()->willReturn(1);
         $this->liveUpdates
-            ->toDispatchers('precog:gone', ['precog' => ['id' => $id]])
+            ->toDispatchers('precog:gone', ['precog' => [
+                'id' => $id,
+                'reason' => PrecogTracker::REASON_ORDER_PLACED,
+            ]])
             ->shouldBeCalledOnce();
 
         $tracker->forget(42);
+    }
+
+    public function testADifferentReasonIsPassedThroughUnchanged()
+    {
+        $tracker = $this->tracker();
+        $id = $tracker->idFor(42);
+
+        $this->redis->del(Argument::any())->willReturn(1);
+        $this->redis->zRem(Argument::cetera())->willReturn(1);
+        $this->liveUpdates
+            ->toDispatchers('precog:gone', ['precog' => ['id' => $id, 'reason' => 'merged']])
+            ->shouldBeCalledOnce();
+
+        $tracker->forget(42, 'merged');
     }
 
     public function testTheGhostIdDoesNotLeakTheCartId()

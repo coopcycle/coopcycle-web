@@ -12,6 +12,21 @@ import { createLeafletIcon } from '../../components/Avatar'
 import { isMarkerInsidePolygon } from '../utils'
 import { createRoot } from 'react-dom/client'
 import { taskMapIcon } from '../../styles';
+import i18next from 'i18next'
+
+/**
+ * Leaflet takes div icons as a string of HTML, so anything interpolated into
+ * one has to be escaped on the way in. The only interpolated value here is a
+ * translated label from our own catalogue, but a catalogue is still a file
+ * somebody edits.
+ */
+const escapeHtml = text => String(text).replace(/[&<>"']/g, c => ({
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;',
+}[c]))
 
 const tagsColor = tags => {
   const tag = _.first(tags)
@@ -90,6 +105,7 @@ export default class MapProxy {
 
     this.precogLayerGroup = new L.LayerGroup()
     this.precogMarkers = new Map()
+    this.precogBurstMarkers = new Map()
     this.precogEnabled = false
 
     this.tasksLayerGroup = new L.LayerGroup()
@@ -779,9 +795,75 @@ export default class MapProxy {
     })
   }
 
+  /**
+   * Marks the spots where carts were just paid for.
+   *
+   * Separate from setPrecog() because these are not carts any more: they carry
+   * only a position, they are never updated once placed, and they are driven by
+   * a timer rather than by heartbeats.
+   *
+   * @param {Object[]} completions
+   * @param {boolean} enabled
+   */
+  setPrecogCompletions(completions, enabled) {
+
+    if (!enabled) {
+      this._clearPrecogBursts()
+      return
+    }
+
+    if (!this.map.hasLayer(this.precogLayerGroup)) {
+      this.precogLayerGroup.addTo(this.map)
+    }
+
+    const seen = new Set()
+
+    completions.forEach(completion => {
+      seen.add(completion.id)
+
+      if (this.precogBurstMarkers.has(completion.id)) {
+        return
+      }
+
+      const marker = L.marker(L.latLng(completion.latitude, completion.longitude), {
+        pane: 'precog',
+        interactive: false,
+        keyboard: false,
+        icon: L.divIcon({
+          className: '',
+          iconSize: [ 0, 0 ],
+          html:
+            '<div class="precog-burst">' +
+              '<span class="precog-burst__ring"></span>' +
+              '<span class="precog-burst__core"></span>' +
+              '<span class="precog-burst__label">' +
+                escapeHtml(i18next.t('ADMIN_DASHBOARD_PRECOG_ORDER_PLACED')) +
+              '</span>' +
+            '</div>',
+        }),
+      })
+
+      this.precogLayerGroup.addLayer(marker)
+      this.precogBurstMarkers.set(completion.id, marker)
+    })
+
+    this.precogBurstMarkers.forEach((marker, id) => {
+      if (!seen.has(id)) {
+        this.precogLayerGroup.removeLayer(marker)
+        this.precogBurstMarkers.delete(id)
+      }
+    })
+  }
+
+  _clearPrecogBursts() {
+    this.precogBurstMarkers.forEach(marker => this.precogLayerGroup.removeLayer(marker))
+    this.precogBurstMarkers.clear()
+  }
+
   clearPrecog() {
     this.precogLayerGroup.clearLayers()
     this.precogMarkers.clear()
+    this.precogBurstMarkers.clear()
     this.precogEnabled = false
 
     if (this.map.hasLayer(this.precogLayerGroup)) {
@@ -817,6 +899,10 @@ export default class MapProxy {
           '<span class="precog__core"></span>' +
         '</div>',
     })
+  }
+
+  testPrecogCompletions() {
+    return Array.from(this.precogBurstMarkers.keys())
   }
 
   testPrecog() {

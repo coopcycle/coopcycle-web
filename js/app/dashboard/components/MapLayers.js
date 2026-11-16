@@ -4,7 +4,7 @@ import _ from 'lodash'
 
 import { selectVisibleOnMapTaskIds, selectHiddenOnMapTaskIds, selectPolylines, selectAsTheCrowFlies,
   selectPositions, selectSelectedTasks, selectRestaurantAddressIds, selectTourIdToColorMap, selectSettings,
-  selectPrecogGhosts, selectPrecogEnabled } from '../redux/selectors'
+  selectPrecogGhosts, selectPrecogEnabled, selectPrecogCompletions } from '../redux/selectors'
 import { selectAllTasks } from '../../coopcycle-frontend-js/logistics/redux'
 import { selectAllWarehouses } from '../../../shared/src/logistics/redux/selectors'
 
@@ -164,6 +164,24 @@ const PrecogLayer = ({ ghosts, precogEnabled }) => {
   return null
 }
 
+/**
+ * The couple of seconds after a cart was paid for.
+ *
+ * Its own layer rather than part of PrecogLayer: these come and go on a timer
+ * of their own, and folding them in would re-run the ghost diff every time one
+ * appears or expires.
+ */
+const PrecogCompletionLayer = ({ completions, precogEnabled }) => {
+
+  const map = useMap()
+
+  React.useEffect(() => {
+    map.setPrecogCompletions(completions, precogEnabled)
+  }, [ completions, precogEnabled ])
+
+  return null
+}
+
 const WarehouseLayer = ({ warehouses }) => {
   const map = useMap()
 
@@ -183,3 +201,7 @@ export const PrecogMapLayer = connect(state => ({
   ghosts: selectPrecogGhosts(state),
   precogEnabled: selectPrecogEnabled(state),
 }))(PrecogLayer)
+export const PrecogCompletionMapLayer = connect(state => ({
+  completions: selectPrecogCompletions(state),
+  precogEnabled: selectPrecogEnabled(state),
+}))(PrecogCompletionLayer)

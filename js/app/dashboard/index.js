@@ -100,9 +100,12 @@ async function start(tasksRequest, tasksListsRequest, toursRequest) {
     // Carts already in flight when the board opened. Centrifugo only carries
     // what happens from now on, so without this the first minute and a half of
     // a freshly loaded board would be blank for no reason.
-    precog: Object.fromEntries(
-      JSON.parse(dashboardEl.dataset.precog || '[]').map(ghost => [ ghost.id, ghost ])
-    ),
+    precog: {
+      ghosts: Object.fromEntries(
+        JSON.parse(dashboardEl.dataset.precog || '[]').map(ghost => [ ghost.id, ghost ])
+      ),
+      completions: {},
+    },
     settings: settingsInitialState,
   }
 

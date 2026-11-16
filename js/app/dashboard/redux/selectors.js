@@ -538,8 +538,16 @@ export const selectPrecogEnabled = state =>
   Boolean(state.config.precogEnabled) && Boolean(state.settings.precogEnabled)
 
 export const selectPrecogGhosts = createSelector(
-  state => state.precog,
-  precog => Object.values(precog)
+  state => state.precog.ghosts,
+  ghosts => Object.values(ghosts)
+)
+
+/**
+ * Carts paid for in the last couple of seconds, still being marked on the map.
+ */
+export const selectPrecogCompletions = createSelector(
+  state => state.precog.completions,
+  completions => Object.values(completions)
 )
 
 /**

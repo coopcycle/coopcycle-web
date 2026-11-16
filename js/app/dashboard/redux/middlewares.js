@@ -18,6 +18,8 @@ import {
   precogGone,
   precogSynced,
   precogExpired,
+  precogCompleted,
+  precogCompletionEnded,
 } from './actions'
 import _ from 'lodash'
 import { createCentrifuge, subscribe } from '../../centrifugo/client'
@@ -32,11 +34,44 @@ const OFFLINE_TIMEOUT_INTERVAL = (30 * 1000)
 // carries the moment it stops being true, and the board enforces it locally.
 const PRECOG_SWEEP_INTERVAL = (5 * 1000)
 
+// How long the mark left by a paid-for cart stays on the map. Long enough to
+// catch, short enough that the board is clean again before anyone acts on it.
+// Must outlast the CSS animation in dashboard.scss, or the mark is cut off
+// mid-collapse.
+const PRECOG_COMPLETION_MS = 2600
+
+/**
+ * A cart left the board. Whether that is worth marking depends entirely on why.
+ *
+ * Paid for: the ghost's position becomes a brief confirmation, because the task
+ * marker will not arrive until the restaurant accepts -- minutes later, and
+ * never at all if it refuses. Abandoned, or any other reason: it just goes.
+ *
+ * A reason of "order_placed" for a ghost this board never had leaves nothing
+ * behind. Marking a spot would mean inventing the position.
+ */
+export function handlePrecogGone(dispatch, getState, payload) {
+  const ghost = getState().precog.ghosts[payload.id]
+
+  if (payload.reason !== 'order_placed' || !ghost) {
+    dispatch(precogGone(payload))
+    return
+  }
+
+  dispatch(precogCompleted({
+    id: ghost.id,
+    latitude: ghost.latitude,
+    longitude: ghost.longitude,
+  }))
+
+  setTimeout(() => dispatch(precogCompletionEnded(ghost.id)), PRECOG_COMPLETION_MS)
+}
+
 let centrifuge
 
 function sweepPrecog(dispatch, getState) {
   const now = Date.now()
-  const expired = Object.values(getState().precog)
+  const expired = Object.values(getState().precog.ghosts)
     .filter(ghost => Date.parse(ghost.expiresAt) <= now)
     .map(ghost => ghost.id)
 
@@ -130,7 +165,7 @@ export const socketIO = ({ dispatch, getState }) => {
           dispatch(precogUpdated(event.data.precog))
           break
         case 'precog:gone':
-          dispatch(precogGone(event.data.precog))
+          handlePrecogGone(dispatch, getState, event.data.precog)
           break
         case 'v2:task_list:updated':
           if (event.data.task_list.date === currentDate.format('YYYY-MM-DD')) {
