@@ -46,22 +46,31 @@ enum PrecogStage: string
     }
 
     /**
-     * The radius, in metres, the published position is rounded to.
+     * The radius, in metres, within which the delivery address is guaranteed to
+     * lie -- and therefore the radius of the disc the board draws.
      *
      * This is a privacy decision before it is a visual one: showing a dispatcher
      * roughly where a stranger lives before that stranger has bought anything is
      * the part that needs justifying. The position gets finer as the customer
      * commits, and an exact address only ever appears once the order exists --
      * at which point it is an ordinary task, not a ghost.
+     *
+     * Each rung is exactly half the one above it. That is load-bearing, not
+     * tidiness: PrecogTracker rounds onto a grid sized from this number, and
+     * only grids whose cells divide evenly nest inside one another. Without
+     * nesting, a dispatcher watching one cart climb the funnel could intersect
+     * the cells from two rungs and end up with a better fix than the finest rung
+     * ever promised -- the published positions would leak more together than
+     * either does alone.
      */
     public function precisionInMeters(): int
     {
         return match ($this) {
             self::CartAddress      => 1200,
-            self::CheckoutOpen     => 800,
-            self::CheckoutReady    => 500,
-            self::PaymentOpen      => 250,
-            self::PaymentSubmitted => 100,
+            self::CheckoutOpen     => 600,
+            self::CheckoutReady    => 300,
+            self::PaymentOpen      => 150,
+            self::PaymentSubmitted => 75,
         };
     }
 }

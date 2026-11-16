@@ -33,6 +33,21 @@ class PrecogTracker
     private const INDEX_KEY = 'precog:index';
     private const ITEM_KEY  = 'precog:item:%s';
 
+    /**
+     * How big a grid cell is, relative to the disc radius drawn around it.
+     *
+     * The address can be anywhere in its cell while the board only draws the
+     * cell's centre, so the disc has to reach the far corner: half a diagonal is
+     * about 0.707 cells, which at 4/3 works out to 0.94 of the radius. The
+     * remaining 6% is slack for the grid being slightly out of square, since the
+     * longitude step is computed for the latitude band rather than for the
+     * address's exact latitude.
+     */
+    private const CELL_PER_RADIUS = 4 / 3;
+
+    /** Metres in a degree of latitude; also of longitude at the equator. */
+    private const METRES_PER_DEGREE = 111320;
+
     public function __construct(
         private Redis $redis,
         private LiveUpdates $liveUpdates,
@@ -212,12 +227,30 @@ class PrecogTracker
     }
 
     /**
-     * Rounds the delivery address onto a grid whose cell is about as wide as the
-     * precision the stage allows.
+     * Replaces the delivery address with the centre of the grid cell containing
+     * it, at the resolution this rung allows.
      *
-     * Rounding rather than jittering, so the point is stable between heartbeats:
-     * a dot that wandered every twenty seconds would read as movement, and the
+     * Snapping rather than jittering, so the point is stable between heartbeats:
+     * a dot that wandered every thirty seconds would read as movement, and the
      * one thing a ghost must not look like is a courier.
+     *
+     * Three properties the grid has to have, each of which the obvious
+     * implementation gets wrong:
+     *
+     * - **The disc contains the address.** The published point is the cell's
+     *   centre, so the address can be up to half a diagonal away. The disc is
+     *   therefore sized from the cell rather than the other way round: see
+     *   CELL_PER_RADIUS.
+     * - **Cells nest.** Each rung's cell sits wholly inside the previous rung's,
+     *   so climbing the funnel moves the dot inward, towards the address, and
+     *   never outside the circle the board was already drawing. This needs
+     *   floor() -- round() puts the coarse grid's boundaries through the middle
+     *   of the fine grid's cells, so the two interleave instead of nesting, and
+     *   intersecting the published cells from two rungs would then pin the
+     *   address down more tightly than the finest rung ever promised.
+     * - **The grid is global.** The longitude step is taken from the latitude
+     *   band rather than the address's own latitude, so neighbours always share
+     *   a grid rather than each getting one centred on themselves.
      *
      * @return array{0: float, 1: float}|null
      */
@@ -232,18 +265,21 @@ class PrecogTracker
         $latitude = (float) $geo->getLatitude();
         $longitude = (float) $geo->getLongitude();
 
-        $metres = $stage->precisionInMeters();
+        $cell = $stage->precisionInMeters() * self::CELL_PER_RADIUS;
 
-        $latStep = $metres / 111320;
+        $latStep = $cell / self::METRES_PER_DEGREE;
 
-        // A degree of longitude shrinks towards the poles. The clamp keeps the
-        // step finite rather than correct at latitudes nobody delivers to.
-        $cos = max(0.01, cos(deg2rad($latitude)));
-        $lngStep = $metres / (111320 * $cos);
+        // A degree of longitude shrinks towards the poles, but the correction is
+        // taken from the whole-degree band the address falls in, not from the
+        // address itself. Two reasons: every address in the band then lands on
+        // one shared grid, and the step still halves exactly from one rung to
+        // the next, which is what makes the cells nest.
+        $cos = max(0.01, cos(deg2rad(floor($latitude) + 0.5)));
+        $lngStep = $cell / (self::METRES_PER_DEGREE * $cos);
 
         return [
-            round(round($latitude / $latStep) * $latStep, 6),
-            round(round($longitude / $lngStep) * $lngStep, 6),
+            round((floor($latitude / $latStep) + 0.5) * $latStep, 6),
+            round((floor($longitude / $lngStep) + 0.5) * $lngStep, 6),
         ];
     }
 
