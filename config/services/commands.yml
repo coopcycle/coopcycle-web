@@ -254,10 +254,9 @@ services:
 
   AppBundle\Command\ImportDeliveriesCommand:
     arguments:
-      $importers:
-        proximus: '@AppBundle\Transporter\Proximus\ProximusImporter'
-      $transformers:
-        proximus: '@AppBundle\Transporter\Proximus\ProximusTransformer'
+      # Named with #[AsTaggedItem('name')], see TransporterImporterInterface
+      $importers: !tagged_locator { tag: coopcycle.deliveries_importer }
+      $transformers: !tagged_locator { tag: coopcycle.deliveries_transformer }
     tags:
       - { name: 'console.command', command: 'coopcycle:deliveries:import' }
 

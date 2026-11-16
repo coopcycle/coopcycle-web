@@ -69,6 +69,10 @@ services:
           $baseUrl: '%router.request_context.scheme%://%router.request_context.host%'
           $appName: '%env(COOPCYCLE_APP_NAME)%'
 
+    # Found by coopcycle:deliveries:import through their tag, as "fake"
+    Tests\AppBundle\Command\Double\FakeDeliveriesImporter: ~
+    Tests\AppBundle\Command\Double\FakeDeliveriesTransformer: ~
+
     # The transporters of the tests don't come from TRANSPORTERS_CONFIG
     AppBundle\Transporter\Waybill:
         arguments:

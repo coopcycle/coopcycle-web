@@ -13,6 +13,7 @@
     "autoload": {
         "psr-4": {
             "AppBundle\\": "src/",
+            "CoopCycle\\Integrations\\": "private/src/",
             "Application\\Migrations\\": "app/DoctrineMigrations"
         }
     },
@@ -181,7 +182,8 @@
         "scheb/2fa-email": "^7.0",
         "islesurlasorguetourisme/daisyui-form-bundle": "dev-main",
         "rezozero/canonical-email": "^1.1",
-        "symfony/postmark-mailer": "6.4.*"
+        "symfony/postmark-mailer": "6.4.*",
+        "webklex/php-imap": "^6.2"
     },
     "require-dev": {
         "symfony/debug-bundle": "*",
