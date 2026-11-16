@@ -14,6 +14,10 @@ class FakeDeliveriesTransformer implements TransporterTransformerInterface
 {
     public function transform($data): string
     {
+        if (str_contains($data, 'BROKEN')) {
+            throw new \RuntimeException('Broken file');
+        }
+
         $reader = Reader::fromString($data)->setDelimiter(';')->setHeaderOffset(0);
 
         $output = Writer::fromString();

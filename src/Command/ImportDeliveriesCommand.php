@@ -13,6 +13,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use League\Csv\Reader;
 use League\Flysystem\Filesystem;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -43,7 +44,8 @@ class ImportDeliveriesCommand extends Command {
         /** @var ServiceProviderInterface<TransporterImporterInterface> */
         private readonly ServiceProviderInterface $importers,
         /** @var ServiceProviderInterface<TransporterTransformerInterface> */
-        private readonly ServiceProviderInterface $transformers
+        private readonly ServiceProviderInterface $transformers,
+        private readonly LoggerInterface $transporterLogger,
     )
     {
         parent::__construct();
@@ -115,10 +117,29 @@ class ImportDeliveriesCommand extends Command {
             throw new \InvalidArgumentException('No CSV content or importer specified');
         }
 
-        // Transform everything before queuing anything, so a bad file
-        // doesn't leave the import half done (and re-imported on next run)
+        // Transform everything before queuing anything. A file that can't be transformed
+        // is rejected on its own, the others still go through: the importer is told on
+        // flush(), so it can set it aside instead of pulling it again on every run.
+        $rejected = [];
         if ($this->transformer instanceof TransporterTransformerInterface) {
-            $csvs = array_map(fn($content): string => $this->transformer->transform($content), $csvs);
+            $transformed = [];
+            foreach ($csvs as $key => $content) {
+                try {
+                    $transformed[$key] = $this->transformer->transform($content);
+                } catch (\Exception $e) {
+                    // A file given on the command line: nothing to set aside, just fail
+                    if (!is_null($this->input->getArgument('csv'))) {
+                        throw $e;
+                    }
+                    $this->transporterLogger->critical(
+                        sprintf('Rejected file "%s": %s', $key, $e->getMessage()),
+                        ['importer' => $this->input->getOption('importer'), 'store' => $this->input->getArgument('store')]
+                    );
+                    $this->output->writeln(sprintf('<error>Rejected file "%s": %s</error>', $key, $e->getMessage()));
+                    $rejected[$key] = $e->getMessage();
+                }
+            }
+            $csvs = $transformed;
         }
 
         foreach ($csvs as $csv) {
@@ -136,20 +157,22 @@ class ImportDeliveriesCommand extends Command {
         }
 
         if ($this->importer instanceof TransporterImporterInterface) {
-            $this->importer->flush($this->dryRun);
+            $this->importer->flush($this->dryRun, $rejected);
         }
 
         // Count deliveries
         $deliveries_count = array_sum(
             array_map(
-                // Not a line count: quoted fields may span several lines
-                fn(string $csv): int => count(Reader::fromString($csv)->setHeaderOffset(0)),
+                // Not a line count: quoted fields may span several lines.
+                // Without header offset, as a malformed header would throw here.
+                fn(string $csv): int => max(0, count(Reader::fromString($csv)) - 1),
                 $csvs
             )
         );
 
         $this->output->writeln(">> {$deliveries_count} deliveries imported");
-        return Command::SUCCESS;
+
+        return empty($rejected) ? Command::SUCCESS : Command::FAILURE;
     }
 
 

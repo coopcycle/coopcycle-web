@@ -13,8 +13,13 @@ interface TransporterImporterInterface {
 
     /**
      * @param array<int,mixed> $options
-     * @return array<string>
+     * @return array<array-key,string> Contents, keyed by an id of their source (given back to flush())
      */
     public function pull(array $options = []): array;
-    public function flush(bool $dry_run = false): void;
+
+    /**
+     * Called once the pulled contents were queued.
+     * @param array<array-key,string> $rejected Contents that couldn't be transformed: reasons, keyed like pull()
+     */
+    public function flush(bool $dry_run = false, array $rejected = []): void;
 }

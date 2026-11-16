@@ -38,7 +38,83 @@ class ImportDeliveriesCommandTest extends KernelTestCase
         // Counted as CSV records, not as lines
         $this->assertStringContainsString('>> 2 deliveries imported', $output);
         // Dry run: flush() was called, but told not to mutate anything
-        $this->assertSame([true], self::getContainer()->get(FakeDeliveriesImporter::class)->flushCalls);
+        $this->assertSame(
+            [['dry_run' => true, 'rejected' => []]],
+            self::getContainer()->get(FakeDeliveriesImporter::class)->flushCalls
+        );
+    }
+
+    public function testFileThatCantBeTransformedIsRejectedAlone(): void
+    {
+        $tester = $this->commandTester();
+
+        $importer = self::getContainer()->get(FakeDeliveriesImporter::class);
+        $importer->files = [
+            'broken.csv' => 'BROKEN',
+            'valid.csv' => FakeDeliveriesImporter::VALID_FILE,
+        ];
+
+        $tester->execute([
+            'store' => '/api/stores/1',
+            '--importer' => 'fake',
+            '--transformer' => 'fake',
+            '--dry-run' => true,
+        ]);
+
+        // The valid file still goes through, the command fails for the broken one
+        $this->assertSame(1, $tester->getStatusCode());
+        $output = $tester->getDisplay();
+        $this->assertStringContainsString('Rejected file "broken.csv": Broken file', $output);
+        $this->assertStringContainsString('>> 2 deliveries imported', $output);
+        // The importer is told, so it can set it aside
+        $this->assertSame(
+            [['dry_run' => true, 'rejected' => ['broken.csv' => 'Broken file']]],
+            $importer->flushCalls
+        );
+    }
+
+    public function testFileGivenOnTheCommandLineThatCantBeTransformedFails(): void
+    {
+        $tester = $this->commandTester();
+
+        $file = tempnam(sys_get_temp_dir(), 'coopcycle_import_test_');
+        file_put_contents($file, 'BROKEN');
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Broken file');
+
+        try {
+            $tester->execute([
+                'store' => '/api/stores/1',
+                'csv' => $file,
+                '--transformer' => 'fake',
+                '--dry-run' => true,
+            ]);
+        } finally {
+            unlink($file);
+        }
+    }
+
+    public function testCountWithAMalformedHeader(): void
+    {
+        $tester = $this->commandTester();
+
+        // Empty trailing columns: the header has duplicate (empty) names
+        $file = tempnam(sys_get_temp_dir(), 'coopcycle_import_test_');
+        file_put_contents($file, "dropoff.address,dropoff.comments,,\n1 rue de la Paix,,,\n");
+
+        try {
+            $tester->execute([
+                'store' => '/api/stores/1',
+                'csv' => $file,
+                '--dry-run' => true,
+            ]);
+        } finally {
+            unlink($file);
+        }
+
+        $tester->assertCommandIsSuccessful();
+        $this->assertStringContainsString('>> 1 deliveries imported', $tester->getDisplay());
     }
 
     public function testUnknownImporter(): void
