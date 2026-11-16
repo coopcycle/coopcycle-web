@@ -101,6 +101,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
     private $apiKeys;
 
+    private ?string $rememberedIri = null;
+
     /**
      * Initializes context.
      *
@@ -573,6 +575,28 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
         $this->restContext->iAddHeaderEqualTo('Authorization', 'Bearer ' . $this->tokens[$username]);
         $this->restContext->iSendARequestTo($method, $url);
+    }
+
+    #[Given('the IRI of the last response is remembered')]
+    public function theIriOfTheLastResponseIsRemembered()
+    {
+        $data = json_decode($this->minkContext->getSession()->getPage()->getContent(), true);
+
+        if (!isset($data['@id'])) {
+            throw new \RuntimeException('The last response has no "@id"');
+        }
+
+        $this->rememberedIri = $data['@id'];
+    }
+
+    #[When('the user :username sends a :method request to the remembered IRI')]
+    public function theUserSendsARequestToTheRememberedIri($username, $method)
+    {
+        if (null === $this->rememberedIri) {
+            throw new \RuntimeException('No IRI has been remembered');
+        }
+
+        $this->theUserSendsARequestTo($username, $method, $this->rememberedIri);
     }
 
     #[When('the user :username sends a :method request to :url with body:')]
