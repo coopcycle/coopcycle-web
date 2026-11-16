@@ -1944,12 +1944,17 @@ services:
       $logger: '@logger'
       $connectionId: ''
 
+  AppBundle\Service\PackageMappingResolver:
+    arguments:
+      $iriConverter: '@api_platform.iri_converter'
+
   AppBundle\Integration\Rdc\Coopcycle\RdcServiceRequestMapper:
     arguments:
       $deliveryManager: '@AppBundle\Service\DeliveryManager'
       $geocoder: '@AppBundle\Service\Geocoder'
       $phoneUtil: '@libphonenumber\PhoneNumberUtil'
       $logger: '@logger'
+      $rdcConnections: '%rdc_connections%'
 
   AppBundle\Integration\Rdc\Coopcycle\RdcServiceRequestProcessor:
     arguments:
@@ -2040,14 +2045,6 @@ services:
   AppBundle\Session\NativeSessionStorageFactory:
     decorates: session.storage.factory.native
     arguments: ['@.inner']
-
-  AppBundle\Transporter\Proximus\ProximusImporter:
-    lazy: true
-    arguments:
-      - "%env(PROXIMUS_SYNC_URI)%"
-
-  AppBundle\Transporter\Proximus\ProximusTransformer:
-    lazy: true
 
   sentry.callback.before_send:
     class: 'AppBundle\Service\Sentry'

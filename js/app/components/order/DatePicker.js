@@ -44,6 +44,7 @@ const DatePicker = ({ choices, onChange, t, value }) => {
       <div>
         <Select
           styles={ selectStyles }
+          isSearchable={ false }
           defaultValue={ _.find(dateOptions, o => o.value === date) }
           options={ dateOptions }
           onChange={ ({ value }) => {
@@ -56,6 +57,7 @@ const DatePicker = ({ choices, onChange, t, value }) => {
       <div>
         <Select
           styles={ selectStyles }
+          isSearchable={ false }
           defaultValue={ _.find(timeOptions, o => o.value === range) }
           value={ timeValue }
           options={ timeOptions }

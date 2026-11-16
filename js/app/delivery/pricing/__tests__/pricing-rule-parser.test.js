@@ -11,6 +11,10 @@ import withZone from './with-zone.json'
 
 import withPackages from './with-packages.json'
 import withDiffHours from './with-diff-hours.json'
+import withDiffDaysPickup from './with-diff-days-pickup.json'
+import withDiffDaysDropoff from './with-diff-days-dropoff.json'
+import withDiffDaysDropoffWithRange from './with-diff-days-dropoff-in.json'
+import withDiffHoursDropoff from './with-diff-hours-dropoff.json'
 import withDropoffDoorstep from './with-dropoff-doorstep.json'
 import withOrderItemsTotal from './with-order-items-total.json'
 import withOrderItemsTotalRange from './with-order-items-total-range.json'
@@ -22,6 +26,11 @@ import withTimeRangeLength from './with-time-range-length.json'
 import withDropoffTimeRangeLength from './with-time-range-length-dropoff.json'
 import withDropoffTimeRangeLengthWithRange from './with-time-range-length-dropoff-in.json'
 import withTimeSlot from './with-time-slot.json'
+import withDropoffRank from './with-dropoff-rank.json'
+import withDropoffRankRange from './with-dropoff-rank-range.json'
+import withTaskTypeAndDropoffRank from './with-task-type-and-dropoff-rank.json'
+import withPickupRank from './with-pickup-rank.json'
+import withPickupRankRange from './with-pickup-rank-range.json'
 
 import fixedPrice from './fixed-price.json'
 import pricePercentage from './price-percentage.json'
@@ -258,6 +267,54 @@ describe('Pricing rule parser (AST)', function() {
 
   })
 
+  it('should parse AST with diff days of pickup', function() {
+
+    const result = parseAST(withDiffDaysPickup)
+
+    expect(result).toEqual(
+      [
+        { left: 'diff_days(pickup)', operator: '<', right: '1' }
+      ]
+    )
+
+  })
+
+  it('should parse AST with diff days of dropoff', function() {
+
+    const result = parseAST(withDiffDaysDropoff)
+
+    expect(result).toEqual(
+      [
+        { left: 'diff_days(dropoff)', operator: '<', right: '1' }
+      ]
+    )
+
+  })
+
+  it('should parse AST with diff days of dropoff with range', function() {
+
+    const result = parseAST(withDiffDaysDropoffWithRange)
+
+    expect(result).toEqual(
+      [
+        { left: 'diff_days(dropoff)', operator: 'in', right: [ '0', '1' ] }
+      ]
+    )
+
+  })
+
+  it('should parse AST with diff hours of dropoff', function() {
+
+    const result = parseAST(withDiffHoursDropoff)
+
+    expect(result).toEqual(
+      [
+        { left: 'diff_hours(dropoff)', operator: '<', right: '3' }
+      ]
+    )
+
+  })
+
   it('should parse AST with dropoff doorstep', function() {
 
     const result = parseAST(withDropoffDoorstep)
@@ -291,6 +348,62 @@ describe('Pricing rule parser (AST)', function() {
     expect(result).toEqual(
       [
         { left: 'order.itemsTotal', operator: 'in', right: [ 2300, 2599 ] }
+      ]
+    )
+  })
+
+  it('should parse AST with dropoff rank', function() {
+
+    const result = parseAST(withDropoffRank)
+
+    expect(result).toEqual(
+      [
+        { left: 'task.dropoffRank', operator: '>', right: 1 }
+      ]
+    )
+  })
+
+  it('should parse AST with dropoff rank (range)', function() {
+
+    const result = parseAST(withDropoffRankRange)
+
+    expect(result).toEqual(
+      [
+        { left: 'task.dropoffRank', operator: 'in', right: [ 2, 3 ] }
+      ]
+    )
+  })
+
+  it('should parse AST with task type and dropoff rank', function() {
+
+    const result = parseAST(withTaskTypeAndDropoffRank)
+
+    expect(result).toEqual(
+      [
+        { left: 'task.type', operator: '==', right: 'DROPOFF' },
+        { left: 'task.dropoffRank', operator: '==', right: 2 }
+      ]
+    )
+  })
+
+  it('should parse AST with pickup rank', function() {
+
+    const result = parseAST(withPickupRank)
+
+    expect(result).toEqual(
+      [
+        { left: 'task.pickupRank', operator: '>', right: 1 }
+      ]
+    )
+  })
+
+  it('should parse AST with pickup rank (range)', function() {
+
+    const result = parseAST(withPickupRankRange)
+
+    expect(result).toEqual(
+      [
+        { left: 'task.pickupRank', operator: 'in', right: [ 2, 3 ] }
       ]
     )
   })

@@ -65,6 +65,14 @@ export default function(formSelector, options) {
 
   disableBtn(submitButton)
 
+  // When navigating back (e.g. from a hosted payment page), the browser may restore
+  // this page from the back/forward cache, with the button still in loading state
+  window.addEventListener('pageshow', (event) => {
+    if (event.persisted) {
+      setLoading(false)
+    }
+  })
+
   const showCardSkeleton = () => {
     document.getElementById('card-element').innerHTML = `
       <div id="card-element-skeleton" class="space-y-3">

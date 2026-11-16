@@ -11,7 +11,9 @@ use AppBundle\Transporter\TransporterTransformerInterface;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
+use League\Csv\Reader;
 use League\Flysystem\Filesystem;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -20,6 +22,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
+use Symfony\Contracts\Service\ServiceProviderInterface;
 
 class ImportDeliveriesCommand extends Command {
 
@@ -38,8 +41,11 @@ class ImportDeliveriesCommand extends Command {
         private readonly Hashids $hashids8,
         private readonly MessageBusInterface $messageBus,
         private readonly Filesystem $deliveryImportsFilesystem,
-        private readonly array $importers,
-        private readonly array $transformers
+        /** @var ServiceProviderInterface<TransporterImporterInterface> */
+        private readonly ServiceProviderInterface $importers,
+        /** @var ServiceProviderInterface<TransporterTransformerInterface> */
+        private readonly ServiceProviderInterface $transformers,
+        private readonly LoggerInterface $transporterLogger,
     )
     {
         parent::__construct();
@@ -69,27 +75,27 @@ class ImportDeliveriesCommand extends Command {
         }
 
         if (!is_null($importer)) {
-            if (!isset($this->importers[$importer])) {
+            if (!$this->importers->has($importer)) {
                 throw new \InvalidArgumentException(
                     sprintf(
                         'Unknown importer "%s", available importers: "%s"',
-                        $importer, implode('", "', array_keys($this->importers))
+                        $importer, implode('", "', array_keys($this->importers->getProvidedServices()))
                     )
                 );
             }
-            $this->importer = $this->importers[$importer];
+            $this->importer = $this->importers->get($importer);
         }
 
         if (!is_null($transformer)) {
-            if (!isset($this->transformers[$transformer])) {
+            if (!$this->transformers->has($transformer)) {
                 throw new \InvalidArgumentException(
                     sprintf(
                         'Unknown transformer "%s", available transformers: "%s"',
-                        $transformer, implode('", "', array_keys($this->transformers))
+                        $transformer, implode('", "', array_keys($this->transformers->getProvidedServices()))
                     )
                 );
             }
-            $this->transformer = $this->transformers[$transformer];
+            $this->transformer = $this->transformers->get($transformer);
         }
 
     }
@@ -111,11 +117,32 @@ class ImportDeliveriesCommand extends Command {
             throw new \InvalidArgumentException('No CSV content or importer specified');
         }
 
-        foreach ($csvs as $csv) {
-
-            if ($this->transformer instanceof TransporterTransformerInterface) {
-                $csv = $this->transformer->transform($csv);
+        // Transform everything before queuing anything. A file that can't be transformed
+        // is rejected on its own, the others still go through: the importer is told on
+        // flush(), so it can set it aside instead of pulling it again on every run.
+        $rejected = [];
+        if ($this->transformer instanceof TransporterTransformerInterface) {
+            $transformed = [];
+            foreach ($csvs as $key => $content) {
+                try {
+                    $transformed[$key] = $this->transformer->transform($content);
+                } catch (\Exception $e) {
+                    // A file given on the command line: nothing to set aside, just fail
+                    if (!is_null($this->input->getArgument('csv'))) {
+                        throw $e;
+                    }
+                    $this->transporterLogger->critical(
+                        sprintf('Rejected file "%s": %s', $key, $e->getMessage()),
+                        ['importer' => $this->input->getOption('importer'), 'store' => $this->input->getArgument('store')]
+                    );
+                    $this->output->writeln(sprintf('<error>Rejected file "%s": %s</error>', $key, $e->getMessage()));
+                    $rejected[$key] = $e->getMessage();
+                }
             }
+            $csvs = $transformed;
+        }
+
+        foreach ($csvs as $csv) {
 
             // Dry run, console output then continue
             if ($this->dryRun) {
@@ -130,19 +157,22 @@ class ImportDeliveriesCommand extends Command {
         }
 
         if ($this->importer instanceof TransporterImporterInterface) {
-            $this->importer->flush($this->dryRun);
+            $this->importer->flush($this->dryRun, $rejected);
         }
 
         // Count deliveries
         $deliveries_count = array_sum(
             array_map(
-                fn($csv) => substr_count($csv, "\n") - 1,
+                // Not a line count: quoted fields may span several lines.
+                // Without header offset, as a malformed header would throw here.
+                fn(string $csv): int => max(0, count(Reader::fromString($csv)) - 1),
                 $csvs
             )
         );
 
         $this->output->writeln(">> {$deliveries_count} deliveries imported");
-        return Command::SUCCESS;
+
+        return empty($rejected) ? Command::SUCCESS : Command::FAILURE;
     }
 
 

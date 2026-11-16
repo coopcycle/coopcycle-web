@@ -4,6 +4,7 @@ namespace AppBundle\Api\State;
 
 use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\Metadata\Operation;
+use ApiPlatform\Metadata\Put;
 use ApiPlatform\State\ProcessorInterface;
 use AppBundle\Api\Dto\ShiftPresetCreateInput;
 use AppBundle\Entity\Skill;
@@ -13,7 +14,12 @@ use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+/**
+ * Handles both creating (POST) and editing (PUT) a ShiftPreset — the PUT body
+ * is the same full ShiftPresetCreateInput, replacing every field.
+ */
 final class ShiftPresetCreateProcessor implements ProcessorInterface
 {
     public function __construct(
@@ -39,10 +45,20 @@ final class ShiftPresetCreateProcessor implements ProcessorInterface
             throw new BadRequestHttpException('Invalid startTime/endTime, expected "HH:MM"');
         }
 
-        /** @var User $user */
-        $user = $this->security->getUser();
+        if ($operation instanceof Put) {
+            $preset = $this->entityManager->find(ShiftPreset::class, $uriVariables['id']);
+            if (null === $preset) {
+                throw new NotFoundHttpException();
+            }
+            $preset->clearRequiredSkills();
+        } else {
+            /** @var User $user */
+            $user = $this->security->getUser();
 
-        $preset = new ShiftPreset();
+            $preset = new ShiftPreset();
+            $preset->setCreatedBy($user);
+        }
+
         $preset->setName($data->name);
         $preset->setActivity($data->activity);
         $preset->setStartTime($startTime);
@@ -50,7 +66,6 @@ final class ShiftPresetCreateProcessor implements ProcessorInterface
         $preset->setSlots($data->slots);
         $preset->setBreakMinutes($data->breakMinutes);
         $preset->setComment($data->comment);
-        $preset->setCreatedBy($user);
 
         foreach ($data->requiredSkills as $iri) {
             /** @var Skill $skill */

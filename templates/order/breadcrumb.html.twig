@@ -10,8 +10,8 @@
 {% endif %}
 
 <ol class="steps w-full mb-5">
-  <li class="step step-primary">
-    <a href="{{ path((order.isMultiVendor() ? 'hub' : 'restaurant'), {
+  <li class="step step-primary relative">
+    <a class="after:absolute after:inset-0 after:z-10" href="{{ path((order.isMultiVendor() ? 'hub' : 'restaurant'), {
         id:   order.vendor.id,
         slug: order.vendor.name|slugify
       }) }}">
@@ -23,9 +23,9 @@
       </span>
     </a>
   </li>
-  <li class="step {% if step >= 2 %}step-primary{% endif %}">
+  <li class="step {% if step >= 2 %}step-primary{% endif %} relative">
     {% if order is defined and step < 4 %}
-      <a href="{{ path('order') }}">
+      <a class="after:absolute after:inset-0 after:z-10" href="{{ path('order') }}">
     {% else %}
       <span>
     {% endif %}

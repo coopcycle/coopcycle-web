@@ -345,7 +345,13 @@ const Planning = () => {
         holidayRequests={weekHolidays}
         availabilityRules={availabilityRules ?? []}
         shifts={shifts}
-        onClose={() => setModalState(null)}
+        onClose={() => {
+          // Back to the gallery once done editing one of its templates
+          if (modalState?.editPreset) {
+            setPresetPickerOpen(true);
+          }
+          setModalState(null);
+        }}
       />
       <HolidayRequestsDrawer
         open={drawerOpen}
@@ -359,6 +365,10 @@ const Planning = () => {
         onSelect={preset => {
           setPresetPickerOpen(false);
           setModalState({ date: weekStart, preset });
+        }}
+        onEdit={preset => {
+          setPresetPickerOpen(false);
+          setModalState({ editPreset: preset });
         }}
       />
     </div>

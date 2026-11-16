@@ -299,6 +299,14 @@ class RuleHumanizer
             $attributeName = 'unknown';
         }
 
+        if ($attributeName === 'task.pickupRank') {
+            return $this->humanizeRank($node->attributes['operator'], $node->nodes['right'], 'pricing.rule.humanizer.pickup_rank');
+        }
+
+        if ($attributeName === 'task.dropoffRank') {
+            return $this->humanizeRank($node->attributes['operator'], $node->nodes['right'], 'pricing.rule.humanizer.dropoff_rank');
+        }
+
         if ($node->attributes['operator'] === 'in') {
 
             $left = $node->nodes['right']->nodes['left']->attributes['value'];
@@ -407,6 +415,26 @@ class RuleHumanizer
             '%operator%' => $translatedOperator,
             '%value%' => $value,
         ]);
+    }
+
+    private function humanizeRank(string $operator, BinaryNode|ConstantNode $value, string $transKey): string
+    {
+        if ('in' === $operator) {
+            $translatedOperator = $this->translator->trans('pricing.rule.humanizer.between', [
+                '%left%' => $value->nodes['left']->attributes['value'],
+                '%right%' => $value->nodes['right']->attributes['value'],
+            ]);
+            $translatedValue = '';
+        } else {
+            $translatedOperator = $this->translateOperator($operator);
+            $translatedValue = $value->attributes['value'];
+        }
+
+        // Use trim() to remove the extra space at the end because of an empty %value%
+        return trim($this->translator->trans($transKey, [
+            '%operator%' => $translatedOperator,
+            '%value%' => $translatedValue,
+        ]));
     }
 
     private function translateOperator(string $operator): string

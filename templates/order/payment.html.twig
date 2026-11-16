@@ -79,7 +79,11 @@
       <!-- React component will be inserted here -->
       <div id="order__fulfilment_time_range__container">
       </div>
-      <div>
+      <div class="flex flex-row items-center">
+        <a class="btn btn-ghost mr-2" href="{{ path('order') }}" title="{{ 'checkout.previous'|trans }}">
+          <i class="fa fa-arrow-left"></i>
+          <span class="hidden md:inline">{{ 'checkout.previous'|trans }}</span>
+        </a>
         <button type="submit" class="btn btn-lg btn-primary btn-payment" data-payment-button disabled="disabled">
           <span class="loading loading-spinner hidden"></span>
           <span class="whitespace-nowrap">{% trans with { '%total%': order.total|price_format } %}order.payment.total{% endtrans %}</span>

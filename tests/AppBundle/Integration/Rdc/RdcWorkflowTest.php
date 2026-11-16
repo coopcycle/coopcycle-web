@@ -10,6 +10,8 @@ use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryRepository;
 use AppBundle\Entity\Incident\Incident;
+use AppBundle\Entity\Package;
+use AppBundle\Entity\PackageSet;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskImage;
@@ -31,7 +33,8 @@ use Symfony\Component\HttpClient\MockHttpClient;
  * - a cancelled delivery cancels the service and the activity, then the
  *   requestor's service request;
  * - a delivered delivery finishes them with its proof of delivery;
- * - an incident is reported on them with its reason.
+ * - an incident is reported on them with its reason;
+ * - the goods become the packages the connection maps them to.
  *
  * Run on a collection: the courier picks goods up at a third party (with its
  * SHIPPER contact) and brings them to the requestor's partner. The other
@@ -47,10 +50,14 @@ class RdcWorkflowTest extends WebTestCase
     /** The REQUESTOR_LABEL_ID of the fixture, which becomes the external reference */
     protected const LABEL = 'C-26-1234-1';
 
+    /** The cardboard parcels of the fixture */
+    protected const CARTONS = 6;
+
     private KernelBrowser $client;
     private EntityManagerInterface $entityManager;
     private FakeBol $bol;
     private Store $store;
+    private Package $carton;
     private string $loUri;
 
     /** @var array<string, array{0: mixed, 1: mixed}> */
@@ -66,6 +73,8 @@ class RdcWorkflowTest extends WebTestCase
                 'enabled' => true,
                 'name' => 'Provider',
                 'webhookSecret' => self::SECRET,
+                // The first package of the purged database, created below
+                'packageMapping' => ['PARCEL/CARDBOARD' => '/api/packages/1'],
                 'instanceBaseUrl' => self::OUR_NODE,
                 'memberProvider' => 'COOPCYCLE',
                 'keycloakBaseUrl' => 'https://keycloak.coopcycle.test',
@@ -129,11 +138,26 @@ class RdcWorkflowTest extends WebTestCase
 
         $this->entityManager->getConnection()->beginTransaction();
 
+        $packageSet = new PackageSet();
+        $packageSet->setName('RDC workflow');
+        $this->carton = new Package();
+        $this->carton->setName('Carton');
+        $this->carton->setDescription('Carton');
+        $this->carton->setColor('#000000');
+        $this->carton->setShortCode('CA');
+        $this->carton->setAverageVolumeUnits(1);
+        $this->carton->setMaxVolumeUnits(1);
+        $packageSet->addPackage($this->carton);
+        $this->entityManager->persist($packageSet);
+        $this->entityManager->persist($this->carton);
+
         $this->store = new Store();
         $this->store->setName('RDC workflow');
         $this->store->setRdcConnectionId(self::CONNECTION);
+        $this->store->setPackageSet($packageSet);
         $this->entityManager->persist($this->store);
         $this->entityManager->flush();
+        $this->assertSame(1, $this->carton->getId(), 'The packageMapping of the connection names the first package');
 
         // Unique, so that the webhook idempotency claim of a previous run doesn't skip it
         $this->loUri = sprintf('https://bol-api.requestor.test/service-requests/%s', uniqid('sr-'));
@@ -207,6 +231,18 @@ class RdcWorkflowTest extends WebTestCase
         $operations = $this->operationsByPath($changeRequest['body']);
         $this->assertSame('APPROVED', $operations['/responseStatus']);
         $this->assertSame(['uri' => $serviceUri], $operations['/service']);
+    }
+
+    public function testTheGoodsBecomePackagesOfTheDropoff(): void
+    {
+        $delivery = $this->receiveServiceRequest();
+
+        $this->assertSame(static::CARTONS, $delivery->getDropoff()->getQuantityForPackage($this->carton));
+        $this->assertFalse($delivery->getPickup()->hasPackages());
+        $this->assertSame(
+            [['containerType' => 'PARCEL', 'containerSubtype' => 'CARDBOARD', 'quantity' => static::CARTONS]],
+            $delivery->getMetadata()['rdc']['goods']
+        );
     }
 
     public function testACancelledDeliveryCancelsTheServiceAndTheServiceRequest(): void

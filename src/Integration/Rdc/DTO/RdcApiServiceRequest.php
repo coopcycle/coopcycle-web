@@ -244,6 +244,38 @@ final class RdcApiServiceRequest
         return $this->endLocation['location']['specialInstructions'] ?? [];
     }
 
+    /**
+     * The goods to carry. The pickup loads the same goods the dropoff unloads,
+     * so they are read on the pickup, and on the dropoff only when the pickup
+     * lists none: reading both would count them twice.
+     *
+     * @return BatchOfGoods[]
+     */
+    public function getBatchesOfGoods(): array
+    {
+        return self::batchesOfGoodsAt($this->startLocation)
+            ?: self::batchesOfGoodsAt($this->endLocation);
+    }
+
+    /**
+     * @return BatchOfGoods[]
+     */
+    private static function batchesOfGoodsAt(?array $location): array
+    {
+        $batches = [];
+        foreach ($location['actions'] ?? [] as $action) {
+            foreach ($action['compositionMovements'] ?? [] as $movement) {
+                foreach ($movement['containedBatchesOfGoods'] ?? [] as $batch) {
+                    if (is_array($batch)) {
+                        $batches[] = BatchOfGoods::parse($batch);
+                    }
+                }
+            }
+        }
+
+        return $batches;
+    }
+
     public function getBarcode(): ?string
     {
         $ref = $this->getExternalReferenceByType(ExternalReferenceType::REQUESTOR_LABEL_ID->value);

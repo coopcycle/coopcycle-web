@@ -640,6 +640,17 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ['ShiftPreset'],
     }),
+    putShiftPreset: builder.mutation<
+      ShiftPreset,
+      CreateShiftPresetRequest & { '@id': Uri }
+    >({
+      query: ({ '@id': uri, ...body }) => ({
+        url: uri,
+        method: 'PUT',
+        body,
+      }),
+      invalidatesTags: ['ShiftPreset'],
+    }),
     deleteShiftPreset: builder.mutation<void, Uri>({
       query: uri => ({
         url: uri,
@@ -1023,6 +1034,7 @@ export const {
   useApplyShiftTemplateMutation,
   useGetShiftPresetsQuery,
   useCreateShiftPresetMutation,
+  usePutShiftPresetMutation,
   useDeleteShiftPresetMutation,
   useGetHolidayRequestsQuery,
   useGetMyHolidayRequestsQuery,
