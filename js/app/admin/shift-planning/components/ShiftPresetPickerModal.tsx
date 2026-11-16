@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { App, Button, Empty, Modal, Popconfirm, Tag } from 'antd';
-import { DeleteOutlined } from '@ant-design/icons';
+import { App, Button, Empty, Modal, Popconfirm, Tag, Tooltip } from 'antd';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import {
   useDeleteShiftPresetMutation,
@@ -15,6 +15,8 @@ type Props = {
   open: boolean;
   onClose: () => void;
   onSelect: (preset: ShiftPreset) => void;
+  /** Open ShiftModal to edit the preset itself */
+  onEdit: (preset: ShiftPreset) => void;
 };
 
 // "9:00" - "17:30" -> "8h30"
@@ -31,13 +33,15 @@ const formatDuration = (startTime: string, endTime: string): string => {
  * "New shift from template" gallery: pick a previously saved ShiftPreset
  * (see SaveShiftPresetModal) to prefill ShiftModal with — everything but who
  * it's assigned to. Triggered from the planning toolbar's "New shift" split
- * button.
+ * button. Each tile also has an edit button, opening ShiftModal in
+ * preset-edit mode.
  */
 export default function ShiftPresetPickerModal({
   activities,
   open,
   onClose,
   onSelect,
+  onEdit,
 }: Props) {
   const { t } = useTranslation();
   const { message } = App.useApp();
@@ -96,19 +100,30 @@ export default function ShiftPresetPickerModal({
         <>
           <div className="shift-preset-grid">
             {(presets ?? []).map(preset => (
-              <button
-                type="button"
-                key={preset['@id']}
-                className={`shift-preset-tile ${
-                  selected === preset['@id'] ? 'shift-preset-tile--selected' : ''
-                }`}
-                style={{ backgroundColor: activityColor(preset.activity, activities) }}
-                onClick={() => setSelected(preset['@id'])}>
-                <span className="shift-preset-tile__name">{preset.name}</span>
-                <span className="shift-preset-tile__time">
-                  {preset.startTime} - {preset.endTime}
-                </span>
-              </button>
+              <div key={preset['@id']} className="shift-preset-tile-wrapper">
+                <button
+                  type="button"
+                  className={`shift-preset-tile ${
+                    selected === preset['@id'] ? 'shift-preset-tile--selected' : ''
+                  }`}
+                  style={{ backgroundColor: activityColor(preset.activity, activities) }}
+                  onClick={() => setSelected(preset['@id'])}>
+                  <span className="shift-preset-tile__name">{preset.name}</span>
+                  <span className="shift-preset-tile__time">
+                    {preset.startTime} - {preset.endTime}
+                  </span>
+                </button>
+                <Tooltip title={t('SHIFT_PRESET_EDIT')}>
+                  <Button
+                    className="shift-preset-tile__edit"
+                    type="text"
+                    size="small"
+                    icon={<EditOutlined />}
+                    aria-label={t('SHIFT_PRESET_EDIT')}
+                    onClick={() => onEdit(preset)}
+                  />
+                </Tooltip>
+              </div>
             ))}
           </div>
           {selectedPreset && (

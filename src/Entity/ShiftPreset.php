@@ -6,6 +6,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use AppBundle\Api\Dto\ShiftPresetCreateInput;
 use AppBundle\Api\State\ShiftPresetCreateProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -18,8 +19,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * A reusable, named shape for a *single* shift (activity, time of day, slots,
  * break, required skills, ...) — never assignees. Saved from an existing
- * shift in the planning UI (ShiftModal's "Save as template") and picked back
- * from the "New shift from template" gallery to prefill a new shift on
+ * shift in the planning UI (ShiftModal's "Save as template"), editable from
+ * the "New shift from template" gallery, and picked back from that gallery to prefill a new shift on
  * whatever day/week the dispatcher is currently looking at.
  *
  * Deliberately distinct from ShiftTemplate, which snapshots a whole week's
@@ -33,6 +34,11 @@ use Symfony\Component\Validator\Constraints as Assert;
             security: 'is_granted(\'ROLE_DISPATCHER\')'
         ),
         new Post(
+            input: ShiftPresetCreateInput::class,
+            processor: ShiftPresetCreateProcessor::class,
+            security: 'is_granted(\'ROLE_DISPATCHER\')'
+        ),
+        new Put(
             input: ShiftPresetCreateInput::class,
             processor: ShiftPresetCreateProcessor::class,
             security: 'is_granted(\'ROLE_DISPATCHER\')'
@@ -221,6 +227,13 @@ class ShiftPreset
     public function removeRequiredSkill(Skill $skill): self
     {
         $this->requiredSkills->removeElement($skill);
+
+        return $this;
+    }
+
+    public function clearRequiredSkills(): self
+    {
+        $this->requiredSkills->clear();
 
         return $this;
     }

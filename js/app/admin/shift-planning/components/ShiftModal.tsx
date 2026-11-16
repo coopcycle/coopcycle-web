@@ -21,6 +21,7 @@ import {
   useGetSkillsQuery,
   usePostShiftMutation,
   usePutShiftMutation,
+  usePutShiftPresetMutation,
 } from '../../../api/slice';
 import {
   AvailabilityRule,
@@ -54,6 +55,11 @@ export type ShiftModalState = {
   time?: Dayjs;
   /** Prefill everything but assignees from a saved ShiftPreset — see "New shift from template" */
   preset?: ShiftPreset;
+  /**
+   * Edit a saved ShiftPreset itself (from the "New shift from template"
+   * gallery) instead of a shift: no date, no assignees, adds a name field
+   */
+  editPreset?: ShiftPreset;
 } | null;
 
 type Props = {
@@ -67,6 +73,7 @@ type Props = {
 };
 
 type FormValues = {
+  name?: string;
   activity: string;
   date: Dayjs;
   times: [Dayjs, Dayjs];
@@ -93,10 +100,13 @@ export default function ShiftModal({
   const [postShift, { isLoading: isCreating }] = usePostShiftMutation();
   const [putShift, { isLoading: isUpdating }] = usePutShiftMutation();
   const [deleteShift, { isLoading: isDeleting }] = useDeleteShiftMutation();
+  const [putShiftPreset, { isLoading: isUpdatingPreset }] =
+    usePutShiftPresetMutation();
 
   const { data: skills } = useGetSkillsQuery();
 
   const shift = state?.shift;
+  const editPreset = state?.editPreset;
 
   // Worked-time reports are edited against the freshest version of the shift
   // (the modal keeps a snapshot in `state`, but `shifts` refetches on change)
@@ -123,13 +133,14 @@ export default function ShiftModal({
         requiredSkills: state.shift.requiredSkills.map(s => s['@id']),
         users: state.shift.assignments.map(a => a.user['@id']),
       });
-    } else if (state.preset) {
-      const preset = state.preset;
+    } else if (state.preset || state.editPreset) {
+      const preset = (state.editPreset || state.preset) as ShiftPreset;
       const date = state.date || dayjs();
       const [startH, startM] = preset.startTime.split(':').map(Number);
       const [endH, endM] = preset.endTime.split(':').map(Number);
 
       form.setFieldsValue({
+        name: state.editPreset ? preset.name : undefined,
         activity: preset.activity,
         date,
         times: [date.hour(startH).minute(startM), date.hour(endH).minute(endM)],
@@ -262,7 +273,33 @@ export default function ShiftModal({
     );
   }
 
+  const onFinishPreset = async (values: FormValues) => {
+    if (!editPreset) {
+      return;
+    }
+    try {
+      await putShiftPreset({
+        '@id': editPreset['@id'],
+        name: (values.name ?? '').trim(),
+        activity: values.activity,
+        startTime: values.times[0].format('HH:mm'),
+        endTime: values.times[1].format('HH:mm'),
+        slots: values.slots,
+        breakMinutes: values.breakMinutes,
+        comment: values.comment || null,
+        requiredSkills: values.requiredSkills,
+      }).unwrap();
+      message.success(t('SHIFT_PRESET_SAVED'));
+      onClose();
+    } catch (e) {
+      message.error(t('SHIFT_PLANNING_ERROR'));
+    }
+  };
+
   const onFinish = async (values: FormValues) => {
+    if (editPreset) {
+      return onFinishPreset(values);
+    }
     const date = values.date.format('YYYY-MM-DD');
     const payload = {
       activity: values.activity,
@@ -304,7 +341,13 @@ export default function ShiftModal({
   return (
     <Modal
       open={state !== null}
-      title={shift ? t('SHIFT_PLANNING_EDIT_SHIFT') : t('SHIFT_PLANNING_NEW_SHIFT')}
+      title={
+        editPreset
+          ? t('SHIFT_PRESET_EDIT_TITLE', { name: editPreset.name })
+          : shift
+            ? t('SHIFT_PLANNING_EDIT_SHIFT')
+            : t('SHIFT_PLANNING_NEW_SHIFT')
+      }
       onCancel={onClose}
       destroyOnHidden
       footer={[
@@ -318,27 +361,45 @@ export default function ShiftModal({
             </Button>
           </Popconfirm>
         ) : null,
-        <Dropdown.Button
-          key="submit"
-          type="primary"
-          icon={<EllipsisOutlined />}
-          trigger={['click']}
-          loading={isCreating || isUpdating}
-          onClick={() => form.submit()}
-          menu={{
-            items: [
-              {
-                key: 'save-as-preset',
-                label: t('SHIFT_PRESET_SAVE'),
-                disabled: !presetSnapshot,
-                onClick: () => setPresetModalOpen(true),
-              },
-            ],
-          }}>
-          {t('SHIFT_PLANNING_SAVE')}
-        </Dropdown.Button>,
+        editPreset ? (
+          <Button
+            key="submit"
+            type="primary"
+            loading={isUpdatingPreset}
+            onClick={() => form.submit()}>
+            {t('SHIFT_PLANNING_SAVE')}
+          </Button>
+        ) : (
+          <Dropdown.Button
+            key="submit"
+            type="primary"
+            icon={<EllipsisOutlined />}
+            trigger={['click']}
+            loading={isCreating || isUpdating}
+            onClick={() => form.submit()}
+            menu={{
+              items: [
+                {
+                  key: 'save-as-preset',
+                  label: t('SHIFT_PRESET_SAVE'),
+                  disabled: !presetSnapshot,
+                  onClick: () => setPresetModalOpen(true),
+                },
+              ],
+            }}>
+            {t('SHIFT_PLANNING_SAVE')}
+          </Dropdown.Button>
+        ),
       ]}>
       <Form form={form} layout="vertical" onFinish={onFinish}>
+        {editPreset && (
+          <Form.Item
+            name="name"
+            label={t('SHIFT_PRESET_NAME')}
+            rules={[{ required: true, whitespace: true }, { max: 255 }]}>
+            <Input placeholder={t('SHIFT_PRESET_NAME_PLACEHOLDER')} />
+          </Form.Item>
+        )}
         <Form.Item
           name="activity"
           label={t('SHIFT_PLANNING_TYPE')}
@@ -360,16 +421,18 @@ export default function ShiftModal({
             }))}
           />
         </Form.Item>
-        <Form.Item
-          name="date"
-          label={t('SHIFT_PLANNING_DATE')}
-          rules={[{ required: true }]}>
-          <DatePicker
-            style={{ width: '100%' }}
-            allowClear={false}
-            format={datePickerProps.format}
-          />
-        </Form.Item>
+        {!editPreset && (
+          <Form.Item
+            name="date"
+            label={t('SHIFT_PLANNING_DATE')}
+            rules={[{ required: true }]}>
+            <DatePicker
+              style={{ width: '100%' }}
+              allowClear={false}
+              format={datePickerProps.format}
+            />
+          </Form.Item>
+        )}
         <Form.Item
           name="times"
           label={t('SHIFT_PLANNING_TIME')}
@@ -406,16 +469,18 @@ export default function ShiftModal({
             }))}
           />
         </Form.Item>
-        <Form.Item name="users" label={t('SHIFT_PLANNING_ASSIGNEES')}>
-          <Select
-            mode="multiple"
-            optionFilterProp="label"
-            options={users.map(u => ({
-              value: u['@id'],
-              label: u.username,
-            }))}
-          />
-        </Form.Item>
+        {!editPreset && (
+          <Form.Item name="users" label={t('SHIFT_PLANNING_ASSIGNEES')}>
+            <Select
+              mode="multiple"
+              optionFilterProp="label"
+              options={users.map(u => ({
+                value: u['@id'],
+                label: u.username,
+              }))}
+            />
+          </Form.Item>
+        )}
         <Form.Item name="comment" label={t('SHIFT_PLANNING_COMMENT')}>
           <Input.TextArea rows={2} maxLength={65535} />
         </Form.Item>
