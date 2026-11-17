@@ -15,7 +15,9 @@ use AppBundle\Messenger\TransactionalMessages;
 use AppBundle\Service\DeliveryOrderManager;
 use AppBundle\Service\PackageMappingResolver;
 use AppBundle\Service\SettingsManager;
+use AppBundle\Transporter\ImportFailureNotifier;
 use AppBundle\Transporter\ImportFromPoint;
+use AppBundle\Transporter\RejectedFile;
 use AppBundle\Transporter\ReportFromCC;
 use AppBundle\Transporter\TransporterHelpers;
 use Carbon\Carbon;
@@ -38,6 +40,7 @@ use Transporter\Enum\DateEventType;
 use Transporter\Enum\INOVERTMessageType;
 use Transporter\Enum\NameAndAddressType;
 use Transporter\Enum\TransporterName;
+use Transporter\Interface\TransporterParserInterface;
 use Transporter\Interface\TransporterSync;
 use Transporter\Transporter;
 use Transporter\TransporterException;
@@ -81,6 +84,7 @@ class SyncTransportersCommand extends Command {
         private PackageMappingResolver $packageMappingResolver,
         private TransactionalMessages $transactionalMessages,
         private ManagerRegistry $doctrine,
+        private ImportFailureNotifier $importFailureNotifier,
     )
     { parent::__construct(); }
 
@@ -92,6 +96,7 @@ class SyncTransportersCommand extends Command {
         $this->addArgument('transporter', InputArgument::REQUIRED, 'Transporter name');
 
         $this->addOption('dry-run', 'd', InputOption::VALUE_NONE, 'Dry run mode');
+        $this->addOption('retry-failed', null, InputOption::VALUE_NONE, 'Import the files of the failed folder (failedPath) again');
     }
 
     /**
@@ -237,6 +242,16 @@ class SyncTransportersCommand extends Command {
                 $output->writeln("Dry run mode, nothing will be imported");
             }
 
+            $retryFailed = (bool) $input->getOption('retry-failed');
+            if ($retryFailed) {
+                if (is_null($inFs->getFailedPath())) {
+                    $message = sprintf('No failedPath configured for %s, nothing to retry', $this->transporter);
+                    $this->transporterLogger->warning($message, ['transporter' => $this->transporter]);
+                    throw new Exception($message);
+                }
+                $output->writeln("Retrying the files of the failed folder");
+            }
+
             $this->transporterLogger->info(
                 sprintf(
                     'Syncing %s with %s',
@@ -247,7 +262,7 @@ class SyncTransportersCommand extends Command {
             );
 
             try {
-                $this->importAllTasks($sync);
+                $rejected = $this->importAllTasks($sync, $retryFailed);
             } catch (Exception $e) {
                 $this->transporterLogger->critical(
                     sprintf(
@@ -257,6 +272,10 @@ class SyncTransportersCommand extends Command {
                     ['transporter' => $this->transporter]
                 );
                 throw $e;
+            }
+
+            if (!$this->dryRun) {
+                $this->importFailureNotifier->notify($this->transporter, $rejected);
             }
 
             // If a flush failure closed the EntityManager during the import,
@@ -283,7 +302,8 @@ class SyncTransportersCommand extends Command {
                 throw $e;
             }
 
-            return Command::SUCCESS;
+            // The reports were still sent, but a rejected file needs someone to look at it
+            return empty($rejected) ? Command::SUCCESS : Command::FAILURE;
         } finally {
             $this->release();
         }
@@ -327,33 +347,37 @@ class SyncTransportersCommand extends Command {
     }
 
     /**
+     * @return array<string,RejectedFile> The rejected files, keyed by their path on the remote
      * @throws FilesystemException
      * @throws TransporterException
      * @throws Exception
      */
-    private function importAllTasks(TransporterSync $sync): void
+    private function importAllTasks(TransporterSync $sync, bool $retryFailed): array
     {
         $imported = 0;
         $skipped = 0;
         $filtered = 0;
-        $failedFiles = 0;
+        $rejected = [];
+        $stoppedEarly = false;
 
         // Each file is imported in isolation so a single malformed or
         // otherwise unimportable file cannot abort the whole batch.
-        foreach ($sync->pull() as $content) {
+        foreach ($retryFailed ? $sync->pullFailed() : $sync->pull() as $path => $content) {
             try {
                 [$imp, $skp, $flt] = $this->importFileContent($content);
                 $imported += $imp;
                 $skipped += $skp;
                 $filtered += $flt;
             } catch (\Throwable $e) {
-                $failedFiles++;
+                // Set aside by flush(), in the failed folder (retried with --retry-failed),
+                // or left where it is without one (retried on the next run)
+                $rejected[$path] = new RejectedFile((string) $path, $e->getMessage(), $content);
                 $this->output->writeln(sprintf(
-                    '<error>Failed to import a file (kept on the remote for retry): %s</error>',
-                    $e->getMessage()
+                    '<error>Rejected file "%s": %s</error>',
+                    $path, $e->getMessage()
                 ));
-                $this->transporterLogger->error(
-                    sprintf('Failed to import an EDIFACT file, it will be retried on the next run: %s', $e->getMessage()),
+                $this->transporterLogger->critical(
+                    sprintf('Rejected EDIFACT file "%s": %s', $path, $e->getMessage()),
                     ['transporter' => $this->transporter, 'exception' => $e]
                 );
 
@@ -362,42 +386,39 @@ class SyncTransportersCommand extends Command {
                 // back with a fresh EntityManager (see persistShipment()), so we
                 // just move on to the next file. Should the EntityManager still
                 // be closed, it cannot be reused; in that case stop early.
-                // Everything not yet processed stays on the remote and is
-                // retried next run, and dedup on reference prevents duplicates.
                 if (!$this->entityManager->isOpen()) {
                     $this->output->writeln('<error>Database session closed after a failure; stopping early. Remaining files will be retried on the next run.</error>');
                     $this->transporterLogger->error(
                         'EntityManager closed after a failure; stopping import early',
                         ['transporter' => $this->transporter]
                     );
+                    $stoppedEarly = true;
                     break;
                 }
             }
         }
 
-        if ($failedFiles === 0) {
-            // Everything imported cleanly: acknowledge the files on the remote.
-            $this->output->writeln("Remove files to acknowledge import");
-            $this->transporterLogger->info("Remove files to acknowledge import", ['transporter' => $this->transporter]);
-            $sync->flush($this->dryRun);
-        } else {
-            // At least one file failed. The remote acknowledge is all-or-nothing,
-            // so we keep every file in place to avoid losing the failed ones.
-            // Import is idempotent (dedup on reference), so the next run skips
-            // what already landed and retries only what failed.
-            $this->output->writeln(sprintf(
-                '<comment>%d file(s) failed; keeping all files on the remote for retry (already-imported tasks are skipped).</comment>',
-                $failedFiles
-            ));
+        if ($stoppedEarly) {
+            // The files not processed yet aren't rejected: keep them all, the
+            // next run skips what already landed (dedup on reference)
             $this->transporterLogger->warning(
-                sprintf('%d EDIFACT file(s) failed to import; all files kept on the remote for retry', $failedFiles),
+                'Import stopped early, all files kept on the remote for retry',
                 ['transporter' => $this->transporter]
             );
+        } else {
+            $this->output->writeln("Remove files to acknowledge import");
+            $this->transporterLogger->info("Remove files to acknowledge import", ['transporter' => $this->transporter]);
+            $sync->flush($this->dryRun, RejectedFile::reasons($rejected));
         }
 
-        $summary = "Done syncing, imported $imported tasks ($skipped already-imported, $filtered filtered out by postal code, $failedFiles file(s) failed)";
+        $summary = sprintf(
+            'Done syncing, imported %d tasks (%d already-imported, %d filtered out by postal code, %d file(s) failed)',
+            $imported, $skipped, $filtered, count($rejected)
+        );
         $this->output->writeln($summary);
         $this->transporterLogger->info($summary, ['transporter' => $this->transporter]);
+
+        return $rejected;
     }
 
     /**
@@ -429,6 +450,42 @@ class SyncTransportersCommand extends Command {
             );
         }
 
+        $tasks = array_merge(...array_map(
+            fn(TransporterParserInterface $message): array => $message->getTasks(),
+            $messages
+        ));
+
+        // Idempotency: skip tasks already imported for this transporter
+        // (e.g. a file retried after a failure, or a resend of the same consignment).
+        // Kept up to date below, for a reference sent twice in the same file.
+        $known = [];
+        if (!$this->dryRun) {
+            /** @var EDIFACTMessageRepository $ediRepo */
+            $ediRepo = $this->entityManager->getRepository(EDIFACTMessage::class);
+            $references = array_map(fn(Point $task): string => $task->getId(), $tasks);
+            $known = array_fill_keys($ediRepo->findInboundReferences($references, $this->transporter), true);
+        }
+
+        $skipped = 0;
+        $new = [];
+        foreach ($tasks as $task) {
+            if (isset($known[$task->getId()])) {
+                $skipped++;
+                $this->transporterLogger->info(
+                    sprintf('Task %s already imported, skipping', $task->getId()),
+                    ['transporter' => $this->transporter]
+                );
+                continue;
+            }
+            $new[] = $task;
+            $known[$task->getId()] = true;
+        }
+
+        // Nothing new: the file was already archived when its tasks were imported
+        if (empty($new)) {
+            return [0, $skipped, 0];
+        }
+
         $filename = sprintf(
             "%s-%s_%s.%s.edi",
             mb_strtoupper($type->value),
@@ -440,32 +497,14 @@ class SyncTransportersCommand extends Command {
             $this->edifactFs->write($filename, $content);
         }
 
-        /** @var EDIFACTMessageRepository $ediRepo */
-        $ediRepo = $this->entityManager->getRepository(EDIFACTMessage::class);
-
         $imported = 0;
-        $skipped = 0;
         $filtered = 0;
-        foreach ($messages as $tasks) {
-            foreach ($tasks->getTasks() as $task) {
-                // Idempotency: skip tasks already imported for this transporter
-                // (e.g. a file re-processed after a mid-batch failure, or a
-                // resend of the same consignment).
-                if (!$this->dryRun && $ediRepo->hasInbound($task->getId(), $this->transporter)) {
-                    $skipped++;
-                    $this->transporterLogger->info(
-                        sprintf('Task %s already imported, skipping', $task->getId()),
-                        ['transporter' => $this->transporter]
-                    );
-                    continue;
-                }
-
-                $edifactMessage = $this->storeInboundEdi($task, $filename);
-                if ($this->importTask($task, $edifactMessage)) {
-                    $imported++;
-                } else {
-                    $filtered++;
-                }
+        foreach ($new as $task) {
+            $edifactMessage = $this->storeInboundEdi($task, $filename);
+            if ($this->importTask($task, $edifactMessage)) {
+                $imported++;
+            } else {
+                $filtered++;
             }
         }
 
@@ -697,11 +736,12 @@ class SyncTransportersCommand extends Command {
     {
         $attributes = array_diff_key(
             $config,
-            array_flip(['uri', 'pushPath', 'pullPath'])
+            array_flip(['uri', 'pushPath', 'pullPath', 'failedPath'])
         );
 
         $pushPath = isset($config['pushPath']) ? str_replace('`', "'", $config['pushPath']) : null;
         $pullPath = isset($config['pullPath']) ? str_replace('`', "'", $config['pullPath']) : null;
+        $failedPath = isset($config['failedPath']) ? str_replace('`', "'", $config['failedPath']) : null;
 
         // This is used for testing purposes
         if ($config['uri'] instanceof Filesystem) {
@@ -709,7 +749,8 @@ class SyncTransportersCommand extends Command {
                 $config['uri'],
                 $attributes,
                 $pushPath,
-                $pullPath
+                $pullPath,
+                $failedPath
             );
         }
 
@@ -724,7 +765,8 @@ class SyncTransportersCommand extends Command {
             $fs,
             $attributes,
             $pushPath,
-            $pullPath
+            $pullPath,
+            $failedPath
         );
     }
 

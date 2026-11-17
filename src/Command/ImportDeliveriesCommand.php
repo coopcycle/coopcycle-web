@@ -6,6 +6,8 @@ use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\Delivery\ImportQueue;
 use AppBundle\Entity\Store;
 use AppBundle\Message\ImportDeliveries;
+use AppBundle\Transporter\ImportFailureNotifier;
+use AppBundle\Transporter\RejectedFile;
 use AppBundle\Transporter\TransporterImporterInterface;
 use AppBundle\Transporter\TransporterTransformerInterface;
 use DateTime;
@@ -46,6 +48,7 @@ class ImportDeliveriesCommand extends Command {
         /** @var ServiceProviderInterface<TransporterTransformerInterface> */
         private readonly ServiceProviderInterface $transformers,
         private readonly LoggerInterface $transporterLogger,
+        private readonly ImportFailureNotifier $importFailureNotifier,
     )
     {
         parent::__construct();
@@ -136,7 +139,7 @@ class ImportDeliveriesCommand extends Command {
                         ['importer' => $this->input->getOption('importer'), 'store' => $this->input->getArgument('store')]
                     );
                     $this->output->writeln(sprintf('<error>Rejected file "%s": %s</error>', $key, $e->getMessage()));
-                    $rejected[$key] = $e->getMessage();
+                    $rejected[$key] = new RejectedFile((string) $key, $e->getMessage(), $content);
                 }
             }
             $csvs = $transformed;
@@ -157,7 +160,12 @@ class ImportDeliveriesCommand extends Command {
         }
 
         if ($this->importer instanceof TransporterImporterInterface) {
-            $this->importer->flush($this->dryRun, $rejected);
+            $this->importer->flush($this->dryRun, RejectedFile::reasons($rejected));
+        }
+
+        // Only an importer rejects files: one given on the command line fails the command
+        if (!$this->dryRun && !empty($rejected)) {
+            $this->importFailureNotifier->notify($this->input->getOption('importer'), $rejected);
         }
 
         // Count deliveries

@@ -13,6 +13,7 @@ use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Task;
 use AppBundle\LoopEat\Context as LoopeatContext;
 use AppBundle\LoopEat\ContextInitializer as LoopeatContextInitializer;
+use AppBundle\Transporter\RejectedFile;
 use AppBundle\Twig\LocalBusinessRuntime;
 use AppBundle\Twig\OrderRuntime;
 use Hashids\Hashids;
@@ -399,6 +400,25 @@ class EmailManager
         ]));
 
         return $this->createHtmlMessageWithReplyTo($subject, $body);
+    }
+
+    /**
+     * @param array<array-key,RejectedFile> $files Attached as they were received
+     */
+    public function createImportFailedMessage(string $source, array $files): Email
+    {
+        $subject = $this->translator->trans('admin.import_failed.subject', ['%source%' => $source], 'emails');
+        $body = $this->mjml->render($this->templating->render('emails/import_failed.mjml.twig', [
+            'source' => $source,
+            'files' => $files,
+        ]));
+
+        $message = $this->createHtmlMessage($subject, $body);
+        foreach ($files as $file) {
+            $message->attach($file->content, basename($file->name), 'text/plain');
+        }
+
+        return $message;
     }
 
     public function createInvitationMessage(Invitation $invitation)
