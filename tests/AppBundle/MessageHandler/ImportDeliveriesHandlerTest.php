@@ -14,6 +14,7 @@ use AppBundle\MessageHandler\ImportDeliveriesHandler;
 use AppBundle\Service\DeliveryImportStatusManager;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\DeliveryOrderManager;
+use AppBundle\Service\RemotePushNotificationManager;
 use AppBundle\Spreadsheet\DeliverySpreadsheetParser;
 use AppBundle\Spreadsheet\SpreadsheetParseResult;
 use Doctrine\ORM\EntityManagerInterface;
@@ -34,6 +35,15 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class ImportDeliveriesHandlerTest extends TestCase
 {
     use ProphecyTrait;
+
+    protected function tearDown(): void
+    {
+        // The handler disables push notifications for the whole process,
+        // the tests running after this one expect them to be enabled
+        RemotePushNotificationManager::enable();
+
+        parent::tearDown();
+    }
 
     public function testDeliveryWithoutPricingRuleGetsAnOrderToReview(): void
     {
