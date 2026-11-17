@@ -2089,6 +2089,18 @@ loyalty.reward.field.couponValidityDays: Validité du coupon (jours)
 loyalty.reward.field.couponValidityDays.help: Nombre de jours pendant lesquels le coupon reste valable après que le client a utilisé cette récompense.
 loyalty.reward.field.enabled: Disponible pour les clients
 loyalty.reward.field.enabled.help: Décochez pour masquer cette récompense sans la supprimer ; les coupons déjà délivrés ne sont pas affectés.
+loyalty.activity.title: Activité
+loyalty.activity.help: Tous les mouvements de points, tous clients confondus, du plus récent au plus ancien.
+loyalty.activity.none: Aucun point n'a encore été gagné ni dépensé.
+loyalty.activity.column.customer: Client
+loyalty.activity.column.description: Description
+loyalty.activity.column.points: Points
+loyalty.activity.column.remaining: Restant
+loyalty.activity.column.expires_at: Expire le
+loyalty.filter.all: Tous
+loyalty.type.credit: Gagnés
+loyalty.type.debit: Dépensés
+loyalty.type.expiry: Expirés
 profile.myLoyalty: Mes points de fidélité
 profile.loyalty.title: Points de fidélité
 profile.loyalty.intro: "Chaque commande passée chez %brand_name% vous rapporte des points. Dépensez-les dans les récompenses ci-dessous."

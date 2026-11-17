@@ -101,6 +101,37 @@ class LoyaltyPointsEntryRepository extends EntityRepository
         return $this->findOneBy(['order' => $order, 'type' => LoyaltyPointsEntry::TYPE_CREDIT]);
     }
 
+    /**
+     * The whole ledger, every customer, newest first -- what the admin
+     * dashboard lists.
+     *
+     * The related rows are selected along with the entries: the list renders
+     * the customer, the reward and the coupon of every line, which is one
+     * query per line otherwise.
+     *
+     * @param string|null $type One of LoyaltyPointsEntry::TYPE_*, or null for
+     *                          every kind of entry.
+     */
+    public function createAdminActivityQueryBuilder(?string $type = null): QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('e')
+            ->addSelect('c', 'r', 'co', 'o')
+            ->innerJoin('e.customer', 'c')
+            ->leftJoin('e.reward', 'r')
+            ->leftJoin('e.coupon', 'co')
+            ->leftJoin('e.order', 'o')
+            ->orderBy('e.createdAt', 'DESC')
+            ->addOrderBy('e.id', 'DESC');
+
+        if (null !== $type) {
+            $qb
+                ->andWhere('e.type = :type')
+                ->setParameter('type', $type);
+        }
+
+        return $qb;
+    }
+
     public function createHistoryQueryBuilder(Customer $customer)
     {
         return $this->createQueryBuilder('e')

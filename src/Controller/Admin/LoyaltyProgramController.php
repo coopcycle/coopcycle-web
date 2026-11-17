@@ -2,12 +2,15 @@
 
 namespace AppBundle\Controller\Admin;
 
+use AppBundle\Entity\Loyalty\LoyaltyPointsEntry;
+use AppBundle\Entity\Loyalty\LoyaltyPointsEntryRepository;
 use AppBundle\Entity\Loyalty\LoyaltyReward;
 use AppBundle\Form\Loyalty\LoyaltyRewardType;
 use AppBundle\Form\Loyalty\LoyaltySettingsType;
 use AppBundle\Service\Loyalty\LoyaltyPointsManager;
 use AppBundle\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -19,14 +22,17 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LoyaltyProgramController extends AbstractController
 {
+    private const ITEMS_PER_PAGE = 20;
+
     public function __construct(
         private readonly bool $loyaltyProgramEnabled,
         private readonly SettingsManager $settingsManager,
         private readonly EntityManagerInterface $entityManager,
+        private readonly LoyaltyPointsEntryRepository $pointsEntryRepository,
     ) {}
 
     #[Route('/admin/loyalty-program', name: 'admin_loyalty_program', methods: ['GET', 'POST'])]
-    public function __invoke(Request $request, TranslatorInterface $translator): Response
+    public function __invoke(Request $request, PaginatorInterface $paginator, TranslatorInterface $translator): Response
     {
         if (!$this->loyaltyProgramEnabled) {
             throw $this->createNotFoundException();
@@ -112,11 +118,28 @@ class LoyaltyProgramController extends AbstractController
             return $this->redirectToRoute('admin_loyalty_program');
         }
 
+        $activeType = $request->query->get('type');
+        if (!in_array($activeType, [
+            LoyaltyPointsEntry::TYPE_CREDIT,
+            LoyaltyPointsEntry::TYPE_DEBIT,
+            LoyaltyPointsEntry::TYPE_EXPIRY,
+        ], true)) {
+            $activeType = null;
+        }
+
+        $activity = $paginator->paginate(
+            $this->pointsEntryRepository->createAdminActivityQueryBuilder($activeType),
+            $request->query->getInt('page', 1),
+            self::ITEMS_PER_PAGE
+        );
+
         return $this->render('admin/loyalty_program.html.twig', [
             'active_form' => $activeForm,
             'is_active' => $this->settingsManager->getBoolean('loyalty_program_active'),
             'settings_form' => $settingsForm,
             'rewards_form' => $rewardsForm,
+            'activity' => $activity,
+            'active_type' => $activeType,
         ]);
     }
 }

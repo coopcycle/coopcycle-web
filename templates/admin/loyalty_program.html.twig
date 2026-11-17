@@ -89,6 +89,75 @@
   </div>
 </div>
 
+<hr>
+
+<h4>{% trans %}loyalty.activity.title{% endtrans %}</h4>
+<p class="text-muted">{% trans %}loyalty.activity.help{% endtrans %}</p>
+
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+  <div class="btn-group">
+    <a href="{{ path('admin_loyalty_program') }}" class="btn btn-sm {{ active_type is null ? 'btn-primary' : 'btn-default' }}">{% trans %}loyalty.filter.all{% endtrans %}</a>
+    <a href="{{ path('admin_loyalty_program', { type: 'credit' }) }}" class="btn btn-sm {{ active_type == 'credit' ? 'btn-primary' : 'btn-default' }}">{% trans %}loyalty.type.credit{% endtrans %}</a>
+    <a href="{{ path('admin_loyalty_program', { type: 'debit' }) }}" class="btn btn-sm {{ active_type == 'debit' ? 'btn-primary' : 'btn-default' }}">{% trans %}loyalty.type.debit{% endtrans %}</a>
+    <a href="{{ path('admin_loyalty_program', { type: 'expiry' }) }}" class="btn btn-sm {{ active_type == 'expiry' ? 'btn-primary' : 'btn-default' }}">{% trans %}loyalty.type.expiry{% endtrans %}</a>
+  </div>
+</div>
+
+{% if activity.totalItemCount > 0 %}
+<table class="table">
+  <thead>
+    <tr>
+      <th>{% trans %}loyalty.activity.column.customer{% endtrans %}</th>
+      <th>{% trans %}loyalty.activity.column.description{% endtrans %}</th>
+      <th class="text-right">{% trans %}loyalty.activity.column.points{% endtrans %}</th>
+      <th class="text-right">{% trans %}loyalty.activity.column.remaining{% endtrans %}</th>
+      <th class="text-right">{% trans %}loyalty.activity.column.expires_at{% endtrans %}</th>
+      <th class="text-right">{% trans %}referral.column.created_at{% endtrans %}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for entry in activity %}
+    <tr>
+      <td>
+        <a href="{{ path('admin_customer', { id: entry.customer.id }) }}">
+          <span class="text-monospace">{{ entry.customer.email }}</span>
+        </a>
+      </td>
+      <td>
+        {% if entry.isCredit %}
+          <span class="label label-success">{% trans %}loyalty.type.credit{% endtrans %}</span>
+          {% if entry.order %}
+            <a href="{{ path('admin_order', { id: entry.order.id }) }}">#{{ entry.order.number }}</a>
+          {% endif %}
+        {% elseif entry.isExpiry %}
+          <span class="label label-default">{% trans %}loyalty.type.expiry{% endtrans %}</span>
+        {% else %}
+          <span class="label label-info">{% trans %}loyalty.type.debit{% endtrans %}</span>
+          {{ entry.reward ? entry.reward.name : '' }}
+          {% if entry.coupon %}
+            <span class="label label-default">{{ entry.coupon.code }}</span>
+          {% endif %}
+        {% endif %}
+      </td>
+      <td class="text-right {{ entry.isCredit ? 'text-success' : '' }}">
+        {{ entry.amount > 0 ? '+' : '' }}{{ entry.amount }}
+      </td>
+      {# Only credits carry a remaining balance; on the other lines it would
+         read as a zero that means something. #}
+      <td class="text-right">{{ entry.isCredit ? entry.remaining : '-' }}</td>
+      <td class="text-right">{{ entry.expiresAt ? entry.expiresAt|format_date('short') : '-' }}</td>
+      <td class="text-right">{{ entry.createdAt|ago }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<nav class="text-center">
+  {{ knp_pagination_render(activity) }}
+</nav>
+{% else %}
+<div class="alert alert-info">{% trans %}loyalty.activity.none{% endtrans %}</div>
+{% endif %}
+
 {% endblock %}
 
 {% block scripts %}
