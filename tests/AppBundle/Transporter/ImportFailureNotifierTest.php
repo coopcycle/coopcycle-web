@@ -8,6 +8,8 @@ use AppBundle\Service\EmailManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Transporter\ImportFailureNotifier;
 use AppBundle\Transporter\RejectedFile;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx as XlsxWriter;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\LoggerInterface;
@@ -121,5 +123,45 @@ class ImportFailureNotifierTest extends KernelTestCase
         $this->assertSame('GARBAGE', $attachments[0]->getBody());
         $this->assertSame('other.edi', $attachments[1]->getFilename());
         $this->assertSame("UNA:+.? '\nUNB+UNOC:1", $attachments[1]->getBody());
+        $this->assertSame('text/plain', sprintf('%s/%s', $attachments[0]->getMediaType(), $attachments[0]->getMediaSubtype()));
+    }
+
+    public function testABinaryFileIsAttachedWithItsTypeAndExtension(): void
+    {
+        self::bootKernel();
+
+        $spreadsheet = new Spreadsheet();
+        $spreadsheet->getActiveSheet()->setCellValue('A1', 'N° de livraison');
+        $tempnam = tempnam(sys_get_temp_dir(), 'coopcycle_rejected_xlsx_');
+        try {
+            (new XlsxWriter($spreadsheet))->save($tempnam);
+            $xlsx = file_get_contents($tempnam);
+        } finally {
+            unlink($tempnam);
+        }
+
+        /** @var EmailManager $emailManager */
+        $emailManager = self::getContainer()->get(EmailManager::class);
+        $message = $emailManager->createImportFailedMessage('qerys', [
+            // The key QerysImporter gives it
+            'Sider Toulouse.xlsx (email 1234)' => new RejectedFile('Sider Toulouse.xlsx (email 1234)', 'Unknown loading site', $xlsx),
+            'Already right.xlsx' => new RejectedFile('Already right.xlsx', 'Unknown loading site', $xlsx),
+        ]);
+
+        $attachments = array_values(array_filter(
+            $message->getAttachments(),
+            fn($part): bool => $part->getDisposition() === 'attachment'
+        ));
+        $this->assertCount(2, $attachments);
+
+        // The extension moved to the end, so it opens as a spreadsheet
+        $this->assertSame('Sider Toulouse (email 1234).xlsx', $attachments[0]->getFilename());
+        $this->assertSame(
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            sprintf('%s/%s', $attachments[0]->getMediaType(), $attachments[0]->getMediaSubtype())
+        );
+        $this->assertSame($xlsx, $attachments[0]->getBody());
+
+        $this->assertSame('Already right.xlsx', $attachments[1]->getFilename());
     }
 }

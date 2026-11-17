@@ -26,6 +26,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
+use Symfony\Component\Mime\MimeTypes;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment as TwigEnvironment;
@@ -415,10 +416,38 @@ class EmailManager
 
         $message = $this->createHtmlMessage($subject, $body);
         foreach ($files as $file) {
-            $message->attach($file->content, basename($file->name), 'text/plain');
+            [$name, $contentType] = $this->rejectedFileAttachment($file);
+            $message->attach($file->content, $name, $contentType);
         }
 
         return $message;
+    }
+
+    /**
+     * The name and type to attach a rejected file with, so it opens in the right app.
+     * The name is the importer's key, it can hide the extension: "Tour.xlsx (email 1234)".
+     *
+     * @return array{0:string,1:string}
+     */
+    private function rejectedFileAttachment(RejectedFile $file): array
+    {
+        $name = basename($file->name);
+        $contentType = (new \finfo(FILEINFO_MIME_TYPE))->buffer($file->content) ?: 'application/octet-stream';
+
+        // EDIFACT, CSV: as received
+        if (str_starts_with($contentType, 'text/')) {
+            return [$name, 'text/plain'];
+        }
+
+        $extension = MimeTypes::getDefault()->getExtensions($contentType)[0] ?? null;
+        if (is_null($extension) || str_ends_with(strtolower($name), sprintf('.%s', $extension))) {
+            return [$name, $contentType];
+        }
+
+        // "Tour.xlsx (email 1234)" -> "Tour (email 1234).xlsx"
+        $name = preg_replace(sprintf('/\\.%s(?![a-z0-9])/i', preg_quote($extension, '/')), '', $name, 1);
+
+        return [sprintf('%s.%s', $name, $extension), $contentType];
     }
 
     public function createInvitationMessage(Invitation $invitation)
