@@ -197,12 +197,12 @@ export default () => {
 
     if (error)
     {
-      alert(t('ERROR'))
-      return;
-    } else {
-      fetchAll()
-      setIsVehicleModalOpen(false)
+      // let the form display the actual error returned by the API
+      return error
     }
+
+    fetchAll()
+    setIsVehicleModalOpen(false)
   }
 
   const onSubmitTrailer = async (values) => {
