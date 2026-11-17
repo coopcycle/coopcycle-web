@@ -18,6 +18,7 @@ use AppBundle\Service\DeliveryOrderManager;
 use AppBundle\Service\PackageMappingResolver;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TaskManager;
+use AppBundle\Transporter\ImportFailureNotifier;
 use AppBundle\Transporter\ImportFromPoint;
 use AppBundle\Transporter\ReportFromCC;
 use AppBundle\Transporter\TransporterHelpers;
@@ -133,6 +134,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
     protected DeliveryOrderManager $deliveryOrderManager;
     protected $params;
     protected $settingManager;
+    protected $importFailureNotifier;
 
     public function setUp(): void
     {
@@ -147,6 +149,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->fixturesLoader = self::getContainer()->get('fidry_alice_data_fixtures.loader.doctrine');
         $this->params = $this->prophesize(ParameterBagInterface::class);
         $this->settingManager = $this->prophesize(SettingsManager::class);
+        $this->importFailureNotifier = $this->prophesize(ImportFailureNotifier::class);
         $this->logger = self::getContainer()->get(LoggerInterface::class);
         $this->syncDBSchenkerFs = new Filesystem(new InMemoryFilesystemAdapter());
         $this->syncInBMVFs = new Filesystem(new InMemoryFilesystemAdapter());
@@ -240,7 +243,8 @@ class SyncTransportersCommandTest extends KernelTestCase {
             $this->deliveryOrderManager,
             self::getContainer()->get(PackageMappingResolver::class),
             self::getContainer()->get(TransactionalMessages::class),
-            self::getContainer()->get('doctrine')
+            self::getContainer()->get('doctrine'),
+            $this->importFailureNotifier->reveal()
         );
     }
 
@@ -284,7 +288,8 @@ class SyncTransportersCommandTest extends KernelTestCase {
             $this->deliveryOrderManager,
             self::getContainer()->get(PackageMappingResolver::class),
             self::getContainer()->get(TransactionalMessages::class),
-            self::getContainer()->get('doctrine')
+            self::getContainer()->get('doctrine'),
+            $this->importFailureNotifier->reveal()
         );
 
         $this->expectException(\Exception::class);
@@ -331,7 +336,8 @@ class SyncTransportersCommandTest extends KernelTestCase {
             $this->deliveryOrderManager,
             self::getContainer()->get(PackageMappingResolver::class),
             self::getContainer()->get(TransactionalMessages::class),
-            self::getContainer()->get('doctrine')
+            self::getContainer()->get('doctrine'),
+            $this->importFailureNotifier->reveal()
         );
 
         $this->expectException(\Exception::class);
@@ -378,7 +384,8 @@ class SyncTransportersCommandTest extends KernelTestCase {
             $this->deliveryOrderManager,
             self::getContainer()->get(PackageMappingResolver::class),
             self::getContainer()->get(TransactionalMessages::class),
-            self::getContainer()->get('doctrine')
+            self::getContainer()->get('doctrine'),
+            $this->importFailureNotifier->reveal()
         );
 
         $this->expectException(\Exception::class);
@@ -425,7 +432,8 @@ class SyncTransportersCommandTest extends KernelTestCase {
             $this->deliveryOrderManager,
             self::getContainer()->get(PackageMappingResolver::class),
             self::getContainer()->get(TransactionalMessages::class),
-            self::getContainer()->get('doctrine')
+            self::getContainer()->get('doctrine'),
+            $this->importFailureNotifier->reveal()
         );
 
         $this->expectException(\Exception::class);
@@ -468,7 +476,8 @@ class SyncTransportersCommandTest extends KernelTestCase {
             $this->deliveryOrderManager,
             self::getContainer()->get(PackageMappingResolver::class),
             self::getContainer()->get(TransactionalMessages::class),
-            self::getContainer()->get('doctrine')
+            self::getContainer()->get('doctrine'),
+            $this->importFailureNotifier->reveal()
         );
 
         $this->expectException(\Exception::class);
@@ -651,6 +660,13 @@ class SyncTransportersCommandTest extends KernelTestCase {
         // ... and the failure is reported, with the file.
         $this->assertStringContainsString('1 file(s) failed', $output);
         $this->assertStringContainsString(sprintf('Rejected file "to_%s/garbage.edi"', self::FS_MASK_DBS), $output);
+        // ... and to the cooperative's administrator, with the file as received
+        $this->importFailureNotifier
+            ->notify('DBSCHENKER', Argument::that(fn(array $files): bool =>
+                array_keys($files) === [sprintf('to_%s/garbage.edi', self::FS_MASK_DBS)]
+                && $files[sprintf('to_%s/garbage.edi', self::FS_MASK_DBS)]->content === 'THIS IS NOT AN EDIFACT MESSAGE'
+            ))
+            ->shouldHaveBeenCalledOnce();
 
         // The valid delivery exists.
         $this->assertCount(1, $this->entityManager->getRepository(Delivery::class)->findAll());
@@ -873,7 +889,8 @@ class SyncTransportersCommandTest extends KernelTestCase {
             $failingOrderManager->reveal(),
             self::getContainer()->get(PackageMappingResolver::class),
             self::getContainer()->get(TransactionalMessages::class),
-            self::getContainer()->get('doctrine')
+            self::getContainer()->get('doctrine'),
+            $this->importFailureNotifier->reveal()
         );
         $commandTester = new CommandTester($command);
         $commandTester->execute([
@@ -2163,7 +2180,8 @@ class SyncTransportersCommandTest extends KernelTestCase {
             $failingOrderManager->reveal(),
             self::getContainer()->get(PackageMappingResolver::class),
             self::getContainer()->get(TransactionalMessages::class),
-            self::getContainer()->get('doctrine')
+            self::getContainer()->get('doctrine'),
+            $this->importFailureNotifier->reveal()
         );
         $commandTester = new CommandTester($command);
         $commandTester->execute([
@@ -3118,7 +3136,8 @@ class SyncTransportersCommandTest extends KernelTestCase {
             $this->deliveryOrderManager,
             self::getContainer()->get(PackageMappingResolver::class),
             self::getContainer()->get(TransactionalMessages::class),
-            self::getContainer()->get('doctrine')
+            self::getContainer()->get('doctrine'),
+            $this->importFailureNotifier->reveal()
         );
     }
 

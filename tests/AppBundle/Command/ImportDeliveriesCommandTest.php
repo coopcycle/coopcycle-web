@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\AppBundle\Command;
 
+use AppBundle\Transporter\ImportFailureNotifier;
+use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -11,6 +14,8 @@ use Tests\AppBundle\Command\Double\FakeDeliveriesImporter;
 
 class ImportDeliveriesCommandTest extends KernelTestCase
 {
+    use ProphecyTrait;
+
     private function commandTester(): CommandTester
     {
         $application = new Application(self::bootKernel());
@@ -69,6 +74,40 @@ class ImportDeliveriesCommandTest extends KernelTestCase
         // The importer is told, so it can set it aside
         $this->assertSame(
             [['dry_run' => true, 'rejected' => ['broken.csv' => 'Broken file']]],
+            $importer->flushCalls
+        );
+    }
+
+    public function testRejectedFileIsSentToTheAdministrator(): void
+    {
+        $kernel = self::bootKernel();
+
+        $notifier = $this->prophesize(ImportFailureNotifier::class);
+        self::getContainer()->set(ImportFailureNotifier::class, $notifier->reveal());
+
+        $importer = self::getContainer()->get(FakeDeliveriesImporter::class);
+        $importer->files = [
+            'broken.csv' => 'BROKEN',
+        ];
+
+        $tester = new CommandTester((new Application($kernel))->find('coopcycle:deliveries:import'));
+        $tester->execute([
+            'store' => '/api/stores/1',
+            '--importer' => 'fake',
+            '--transformer' => 'fake',
+        ]);
+
+        $this->assertSame(1, $tester->getStatusCode());
+        // As received, before the transformer
+        $notifier
+            ->notify('fake', Argument::that(fn(array $files): bool =>
+                array_keys($files) === ['broken.csv']
+                && $files['broken.csv']->reason === 'Broken file'
+                && $files['broken.csv']->content === 'BROKEN'
+            ))
+            ->shouldHaveBeenCalledOnce();
+        $this->assertSame(
+            [['dry_run' => false, 'rejected' => ['broken.csv' => 'Broken file']]],
             $importer->flushCalls
         );
     }

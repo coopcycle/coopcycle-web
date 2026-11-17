@@ -201,3 +201,8 @@ shift_week.published.subject: "Planning publié pour la semaine du %date%"
 shift_week.published.intro: "Le planning des créneaux de la semaine du %date% a été publié."
 shift_week.published.cta: "Vous pouvez maintenant consulter vos créneaux et postuler aux créneaux ouverts."
 shift_week.published.button: "Voir les créneaux"
+admin.import_failed.subject: "Échec de l'import : %source%"
+admin.import_failed.body: |
+  Bonjour,
+  <br>
+  %count% fichier(s) de <strong>%source%</strong> n'ont pas pu être importés, les autres fichiers ont bien été importés :

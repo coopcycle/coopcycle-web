@@ -15,7 +15,9 @@ use AppBundle\Messenger\TransactionalMessages;
 use AppBundle\Service\DeliveryOrderManager;
 use AppBundle\Service\PackageMappingResolver;
 use AppBundle\Service\SettingsManager;
+use AppBundle\Transporter\ImportFailureNotifier;
 use AppBundle\Transporter\ImportFromPoint;
+use AppBundle\Transporter\RejectedFile;
 use AppBundle\Transporter\ReportFromCC;
 use AppBundle\Transporter\TransporterHelpers;
 use Carbon\Carbon;
@@ -82,6 +84,7 @@ class SyncTransportersCommand extends Command {
         private PackageMappingResolver $packageMappingResolver,
         private TransactionalMessages $transactionalMessages,
         private ManagerRegistry $doctrine,
+        private ImportFailureNotifier $importFailureNotifier,
     )
     { parent::__construct(); }
 
@@ -271,6 +274,10 @@ class SyncTransportersCommand extends Command {
                 throw $e;
             }
 
+            if (!$this->dryRun) {
+                $this->importFailureNotifier->notify($this->transporter, $rejected);
+            }
+
             // If a flush failure closed the EntityManager during the import,
             // it can no longer be used to build/persist reports. Skip reporting
             // for this run; it will be picked up on the next one.
@@ -340,7 +347,7 @@ class SyncTransportersCommand extends Command {
     }
 
     /**
-     * @return array<string,string> The rejected files: reasons, keyed by their path on the remote
+     * @return array<string,RejectedFile> The rejected files, keyed by their path on the remote
      * @throws FilesystemException
      * @throws TransporterException
      * @throws Exception
@@ -364,7 +371,7 @@ class SyncTransportersCommand extends Command {
             } catch (\Throwable $e) {
                 // Set aside by flush(), in the failed folder (retried with --retry-failed),
                 // or left where it is without one (retried on the next run)
-                $rejected[$path] = $e->getMessage();
+                $rejected[$path] = new RejectedFile((string) $path, $e->getMessage(), $content);
                 $this->output->writeln(sprintf(
                     '<error>Rejected file "%s": %s</error>',
                     $path, $e->getMessage()
@@ -401,7 +408,7 @@ class SyncTransportersCommand extends Command {
         } else {
             $this->output->writeln("Remove files to acknowledge import");
             $this->transporterLogger->info("Remove files to acknowledge import", ['transporter' => $this->transporter]);
-            $sync->flush($this->dryRun, $rejected);
+            $sync->flush($this->dryRun, RejectedFile::reasons($rejected));
         }
 
         $summary = sprintf(

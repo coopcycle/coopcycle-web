@@ -1140,6 +1140,7 @@ services:
 
   AppBundle\Transporter\ImportFromPoint: ~
   AppBundle\Transporter\ReportFromCC: ~
+  AppBundle\Transporter\ImportFailureNotifier: ~
   AppBundle\Transporter\EdifactMessageParser:
     arguments:
       $edifactFs: '@edi_messages_filesystem'

@@ -191,3 +191,8 @@ shift_week.published.subject: "Schedule published for the week of %date%"
 shift_week.published.intro: "The shift schedule for the week of %date% has been published."
 shift_week.published.cta: "You can now view your shifts and apply to open ones."
 shift_week.published.button: "View shifts"
+admin.import_failed.subject: "Import failed: %source%"
+admin.import_failed.body: |
+  Hello,
+  <br>
+  %count% file(s) from <strong>%source%</strong> couldn't be imported, the other files were imported:
