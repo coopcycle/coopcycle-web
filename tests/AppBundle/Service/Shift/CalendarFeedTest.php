@@ -2,6 +2,8 @@
 
 namespace Tests\AppBundle\Service\Shift;
 
+use AppBundle\Entity\SchedulePublication;
+use AppBundle\Entity\SchedulePublicationRepository;
 use AppBundle\Entity\Shift;
 use AppBundle\Entity\ShiftActivity;
 use AppBundle\Entity\ShiftActivityRepository;
@@ -19,6 +21,9 @@ class CalendarFeedTest extends TestCase
 {
     private CalendarFeed $calendarFeed;
     private $shiftRepository;
+    private $schedulePublicationRepository;
+    /** @var string[]|null Published week starts (Y-m-d); null means "everything is published" */
+    private ?array $publishedWeeks = null;
 
     public function setUp(): void
     {
@@ -33,12 +38,25 @@ class CalendarFeedTest extends TestCase
             ->method('findAll')
             ->willReturn([$activity]);
 
+        // By default every week is published; tests that care set $publishedWeeks
+        $this->schedulePublicationRepository = $this->createMock(SchedulePublicationRepository::class);
+        $this->schedulePublicationRepository
+            ->method('filterPublished')
+            ->willReturnCallback(fn (array $shifts) => null === $this->publishedWeeks ? $shifts
+                : array_values(array_filter($shifts, fn (Shift $shift) => in_array(
+                    \DateTimeImmutable::createFromInterface($shift->getStartsAt())
+                        ->modify('monday this week')->format('Y-m-d'),
+                    $this->publishedWeeks,
+                    true
+                ))));
+
         $entityManager = $this->createMock(EntityManagerInterface::class);
         $entityManager
             ->method('getRepository')
             ->willReturnMap([
                 [Shift::class, $this->shiftRepository],
                 [ShiftActivity::class, $shiftActivityRepository],
+                [SchedulePublication::class, $this->schedulePublicationRepository],
             ]);
 
         $settingsManager = $this->createMock(SettingsManager::class);
@@ -167,6 +185,24 @@ class CalendarFeedTest extends TestCase
 
         // Unfolding restores the original content
         $this->assertStringContainsString(str_repeat('a', 200), str_replace("\r\n ", '', $ics));
+    }
+
+    public function testShiftsInDraftWeeksAreNotRendered()
+    {
+        $published = $this->shift(1, '2026-07-13 12:00:00', '2026-07-13 15:00:00');
+        $draft = $this->shift(2, '2026-07-20 12:00:00', '2026-07-20 15:00:00');
+
+        $this->shiftRepository
+            ->method('findForUserBetween')
+            ->willReturn([$published, $draft]);
+
+        // Only the week of the 13th is published
+        $this->publishedWeeks = ['2026-07-13'];
+
+        $ics = $this->calendarFeed->render($this->user(7));
+
+        $this->assertStringContainsString('UID:shift-1@demo.coopcycle.org', $ics);
+        $this->assertStringNotContainsString('UID:shift-2@demo.coopcycle.org', $ics);
     }
 
     public function testEmptyScheduleStillRendersAValidCalendar()
