@@ -2151,6 +2151,18 @@ loyalty.reward.field.couponValidityDays: Coupon validity (days)
 loyalty.reward.field.couponValidityDays.help: Number of days the coupon stays valid after the customer redeems this reward.
 loyalty.reward.field.enabled: Available to customers
 loyalty.reward.field.enabled.help: Uncheck to hide this reward without deleting it, leaving already-issued coupons untouched.
+loyalty.activity.title: Activity
+loyalty.activity.help: Every movement of points across all customers, newest first.
+loyalty.activity.none: No points have been earned or spent yet.
+loyalty.activity.column.customer: Customer
+loyalty.activity.column.description: Description
+loyalty.activity.column.points: Points
+loyalty.activity.column.remaining: Remaining
+loyalty.activity.column.expires_at: Expires on
+loyalty.filter.all: All
+loyalty.type.credit: Earned
+loyalty.type.debit: Spent
+loyalty.type.expiry: Expired
 profile.myLoyalty: My loyalty points
 profile.loyalty.title: Loyalty points
 profile.loyalty.intro: "Every order you place at %brand_name% earns you points. Spend them on the rewards below."
