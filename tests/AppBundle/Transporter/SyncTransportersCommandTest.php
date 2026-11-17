@@ -643,29 +643,50 @@ class SyncTransportersCommandTest extends KernelTestCase {
             'transporter' => 'DBSCHENKER'
         ]);
 
-        // The batch completes despite the bad file ...
-        $commandTester->assertCommandIsSuccessful();
+        // The batch completes despite the bad file, but exits 1 ...
+        $this->assertEquals(Command::FAILURE, $commandTester->getStatusCode());
         $output = $commandTester->getDisplay();
         // ... the valid file was imported ...
         $this->assertStringContainsString('imported 1 tasks', $output);
-        // ... and the failure is reported.
+        // ... and the failure is reported, with the file.
         $this->assertStringContainsString('1 file(s) failed', $output);
+        $this->assertStringContainsString(sprintf('Rejected file "to_%s/garbage.edi"', self::FS_MASK_DBS), $output);
 
         // The valid delivery exists.
         $this->assertCount(1, $this->entityManager->getRepository(Delivery::class)->findAll());
 
-        // Acknowledge is all-or-nothing: because a file failed, nothing is
-        // deleted so the good and bad files are both kept for a safe retry.
-        $this->assertCount(
-            2,
-            $this->syncDBSchenkerFs->listContents(sprintf('to_%s', self::FS_MASK_DBS))->toArray()
-        );
+        // Only the bad file is kept on the remote, to be retried
+        $dir_list = $this->syncDBSchenkerFs->listContents(sprintf('to_%s', self::FS_MASK_DBS))->toArray();
+        $this->assertCount(1, $dir_list);
+        $this->assertEquals(sprintf('to_%s/garbage.edi', self::FS_MASK_DBS), $dir_list[0]->path());
+
+        // Next run: the bad file is rejected again, nothing else to do
+        $commandTester->execute([
+            'transporter' => 'DBSCHENKER'
+        ]);
+        $this->assertEquals(Command::FAILURE, $commandTester->getStatusCode());
+        $this->assertStringContainsString('imported 0 tasks (0 already-imported, 0 filtered out by postal code, 1 file(s) failed)', $commandTester->getDisplay());
+        $this->assertCount(1, $this->entityManager->getRepository(Delivery::class)->findAll());
     }
 
-    public function testReprocessingKeptFilesDoesNotDuplicate(): void
+    public function testRejectedFileIsMovedToTheFailedFolder(): void
     {
-        // First run: a valid file alongside a failing one keeps both files
-        // (all-or-nothing acknowledge).
+        $this->params
+            ->get('transporters_config')
+            ->willReturn([
+                'DBSCHENKER' => [
+                    'enabled' => true,
+                    'name' => 'DBSchenker test',
+                    'legal_name' => 'DBSchenker Testing Inc.',
+                    'legal_id' => '0000011',
+                    'sync' => [
+                        'filemask' => self::FS_MASK_DBS,
+                        'uri' => $this->syncDBSchenkerFs,
+                        'failedPath' => 'failed_{filemask}',
+                    ]
+                ],
+            ]);
+
         $this->syncDBSchenkerFs->write(
             sprintf('to_%s/valid.edi', self::FS_MASK_DBS),
             self::EDI_SAMPLE
@@ -675,6 +696,113 @@ class SyncTransportersCommandTest extends KernelTestCase {
             'THIS IS NOT AN EDIFACT MESSAGE'
         );
 
+        $commandTester = new CommandTester($this->initCommand());
+        $commandTester->execute([
+            'transporter' => 'DBSCHENKER'
+        ]);
+
+        $this->assertEquals(Command::FAILURE, $commandTester->getStatusCode());
+        $this->assertStringContainsString('imported 1 tasks', $commandTester->getDisplay());
+
+        // The pull folder is empty, the bad file was set aside
+        $this->assertCount(0, $this->syncDBSchenkerFs->listContents(sprintf('to_%s', self::FS_MASK_DBS))->toArray());
+        $failed = $this->syncDBSchenkerFs->listContents(sprintf('failed_%s', self::FS_MASK_DBS))->toArray();
+        $this->assertCount(1, $failed);
+        $this->assertEquals(sprintf('failed_%s/garbage.edi', self::FS_MASK_DBS), $failed[0]->path());
+
+        // Another bad file with the same name: both are kept
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/garbage.edi', self::FS_MASK_DBS),
+            'STILL NOT AN EDIFACT MESSAGE'
+        );
+        $commandTester->execute([
+            'transporter' => 'DBSCHENKER'
+        ]);
+
+        $this->assertEquals(Command::FAILURE, $commandTester->getStatusCode());
+        $this->assertCount(0, $this->syncDBSchenkerFs->listContents(sprintf('to_%s', self::FS_MASK_DBS))->toArray());
+        $this->assertCount(2, $this->syncDBSchenkerFs->listContents(sprintf('failed_%s', self::FS_MASK_DBS))->toArray());
+        $this->assertEquals(
+            'THIS IS NOT AN EDIFACT MESSAGE',
+            $this->syncDBSchenkerFs->read(sprintf('failed_%s/garbage.edi', self::FS_MASK_DBS))
+        );
+    }
+
+    public function testRetryFailedImportsTheFailedFolder(): void
+    {
+        $this->params
+            ->get('transporters_config')
+            ->willReturn([
+                'DBSCHENKER' => [
+                    'enabled' => true,
+                    'name' => 'DBSchenker test',
+                    'legal_name' => 'DBSchenker Testing Inc.',
+                    'legal_id' => '0000011',
+                    'sync' => [
+                        'filemask' => self::FS_MASK_DBS,
+                        'uri' => $this->syncDBSchenkerFs,
+                        'failedPath' => 'failed_{filemask}',
+                    ]
+                ],
+            ]);
+
+        // Set aside by an earlier run, e.g. while the geocoder was down
+        $this->syncDBSchenkerFs->write(
+            sprintf('failed_%s/valid.edi', self::FS_MASK_DBS),
+            self::EDI_SAMPLE
+        );
+        $this->syncDBSchenkerFs->write(
+            sprintf('failed_%s/garbage.edi', self::FS_MASK_DBS),
+            'THIS IS NOT AN EDIFACT MESSAGE'
+        );
+        // Not part of the retry
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/pickup.edi', self::FS_MASK_DBS),
+            self::EDI_PICKUP_SAMPLE
+        );
+
+        $commandTester = new CommandTester($this->initCommand());
+        $commandTester->execute([
+            'transporter' => 'DBSCHENKER',
+            '--retry-failed' => true,
+        ]);
+
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('Retrying the files of the failed folder', $output);
+        $this->assertStringContainsString('imported 1 tasks (0 already-imported, 0 filtered out by postal code, 1 file(s) failed)', $output);
+        $this->assertEquals(Command::FAILURE, $commandTester->getStatusCode());
+
+        $deliveries = $this->entityManager->getRepository(Delivery::class)->findAll();
+        $this->assertCount(1, $deliveries);
+        $this->assertEquals('JOY0123456789', $deliveries[0]->getExternalReference());
+
+        // The imported file is removed, the bad one stays in the failed folder, once
+        $failed = $this->syncDBSchenkerFs->listContents(sprintf('failed_%s', self::FS_MASK_DBS))->toArray();
+        $this->assertCount(1, $failed);
+        $this->assertEquals(sprintf('failed_%s/garbage.edi', self::FS_MASK_DBS), $failed[0]->path());
+        // The pull folder wasn't touched
+        $this->assertCount(1, $this->syncDBSchenkerFs->listContents(sprintf('to_%s', self::FS_MASK_DBS))->toArray());
+    }
+
+    public function testRetryFailedWithoutFailedPath(): void
+    {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('No failedPath configured for DBSCHENKER, nothing to retry');
+
+        $commandTester = new CommandTester($this->initCommand());
+        $commandTester->execute([
+            'transporter' => 'DBSCHENKER',
+            '--retry-failed' => true,
+        ]);
+    }
+
+    public function testResentFileDoesNotDuplicate(): void
+    {
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/valid.edi', self::FS_MASK_DBS),
+            self::EDI_SAMPLE
+        );
+
         $command = $this->initCommand();
         $commandTester = new CommandTester($command);
         $commandTester->execute([
@@ -682,17 +810,25 @@ class SyncTransportersCommandTest extends KernelTestCase {
         ]);
         $this->assertStringContainsString('imported 1 tasks', $commandTester->getDisplay());
         $this->assertCount(1, $this->entityManager->getRepository(Delivery::class)->findAll());
+        $this->assertCount(1, $this->edifactFs->listContents('/')->toArray());
 
-        // Second run over the same kept files: the valid task is recognised as
+        // The transporter sends the same file again: the task is recognised as
         // already imported (dedup on reference) and skipped, so no duplicate
-        // delivery is created.
+        // delivery is created, and the file isn't archived a second time.
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/valid_again.edi', self::FS_MASK_DBS),
+            self::EDI_SAMPLE
+        );
         $commandTester->execute([
             'transporter' => 'DBSCHENKER'
         ]);
+        $commandTester->assertCommandIsSuccessful();
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('imported 0 tasks', $output);
         $this->assertStringContainsString('1 already-imported', $output);
         $this->assertCount(1, $this->entityManager->getRepository(Delivery::class)->findAll());
+        $this->assertCount(1, $this->edifactFs->listContents('/')->toArray());
+        $this->assertCount(0, $this->syncDBSchenkerFs->listContents(sprintf('to_%s', self::FS_MASK_DBS))->toArray());
     }
 
     public function testFailedOrderCreationLeavesNothingAndIsRetried(): void
@@ -762,11 +898,11 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->assertNotNull($deliveries[0]->getOrder());
         $this->assertCount(2, $this->entityManager->getRepository(Task::class)->findAll());
 
-        // Both files are kept for the retry
-        $this->assertCount(
-            2,
-            $this->syncDBSchenkerFs->listContents(sprintf('to_%s', self::FS_MASK_DBS))->toArray()
-        );
+        // Only the failed file is kept for the retry
+        $dir_list = $this->syncDBSchenkerFs->listContents(sprintf('to_%s', self::FS_MASK_DBS))->toArray();
+        $this->assertCount(1, $dir_list);
+        $this->assertEquals(sprintf('to_%s/a_scontr.edi', self::FS_MASK_DBS), $dir_list[0]->path());
+        $this->assertEquals(Command::FAILURE, $commandTester->getStatusCode());
 
         // Second run: the failed shipment is imported, not skipped
         $commandTester = new CommandTester($this->initCommand());
@@ -776,7 +912,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
 
         $commandTester->assertCommandIsSuccessful();
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('imported 1 tasks (1 already-imported, 0 filtered out by postal code, 0 file(s) failed)', $output);
+        $this->assertStringContainsString('imported 1 tasks (0 already-imported, 0 filtered out by postal code, 0 file(s) failed)', $output);
 
         $this->assertTrue($ediRepo->hasInbound('JOY0123456789', 'DBSCHENKER'));
         $deliveries = $this->entityManager->getRepository(Delivery::class)->findAll();

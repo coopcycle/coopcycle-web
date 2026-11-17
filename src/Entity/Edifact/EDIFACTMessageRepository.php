@@ -32,18 +32,31 @@ class EDIFACTMessageRepository extends EntityRepository {
      */
     public function hasInbound(string $reference, string $transporter): bool
     {
-        $count = (int) $this->createQueryBuilder('e')
-            ->select('COUNT(e.id)')
-            ->where('e.reference = :reference')
+        return !empty($this->findInboundReferences([$reference], $transporter));
+    }
+
+    /**
+     * The references already imported for this transporter, among the given ones:
+     * one query for all the tasks of a file.
+     * @param array<string> $references
+     * @return array<string>
+     */
+    public function findInboundReferences(array $references, string $transporter): array
+    {
+        if (empty($references)) {
+            return [];
+        }
+
+        return $this->createQueryBuilder('e')
+            ->select('DISTINCT e.reference')
+            ->where('e.reference IN (:references)')
             ->andWhere('e.transporter = :transporter')
             ->andWhere('e.direction = :direction')
-            ->setParameter('reference', $reference)
+            ->setParameter('references', array_values(array_unique($references)))
             ->setParameter('transporter', $transporter)
             ->setParameter('direction', EDIFACTMessage::DIRECTION_INBOUND)
             ->getQuery()
-            ->getSingleScalarResult();
-
-        return $count > 0;
+            ->getSingleColumnResult();
     }
 
     public function getUnsynced(string $transporter): mixed
