@@ -58,7 +58,6 @@ class Vehicle implements SoftDeleteableInterface
     protected $maxWeight;
 
     #[Groups(['vehicle', 'vehicle_create'])]
-    #[Assert\NotBlank]
     #[Assert\CssColor]
     protected $color;
 
@@ -84,6 +83,16 @@ class Vehicle implements SoftDeleteableInterface
 
     public function __construct() {
         $this->compatibleTrailers = new ArrayCollection();
+        // The color is not mandatory; when none is provided, we pick a random one
+        $this->color = self::randomColor();
+    }
+
+    /**
+     * Generates a random hexadecimal color, i.e "#A1B2C3"
+     */
+    public static function randomColor(): string
+    {
+        return sprintf('#%06X', random_int(0, 0xFFFFFF));
     }
 
     /**
@@ -169,7 +178,8 @@ class Vehicle implements SoftDeleteableInterface
      */
     public function setColor($color)
     {
-        $this->color = $color;
+        // The color is not mandatory; when none is provided, we pick a random one
+        $this->color = (null === $color || '' === trim((string) $color)) ? self::randomColor() : $color;
 
         return $this;
     }
