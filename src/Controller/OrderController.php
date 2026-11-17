@@ -15,6 +15,10 @@ use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Form\Checkout\CheckoutAddressType;
 use AppBundle\Form\Checkout\CheckoutCouponType;
+use AppBundle\Form\Checkout\CheckoutGiftCardType;
+use AppBundle\Service\GiftCard\GiftCardException;
+use AppBundle\Service\GiftCard\GiftCardManager;
+use AppBundle\Service\GiftCard\GiftCardStatus;
 use AppBundle\Form\Checkout\CheckoutPaymentType;
 use AppBundle\Form\Checkout\CheckoutTipType;
 use AppBundle\Form\Checkout\CheckoutVytalType;
@@ -86,7 +90,9 @@ class OrderController extends AbstractController
         OrderProcessorInterface $orderProcessor,
         TranslatorInterface $translator,
         SettingsManager $settingsManager,
-        EmbedContext $embedContext)
+        EmbedContext $embedContext,
+        GiftCardManager $giftCardManager,
+        GiftCardStatus $giftCardStatus)
     {
         if (!$settingsManager->get('guest_checkout_enabled')) {
             if (!$embedContext->isEnabled()) {
@@ -160,6 +166,40 @@ class OrderController extends AbstractController
                     'error',
                     'No coupon applied'
                 );
+            }
+
+            $orderProcessor->process($order);
+            $this->objectManager->flush();
+
+            return $this->redirectToRoute('order');
+        }
+
+        // Applied like a coupon, and for the same reason: it belongs to the
+        // basket, not to the payment step. A gift card is not a choice
+        // between ways to pay -- it is an amount already paid for, and
+        // whatever it doesn't cover is still paid however the customer
+        // likes.
+        $giftCardForm = $this->createForm(CheckoutGiftCardType::class);
+        $giftCardForm->handleRequest($request);
+
+        if ($giftCardForm->isSubmitted()) {
+
+            $code = trim((string) $giftCardForm->get('code')->getData());
+
+            if ('' === $code) {
+                // An empty box is how a customer takes the card back off.
+                $order->setGiftCard(null);
+            } else {
+                try {
+                    $order->setGiftCard($giftCardManager->findForOrder($code, $order));
+                    $this->addFlash('notice', $translator->trans('gift_card.applied'));
+                } catch (GiftCardException $e) {
+                    $order->setGiftCard(null);
+                    $this->addFlash('error', $translator->trans(
+                        $e->getTranslationKey(),
+                        $this->giftCardErrorParameters($e)
+                    ));
+                }
             }
 
             $orderProcessor->process($order);
@@ -274,9 +314,28 @@ class OrderController extends AbstractController
             'form' => $form->createView(),
             'form_tip' => $tipForm->createView(),
             'form_coupon' => $couponForm->createView(),
+            'form_gift_card' => $giftCardForm->createView(),
+            'gift_cards_enabled' => $giftCardStatus->isActive(),
             'form_vytal' => $vytalForm->createView(),
             'form_loopeat_returns' => $loopeatReturnsForm->createView(),
         ]));
+    }
+
+    /**
+     * Turns a refusal reason into message placeholders.
+     *
+     * Only the restaurant-scoped case has one, but going through a single
+     * place keeps the templates from each inventing their own mapping.
+     */
+    private function giftCardErrorParameters(GiftCardException $e): array
+    {
+        $parameters = [];
+
+        foreach ($e->getContext() as $key => $value) {
+            $parameters[sprintf('%%%s%%', $key)] = $value;
+        }
+
+        return $parameters;
     }
 
     private function getShippingTimeRange(OrderInterface $order)

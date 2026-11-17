@@ -102,6 +102,31 @@
                 <button class="btn btn-sm btn-neutral join-item" type="button" id="apply-coupon">{{ 'form.checkout_address.add_promotion.label'|trans }}</button>
               </div>
             </div>
+            {% if gift_cards_enabled %}
+            <div class="flex items-center justify-end gap-4 mb-4">
+              {# A plain form submit rather than the coupon's AJAX swap: a
+                 refused code has to say *why* -- expired, already spent,
+                 meant for another restaurant -- and those messages arrive as
+                 flashes, which a partial swap would drop. #}
+              {{ form_start(form_gift_card, { attr: { class: 'flex items-center gap-4' } }) }}
+                <label>{{ 'form.checkout.gift_card.label'|trans }}</label>
+                <div class="join">
+                  <span class="input input-sm join-item">
+                    {{ form_widget(form_gift_card.code, { attr: { class: '' } }) }}
+                  </span>
+                  <button class="btn btn-sm btn-neutral join-item" type="submit">
+                    {{ 'form.checkout.gift_card.apply'|trans }}
+                  </button>
+                </div>
+              {{ form_end(form_gift_card) }}
+            </div>
+            {% if order.giftCard %}
+            <div class="flex items-center justify-end gap-2 mb-4 text-sm">
+              <span>{{ 'form.checkout.gift_card.applied'|trans({ '%code%': order.giftCard.code }) }}</span>
+              <span class="font-semibold">− {{ order.giftCardTotal|price_format }}</span>
+            </div>
+            {% endif %}
+            {% endif %}
             {% if form.reusablePackagingEnabled is defined %}
               {{ form_row(form.reusablePackagingEnabled) }}
             {% endif %}

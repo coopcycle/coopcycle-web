@@ -1,0 +1,40 @@
+{% extends 'emails/layout.mjml.twig' %}
+
+{% block content %}
+  <mj-text align="left" line-height="20px">
+    {% if gift_card.recipientName %}
+      {{ 'gift_card.greeting'|trans({ '%name%': gift_card.recipientName }, 'emails') }}
+    {% else %}
+      {{ 'gift_card.greeting_anonymous'|trans({}, 'emails') }}
+    {% endif %}
+  </mj-text>
+
+  <mj-text align="center" font-size="28px" font-weight="700">
+    {{ gift_card.initialAmount|price_format }}
+  </mj-text>
+
+  {% if gift_card.message %}
+  <mj-text align="left" line-height="20px" font-style="italic">
+    {{ gift_card.message|nl2br }}
+  </mj-text>
+  {% endif %}
+
+  <mj-text align="left" line-height="20px">
+    {{ 'gift_card.body'|trans({}, 'emails')|raw }}
+  </mj-text>
+
+  <mj-text align="center" font-size="22px" font-weight="700" letter-spacing="2px">
+    {{ code }}
+  </mj-text>
+
+  <mj-text align="left" line-height="20px" font-size="13px" color="#888">
+    {% if not gift_card.platformWide %}
+      {{ 'gift_card.restricted'|trans({ '%restaurant%': gift_card.restaurant.name }, 'emails') }}<br>
+    {% endif %}
+    {% if gift_card.expiresAt %}
+      {{ 'gift_card.expires'|trans({ '%date%': gift_card.expiresAt|format_datetime('medium', 'none') }, 'emails') }}
+    {% else %}
+      {{ 'gift_card.no_expiry'|trans({}, 'emails') }}
+    {% endif %}
+  </mj-text>
+{% endblock %}

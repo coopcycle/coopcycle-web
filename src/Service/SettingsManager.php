@@ -61,6 +61,8 @@ class SettingsManager
         'referral_program_active',
         'loyalty_program_active',
         'marketing_automation_active',
+        'gift_cards_active',
+        'gift_card_scoping_enabled',
     ];
 
     private static $integer = [
@@ -71,6 +73,9 @@ class SettingsManager
         'loyalty_points_per_currency_unit',
         'loyalty_points_validity_days',
         'marketing_frequency_cap_days',
+        'gift_card_validity_months',
+        'gift_card_min_amount',
+        'gift_card_max_amount',
     ];
 
     private $cache = [];

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd" xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
+  <entity repository-class="AppBundle\Entity\GiftCard\GiftCardTransactionRepository" name="AppBundle\Entity\GiftCard\GiftCardTransaction" table="gift_card_transaction">
+    <indexes>
+      <!-- Covers both the ledger sum and the history listing. -->
+      <index name="idx_gift_card_transaction_card" columns="gift_card_id,created_at"/>
+      <!-- Covers the per-leg lookups that make holds and releases idempotent. -->
+      <index name="idx_gift_card_transaction_payment" columns="payment_id,type"/>
+      <index name="idx_gift_card_transaction_order" columns="order_id"/>
+      <!-- Covers the stale-hold sweep. -->
+      <index name="idx_gift_card_transaction_hold_expiry" columns="type,expires_at"/>
+    </indexes>
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="type" type="string" column="type" length="16"/>
+    <field name="amount" type="integer" column="amount"/>
+    <field name="stripeTransferId" type="string" column="stripe_transfer_id" length="255" nullable="true"/>
+    <field name="expiresAt" type="datetime" column="expires_at" nullable="true"/>
+    <field name="createdAt" type="datetime" column="created_at">
+      <gedmo:timestampable on="create"/>
+    </field>
+    <many-to-one field="giftCard" target-entity="AppBundle\Entity\GiftCard\GiftCard" inversed-by="transactions">
+      <join-columns>
+        <join-column name="gift_card_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="order" target-entity="Sylius\Component\Order\Model\OrderInterface">
+      <join-columns>
+        <join-column name="order_id" referenced-column-name="id" nullable="true" on-delete="SET NULL"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="payment" target-entity="AppBundle\Entity\Sylius\Payment">
+      <join-columns>
+        <join-column name="payment_id" referenced-column-name="id" nullable="true" on-delete="SET NULL"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="parent" target-entity="AppBundle\Entity\GiftCard\GiftCardTransaction">
+      <join-columns>
+        <join-column name="parent_id" referenced-column-name="id" nullable="true" on-delete="SET NULL"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

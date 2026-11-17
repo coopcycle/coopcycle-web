@@ -2313,3 +2313,183 @@ marketing.campaign.send_test.refused: "Postmark refused the message: %error%"
 marketing.postmark.info.title: Why does this need Postmark?
 marketing.postmark.saved: Postmark settings saved.
 marketing.not_configured_here: Postmark is not configured yet, so nothing can be sent. Fill in the settings above.
+
+# Gift cards
+gift_card.title: Gift cards
+gift_card.program.active_label: Gift cards are on sale
+gift_card.program.active_help: >-
+  Customers can buy gift cards and spend them at checkout. Leave this off until the amounts
+  below are set and the legal mention is written: turning it on puts the purchase page live.
+gift_card.program.scoping_label: Allow cards tied to one restaurant
+gift_card.program.scoping_help: >-
+  A restaurant-scoped card can only be spent at that restaurant. The money still goes to the
+  co-op, so a restaurant leaving the platform never strands a card. Check with your accountant
+  first: in a narrow case, restricting a card to one vendor can change when VAT falls due.
+gift_card.program.inactive_warning: >-
+  Gift cards are turned off. Existing cards keep their balance and can still be refunded, but
+  nobody can buy or spend one.
+gift_card.program.activated: Gift cards are now on sale.
+gift_card.program.deactivated: Gift cards are no longer on sale.
+gift_card.liability.label: Outstanding balance
+gift_card.liability.help: >-
+  What customers still hold in unspent gift cards. This is money the co-op owes, not revenue —
+  a gift card only becomes turnover when it is spent.
+gift_card.settings.configure: Gift card settings
+gift_card.settings.saved: Gift card settings saved.
+gift_card.settings.info.title: How gift cards are paid for and spent
+gift_card.settings.info.body: >-
+  The money from a gift card sale goes to the co-op, not to a restaurant. When the card is
+  spent, the restaurant is paid its usual share by transfer and the co-op keeps its usual
+  commission — so a gift card never changes what a restaurant earns on an order.
+gift_card.settings.field.minAmount: Minimum amount
+gift_card.settings.field.minAmount.help: The smallest gift card a customer can buy.
+gift_card.settings.field.maxAmount: Maximum amount
+gift_card.settings.field.maxAmount.help: >-
+  The largest gift card a customer can buy. Worth keeping sensible: a stolen card is a loss
+  the co-op carries.
+gift_card.settings.field.denominations: Suggested amounts
+gift_card.settings.field.denominations.help: >-
+  Amounts offered as buttons on the purchase page, in cents, separated by commas (for example
+  2000,5000,10000). Leave empty to let customers type any amount.
+gift_card.settings.field.expiryPolicy: Expiry
+gift_card.settings.field.expiryPolicy.help: >-
+  Whether unspent balances lapse. Many countries restrict or forbid short expiry periods, and
+  some require unclaimed balances to be handed to the state — take advice before changing this.
+gift_card.settings.expiryPolicy.never: Cards never expire
+gift_card.settings.expiryPolicy.forfeit: Cards expire and the balance is kept by the co-op
+gift_card.settings.field.validityMonths: Valid for (months)
+gift_card.settings.field.validityMonths.help: >-
+  How long a card lasts from the day it is bought. Ignored when cards never expire.
+gift_card.settings.field.legalMention: Legal mention on the receipt
+gift_card.settings.field.legalMention.help: >-
+  Printed on the purchase receipt. A gift card sale is not a VAT invoice; in France the
+  mention is "bon à usages multiples, art. 256 ter CGI". Check what applies where you operate.
+gift_card.list.title: Gift cards
+gift_card.list.search_placeholder: Code or email…
+gift_card.list.all_states: All states
+gift_card.list.code: Code
+gift_card.list.state: State
+gift_card.list.initialAmount: Bought for
+gift_card.list.balance: Balance
+gift_card.list.recipient: Recipient
+gift_card.list.scope: Valid at
+gift_card.list.createdAt: Created
+gift_card.list.empty: No gift cards yet.
+gift_card.state.pending: Awaiting payment
+gift_card.state.active: Active
+gift_card.state.depleted: Fully spent
+gift_card.state.expired: Expired
+gift_card.state.cancelled: Cancelled
+gift_card.state.frozen: Frozen
+gift_card.scope.platform: Anywhere
+gift_card.funding.funded: Paid for
+gift_card.funding.granted: Issued by the co-op
+gift_card.granted.label: Granted
+gift_card.granted.help: Issued by the co-op, with no payment behind it.
+gift_card.granted.warning: >-
+  Nobody paid for this card. When it is spent, the restaurant is still paid in full — out of
+  the co-op's own balance.
+gift_card.detail.funding: Funding
+gift_card.detail.purchaser: Bought by
+gift_card.detail.expiresAt: Expires
+gift_card.detail.never_expires: Never
+gift_card.detail.purchaseCharge: Stripe charge
+gift_card.drift.title: This card's balance does not match its history
+gift_card.drift.body: >-
+  The stored balance is %balance% but the entries below add up to %ledger%. The history is
+  the source of truth. Please report this before anyone spends the card.
+gift_card.ledger.title: History
+gift_card.ledger.help: >-
+  Every movement on this card. Nothing here is ever deleted or edited, so the entries always
+  explain the balance.
+gift_card.ledger.date: Date
+gift_card.ledger.type: Movement
+gift_card.ledger.amount: Amount
+gift_card.ledger.order: Order
+gift_card.ledger.transfer: Transfer
+gift_card.ledger.empty: Nothing has happened to this card yet.
+gift_card.ledger.type.purchase: Bought
+gift_card.ledger.type.hold: Reserved at checkout
+gift_card.ledger.type.redemption: Spent
+gift_card.ledger.type.refund: Returned
+gift_card.ledger.type.expiry: Expired
+gift_card.issue.title: Issue a gift card
+gift_card.issue.submit: Issue the card
+gift_card.issue.created: Gift card %code% issued.
+gift_card.issue.warning.title: This hands out the co-op's own money
+gift_card.issue.warning.body: >-
+  A card issued here has no payment behind it. Whatever it buys, the restaurant is still paid
+  in full, and the co-op covers it. Use it for compensation or a giveaway, not for a sale.
+gift_card.issue.field.amount: Amount
+gift_card.issue.field.recipientEmail: Recipient's email
+gift_card.issue.field.recipientEmail.help: >-
+  Leave empty to hand the code over yourself; fill it in and the card is emailed straight away.
+gift_card.issue.field.recipientName: Recipient's name
+gift_card.issue.field.message: Message
+gift_card.issue.field.reason: Reason
+gift_card.issue.field.reason.help: >-
+  Why the co-op is handing this out. Not shown to the customer — it is what will make sense of
+  this entry in a year's time.
+gift_card.issue.field.restaurant: Restaurant
+gift_card.issue.field.restaurant.help: Leave empty for a card that works anywhere.
+gift_card.issue.field.restaurant.placeholder: Anywhere
+gift_card.void.action: Cancel this card
+gift_card.void.help: The balance is forfeited and the code stops working.
+gift_card.void.confirm: Cancel this gift card? Its remaining balance will be lost.
+gift_card.void.done: Gift card %code% cancelled.
+gift_card.error.not_found: We don't recognise that gift card code.
+gift_card.error.not_active: This gift card can't be used.
+gift_card.error.expired: This gift card has expired.
+gift_card.error.depleted: This gift card has already been spent.
+gift_card.error.frozen: This gift card is temporarily unavailable.
+gift_card.error.currency_mismatch: This gift card is in a different currency.
+gift_card.error.livemode_mismatch: This gift card can't be used here.
+gift_card.error.wrong_restaurant: This gift card can only be used at %restaurant%.
+gift_card.error.multi_vendor: Gift cards can't be used on orders from several restaurants.
+gift_card.error.meal_voucher: Gift cards can't be combined with meal vouchers.
+gift_card.error.insufficient_balance: This gift card's balance has changed. Please check your order again.
+payment_method.gift_card: Gift card
+gift_card.purchase.title: Buy a gift card
+gift_card.purchase.intro: >-
+  Give someone an amount to spend on %brand_name%. They can use it at any restaurant, over as
+  many orders as they like, until it runs out.
+gift_card.purchase.choose_amount: Choose an amount
+gift_card.purchase.card: Pay with
+gift_card.purchase.submit: Buy this gift card
+gift_card.purchase.expires: The card will be valid until %date%.
+gift_card.purchase.no_expiry: The card does not expire.
+gift_card.purchase.invalid: Please check the form and try again.
+gift_card.purchase.no_payment_method: Please enter your card details.
+gift_card.purchase.failed: We couldn't take the payment. Please try another card.
+gift_card.purchase.amount.out_of_range: Please choose an amount between {{ min }} and {{ max }}.
+gift_card.purchase.field.amount: Amount
+gift_card.purchase.field.recipientName: Who is it for?
+gift_card.purchase.field.recipientEmail: Their email
+gift_card.purchase.field.recipientEmail.help: >-
+  We'll email them the card. Leave it empty and we'll send it to you instead, so you can hand
+  it over yourself.
+gift_card.purchase.field.message: A message for them
+gift_card.purchase.field.purchaserEmail: Your email
+gift_card.purchase.field.purchaserEmail.help: For your receipt.
+gift_card.purchase.field.restaurant: Restaurant
+gift_card.purchase.field.restaurant.help: >-
+  Choose one to make the card usable only there, or leave it empty for a card that works
+  anywhere.
+gift_card.purchase.field.restaurant.placeholder: Any restaurant
+gift_card.confirmation.title: Your gift card is ready
+gift_card.confirmation.sent: We've emailed it to %email%.
+gift_card.confirmation.keep: We've emailed it to you. Here's the code, so you can pass it on.
+gift_card.confirmation.code: Code
+gift_card.confirmation.how_to_use: Enter this code in the basket before paying.
+gift_card.confirmation.back: Back to the shops
+form.checkout.gift_card.label: Gift card
+form.checkout.gift_card.apply: Apply
+form.checkout.gift_card.applied: Gift card %code%
+gift_card.applied: Gift card applied.
+profile.gift_cards.title: My gift cards
+profile.gift_cards.intro: Cards you've bought, and cards other people have sent you.
+profile.gift_cards.at: usable at %restaurant%
+profile.gift_cards.expires: valid until %date%
+profile.gift_cards.of: of %amount%
+profile.gift_cards.empty: You don't have any gift cards.
+profile.myGiftCards: My gift cards

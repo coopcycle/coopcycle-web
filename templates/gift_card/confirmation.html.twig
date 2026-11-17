@@ -1,0 +1,39 @@
+{% extends "frontend.html.twig" %}
+
+{% block prepare_title %}
+  {{ add_title_prefix('gift_card.confirmation.title'|trans) }}
+{% endblock %}
+
+{% block body %}
+<div class="container mx-auto max-w-2xl px-4 py-8 text-center">
+
+  <h1 class="text-2xl font-semibold mb-2">{{ 'gift_card.confirmation.title'|trans }}</h1>
+
+  {% if gift_card.recipientEmail %}
+    <p class="text-gray-500 mb-6">
+      {{ 'gift_card.confirmation.sent'|trans({ '%email%': gift_card.recipientEmail }) }}
+    </p>
+  {% else %}
+    <p class="text-gray-500 mb-6">{{ 'gift_card.confirmation.keep'|trans }}</p>
+  {% endif %}
+
+  <div class="card bg-base-100 shadow">
+    <div class="card-body">
+      <div class="text-gray-500">{{ 'gift_card.confirmation.code'|trans }}</div>
+      <div style="font-size:28px;font-weight:700;letter-spacing:3px;">
+        {{ gift_card.code|slice(0, 4) }}-{{ gift_card.code|slice(4, 4) }}-{{ gift_card.code|slice(8, 4) }}
+      </div>
+      <div style="font-size:20px;" class="mt-2">{{ gift_card.initialAmount|price_format }}</div>
+    </div>
+  </div>
+
+  <p class="text-sm text-gray-500 mt-4">{{ 'gift_card.confirmation.how_to_use'|trans }}</p>
+
+  {% if legal_mention %}
+    <p class="text-sm text-gray-500 mt-2">{{ legal_mention }}</p>
+  {% endif %}
+
+  <a href="{{ path('homepage') }}" class="btn mt-4">{{ 'gift_card.confirmation.back'|trans }}</a>
+
+</div>
+{% endblock %}

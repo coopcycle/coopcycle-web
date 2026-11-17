@@ -1,0 +1,133 @@
+{% extends "admin.html.twig" %}
+
+{% block prepare_title %}
+  {{ add_title_prefix(gift_card.code) }}
+{% endblock %}
+
+{% block breadcrumb %}
+<li><a href="{{ path('admin_gift_cards') }}">{% trans %}gift_card.title{% endtrans %}</a></li>
+<li>{{ gift_card.code }}</li>
+{% endblock %}
+
+{% block content %}
+
+{% if ledger_balance != gift_card.balance %}
+<div class="alert alert-danger" role="alert">
+  <h4><i class="fa fa-exclamation-triangle"></i> {% trans %}gift_card.drift.title{% endtrans %}</h4>
+  <p style="margin:0;">
+    {{ 'gift_card.drift.body'|trans({
+      '%balance%': gift_card.balance|price_format,
+      '%ledger%': ledger_balance|price_format
+    }) }}
+  </p>
+</div>
+{% endif %}
+
+{% if not gift_card.funded %}
+<div class="alert alert-warning" role="alert">
+  <i class="fa fa-exclamation-triangle"></i> {% trans %}gift_card.granted.warning{% endtrans %}
+</div>
+{% endif %}
+
+<div class="panel panel-default">
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-md-6">
+        <dl class="dl-horizontal">
+          <dt>{% trans %}gift_card.list.code{% endtrans %}</dt>
+          <dd><code style="font-size:16px;">{{ gift_card.code }}</code></dd>
+          <dt>{% trans %}gift_card.list.state{% endtrans %}</dt>
+          <dd>{{ ('gift_card.state.' ~ gift_card.state)|trans }}</dd>
+          <dt>{% trans %}gift_card.list.initialAmount{% endtrans %}</dt>
+          <dd>{{ gift_card.initialAmount|price_format }}</dd>
+          <dt>{% trans %}gift_card.list.balance{% endtrans %}</dt>
+          <dd><strong>{{ gift_card.balance|price_format }}</strong></dd>
+          <dt>{% trans %}gift_card.detail.funding{% endtrans %}</dt>
+          <dd>{{ ('gift_card.funding.' ~ gift_card.funding)|trans }}</dd>
+        </dl>
+      </div>
+      <div class="col-md-6">
+        <dl class="dl-horizontal">
+          <dt>{% trans %}gift_card.list.recipient{% endtrans %}</dt>
+          <dd>{{ gift_card.recipientEmail ?? '—' }}</dd>
+          <dt>{% trans %}gift_card.detail.purchaser{% endtrans %}</dt>
+          <dd>{{ gift_card.purchaserEmail ?? '—' }}</dd>
+          <dt>{% trans %}gift_card.list.scope{% endtrans %}</dt>
+          <dd>
+            {% if gift_card.platformWide %}
+              {% trans %}gift_card.scope.platform{% endtrans %}
+            {% else %}
+              {{ gift_card.restaurant.name }}
+            {% endif %}
+          </dd>
+          <dt>{% trans %}gift_card.detail.expiresAt{% endtrans %}</dt>
+          <dd>
+            {% if gift_card.expiresAt %}
+              {{ gift_card.expiresAt|format_datetime('short', 'none') }}
+            {% else %}
+              {% trans %}gift_card.detail.never_expires{% endtrans %}
+            {% endif %}
+          </dd>
+          <dt>{% trans %}gift_card.detail.purchaseCharge{% endtrans %}</dt>
+          <dd>{{ gift_card.purchaseChargeId ?? '—' }}</dd>
+        </dl>
+      </div>
+    </div>
+
+    {% if gift_card.state in ['active', 'depleted'] %}
+    <form method="post" action="{{ path('admin_gift_card_void', { id: gift_card.id }) }}"
+      onsubmit="return confirm('{{ 'gift_card.void.confirm'|trans|e('js') }}');">
+      <input type="hidden" name="_token" value="{{ csrf_token('admin_gift_card_void') }}">
+      <button type="submit" class="btn btn-danger btn-sm">{% trans %}gift_card.void.action{% endtrans %}</button>
+      <span class="text-muted" style="margin-left:8px;">{% trans %}gift_card.void.help{% endtrans %}</span>
+    </form>
+    {% endif %}
+
+  </div>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <i class="fa fa-list"></i> {% trans %}gift_card.ledger.title{% endtrans %}
+  </div>
+  <div class="panel-body">
+    <p class="text-muted">{% trans %}gift_card.ledger.help{% endtrans %}</p>
+    {% if history|length > 0 %}
+    <table class="table table-condensed">
+      <thead>
+        <tr>
+          <th>{% trans %}gift_card.ledger.date{% endtrans %}</th>
+          <th>{% trans %}gift_card.ledger.type{% endtrans %}</th>
+          <th class="text-right">{% trans %}gift_card.ledger.amount{% endtrans %}</th>
+          <th>{% trans %}gift_card.ledger.order{% endtrans %}</th>
+          <th>{% trans %}gift_card.ledger.transfer{% endtrans %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for entry in history %}
+        <tr>
+          <td>{{ entry.createdAt|format_datetime('short', 'short') }}</td>
+          <td>{{ ('gift_card.ledger.type.' ~ entry.type)|trans }}</td>
+          <td class="text-right {{ entry.amount < 0 ? 'text-danger' : 'text-success' }}">
+            {{ entry.amount|price_format }}
+          </td>
+          <td>
+            {% if entry.order %}
+              <a href="{{ path('admin_order', { id: entry.order.id }) }}">{{ entry.order.number ?? entry.order.id }}</a>
+            {% else %}—{% endif %}
+          </td>
+          <td>{{ entry.stripeTransferId ?? '—' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div class="text-center">
+      {{ knp_pagination_render(history, '@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig') }}
+    </div>
+    {% else %}
+    <p class="text-muted" style="margin:0;">{% trans %}gift_card.ledger.empty{% endtrans %}</p>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

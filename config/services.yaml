@@ -398,6 +398,18 @@ services:
     arguments:
       $envEnabled: '%env(bool:MARKETING_AUTOMATION_ENABLED)%'
 
+  AppBundle\Controller\Admin\GiftCardController:
+    arguments:
+      $giftCardsEnabled: '%env(bool:GIFT_CARDS_ENABLED)%'
+
+  AppBundle\Controller\GiftCardController:
+    arguments:
+      $giftCardsEnabled: '%env(bool:GIFT_CARDS_ENABLED)%'
+
+  AppBundle\Service\GiftCard\GiftCardStatus:
+    arguments:
+      $envEnabled: '%env(bool:GIFT_CARDS_ENABLED)%'
+
   # Used to tell apart two addresses that reach the same mailbox, so someone
   # can't refer themselves (or an account they already own) with an alias.
   # The strategies, and crucially their order, are in the factory.
@@ -890,6 +902,21 @@ services:
     factory: ['@doctrine.orm.default_entity_manager', getRepository]
     arguments:
       - AppBundle\Entity\Loyalty\LoyaltyPointsEntry
+
+  AppBundle\Entity\GiftCard\GiftCardRepository:
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\GiftCard\GiftCard
+
+  AppBundle\Entity\GiftCard\GiftCardTransactionRepository:
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\GiftCard\GiftCardTransaction
+
+  AppBundle\Entity\OrderTransferRepository:
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\OrderTransfer
 
   AppBundle\Entity\Marketing\EmailSuppressionRepository:
     factory: ['@doctrine.orm.default_entity_manager', getRepository]
@@ -1555,6 +1582,7 @@ services:
   AppBundle\Payment\Gateway\MercadoPago: ~
   AppBundle\Payment\Gateway\Paygreen: ~
   AppBundle\Payment\Gateway\Pawapay: ~
+  AppBundle\Payment\Gateway\GiftCard: ~
 
   AppBundle\Payment\Gateway:
     arguments:
@@ -1564,6 +1592,7 @@ services:
         mercadopago: '@AppBundle\Payment\Gateway\MercadoPago'
         paygreen: '@AppBundle\Payment\Gateway\Paygreen'
         pawapay: '@AppBundle\Payment\Gateway\Pawapay'
+        gift_card: '@AppBundle\Payment\Gateway\GiftCard'
 
   AppBundle\Security\BusinessVoter:
     tags: ['security.voter']

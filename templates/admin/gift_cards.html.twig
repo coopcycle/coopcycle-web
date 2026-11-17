@@ -1,0 +1,142 @@
+{% extends "admin.html.twig" %}
+
+{% block prepare_title %}
+  {{ add_title_prefix('gift_card.title'|trans) }}
+{% endblock %}
+
+{% block breadcrumb %}
+<li><a href="{{ path('admin_gift_cards') }}">{% trans %}gift_card.title{% endtrans %}</a></li>
+{% endblock %}
+
+{% block content %}
+
+{% form_theme active_form 'bootstrap_3_layout.html.twig' %}
+<div class="panel panel-default" style="margin-bottom:16px;">
+  <div class="panel-body">
+    {{ form_start(active_form, { attr: { id: 'gift-cards-active-form' } }) }}
+      <div class="d-flex align-items-center" style="gap:8px;">
+        {{ form_widget(active_form.active) }}
+        <strong>{% trans %}gift_card.program.active_label{% endtrans %}</strong>
+      </div>
+      <p class="text-muted" style="margin:4px 0 12px;">{% trans %}gift_card.program.active_help{% endtrans %}</p>
+      <div class="d-flex align-items-center" style="gap:8px;">
+        {{ form_widget(active_form.scoping) }}
+        <strong>{% trans %}gift_card.program.scoping_label{% endtrans %}</strong>
+      </div>
+      <p class="text-muted" style="margin:4px 0 0;">{% trans %}gift_card.program.scoping_help{% endtrans %}</p>
+    {{ form_end(active_form) }}
+  </div>
+</div>
+
+{% if not is_active %}
+<div class="alert alert-warning" role="alert">
+  <i class="fa fa-exclamation-triangle"></i> {% trans %}gift_card.program.inactive_warning{% endtrans %}
+</div>
+{% endif %}
+
+<div class="row" style="margin-bottom:16px;">
+  <div class="col-md-6">
+    <div class="panel panel-default" style="margin-bottom:0;">
+      <div class="panel-body">
+        <div class="text-muted">{% trans %}gift_card.liability.label{% endtrans %}</div>
+        <div style="font-size:24px;font-weight:700;">{{ outstanding_liability|price_format }}</div>
+        <p class="text-muted" style="margin:4px 0 0;">{% trans %}gift_card.liability.help{% endtrans %}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 text-right">
+    <a href="{{ path('admin_gift_card_new') }}" class="btn btn-primary">
+      <i class="fa fa-plus"></i> {% trans %}gift_card.issue.title{% endtrans %}
+    </a>
+  </div>
+</div>
+
+{% form_theme settings_form 'bootstrap_3_layout.html.twig' %}
+<div class="panel panel-default">
+  <div class="panel-heading" style="cursor:pointer;" data-toggle="collapse" data-target="#gift-card-settings-panel">
+    <i class="fa fa-sliders"></i> {% trans %}gift_card.settings.configure{% endtrans %}
+    <span class="pull-right"><i class="fa fa-chevron-down"></i></span>
+  </div>
+  <div id="gift-card-settings-panel" class="panel-collapse collapse">
+    <div class="panel-body">
+      <div class="alert alert-info" role="alert">
+        <h4><i class="fa fa-info-circle"></i> {% trans %}gift_card.settings.info.title{% endtrans %}</h4>
+        <p style="margin:0;">{% trans %}gift_card.settings.info.body{% endtrans %}</p>
+      </div>
+      {{ form_start(settings_form) }}
+        {{ form_widget(settings_form) }}
+        <button type="submit" class="btn btn-primary">{% trans %}basics.save{% endtrans %}</button>
+      {{ form_end(settings_form) }}
+    </div>
+  </div>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <i class="fa fa-gift"></i> {% trans %}gift_card.list.title{% endtrans %}
+  </div>
+  <div class="panel-body">
+
+    <form method="get" action="{{ path('admin_gift_cards') }}" class="form-inline" style="margin-bottom:12px;">
+      <input type="search" name="q" class="form-control" value="{{ query }}"
+        placeholder="{{ 'gift_card.list.search_placeholder'|trans }}">
+      <select name="state" class="form-control">
+        <option value="">{% trans %}gift_card.list.all_states{% endtrans %}</option>
+        {% for state in states %}
+          <option value="{{ state }}" {% if state == active_state %}selected{% endif %}>
+            {{ ('gift_card.state.' ~ state)|trans }}
+          </option>
+        {% endfor %}
+      </select>
+      <button type="submit" class="btn btn-default">{% trans %}basics.search{% endtrans %}</button>
+    </form>
+
+    {% if gift_cards|length > 0 %}
+    <table class="table table-condensed">
+      <thead>
+        <tr>
+          <th>{% trans %}gift_card.list.code{% endtrans %}</th>
+          <th>{% trans %}gift_card.list.state{% endtrans %}</th>
+          <th class="text-right">{% trans %}gift_card.list.initialAmount{% endtrans %}</th>
+          <th class="text-right">{% trans %}gift_card.list.balance{% endtrans %}</th>
+          <th>{% trans %}gift_card.list.recipient{% endtrans %}</th>
+          <th>{% trans %}gift_card.list.scope{% endtrans %}</th>
+          <th>{% trans %}gift_card.list.createdAt{% endtrans %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for gift_card in gift_cards %}
+        <tr>
+          <td>
+            <a href="{{ path('admin_gift_card', { id: gift_card.id }) }}"><code>{{ gift_card.code }}</code></a>
+            {% if not gift_card.funded %}
+              <span class="label label-warning" title="{{ 'gift_card.granted.help'|trans }}">{% trans %}gift_card.granted.label{% endtrans %}</span>
+            {% endif %}
+          </td>
+          <td>{{ ('gift_card.state.' ~ gift_card.state)|trans }}</td>
+          <td class="text-right">{{ gift_card.initialAmount|price_format }}</td>
+          <td class="text-right">{{ gift_card.balance|price_format }}</td>
+          <td>{{ gift_card.recipientEmail ?? gift_card.purchaserEmail ?? '—' }}</td>
+          <td>
+            {% if gift_card.platformWide %}
+              {% trans %}gift_card.scope.platform{% endtrans %}
+            {% else %}
+              {{ gift_card.restaurant.name }}
+            {% endif %}
+          </td>
+          <td>{{ gift_card.createdAt|format_datetime('short', 'short') }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div class="text-center">
+      {{ knp_pagination_render(gift_cards, '@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig') }}
+    </div>
+    {% else %}
+    <p class="text-muted" style="margin:0;">{% trans %}gift_card.list.empty{% endtrans %}</p>
+    {% endif %}
+
+  </div>
+</div>
+
+{% endblock %}

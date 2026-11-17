@@ -42,6 +42,13 @@ class BaseProvider implements ScheduleProviderInterface
                 // off each other's toes.
                 RecurringMessage::cron('23 4 * * *', new RunCommandMessage('coopcycle:referral:expire')),
                 RecurringMessage::cron('31 4 * * *', new RunCommandMessage('coopcycle:loyalty:expire-points')),
+                // A no-op unless the instance opted into an expiry policy,
+                // which most won't: forfeiting a balance is restricted or
+                // forbidden in a good many places.
+                RecurringMessage::cron('37 4 * * *', new RunCommandMessage('coopcycle:gift-cards:expire')),
+                // Hourly rather than nightly: this is a restaurant waiting to
+                // be paid, and a dropped webhook shouldn't cost them a day.
+                RecurringMessage::cron('43 * * * *', new RunCommandMessage('coopcycle:gift-cards:settle-pending')),
                 // A backstop for the suppression webhooks Postmark couldn't deliver.
                 RecurringMessage::cron('47 4 * * *', new RunCommandMessage('coopcycle:marketing:sync-suppressions')),
             )

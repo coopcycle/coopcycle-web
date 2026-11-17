@@ -36,6 +36,15 @@ class Gateway implements GatewayInterface
             return $this->gateways['edenred'];
         }
 
+        // A gift card is the co-op's own money moving between its own
+        // books -- no external gateway is involved at all, which is why it
+        // is matched on the method code here rather than resolved through
+        // GatewayResolver's country/provider logic.
+        if ($method && 'GIFT_CARD' === $method->getCode()) {
+
+            return $this->gateways['gift_card'];
+        }
+
         switch ($this->resolver->resolveForPayment($payment)) {
             case 'paygreen':
                 return $this->gateways['paygreen'];

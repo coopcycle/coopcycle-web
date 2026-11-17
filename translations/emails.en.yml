@@ -191,3 +191,23 @@ shift_week.published.subject: "Schedule published for the week of %date%"
 shift_week.published.intro: "The shift schedule for the week of %date% has been published."
 shift_week.published.cta: "You can now view your shifts and apply to open ones."
 shift_week.published.button: "View shifts"
+
+gift_card.subject: "You have been given a %brand_name% gift card"
+gift_card.greeting: "Hello %name%, someone has given you a gift card."
+gift_card.greeting_anonymous: "Hello, someone has given you a gift card."
+gift_card.body: |
+  To use it, enter this code in your basket before paying. You don't have to spend it all at
+  once — whatever is left stays on the card for next time.
+gift_card.restricted: "This card can be used at %restaurant%."
+gift_card.expires: "Valid until %date%."
+gift_card.no_expiry: "This card does not expire."
+gift_card.receipt.subject: "Your gift card purchase"
+gift_card.receipt.body: |
+  Thank you. Here are the details of the gift card you bought.
+gift_card.receipt.amount: Amount
+gift_card.receipt.code: Code
+gift_card.receipt.sent_to: Sent to
+gift_card.receipt.date: Date
+gift_card.receipt.not_an_invoice: >-
+  This is a receipt, not an invoice. No VAT is due on the sale of a gift card; it is charged
+  on the orders the card is used to pay for.
