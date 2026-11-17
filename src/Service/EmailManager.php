@@ -425,7 +425,7 @@ class EmailManager
 
     /**
      * The name and type to attach a rejected file with, so it opens in the right app.
-     * The name is the importer's key, it can hide the extension: "Tour.xlsx (email 1234)".
+     * The name is the importer's key, which doesn't have to end with the file's extension.
      *
      * @return array{0:string,1:string}
      */
@@ -443,9 +443,6 @@ class EmailManager
         if (is_null($extension) || str_ends_with(strtolower($name), sprintf('.%s', $extension))) {
             return [$name, $contentType];
         }
-
-        // "Tour.xlsx (email 1234)" -> "Tour (email 1234).xlsx"
-        $name = preg_replace(sprintf('/\\.%s(?![a-z0-9])/i', preg_quote($extension, '/')), '', $name, 1);
 
         return [sprintf('%s.%s', $name, $extension), $contentType];
     }

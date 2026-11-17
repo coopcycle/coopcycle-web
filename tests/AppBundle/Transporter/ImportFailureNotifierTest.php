@@ -142,10 +142,10 @@ class ImportFailureNotifierTest extends KernelTestCase
 
         /** @var EmailManager $emailManager */
         $emailManager = self::getContainer()->get(EmailManager::class);
-        $message = $emailManager->createImportFailedMessage('qerys', [
-            // The key QerysImporter gives it
-            'Sider Toulouse.xlsx (email 1234)' => new RejectedFile('Sider Toulouse.xlsx (email 1234)', 'Unknown loading site', $xlsx),
-            'Already right.xlsx' => new RejectedFile('Already right.xlsx', 'Unknown loading site', $xlsx),
+        $message = $emailManager->createImportFailedMessage('DBSCHENKER', [
+            // An importer's key doesn't have to end with the extension
+            'Tour 1234' => new RejectedFile('Tour 1234', 'Unreadable file', $xlsx),
+            'Tour.xlsx' => new RejectedFile('Tour.xlsx', 'Unreadable file', $xlsx),
         ]);
 
         $attachments = array_values(array_filter(
@@ -154,14 +154,15 @@ class ImportFailureNotifierTest extends KernelTestCase
         ));
         $this->assertCount(2, $attachments);
 
-        // The extension moved to the end, so it opens as a spreadsheet
-        $this->assertSame('Sider Toulouse (email 1234).xlsx', $attachments[0]->getFilename());
+        // With the extension added, so it opens as a spreadsheet
+        $this->assertSame('Tour 1234.xlsx', $attachments[0]->getFilename());
         $this->assertSame(
             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             sprintf('%s/%s', $attachments[0]->getMediaType(), $attachments[0]->getMediaSubtype())
         );
         $this->assertSame($xlsx, $attachments[0]->getBody());
 
-        $this->assertSame('Already right.xlsx', $attachments[1]->getFilename());
+        // Not twice
+        $this->assertSame('Tour.xlsx', $attachments[1]->getFilename());
     }
 }
