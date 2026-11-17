@@ -30,7 +30,7 @@ export default () => {
   }
 
   return (
-    <Tooltip title={ t('ADMIN_DASHBOARD_PRECOG_TOOLTIP') }>
+    <Tooltip title={ t('ADMIN_DASHBOARD_PRECOG_TOOLTIP') } placement="left">
       <span className="precog-counter" data-testid="precog-counter">
         <span className="precog-counter__dot"></span>
         <span className="precog-counter__n">{ browsing }</span>
