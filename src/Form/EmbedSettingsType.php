@@ -9,6 +9,7 @@ use AppBundle\Entity\TimeSlot;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormEvents;
@@ -22,6 +23,14 @@ class EmbedSettingsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('name', TextType::class, [
+                'label' => 'form.embed_settings.name.label',
+                'help' => 'form.embed_settings.name.help',
+                'constraints' => [
+                    new Constraints\NotBlank(),
+                    new Constraints\Length(max: 255),
+                ],
+            ])
             ->add('pricingRuleSet', EntityType::class, array(
                 'required' => true,
                 'placeholder' => 'form.store_type.pricing_rule_set.placeholder',

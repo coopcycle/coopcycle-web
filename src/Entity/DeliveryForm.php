@@ -26,6 +26,7 @@ class DeliveryForm
     use Timestampable;
 
     private $id;
+    private ?string $name = null;
     private $pricingRuleSet;
     private $timeSlot;
     private $packageSet;
@@ -45,6 +46,18 @@ class DeliveryForm
     public function getId()
     {
         return $this->id;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
     }
 
     /**

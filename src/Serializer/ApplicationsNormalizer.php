@@ -43,6 +43,10 @@ class ApplicationsNormalizer implements NormalizerInterface
         } else if ($object instanceof Store) {
             return $object->getName();
         } else if ($object instanceof DeliveryForm) {
+            if (!empty($object->getName())) {
+                return $object->getName();
+            }
+
             $hashids12 = new Hashids($this->secret, 12);
             return $hashids12->encode($object->getId());
         } else if ($object instanceof RecurrenceRule) {
