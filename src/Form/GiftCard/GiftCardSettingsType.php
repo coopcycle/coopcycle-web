@@ -2,6 +2,7 @@
 
 namespace AppBundle\Form\GiftCard;
 
+use AppBundle\Form\Type\MoneyType;
 use AppBundle\Service\GiftCard\GiftCardStatus;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -21,12 +22,16 @@ class GiftCardSettingsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('gift_card_min_amount', IntegerType::class, [
+            // MoneyType, not IntegerType: these are stored in cents like
+            // every other amount in the codebase, and its divisor of 100
+            // keeps that out of the admin's face -- they set 10,00 €, not
+            // 1000.
+            ->add('gift_card_min_amount', MoneyType::class, [
                 'label' => 'gift_card.settings.field.minAmount',
                 'help' => 'gift_card.settings.field.minAmount.help',
                 'constraints' => [new Assert\Positive()],
             ])
-            ->add('gift_card_max_amount', IntegerType::class, [
+            ->add('gift_card_max_amount', MoneyType::class, [
                 'label' => 'gift_card.settings.field.maxAmount',
                 'help' => 'gift_card.settings.field.maxAmount.help',
                 'constraints' => [new Assert\Positive()],

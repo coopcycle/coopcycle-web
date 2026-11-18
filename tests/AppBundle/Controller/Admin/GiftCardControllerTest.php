@@ -4,6 +4,7 @@ namespace Tests\AppBundle\Controller\Admin;
 
 use AppBundle\Entity\GiftCard\GiftCard;
 use AppBundle\Entity\User;
+use AppBundle\Security\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -44,21 +45,25 @@ class GiftCardControllerTest extends WebTestCase
 
     private function logInAsAdmin(): void
     {
-        $userManager = static::getContainer()->get('nucleos_user.user_manager');
+        $userManager = static::getContainer()->get(UserManager::class);
 
         // Persisted rather than mocked: the `web` firewall reloads the user
         // from the database on each request.
         $admin = $userManager->createUser();
-        $admin->setUsername('gift_card_admin');
-        $admin->setEmail('gift_card_admin@coopcycle.org');
-        $admin->setPlainPassword('123456');
+        $username = 'gift_card_admin_'.uniqid();
+        $admin->setUsername($username);
+        $admin->setEmail($username.'@example.com');
+        $admin->setPlainPassword('irrelevant');
+        $admin->setRoles(['ROLE_ADMIN']);
         $admin->setEnabled(true);
-        $admin->addRole('ROLE_ADMIN');
 
         $userManager->updateUser($admin);
 
         $this->admin = $admin;
-        $this->client->loginUser($admin);
+
+        // The firewall name matters: without it the client authenticates
+        // against the wrong context and every request redirects to /login.
+        $this->client->loginUser($admin, 'web');
     }
 
     public function testTheListIsAdminOnly()

@@ -2349,8 +2349,8 @@ gift_card.settings.field.maxAmount.help: >-
   the co-op carries.
 gift_card.settings.field.denominations: Suggested amounts
 gift_card.settings.field.denominations.help: >-
-  Amounts offered as buttons on the purchase page, in cents, separated by commas (for example
-  2000,5000,10000). Leave empty to let customers type any amount.
+  Amounts offered as buttons on the purchase page, in whole euros, separated by commas (for
+  example 20, 50, 100). Leave empty to let customers type any amount.
 gift_card.settings.field.expiryPolicy: Expiry
 gift_card.settings.field.expiryPolicy.help: >-
   Whether unspent balances lapse. Many countries restrict or forbid short expiry periods, and

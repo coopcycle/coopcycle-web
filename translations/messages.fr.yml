@@ -2292,8 +2292,8 @@ gift_card.settings.field.maxAmount.help: >-
   carte volée est une perte que la coopérative assume.
 gift_card.settings.field.denominations: Montants proposés
 gift_card.settings.field.denominations.help: >-
-  Montants proposés sous forme de boutons sur la page d'achat, en centimes, séparés par des
-  virgules (par exemple 2000,5000,10000). Laissez vide pour que les clients saisissent le
+  Montants proposés sous forme de boutons sur la page d'achat, en euros entiers, séparés par
+  des virgules (par exemple 20, 50, 100). Laissez vide pour que les clients saisissent le
   montant de leur choix.
 gift_card.settings.field.expiryPolicy: Expiration
 gift_card.settings.field.expiryPolicy.help: >-

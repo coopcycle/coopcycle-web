@@ -81,7 +81,9 @@ class GiftCardController extends AbstractController
         $settingsForm = $this->createForm(GiftCardSettingsType::class, [
             'gift_card_min_amount' => $this->giftCardStatus->getMinAmount(),
             'gift_card_max_amount' => $this->giftCardStatus->getMaxAmount(),
-            'gift_card_denominations' => $this->settingsManager->get('gift_card_denominations') ?? '',
+            'gift_card_denominations' => $this->denominationsToEuros(
+                $this->settingsManager->get('gift_card_denominations') ?? ''
+            ),
             'gift_card_expiry_policy' => $this->giftCardStatus->getExpiryPolicy(),
             'gift_card_validity_months' => (int) ($this->settingsManager->get('gift_card_validity_months')
                 ?? GiftCardStatus::DEFAULT_VALIDITY_MONTHS),
@@ -91,6 +93,17 @@ class GiftCardController extends AbstractController
 
         if ($settingsForm->isSubmitted() && $settingsForm->isValid()) {
             foreach ($settingsForm->getData() as $key => $value) {
+                // MoneyType hands back a float in cents. Rounding before
+                // storing keeps a float artefact from being written as
+                // "1049.9999999" and read back as 1049.
+                if (is_float($value)) {
+                    $value = (int) round($value);
+                }
+
+                if ('gift_card_denominations' === $key) {
+                    $value = $this->denominationsToCents((string) $value);
+                }
+
                 $this->settingsManager->set($key, (string) $value);
             }
             $this->settingsManager->flush();
@@ -215,6 +228,29 @@ class GiftCardController extends AbstractController
         ]));
 
         return $this->redirectToRoute('admin_gift_card', ['id' => $giftCard->getId()]);
+    }
+
+    /**
+     * The preset amounts are stored in cents like every other amount, but an
+     * admin setting them alongside a minimum of "10,00" should not have to
+     * type 2000 for the next field along.
+     *
+     * Whole euros only, deliberately: the list is comma-separated and a
+     * French decimal comma would turn "20,50" into two presets. Round
+     * numbers are what presets are for.
+     */
+    private function denominationsToEuros(string $cents): string
+    {
+        $amounts = array_filter(array_map('trim', explode(',', $cents)), 'is_numeric');
+
+        return implode(', ', array_map(fn ($amount): int => intdiv((int) $amount, 100), $amounts));
+    }
+
+    private function denominationsToCents(string $euros): string
+    {
+        $amounts = array_filter(array_map('trim', explode(',', $euros)), 'is_numeric');
+
+        return implode(',', array_map(fn ($amount): int => (int) $amount * 100, $amounts));
     }
 
     private function denyUnlessEnabled(): void
