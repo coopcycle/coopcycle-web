@@ -8,6 +8,7 @@ import _ from 'lodash'
 import i18n from '../../i18n'
 import SavedCreditCard from './SavedCreditCard'
 import MealVoucherDetails from './MealVoucherDetails'
+import GiftCardDetails from './GiftCardDetails'
 import { isGuest } from './utils'
 
 const baseStyle = {
@@ -141,8 +142,9 @@ const StripeForm = ({ onChange, onCardholderNameChange, options, cards, onSaveCr
     return () => mq.removeEventListener('change', handler)
   }, [])
 
-  const edenred = !!options && _.find(options.payments, p => p.method.code === 'EDENRED')
-  const card    = !!options && _.find(options.payments, p => p.method.code === 'CARD')
+  const edenred  = !!options && _.find(options.payments, p => p.method.code === 'EDENRED')
+  const card     = !!options && _.find(options.payments, p => p.method.code === 'CARD')
+  const giftCard = !!options && _.find(options.payments, p => p.method.code === 'GIFT_CARD')
 
   const thereAreCardsToShow = cards && cards.length
 
@@ -174,6 +176,9 @@ const StripeForm = ({ onChange, onCardholderNameChange, options, cards, onSaveCr
     <React.Fragment>
       { edenred && (
         <MealVoucherDetails edenred={ edenred?.amount || 0 } card={ card.amount } />
+      )}
+      { giftCard && (
+        <GiftCardDetails giftCard={ giftCard?.amount || 0 } card={ card?.amount || 0 } />
       )}
       {
         thereAreCardsToShow ?

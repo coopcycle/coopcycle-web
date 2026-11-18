@@ -101,7 +101,12 @@ class GiftCard
 
     protected ?string $purchaseChargeId = null;
 
-    /** Null means the card never lapses, which is the default. */
+    /**
+     * Null means this card never lapses. Cards issued before expiry became
+     * the default keep that null, and the sweep only looks at cards that
+     * have a date -- nobody's card is retroactively given a deadline it was
+     * not sold with.
+     */
     protected ?\DateTime $expiresAt = null;
 
     protected ?\DateTime $issuedAt = null;

@@ -103,8 +103,23 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
 
         if ($giftCardAmount > 0) {
             $giftCardMethod = $this->paymentMethodRepository->findOneByCode('GIFT_CARD');
-            $giftCardPayment = $this->upsertPayment($order, $payments, $giftCardMethod, $giftCardAmount, $targetState);
-            $paymentsToKeep->add($giftCardPayment);
+
+            // The row is seeded by app:setup, which an instance can enable
+            // the feature without having re-run. Leaving the customer to pay
+            // in full is wrong, but it is a great deal better than a fatal
+            // error on the basket page -- and the log says exactly what to do
+            // about it.
+            if (null === $giftCardMethod) {
+                $this->checkoutLogger->error(
+                    'OrderPaymentProcessor | the GIFT_CARD payment method is missing, run app:setup',
+                    ['order' => $this->loggingUtils->getOrderId($order)]
+                );
+
+                $giftCardAmount = 0;
+            } else {
+                $giftCardPayment = $this->upsertPayment($order, $payments, $giftCardMethod, $giftCardAmount, $targetState);
+                $paymentsToKeep->add($giftCardPayment);
+            }
         }
 
         $remainder = $order->getTotal() - $giftCardAmount;

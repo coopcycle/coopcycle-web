@@ -42,9 +42,10 @@ class BaseProvider implements ScheduleProviderInterface
                 // off each other's toes.
                 RecurringMessage::cron('23 4 * * *', new RunCommandMessage('coopcycle:referral:expire')),
                 RecurringMessage::cron('31 4 * * *', new RunCommandMessage('coopcycle:loyalty:expire-points')),
-                // A no-op unless the instance opted into an expiry policy,
-                // which most won't: forfeiting a balance is restricted or
-                // forbidden in a good many places.
+                // Cards lapse a year after purchase by default, so this
+                // has work to do on most instances. Setting the policy to
+                // "never" -- which some jurisdictions require -- makes it a
+                // no-op.
                 RecurringMessage::cron('37 4 * * *', new RunCommandMessage('coopcycle:gift-cards:expire')),
                 // Hourly rather than nightly: this is a restaurant waiting to
                 // be paid, and a dropped webhook shouldn't cost them a day.

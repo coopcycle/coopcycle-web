@@ -103,22 +103,21 @@
               </div>
             </div>
             {% if gift_cards_enabled %}
+            {# Plain inputs here, with the real form rendered hidden below,
+               outside the checkout form -- exactly as the coupon field does
+               it. A <form> nested inside another is dropped by the parser,
+               and its closing tag shuts the checkout form early, leaving the
+               Order button outside any form and doing nothing when clicked. #}
             <div class="flex items-center justify-end gap-4 mb-4">
-              {# A plain form submit rather than the coupon's AJAX swap: a
-                 refused code has to say *why* -- expired, already spent,
-                 meant for another restaurant -- and those messages arrive as
-                 flashes, which a partial swap would drop. #}
-              {{ form_start(form_gift_card, { attr: { class: 'flex items-center gap-4' } }) }}
-                <label>{{ 'form.checkout.gift_card.label'|trans }}</label>
-                <div class="join">
-                  <span class="input input-sm join-item">
-                    {{ form_widget(form_gift_card.code, { attr: { class: '' } }) }}
-                  </span>
-                  <button class="btn btn-sm btn-neutral join-item" type="submit">
-                    {{ 'form.checkout.gift_card.apply'|trans }}
-                  </button>
-                </div>
-              {{ form_end(form_gift_card) }}
+              <label for="gift-card-code">{{ 'form.checkout.gift_card.label'|trans }}</label>
+              <div class="join">
+                <span class="input input-sm join-item">
+                  <input type="text" id="gift-card-code" autocomplete="off" autocapitalize="characters">
+                </span>
+                <button class="btn btn-sm btn-neutral join-item" type="button" id="apply-gift-card">
+                  {{ 'form.checkout.gift_card.apply'|trans }}
+                </button>
+              </div>
             </div>
             {% if order.giftCard %}
             <div class="flex items-center justify-end gap-2 mb-4 text-sm">
@@ -198,6 +197,18 @@
         {{ form_widget(form_coupon) }}
       {{ form_end(form_coupon) }}
     </div>
+
+    {% if gift_cards_enabled %}
+    {# Submitted natively rather than swapped in over AJAX like the coupon:
+       a refused code has to say *why* -- expired, already spent, meant for
+       another restaurant -- and those reasons arrive as flash messages,
+       which a partial swap would drop on the floor. #}
+    <div class="hidden">
+      {{ form_start(form_gift_card) }}
+        {{ form_widget(form_gift_card) }}
+      {{ form_end(form_gift_card) }}
+    </div>
+    {% endif %}
 
     <dialog id="modal-loopeat" class="modal">
       <div class="modal-box">

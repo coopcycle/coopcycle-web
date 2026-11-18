@@ -15,12 +15,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Forfeits the balance of gift cards whose expiry date has passed.
  *
- * Does nothing at all unless the instance has deliberately opted into an
- * expiry policy, and that default is not timidity: several EU countries
- * restrict how short a voucher's life may be, and a number of US states
- * require unclaimed balances to be handed to the state rather than kept by
- * the seller. "Never expires" is the only answer that is safe everywhere
- * without advice, so it is the one that ships.
+ * Cards last a year by default, so on most instances this does something.
+ * An instance whose law requires otherwise -- several EU countries restrict
+ * how short a voucher's life may be, and a number of US states require
+ * unclaimed balances to be handed to the state rather than kept by the
+ * seller -- can set the policy to "never", and this becomes a no-op.
+ *
+ * Only cards that carry an expiry date are touched, so cards sold while the
+ * instance had no expiry policy keep their null and never lapse.
  *
  * Unlike the loyalty points sweep, this one really does take money: an
  * expired card's balance is gone. Hence --dry-run, and hence the ledger row

@@ -85,6 +85,14 @@ class GiftCardIssuerIntegrationTest extends KernelTestCase
         $this->assertTrue($giftCard->isRedeemable());
         $this->assertNotNull($giftCard->getIssuedAt());
 
+        // The expiry policy is applied at issue, not at purchase: a card is
+        // dated from the moment it became worth something.
+        $this->assertNotNull($giftCard->getExpiresAt(), 'Cards lapse by default');
+        $this->assertSame(
+            (new \DateTime('+12 months'))->format('Y-m-d'),
+            $giftCard->getExpiresAt()->format('Y-m-d')
+        );
+
         $this->assertCount(1, $giftCard->getTransactions());
         $this->assertSame(
             GiftCardTransaction::TYPE_PURCHASE,

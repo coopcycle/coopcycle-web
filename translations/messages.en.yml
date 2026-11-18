@@ -2353,13 +2353,15 @@ gift_card.settings.field.denominations.help: >-
   example 20, 50, 100). Leave empty to let customers type any amount.
 gift_card.settings.field.expiryPolicy: Expiry
 gift_card.settings.field.expiryPolicy.help: >-
-  Whether unspent balances lapse. Many countries restrict or forbid short expiry periods, and
-  some require unclaimed balances to be handed to the state — take advice before changing this.
+  Whether unspent balances lapse. Cards expire after a year by default. Many countries restrict
+  or forbid short expiry periods, and some require unclaimed balances to be handed to the state
+  rather than kept — check what applies where you operate.
 gift_card.settings.expiryPolicy.never: Cards never expire
 gift_card.settings.expiryPolicy.forfeit: Cards expire and the balance is kept by the co-op
 gift_card.settings.field.validityMonths: Valid for (months)
 gift_card.settings.field.validityMonths.help: >-
-  How long a card lasts from the day it is bought. Ignored when cards never expire.
+  How long a card lasts from the day it is bought. Twelve months unless you change it, and
+  ignored entirely when cards never expire.
 gift_card.settings.field.legalMention: Legal mention on the receipt
 gift_card.settings.field.legalMention.help: >-
   Printed on the purchase receipt. A gift card sale is not a VAT invoice; in France the

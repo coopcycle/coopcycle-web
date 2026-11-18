@@ -2297,14 +2297,15 @@ gift_card.settings.field.denominations.help: >-
   montant de leur choix.
 gift_card.settings.field.expiryPolicy: Expiration
 gift_card.settings.field.expiryPolicy.help: >-
-  Si les soldes non utilisés expirent. De nombreux pays encadrent ou interdisent les durées de
-  validité courtes, et certains imposent de reverser les soldes non réclamés à l'État :
-  demandez conseil avant de modifier ce réglage.
+  Si les soldes non utilisés expirent. Par défaut, les cartes expirent au bout d'un an. De
+  nombreux pays encadrent ou interdisent les durées de validité courtes, et certains imposent
+  de reverser les soldes non réclamés à l'État : vérifiez ce qui s'applique chez vous.
 gift_card.settings.expiryPolicy.never: Les cartes n'expirent jamais
 gift_card.settings.expiryPolicy.forfeit: Les cartes expirent et le solde reste à la coopérative
 gift_card.settings.field.validityMonths: Durée de validité (mois)
 gift_card.settings.field.validityMonths.help: >-
-  Durée de vie d'une carte à partir du jour de son achat. Ignoré si les cartes n'expirent pas.
+  Durée de vie d'une carte à partir du jour de son achat. Douze mois sauf modification, et sans
+  effet si les cartes n'expirent pas.
 gift_card.settings.field.legalMention: Mention légale sur le reçu
 gift_card.settings.field.legalMention.help: >-
   Imprimée sur le reçu d'achat. La vente d'une carte cadeau n'est pas une facture de TVA ; en

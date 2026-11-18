@@ -28,12 +28,17 @@ class GiftCardStatus
     public const DEFAULT_MAX_AMOUNT = 25000;
 
     /**
-     * Zero means cards never lapse, and that is the default: several EU
-     * countries restrict short expiry periods, and some US states require
-     * unused balances to be handed to the state rather than kept. "Never" is
-     * the only answer that is safe everywhere without advice.
+     * Cards lapse a year after they are bought unless an instance says
+     * otherwise -- the ordinary commercial practice, and long enough to be
+     * honest about.
+     *
+     * It stays a setting rather than a constant because the law is not the
+     * same everywhere: several EU countries restrict short validity periods,
+     * and some US states require unclaimed balances to be handed to the state
+     * instead of kept. An instance that needs to can set the policy to
+     * "never", or lengthen this.
      */
-    public const DEFAULT_VALIDITY_MONTHS = 0;
+    public const DEFAULT_VALIDITY_MONTHS = 12;
 
     public const EXPIRY_POLICY_NEVER = 'never';
     public const EXPIRY_POLICY_FORFEIT = 'expire_and_forfeit';
@@ -74,7 +79,7 @@ class GiftCardStatus
 
         return in_array($policy, [self::EXPIRY_POLICY_NEVER, self::EXPIRY_POLICY_FORFEIT], true)
             ? $policy
-            : self::EXPIRY_POLICY_NEVER;
+            : self::EXPIRY_POLICY_FORFEIT;
     }
 
     public function getValidityMonths(): int
@@ -83,8 +88,12 @@ class GiftCardStatus
             return 0;
         }
 
-        return (int) ($this->settingsManager->get('gift_card_validity_months')
+        $months = (int) ($this->settingsManager->get('gift_card_validity_months')
             ?? self::DEFAULT_VALIDITY_MONTHS);
+
+        // A policy of "expire" with no duration is a misconfiguration, not a
+        // request for immortal cards: "never" is how you ask for those.
+        return $months > 0 ? $months : self::DEFAULT_VALIDITY_MONTHS;
     }
 
     /**

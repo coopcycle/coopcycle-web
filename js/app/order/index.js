@@ -244,6 +244,41 @@ document.querySelector('#apply-coupon').addEventListener('click', async function
   }
 })
 
+// Submitted natively rather than swapped in over AJAX like the coupon above:
+// a refused code has to explain itself -- expired, already spent, meant for
+// another restaurant -- and those reasons come back as flash messages, which
+// a partial table swap would discard.
+//
+// The real form lives outside the checkout form, so the code is copied across
+// before submitting. Nesting it where the field is shown would close the
+// checkout form early and leave the Order button inert.
+const applyGiftCard = document.querySelector('#apply-gift-card')
+
+if (applyGiftCard) {
+  const submitGiftCard = () => {
+    const giftCardForm = document.querySelector('form[name="checkout_gift_card"]')
+
+    giftCardForm.querySelector('[id$="_code"]').value =
+      document.querySelector('#gift-card-code').value
+
+    giftCardForm.submit()
+  }
+
+  applyGiftCard.addEventListener('click', e => {
+    e.preventDefault()
+    submitGiftCard()
+  })
+
+  // Enter in the code field would otherwise submit the checkout form it sits
+  // inside, placing the order instead of applying the card.
+  document.querySelector('#gift-card-code').addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      submitGiftCard()
+    }
+  })
+}
+
 const orderDataElement = document.querySelector('#js-order-data')
 const orderNodeId = orderDataElement.dataset.orderNodeId
 const orderAccessToken = orderDataElement.dataset.orderAccessToken
