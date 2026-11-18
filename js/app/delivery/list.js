@@ -12,6 +12,8 @@ import React, { useState } from 'react'
 import Spreadsheet from 'react-spreadsheet'
 import { render } from 'react-dom'
 import { createCentrifuge, subscribe } from '../centrifugo/client'
+import i18n from '../i18n'
+import moment from 'moment'
 
 import './list.scss'
 
@@ -146,8 +148,93 @@ function SpreadsheetViewer({ data, errors }) {
 const importStatusIcon = {
   'pending': 'clock-o',
   'started': 'play',
+  'saving': 'floppy-o',
   'completed': 'check',
-  'failed': 'exclamation-triangle'
+  'failed': 'exclamation-triangle',
+  'cancelled': 'ban'
+}
+
+const cancellableImportStatuses = [ 'pending', 'started' ]
+
+// The values are only written with textContent, there is nothing to escape
+const _t = (key, options = {}) => i18n.t(key, { ...options, interpolation: { escapeValue: false } })
+
+function _importProgressText({ status, startedAt, totalRows, processedRows, errorRows }) {
+  // Unknown until a worker has read the file
+  if (!totalRows) {
+    return ''
+  }
+
+  const parts = [
+    _t('DELIVERY_IMPORT_PROGRESS_ROWS', {
+      processed: processedRows.toLocaleString(),
+      total: totalRows.toLocaleString(),
+      percent: Math.floor(processedRows / totalRows * 100),
+    })
+  ]
+
+  if (errorRows > 0) {
+    parts.push(_t('DELIVERY_IMPORT_PROGRESS_ERRORS', { count: errorRows }))
+  }
+
+  if (status === 'saving') {
+    parts.push(_t('DELIVERY_IMPORT_PROGRESS_SAVING'))
+  }
+
+  if (status === 'started' && startedAt && processedRows > 0 && processedRows < totalRows) {
+    const elapsedSeconds = moment().diff(moment(startedAt), 'seconds')
+    const remainingSeconds = elapsedSeconds / processedRows * (totalRows - processedRows)
+
+    parts.push(_t('DELIVERY_IMPORT_PROGRESS_REMAINING', {
+      duration: moment.duration(remainingSeconds, 'seconds').humanize()
+    }))
+  }
+
+  return parts.join(' · ')
+}
+
+function _renderImportProgress(row, progress) {
+  row.querySelector('[data-delivery-import-progress]').textContent = _importProgressText(progress)
+  row.querySelector('[data-delivery-import-cancel-button]')
+    .classList.toggle('d-none', !cancellableImportStatuses.includes(progress.status))
+}
+
+function _progressFromDataset(el) {
+  const { status, startedAt, totalRows, processedRows, errorRows } = el.dataset
+
+  return {
+    status,
+    startedAt: startedAt || null,
+    totalRows: totalRows ? parseInt(totalRows, 10) : null,
+    processedRows: parseInt(processedRows || '0', 10),
+    errorRows: parseInt(errorRows || '0', 10),
+  }
+}
+
+function addCancel(el) {
+  el.addEventListener('click', e => {
+
+    e.preventDefault()
+
+    if (!window.confirm(_t('DELIVERY_IMPORT_CANCEL_CONFIRM'))) {
+      return
+    }
+
+    const parentEl = e.target.closest('[data-delivery-import]')
+
+    axios({
+      method: 'put',
+      url: parentEl.dataset.deliveryImportCancel,
+      headers: {
+        Authorization: `Bearer ${window._auth.jwt}`
+      }
+    }).then(() => {
+      // The live update takes care of the rest of the row
+      el.classList.add('d-none')
+    }).catch(() => {
+      window.alert(_t('SOMETHING_WENT_WRONG'))
+    })
+  }, false)
 }
 
 function addSpreadsheetView(viewIcon) {
@@ -235,6 +322,11 @@ if (deliveryImports) {
     const { event } = data
     if (event.name === 'delivery_import:updated') {
       const row = document.querySelector(`[data-delivery-import-filename="${event.data.filename}"]`)
+      // An import from another day than the one displayed
+      if (!row) {
+        return
+      }
+      _renderImportProgress(row, event.data)
       const statusIcon = row.querySelector('[data-delivery-import-status]')
       const viewIcon = row.querySelector('[data-delivery-import-view]')
       const downloadIcon = row.querySelector('[data-delivery-import-redownload]')
@@ -257,6 +349,8 @@ if (deliveryImports) {
   deliveryImports.querySelectorAll('[data-delivery-import]').forEach(el => {
     addSpreadsheetView(el.querySelector('[data-delivery-import-view]'))
     addRedownload(el.querySelector('[data-delivery-import-redownload]'))
+    addCancel(el.querySelector('[data-delivery-import-cancel-button]'))
+    _renderImportProgress(el, _progressFromDataset(el.querySelector('[data-delivery-import-progress]')))
   })
 }
 

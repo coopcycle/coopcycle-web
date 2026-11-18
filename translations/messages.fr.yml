@@ -1550,6 +1550,8 @@ error.return_to_homepage: Retourner à la page d'accueil
 deliveries.imports: Fichiers importés
 deliveries.importing: Le fichier %filename% va bientôt être importé.
 deliveries.imports.created_at: Créé le
+deliveries.imports.progress: Progression
+deliveries.imports.cancel: Annuler
 deliveries.imports.see_file: Voir le fichier
 deliveries.imports.see_errored_file: Voir les erreurs
 deliveries.imports.error.interrupted: L'import a été interrompu par une erreur inattendue et n'est pas allé à son terme. Les lignes traitées avant celle-ci ont peut-être déjà été importées, merci de les vérifier avant d'importer à nouveau ce fichier.
