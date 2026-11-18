@@ -24,6 +24,7 @@ import { DeleteOutlined, UndoOutlined } from '@ant-design/icons';
 import { FA_CANCELLED, taskTypeListIcon } from '../../../../styles';
 import IsCancelledTaskWrapper from '../../../../IsCancelledTaskWrapper';
 
+import i18n from '../../../../i18n';
 import UploadContext from '../../UploadContext';
 import Uppy from '@uppy/core'
 import Compressor from '@uppy/compressor';
@@ -124,7 +125,7 @@ const Task = ({
       // it would reject photos that are fine once compressed
       onBeforeFileAdded: (file) => {
         if (!file.type?.startsWith('image/') && file.size > MAX_DOCUMENT_SIZE) {
-          uppy.info(t('DELIVERY_FORM_TASK_DOCUMENT_TOO_LARGE', { name: file.name }), 'error', 5000)
+          uppy.info(i18n.t('DELIVERY_FORM_TASK_DOCUMENT_TOO_LARGE', { name: file.name }), 'error', 5000)
 
           return false
         }
@@ -170,7 +171,7 @@ const Task = ({
       uppy.destroy();
     };
 
-  }, [taskId, endpoint, uploadButtonRef, t])
+  }, [taskId, endpoint, uploadButtonRef])
 
   return (
     <div
