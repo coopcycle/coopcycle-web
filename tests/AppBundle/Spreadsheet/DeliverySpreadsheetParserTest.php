@@ -177,6 +177,52 @@ class DeliverySpreadsheetParserTest extends TestCase
         $this->assertNull($delivery->getExternalReference());
     }
 
+    /**
+     * Every row used to fail on the missing column, one by one, after its addresses
+     * were geocoded: a couple of seconds per row, hours on a large file.
+     */
+    public function testFileWithoutARequiredColumnFailsBeforeAnyRowIsRead()
+    {
+        $filename = realpath(__DIR__ . '/../Resources/spreadsheet/deliveries_missing_pickup_timeslot.csv');
+        $parseResult = $this->parser->parse($filename);
+
+        $this->assertEmpty($parseResult->getData());
+        $this->assertEquals([
+            ['row' => 0, 'errors' => ["Le fichier n'a pas de colonne pickup.timeslot, ajoutez-la et importez à nouveau le fichier"]]
+        ], $parseResult->getNormalizedErrors());
+
+        $this->geocoder->geocode(Argument::any())->shouldNotHaveBeenCalled();
+    }
+
+    public function testProgressIsReportedAfterEachRow()
+    {
+        $filename = realpath(__DIR__ . '/../Resources/spreadsheet/deliveries_invalid_address.csv');
+
+        $calls = [];
+        $this->parser->parse($filename, [
+            'on_row' => function (int $processedRows, int $totalRows, int $errorRows) use (&$calls) {
+                $calls[] = [$processedRows, $totalRows, $errorRows];
+            }
+        ]);
+
+        // One row, which fails on its invalid pickup address
+        $this->assertEquals([[1, 1, 1]], $calls);
+    }
+
+    public function testWhatTheProgressCallbackThrowsStopsTheParsing()
+    {
+        $filename = realpath(__DIR__ . '/../Resources/spreadsheet/deliveries_with_external_reference.csv');
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Stop');
+
+        $this->parser->parse($filename, [
+            'on_row' => function () {
+                throw new \RuntimeException('Stop');
+            }
+        ]);
+    }
+
     public function testWithTour()
     {
         $filename = realpath(__DIR__ . '/../Resources/spreadsheet/deliveries_with_tour.csv');

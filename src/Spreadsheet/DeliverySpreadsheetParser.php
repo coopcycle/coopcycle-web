@@ -23,6 +23,16 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
     use ParsePackagesTrait;
     use ParseMetadataTrait;
 
+    /**
+     * A row without one of these columns can't be turned into a delivery
+     */
+    const REQUIRED_COLUMNS = [
+        'pickup.address',
+        'pickup.timeslot',
+        'dropoff.address',
+        'dropoff.timeslot',
+    ];
+
     private $defaultCoordinates;
 
     public function __construct(
@@ -36,6 +46,12 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
     ) {}
 
     /**
+     * Options:
+     * - create_task_if_address_not_geocoded: keep a row whose address can't be geocoded
+     * - on_row: called after each row with the number of rows handled so far,
+     *   the number of rows in the file and the number of rows with errors so far.
+     *   Whatever it throws stops the parsing.
+     *
      * @inheritdoc
      */
     public function parseData(array $data, array $options = []): SpreadsheetParseResult
@@ -44,9 +60,26 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
         $parseResult = new SpreadsheetParseResult();
 
         $options = array_merge(
-            ['create_task_if_address_not_geocoded' => false],
+            [
+                'create_task_if_address_not_geocoded' => false,
+                'on_row' => null,
+            ],
             $options
         );
+
+        // Every row would fail on the missing column, but only after geocoding its addresses,
+        // which takes hours on a large file: fail the whole file right away instead
+        $missingColumns = $this->findMissingColumns($data);
+        if (!empty($missingColumns)) {
+            $parseResult->addErrorToRow(0, $this->translator->trans('import.columns.missing', [
+                '%columns%' => implode(', ', $missingColumns)
+            ]));
+
+            return $parseResult;
+        }
+
+        $totalRows = count($data);
+        $handledRows = 0;
 
         foreach ($data as $index=>$record) {
             $rowNumber = $index + 1;
@@ -161,8 +194,29 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 );
             }
 
+            $handledRows++;
+
+            if (!is_null($options['on_row'])) {
+                $options['on_row']($handledRows, $totalRows, count($parseResult->getErrors()));
+            }
         }
         return $parseResult;
+    }
+
+    /**
+     * @param array<int,array<string,mixed>> $data
+     * @return string[]
+     */
+    private function findMissingColumns(array $data): array
+    {
+        if (empty($data)) {
+            return [];
+        }
+
+        // All the rows have the same keys, taken from the header
+        $columns = array_keys(reset($data));
+
+        return array_values(array_diff(self::REQUIRED_COLUMNS, $columns));
     }
 
     private function setup(): void
