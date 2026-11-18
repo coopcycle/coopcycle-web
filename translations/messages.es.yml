@@ -1389,6 +1389,7 @@ tasks.mark_as_done.has_previous: 'La tarea #%failed_task% no puede finalizarse p
 import.errors.at.row: Errores en fila %row_number%
 import.address.geocode.error: No se pudo geocodificar la dirección %failed_address%
 import.time.range.error: Rango de tiempo "%value%" en %key% no es válido
+import.columns.missing: "El fichero no tiene la columna %columns%, añádela y vuelve a importar el fichero"
 import.successful.rows: 'Se procesó el archivo y se crearon %count% entregas correspondientes
   a las filas: %rows%'
 import.delivery.price.error.priceCalculation.row: El precio de la entrega no pudo

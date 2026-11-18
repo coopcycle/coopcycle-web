@@ -1672,6 +1672,7 @@ tasks.mark_as_done.has_previous: "La tâche #%failed_task% n'a pas pu être comp
 import.errors.at.row: "Erreurs à la ligne %row_number%"
 import.address.geocode.error: "Impossible de géocoder l'adresse %failed_address%"
 import.time.range.error: "La plage horaire \"%value%\" dans %key% n'est pas valide"
+import.columns.missing: "Le fichier n'a pas de colonne %columns%, ajoutez-la et importez à nouveau le fichier"
 import.successful.rows: "Votre fichier a été traité et %count% livraisons ont été créées pour les lignes : %rows%"
 import.delivery.price.error.priceCalculation.row: "Le prix de la livraison n'a pas pu être calculé pour la ligne %row_number%"
 import.unsuccessful.rows: "Il y a eu des erreurs et les livraisons n'ont pas pu être créées pour les lignes : %rows%"
