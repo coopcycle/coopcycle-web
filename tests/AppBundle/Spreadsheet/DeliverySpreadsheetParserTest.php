@@ -194,6 +194,35 @@ class DeliverySpreadsheetParserTest extends TestCase
         $this->geocoder->geocode(Argument::any())->shouldNotHaveBeenCalled();
     }
 
+    /**
+     * A row with an empty time slot or address used to be found out only after
+     * its addresses were geocoded, a couple of seconds per row
+     */
+    public function testRowsWithEmptyMandatoryValuesAreNotGeocoded()
+    {
+        $filename = realpath(__DIR__ . '/../Resources/spreadsheet/deliveries_with_empty_values.csv');
+
+        $handledRows = [];
+        $parseResult = $this->parser->parse($filename, [
+            'on_row' => function (int $processedRows) use (&$handledRows) {
+                $handledRows[] = $processedRows;
+            }
+        ]);
+
+        $this->assertEquals([1], array_keys($parseResult->getData()));
+        $this->assertEquals([
+            2 => ['La plage horaire "" dans pickup.timeslot n\'est pas valide'],
+            3 => ['dropoff.address: Impossible de géocoder l\'adresse dropoff'],
+        ], $parseResult->getErrors());
+
+        $this->geocoder->geocode('ROW 2 PICKUP')->shouldNotHaveBeenCalled();
+        $this->geocoder->geocode('ROW 2 DROPOFF')->shouldNotHaveBeenCalled();
+        $this->geocoder->geocode('ROW 3 PICKUP')->shouldNotHaveBeenCalled();
+
+        // The rows skipped count in the progress all the same
+        $this->assertEquals([1, 2, 3], $handledRows);
+    }
+
     public function testProgressIsReportedAfterEachRow()
     {
         $filename = realpath(__DIR__ . '/../Resources/spreadsheet/deliveries_invalid_address.csv');
