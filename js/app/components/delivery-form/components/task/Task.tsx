@@ -26,10 +26,15 @@ import IsCancelledTaskWrapper from '../../../../IsCancelledTaskWrapper';
 
 import UploadContext from '../../UploadContext';
 import Uppy from '@uppy/core'
+import Compressor from '@uppy/compressor';
 import Dashboard from '@uppy/dashboard';
 import XHR from '@uppy/xhr-upload';
 
 const basename = (str: string) => str.substr(str.lastIndexOf('/') + 1)
+
+// nginx rejects request bodies over 5 MB (client_max_body_size in coopcycle-ops),
+// keep some room for the multipart overhead
+const MAX_DOCUMENT_SIZE = 4.5 * 1024 * 1024
 
 type Props = {
   storeNodeId: string;
@@ -114,12 +119,29 @@ const Task = ({
           'application/msword',
           'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         ]
-      }
+      },
+      // Uppy's maxFileSize restriction is checked before the Compressor runs,
+      // it would reject photos that are fine once compressed
+      onBeforeFileAdded: (file) => {
+        if (!file.type?.startsWith('image/') && file.size > MAX_DOCUMENT_SIZE) {
+          uppy.info(t('DELIVERY_FORM_TASK_DOCUMENT_TOO_LARGE', { name: file.name }), 'error', 5000)
+
+          return false
+        }
+
+        return true
+      },
     })
       .use(Dashboard, {
         trigger: uploadButtonRef.current,
         inline: false,
         target: 'body'
+      })
+      // Photos taken with a phone are often over the server limit
+      .use(Compressor, {
+        quality: 0.8,
+        maxWidth: 2000,
+        maxHeight: 2000,
       })
       .use(XHR, {
         endpoint,
@@ -133,6 +155,11 @@ const Task = ({
       }
       uppy.setFileMeta(file.id, meta);
     });
+    // The Compressor replaces meta.type with the MIME type,
+    // but UploadListener needs type=document to return the URL
+    uppy.on('compressor:complete', (files) => {
+      files.forEach(file => uppy.setFileMeta(file.id, { type: 'document' }))
+    });
     uppy.on('upload-success', (file, response) => {
       if (response.status === 200 && response.body?.url) {
         documentsArrayHelpersRef.current.push(response.body?.url)
@@ -143,7 +170,7 @@ const Task = ({
       uppy.destroy();
     };
 
-  }, [taskId, endpoint, uploadButtonRef])
+  }, [taskId, endpoint, uploadButtonRef, t])
 
   return (
     <div

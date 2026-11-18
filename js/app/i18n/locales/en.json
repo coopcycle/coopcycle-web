@@ -1043,6 +1043,7 @@
         "DELIVERY_FORM_ADD_REVERSE_HELP": "After saving, you will be redirected to a new page, with pickup & dropoff reversed",
         "DELIVERY_FORM_TASK_DOCUMENTS": "Documents",
         "DELIVERY_FORM_TASK_DOCUMENT_UPLOAD": "Add a document",
+        "DELIVERY_FORM_TASK_DOCUMENT_TOO_LARGE": "{{name}} is too large, documents must be under 4.5 MB",
         "METRICS": {
             "NUMBER_OF_STORES": "Number of stores",
             "AVERAGE_DISTANCE": "Average distance",
