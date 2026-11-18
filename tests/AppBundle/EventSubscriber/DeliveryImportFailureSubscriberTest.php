@@ -42,6 +42,9 @@ class DeliveryImportFailureSubscriberTest extends TestCase
         $this->doctrine->getManager()->willReturn($this->entityManager->reveal());
 
         $this->statusManager = $this->prophesize(DeliveryImportStatusManager::class);
+        $this->statusManager->isCancelled(Argument::any())->willReturn(false);
+        $this->statusManager->requeued(Argument::cetera())->will(function () {});
+        $this->statusManager->failed(Argument::cetera())->will(function () {});
 
         $translator = $this->prophesize(TranslatorInterface::class);
         $translator->trans(Argument::cetera())->willReturn('Import interrupted');
@@ -84,7 +87,7 @@ class DeliveryImportFailureSubscriberTest extends TestCase
             ->shouldHaveBeenCalled();
     }
 
-    public function testQueueIsLeftAloneWhileTheMessageIsStillRetried()
+    public function testQueueIsPutBackInLineWhileTheMessageIsStillRetried()
     {
         $queue = new DeliveryImportQueue();
         $queue->setFilename('import.csv');
@@ -94,7 +97,25 @@ class DeliveryImportFailureSubscriberTest extends TestCase
 
         $this->subscriber->onFailure($this->failedEvent(new ImportDeliveries('import.csv'), true));
 
+        // The handler skips the imports that aren't pending, the retry would do nothing otherwise
+        $this->statusManager->requeued($queue)->shouldHaveBeenCalled();
         $this->statusManager->failed(Argument::cetera())->shouldNotHaveBeenCalled();
+    }
+
+    public function testCancelledQueueIsLeftAlone()
+    {
+        $queue = new DeliveryImportQueue();
+        $queue->setFilename('import.csv');
+        $queue->setStatus(DeliveryImportQueue::STATUS_STARTED);
+
+        $this->repository->findOneBy(Argument::cetera())->willReturn($queue);
+        $this->statusManager->isCancelled($queue)->willReturn(true);
+
+        $this->subscriber->onFailure($this->failedEvent(new ImportDeliveries('import.csv'), false));
+        $this->subscriber->onFailure($this->failedEvent(new ImportDeliveries('import.csv'), true));
+
+        $this->statusManager->failed(Argument::cetera())->shouldNotHaveBeenCalled();
+        $this->statusManager->requeued(Argument::cetera())->shouldNotHaveBeenCalled();
     }
 
     public function testOtherMessagesAreIgnored()

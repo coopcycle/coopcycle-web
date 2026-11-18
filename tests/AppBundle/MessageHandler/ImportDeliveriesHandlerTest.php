@@ -50,9 +50,7 @@ class ImportDeliveriesHandlerTest extends TestCase
         // SET UP THE QUEUE & THE FILE
         $store = new Store();
 
-        $queue = new DeliveryImportQueue();
-        $queue->setStore($store);
-        $queue->setFilename('deliveries.csv');
+        $queue = $this->createQueue($store, 42);
 
         $filesystem = new Filesystem(new InMemoryFilesystemAdapter());
         $filesystem->write('deliveries.csv', 'pickup.address,dropoff.address');
@@ -97,7 +95,7 @@ class ImportDeliveriesHandlerTest extends TestCase
                 return new Order();
             });
 
-        $statusManager = $this->prophesize(DeliveryImportStatusManager::class);
+        $statusManager = $this->createStatusManager($queue, true, false);
 
         $handler = new ImportDeliveriesHandler(
             $entityManager->reveal(),
@@ -118,7 +116,211 @@ class ImportDeliveriesHandlerTest extends TestCase
 
         $this->assertContains($delivery, $store->getDeliveries());
 
+        // To find the deliveries that came from this file
+        $this->assertSame(42, $delivery->getMetadata()['delivery_import_id']);
+
         $statusManager->completed($queue)->shouldHaveBeenCalled();
         $statusManager->failed(Argument::cetera())->shouldNotHaveBeenCalled();
+    }
+
+    private function createQueue(Store $store, int $id, string $status = DeliveryImportQueue::STATUS_PENDING): DeliveryImportQueue
+    {
+        $queue = new DeliveryImportQueue();
+        $queue->setStore($store);
+        $queue->setFilename('deliveries.csv');
+        $queue->setStatus($status);
+
+        // Set by the database
+        (new \ReflectionProperty(DeliveryImportQueue::class, 'id'))->setValue($queue, $id);
+
+        return $queue;
+    }
+
+    /**
+     * The repository is an anonymous class, as findOneByFilename() is a magic method Prophecy can't double
+     */
+    private function createEntityManager(DeliveryImportQueue $queue)
+    {
+        $repository = new class($queue) extends EntityRepository {
+            public function __construct(private readonly DeliveryImportQueue $queue)
+            {
+            }
+
+            public function findOneByFilename(string $filename): ?DeliveryImportQueue
+            {
+                return $filename === $this->queue->getFilename() ? $this->queue : null;
+            }
+        };
+
+        $entityManager = $this->prophesize(EntityManagerInterface::class);
+        $entityManager->getRepository(DeliveryImportQueue::class)->willReturn($repository);
+        $entityManager->persist(Argument::any())->willReturn(null);
+        $entityManager->flush()->willReturn(null);
+
+        return $entityManager;
+    }
+
+    /**
+     * @param bool $saving whether the import can still be moved to "saving" once the file is read
+     * @param bool ...$isCancelled what each cancellation check returns, in turn
+     */
+    private function createStatusManager(DeliveryImportQueue $queue, bool $saving, bool ...$isCancelled)
+    {
+        $statusManager = $this->prophesize(DeliveryImportStatusManager::class);
+        $statusManager->started($queue)->will(function () {});
+        $statusManager->progress($queue, Argument::cetera())->will(function () {});
+        $statusManager->completed($queue)->will(function () {});
+        $statusManager->failed($queue, Argument::cetera())->will(function () {});
+        $statusManager->cancelled($queue)->will(function () {});
+        $statusManager->isCancelled($queue)->willReturn(...$isCancelled);
+        $statusManager->saving($queue)->willReturn($saving);
+
+        return $statusManager;
+    }
+
+    private function createHandler($entityManager, $parser, $statusManager): ImportDeliveriesHandler
+    {
+        $filesystem = new Filesystem(new InMemoryFilesystemAdapter());
+        $filesystem->write('deliveries.csv', 'pickup.address,dropoff.address');
+
+        return new ImportDeliveriesHandler(
+            $entityManager->reveal(),
+            $filesystem,
+            $parser->reveal(),
+            $this->prophesize(ValidatorInterface::class)->reveal(),
+            $this->prophesize(DeliveryOrderManager::class)->reveal(),
+            $statusManager->reveal(),
+            $this->prophesize(DeliveryManager::class)->reveal(),
+            new NullLogger(),
+            $this->prophesize(TourRepository::class)->reveal()
+        );
+    }
+
+    /**
+     * The transport hands the message out again after an hour, while the first
+     * worker is still on a large file: both used to import it.
+     */
+    public function testImportThatIsNotPendingIsLeftAlone(): void
+    {
+        foreach ([
+            DeliveryImportQueue::STATUS_STARTED,
+            DeliveryImportQueue::STATUS_CANCELLED,
+            DeliveryImportQueue::STATUS_COMPLETED,
+        ] as $status) {
+            $queue = $this->createQueue(new Store(), 42, $status);
+
+            $parser = $this->prophesize(DeliverySpreadsheetParser::class);
+            $statusManager = $this->prophesize(DeliveryImportStatusManager::class);
+
+            $handler = $this->createHandler($this->createEntityManager($queue), $parser, $statusManager);
+            $handler(new ImportDeliveries('deliveries.csv'));
+
+            $parser->parse(Argument::cetera())->shouldNotHaveBeenCalled();
+            $statusManager->started(Argument::cetera())->shouldNotHaveBeenCalled();
+            $this->assertSame($status, $queue->getStatus());
+        }
+    }
+
+    public function testCancelledImportStopsBeforeAnyDeliveryIsSaved(): void
+    {
+        $store = new Store();
+        $queue = $this->createQueue($store, 42);
+
+        $entityManager = $this->createEntityManager($queue);
+
+        // The dispatcher cancels it while the 10th row is read
+        $parser = $this->prophesize(DeliverySpreadsheetParser::class);
+        $parser->parse(Argument::type('string'), Argument::any())->will(function (array $args) {
+            for ($row = 1; $row <= 20; $row++) {
+                $args[1]['on_row']($row, 20, 0);
+            }
+
+            return new SpreadsheetParseResult();
+        });
+
+        $statusManager = $this->createStatusManager($queue, true, false, true);
+
+        $handler = $this->createHandler($entityManager, $parser, $statusManager);
+        $handler(new ImportDeliveries('deliveries.csv'));
+
+        // Reported the 1st row, then stopped at the 10th without reporting it:
+        // the report carries the status the worker has in memory, still "started"
+        $statusManager->progress($queue, 1, 20, 0)->shouldHaveBeenCalledOnce();
+        $statusManager->progress(Argument::cetera())->shouldHaveBeenCalledOnce();
+
+        // The last word in the admin
+        $statusManager->cancelled($queue)->shouldHaveBeenCalledOnce();
+
+        $entityManager->persist(Argument::any())->shouldNotHaveBeenCalled();
+        $entityManager->flush()->shouldNotHaveBeenCalled();
+        $statusManager->completed(Argument::cetera())->shouldNotHaveBeenCalled();
+        $statusManager->failed(Argument::cetera())->shouldNotHaveBeenCalled();
+    }
+
+    /**
+     * The dispatcher cancelled it after the last check made while reading the file,
+     * and the worker went on saving the deliveries all the same
+     */
+    public function testImportCancelledOnceReadIsNotSaved(): void
+    {
+        $store = new Store();
+        $queue = $this->createQueue($store, 42);
+
+        $entityManager = $this->createEntityManager($queue);
+
+        $delivery = Delivery::create();
+
+        $result = new SpreadsheetParseResult();
+        $result->addData(1, ['delivery' => $delivery, 'tourName' => null]);
+
+        $parser = $this->prophesize(DeliverySpreadsheetParser::class);
+        $parser->parse(Argument::type('string'), Argument::any())->will(function (array $args) use ($result) {
+            $args[1]['on_row'](1, 1, 0);
+
+            return $result;
+        });
+
+        // Not cancelled yet while reading, then too late to move it to "saving"
+        $statusManager = $this->createStatusManager($queue, false, false);
+
+        $handler = $this->createHandler($entityManager, $parser, $statusManager);
+        $handler(new ImportDeliveries('deliveries.csv'));
+
+        $entityManager->persist(Argument::any())->shouldNotHaveBeenCalled();
+        $entityManager->flush()->shouldNotHaveBeenCalled();
+        $this->assertNotContains($delivery, $store->getDeliveries());
+
+        $statusManager->cancelled($queue)->shouldHaveBeenCalledOnce();
+        $statusManager->completed(Argument::cetera())->shouldNotHaveBeenCalled();
+    }
+
+    public function testProgressIsReportedEveryFewRows(): void
+    {
+        $store = new Store();
+        $queue = $this->createQueue($store, 42);
+
+        $entityManager = $this->createEntityManager($queue);
+
+        $parser = $this->prophesize(DeliverySpreadsheetParser::class);
+        $parser->parse(Argument::type('string'), Argument::any())->will(function (array $args) {
+            for ($row = 1; $row <= 25; $row++) {
+                $args[1]['on_row']($row, 25, 0);
+            }
+
+            return new SpreadsheetParseResult();
+        });
+
+        $statusManager = $this->createStatusManager($queue, true, false);
+
+        $handler = $this->createHandler($entityManager, $parser, $statusManager);
+        $handler(new ImportDeliveries('deliveries.csv'));
+
+        // The first row, every 10th row, and the last one
+        foreach ([1, 10, 20, 25] as $row) {
+            $statusManager->progress($queue, $row, 25, 0)->shouldHaveBeenCalledOnce();
+        }
+        $statusManager->progress(Argument::cetera())->shouldHaveBeenCalledTimes(4);
+
+        $statusManager->completed($queue)->shouldHaveBeenCalled();
     }
 }

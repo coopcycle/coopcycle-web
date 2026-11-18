@@ -40,21 +40,11 @@ class DeliveryImportFailureSubscriber implements EventSubscriberInterface
 
     public function onFailure(WorkerMessageFailedEvent $event): void
     {
-        // Another attempt may still succeed, leave the import as it is
-        if ($event->willRetry()) {
-            return;
-        }
-
         $message = $event->getEnvelope()->getMessage();
 
         if (!$message instanceof ImportDeliveries) {
             return;
         }
-
-        $this->logger->error(
-            sprintf('Marking delivery import %s as failed', $message->getFilename()),
-            ['error' => $event->getThrowable()->getMessage()]
-        );
 
         // Whatever failed the message most likely failed a flush, which closes
         // the entity manager, so get a working one before writing the status
@@ -71,6 +61,25 @@ class DeliveryImportFailureSubscriber implements EventSubscriberInterface
         if (null === $queue) {
             return;
         }
+
+        // A dispatcher stopped it, that's the status to keep. Read from the database,
+        // the queue in memory is the one the worker loaded before it was cancelled.
+        if ($this->statusManager->isCancelled($queue)) {
+            return;
+        }
+
+        // Another attempt may still succeed. The handler only imports a pending
+        // file, to not import it twice when the transport redelivers it, so the
+        // import has to be put back in line for the retry to go through.
+        if ($event->willRetry()) {
+            $this->statusManager->requeued($queue);
+            return;
+        }
+
+        $this->logger->error(
+            sprintf('Marking delivery import %s as failed', $message->getFilename()),
+            ['error' => $event->getThrowable()->getMessage()]
+        );
 
         // The handler flushes as it goes, so the rows handled before the error
         // are already imported: say so rather than let a dispatcher assume the

@@ -3,12 +3,14 @@
 namespace AppBundle\Entity\Delivery;
 
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Entity\Store;
 use AppBundle\Action\Delivery\ImportQueueCsv as CsvController;
 use AppBundle\Action\Delivery\ImportQueueRedownload as RedownloadController;
+use AppBundle\Action\Delivery\ImportQueueCancel as CancelController;
 use AppBundle\Spreadsheet\SpreadsheetParseResult;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -29,6 +31,15 @@ use Symfony\Component\Validator\Constraints as Assert;
             uriTemplate: '/delivery_import_queues/{id}/redownload',
             controller: RedownloadController::class,
             security: 'is_granted(\'view\', object)'
+        ),
+        new Put(
+            uriTemplate: '/delivery_import_queues/{id}/cancel',
+            controller: CancelController::class,
+            openapiContext: ['summary' => 'Cancels a delivery import that is pending or in progress'],
+            security: 'is_granted(\'edit\', object)',
+            // The status is written by the controller
+            write: false,
+            deserialize: false
         )
     ],
     normalizationContext: ['groups' => ['delivery_import_queue']]
@@ -39,8 +50,11 @@ class ImportQueue
 
     const STATUS_PENDING = 'pending';
     const STATUS_STARTED = 'started';
+    // The file is read, its deliveries are being saved: too late to cancel
+    const STATUS_SAVING = 'saving';
     const STATUS_COMPLETED = 'completed';
     const STATUS_FAILED = 'failed';
+    const STATUS_CANCELLED = 'cancelled';
 
     protected $id;
 
@@ -58,6 +72,23 @@ class ImportQueue
 
     #[Groups(['delivery_import_queue'])]
     protected array $errors = [];
+
+    /**
+     * Unknown until a worker has read the file
+     */
+    #[Groups(['delivery_import_queue'])]
+    protected ?int $totalRows = null;
+
+    #[Groups(['delivery_import_queue'])]
+    protected int $processedRows = 0;
+
+    #[Groups(['delivery_import_queue'])]
+    protected int $errorRows = 0;
+
+    /**
+     * When the worker last reported its progress, to tell a long import from a dead one
+     */
+    protected ?\DateTime $progressedAt = null;
 
     public function getId()
     {
@@ -112,5 +143,43 @@ class ImportQueue
     public function getErrors(): array
     {
         return $this->errors;
+    }
+
+    public function getStartedAt(): ?\DateTime
+    {
+        return $this->startedAt;
+    }
+
+    public function getTotalRows(): ?int
+    {
+        return $this->totalRows;
+    }
+
+    public function getProcessedRows(): int
+    {
+        return $this->processedRows;
+    }
+
+    public function getErrorRows(): int
+    {
+        return $this->errorRows;
+    }
+
+    public function getProgressedAt(): ?\DateTime
+    {
+        return $this->progressedAt;
+    }
+
+    public function setProgress(int $processedRows, int $totalRows, int $errorRows): void
+    {
+        $this->processedRows = $processedRows;
+        $this->totalRows = $totalRows;
+        $this->errorRows = $errorRows;
+        $this->progressedAt = new \DateTime();
+    }
+
+    public function isCancellable(): bool
+    {
+        return in_array($this->status, [self::STATUS_PENDING, self::STATUS_STARTED], true);
     }
 }
