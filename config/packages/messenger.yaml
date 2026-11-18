@@ -65,6 +65,10 @@ framework:
                     delay: 1000
                     multiplier: 2
                     max_delay: 10000
+            # For the messages a worker handles right away, rather than put them in line
+            # behind the job it is busy with, see LiveUpdates::publish()
+            sync:
+                dsn: 'sync://'
             # Not the async stream: the worker would consume the failed messages
             # again, then drop them. In the database, they can be listed and
             # replayed with messenger:failed:show / messenger:failed:retry.

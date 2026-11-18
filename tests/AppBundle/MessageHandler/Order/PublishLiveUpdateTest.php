@@ -6,6 +6,7 @@ use AppBundle\Domain\Order\Event;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\User;
 use AppBundle\Message\PublishToCentrifugo;
+use AppBundle\Messenger\WorkerMessageContext;
 use AppBundle\Message\TopBarNotification;
 use AppBundle\MessageHandler\Order\PublishLiveUpdate;
 use AppBundle\Security\UserManager;
@@ -53,6 +54,7 @@ class PublishLiveUpdateTest extends TestCase
             $this->messageBus->reveal(),
             $this->notificationPreferences->reveal(),
             new NullLogger(),
+            new WorkerMessageContext(),
             'foo'
         );
 

@@ -3,6 +3,7 @@
 namespace Tests\AppBundle\Service;
 
 use AppBundle\Message\PublishToCentrifugo;
+use AppBundle\Messenger\WorkerMessageContext;
 use AppBundle\Security\UserManager;
 use AppBundle\Service\LiveUpdates;
 use AppBundle\Service\NotificationPreferences;
@@ -13,6 +14,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\TransportNamesStamp;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -29,6 +31,7 @@ class LiveUpdatesTest extends TestCase
     private $messageBusMock;
     private $notificationPreferencesMock;
     private $realTimeMessageLoggerMock;
+    private WorkerMessageContext $workerMessageContext;
     private $namespace = 'test_namespace';
 
     public function setUp(): void
@@ -40,6 +43,7 @@ class LiveUpdatesTest extends TestCase
         $this->messageBusMock = $this->prophesize(MessageBusInterface::class);
         $this->notificationPreferencesMock = $this->prophesize(NotificationPreferences::class);
         $this->realTimeMessageLoggerMock = $this->prophesize(LoggerInterface::class);
+        $this->workerMessageContext = new WorkerMessageContext();
 
         $this->liveUpdates = new LiveUpdates(
             $this->securityMock->reveal(),
@@ -49,6 +53,7 @@ class LiveUpdatesTest extends TestCase
             $this->messageBusMock->reveal(),
             $this->notificationPreferencesMock->reveal(),
             $this->realTimeMessageLoggerMock->reveal(),
+            $this->workerMessageContext,
             $this->namespace,
         );
     }
@@ -124,6 +129,72 @@ class LiveUpdatesTest extends TestCase
             ->shouldBeCalled();
 
         $this->liveUpdates->toDispatchers($message);
+    }
+
+    /**
+     * A worker busy with a delivery import put its own progress updates on the
+     * async transport, behind the import: with the other workers busy too, the
+     * dispatch board heard nothing until the import was over
+     */
+    public function testWorkerPublishesRightAway(): void
+    {
+        $this->userManagerMock->findUsersByRoles(LiveUpdates::DISPATCH_ROLES)
+            ->willReturn([$this->createUser()]);
+
+        $this->notificationPreferencesMock->isEventEnabled(Argument::any())->willReturn(false);
+
+        $this->messageBusMock
+            ->dispatch(
+                Argument::that(fn ($message) => $message instanceof PublishToCentrifugo
+                    && 'delivery_import:updated' === $message->event['name']),
+                Argument::that(fn (array $stamps) => 1 === count($stamps)
+                    && $stamps[0] instanceof TransportNamesStamp
+                    && ['sync'] === $stamps[0]->getTransportNames())
+            )
+            ->willReturn(new Envelope(new \stdClass()))
+            ->shouldBeCalledOnce();
+
+        $this->workerMessageContext->onReceived();
+
+        $this->liveUpdates->toDispatchers('delivery_import:updated', ['status' => 'started']);
+    }
+
+    public function testWorkerIsNotFailedWhenCentrifugoFails(): void
+    {
+        $this->userManagerMock->findUsersByRoles(LiveUpdates::DISPATCH_ROLES)
+            ->willReturn([$this->createUser()]);
+
+        $this->notificationPreferencesMock->isEventEnabled(Argument::any())->willReturn(false);
+
+        $this->messageBusMock
+            ->dispatch(Argument::cetera())
+            ->willThrow(new \RuntimeException('Centrifugo timed out'));
+
+        $this->workerMessageContext->onReceived();
+
+        $this->liveUpdates->toDispatchers('delivery_import:updated', ['status' => 'started']);
+
+        $this->realTimeMessageLoggerMock
+            ->error("Could not publish event 'delivery_import:updated': Centrifugo timed out")
+            ->shouldHaveBeenCalledOnce();
+    }
+
+    public function testBackToTheAsyncTransportOnceTheMessageIsHandled(): void
+    {
+        $this->userManagerMock->findUsersByRoles(LiveUpdates::DISPATCH_ROLES)
+            ->willReturn([$this->createUser()]);
+
+        $this->notificationPreferencesMock->isEventEnabled(Argument::any())->willReturn(false);
+
+        $this->messageBusMock
+            ->dispatch(Argument::type(PublishToCentrifugo::class))
+            ->willReturn(new Envelope(new \stdClass()))
+            ->shouldBeCalledOnce();
+
+        $this->workerMessageContext->onReceived();
+        $this->workerMessageContext->onDone();
+
+        $this->liveUpdates->toDispatchers('delivery_import:updated', ['status' => 'started']);
     }
 
     public function testToUserAndDispatchers_userNotAdmin(): void
