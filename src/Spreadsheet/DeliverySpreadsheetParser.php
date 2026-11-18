@@ -78,11 +78,29 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
             return $parseResult;
         }
 
+        // Same idea for the values: an empty address or an unreadable time slot is found
+        // in a few seconds for the whole file, rather than row by row after geocoding
+        $this->checkMandatoryValues($data, $parseResult, $options);
+
         $totalRows = count($data);
         $handledRows = 0;
 
+        $reportRow = function () use (&$handledRows, $totalRows, $parseResult, $options): void {
+            $handledRows++;
+
+            if (!is_null($options['on_row'])) {
+                $options['on_row']($handledRows, $totalRows, count($parseResult->getErrors()));
+            }
+        };
+
         foreach ($data as $index=>$record) {
             $rowNumber = $index + 1;
+
+            // Already failed the first pass: nothing to gain from geocoding its addresses
+            if ($parseResult->rowHasErrors($rowNumber)) {
+                $reportRow();
+                continue;
+            }
 
             $delivery = new Delivery();
 
@@ -194,13 +212,40 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 );
             }
 
-            $handledRows++;
-
-            if (!is_null($options['on_row'])) {
-                $options['on_row']($handledRows, $totalRows, count($parseResult->getErrors()));
-            }
+            $reportRow();
         }
         return $parseResult;
+    }
+
+    /**
+     * The checks that don't need geocoding, made on every row before any address is
+     * geocoded. They give the same errors as the full pass, which skips the rows failing them.
+     *
+     * @param array<int,array<string,mixed>> $data
+     */
+    private function checkMandatoryValues(array $data, SpreadsheetParseResult $parseResult, array $options): void
+    {
+        foreach ($data as $index => $record) {
+            $rowNumber = $index + 1;
+
+            // With the option set, a row without an address is kept, with a placeholder
+            if (!$options['create_task_if_address_not_geocoded']) {
+                if (!$record['pickup.address']) {
+                    $this->handleFaultyAddress($parseResult, $rowNumber, 'pickup.address', 'pickup', $options);
+                }
+                if (!$record['dropoff.address']) {
+                    $this->handleFaultyAddress($parseResult, $rowNumber, 'dropoff.address', 'dropoff', $options);
+                }
+            }
+
+            foreach (['pickup.timeslot', 'dropoff.timeslot'] as $key) {
+                try {
+                    $this->parseTimeRange($record, $key);
+                } catch (DateTimeParseException $e) {
+                    $parseResult->addErrorToRow($rowNumber, $e->getMessage());
+                }
+            }
+        }
     }
 
     /**
