@@ -84,9 +84,12 @@
           <i class="fa fa-arrow-left"></i>
           <span class="hidden md:inline">{{ 'checkout.previous'|trans }}</span>
         </a>
+        {# What the customer hands over now, which is not the order total
+           once a gift card has already paid for part of it. Zero when there
+           is no gift card, so this reads as before on an ordinary order. #}
         <button type="submit" class="btn btn-lg btn-primary btn-payment" data-payment-button disabled="disabled">
           <span class="loading loading-spinner hidden"></span>
-          <span class="whitespace-nowrap">{% trans with { '%total%': order.total|price_format } %}order.payment.total{% endtrans %}</span>
+          <span class="whitespace-nowrap">{% trans with { '%total%': (order.total - order.giftCardTotal)|price_format } %}order.payment.total{% endtrans %}</span>
         </button>
       </div>
     </div>

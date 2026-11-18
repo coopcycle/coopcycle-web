@@ -72,7 +72,9 @@
 
           <div class="text-center">
             <button type="submit" class="btn btn-block btn-lg btn-primary btn-payment" data-payment-button disabled="disabled">
-              <span class="loading loading-spinner hidden"></span> {% trans with { '%total%': order.total|price_format } %}order.payment.total{% endtrans %}
+              {# Same as the checkout button: what is left to pay now, not
+                 the order total, once a gift card has covered part of it. #}
+              <span class="loading loading-spinner hidden"></span> {% trans with { '%total%': (order.total - order.giftCardTotal)|price_format } %}order.payment.total{% endtrans %}
             </button>
           </div>
 
