@@ -85,11 +85,19 @@
           <span class="hidden md:inline">{{ 'checkout.previous'|trans }}</span>
         </a>
         {# What the customer hands over now, which is not the order total
-           once a gift card has already paid for part of it. Zero when there
-           is no gift card, so this reads as before on an ordinary order. #}
+           once a gift card has already paid for part of it. When it covers
+           the lot there is nothing to pay, and "Pay 0.00" is a nonsense --
+           so the button says what it does, the same word the basket uses. #}
+        {% set amount_due = order.total - order.giftCardTotal %}
         <button type="submit" class="btn btn-lg btn-primary btn-payment" data-payment-button disabled="disabled">
           <span class="loading loading-spinner hidden"></span>
-          <span class="whitespace-nowrap">{% trans with { '%total%': (order.total - order.giftCardTotal)|price_format } %}order.payment.total{% endtrans %}</span>
+          <span class="whitespace-nowrap">
+            {%- if amount_due > 0 -%}
+              {% trans with { '%total%': amount_due|price_format } %}order.payment.total{% endtrans %}
+            {%- else -%}
+              {% trans %}cart.widget.button{% endtrans %}
+            {%- endif -%}
+          </span>
         </button>
       </div>
     </div>

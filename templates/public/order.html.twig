@@ -73,8 +73,15 @@
           <div class="text-center">
             <button type="submit" class="btn btn-block btn-lg btn-primary btn-payment" data-payment-button disabled="disabled">
               {# Same as the checkout button: what is left to pay now, not
-                 the order total, once a gift card has covered part of it. #}
-              <span class="loading loading-spinner hidden"></span> {% trans with { '%total%': (order.total - order.giftCardTotal)|price_format } %}order.payment.total{% endtrans %}
+                 the order total, once a gift card has covered part of it --
+                 and a plain "Order" when it covers all of it. #}
+              {% set amount_due = order.total - order.giftCardTotal %}
+              <span class="loading loading-spinner hidden"></span>
+              {%- if amount_due > 0 -%}
+                {% trans with { '%total%': amount_due|price_format } %}order.payment.total{% endtrans %}
+              {%- else -%}
+                {% trans %}cart.widget.button{% endtrans %}
+              {%- endif -%}
             </button>
           </div>
 
