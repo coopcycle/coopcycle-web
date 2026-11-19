@@ -113,7 +113,7 @@ class ImportDeliveriesHandlerFunctionalTest extends KernelTestCase
         return $delivery;
     }
 
-    private function assertNothingWasImported(): void
+    private function assertNothingWasImported(int $failedRow = 3): void
     {
         $this->entityManager->clear();
 
@@ -125,7 +125,7 @@ class ImportDeliveriesHandlerFunctionalTest extends KernelTestCase
         $this->assertEquals(DeliveryImportQueue::STATUS_FAILED, $queue->getStatus());
         $this->assertEquals([
             [
-                'row' => 3,
+                'row' => $failedRow,
                 'errors' => [self::getContainer()->get(TranslatorInterface::class)->trans('deliveries.imports.error.rolled_back')],
             ]
         ], $queue->getErrors());
@@ -194,6 +194,42 @@ class ImportDeliveriesHandlerFunctionalTest extends KernelTestCase
 
         $this->assertTrue($this->entityManager->isOpen());
         $this->assertNothingWasImported();
+    }
+
+    /**
+     * What comes after the order, the tour above all, is flushed with the row:
+     * flushed with the next one, it was that row the error pointed at
+     */
+    public function testFailureIsReportedOnTheRowItHappenedOn(): void
+    {
+        $first = $this->createDelivery('2026-10-01');
+        $second = $this->createDelivery('2026-10-02');
+
+        $order = $this->prophesize(OrderInterface::class)->reveal();
+        $entityManager = $this->entityManager;
+
+        $deliveryOrderManager = $this->prophesize(DeliveryOrderManager::class);
+        // Persisted after the order was flushed
+        $deliveryOrderManager->createOrder(Argument::is($first), Argument::any())->will(function () use ($entityManager, $order) {
+            $invalid = new DeliveryImportQueue();
+            $invalid->setStatus('longer than the column allows');
+            $entityManager->persist($invalid);
+
+            return $order;
+        });
+        $deliveryOrderManager->createOrder(Argument::is($second), Argument::any())->willReturn($order);
+
+        $handler = $this->createHandler($this->createParser($first, $second), $deliveryOrderManager->reveal());
+
+        try {
+            $handler(new ImportDeliveries(self::FILENAME));
+            $this->fail('An exception should have been thrown');
+        } catch (UnrecoverableMessageHandlingException $e) {
+            $this->assertStringStartsWith(sprintf('Importing deliveries from %s failed: ', self::FILENAME), $e->getMessage());
+        }
+
+        $deliveryOrderManager->createOrder(Argument::is($second), Argument::any())->shouldNotHaveBeenCalled();
+        $this->assertNothingWasImported(2);
     }
 
     public function testFinishedImportIsSkipped(): void
