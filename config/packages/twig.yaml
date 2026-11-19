@@ -51,6 +51,7 @@ twig:
         loyalty_program_enabled: '%env(bool:LOYALTY_PROGRAM_ENABLED)%'
         marketing_automation_enabled: '%env(bool:MARKETING_AUTOMATION_ENABLED)%'
         gift_cards_enabled: '%env(bool:GIFT_CARDS_ENABLED)%'
+        precog_enabled: '%env(bool:PRECOG_ENABLED)%'
         invitation_link_provider: '@AppBundle\Service\InvitationLinkProviderService'
         paygreen_environment: '%env(PAYGREEN_ENVIRONMENT)%'
 
