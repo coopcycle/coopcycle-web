@@ -33,6 +33,11 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
         'dropoff.timeslot',
     ];
 
+    /**
+     * The size of the string columns, the address and tour names
+     */
+    const MAX_TEXT_LENGTH = 255;
+
     private $defaultCoordinates;
 
     public function __construct(
@@ -46,6 +51,9 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
     ) {}
 
     /**
+     * A file with a missing column, or a row failing one of the checks that don't need geocoding,
+     * is rejected as a whole, before any address is geocoded.
+     *
      * Options:
      * - create_task_if_address_not_geocoded: keep a row whose address can't be geocoded
      * - on_row: called after each row with the number of rows handled so far,
@@ -78,9 +86,15 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
             return $parseResult;
         }
 
-        // Same idea for the values: an empty address or an unreadable time slot is found
-        // in a few seconds for the whole file, rather than row by row after geocoding
-        $this->checkMandatoryValues($data, $parseResult, $options);
+        // Same idea for the values: everything that can be checked without geocoding is,
+        // for the whole file, in a few seconds
+        $this->preflight($data, $parseResult, $options);
+
+        // The deliveries are saved all at once, or not at all: better to fix the file and import
+        // it again right away than to find out about a single faulty row once the whole file is geocoded
+        if ($parseResult->hasErrors()) {
+            return $parseResult;
+        }
 
         $totalRows = count($data);
         $handledRows = 0;
@@ -95,12 +109,6 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
 
         foreach ($data as $index=>$record) {
             $rowNumber = $index + 1;
-
-            // Already failed the first pass: nothing to gain from geocoding its addresses
-            if ($parseResult->rowHasErrors($rowNumber)) {
-                $reportRow();
-                continue;
-            }
 
             $delivery = new Delivery();
 
@@ -192,7 +200,7 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
             }
 
             if (isset($record['dropoff.packages']) && !empty($record['dropoff.packages'])) {
-                $this->parseAndApplyPackages($delivery->getDropoff(), $record['dropoff.packages']);
+                $this->parseAndApplyPackages($delivery->getDropoff(), trim($record['dropoff.packages']));
             }
 
             if (isset($record['pickup.tags']) && !empty($record['pickup.tags'])) {
@@ -218,12 +226,12 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
     }
 
     /**
-     * The checks that don't need geocoding, made on every row before any address is
-     * geocoded. They give the same errors as the full pass, which skips the rows failing them.
+     * The checks that don't need geocoding, made on every row before any address is geocoded:
+     * the values the full pass would reject, and those the database would, failing the whole import.
      *
      * @param array<int,array<string,mixed>> $data
      */
-    private function checkMandatoryValues(array $data, SpreadsheetParseResult $parseResult, array $options): void
+    private function preflight(array $data, SpreadsheetParseResult $parseResult, array $options): void
     {
         foreach ($data as $index => $record) {
             $rowNumber = $index + 1;
@@ -238,14 +246,143 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 }
             }
 
-            foreach (['pickup.timeslot', 'dropoff.timeslot'] as $key) {
-                try {
-                    $this->parseTimeRange($record, $key);
-                } catch (DateTimeParseException $e) {
-                    $parseResult->addErrorToRow($rowNumber, $e->getMessage());
-                }
+            $errors = array_merge(
+                $this->checkTimeSlots($record),
+                $this->checkTelephone($record, 'pickup.address.telephone'),
+                $this->checkTelephone($record, 'dropoff.address.telephone'),
+                $this->checkMetadata($record, 'pickup.metadata'),
+                $this->checkMetadata($record, 'dropoff.metadata'),
+                $this->checkPackages($record, 'dropoff.packages'),
+                $this->checkLength($record, 'pickup.address.name'),
+                $this->checkLength($record, 'dropoff.address.name'),
+                $this->checkLength($record, 'tour.name'),
+            );
+
+            foreach ($errors as $error) {
+                $parseResult->addErrorToRow($rowNumber, $error);
             }
         }
+    }
+
+    /**
+     * @param array<string,mixed> $record
+     * @return string[]
+     */
+    private function checkTimeSlots(array $record): array
+    {
+        $errors = [];
+        $timeSlots = [];
+
+        foreach (['pickup.timeslot', 'dropoff.timeslot'] as $key) {
+            try {
+                $timeSlots[$key] = $this->parseTimeRange($record, $key);
+            } catch (DateTimeParseException $e) {
+                $errors[] = $e->getMessage();
+            }
+        }
+
+        if (!empty($errors)) {
+            return $errors;
+        }
+
+        // Otherwise only found out by the validator, when saving
+        [, $pickupBefore] = $timeSlots['pickup.timeslot'];
+        [, $dropoffBefore] = $timeSlots['dropoff.timeslot'];
+
+        if ($pickupBefore > $dropoffBefore) {
+            return [$this->translator->trans('delivery.tasks.pickupAfterDropoff', [], 'validators')];
+        }
+
+        return [];
+    }
+
+    /**
+     * @param array<string,mixed> $record
+     * @return string[]
+     */
+    private function checkTelephone(array $record, string $key): array
+    {
+        if (!isset($record[$key]) || empty($record[$key])) {
+            return [];
+        }
+
+        try {
+            $this->phoneNumberUtil->parse($record[$key], strtoupper($this->countryCode));
+        } catch (NumberParseException $e) {
+            return [$this->translator->trans('import.telephone.error', [
+                '%key%' => $key,
+                '%value%' => $record[$key],
+            ])];
+        }
+
+        return [];
+    }
+
+    /**
+     * As read by ParseMetadataTrait: key=value, separated by spaces
+     *
+     * @param array<string,mixed> $record
+     * @return string[]
+     */
+    private function checkMetadata(array $record, string $key): array
+    {
+        if (!isset($record[$key]) || empty($record[$key])) {
+            return [];
+        }
+
+        foreach (explode(' ', trim($record[$key])) as $metadata) {
+            if (!str_contains($metadata, '=')) {
+                return [$this->translator->trans('import.metadata.error', [
+                    '%key%' => $key,
+                    '%value%' => $record[$key],
+                ])];
+            }
+        }
+
+        return [];
+    }
+
+    /**
+     * As read by ParsePackagesTrait: slug=quantity, separated by spaces.
+     * An unknown package is left out of the delivery, as before.
+     *
+     * @param array<string,mixed> $record
+     * @return string[]
+     */
+    private function checkPackages(array $record, string $key): array
+    {
+        if (!isset($record[$key]) || empty($record[$key])) {
+            return [];
+        }
+
+        foreach (explode(' ', trim($record[$key])) as $package) {
+            if (1 !== preg_match('/^[^=]+=\d+$/', $package)) {
+                return [$this->translator->trans('import.packages.error', [
+                    '%key%' => $key,
+                    '%value%' => $record[$key],
+                ])];
+            }
+        }
+
+        return [];
+    }
+
+    /**
+     * A longer value doesn't fit its column, which fails the whole import when it's saved
+     *
+     * @param array<string,mixed> $record
+     * @return string[]
+     */
+    private function checkLength(array $record, string $key): array
+    {
+        if (!isset($record[$key]) || mb_strlen((string) $record[$key]) <= self::MAX_TEXT_LENGTH) {
+            return [];
+        }
+
+        return [$this->translator->trans('import.value.too_long', [
+            '%key%' => $key,
+            '%max%' => self::MAX_TEXT_LENGTH,
+        ])];
     }
 
     /**
