@@ -1494,6 +1494,8 @@ api_apps.regenerate_secret: Renew secret key
 api_apps.regenerate_secret_warning: Any apps using this API endpoint with the previous secret will stop working.
 restaurant.form.cash_on_delivery_enabled.label: Enable cash on delivery
 restaurant.form.cash_on_delivery_enabled.help: This will allow customers to pay with cash on delivery. Use with caution.
+restaurant.form.tags.label: Tags to apply automatically to tasks
+restaurant.form.tags.help: These tags are added to the tasks of the orders of this restaurant.
 store.form.cash_on_delivery_enabled.label: Enable cash on delivery
 store.form.cash_on_delivery_enabled.help: This will allow customers to pay with cash on delivery. Use with caution.
 form.api_app.type.label: API authentication mechanism
