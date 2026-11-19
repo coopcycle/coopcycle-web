@@ -129,6 +129,9 @@ class FailStaleDeliveryImportsCommand extends Command
             // A large import takes hours, what tells it from a dead one is that it keeps
             // reporting its progress. An import the worker never picked up is still
             // pending, and has neither progressedAt nor startedAt to go by.
+            // While saving, nothing is reported: the deliveries are saved in a single
+            // transaction, the progress written meanwhile would not be seen. progressedAt
+            // is when saving started, and a worker dying then rolls the deliveries back.
             ->andWhere('COALESCE(q.progressedAt, q.startedAt, q.createdAt) < :threshold')
             ->setParameter('statuses', [
                 DeliveryImportQueue::STATUS_PENDING,

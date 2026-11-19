@@ -62,9 +62,15 @@ class DeliveryImportFailureSubscriber implements EventSubscriberInterface
             return;
         }
 
-        // A dispatcher stopped it, that's the status to keep. Read from the database,
-        // the queue in memory is the one the worker loaded before it was cancelled.
-        if ($this->statusManager->isCancelled($queue)) {
+        // Already finished: cancelled by a dispatcher, or failed by the handler itself when
+        // saving the deliveries failed. Read from the database, the queue in memory is the
+        // one the worker loaded before.
+        $unfinished = [
+            DeliveryImportQueue::STATUS_PENDING,
+            DeliveryImportQueue::STATUS_STARTED,
+            DeliveryImportQueue::STATUS_SAVING,
+        ];
+        if (!in_array($this->statusManager->currentStatus($queue), $unfinished, true)) {
             return;
         }
 
@@ -81,9 +87,8 @@ class DeliveryImportFailureSubscriber implements EventSubscriberInterface
             ['error' => $event->getThrowable()->getMessage()]
         );
 
-        // The handler flushes as it goes, so the rows handled before the error
-        // are already imported: say so rather than let a dispatcher assume the
-        // file has to be imported again as a whole.
+        // The deliveries are saved in a single transaction, rolled back by the handler
+        // when it fails: an error that gets here came before, and nothing was imported.
         $this->statusManager->failed($queue, DeliveryImportStatusManager::errorForWholeImport(
             $this->translator->trans('deliveries.imports.error.interrupted')
         ));

@@ -11,6 +11,7 @@ use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\TourRepository;
 use AppBundle\Message\ImportDeliveries;
 use AppBundle\MessageHandler\ImportDeliveriesHandler;
+use AppBundle\Service\DeliveryCreatedNotifier;
 use AppBundle\Service\DeliveryImportStatusManager;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\DeliveryOrderManager;
@@ -19,6 +20,7 @@ use AppBundle\Spreadsheet\DeliverySpreadsheetParser;
 use AppBundle\Spreadsheet\SpreadsheetParseResult;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use League\Flysystem\Filesystem;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use PHPUnit\Framework\TestCase;
@@ -27,6 +29,7 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * An imported delivery that matched none of the pricing rules was saved without an order,
@@ -69,6 +72,8 @@ class ImportDeliveriesHandlerTest extends TestCase
         $entityManager = $this->prophesize(EntityManagerInterface::class);
         $entityManager->getRepository(DeliveryImportQueue::class)->willReturn($repository);
         $entityManager->flush()->shouldBeCalled();
+        $entityManager->beginTransaction()->will(function () {});
+        $entityManager->commit()->will(function () {});
 
         // ONE ROW, WHATEVER ITS PRICE
         $delivery = Delivery::create();
@@ -106,7 +111,10 @@ class ImportDeliveriesHandlerTest extends TestCase
             $statusManager->reveal(),
             $this->prophesize(DeliveryManager::class)->reveal(),
             new NullLogger(),
-            $this->prophesize(TourRepository::class)->reveal()
+            $this->prophesize(TourRepository::class)->reveal(),
+            $this->prophesize(DeliveryCreatedNotifier::class)->reveal(),
+            $this->prophesize(TranslatorInterface::class)->reveal(),
+            $this->prophesize(ManagerRegistry::class)->reveal()
         );
 
         $handler(new ImportDeliveries('deliveries.csv'));
@@ -156,6 +164,8 @@ class ImportDeliveriesHandlerTest extends TestCase
         $entityManager->getRepository(DeliveryImportQueue::class)->willReturn($repository);
         $entityManager->persist(Argument::any())->willReturn(null);
         $entityManager->flush()->willReturn(null);
+        $entityManager->beginTransaction()->will(function () {});
+        $entityManager->commit()->will(function () {});
 
         return $entityManager;
     }
@@ -192,7 +202,10 @@ class ImportDeliveriesHandlerTest extends TestCase
             $statusManager->reveal(),
             $this->prophesize(DeliveryManager::class)->reveal(),
             new NullLogger(),
-            $this->prophesize(TourRepository::class)->reveal()
+            $this->prophesize(TourRepository::class)->reveal(),
+            $this->prophesize(DeliveryCreatedNotifier::class)->reveal(),
+            $this->prophesize(TranslatorInterface::class)->reveal(),
+            $this->prophesize(ManagerRegistry::class)->reveal()
         );
     }
 
