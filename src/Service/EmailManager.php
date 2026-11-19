@@ -15,6 +15,7 @@ use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Task;
 use AppBundle\LoopEat\Context as LoopeatContext;
 use AppBundle\LoopEat\ContextInitializer as LoopeatContextInitializer;
+use AppBundle\Transporter\RejectedFile;
 use AppBundle\Twig\LocalBusinessRuntime;
 use AppBundle\Twig\OrderRuntime;
 use Hashids\Hashids;
@@ -27,6 +28,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
+use Symfony\Component\Mime\MimeTypes;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment as TwigEnvironment;
@@ -401,6 +403,50 @@ class EmailManager
         ]));
 
         return $this->createHtmlMessageWithReplyTo($subject, $body);
+    }
+
+    /**
+     * @param array<array-key,RejectedFile> $files Attached as they were received
+     */
+    public function createImportFailedMessage(string $source, array $files): Email
+    {
+        $subject = $this->translator->trans('admin.import_failed.subject', ['%source%' => $source], 'emails');
+        $body = $this->mjml->render($this->templating->render('emails/import_failed.mjml.twig', [
+            'source' => $source,
+            'files' => $files,
+        ]));
+
+        $message = $this->createHtmlMessage($subject, $body);
+        foreach ($files as $file) {
+            [$name, $contentType] = $this->rejectedFileAttachment($file);
+            $message->attach($file->content, $name, $contentType);
+        }
+
+        return $message;
+    }
+
+    /**
+     * The name and type to attach a rejected file with, so it opens in the right app.
+     * The name is the importer's key, which doesn't have to end with the file's extension.
+     *
+     * @return array{0:string,1:string}
+     */
+    private function rejectedFileAttachment(RejectedFile $file): array
+    {
+        $name = basename($file->name);
+        $contentType = (new \finfo(FILEINFO_MIME_TYPE))->buffer($file->content) ?: 'application/octet-stream';
+
+        // EDIFACT, CSV: as received
+        if (str_starts_with($contentType, 'text/')) {
+            return [$name, 'text/plain'];
+        }
+
+        $extension = MimeTypes::getDefault()->getExtensions($contentType)[0] ?? null;
+        if (is_null($extension) || str_ends_with(strtolower($name), sprintf('.%s', $extension))) {
+            return [$name, $contentType];
+        }
+
+        return [sprintf('%s.%s', $name, $extension), $contentType];
     }
 
     public function createInvitationMessage(Invitation $invitation)

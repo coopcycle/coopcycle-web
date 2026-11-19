@@ -221,3 +221,8 @@ gift_card.receipt.date: Date
 gift_card.receipt.not_an_invoice: >-
   Ceci est un reçu, pas une facture. La vente d'une carte cadeau n'est pas soumise à la TVA ;
   celle-ci s'applique aux commandes réglées avec la carte.
+admin.import_failed.subject: "Échec de l'import : %source%"
+admin.import_failed.body: |
+  Bonjour,
+  <br>
+  %count% fichier(s) de <strong>%source%</strong> n'ont pas pu être importés, les autres fichiers ont bien été importés :

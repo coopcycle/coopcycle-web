@@ -5,7 +5,6 @@ namespace AppBundle\MessageHandler;
 use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
 use AppBundle\Entity\Tour;
 use AppBundle\Entity\TourRepository;
-use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Message\ImportDeliveries;
 use AppBundle\Service\DeliveryImportStatusManager;
 use AppBundle\Service\DeliveryManager;
@@ -17,7 +16,6 @@ use League\Flysystem\Filesystem;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsMessageHandler]
 class ImportDeliveriesHandler
@@ -27,7 +25,6 @@ class ImportDeliveriesHandler
         private Filesystem $deliveryImportsFilesystem,
         private DeliverySpreadsheetParser $spreadsheetParser,
         private ValidatorInterface $validator,
-        private TranslatorInterface $translator,
         private DeliveryOrderManager $deliveryOrderManager,
         private DeliveryImportStatusManager $statusManager,
         private DeliveryManager $deliveryManager,
@@ -90,15 +87,10 @@ class ImportDeliveriesHandler
             $store->addDelivery($delivery);
             $this->entityManager->persist($delivery);
 
-            try {
-                $this->deliveryOrderManager->createOrder($delivery, [
-                    'throwException' => true
-                ]);
-            } catch (NoRuleMatchedException $e) {
-                //FIXME: Shouldn't we create an incident instead ?
-                $errorMessage = $this->translator->trans('delivery.price.error.priceCalculation', [], 'validators');
-                $result->addErrorToRow($rowNumber, $errorMessage);
-            }
+            // When no rule matches, the order gets a placeholder price of 0
+            // and an incident for a dispatcher to review it, as with the API.
+            // The delivery is imported anyway: without an order, it could never be priced.
+            $this->deliveryOrderManager->createOrder($delivery);
 
             if ($deliveryImportData['tourName']) {
                 foreach ($delivery->getTasks() as $task) {

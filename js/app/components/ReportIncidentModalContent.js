@@ -10,6 +10,8 @@ import {
   Select,
   Skeleton,
   Spin,
+  Switch,
+  Tooltip,
 } from 'antd';
 import moment from 'moment';
 import { useTranslation } from 'react-i18next';
@@ -37,6 +39,48 @@ async function _createIncident(task, data) {
   );
 }
 
+async function _markTaskAsDone(task) {
+  const httpClient = new window._auth.httpClient();
+  return await httpClient.put(
+    window.Routing.generate('_api_/tasks/{id}/done_put', { id: task.id }),
+    {},
+  );
+}
+
+function _errorReason(error) {
+  const data = error.response?.data || error.data;
+  return data?.['hydra:description'] || data?.detail;
+}
+
+// Why the task can't be validated anymore, if it can't
+function _cannotValidateReason(status) {
+  switch (status) {
+    case 'DONE':
+      return 'TASK_ALREADY_VALIDATED';
+    case 'CANCELLED':
+      return 'TASK_CANCELLED_CANNOT_VALIDATE';
+    default:
+      return null;
+  }
+}
+
+const styles = {
+  footer: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    gap: 16,
+  },
+  validateTask: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 0,
+    fontWeight: 'normal',
+    cursor: 'pointer',
+  },
+};
+
 function FailureReasonSelector({ failureReasons, value, onChange }) {
   const { t } = useTranslation();
 
@@ -59,6 +103,8 @@ function ReportIncidentModalContent({ task }) {
   const [incidents, setIncidents] = useState([]);
   const [incidentsLoading, setIncidentsLoading] = useState(true);
   const [highlightedId, setHighlightedId] = useState(null);
+  const [validateTask, setValidateTask] = useState(false);
+  const [taskStatus, setTaskStatus] = useState(task.status);
   const listRef = useRef(null);
   const highlightTimerRef = useRef(null);
   const { t } = useTranslation();
@@ -97,6 +143,11 @@ function ReportIncidentModalContent({ task }) {
     };
   }, [task.id, task['@id']]);
 
+  // The dashboard pushes `task:done` in real time, keep the toggle in sync
+  useEffect(() => {
+    setTaskStatus(task.status);
+  }, [task.status]);
+
   useEffect(() => {
     return () => {
       if (highlightTimerRef.current) {
@@ -120,6 +171,8 @@ function ReportIncidentModalContent({ task }) {
     }
     return map;
   }, [failureReasons]);
+
+  const cannotValidateReason = _cannotValidateReason(taskStatus);
 
   const renderReason = code => {
     if (code && reasonsByCode[code]) return reasonsByCode[code];
@@ -146,6 +199,21 @@ function ReportIncidentModalContent({ task }) {
               setHighlightedId(null);
               highlightTimerRef.current = null;
             }, 1500);
+
+            if (validateTask) {
+              const { response: doneTask, error: doneError } =
+                await _markTaskAsDone(task);
+              if (!doneError) {
+                setTaskStatus(doneTask.status);
+                setValidateTask(false);
+              } else {
+                // The incident is reported anyway, only the validation failed
+                notification.error({
+                  message: t('INCIDENT_REPORTED_TASK_NOT_VALIDATED'),
+                  description: _errorReason(doneError),
+                });
+              }
+            }
           } else {
             notification.error({
               message: t('SOMETHING_WENT_WRONG'),
@@ -163,10 +231,22 @@ function ReportIncidentModalContent({ task }) {
           style={{ marginBottom: 24 }}>
           <Input.TextArea placeholder="Description" autoSize={{ minRows: 2 }} />
         </Form.Item>
-        <Form.Item className="pull-right">
-          <Button type="primary" loading={loading} htmlType="submit">
-            {t('REPORT')}
-          </Button>
+        <Form.Item>
+          <div style={styles.footer}>
+            <Tooltip title={cannotValidateReason && t(cannotValidateReason)}>
+              <label style={styles.validateTask}>
+                <Switch
+                  checked={validateTask}
+                  onChange={setValidateTask}
+                  disabled={!!cannotValidateReason}
+                />
+                {t('VALIDATE_TASK_AFTER_INCIDENT')}
+              </label>
+            </Tooltip>
+            <Button type="primary" loading={loading} htmlType="submit">
+              {t('REPORT')}
+            </Button>
+          </div>
         </Form.Item>
       </Form>
 

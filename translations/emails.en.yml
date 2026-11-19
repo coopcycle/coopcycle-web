@@ -211,3 +211,8 @@ gift_card.receipt.date: Date
 gift_card.receipt.not_an_invoice: >-
   This is a receipt, not an invoice. No VAT is due on the sale of a gift card; it is charged
   on the orders the card is used to pay for.
+admin.import_failed.subject: "Import failed: %source%"
+admin.import_failed.body: |
+  Hello,
+  <br>
+  %count% file(s) from <strong>%source%</strong> couldn't be imported, the other files were imported:
