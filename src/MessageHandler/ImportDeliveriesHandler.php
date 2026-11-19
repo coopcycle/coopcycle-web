@@ -7,16 +7,21 @@ use AppBundle\Entity\Tour;
 use AppBundle\Entity\TourRepository;
 use AppBundle\Exception\DeliveryImportCancelledException;
 use AppBundle\Message\ImportDeliveries;
+use AppBundle\Service\DeliveryCreatedNotifier;
 use AppBundle\Service\DeliveryImportStatusManager;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\DeliveryOrderManager;
 use AppBundle\Service\RemotePushNotificationManager;
 use AppBundle\Spreadsheet\DeliverySpreadsheetParser;
+use AppBundle\Spreadsheet\SpreadsheetParseResult;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use League\Flysystem\Filesystem;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsMessageHandler]
 class ImportDeliveriesHandler
@@ -27,8 +32,6 @@ class ImportDeliveriesHandler
      */
     const PROGRESS_EVERY_ROWS = 10;
 
-    const HEARTBEAT_EVERY_DELIVERIES = 100;
-
     public function __construct(
         private EntityManagerInterface $entityManager,
         private Filesystem $deliveryImportsFilesystem,
@@ -38,7 +41,11 @@ class ImportDeliveriesHandler
         private DeliveryImportStatusManager $statusManager,
         private DeliveryManager $deliveryManager,
         private LoggerInterface $logger,
-        private TourRepository $tourRepository
+        private TourRepository $tourRepository,
+        private DeliveryCreatedNotifier $deliveryCreatedNotifier,
+        private TranslatorInterface $translator,
+        // To get a working entity manager back once a failed flush has closed it
+        private ManagerRegistry $doctrine,
         )
     {
     }
@@ -106,15 +113,69 @@ class ImportDeliveriesHandler
             return;
         }
 
-        $savedDeliveries = 0;
+        // A single recap notification once the import is committed, rather than one per delivery
+        $this->deliveryCreatedNotifier->startBatch();
+
+        // All the rows are saved in a single transaction, so that a failure (a deadlock, say)
+        // doesn't leave the file half imported. The orders only move from "cart" to "new" once
+        // the whole message is handled (see OnDemandHandler): those of a partial import stayed
+        // in "cart", and could not be cancelled.
+        // It only starts now: what was written while reading the file, the progress above all,
+        // has to be seen by the admin as it goes.
+        $this->entityManager->beginTransaction();
+
+        // The row being saved, for the error to point at when saving fails
+        $rowNumber = null;
+
+        try {
+            $this->saveDeliveries($queue, $result, $rowNumber);
+
+            $this->entityManager->flush();
+            $this->entityManager->commit();
+        } catch (\Throwable $e) {
+            $this->logger->error(
+                sprintf('Importing deliveries from %s failed on row %s, nothing was imported: %s', $message->getFilename(), $rowNumber ?? '?', $e->getMessage()),
+                ['store_id' => $store->getId()]
+            );
+
+            $this->rollBack($message->getFilename(), $rowNumber ?? array_key_first($result->getData()));
+
+            // The deliveries they were about are rolled back
+            $this->deliveryCreatedNotifier->abortBatch();
+
+            unlink($tempnam);
+
+            // Nothing was imported, and a retry would most likely fail the same way:
+            // the file can be imported again as a whole
+            throw new UnrecoverableMessageHandlingException(
+                sprintf('Importing deliveries from %s failed: %s', $message->getFilename(), $e->getMessage()), 0, $e
+            );
+        }
+
+        $this->deliveryCreatedNotifier->endBatch();
+
+        // Rows can still fail validation once read, count them too
+        if (!is_null($queue->getTotalRows())) {
+            $queue->setProgress($queue->getProcessedRows(), $queue->getTotalRows(), count($result->getErrors()));
+        }
+
+        if ($result->hasErrors()) {
+            $this->statusManager->failed($queue, $result->getNormalizedErrors());
+        } else {
+            $this->statusManager->completed($queue);
+        }
+
+        unlink($tempnam);
+    }
+
+    /**
+     * @param ?int $rowNumber set to the row being saved, for the error to point at if it fails
+     */
+    private function saveDeliveries(DeliveryImportQueue $queue, SpreadsheetParseResult $result, ?int &$rowNumber): void
+    {
+        $store = $queue->getStore();
 
         foreach ($result->getData() as $rowNumber => $deliveryImportData) {
-
-            // Pricing each delivery takes a while on a large file too:
-            // show the import is still alive, so the sweep leaves it alone
-            if (0 === ++$savedDeliveries % self::HEARTBEAT_EVERY_DELIVERIES) {
-                $this->statusManager->progress($queue, $queue->getProcessedRows(), $queue->getTotalRows(), $queue->getErrorRows());
-            }
 
             $delivery = $deliveryImportData['delivery'];
 
@@ -164,21 +225,37 @@ class ImportDeliveriesHandler
                 }
             }
         }
+    }
 
-        $this->entityManager->flush();
-
-        // Rows can still fail validation once read, count them too
-        if (!is_null($queue->getTotalRows())) {
-            $queue->setProgress($queue->getProcessedRows(), $queue->getTotalRows(), count($result->getErrors()));
+    private function rollBack(string $filename, ?int $rowNumber): void
+    {
+        $connection = $this->entityManager->getConnection();
+        while ($connection->isTransactionActive()) {
+            $connection->rollBack();
         }
 
-        if ($result->hasErrors()) {
-            $this->statusManager->failed($queue, $result->getNormalizedErrors());
+        // A failed flush closes the entity manager. Otherwise, it still holds the entities rolled back.
+        if ($this->entityManager->isOpen()) {
+            $this->entityManager->clear();
         } else {
-            $this->statusManager->completed($queue);
+            $this->doctrine->resetManager();
         }
 
-        unlink($tempnam);
+        /** @var ?DeliveryImportQueue $queue */
+        $queue = $this->doctrine->getManager()
+            ->getRepository(DeliveryImportQueue::class)
+            ->findOneBy(['filename' => $filename]);
+
+        if (is_null($queue)) {
+            return;
+        }
+
+        $errors = is_null($rowNumber) ? [] : [[
+            'row' => $rowNumber,
+            'errors' => [$this->translator->trans('deliveries.imports.error.rolled_back')],
+        ]];
+
+        $this->statusManager->failed($queue, $errors);
     }
 
     private function onRow(DeliveryImportQueue $queue, int $processedRows, int $totalRows, int $errorRows): void

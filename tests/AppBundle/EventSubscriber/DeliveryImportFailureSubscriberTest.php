@@ -42,7 +42,7 @@ class DeliveryImportFailureSubscriberTest extends TestCase
         $this->doctrine->getManager()->willReturn($this->entityManager->reveal());
 
         $this->statusManager = $this->prophesize(DeliveryImportStatusManager::class);
-        $this->statusManager->isCancelled(Argument::any())->willReturn(false);
+        $this->statusManager->currentStatus(Argument::any())->willReturn(DeliveryImportQueue::STATUS_STARTED);
         $this->statusManager->requeued(Argument::cetera())->will(function () {});
         $this->statusManager->failed(Argument::cetera())->will(function () {});
 
@@ -109,13 +109,31 @@ class DeliveryImportFailureSubscriberTest extends TestCase
         $queue->setStatus(DeliveryImportQueue::STATUS_STARTED);
 
         $this->repository->findOneBy(Argument::cetera())->willReturn($queue);
-        $this->statusManager->isCancelled($queue)->willReturn(true);
+        $this->statusManager->currentStatus($queue)->willReturn(DeliveryImportQueue::STATUS_CANCELLED);
 
         $this->subscriber->onFailure($this->failedEvent(new ImportDeliveries('import.csv'), false));
         $this->subscriber->onFailure($this->failedEvent(new ImportDeliveries('import.csv'), true));
 
         $this->statusManager->failed(Argument::cetera())->shouldNotHaveBeenCalled();
         $this->statusManager->requeued(Argument::cetera())->shouldNotHaveBeenCalled();
+    }
+
+    /**
+     * Saving the deliveries failed: the handler rolled them back, marked the import as
+     * failed with the row it stopped on, and threw so that the message is not retried
+     */
+    public function testQueueFailedByTheHandlerIsLeftAlone()
+    {
+        $queue = new DeliveryImportQueue();
+        $queue->setFilename('import.csv');
+        $queue->setStatus(DeliveryImportQueue::STATUS_SAVING);
+
+        $this->repository->findOneBy(Argument::cetera())->willReturn($queue);
+        $this->statusManager->currentStatus($queue)->willReturn(DeliveryImportQueue::STATUS_FAILED);
+
+        $this->subscriber->onFailure($this->failedEvent(new ImportDeliveries('import.csv'), false));
+
+        $this->statusManager->failed(Argument::cetera())->shouldNotHaveBeenCalled();
     }
 
     public function testOtherMessagesAreIgnored()
