@@ -193,6 +193,12 @@ function _importProgressText({ status, startedAt, totalRows, processedRows, erro
   return parts.join(' · ')
 }
 
+function _renderImportStatus(row, status) {
+  const statusIcon = row.querySelector('[data-delivery-import-status]')
+  statusIcon.classList.remove(...statusIcon.classList)
+  statusIcon.classList.add('fa', `fa-${importStatusIcon[status]}`)
+}
+
 function _renderImportProgress(row, progress) {
   row.querySelector('[data-delivery-import-progress]').textContent = _importProgressText(progress)
   row.querySelector('[data-delivery-import-cancel-button]')
@@ -228,9 +234,17 @@ function addCancel(el) {
       headers: {
         Authorization: `Bearer ${window._auth.jwt}`
       }
-    }).then(() => {
-      // The live update takes care of the rest of the row
-      el.classList.add('d-none')
+    }).then(response => {
+      // The live update is sent from this request, through the async transport:
+      // it may wait behind the very import the worker is busy with
+      _renderImportStatus(parentEl, response.data.status)
+      _renderImportProgress(parentEl, {
+        status: response.data.status,
+        startedAt: null,
+        totalRows: response.data.totalRows,
+        processedRows: response.data.processedRows,
+        errorRows: response.data.errorRows,
+      })
     }).catch(() => {
       window.alert(_t('SOMETHING_WENT_WRONG'))
     })
@@ -327,11 +341,9 @@ if (deliveryImports) {
         return
       }
       _renderImportProgress(row, event.data)
-      const statusIcon = row.querySelector('[data-delivery-import-status]')
       const viewIcon = row.querySelector('[data-delivery-import-view]')
       const downloadIcon = row.querySelector('[data-delivery-import-redownload]')
-      statusIcon.classList.remove(...statusIcon.classList)
-      statusIcon.classList.add('fa', `fa-${importStatusIcon[event.data.status]}`)
+      _renderImportStatus(row, event.data.status)
       if (event.data.status === 'failed') {
         row.classList.add('danger')
         viewIcon.classList.remove('d-none')
