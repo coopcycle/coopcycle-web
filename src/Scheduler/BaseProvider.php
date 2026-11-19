@@ -20,6 +20,7 @@ class BaseProvider implements ScheduleProviderInterface
     public function __construct(
         private readonly LockFactory $lockFactory,
         private readonly CacheInterface $schedulerCache,
+        private readonly string $databaseName,
     ) {
     }
 
@@ -55,7 +56,10 @@ class BaseProvider implements ScheduleProviderInterface
             )
             // Without this, two workers consuming the schedule would each get
             // their own trigger, and a campaign would go out twice.
-            ->lock($this->lockFactory->createLock('scheduler-default'))
+            // The lock store is shared by every tenant, so the key has to carry
+            // the tenant name: otherwise the first tenant to start holds
+            // "scheduler-default" and all the others never fire.
+            ->lock($this->lockFactory->createLock(sprintf('%s:scheduler-default', $this->databaseName)))
             // Without this, a worker restart recomputes the schedule from "now",
             // and whatever was due while it was down never runs.
             ->stateful($this->schedulerCache);
