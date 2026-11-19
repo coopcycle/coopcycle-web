@@ -11,6 +11,7 @@ const initialState = {
   initialTask: null,
   pickupClusterAddresses: [],
   exportEnabled: 'off',
+  precogEnabled: false,
 }
 
 export default (state = initialState) => state

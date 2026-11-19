@@ -39,6 +39,7 @@ import { selectSelectedDate } from '../../coopcycle-frontend-js/logistics/redux'
 import DeliveryCreateNewButton from '../../components/DeliveryCreateNewButton'
 import { selectHiddenTasksCount, selectNav, selectStores } from '../redux/selectors';
 import SearchInput from './SearchInput'
+import PrecogCounter from './PrecogCounter'
 
 const { Header } = Layout
 const { useBreakpoint } = Grid
@@ -282,8 +283,9 @@ const SettingsButton = ({ withLabel = false, onClick }) => {
 
 const LiveUpdatesStatus = () => {
   return (
-    <div>
+    <div className="d-flex align-items-center">
       <span className="pulse" id="pulse"></span>
+      <PrecogCounter />
     </div>
   )
 }
