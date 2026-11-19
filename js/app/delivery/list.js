@@ -341,15 +341,15 @@ if (deliveryImports) {
         return
       }
       _renderImportProgress(row, event.data)
-      const viewIcon = row.querySelector('[data-delivery-import-view]')
-      const downloadIcon = row.querySelector('[data-delivery-import-redownload]')
       _renderImportStatus(row, event.data.status)
       if (event.data.status === 'failed') {
         row.classList.add('danger')
-        viewIcon.classList.remove('d-none')
-        downloadIcon.classList.remove('d-none')
-        addSpreadsheetView(viewIcon)
-        addRedownload(downloadIcon)
+        // Its click listener was added with the page: adding it again would open the file twice
+        const viewLink = row.querySelector('[data-delivery-import-view]')
+        if (viewLink.dataset.errorsLabel) {
+          viewLink.textContent = viewLink.dataset.errorsLabel
+          viewLink.classList.add('text-danger')
+        }
       }
     }
   })
