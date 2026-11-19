@@ -121,6 +121,23 @@ class GiftCardManagerTest extends TestCase
         $this->assertSame(0, $this->manager->getMaxAmount($this->createOrder(2450)->reveal()));
     }
 
+    /**
+     * Otherwise the card attaches, the order shows it, getMaxAmount() returns
+     * nothing, and the customer pays full price for an order that claims to
+     * have a gift card on it.
+     */
+    public function testACodeIsRefusedWhileTheFeatureIsOff()
+    {
+        $this->giftCardStatus->isActive()->willReturn(false);
+
+        try {
+            $this->manager->findForOrder('ABCD2345EFGH', $this->createOrder(2450)->reveal());
+            $this->fail('A code must not attach while gift cards are turned off');
+        } catch (GiftCardException $e) {
+            $this->assertSame(GiftCardException::REASON_NOT_FOUND, $e->getReason());
+        }
+    }
+
     public function testReserveTakesTheMoneyAndWritesAHold()
     {
         $order = $this->createOrder(2450)->reveal();

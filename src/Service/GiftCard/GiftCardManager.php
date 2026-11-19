@@ -51,6 +51,15 @@ class GiftCardManager
      */
     public function findForOrder(string $code, OrderInterface $order): GiftCard
     {
+        // Refused outright while the feature is off, rather than attached and
+        // then quietly ignored. getMaxAmount() returns nothing in that state,
+        // so the order would carry a gift card, show it to the customer, and
+        // still charge them the full price. "We don't recognise that code" is
+        // the honest answer on an instance that doesn't sell them.
+        if (!$this->giftCardStatus->isActive()) {
+            throw new GiftCardException(GiftCardException::REASON_NOT_FOUND);
+        }
+
         $giftCard = $this->giftCardRepository->findOneByCode($code);
 
         if (null === $giftCard) {
