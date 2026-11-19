@@ -2,6 +2,33 @@ import { default as taskEntityReducers } from '../taskEntityReducers'
 
 describe('taskEntityReducers', () => {
 
+  // Sent by the jobs that save a lot of tasks at once, e.g. a delivery import
+  describe('TASKS_RELOADED', () => {
+    it('should add the new tasks and update the others', () => {
+      expect(taskEntityReducers(
+        {
+          ids: [ '/api/tasks/1' ],
+          entities: {
+            '/api/tasks/1': { '@id': '/api/tasks/1', id: 1, status: 'TODO' },
+          },
+        },
+        {
+          type: 'TASKS_RELOADED',
+          payload: [
+            { '@id': '/api/tasks/1', id: 1, status: 'DONE' },
+            { '@id': '/api/tasks/2', id: 2, status: 'TODO' },
+          ],
+        }
+      )).toEqual({
+        ids: [ '/api/tasks/1', '/api/tasks/2' ],
+        entities: {
+          '/api/tasks/1': { '@id': '/api/tasks/1', id: 1, status: 'DONE' },
+          '/api/tasks/2': { '@id': '/api/tasks/2', id: 2, status: 'TODO' },
+        },
+      })
+    })
+  })
+
   describe('UPDATE_TASK', () => {
     describe('task exists', () => {
       it('should update task', () => {
