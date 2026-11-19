@@ -154,6 +154,8 @@ services:
 
   AppBundle\Scheduler\:
     resource: '../src/Scheduler/*'
+    arguments:
+      $databaseName: '%database_name%'
 
   AppBundle\Controller\:
     resource: '../src/Controller'
