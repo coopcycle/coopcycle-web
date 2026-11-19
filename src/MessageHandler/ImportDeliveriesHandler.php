@@ -132,12 +132,9 @@ class ImportDeliveriesHandler
         try {
             // A live update per task and per tour is a dozen calls to Centrifugo per line,
             // while the transaction is open: the board reloads once, when it's saved
+            // Not an arrow function, which would get a copy of $rowNumber
             $dates = $this->liveUpdatesSuspension->during(function () use ($queue, $result, &$rowNumber) {
-                $dates = $this->saveDeliveries($queue, $result, $rowNumber);
-
-                $this->entityManager->flush();
-
-                return $dates;
+                return $this->saveDeliveries($queue, $result, $rowNumber);
             });
 
             $this->entityManager->commit();
@@ -249,6 +246,10 @@ class ImportDeliveriesHandler
                     $tour->addTask($task);
                 }
             }
+
+            // The order is flushed while it's created, not what comes after it: flushed with
+            // the next row, a failure would point at that row
+            $this->entityManager->flush();
         }
 
         $dates = array_keys($dates);
