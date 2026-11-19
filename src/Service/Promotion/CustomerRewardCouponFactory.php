@@ -45,6 +45,7 @@ class CustomerRewardCouponFactory
         Customer $customer,
         string $rewardType,
         ?int $amount,
+        /** Human-facing percentage, 0..100 -- NOT the 0..1 ratio Sylius stores. */
         ?float $percentage,
         int $validityDays,
         ?int $usageLimit,
@@ -71,7 +72,12 @@ class CustomerRewardCouponFactory
             // (unlike delivery) is shared with the restaurant -- decrase_platform_fee
             // (sic, see OrderFeeProcessor::decreasePlatformFee()) makes the
             // coop absorb most of the cost instead of the restaurant.
-            PercentageDiscountPromotionActionCommand::TYPE => ['percentage' => $percentage ?? 0.0, 'decrase_platform_fee' => true],
+            // $percentage comes in human-facing (10 = 10%), the way the admin
+            // forms ask for it and the way it's stored on ReferralLevel /
+            // LoyaltyReward; PercentageDiscountPromotionActionCommand expects
+            // a 0..1 ratio it multiplies the total by, so writing 10 straight
+            // in here would mint a 1000%-off coupon.
+            PercentageDiscountPromotionActionCommand::TYPE => ['percentage' => ($percentage ?? 0.0) / 100, 'decrase_platform_fee' => true],
             default => ['amount' => $amount ?? 0, 'decrase_platform_fee' => true],
         });
         $promotion->addAction($promotionAction);
