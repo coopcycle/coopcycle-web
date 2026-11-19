@@ -105,7 +105,7 @@ class LoyaltyPointsManager
      *
      * Returns null when the order earns nothing, which is also the case for
      * an order that has already been credited: the entry holds the order it
-     * came from, so a replayed CheckoutSucceeded can't pay out twice.
+     * came from, so a replayed OrderFulfilled can't pay out twice.
      */
     public function creditForOrder(OrderInterface $order): ?LoyaltyPointsEntry
     {

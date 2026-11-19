@@ -139,7 +139,7 @@ class LoyaltyPointsManagerTest extends TestCase
     }
 
     /**
-     * CheckoutSucceeded can be replayed, and paying out twice for one order
+     * OrderFulfilled can be replayed, and paying out twice for one order
      * would be free points.
      */
     public function testDoesNotCreditAnOrderTwice(): void
