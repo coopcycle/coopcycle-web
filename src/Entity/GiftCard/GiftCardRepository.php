@@ -39,7 +39,7 @@ class GiftCardRepository extends EntityRepository
      */
     public function findOneByIdForUpdate(int $id): ?GiftCard
     {
-        return $this->getEntityManager()->find(GiftCard::class, $id, LockMode::PESSIMISTIC_WRITE);
+        return $this->find($id, LockMode::PESSIMISTIC_WRITE);
     }
 
     /**

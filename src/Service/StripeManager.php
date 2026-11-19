@@ -383,7 +383,7 @@ class StripeManager
         string $transferId,
         int $amount,
         string $idempotencyKey
-    ): Stripe\Reversal {
+    ): Stripe\TransferReversal {
         $this->setupStripeApi();
 
         $this->logger->info(sprintf('StripeManager::createTransferReversal | %s | %d', $transferId, $amount));

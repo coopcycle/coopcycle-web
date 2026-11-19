@@ -9,7 +9,6 @@ use AppBundle\Service\GiftCard\GiftCardIssuer;
 use AppBundle\Service\GiftCard\GiftCardPurchaseManager;
 use AppBundle\Service\GiftCard\GiftCardStatus;
 use AppBundle\Service\SettingsManager;
-use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use Stripe;
 use Sylius\Component\Currency\Context\CurrencyContextInterface;
@@ -36,7 +35,6 @@ class GiftCardController extends AbstractController
         private readonly GiftCardPurchaseManager $purchaseManager,
         private readonly GiftCardIssuer $giftCardIssuer,
         private readonly SettingsManager $settingsManager,
-        private readonly EntityManagerInterface $entityManager,
         private readonly Hashids $hashids12,
     ) {
     }
