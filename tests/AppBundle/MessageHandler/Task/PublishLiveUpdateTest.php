@@ -15,6 +15,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\User;
 use AppBundle\MessageHandler\Task\PublishLiveUpdate;
 use AppBundle\Service\LiveUpdates;
+use AppBundle\Service\LiveUpdatesSuspension;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -23,13 +24,30 @@ class PublishLiveUpdateTest extends TestCase
 {
     use ProphecyTrait;
 
+    private LiveUpdatesSuspension $suspension;
+
     private PublishLiveUpdate $handler;
     private $liveUpdates;
 
     public function setUp(): void
     {
         $this->liveUpdates = $this->prophesize(LiveUpdates::class);
-        $this->handler = new PublishLiveUpdate($this->liveUpdates->reveal());
+        $this->suspension = new LiveUpdatesSuspension();
+        $this->handler = new PublishLiveUpdate($this->liveUpdates->reveal(), $this->suspension);
+    }
+
+    /**
+     * A delivery import sent one per task, with the notifications that go with it,
+     * a dozen calls to Centrifugo per line: it sends a single event instead
+     */
+    public function testNothingIsSentWhileSuspended(): void
+    {
+        $event = $this->prophesize(TaskCreated::class);
+
+        $this->suspension->during(fn () => ($this->handler)($event->reveal()));
+
+        $this->liveUpdates->toDispatchers(Argument::cetera())->shouldNotHaveBeenCalled();
+        $this->liveUpdates->toUserAndDispatchers(Argument::cetera())->shouldNotHaveBeenCalled();
     }
 
     public function taskEventClassProvider(): array

@@ -14,6 +14,7 @@ use AppBundle\MessageHandler\ImportDeliveriesHandler;
 use AppBundle\Service\DeliveryCreatedNotifier;
 use AppBundle\Service\DeliveryImportStatusManager;
 use AppBundle\Service\DeliveryManager;
+use AppBundle\Service\LiveUpdatesSuspension;
 use AppBundle\Service\DeliveryOrderManager;
 use AppBundle\Service\RemotePushNotificationManager;
 use AppBundle\Spreadsheet\DeliverySpreadsheetParser;
@@ -38,6 +39,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ImportDeliveriesHandlerTest extends TestCase
 {
     use ProphecyTrait;
+
+    private LiveUpdatesSuspension $liveUpdatesSuspension;
+
+    protected function setUp(): void
+    {
+        $this->liveUpdatesSuspension = new LiveUpdatesSuspension();
+    }
 
     protected function tearDown(): void
     {
@@ -77,6 +85,8 @@ class ImportDeliveriesHandlerTest extends TestCase
 
         // ONE ROW, WHATEVER ITS PRICE
         $delivery = Delivery::create();
+        $delivery->setPickupRange(new \DateTime('2026-10-01 10:00'), new \DateTime('2026-10-01 10:30'));
+        $delivery->setDropoffRange(new \DateTime('2026-10-01 11:00'), new \DateTime('2026-10-02 09:00'));
 
         $result = new SpreadsheetParseResult();
         $result->addData(2, ['delivery' => $delivery, 'tourName' => null]);
@@ -90,12 +100,15 @@ class ImportDeliveriesHandlerTest extends TestCase
         $entityManager->persist($delivery)->shouldBeCalled();
 
         $options = null;
+        $suspendedWhileSaving = null;
+        $suspension = $this->liveUpdatesSuspension;
         $deliveryOrderManager = $this->prophesize(DeliveryOrderManager::class);
         $deliveryOrderManager
             ->createOrder($delivery, Argument::cetera())
             ->shouldBeCalledOnce()
-            ->will(function (array $args) use (&$options) {
+            ->will(function (array $args) use (&$options, &$suspendedWhileSaving, $suspension) {
                 $options = $args[1] ?? [];
+                $suspendedWhileSaving = $suspension->isSuspended();
 
                 return new Order();
             });
@@ -114,6 +127,7 @@ class ImportDeliveriesHandlerTest extends TestCase
             $this->prophesize(TourRepository::class)->reveal(),
             $this->prophesize(DeliveryCreatedNotifier::class)->reveal(),
             $this->prophesize(TranslatorInterface::class)->reveal(),
+            $this->liveUpdatesSuspension,
             $this->prophesize(ManagerRegistry::class)->reveal()
         );
 
@@ -126,6 +140,11 @@ class ImportDeliveriesHandlerTest extends TestCase
 
         // To find the deliveries that came from this file
         $this->assertSame(42, $delivery->getMetadata()['delivery_import_id']);
+
+        // No live update per task while saving, a single event once saved
+        $this->assertTrue($suspendedWhileSaving);
+        $this->assertFalse($this->liveUpdatesSuspension->isSuspended());
+        $statusManager->saved($queue, ['2026-10-01', '2026-10-02'])->shouldHaveBeenCalledOnce();
 
         $statusManager->completed($queue)->shouldHaveBeenCalled();
         $statusManager->failed(Argument::cetera())->shouldNotHaveBeenCalled();
@@ -182,6 +201,7 @@ class ImportDeliveriesHandlerTest extends TestCase
         $statusManager->completed($queue)->will(function () {});
         $statusManager->failed($queue, Argument::cetera())->will(function () {});
         $statusManager->cancelled($queue)->will(function () {});
+        $statusManager->saved($queue, Argument::any())->will(function () {});
         $statusManager->isCancelled($queue)->willReturn(...$isCancelled);
         $statusManager->saving($queue)->willReturn($saving);
 
@@ -205,6 +225,7 @@ class ImportDeliveriesHandlerTest extends TestCase
             $this->prophesize(TourRepository::class)->reveal(),
             $this->prophesize(DeliveryCreatedNotifier::class)->reveal(),
             $this->prophesize(TranslatorInterface::class)->reveal(),
+            $this->liveUpdatesSuspension,
             $this->prophesize(ManagerRegistry::class)->reveal()
         );
     }

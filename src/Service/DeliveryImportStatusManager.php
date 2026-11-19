@@ -169,6 +169,20 @@ class DeliveryImportStatusManager
         $this->publish($queue);
     }
 
+    /**
+     * Sent once the deliveries are committed: their tasks and tours were saved
+     * without a live update each, the boards showing one of these days reload them.
+     *
+     * @param string[] $dates the days the tasks are on, as Y-m-d
+     */
+    public function saved(DeliveryImportQueue $queue, array $dates): void
+    {
+        $this->liveUpdates->toDispatchers('delivery_import:saved', [
+            'filename' => $queue->getFilename(),
+            'dates' => $dates,
+        ]);
+    }
+
     public function completed(DeliveryImportQueue $queue): void
     {
         $queue->setStatus(DeliveryImportQueue::STATUS_COMPLETED);

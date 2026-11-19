@@ -11,6 +11,7 @@ use AppBundle\Message\ImportDeliveries;
 use AppBundle\MessageHandler\ImportDeliveriesHandler;
 use AppBundle\Service\DeliveryCreatedNotifier;
 use AppBundle\Service\DeliveryManager;
+use AppBundle\Service\LiveUpdatesSuspension;
 use AppBundle\Service\DeliveryOrderManager;
 use AppBundle\Service\DeliveryImportStatusManager;
 use AppBundle\Spreadsheet\DeliverySpreadsheetParser;
@@ -83,6 +84,7 @@ class ImportDeliveriesHandlerFunctionalTest extends KernelTestCase
             self::getContainer()->get(TourRepository::class),
             self::getContainer()->get(DeliveryCreatedNotifier::class),
             self::getContainer()->get(TranslatorInterface::class),
+            self::getContainer()->get(LiveUpdatesSuspension::class),
             self::getContainer()->get('doctrine'),
         );
     }
@@ -156,6 +158,7 @@ class ImportDeliveriesHandlerFunctionalTest extends KernelTestCase
         }
 
         $this->assertNothingWasImported();
+        $this->assertFalse(self::getContainer()->get(LiveUpdatesSuspension::class)->isSuspended());
     }
 
     public function testImportIsRolledBackWhenAFlushFails(): void

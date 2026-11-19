@@ -10,6 +10,7 @@ use AppBundle\Message\ImportDeliveries;
 use AppBundle\Service\DeliveryCreatedNotifier;
 use AppBundle\Service\DeliveryImportStatusManager;
 use AppBundle\Service\DeliveryManager;
+use AppBundle\Service\LiveUpdatesSuspension;
 use AppBundle\Service\DeliveryOrderManager;
 use AppBundle\Service\RemotePushNotificationManager;
 use AppBundle\Spreadsheet\DeliverySpreadsheetParser;
@@ -44,6 +45,7 @@ class ImportDeliveriesHandler
         private TourRepository $tourRepository,
         private DeliveryCreatedNotifier $deliveryCreatedNotifier,
         private TranslatorInterface $translator,
+        private LiveUpdatesSuspension $liveUpdatesSuspension,
         // To get a working entity manager back once a failed flush has closed it
         private ManagerRegistry $doctrine,
         )
@@ -128,9 +130,16 @@ class ImportDeliveriesHandler
         $rowNumber = null;
 
         try {
-            $this->saveDeliveries($queue, $result, $rowNumber);
+            // A live update per task and per tour is a dozen calls to Centrifugo per line,
+            // while the transaction is open: the board reloads once, when it's saved
+            $dates = $this->liveUpdatesSuspension->during(function () use ($queue, $result, &$rowNumber) {
+                $dates = $this->saveDeliveries($queue, $result, $rowNumber);
 
-            $this->entityManager->flush();
+                $this->entityManager->flush();
+
+                return $dates;
+            });
+
             $this->entityManager->commit();
         } catch (\Throwable $e) {
             $this->logger->error(
@@ -154,6 +163,10 @@ class ImportDeliveriesHandler
 
         $this->deliveryCreatedNotifier->endBatch();
 
+        if (!empty($dates)) {
+            $this->statusManager->saved($queue, $dates);
+        }
+
         // Rows can still fail validation once read, count them too
         if (!is_null($queue->getTotalRows())) {
             $queue->setProgress($queue->getProcessedRows(), $queue->getTotalRows(), count($result->getErrors()));
@@ -170,10 +183,14 @@ class ImportDeliveriesHandler
 
     /**
      * @param ?int $rowNumber set to the row being saved, for the error to point at if it fails
+     *
+     * @return string[] the days the tasks saved are on, as Y-m-d
      */
-    private function saveDeliveries(DeliveryImportQueue $queue, SpreadsheetParseResult $result, ?int &$rowNumber): void
+    private function saveDeliveries(DeliveryImportQueue $queue, SpreadsheetParseResult $result, ?int &$rowNumber): array
     {
         $store = $queue->getStore();
+
+        $dates = [];
 
         foreach ($result->getData() as $rowNumber => $deliveryImportData) {
 
@@ -202,6 +219,14 @@ class ImportDeliveriesHandler
             $store->addDelivery($delivery);
             $this->entityManager->persist($delivery);
 
+            foreach ($delivery->getTasks() as $task) {
+                foreach ([$task->getAfter(), $task->getBefore()] as $date) {
+                    if (!is_null($date)) {
+                        $dates[$date->format('Y-m-d')] = true;
+                    }
+                }
+            }
+
             // When no rule matches, the order gets a placeholder price of 0
             // and an incident for a dispatcher to review it, as with the API.
             // The delivery is imported anyway: without an order, it could never be priced.
@@ -225,6 +250,11 @@ class ImportDeliveriesHandler
                 }
             }
         }
+
+        $dates = array_keys($dates);
+        sort($dates);
+
+        return $dates;
     }
 
     private function rollBack(string $filename, ?int $rowNumber): void
