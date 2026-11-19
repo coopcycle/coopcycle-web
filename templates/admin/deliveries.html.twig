@@ -155,7 +155,9 @@
                   {{ 'deliveries.imports.see_errored_file'|trans }}
                 </a>
               {% else %}
-                <a href="#" class="mr-3 text-underline" data-delivery-import-view>
+                {# Switched to the errors by list.js, when the import fails while the page is open #}
+                <a href="#" class="mr-3 text-underline" data-delivery-import-view
+                  data-errors-label="{{ 'deliveries.imports.see_errored_file'|trans }}">
                   {{ 'deliveries.imports.see_file'|trans }}
                 </a>
               {% endif %}
