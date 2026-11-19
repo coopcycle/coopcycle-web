@@ -1390,6 +1390,10 @@ import.errors.at.row: Errores en fila %row_number%
 import.address.geocode.error: No se pudo geocodificar la dirección %failed_address%
 import.time.range.error: Rango de tiempo "%value%" en %key% no es válido
 import.columns.missing: "El fichero no tiene la columna %columns%, añádela y vuelve a importar el fichero"
+import.telephone.error: "%key%: \"%value%\" no es un número de teléfono válido"
+import.metadata.error: "%key%: \"%value%\" no es válido, escríbelo como clave=valor, separados por espacios"
+import.packages.error: "%key%: \"%value%\" no es válido, escríbelo como paquete=cantidad, separados por espacios"
+import.value.too_long: "%key% supera los %max% caracteres"
 import.successful.rows: 'Se procesó el archivo y se crearon %count% entregas correspondientes
   a las filas: %rows%'
 import.delivery.price.error.priceCalculation.row: El precio de la entrega no pudo

@@ -1,0 +1,8 @@
+pickup.address,pickup.address.telephone,pickup.timeslot,pickup.metadata,dropoff.address,dropoff.timeslot,dropoff.packages,tour.name
+"Via Pippo Spano 17, 50129, Firenze",+33612345678,16/01/2024 09:00 - 16/01/2024 18:00,foo=bar,"Via Pippo Spano 17, 50129, Firenze",16/01/2024 09:00 - 16/01/2024 18:00,small-box=1,Tour
+"Via Pippo Spano 17, 50129, Firenze",not a phone,16/01/2024 09:00 - 16/01/2024 18:00,,"Via Pippo Spano 17, 50129, Firenze",16/01/2024 09:00 - 16/01/2024 18:00,,
+"Via Pippo Spano 17, 50129, Firenze",,16/01/2024 09:00 - 16/01/2024 18:00,foo,"Via Pippo Spano 17, 50129, Firenze",16/01/2024 09:00 - 16/01/2024 18:00,,
+"Via Pippo Spano 17, 50129, Firenze",,16/01/2024 09:00 - 16/01/2024 18:00,,"Via Pippo Spano 17, 50129, Firenze",16/01/2024 09:00 - 16/01/2024 18:00,small-box,
+"Via Pippo Spano 17, 50129, Firenze",,16/01/2024 09:00 - 16/01/2024 18:00,,"Via Pippo Spano 17, 50129, Firenze",16/01/2024 09:00 - 16/01/2024 18:00,small-box=1 huge-box=2,
+"Via Pippo Spano 17, 50129, Firenze",,16/01/2024 12:00 - 16/01/2024 18:00,,"Via Pippo Spano 17, 50129, Firenze",16/01/2024 09:00 - 16/01/2024 10:00,,
+"Via Pippo Spano 17, 50129, Firenze",,16/01/2024 09:00 - 16/01/2024 18:00,,"Via Pippo Spano 17, 50129, Firenze",16/01/2024 09:00 - 16/01/2024 18:00,,TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT

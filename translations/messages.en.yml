@@ -1568,6 +1568,10 @@ import.errors.at.row: Errors at row %row_number%
 import.address.geocode.error: Could not geocode address %failed_address%
 import.time.range.error: Time range "%value%" in %key% is not valid
 import.columns.missing: "The file has no %columns% column, add it and import the file again"
+import.telephone.error: "%key%: \"%value%\" is not a valid phone number"
+import.metadata.error: "%key%: \"%value%\" is not valid, write it as key=value, separated by spaces"
+import.packages.error: "%key%: \"%value%\" is not valid, write it as package=quantity, separated by spaces"
+import.value.too_long: "%key% is longer than %max% characters"
 import.successful.rows: 'Your file was processed and %count% deliveries were created for rows: %rows%'
 import.delivery.price.error.priceCalculation.row: The delivery price could not be calculated for row %row_number%
 import.unsuccessful.rows: "There were errors and deliveries could not be created for rows: %rows%."
