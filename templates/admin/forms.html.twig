@@ -18,7 +18,7 @@
 
 <table class="table">
   <thead>
-    <th>#</th>
+    <th>{{ 'form.embed_settings.name.label'|trans }}</th>
     <th>{{ 'form.embed_settings.show_home_page.label'|trans }}</th>
     <th>{{ 'form.store_type.pricing_rule_set.label'|trans }}</th>
     <th>{{ 'form.store_type.time_slot.label'|trans }}</th>
@@ -29,10 +29,17 @@
   <tbody>
   {% for form in forms %}
     <tr>
-      <td width="5%">
+      <td>
         <a href="{{ path('admin_form', { id: form.id }) }}">
-          <span class="text-monospace">{{ form|hashid(12) }}</span>
+          {% if form.name is not empty %}
+            {{ form.name }}
+          {% else %}
+            <span class="text-monospace">{{ form|hashid(12) }}</span>
+          {% endif %}
         </a>
+        {% if form.name is not empty %}
+          <br><small class="text-muted text-monospace">{{ form|hashid(12) }}</small>
+        {% endif %}
       </td>
       <td class="text-center">
         <span>
@@ -67,7 +74,7 @@
       </td>
       {% if is_granted('ROLE_ADMIN') %}
         <td>
-          <div {{ react_component('DeleteIcon', { objectId: form.id, objectName: form|hashid(12), deleteUrl: '_api_/delivery_forms/{id}{._format}_delete'}) }}></div>
+          <div {{ react_component('DeleteIcon', { objectId: form.id, objectName: form.name|default(form|hashid(12)), deleteUrl: '_api_/delivery_forms/{id}{._format}_delete'}) }}></div>
         </td>
       {% endif %}
       </td>

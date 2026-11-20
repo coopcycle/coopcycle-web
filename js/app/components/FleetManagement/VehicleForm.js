@@ -5,23 +5,43 @@ import { Field, Formik } from 'formik'
 import _ from 'lodash'
 import { useTranslation } from 'react-i18next'
 
+import { getApiErrorMessage, getApiFieldErrors } from '../../utils/apiErrors'
+
+// Used when the user does not pick any color
+const randomColor = () =>
+  '#' +
+  Math.floor(Math.random() * 0xffffff)
+    .toString(16)
+    .padStart(6, '0')
+    .toUpperCase()
+
 export default ({ initialValues, onSubmit, warehouses, closeModal }) => {
   const { t } = useTranslation()
 
   const [isLoading, setLoading] = useState(false)
 
-  const handleSubmit = async values => {
+  const handleSubmit = async (values, { setErrors, setStatus }) => {
     setLoading(true)
-    await onSubmit({
+    setStatus(null)
+
+    const error = await onSubmit({
       ...values,
+      color: values.color || randomColor(), // the color is optional, pick a random one
       maxWeight: values.maxWeight * 1000, // convert to gramms
       isElectric: values.isElectric || false, // force-define this value as the checkox component seems not controlled in Formik
     })
+
     setLoading(false)
+
+    if (error) {
+      setErrors(getApiFieldErrors(error))
+      setStatus(getApiErrorMessage(error) || t('ERROR'))
+    }
   }
 
   initialValues = {
     ...initialValues,
+    color: initialValues.color || randomColor(),
     co2emissions: initialValues.co2emissions || 0,
     maxWeight: initialValues.maxWeight ? initialValues.maxWeight / 1000 : null,
     warehouse: initialValues.warehouse
@@ -33,9 +53,11 @@ export default ({ initialValues, onSubmit, warehouses, closeModal }) => {
     // we use mostly buil-int HTML validation
     const errors = {}
 
-    if (!values.color || (values.isElectric && !values.electricRange)) {
+    if (values.isElectric && !values.electricRange) {
       errors.electricRange = t('FORM_REQUIRED')
     }
+
+    return errors
   }
 
   return (
@@ -57,8 +79,15 @@ export default ({ initialValues, onSubmit, warehouses, closeModal }) => {
           onSubmit={handleSubmit}
           validateOnBlur={false}
           validateOnChange={false}>
-          {({ values, errors, touched, setFieldValue, handleSubmit }) => (
+          {({ values, errors, status, setFieldValue, handleSubmit }) => (
             <form onSubmit={handleSubmit} autoComplete="off" className="p-4">
+              {status && (
+                <div className="alert alert-danger" role="alert">
+                  {status.split('\n').map((line, index) => (
+                    <div key={index}>{line}</div>
+                  ))}
+                </div>
+              )}
               <div className={`form-group${errors.name ? 'has-error' : ''}`}>
                 <div className="row">
                   <div className="col-md-12">
@@ -73,7 +102,7 @@ export default ({ initialValues, onSubmit, warehouses, closeModal }) => {
                       minLength="2"
                       required
                     />
-                    {errors.name && touched.name && (
+                    {errors.name && (
                       <div className="has-error px-4">
                         <small className="help-block">{errors.name}</small>
                       </div>
@@ -91,8 +120,7 @@ export default ({ initialValues, onSubmit, warehouses, closeModal }) => {
                       name="color"
                       minLength="7"
                       maxlength="7"
-                      pattern="#[\d\w]{6}"
-                      required>
+                      pattern="#[\d\w]{6}">
                       {() => (
                         <ColorPicker
                           defaultValue={values.color}
@@ -103,7 +131,7 @@ export default ({ initialValues, onSubmit, warehouses, closeModal }) => {
                         />
                       )}
                     </Field>
-                    {errors.color && touched.color && (
+                    {errors.color && (
                       <div className="has-error px-4">
                         <small className="help-block">{errors.color}</small>
                       </div>
@@ -124,7 +152,7 @@ export default ({ initialValues, onSubmit, warehouses, closeModal }) => {
                       name="maxWeight"
                       required
                     />
-                    {errors.maxWeight && touched.maxWeight && (
+                    {errors.maxWeight && (
                       <div className="has-error px-4">
                         <small className="help-block">{errors.maxWeight}</small>
                       </div>
@@ -144,7 +172,7 @@ export default ({ initialValues, onSubmit, warehouses, closeModal }) => {
                       name="maxVolumeUnits"
                       required
                     />
-                    {errors.maxVolumeUnits && touched.maxVolumeUnits && (
+                    {errors.maxVolumeUnits && (
                       <div className="has-error px-4">
                         <small className="help-block">
                           {errors.maxVolumeUnits}
@@ -161,7 +189,7 @@ export default ({ initialValues, onSubmit, warehouses, closeModal }) => {
                       {t('ADMIN_VEHICLE_IS_ELECTRIC_LABEL')}
                     </label>
                     <Field type="checkbox" name="isElectric" />
-                    {errors.isElectric && touched.isElectric && (
+                    {errors.isElectric && (
                       <div className="has-error px-4">
                         <small className="help-block">
                           {errors.isElectric}
@@ -183,7 +211,7 @@ export default ({ initialValues, onSubmit, warehouses, closeModal }) => {
                         value={values.electricRange}
                         name="electricRange"
                       />
-                      {errors.electricRange && touched.electricRange && (
+                      {errors.electricRange && (
                         <div className="has-error px-4">
                           <small className="help-block">
                             {errors.electricRange}
@@ -207,7 +235,7 @@ export default ({ initialValues, onSubmit, warehouses, closeModal }) => {
                       name="co2emissions"
                       required
                     />
-                    {errors.co2emissions && touched.co2emissions && (
+                    {errors.co2emissions && (
                       <div className="has-error px-4">
                         <small className="help-block">
                           {errors.co2emissions}
@@ -238,7 +266,7 @@ export default ({ initialValues, onSubmit, warehouses, closeModal }) => {
                         )
                       })}
                     </Field>
-                    {errors.warehouse && touched.warehouse && (
+                    {errors.warehouse && (
                       <div className="has-error px-4">
                         <small className="help-block">{errors.warehouse}</small>
                       </div>

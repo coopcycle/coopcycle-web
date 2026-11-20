@@ -52,7 +52,13 @@
           {{ promotion.endsAt|format_datetime('medium', 'short') }}
         {% endif %}
       </td>
-      <td class="text-right"></td>
+      <td class="text-right">
+        {% if promotion.isCouponBased %}
+          {{ coupon.used }}
+        {% else %}
+          {{ promotion.used }}
+        {% endif %}
+      </td>
       {% if show_feature %}
       {% set is_featured = promotion.isCouponBased ? coupon.featured : promotion.featured %}
       <td>

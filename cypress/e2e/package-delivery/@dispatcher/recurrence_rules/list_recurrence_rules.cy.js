@@ -60,11 +60,13 @@ context('Managing recurrence rules (role: dispatcher)', () => {
       .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
       .should('exist')
 
+    // The dates are formatted by PHP intl, which only has the ICU data for English
+    // in the Docker images, so they are formatted the US way (1/15/30)
     cy.get('[data-testid=recurrence-list-item]')
-      .contains(/15\/01\/2030/)
+      .contains(/15\/01\/2030|1\/15\/30/)
       .should('exist')
     cy.get('[data-testid=recurrence-list-item]')
-      .contains(/30\/06\/2030/)
+      .contains(/30\/06\/2030|6\/30\/30/)
       .should('exist')
   })
 })

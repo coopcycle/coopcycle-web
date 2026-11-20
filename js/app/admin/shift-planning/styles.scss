@@ -641,6 +641,28 @@
   }
 }
 
+.shift-preset-tile-wrapper {
+  position: relative;
+  display: flex;
+
+  .shift-preset-tile {
+    flex: 1;
+    padding-right: 36px;
+  }
+}
+
+.shift-preset-tile__edit {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  opacity: 0.6;
+
+  &:hover,
+  &:focus-visible {
+    opacity: 1;
+  }
+}
+
 .shift-preset-tile__name {
   font-weight: 600;
 }

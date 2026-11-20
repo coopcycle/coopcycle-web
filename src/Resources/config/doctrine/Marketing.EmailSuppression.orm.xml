@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd" xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
+  <entity repository-class="AppBundle\Entity\Marketing\EmailSuppressionRepository" name="AppBundle\Entity\Marketing\EmailSuppression" table="email_suppression">
+    <unique-constraints>
+      <!-- Postmark suppresses per stream, so the same address can legitimately
+           be suppressed on one stream and deliverable on another. -->
+      <unique-constraint name="uniq_email_suppression_email_stream" columns="email,message_stream"/>
+    </unique-constraints>
+    <indexes>
+      <!-- Audience filtering looks addresses up across every stream. -->
+      <index name="idx_email_suppression_email" columns="email"/>
+    </indexes>
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="email" type="string" column="email" length="255"/>
+    <field name="messageStream" type="string" column="message_stream" length="64"/>
+    <field name="reason" type="string" column="reason" length="32"/>
+    <field name="suppressedAt" type="datetime" column="suppressed_at"/>
+    <field name="createdAt" type="datetime" column="created_at">
+      <gedmo:timestampable on="create"/>
+    </field>
+  </entity>
+</doctrine-mapping>

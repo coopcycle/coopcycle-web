@@ -19,7 +19,10 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[ApiResource(
     types: ['http://schema.org/MediaObject'],
     operations: [
-        new Get(),
+        new Get(
+            // Images are uploaded before being attached to a task, so the task may be null
+            security: 'is_granted(\'ROLE_DISPATCHER\') or (null !== object.getTask() and is_granted(\'view\', object.getTask()))'
+        ),
         new Post(
             controller: CreateImage::class,
             security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_COURIER\')',

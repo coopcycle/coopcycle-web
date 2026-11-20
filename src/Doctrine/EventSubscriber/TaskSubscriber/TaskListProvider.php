@@ -59,6 +59,15 @@ class TaskListProvider
 
         // 3. Not assigned to this courier yet: use (or create) the list for the
         //    day the task should be dispatched on.
+        return $this->getTaskListForAssignmentDate($task, $courier);
+    }
+
+    /**
+     * The list (existing or new) for the day the task should be dispatched on,
+     * ignoring the list that may already contain it.
+     */
+    public function getTaskListForAssignmentDate(Task $task, UserInterface $courier) : TaskList
+    {
         return $this->getTaskListForUserAndDate($this->resolveAssignmentDate($task), $courier);
     }
 

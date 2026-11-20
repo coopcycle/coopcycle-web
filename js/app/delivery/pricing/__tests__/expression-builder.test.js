@@ -1,4 +1,9 @@
-import { numericTypes, isNum, lineToString } from '../expression-builder'
+import { numericTypes, isNum, lineToString, linesToString } from '../expression-builder'
+import { parseAST } from '../pricing-rule-parser'
+import withDiffDaysPickup from './with-diff-days-pickup.json'
+import withDiffDaysDropoff from './with-diff-days-dropoff.json'
+import withDiffDaysDropoffWithRange from './with-diff-days-dropoff-in.json'
+import withDiffHoursDropoff from './with-diff-hours-dropoff.json'
 
 describe('isNum', () => {
   it('should return true for numeric types', () => {
@@ -120,6 +125,37 @@ describe('lineToString', () => {
     })
   })
 
+  describe('diff_days(dropoff)', () => {
+    it('should handle < operator', () => {
+      const result = lineToString({ left: 'diff_days(dropoff)', operator: '<', right: 1 })
+      expect(result).toEqual('diff_days(dropoff, \'< 1\')')
+    })
+
+    it('should handle in operator with range', () => {
+      const result = lineToString({ left: 'diff_days(dropoff)', operator: 'in', right: [0, 1] })
+      expect(result).toEqual('diff_days(dropoff, \'in 0..1\')')
+    })
+  })
+
+  describe('diff_hours(dropoff)', () => {
+    it('should handle < operator', () => {
+      const result = lineToString({ left: 'diff_hours(dropoff)', operator: '<', right: 3 })
+      expect(result).toEqual('diff_hours(dropoff, \'< 3\')')
+    })
+  })
+
+  describe('round trip from the AST sent by the server', () => {
+    // A rule saved again without being edited must keep its expression
+    it.each([
+      [ withDiffDaysPickup, 'diff_days(pickup, \'< 1\')' ],
+      [ withDiffDaysDropoff, 'diff_days(dropoff, \'< 1\')' ],
+      [ withDiffDaysDropoffWithRange, 'diff_days(dropoff, \'in 0..1\')' ],
+      [ withDiffHoursDropoff, 'diff_hours(dropoff, \'< 3\')' ],
+    ])('should rebuild %#', (ast, expression) => {
+      expect(linesToString(parseAST(ast))).toEqual(expression)
+    })
+  })
+
   describe('dropoff.doorstep', () => {
     it('should handle == operator with boolean', () => {
       const result = lineToString({ left: 'dropoff.doorstep', operator: '==', right: true })
@@ -153,6 +189,53 @@ describe('lineToString', () => {
     it('should handle in operator with range', () => {
       const result = lineToString({ left: 'order.itemsTotal', operator: 'in', right: [20, 50] })
       expect(result).toEqual('order.itemsTotal in 20..50')
+    })
+  })
+
+  describe('task.dropoffRank', () => {
+    it('should handle == operator', () => {
+      const result = lineToString({ left: 'task.dropoffRank', operator: '==', right: 2 })
+      expect(result).toEqual('task.dropoffRank == 2')
+    })
+
+    it('should handle < operator', () => {
+      const result = lineToString({ left: 'task.dropoffRank', operator: '<', right: 3 })
+      expect(result).toEqual('task.dropoffRank < 3')
+    })
+
+    it('should handle > operator', () => {
+      const result = lineToString({ left: 'task.dropoffRank', operator: '>', right: 1 })
+      expect(result).toEqual('task.dropoffRank > 1')
+    })
+
+    it('should handle in operator with range', () => {
+      const result = lineToString({ left: 'task.dropoffRank', operator: 'in', right: ['2', '3'] })
+      expect(result).toEqual('task.dropoffRank in 2..3')
+    })
+
+    it('should be combined with the task type', () => {
+      const result = linesToString([
+        { left: 'task.type', operator: '==', right: 'DROPOFF' },
+        { left: 'task.dropoffRank', operator: '>', right: 1 },
+      ])
+      expect(result).toEqual('task.type == "DROPOFF" and task.dropoffRank > 1')
+    })
+  })
+
+  describe('task.pickupRank', () => {
+    it('should handle == operator', () => {
+      const result = lineToString({ left: 'task.pickupRank', operator: '==', right: 2 })
+      expect(result).toEqual('task.pickupRank == 2')
+    })
+
+    it('should handle > operator', () => {
+      const result = lineToString({ left: 'task.pickupRank', operator: '>', right: 1 })
+      expect(result).toEqual('task.pickupRank > 1')
+    })
+
+    it('should handle in operator with range', () => {
+      const result = lineToString({ left: 'task.pickupRank', operator: 'in', right: ['2', '3'] })
+      expect(result).toEqual('task.pickupRank in 2..3')
     })
   })
 

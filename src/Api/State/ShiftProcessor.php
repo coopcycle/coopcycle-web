@@ -46,7 +46,8 @@ class ShiftProcessor implements ProcessorInterface
 
         $result = $this->persistProcessor->process($data, $operation, $uriVariables, $context);
 
-        if (count($added) > 0) {
+        // On a draft week, couriers are notified when the week gets published
+        if (count($added) > 0 && $this->shiftManager->isWeekPublished($data->getStartsAt())) {
             $this->shiftManager->notify(
                 $this->translator->trans('notifications.shifts.assigned', [
                     '%date%' => $data->getStartsAt()->format('Y-m-d'),

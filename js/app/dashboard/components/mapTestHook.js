@@ -19,6 +19,8 @@
  *                                                   filtered by `type` when given
  *   testWarehouses()      [{ iri, name, taskCount, color }]
  *   testSwoopyCount()     number    "point to next task" arrows currently drawn
+ *   testPrecog()          [{ id, rank, radius }]  carts drawn as halos
+ *   testPrecogCompletions() string[]  ids of carts whose "order placed" mark is up
  *   testContainer()       Element   the map container
  */
 export function installMapTestHook(proxy) {
@@ -36,6 +38,8 @@ export function installMapTestHook(proxy) {
     clusters:        type => proxy.testClusters(type),
     warehouses:      () => proxy.testWarehouses(),
     swoopyCount:     () => proxy.testSwoopyCount(),
+    precog:          () => proxy.testPrecog(),
+    precogCompletions: () => proxy.testPrecogCompletions(),
     container:       () => proxy.testContainer(),
   }
 }

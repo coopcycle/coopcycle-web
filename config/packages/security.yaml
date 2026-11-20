@@ -385,6 +385,8 @@ security:
         - { path: ^/register, role: PUBLIC_ACCESS }
         - { path: ^/resetting, role: PUBLIC_ACCESS }
         - { path: ^/order/public, roles: PUBLIC_ACCESS }
+        # Guest checkout has no session user; the cart still comes from the session.
+        - { path: ^/precog/ping, roles: PUBLIC_ACCESS }
         - { path: ^/dashboard, roles: [ ROLE_ADMIN, ROLE_RESTAURANT, ROLE_STORE ] }
         - { path: ^/profile/restaurants, roles: ROLE_RESTAURANT }
         - { path: ^/profile/jwt, roles: IS_AUTHENTICATED_REMEMBERED }

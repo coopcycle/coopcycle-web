@@ -38,6 +38,9 @@
       <cascade>
         <cascade-all/>
       </cascade>
+      <order-by>
+        <order-by-field name="id" direction="ASC"/>
+      </order-by>
     </one-to-many>
     <one-to-many field="items" target-entity="AppBundle\Entity\Sylius\OrderItem" mapped-by="order" orphan-removal="true">
       <cascade>

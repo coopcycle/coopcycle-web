@@ -39,6 +39,8 @@ const typeToOperators = {
   'dropoff.address': ['in_zone', 'out_zone'],
   'diff_days(pickup)': ['==', '<', '>', 'in'],
   'diff_hours(pickup)': ['==', '<', '>'],
+  'diff_days(dropoff)': ['==', '<', '>', 'in'],
+  'diff_hours(dropoff)': ['==', '<', '>'],
   'dropoff.doorstep': ['=='],
   packages: ['containsAtLeastOne'],
   'order.itemsTotal': ['==', '<', '>', 'in'],
@@ -47,6 +49,8 @@ const typeToOperators = {
   "time_range_length(pickup, 'hours')": ['<', '>', 'in'],
   "time_range_length(dropoff, 'hours')": ['<', '>', 'in'],
   'task.type': ['=='],
+  'task.pickupRank': ['==', '<', '>', 'in'],
+  'task.dropoffRank': ['==', '<', '>', 'in'],
   time_slot: ['==', '!='],
 };
 
@@ -75,7 +79,9 @@ const getStepForType = (type: string): string => {
   // https://github.com/coopcycle/coopcycle-web/issues/5002
   if (
     type === 'packages.totalVolumeUnits()' ||
-    type === 'delivery.packages.totalVolumeUnits()'
+    type === 'delivery.packages.totalVolumeUnits()' ||
+    type === 'task.pickupRank' ||
+    type === 'task.dropoffRank'
   ) {
     return '1';
   }
@@ -306,7 +312,7 @@ class RulePickerLine extends React.Component<Props, State> {
           isK(this.state.type),
           isDecimals(this.state.type),
         );
-      // weight, distance, diff_days(pickup)
+      // weight, distance, diff_days(pickup), diff_days(dropoff)
       case 'in':
         return (
           <div className="d-flex justify-content-between">

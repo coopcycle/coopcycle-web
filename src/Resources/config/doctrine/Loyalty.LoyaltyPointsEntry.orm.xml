@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd" xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
+  <entity repository-class="AppBundle\Entity\Loyalty\LoyaltyPointsEntryRepository" name="AppBundle\Entity\Loyalty\LoyaltyPointsEntry" table="loyalty_points_entry">
+    <indexes>
+      <!-- Covers both the balance sum and the FIFO spend walk. -->
+      <index name="idx_loyalty_points_entry_balance" columns="customer_id,type,expires_at"/>
+    </indexes>
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="type" type="string" column="type" length="16"/>
+    <field name="amount" type="integer" column="amount"/>
+    <field name="remaining" type="integer" column="remaining">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
+    <field name="createdAt" type="datetime" column="created_at">
+      <gedmo:timestampable on="create"/>
+    </field>
+    <field name="expiresAt" type="datetime" column="expires_at" nullable="true"/>
+    <many-to-one field="customer" target-entity="AppBundle\Entity\Sylius\Customer">
+      <join-columns>
+        <join-column name="customer_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="order" target-entity="Sylius\Component\Order\Model\OrderInterface">
+      <join-columns>
+        <join-column name="order_id" referenced-column-name="id" nullable="true" on-delete="SET NULL"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="reward" target-entity="AppBundle\Entity\Loyalty\LoyaltyReward">
+      <join-columns>
+        <join-column name="reward_id" referenced-column-name="id" nullable="true" on-delete="SET NULL"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="coupon" target-entity="AppBundle\Entity\Sylius\PromotionCoupon">
+      <join-columns>
+        <join-column name="coupon_id" referenced-column-name="id" nullable="true" on-delete="SET NULL"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

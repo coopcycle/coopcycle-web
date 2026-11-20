@@ -14,6 +14,12 @@ import {
   setOptimResult,
   setMapFilterValue,
   updateTour,
+  precogUpdated,
+  precogGone,
+  precogSynced,
+  precogExpired,
+  precogCompleted,
+  precogCompletionEnded,
 } from './actions'
 import _ from 'lodash'
 import { createCentrifuge, subscribe } from '../../centrifugo/client'
@@ -23,7 +29,72 @@ import { selectLastOptimResult } from './selectors'
 // Check every 30s
 const OFFLINE_TIMEOUT_INTERVAL = (30 * 1000)
 
+// Redis drops an expired ghost on its own, but Centrifugo has no way to say so:
+// an expiry is the absence of a heartbeat, not an event. Every ghost therefore
+// carries the moment it stops being true, and the board enforces it locally.
+const PRECOG_SWEEP_INTERVAL = (5 * 1000)
+
+// How long the mark left by a paid-for cart stays on the map. Long enough to
+// catch, short enough that the board is clean again before anyone acts on it.
+// Must outlast the CSS animation in dashboard.scss, or the mark is cut off
+// mid-collapse.
+const PRECOG_COMPLETION_MS = 2600
+
+/**
+ * A cart left the board. Whether that is worth marking depends entirely on why.
+ *
+ * Paid for: the ghost's position becomes a brief confirmation, because the task
+ * marker will not arrive until the restaurant accepts -- minutes later, and
+ * never at all if it refuses. Abandoned, or any other reason: it just goes.
+ *
+ * A reason of "order_placed" for a ghost this board never had leaves nothing
+ * behind. Marking a spot would mean inventing the position.
+ */
+export function handlePrecogGone(dispatch, getState, payload) {
+  const ghost = getState().precog.ghosts[payload.id]
+
+  if (payload.reason !== 'order_placed' || !ghost) {
+    dispatch(precogGone(payload))
+    return
+  }
+
+  dispatch(precogCompleted({
+    id: ghost.id,
+    latitude: ghost.latitude,
+    longitude: ghost.longitude,
+  }))
+
+  setTimeout(() => dispatch(precogCompletionEnded(ghost.id)), PRECOG_COMPLETION_MS)
+}
+
 let centrifuge
+
+function sweepPrecog(dispatch, getState) {
+  const now = Date.now()
+  const expired = Object.values(getState().precog.ghosts)
+    .filter(ghost => Date.parse(ghost.expiresAt) <= now)
+    .map(ghost => ghost.id)
+
+  if (expired.length > 0) {
+    dispatch(precogExpired(expired))
+  }
+
+  setTimeout(() => sweepPrecog(dispatch, getState), PRECOG_SWEEP_INTERVAL)
+}
+
+/**
+ * Pulls the whole set of in-flight carts.
+ *
+ * Called on every connect, reconnects included: while the socket was down the
+ * board missed both arrivals and departures, and no amount of replaying events
+ * afterwards can tell it which. Replacing the set is the only honest answer.
+ */
+function syncPrecog(dispatch) {
+  fetch('/admin/precog', { headers: { 'Accept': 'application/json' } })
+    .then(response => response.ok ? response.json() : Promise.reject(response.status))
+    .then(({ precog }) => dispatch(precogSynced(precog)))
+    .catch(() => { /* the board keeps what it has until the next connect */ })
+}
 
 function checkLastSeen(dispatch) {
   dispatch(scanPositions())
@@ -51,7 +122,13 @@ export const socketIO = ({ dispatch, getState }) => {
   // the SDK rejects outright.
   if (!centrifuge && getState().config.centrifugoToken) {
 
-    centrifuge = createCentrifuge(getState().config.centrifugoToken)
+    centrifuge = createCentrifuge(getState().config.centrifugoToken, {
+      onConnected: () => {
+        if (getState().config.precogEnabled) {
+          syncPrecog(dispatch)
+        }
+      },
+    })
 
     subscribe(centrifuge, getState().config.centrifugoEventsChannel, function(data) {
       const { event } = data
@@ -84,6 +161,12 @@ export const socketIO = ({ dispatch, getState }) => {
               dispatch(updateTour(event.data.tour))
             }
             break
+        case 'precog:updated':
+          dispatch(precogUpdated(event.data.precog))
+          break
+        case 'precog:gone':
+          handlePrecogGone(dispatch, getState, event.data.precog)
+          break
         case 'v2:task_list:updated':
           if (event.data.task_list.date === currentDate.format('YYYY-MM-DD')) {
             dispatch(taskListsUpdated(event.data.task_list))
@@ -104,6 +187,10 @@ export const socketIO = ({ dispatch, getState }) => {
     setTimeout(() => {
       checkLastSeen(dispatch)
     }, OFFLINE_TIMEOUT_INTERVAL)
+
+    if (getState().config.precogEnabled) {
+      setTimeout(() => sweepPrecog(dispatch, getState), PRECOG_SWEEP_INTERVAL)
+    }
 
   }
 

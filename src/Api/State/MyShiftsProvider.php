@@ -4,6 +4,7 @@ namespace AppBundle\Api\State;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
+use AppBundle\Entity\SchedulePublication;
 use AppBundle\Entity\Shift;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -29,8 +30,13 @@ final class MyShiftsProvider implements ProviderInterface
         $before->setTime(0, 0);
         $before->modify('+1 day');
 
-        return $this->entityManager
+        $shifts = $this->entityManager
             ->getRepository(Shift::class)
             ->findForUserBetween($user, $after, $before);
+
+        // Draft (unpublished) weeks stay invisible to couriers
+        return $this->entityManager
+            ->getRepository(SchedulePublication::class)
+            ->filterPublished($shifts);
     }
 }

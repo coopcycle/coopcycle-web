@@ -18,4 +18,5 @@ AppBundle\Entity\Store:
 
 AppBundle\Entity\DeliveryForm:
   form_1:
+    name: 'Contact form'
     packageSet: '@package_set_1'

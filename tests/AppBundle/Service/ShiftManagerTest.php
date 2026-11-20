@@ -14,6 +14,8 @@ use AppBundle\Entity\ShiftTemplateShift;
 use AppBundle\Entity\TaskList;
 use AppBundle\Entity\TaskListRepository;
 use AppBundle\Entity\User;
+use AppBundle\Entity\SchedulePublication;
+use AppBundle\Entity\SchedulePublicationRepository;
 use AppBundle\Message\PushNotification;
 use AppBundle\Service\ShiftManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -35,6 +37,7 @@ class ShiftManagerTest extends TestCase
     private $shiftManager;
     private $shiftRepository;
     private $holidayRequestRepository;
+    private $schedulePublicationRepository;
 
     public function setUp(): void
     {
@@ -64,6 +67,15 @@ class ShiftManagerTest extends TestCase
         $this->entityManager
             ->getRepository(ShiftActivity::class)
             ->willReturn($this->shiftActivityRepository->reveal());
+
+        // Weeks are drafts unless a test says otherwise
+        $this->schedulePublicationRepository = $this->prophesize(SchedulePublicationRepository::class);
+        $this->schedulePublicationRepository
+            ->isWeekPublished(Argument::any())
+            ->willReturn(false);
+        $this->entityManager
+            ->getRepository(SchedulePublication::class)
+            ->willReturn($this->schedulePublicationRepository->reveal());
 
         $this->translator
             ->trans(Argument::type('string'), Argument::any())
@@ -513,6 +525,60 @@ class ShiftManagerTest extends TestCase
         );
 
         $this->assertSame([$alice], $copies[0]->getAssignedUsers());
+    }
+
+    private function givenOneAssignedShiftInSourceWeek(): void
+    {
+        $sarah = $this->createUser('sarah');
+
+        $shift = new Shift();
+        $shift->setActivity('delivery');
+        $shift->setStartsAt(new \DateTime('2026-06-23 09:00:00'));
+        $shift->setEndsAt(new \DateTime('2026-06-23 17:00:00'));
+        $assignment = new ShiftAssignment();
+        $assignment->setUser($sarah);
+        $shift->addAssignment($assignment);
+
+        $this->shiftRepository
+            ->findOverlappingRange(Argument::cetera())
+            ->willReturn([$shift]);
+        $this->holidayRequestRepository
+            ->hasApprovedHolidayOnDate(Argument::cetera())
+            ->willReturn(false);
+        $this->entityManager->persist(Argument::type(Shift::class))->willReturn(null);
+        $this->entityManager->flush()->willReturn(null);
+    }
+
+    public function testCopyWeekDoesNotNotifyOnDraftWeek()
+    {
+        $this->givenOneAssignedShiftInSourceWeek();
+
+        // Draft week: couriers are notified on publish, not on assignment
+        $this->messageBus->dispatch(Argument::any())->shouldNotBeCalled();
+
+        $this->shiftManager->copyWeek(
+            new \DateTimeImmutable('2026-06-22'),
+            new \DateTimeImmutable('2026-06-29')
+        );
+    }
+
+    public function testCopyWeekNotifiesOnPublishedWeek()
+    {
+        $this->givenOneAssignedShiftInSourceWeek();
+
+        $this->schedulePublicationRepository
+            ->isWeekPublished(Argument::any())
+            ->willReturn(true);
+
+        $this->messageBus
+            ->dispatch(Argument::type(PushNotification::class))
+            ->shouldBeCalledOnce()
+            ->will(fn ($args) => new Envelope($args[0]));
+
+        $this->shiftManager->copyWeek(
+            new \DateTimeImmutable('2026-06-22'),
+            new \DateTimeImmutable('2026-06-29')
+        );
     }
 
     public function testCreateTemplateFromWeekSnapshotsShapeAndAssignees()

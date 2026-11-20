@@ -101,6 +101,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
     private $apiKeys;
 
+    private ?string $rememberedIri = null;
+
     /**
      * Initializes context.
      *
@@ -573,6 +575,28 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
         $this->restContext->iAddHeaderEqualTo('Authorization', 'Bearer ' . $this->tokens[$username]);
         $this->restContext->iSendARequestTo($method, $url);
+    }
+
+    #[Given('the IRI of the last response is remembered')]
+    public function theIriOfTheLastResponseIsRemembered()
+    {
+        $data = json_decode($this->minkContext->getSession()->getPage()->getContent(), true);
+
+        if (!isset($data['@id'])) {
+            throw new \RuntimeException('The last response has no "@id"');
+        }
+
+        $this->rememberedIri = $data['@id'];
+    }
+
+    #[When('the user :username sends a :method request to the remembered IRI')]
+    public function theUserSendsARequestToTheRememberedIri($username, $method)
+    {
+        if (null === $this->rememberedIri) {
+            throw new \RuntimeException('No IRI has been remembered');
+        }
+
+        $this->theUserSendsARequestTo($username, $method, $this->rememberedIri);
     }
 
     #[When('the user :username sends a :method request to :url with body:')]
@@ -1615,6 +1639,46 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->restContext->iAddHeaderEqualTo('X-Shopify-Shop-Domain', $shopDomain);
         $this->restContext->iAddHeaderEqualTo('X-Shopify-Hmac-SHA256', base64_encode('invalid'));
         $this->restContext->iSendARequestTo('POST', '/api/shopify/webhook', $body);
+    }
+
+    /**
+     * The secret the app itself was configured with, rather than the raw
+     * environment: the Zelty webhook endpoints fail closed, so the two have to
+     * agree or every scenario is a 403.
+     */
+    private function zeltyWebhookSecret(): string
+    {
+        $secret = (string) $this->kernel->getContainer()->getParameter('zelty_webhook_secret');
+
+        Assert::assertNotSame('', $secret,
+            'ZELTY_WEBHOOK_SECRET is empty, so the Zelty webhooks are all rejected. Set it in .env.test.');
+
+        return $secret;
+    }
+
+    #[When('I send a Zelty webhook to :path with body:')]
+    public function iSendZeltyWebhook(string $path, PyStringNode $body): void
+    {
+        $signature = hash_hmac('sha256', $body->getRaw(), $this->zeltyWebhookSecret());
+
+        $this->restContext->iAddHeaderEqualTo('Content-Type', 'application/json');
+        $this->restContext->iAddHeaderEqualTo('x-zelty-hmac-sha256', $signature);
+        $this->restContext->iSendARequestTo('POST', $path, $body);
+    }
+
+    #[When('I send a Zelty webhook to :path with an invalid signature and body:')]
+    public function iSendZeltyWebhookWithInvalidSignature(string $path, PyStringNode $body): void
+    {
+        $this->restContext->iAddHeaderEqualTo('Content-Type', 'application/json');
+        $this->restContext->iAddHeaderEqualTo('x-zelty-hmac-sha256', 'invalid-signature');
+        $this->restContext->iSendARequestTo('POST', $path, $body);
+    }
+
+    #[When('I send an unsigned Zelty webhook to :path with body:')]
+    public function iSendUnsignedZeltyWebhook(string $path, PyStringNode $body): void
+    {
+        $this->restContext->iAddHeaderEqualTo('Content-Type', 'application/json');
+        $this->restContext->iSendARequestTo('POST', $path, $body);
     }
 
     #[Given('a Shopify order :shopifyOrderId exists for shop :shopDomain with a delivery')]

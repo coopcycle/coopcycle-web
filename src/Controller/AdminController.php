@@ -43,7 +43,6 @@ use AppBundle\Entity\BusinessRestaurantGroup;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Order;
-use AppBundle\Entity\Sylius\OrderVendor;
 use AppBundle\Entity\Sylius\TaxRate;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
@@ -875,6 +874,7 @@ class AdminController extends AbstractController
         $filters = [
             'query' => null,
             'range' => null,
+            'owner' => false,
         ];
 
         $range = $this->getDeliveryDateRange($request);
@@ -916,11 +916,14 @@ class AdminController extends AbstractController
             $deliveryRepository->dateRange($qb, $range[0], $range[1]);
         }
 
-        // Allow filtering by store & restaurant with KnpPaginator
-        $qb->leftJoin(Store::class, 's', Expr\Join::WITH, 's.id = d.store');
-        $qb->leftJoin(Order::class, 'o', Expr\Join::WITH, 'o.id = d.order');
-        $qb->leftJoin(OrderVendor::class, 'v', Expr\Join::WITH, 'o.id = v.order');
-        $qb->leftJoin(LocalBusiness::class, 'r', Expr\Join::WITH, 'v.restaurant = r.id');
+        // Clicking the name of a store/restaurant filters the list on it
+        if (ctype_digit((string) $request->query->get('store'))) {
+            $deliveryRepository->filterByStore($qb, $request->query->getInt('store'));
+            $filters['owner'] = true;
+        } elseif (ctype_digit((string) $request->query->get('restaurant'))) {
+            $deliveryRepository->filterByRestaurant($qb, $request->query->getInt('restaurant'));
+            $filters['owner'] = true;
+        }
 
         // Stable tiebreaker, see the store delivery listing: deliveries sharing
         // the same createdAt would otherwise shuffle between pages.
@@ -935,8 +938,10 @@ class AdminController extends AbstractController
                 PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 'd.createdAt',
                 PaginatorInterface::DEFAULT_SORT_DIRECTION => 'desc',
                 PaginatorInterface::SORT_FIELD_ALLOW_LIST => ['d.createdAt'],
-                PaginatorInterface::DEFAULT_FILTER_FIELDS => ['s.id', 'r.id'],
-                PaginatorInterface::FILTER_FIELD_ALLOW_LIST => ['s.id', 'r.id']
+                // Keeps KnpPaginator from filtering, see filterByStore()
+                PaginatorInterface::FILTER_FIELD_PARAMETER_NAME => '_knp_filter_field',
+                PaginatorInterface::FILTER_VALUE_PARAMETER_NAME => '_knp_filter_value',
+                PaginatorInterface::FILTER_FIELD_ALLOW_LIST => [],
             ]
         );
 
@@ -1484,13 +1489,17 @@ class AdminController extends AbstractController
     {
         $query = new TypesenseQuery($request->query->get('q'), 'name');
 
-        $results = $this->typesenseShopsFinder->rawQuery($query)->getResults();
+        // Load the matching restaurants from the database rather than using the raw
+        // Typesense documents: the index may still contain soft-deleted restaurants,
+        // which are filtered out here (see SoftDeletedSubscriber, enabling the
+        // "soft_deleteable" filter for this route).
+        $results = $this->typesenseShopsFinder->query($query)->getResults();
 
         if ($request->query->has('format') && 'json' === $request->query->get('format')) {
-            $data = array_map(function ($hit) {
+            $data = array_map(function (LocalBusiness $restaurant) {
                 return [
-                    'id' => $hit['document']['id'],
-                    'name' => $hit['document']['name'],
+                    'id' => $restaurant->getId(),
+                    'name' => $restaurant->getName(),
                 ];
             }, $results);
 
@@ -2002,11 +2011,13 @@ class AdminController extends AbstractController
 
         $ongoingQb = $repository->createQueryBuilder('c')
             ->andWhere('c.expiresAt IS NULL OR c.expiresAt > :now')
+            ->andWhere('c.internal = false')
             ->setParameter('now', $now)
             ->orderBy('c.id', 'DESC');
 
         $pastQb = $repository->createQueryBuilder('c')
             ->andWhere('c.expiresAt IS NOT NULL AND c.expiresAt <= :now')
+            ->andWhere('c.internal = false')
             ->setParameter('now', $now)
             ->orderBy('c.id', 'DESC');
 
@@ -2134,6 +2145,12 @@ class AdminController extends AbstractController
 
         $promotionCoupon = $this->promotionCouponRepository->findOneByCode($code);
         $promotionRepository->find($id);
+
+        // Minted programmatically for a specific customer (e.g. by the
+        // referral program) -- not meant to be hand-edited by an admin.
+        if (null !== $promotionCoupon && $promotionCoupon->isInternal()) {
+            throw $this->createNotFoundException();
+        }
 
         $form = $this->createForm(PromotionCouponType::class, $promotionCoupon);
 

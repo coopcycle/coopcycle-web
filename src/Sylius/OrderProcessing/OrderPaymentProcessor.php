@@ -139,7 +139,9 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
                 // Do not hardcode this here
                 $card = $this->paymentMethodRepository->findOneByCode('CARD');
                 $cardPayment = $this->upsertPayment($order, $payments, $card, $order->getTotal(), $targetState);
-                switch ($this->gatewayResolver->resolveForOrder($order)) {
+                // Methods such as Apple Pay & Google Pay fall into this branch,
+                // and can only be processed by Paygreen
+                switch ($this->gatewayResolver->resolveForOrderAndMethod($order, $this->paymentContext->getMethod())) {
                     case 'stripe':
                         // Make sure to call StripeManager::configurePayment()
                         // It will resolve the Stripe account that will be used

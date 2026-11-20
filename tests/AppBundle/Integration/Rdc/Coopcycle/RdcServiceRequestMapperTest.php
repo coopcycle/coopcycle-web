@@ -2,14 +2,19 @@
 
 namespace Tests\AppBundle\Integration\Rdc\Coopcycle;
 
+use AppBundle\Entity\Package;
+use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
 use AppBundle\Integration\Rdc\Coopcycle\RdcServiceRequestMapper;
 use AppBundle\Integration\Rdc\DTO\TimeSlot;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\Geocoder;
+use AppBundle\Service\PackageMappingResolver;
 use Carbon\Carbon;
+use libphonenumber\PhoneNumberFormat;
 use libphonenumber\PhoneNumberUtil;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
 use ReflectionMethod;
@@ -20,6 +25,176 @@ class RdcServiceRequestMapperTest extends TestCase
 
     private const INSTANCE_TZ = 'Europe/Paris';
 
+    // Service request from a provider sending a SHIPPER contact, special
+    // characteristics, and the postal code/city apart from the address lines.
+    private const SHIPPER_SERVICE_REQUEST_SAMPLE = <<<JSON
+    {
+        "requestStatus": "REQUESTED",
+        "requestDateTime": "2026-11-02T09:00:00.000Z",
+        "provider": {
+            "legalEntityName": "COOPCYCLE"
+        },
+        "requestor": {
+            "legalEntityName": "REQUESTOR"
+        },
+        "incoterm": "DDP",
+        "isDangerous": false,
+        "contacts": [
+            {
+                "role": "CUSTOMER_DISPATCH",
+                "telephone": "0600000000",
+                "email": "dispatch@example.com"
+            },
+            {
+                "role": "SHIPPER",
+                "telephone": "0600000001",
+                "email": "contact@pharmacie-exemple.fr",
+                "persons": [
+                    {
+                        "familyName": "Martin",
+                        "givenName": "Claire",
+                        "email": "contact@pharmacie-exemple.fr",
+                        "telephone": "0600000001"
+                    }
+                ]
+            },
+            {
+                "role": "RECIPIENT",
+                "telephone": "0600000002",
+                "email": "logistique@association-exemple.org",
+                "persons": [
+                    {
+                        "familyName": "Bernard",
+                        "givenName": "Hugo",
+                        "email": "logistique@association-exemple.org",
+                        "telephone": "0600000002"
+                    }
+                ]
+            }
+        ],
+        "externalReferences": [
+            {
+                "description": "Collecte n° C-26-1234-1",
+                "reference": "C-26-1234-1",
+                "externalReferenceType": "REQUESTOR_ID"
+            },
+            {
+                "description": "Étiquette livraison",
+                "reference": "C-26-1234-1",
+                "externalReferenceType": "REQUESTOR_LABEL_ID"
+            }
+        ],
+        "specialCharacteristics": [
+            {
+                "characteristicReference": "CUSTOMER_ORDER_DESCRIPTION",
+                "stringValue": "6 cartons de produits pharmaceutiques (collecte C-26-1234-1)"
+            }
+        ],
+        "startLocation": {
+            "location": {
+                "locationName": "Pharmacie du Marché",
+                "address": {
+                    "addressCountry": {
+                        "countryCode": "FR",
+                        "countryName": "France"
+                    },
+                    "addressLocality": "Lyon",
+                    "postalCode": "69002",
+                    "addressLines": [
+                        "12 place du Marché"
+                    ]
+                }
+            },
+            "requestedStartTimeRange": {
+                "earliestDateTime": "2026-11-06T07:30:00.000Z",
+                "latestDateTime": "2026-11-06T18:30:00.000Z"
+            },
+            "requestedEndTimeRange": {
+                "earliestDateTime": "2026-11-06T07:30:00.000Z",
+                "latestDateTime": "2026-11-06T18:30:00.000Z"
+            },
+            "actions": [
+                {
+                    "actionName": "Chargement",
+                    "actionState": "REQUESTED",
+                    "actionType": "HANDLING",
+                    "actionSubtype": "LOADING",
+                    "sequenceNumber": 1,
+                    "compositionMovements": [
+                        {
+                            "containedBatchesOfGoods": [
+                                {
+                                    "containerType": "PARCEL",
+                                    "containerSubtype": "CARDBOARD",
+                                    "quantity": {
+                                        "value": 6,
+                                        "unit": "CONTAINER"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        "endLocation": {
+            "location": {
+                "locationName": "Association Exemple",
+                "address": {
+                    "addressCountry": {
+                        "countryCode": "FR",
+                        "countryName": "France"
+                    },
+                    "addressLocality": "Villeurbanne",
+                    "postalCode": "69100",
+                    "addressLines": [
+                        "8 rue de la Solidarité",
+                        "Bâtiment B"
+                    ]
+                },
+                "specialInstructions": [
+                    {
+                        "description": "Livraison par la cour, sonner au local du rez-de-chaussée."
+                    }
+                ]
+            },
+            "requestedStartTimeRange": {
+                "earliestDateTime": "2026-11-06T08:00:00.000Z",
+                "latestDateTime": "2026-11-06T16:00:00.000Z"
+            },
+            "requestedEndTimeRange": {
+                "earliestDateTime": "2026-11-06T08:00:00.000Z",
+                "latestDateTime": "2026-11-06T16:00:00.000Z"
+            },
+            "actions": [
+                {
+                    "actionName": "Déchargement",
+                    "actionState": "REQUESTED",
+                    "actionType": "HANDLING",
+                    "actionSubtype": "UNLOADING",
+                    "sequenceNumber": 1,
+                    "compositionMovements": [
+                        {
+                            "containedBatchesOfGoods": [
+                                {
+                                    "containerType": "PARCEL",
+                                    "containerSubtype": "CARDBOARD",
+                                    "quantity": {
+                                        "value": 6,
+                                        "unit": "CONTAINER"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+    JSON;
+
+    private const CONNECTION = 'BOL.MEMBER.PROVIDER';
+
     private RdcServiceRequestMapper $mapper;
 
     protected function setUp(): void
@@ -27,12 +202,7 @@ class RdcServiceRequestMapperTest extends TestCase
         $previousTz = date_default_timezone_get();
         date_default_timezone_set(self::INSTANCE_TZ);
 
-        $this->mapper = new RdcServiceRequestMapper(
-            $this->prophesize(DeliveryManager::class)->reveal(),
-            $this->prophesize(Geocoder::class)->reveal(),
-            $this->prophesize(PhoneNumberUtil::class)->reveal(),
-            new NullLogger(),
-        );
+        $this->mapper = $this->mapperWithPackages([]);
 
         // Restore on tearDown
         register_shutdown_function(static fn () => date_default_timezone_set($previousTz));
@@ -118,12 +288,11 @@ class RdcServiceRequestMapperTest extends TestCase
         $this->assertSame('📌 SOMETHING_ELSE: Whatever', $comments);
     }
 
-    public function testBuildCommentsFromSpecialInstructionsSkipsEntriesMissingCodeOrDescription(): void
+    public function testBuildCommentsFromSpecialInstructionsSkipsEntriesMissingDescription(): void
     {
         $comments = $this->invokeBuildComments([
             ['instructionCode' => 'COMMENT', 'description' => 'Keep me'],
             ['instructionCode' => 'COMMENT'],
-            ['description' => 'No code here'],
             ['instructionCode' => 'DIGICODE', 'description' => ''],
             ['instructionCode' => 'FLOOR', 'description' => '3'],
         ]);
@@ -131,11 +300,21 @@ class RdcServiceRequestMapperTest extends TestCase
         $this->assertSame("💬 COMMENT: Keep me\n🏢 FLOOR: 3", $comments);
     }
 
+    public function testBuildCommentsFromSpecialInstructionsTreatsEntriesWithoutCodeAsComments(): void
+    {
+        $comments = $this->invokeBuildComments([
+            ['description' => 'Livraison par la cour'],
+            ['instructionCode' => 'FLOOR', 'description' => '3'],
+        ]);
+
+        $this->assertSame("💬 Livraison par la cour\n🏢 FLOOR: 3", $comments);
+    }
+
     public function testBuildCommentsFromSpecialInstructionsReturnsNullWhenAllEntriesAreInvalid(): void
     {
         $comments = $this->invokeBuildComments([
             ['instructionCode' => 'COMMENT'],
-            ['description' => 'No code'],
+            ['description' => ''],
             ['instructionCode' => 'DIGICODE', 'description' => ''],
         ]);
 
@@ -418,19 +597,27 @@ class RdcServiceRequestMapperTest extends TestCase
         $this->assertArrayNotHasKey('rdc_created_at', $pickupMetadata);
     }
 
-    public function testMapToDeliveryWritesBarcodeToMetadataBarcodeKey(): void
+    public function testMapToDeliveryWritesLabelIdToExternalReference(): void
     {
         $apiRequest = $this->buildApiRequestWithBarcode('TEST-001');
 
         $delivery = $this->mapper->mapToDelivery($apiRequest, new \AppBundle\Entity\Store());
 
+        $this->assertSame('TEST-001', $delivery->getExternalReference());
+        $this->assertSame('TEST-001', $delivery->getMetadata()['external_reference']);
+        // Mirrored on both tasks, so it shows up wherever the task does.
+        $this->assertSame('TEST-001', $delivery->getPickup()->getMetadata()['external_reference']);
+        $this->assertSame('TEST-001', $delivery->getDropoff()->getMetadata()['external_reference']);
+        // Shown in the comments, riders look for it.
+        $this->assertSame('🏷️ Reference: TEST-001', $delivery->getPickup()->getComments());
+        $this->assertSame('🏷️ Reference: TEST-001', $delivery->getDropoff()->getComments());
+        // The label id is no longer stored as the pickup barcode.
         $pickupMetadata = $delivery->getPickup()->getMetadata();
-        $this->assertArrayHasKey('barcode', $pickupMetadata);
-        $this->assertSame('TEST-001', $pickupMetadata['barcode']);
+        $this->assertArrayNotHasKey('barcode', $pickupMetadata);
         $this->assertArrayNotHasKey('rdc_barcode', $pickupMetadata);
     }
 
-    public function testMapToDeliveryWritesExternalReferenceToDelivery(): void
+    public function testMapToDeliveryPrefersLabelIdOverRequestorId(): void
     {
         $apiRequest = new \AppBundle\Integration\Rdc\DTO\RdcApiServiceRequest(
             externalReferences: [
@@ -461,27 +648,46 @@ class RdcServiceRequestMapperTest extends TestCase
 
         $delivery = $this->mapper->mapToDelivery($apiRequest, new \AppBundle\Entity\Store());
 
-        $this->assertSame('EXT-REF-42', $delivery->getExternalReference());
-        // Barcode lives on the pickup task's metadata, distinct from externalReference.
-        $pickupMetadata = $delivery->getPickup()->getMetadata();
-        $this->assertSame('TEST-BARCODE', $pickupMetadata['barcode']);
+        // The label id wins over the requestor id, which is kept under `rdc`.
+        $this->assertSame('TEST-BARCODE', $delivery->getExternalReference());
+        $this->assertSame('EXT-REF-42', $delivery->getMetadata()['rdc']['requestor_id']);
         // Legacy metadata keys are gone.
         $pickupMetadata = $delivery->getPickup()->getMetadata();
         $this->assertArrayNotHasKey('rdc_external_ref', $pickupMetadata);
         $this->assertArrayNotHasKey('rdc_contract_ref', $pickupMetadata);
     }
 
-    public function testMapToDeliveryLeavesExternalReferenceNullWhenAbsent(): void
+    public function testMapToDeliveryLeavesExternalReferenceNullWithoutLabelId(): void
     {
-        // Only REQUESTOR_LABEL_ID (barcode) present, no REQUESTOR_ID.
+        // Only REQUESTOR_ID present, no REQUESTOR_LABEL_ID.
+        $base = $this->buildApiRequestWithBarcode('unused');
+        $apiRequest = new \AppBundle\Integration\Rdc\DTO\RdcApiServiceRequest(
+            externalReferences: [
+                ['externalReferenceType' => 'REQUESTOR_ID', 'reference' => 'EXT-REF-ONLY'],
+            ],
+            startLocation: $base->startLocation,
+            endLocation: $base->endLocation,
+        );
+
+        $delivery = $this->mapper->mapToDelivery($apiRequest, new \AppBundle\Entity\Store());
+
+        // No fallback: the requestor id is only kept under `rdc`.
+        $this->assertNull($delivery->getExternalReference());
+        $this->assertNull($delivery->getPickup()->getComments());
+        $this->assertArrayNotHasKey('external_reference', $delivery->getPickup()->getMetadata());
+        $this->assertSame('EXT-REF-ONLY', $delivery->getMetadata()['rdc']['requestor_id']);
+    }
+
+    public function testMapToDeliveryDoesNotStoreRequestorIdWhenAbsent(): void
+    {
         $apiRequest = $this->buildApiRequestWithBarcode('TEST-ONLY-BARCODE');
 
         $delivery = $this->mapper->mapToDelivery($apiRequest, new \AppBundle\Entity\Store());
 
-        $this->assertNull($delivery->getExternalReference());
+        $this->assertArrayNotHasKey('requestor_id', $delivery->getMetadata()['rdc']);
     }
 
-    public function testMapToDeliverySetsWeightOnDropoffFromStartLocationBatches(): void
+    public function testMapToDeliverySetsWeightOnPickupFromStartLocationBatches(): void
     {
         $apiRequest = $this->buildApiRequestWithBarcode('TEST-WEIGHT');
         $apiRequest = new \AppBundle\Integration\Rdc\DTO\RdcApiServiceRequest(
@@ -506,19 +712,23 @@ class RdcServiceRequestMapperTest extends TestCase
 
         $delivery = $this->mapper->mapToDelivery($apiRequest, new \AppBundle\Entity\Store());
 
-        $this->assertSame(5000, $delivery->getDropoff()->getWeight());
+        $this->assertSame(5000, $delivery->getPickup()->getWeight());
+        // Only on the pickup: Delivery::getWeight() sums all tasks.
+        $this->assertNull($delivery->getDropoff()->getWeight());
+        $this->assertSame(5000, $delivery->getWeight());
     }
 
-    public function testMapToDeliveryLeavesDropoffWeightNullWhenPayloadHasNoWeight(): void
+    public function testMapToDeliveryLeavesWeightNullWhenPayloadHasNoWeight(): void
     {
         $apiRequest = $this->buildApiRequestWithBarcode('TEST-NO-WEIGHT');
 
         $delivery = $this->mapper->mapToDelivery($apiRequest, new \AppBundle\Entity\Store());
 
+        $this->assertNull($delivery->getPickup()->getWeight());
         $this->assertNull($delivery->getDropoff()->getWeight());
     }
 
-    public function testMapToDeliveryLeavesDropoffWeightNullWhenStartLocationIsNull(): void
+    public function testMapToDeliveryLeavesWeightNullWhenStartLocationIsNull(): void
     {
         $apiRequest = new \AppBundle\Integration\Rdc\DTO\RdcApiServiceRequest(
             externalReferences: [
@@ -538,6 +748,7 @@ class RdcServiceRequestMapperTest extends TestCase
 
         $delivery = $this->mapper->mapToDelivery($apiRequest, new \AppBundle\Entity\Store());
 
+        $this->assertNull($delivery->getPickup()->getWeight());
         $this->assertNull($delivery->getDropoff()->getWeight());
     }
 
@@ -545,6 +756,281 @@ class RdcServiceRequestMapperTest extends TestCase
     {
         $method = new ReflectionMethod($this->mapper, 'buildCommentsFromSpecialInstructions');
         return $method->invoke($this->mapper, $specialInstructions);
+    }
+
+    public function testMapToDeliveryUsesLocationNamesWhenContactsHaveNone(): void
+    {
+        // Some requestors send a RECIPIENT contact without name:
+        // the names are on the locations.
+        $apiRequest = \AppBundle\Integration\Rdc\DTO\RdcApiServiceRequest::parse([
+            'startLocation' => [
+                'location' => [
+                    'locationName' => 'C.Market Grands Hommes',
+                    'address' => [
+                        'addressLines' => ['Place des Grands Hommes, Bordeaux, France'],
+                        'addressCountry' => ['countryCode' => 'FR'],
+                    ],
+                ],
+            ],
+            'endLocation' => [
+                'location' => [
+                    'locationName' => 'JANE DOE',
+                    'address' => [
+                        'addressLines' => ["Rue d'Aviau 1 33000 Bordeaux France"],
+                        'addressCountry' => ['countryCode' => 'FR'],
+                    ],
+                ],
+            ],
+            'contacts' => [
+                ['email' => 'jane.doe@example.com', 'role' => 'RECIPIENT'],
+            ],
+            'externalReferences' => [
+                ['externalReferenceType' => 'REQUESTOR_LABEL_ID', 'reference' => '637900000'],
+            ],
+        ]);
+
+        $delivery = $this->mapper->mapToDelivery($apiRequest, new \AppBundle\Entity\Store());
+
+        $this->assertSame('C.Market Grands Hommes', $delivery->getPickup()->getAddress()->getName());
+        // No separate postal code/city: the address line is kept as is.
+        $this->assertSame('Place des Grands Hommes, Bordeaux, France', $delivery->getPickup()->getAddress()->getStreetAddress());
+        $this->assertNull($delivery->getPickup()->getAddress()->getDescription());
+        $this->assertSame('JANE DOE', $delivery->getDropoff()->getAddress()->getName());
+        $this->assertSame('JANE DOE', $delivery->getDropoff()->getAddress()->getContactName());
+    }
+
+    public function testMapToDeliveryPrefersRecipientContactNameOverLocationName(): void
+    {
+        $base = $this->buildApiRequestWithBarcode('TEST-CONTACT');
+        $endLocation = $base->endLocation;
+        $endLocation['location']['locationName'] = 'ACME Corp';
+
+        $apiRequest = new \AppBundle\Integration\Rdc\DTO\RdcApiServiceRequest(
+            contacts: [
+                ['familyName' => 'Doe', 'role' => 'RECIPIENT'],
+            ],
+            externalReferences: $base->externalReferences,
+            startLocation: $base->startLocation,
+            endLocation: $endLocation,
+        );
+
+        $delivery = $this->mapper->mapToDelivery($apiRequest, new \AppBundle\Entity\Store());
+
+        $this->assertSame('ACME Corp', $delivery->getDropoff()->getAddress()->getName());
+        $this->assertSame('Doe', $delivery->getDropoff()->getAddress()->getContactName());
+    }
+
+    public function testMapToDeliveryMapsShipperPayload(): void
+    {
+        $apiRequest = \AppBundle\Integration\Rdc\DTO\RdcApiServiceRequest::parse(
+            json_decode(self::SHIPPER_SERVICE_REQUEST_SAMPLE, true, flags: JSON_THROW_ON_ERROR)
+        );
+
+        // The postal code and city are sent apart: they must reach the geocoder.
+        $geocoder = $this->prophesize(Geocoder::class);
+        $geocoder->geocode('12 place du Marché, 69002 Lyon')->shouldBeCalled()->willReturn(null);
+        $geocoder->geocode('8 rue de la Solidarité, 69100 Villeurbanne')->shouldBeCalled()->willReturn(null);
+
+        $phoneUtil = PhoneNumberUtil::getInstance();
+        $mapper = new RdcServiceRequestMapper(
+            $this->prophesize(DeliveryManager::class)->reveal(),
+            $geocoder->reveal(),
+            $phoneUtil,
+            new NullLogger(),
+            $this->prophesize(PackageMappingResolver::class)->reveal(),
+        );
+
+        $delivery = $mapper->mapToDelivery($apiRequest, new \AppBundle\Entity\Store());
+
+        $this->assertSame('C-26-1234-1', $delivery->getExternalReference());
+
+        $pickupAddress = $delivery->getPickup()->getAddress();
+        $this->assertSame('Pharmacie du Marché', $pickupAddress->getName());
+        $this->assertSame('12 place du Marché, 69002 Lyon', $pickupAddress->getStreetAddress());
+        $this->assertSame('Claire Martin', $pickupAddress->getContactName());
+        $this->assertSame('+33600000001', $phoneUtil->format($pickupAddress->getTelephone(), PhoneNumberFormat::E164));
+
+        $dropoffAddress = $delivery->getDropoff()->getAddress();
+        $this->assertSame('Association Exemple', $dropoffAddress->getName());
+        $this->assertSame('8 rue de la Solidarité, 69100 Villeurbanne', $dropoffAddress->getStreetAddress());
+        $this->assertSame('Bâtiment B', $dropoffAddress->getDescription());
+        $this->assertSame('Hugo Bernard', $dropoffAddress->getContactName());
+        $this->assertSame('+33600000002', $phoneUtil->format($dropoffAddress->getTelephone(), PhoneNumberFormat::E164));
+
+        $header = "🏷️ Reference: C-26-1234-1\n📦 CUSTOMER_ORDER_DESCRIPTION: 6 cartons de produits pharmaceutiques (collecte C-26-1234-1)";
+        $this->assertSame($header, $delivery->getPickup()->getComments());
+        $this->assertSame(
+            sprintf("%s\n💬 Livraison par la cour, sonner au local du rez-de-chaussée.", $header),
+            $delivery->getDropoff()->getComments()
+        );
+    }
+
+    public function testBuildCommentsFromSpecialCharacteristics(): void
+    {
+        $method = new ReflectionMethod($this->mapper, 'buildCommentsFromSpecialCharacteristics');
+
+        $this->assertNull($method->invoke($this->mapper, null));
+        $this->assertNull($method->invoke($this->mapper, [['characteristicReference' => 'EMPTY']]));
+        $this->assertSame(
+            "⭐ FRAGILE: oui\n⭐ VOLUME: 0.5 M3\n⭐ Sans libellé",
+            $method->invoke($this->mapper, [
+                // The type wins over the reference
+                ['specialCharacteristicType' => 'FRAGILE', 'characteristicReference' => 'REF-1', 'stringValue' => 'oui'],
+                ['characteristicReference' => 'VOLUME', 'numericalValue' => ['value' => 0.5, 'unit' => 'M3']],
+                ['stringValue' => 'Sans libellé'],
+            ])
+        );
+    }
+
+    public function testExtractWeightFromLocationCountsEachContainerOfTheBatch(): void
+    {
+        // The weight of a batch is the weight of each of its containers
+        $location = $this->locationWithGoods([
+            ['quantity' => ['value' => 6, 'unit' => 'CONTAINER'], 'weight' => ['value' => 2, 'unit' => 'KG']],
+            ['quantity' => ['value' => 3, 'unit' => 'KG'], 'weight' => ['value' => 1.5, 'unit' => 'KG']],
+        ]);
+
+        $this->assertSame(13500, $this->invokeExtractWeight($location));
+    }
+
+    public function testMapToDeliveryAddsTheMappedGoodsToTheDropoff(): void
+    {
+        $carton = $this->package('Carton');
+        $pallet = $this->package('Palette');
+        $mapper = $this->mapperWithPackages(['PARCEL/CARDBOARD' => $carton, 'PALLET' => $pallet]);
+
+        $goods = [
+            ['containerType' => 'PARCEL', 'containerSubtype' => 'CARDBOARD', 'quantity' => ['value' => 4, 'unit' => 'CONTAINER']],
+            // No PALLET/EUR in the mapping: the container type alone is used
+            ['containerType' => 'PALLET', 'containerSubtype' => 'EUR', 'quantity' => ['value' => 2, 'unit' => 'CONTAINER']],
+            // Nothing for it in the mapping
+            ['containerType' => 'BAG', 'quantity' => ['value' => 1, 'unit' => 'CONTAINER']],
+        ];
+        $delivery = $mapper->mapToDelivery($this->apiRequestWithGoods($this->locationWithGoods($goods)), $this->rdcStore());
+
+        $dropoff = $delivery->getDropoff();
+        $this->assertSame(4, $dropoff->getQuantityForPackage($carton));
+        $this->assertSame(2, $dropoff->getQuantityForPackage($pallet));
+        $this->assertCount(2, $dropoff->getPackages());
+        $this->assertFalse($delivery->getPickup()->hasPackages());
+
+        // All the goods are kept as they were sent, the unmapped ones too
+        $this->assertSame([
+            ['containerType' => 'PARCEL', 'containerSubtype' => 'CARDBOARD', 'quantity' => 4],
+            ['containerType' => 'PALLET', 'containerSubtype' => 'EUR', 'quantity' => 2],
+            ['containerType' => 'BAG', 'containerSubtype' => null, 'quantity' => 1],
+        ], $delivery->getMetadata()['rdc']['goods']);
+    }
+
+    public function testMapToDeliveryReadsTheGoodsOnTheDropoffWhenThePickupListsNone(): void
+    {
+        $carton = $this->package('Carton');
+        $mapper = $this->mapperWithPackages(['PARCEL' => $carton]);
+
+        $goods = $this->locationWithGoods([
+            ['containerType' => 'PARCEL', 'quantity' => ['value' => 3, 'unit' => 'CONTAINER']],
+        ]);
+        $delivery = $mapper->mapToDelivery($this->apiRequestWithGoods(null, $goods), $this->rdcStore());
+
+        $this->assertSame(3, $delivery->getDropoff()->getQuantityForPackage($carton));
+    }
+
+    public function testMapToDeliveryDoesNotCountTheGoodsTwice(): void
+    {
+        $carton = $this->package('Carton');
+        $mapper = $this->mapperWithPackages(['PARCEL' => $carton]);
+
+        // The dropoff unloads what the pickup loads
+        $goods = $this->locationWithGoods([
+            ['containerType' => 'PARCEL', 'quantity' => ['value' => 6, 'unit' => 'CONTAINER']],
+        ]);
+        $delivery = $mapper->mapToDelivery($this->apiRequestWithGoods($goods, $goods), $this->rdcStore());
+
+        $this->assertSame(6, $delivery->getDropoff()->getQuantityForPackage($carton));
+    }
+
+    public function testMapToDeliveryDoesNotAddGoodsNotCountedInContainers(): void
+    {
+        $carton = $this->package('Carton');
+        $mapper = $this->mapperWithPackages(['PARCEL' => $carton]);
+
+        $goods = $this->locationWithGoods([
+            ['containerType' => 'PARCEL', 'quantity' => ['value' => 12, 'unit' => 'KG']],
+            ['containerType' => 'PARCEL', 'quantity' => ['value' => 1.5, 'unit' => 'CONTAINER']],
+        ]);
+        $delivery = $mapper->mapToDelivery($this->apiRequestWithGoods($goods), $this->rdcStore());
+
+        $this->assertFalse($delivery->getDropoff()->hasPackages());
+        $this->assertSame([null, null], array_column($delivery->getMetadata()['rdc']['goods'], 'quantity'));
+    }
+
+    public function testMapToDeliveryWithoutGoodsKeepsNoGoods(): void
+    {
+        $delivery = $this->mapper->mapToDelivery($this->apiRequestWithGoods(), $this->rdcStore());
+
+        $this->assertFalse($delivery->getDropoff()->hasPackages());
+        $this->assertArrayNotHasKey('goods', $delivery->getMetadata()['rdc']);
+    }
+
+    /**
+     * @param array<string,Package> $packages What the connection's packageMapping resolves to
+     */
+    private function mapperWithPackages(array $packages): RdcServiceRequestMapper
+    {
+        $mapping = array_map(fn () => '/api/packages/1', $packages);
+
+        $resolver = $this->prophesize(PackageMappingResolver::class);
+        $resolver->resolve($mapping, Argument::cetera())->willReturn($packages);
+
+        return new RdcServiceRequestMapper(
+            $this->prophesize(DeliveryManager::class)->reveal(),
+            $this->prophesize(Geocoder::class)->reveal(),
+            $this->prophesize(PhoneNumberUtil::class)->reveal(),
+            new NullLogger(),
+            $resolver->reveal(),
+            [self::CONNECTION => ['packageMapping' => $mapping]],
+        );
+    }
+
+    private function package(string $name): Package
+    {
+        $package = new Package();
+        $package->setName($name);
+
+        return $package;
+    }
+
+    private function rdcStore(): Store
+    {
+        $store = new Store();
+        $store->setRdcConnectionId(self::CONNECTION);
+
+        return $store;
+    }
+
+    private function locationWithGoods(array $goods): array
+    {
+        return [
+            'actions' => [
+                ['compositionMovements' => [['containedBatchesOfGoods' => $goods]]],
+            ],
+        ];
+    }
+
+    private function apiRequestWithGoods(?array $pickupGoods = null, ?array $dropoffGoods = null): \AppBundle\Integration\Rdc\DTO\RdcApiServiceRequest
+    {
+        return new \AppBundle\Integration\Rdc\DTO\RdcApiServiceRequest(
+            uri: 'https://rdc.example.com/lo/123',
+            externalReferences: [
+                ['externalReferenceType' => 'REQUESTOR_LABEL_ID', 'reference' => 'TEST-BARCODE'],
+            ],
+            startLocation: [
+                'location' => ['address' => ['addressLines' => ['1 rue de Rivoli']]],
+            ] + ($pickupGoods ?? []),
+            endLocation: [
+                'location' => ['address' => ['addressLines' => ['1 place Bellecour']]],
+            ] + ($dropoffGoods ?? []),
+        );
     }
 
     private function invokeExtractWeight(?array $location): ?int

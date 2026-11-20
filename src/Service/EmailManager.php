@@ -6,10 +6,14 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\BusinessAccount;
 use AppBundle\Entity\Invitation;
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\Referral\Referral;
+use AppBundle\Entity\Referral\ReferralLevel;
 use AppBundle\Entity\Restaurant\Pledge;
+use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Task;
 use AppBundle\LoopEat\Context as LoopeatContext;
 use AppBundle\LoopEat\ContextInitializer as LoopeatContextInitializer;
+use AppBundle\Transporter\RejectedFile;
 use AppBundle\Twig\LocalBusinessRuntime;
 use AppBundle\Twig\OrderRuntime;
 use Hashids\Hashids;
@@ -22,6 +26,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
+use Symfony\Component\Mime\MimeTypes;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment as TwigEnvironment;
@@ -68,10 +73,24 @@ class EmailManager
         );
     }
 
-    private function getReplyTo(): Address
+    /**
+     * The administrator email is an optional setting, so an instance that has
+     * never saved the settings form has none. Omit the Reply-To header in that
+     * case -- replies then go to the From address -- rather than building an
+     * Address from an empty string, which throws RfcComplianceException and
+     * takes down every page that sends a transactional email.
+     */
+    private function getReplyTo(): ?Address
     {
+        $administratorEmail = $this->settingsManager->get('administrator_email');
+
+        if (empty($administratorEmail)) {
+
+            return null;
+        }
+
         return Address::create(
-            sprintf('%s <%s>', $this->settingsManager->get('brand_name'), $this->settingsManager->get('administrator_email'))
+            sprintf('%s <%s>', $this->settingsManager->get('brand_name'), $administratorEmail)
         );
     }
 
@@ -95,9 +114,16 @@ class EmailManager
 
     public function createHtmlMessageWithReplyTo($subject = null, $body = null): Email
     {
+        $message = $this->createHtmlMessage($subject, $body);
+
         // Allow replying to the administrator
-        return $this->createHtmlMessage($subject, $body)
-            ->replyTo($this->getReplyTo());
+        $replyTo = $this->getReplyTo();
+
+        if (null !== $replyTo) {
+            $message->replyTo($replyTo);
+        }
+
+        return $message;
     }
 
     public function send(Email $message)
@@ -377,6 +403,50 @@ class EmailManager
         return $this->createHtmlMessageWithReplyTo($subject, $body);
     }
 
+    /**
+     * @param array<array-key,RejectedFile> $files Attached as they were received
+     */
+    public function createImportFailedMessage(string $source, array $files): Email
+    {
+        $subject = $this->translator->trans('admin.import_failed.subject', ['%source%' => $source], 'emails');
+        $body = $this->mjml->render($this->templating->render('emails/import_failed.mjml.twig', [
+            'source' => $source,
+            'files' => $files,
+        ]));
+
+        $message = $this->createHtmlMessage($subject, $body);
+        foreach ($files as $file) {
+            [$name, $contentType] = $this->rejectedFileAttachment($file);
+            $message->attach($file->content, $name, $contentType);
+        }
+
+        return $message;
+    }
+
+    /**
+     * The name and type to attach a rejected file with, so it opens in the right app.
+     * The name is the importer's key, which doesn't have to end with the file's extension.
+     *
+     * @return array{0:string,1:string}
+     */
+    private function rejectedFileAttachment(RejectedFile $file): array
+    {
+        $name = basename($file->name);
+        $contentType = (new \finfo(FILEINFO_MIME_TYPE))->buffer($file->content) ?: 'application/octet-stream';
+
+        // EDIFACT, CSV: as received
+        if (str_starts_with($contentType, 'text/')) {
+            return [$name, 'text/plain'];
+        }
+
+        $extension = MimeTypes::getDefault()->getExtensions($contentType)[0] ?? null;
+        if (is_null($extension) || str_ends_with(strtolower($name), sprintf('.%s', $extension))) {
+            return [$name, $contentType];
+        }
+
+        return [sprintf('%s.%s', $name, $extension), $contentType];
+    }
+
     public function createInvitationMessage(Invitation $invitation)
     {
         $subject = $this->translator->trans('admin.send_invitation.subject', [], 'emails');
@@ -394,6 +464,51 @@ class EmailManager
             'user' => $invitation->getUser(),
             'invitation' => $invitation,
             'account' => $account,
+        ]));
+
+        return $this->createHtmlMessageWithReplyTo($subject, $body);
+    }
+
+    public function createReferralWelcomeMessage(Referral $referral)
+    {
+        $subject = $this->translator->trans('referral.welcome.subject', [], 'emails');
+        $body = $this->mjml->render($this->templating->render('emails/referral/welcome.mjml.twig', [
+            'coupon_code' => $referral->getReferredWelcomeCoupon()?->getCode(),
+        ]));
+
+        return $this->createHtmlMessageWithReplyTo($subject, $body);
+    }
+
+    public function createReferralCompletedMessageForReferrer(Referral $referral)
+    {
+        $subject = $this->translator->trans('referral.reward_earned.subject', [], 'emails');
+        $body = $this->mjml->render($this->templating->render('emails/referral/reward_earned.mjml.twig', [
+            'coupon_code' => $referral->getReferrerRewardCoupon()?->getCode(),
+        ]));
+
+        return $this->createHtmlMessageWithReplyTo($subject, $body);
+    }
+
+    public function createReferralLevelUpMessage(Customer $referrer, ReferralLevel $newLevel)
+    {
+        $levelName = $this->translator->trans(sprintf('referral.level.%s', $newLevel->getName()), [], 'emails');
+
+        $subject = $this->translator->trans('referral.level_up.subject', [], 'emails');
+        $body = $this->mjml->render($this->templating->render('emails/referral/level_up.mjml.twig', [
+            'level_name' => $levelName,
+        ]));
+
+        return $this->createHtmlMessageWithReplyTo($subject, $body);
+    }
+
+    public function createReferralInvitationMessage(Customer $referrer, string $referralLink)
+    {
+        $subject = $this->translator->trans('referral.invitation.subject', [
+            '{{referrer_name}}' => $referrer->getFullName(),
+        ], 'emails');
+        $body = $this->mjml->render($this->templating->render('emails/referral/invitation.mjml.twig', [
+            'referrer_name' => $referrer->getFullName(),
+            'referral_link' => $referralLink,
         ]));
 
         return $this->createHtmlMessageWithReplyTo($subject, $body);

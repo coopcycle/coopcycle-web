@@ -73,6 +73,7 @@ fos_js_routing:
         - _api_/incidents/{id}/comments_post
         - _api_/incidents/{id}/action_put
         - _api_/tasks/{id}/failure_reasons_get
+        - _api_/tasks/{id}/done_put
         - _api_/incident_images{._format}_post
         - _api_/incidents/{id}{._format}_patch
         - _api_/incidents{._format}_get_collection

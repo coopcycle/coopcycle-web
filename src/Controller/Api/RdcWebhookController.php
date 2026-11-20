@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace AppBundle\Controller\Api;
 
-use AppBundle\Integration\Rdc\DTO\RdcApiActivity;
-use AppBundle\Integration\Rdc\DTO\RdcApiService;
-use AppBundle\Integration\Rdc\DTO\RdcApiServiceRequest;
 use AppBundle\Message\RdcMessage;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,12 +15,18 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class RdcWebhookController extends AbstractController
 {
-    private const WEBHOOK_MEMBER_HEADER = 'X-webhook-Source';
+    private const WEBHOOK_SOURCE_HEADER = 'X-webhook-Source';
     private const WEBHOOK_SECRET_HEADER = 'X-webhook-Secret';
+
+    // The only object we handle: created, it becomes a delivery;
+    // updated, the requestor may have cancelled it.
+    private const SUPPORTED_RESOURCE_TYPE = 'servicerequest';
+    private const SUPPORTED_TRIGGER_TYPES = ['create', 'update'];
 
     public function __construct(
         private readonly LoggerInterface $logger,
         private readonly MessageBusInterface $messageBus,
+        private readonly array $rdcConnections = [],
         private readonly bool $rdcEnabled = false,
     ) {}
 
@@ -34,11 +37,17 @@ class RdcWebhookController extends AbstractController
             return $this->errorResponse('Not Found', Response::HTTP_NOT_FOUND);
         }
 
-        if (!$this->isValidSecret($request)) {
-            return $this->errorResponse('Invalid webhook secret', Response::HTTP_UNAUTHORIZED);
-        }
-        if (!$this->isValidBOLMember($request)) {
+        // The source tells which connection sends the webhook, hence which secret it must know
+        $source = (string) $request->headers->get(self::WEBHOOK_SOURCE_HEADER, '');
+        if (!array_key_exists($source, $this->rdcConnections)) {
+            $this->logger->warning('RDC webhook request from an unknown source', [
+                'source' => $source,
+                'known_sources' => array_keys($this->rdcConnections),
+            ]);
             return $this->errorResponse('Invalid BOL member', Response::HTTP_UNAUTHORIZED);
+        }
+        if (!$this->isValidSecret($request, $source)) {
+            return $this->errorResponse('Invalid webhook secret', Response::HTTP_UNAUTHORIZED);
         }
 
         $events = $this->parsePayload($request);
@@ -48,53 +57,44 @@ class RdcWebhookController extends AbstractController
 
         $results = [];
         foreach ($events as $event) {
-            $results[] = $this->handleEvent($event, $request);
+            $results[] = $this->handleEvent($event, $source);
         }
 
         return new JsonResponse(['results' => $results], Response::HTTP_ACCEPTED);
     }
 
-    private function handleEvent(array $event, Request $request): array
+    private function handleEvent(mixed $event, string $source): array
     {
-        $metadata = $event['notificationMetadata'] ?? [];
-        $lo = $event['lo'] ?? null;
-        $resourceType = strtolower($metadata['resourceType'] ?? '');
-        $triggerType = strtolower($metadata['triggerType'] ?? '');
-        $loMember = $request->headers->get(self::WEBHOOK_MEMBER_HEADER) ?? ($metadata['loMemberIdentifier'] ?? '');
+        $metadata = is_array($event) ? ($event['notificationMetadata'] ?? null) : null;
+        $lo = is_array($event) ? ($event['lo'] ?? null) : null;
 
-        $dto = $this->parseDto($resourceType, $lo);
-        if (is_null($dto)) {
-            return $this->errorResult('Unsupported resource type');
+        if (!is_array($metadata) || !is_array($lo)
+            || !is_string($metadata['loUri'] ?? null)
+            || !is_string($metadata['notificationType'] ?? null)) {
+            return $this->rejectEvent('Missing required metadata', $source, is_array($metadata) ? $metadata : []);
         }
-        if ($this->isMissingMetadata($lo, $metadata)) {
-            return $this->errorResult('Missing required metadata');
+
+        $resourceType = $this->lowercase($metadata['resourceType'] ?? null);
+        $triggerType = $this->lowercase($metadata['triggerType'] ?? null);
+
+        if ($resourceType !== self::SUPPORTED_RESOURCE_TYPE) {
+            return $this->rejectEvent('Unsupported resource type', $source, $metadata);
         }
-        if ($this->isSkippedTrigger($resourceType, $triggerType)) {
+        if (!in_array($triggerType, self::SUPPORTED_TRIGGER_TYPES, true)) {
+            $this->logger->info('RDC webhook event skipped', $this->eventContext($source, $metadata));
+
             return $this->buildResponse('skipped', $metadata, $resourceType, $triggerType);
         }
 
         $this->messageBus->dispatch(new RdcMessage(
             loPayload: $lo,
-            loMember: $loMember,
+            loMember: $source,
             loUri: $metadata['loUri'],
-            loRevision: isset($metadata['loRevision']) ? (int) $metadata['loRevision'] : null,
+            loRevision: is_numeric($metadata['loRevision'] ?? null) ? (int) $metadata['loRevision'] : null,
             notificationMetadata: $metadata,
         ));
 
         return $this->buildResponse('queued', $metadata, $resourceType, $triggerType);
-    }
-
-    private function parseDto(string $resourceType, ?array $lo): ?object
-    {
-        if (empty($lo)) {
-            return null;
-        }
-        return match ($resourceType) {
-            'servicerequest' => RdcApiServiceRequest::parse($lo),
-            'service' => RdcApiService::parse($lo),
-            'activity' => RdcApiActivity::parse($lo),
-            default => null,
-        };
     }
 
     private function parsePayload(Request $request): ?array
@@ -104,46 +104,60 @@ class RdcWebhookController extends AbstractController
             $this->logger->warning('RDC webhook payload is not valid JSON', ['error' => json_last_error_msg()]);
             return null;
         }
-        if (!is_array($payload) || empty($payload[0])) {
-            $this->logger->warning('RDC webhook payload is empty or invalid');
+        if (!is_array($payload) || !array_is_list($payload) || empty($payload)) {
+            $this->logger->warning('RDC webhook payload is not a list of events');
             return null;
         }
         return $payload;
     }
 
-    private function isMissingMetadata(?array $lo, array $metadata): bool
+    private function isValidSecret(Request $request, string $source): bool
     {
-        return is_null($lo)
-            || is_null($metadata['loUri'] ?? null)
-            || is_null($metadata['notificationType'] ?? null);
-    }
-
-    private function isSkippedTrigger(string $resourceType, string $triggerType): bool
-    {
-        return $resourceType === 'servicerequest' && $triggerType !== 'create';
-    }
-
-    private function isValidSecret(Request $request): bool
-    {
-        $providedSecret = $request->headers->get(self::WEBHOOK_SECRET_HEADER);
-        $configuredSecret = $this->getParameter('rdc_webhook_secret');
-
-        if (is_null($providedSecret) || is_null($configuredSecret)) {
-            $this->logger->warning('RDC webhook request with invalid secret');
+        $configuredSecret = (string) ($this->rdcConnections[$source]['webhookSecret'] ?? '');
+        // Without it, an empty header would match
+        if ($configuredSecret === '') {
+            $this->logger->error('RDC connection has no webhook secret, its webhooks are refused', [
+                'source' => $source,
+            ]);
             return false;
         }
+
+        $providedSecret = (string) $request->headers->get(self::WEBHOOK_SECRET_HEADER, '');
         if (!hash_equals($configuredSecret, $providedSecret)) {
-            $this->logger->warning('RDC webhook request with invalid secret');
+            $this->logger->warning('RDC webhook request with invalid secret', [
+                'source' => $source,
+            ]);
             return false;
         }
+
         return true;
     }
 
-    private function isValidBOLMember(Request $request): bool
+    private function lowercase(mixed $value): string
     {
-        $members = array_keys($this->getParameter('rdc_connections'));
-        $providedMember = $request->headers->get(self::WEBHOOK_MEMBER_HEADER);
-        return in_array($providedMember, $members, true);
+        return is_string($value) ? strtolower($value) : '';
+    }
+
+    /**
+     * The BOL reads a 202 as delivered and won't send the event again: log
+     * why it is dropped.
+     */
+    private function rejectEvent(string $reason, string $source, array $metadata): array
+    {
+        $this->logger->warning(sprintf('RDC webhook event rejected: %s', $reason), $this->eventContext($source, $metadata));
+
+        return ['status' => 'error', 'error' => $reason];
+    }
+
+    private function eventContext(string $source, array $metadata): array
+    {
+        return [
+            'source' => $source,
+            'lo_uri' => is_string($metadata['loUri'] ?? null) ? $metadata['loUri'] : null,
+            'resource_type' => $metadata['resourceType'] ?? null,
+            'trigger_type' => $metadata['triggerType'] ?? null,
+            'revision' => $metadata['loRevision'] ?? null,
+        ];
     }
 
     private function buildResponse(string $status, array $metadata, string $resourceType, string $triggerType): array
@@ -158,14 +172,8 @@ class RdcWebhookController extends AbstractController
         ];
     }
 
-    private function errorResult(string $message): array
-    {
-        return ['status' => 'error', 'error' => $message];
-    }
-
     private function errorResponse(string $message, int $status): JsonResponse
     {
         return new JsonResponse(['error' => $message], $status);
     }
-
 }

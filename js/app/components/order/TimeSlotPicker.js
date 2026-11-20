@@ -15,6 +15,7 @@ const TimeSlotPicker = ({ choices, onChange, t, value }) => {
   return (
     <Select
       styles={ selectStyles }
+      isSearchable={ false }
       defaultValue={ _.find(options, o => o.value[0] === value[0] && o.value[1] === value[1]) }
       options={ options }
       placeholder={ t('CART_CHANGE_TIME_MODAL_TITLE') }

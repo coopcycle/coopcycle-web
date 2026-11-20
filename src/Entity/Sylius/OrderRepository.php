@@ -236,6 +236,55 @@ class OrderRepository extends BaseOrderRepository
         ;
     }
 
+    /**
+     * Counts a customer's paid orders, excluding cart/cancelled ones and,
+     * optionally, one order in particular -- used by the referral program's
+     * "first order" rule checker, which evaluates eligibility on the very
+     * order it must exclude from the count.
+     */
+    public function countPaidOrdersByCustomer(CustomerInterface $customer, ?OrderInterface $excluding = null): int
+    {
+        $qb = $this->createQueryBuilder('o')
+            ->select('COUNT(o.id)')
+            ->andWhere('o.customer = :customer')
+            ->andWhere('o.state NOT IN (:states)')
+            ->setParameter('customer', $customer)
+            ->setParameter('states', [OrderInterface::STATE_CART, OrderInterface::STATE_CANCELLED]);
+
+        if (null !== $excluding) {
+            $qb
+                ->andWhere('o.id != :excludedOrderId')
+                ->setParameter('excludedOrderId', $excluding->getId());
+        }
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * Counts the customer's paid orders placed strictly before $order.
+     *
+     * countPaidOrdersByCustomer() answers "does this customer have paid
+     * orders at all", which stops being the right question once the referral
+     * reward is granted at fulfillment rather than at checkout: by then the
+     * customer may legitimately have placed further orders, and those must
+     * not make their genuine first order look like a repeat one.
+     */
+    public function countPaidOrdersPlacedBefore(CustomerInterface $customer, OrderInterface $order): int
+    {
+        return (int) $this->createQueryBuilder('o')
+            ->select('COUNT(o.id)')
+            ->andWhere('o.customer = :customer')
+            ->andWhere('o.state NOT IN (:states)')
+            ->andWhere('o.id != :orderId')
+            ->andWhere('o.createdAt < :createdAt')
+            ->setParameter('customer', $customer)
+            ->setParameter('states', [OrderInterface::STATE_CART, OrderInterface::STATE_CANCELLED])
+            ->setParameter('orderId', $order->getId())
+            ->setParameter('createdAt', $order->getCreatedAt())
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
     public function findOneByTask(Task $task): ?OrderInterface
     {
         $qb = $this->createQueryBuilder('o');

@@ -1,0 +1,14 @@
+{% extends 'emails/layout.mjml.twig' %}
+
+{% block content %}
+  <mj-text align="left" line-height="20px">
+  {{ 'admin.import_failed.body' | trans({'%source%': source|e, '%count%': files|length}, 'emails') | raw }}
+  </mj-text>
+  <mj-text align="left" line-height="20px">
+    <ul>
+    {% for file in files %}
+      <li><strong>{{ file.name }}</strong>: {{ file.reason }}</li>
+    {% endfor %}
+    </ul>
+  </mj-text>
+{% endblock %}

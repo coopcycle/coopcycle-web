@@ -208,7 +208,8 @@ export function unassignTasks(username, items) {
       return
     }
 
-    await dispatch(removeTaskListItems(username, items))
+    // The updated list, or nothing if the request failed and was rolled back
+    return dispatch(removeTaskListItems(username, items))
   }
 }
 
@@ -1808,11 +1809,11 @@ export function deleteRecurrenceRule(recurrenceRule) {
   }
 }
 
-export function deleteGroupSuccess(group) {
-  return { type: DELETE_GROUP_SUCCESS, group }
+export function deleteGroupSuccess(group, cancelTasks = false) {
+  return { type: DELETE_GROUP_SUCCESS, group, cancelTasks }
 }
 
-export function deleteGroup(group) {
+export function deleteGroup(group, cancelTasks = false) {
 
   return function(dispatch, getState) {
 
@@ -1822,14 +1823,14 @@ export function deleteGroup(group) {
 
     createClient(dispatch).request({
       method: 'delete',
-      url: resourceId,
+      url: cancelTasks ? `${resourceId}?cancel_tasks=1` : resourceId,
       headers: {
         'Authorization': `Bearer ${jwt}`,
         'Accept': 'application/ld+json',
         'Content-Type': 'application/ld+json'
       }
     })
-      .then(() => dispatch(deleteGroupSuccess(resourceId)))
+      .then(() => dispatch(deleteGroupSuccess(resourceId, cancelTasks)))
       // eslint-disable-next-line no-console
       .catch(error => console.log(error))
   }
@@ -2366,7 +2367,7 @@ export function removeTasksFromTour(tour, tasks, modifyTourAction=modifyTour) {
 
   return function(dispatch) {
     let newTourItems = withoutItemsIRIs(tour.items, tasks.map(t => t['@id']))
-    dispatch(modifyTourAction(tour, newTourItems))
+    return dispatch(modifyTourAction(tour, newTourItems))
   }
 }
 
@@ -2672,3 +2673,23 @@ export function removeTagFromTasks(slug, tasks) {
       .catch(error => dispatch(startTaskFailure(error)))
   }
 }
+
+/**
+ * Dispatch board "precognition": carts moving through checkout, drawn as
+ * halos where an order is about to land.
+ *
+ * `precogSynced` replaces the whole set -- used on load and on every Centrifugo
+ * (re)connect, since a board that was disconnected has no way of knowing which
+ * ghosts appeared or expired while it was away.
+ */
+export const precogUpdated = createAction('PRECOG_UPDATED')
+/**
+ * A cart that was paid for, held just long enough to mark the spot. The ghost
+ * is already gone; this carries the position it had so the board can show
+ * something happened there, rather than a halo silently vanishing.
+ */
+export const precogCompleted = createAction('PRECOG_COMPLETED')
+export const precogCompletionEnded = createAction('PRECOG_COMPLETION_ENDED')
+export const precogGone = createAction('PRECOG_GONE')
+export const precogSynced = createAction('PRECOG_SYNCED')
+export const precogExpired = createAction('PRECOG_EXPIRED')

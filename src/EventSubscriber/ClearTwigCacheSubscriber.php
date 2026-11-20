@@ -12,22 +12,31 @@ class ClearTwigCacheSubscriber implements EventSubscriberInterface
     private $keyGenerator;
     private $twigCache;
     private $annotation;
+    private $locales;
 
     public function __construct(
         KeyGenerator $keyGenerator,
         CacheItemPoolInterface $twigCache,
-        string $annotation)
+        string $annotation,
+        string $localeRegex)
     {
         $this->keyGenerator = $keyGenerator;
         $this->twigCache = $twigCache;
         $this->annotation = $annotation;
+        $this->locales = explode('|', $localeRegex);
     }
 
     public function onCatalogUpdated(GenericEvent $event)
     {
-        $cacheKey = $this->keyGenerator->generateKey($event->getSubject(), $this->annotation);
+        // The menu is cached per locale & business context, see templates/restaurant/index.html.twig
+        $cacheKeys = [];
+        foreach ($this->locales as $locale) {
+            foreach (['', '_business'] as $suffix) {
+                $cacheKeys[] = $this->keyGenerator->generateKey($event->getSubject(), $this->annotation . '_' . $locale . $suffix);
+            }
+        }
 
-        $this->twigCache->deleteItem($cacheKey);
+        $this->twigCache->deleteItems($cacheKeys);
     }
 
     /**

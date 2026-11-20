@@ -15,8 +15,10 @@ use AppBundle\Entity\TaskImage;
 use AppBundle\Enum\TaskImageType;
 use AppBundle\Messenger\TransactionalMessages;
 use AppBundle\Service\DeliveryOrderManager;
+use AppBundle\Service\PackageMappingResolver;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TaskManager;
+use AppBundle\Transporter\ImportFailureNotifier;
 use AppBundle\Transporter\ImportFromPoint;
 use AppBundle\Transporter\ReportFromCC;
 use AppBundle\Transporter\TransporterHelpers;
@@ -79,6 +81,10 @@ class SyncTransportersCommandTest extends KernelTestCase {
     UNA:+,? ' UNB+UNOC:1+349669192:22+942803198:22+260602:1341+999901484802' UNH+1484802+DISPOR:3:2:GT:GTF110' BGM++1484802' TSR+++3' CAG+P+V' NAD+CO+40017751500048:05++ORLEANS LOG PC LA ROSEE' DTM+DEP+260602' NAD+FW+94280319800020:05++CYCLOGIK' GDS+G+.' TDT++++3' DOC+730+++ACG+78822' UNS+D' RFF+SEN+LACOURSERIEDAD' GID++1:23' MSE+CGW+16,000:KG' NAD+CN+++TEST LA COURSERIE+64 RUE ALEXANDRE DUMAS+PARIS++75+FR' CTA++:TEST MTO+06 01 02 03 04:TE+mtor@tel.fr:TM' DTM+DAD+270926' NAD+OS+++ORLEANS LOG PC LA ROSEE+7 ROUTE DE BOIGNY+SAINT JEAN DE BRAYE++45800+FR' CAG+P+V+++++LRC++++LRC' TSR+++3' TXT+DEL+TEST A SUPPRIMER' GDS+G+TEST' PCI+23' GIN+BN+*69069000000000LRC01699848001300' DOC+WBL+++PRI+1699848' DOC+150+++PRI+LACOURSERIEDAD' UNS+S' UNT+27+1484802' UNZ+1+999901484802'
     EDI;
 
+    const EDI_DISPOR_WRONG_GEOCODING_SAMPLE = <<<EDI
+    UNA:+,? ' UNB+UNOC:1+349669192:22+942803198:22+260602:1341+999901484802' UNH+1484802+DISPOR:3:2:GT:GTF110' BGM++1484802' TSR+++3' CAG+P+V' NAD+CO+40017751500048:05++ORLEANS LOG PC LA ROSEE' DTM+DEP+260602' NAD+FW+94280319800020:05++CYCLOGIK' GDS+G+.' TDT++++3' DOC+730+++ACG+78822' UNS+D' RFF+SEN+LACOURSERIETEST' GID++1:23' MSE+CGW+16,000:KG' NAD+CN+++TEST LA COURSERIE+64 RUE ALEXANDRE DUMAS+PARIS++75020+FR' CTA++:TEST MTO+06 01 02 03 04:TE+mtor@tel.fr:TM' NAD+OS+++ORLEANS LOG PC LA ROSEE+7 ROUTE DE BOIGNY+SAINT JEAN DE BRAYE++45800+FR' CAG+P+V+++++LRC++++LRC' TSR+++3' TXT+DEL+TEST A SUPPRIMER' GDS+G+TEST' PCI+23' GIN+BN+*69069000000000LRC01699848001300' DOC+WBL+++PRI+1699848' DOC+150+++PRI+LACOURSERIETEST' UNS+S' UNT+27+1484802' UNZ+1+999901484802'
+    EDI;
+
     const PARTIAL_REPORT_EDI_SAMPLE = <<<EDI
     UNB+UNOC:1+4447190000:22+0000011:22+
     NAD+MR+4447190000:5++Coopcycle Testing Inc.'
@@ -128,6 +134,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
     protected DeliveryOrderManager $deliveryOrderManager;
     protected $params;
     protected $settingManager;
+    protected $importFailureNotifier;
 
     public function setUp(): void
     {
@@ -142,6 +149,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->fixturesLoader = self::getContainer()->get('fidry_alice_data_fixtures.loader.doctrine');
         $this->params = $this->prophesize(ParameterBagInterface::class);
         $this->settingManager = $this->prophesize(SettingsManager::class);
+        $this->importFailureNotifier = $this->prophesize(ImportFailureNotifier::class);
         $this->logger = self::getContainer()->get(LoggerInterface::class);
         $this->syncDBSchenkerFs = new Filesystem(new InMemoryFilesystemAdapter());
         $this->syncInBMVFs = new Filesystem(new InMemoryFilesystemAdapter());
@@ -233,9 +241,10 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs,
             $this->deliveryOrderManager,
-            self::getContainer()->get(IriConverterInterface::class),
+            self::getContainer()->get(PackageMappingResolver::class),
             self::getContainer()->get(TransactionalMessages::class),
-            self::getContainer()->get('doctrine')
+            self::getContainer()->get('doctrine'),
+            $this->importFailureNotifier->reveal()
         );
     }
 
@@ -277,9 +286,10 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs,
             $this->deliveryOrderManager,
-            self::getContainer()->get(IriConverterInterface::class),
+            self::getContainer()->get(PackageMappingResolver::class),
             self::getContainer()->get(TransactionalMessages::class),
-            self::getContainer()->get('doctrine')
+            self::getContainer()->get('doctrine'),
+            $this->importFailureNotifier->reveal()
         );
 
         $this->expectException(\Exception::class);
@@ -324,9 +334,10 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs,
             $this->deliveryOrderManager,
-            self::getContainer()->get(IriConverterInterface::class),
+            self::getContainer()->get(PackageMappingResolver::class),
             self::getContainer()->get(TransactionalMessages::class),
-            self::getContainer()->get('doctrine')
+            self::getContainer()->get('doctrine'),
+            $this->importFailureNotifier->reveal()
         );
 
         $this->expectException(\Exception::class);
@@ -371,9 +382,10 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs,
             $this->deliveryOrderManager,
-            self::getContainer()->get(IriConverterInterface::class),
+            self::getContainer()->get(PackageMappingResolver::class),
             self::getContainer()->get(TransactionalMessages::class),
-            self::getContainer()->get('doctrine')
+            self::getContainer()->get('doctrine'),
+            $this->importFailureNotifier->reveal()
         );
 
         $this->expectException(\Exception::class);
@@ -418,9 +430,10 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs,
             $this->deliveryOrderManager,
-            self::getContainer()->get(IriConverterInterface::class),
+            self::getContainer()->get(PackageMappingResolver::class),
             self::getContainer()->get(TransactionalMessages::class),
-            self::getContainer()->get('doctrine')
+            self::getContainer()->get('doctrine'),
+            $this->importFailureNotifier->reveal()
         );
 
         $this->expectException(\Exception::class);
@@ -461,9 +474,10 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs,
             $this->deliveryOrderManager,
-            self::getContainer()->get(IriConverterInterface::class),
+            self::getContainer()->get(PackageMappingResolver::class),
             self::getContainer()->get(TransactionalMessages::class),
-            self::getContainer()->get('doctrine')
+            self::getContainer()->get('doctrine'),
+            $this->importFailureNotifier->reveal()
         );
 
         $this->expectException(\Exception::class);
@@ -638,29 +652,57 @@ class SyncTransportersCommandTest extends KernelTestCase {
             'transporter' => 'DBSCHENKER'
         ]);
 
-        // The batch completes despite the bad file ...
-        $commandTester->assertCommandIsSuccessful();
+        // The batch completes despite the bad file, but exits 1 ...
+        $this->assertEquals(Command::FAILURE, $commandTester->getStatusCode());
         $output = $commandTester->getDisplay();
         // ... the valid file was imported ...
         $this->assertStringContainsString('imported 1 tasks', $output);
-        // ... and the failure is reported.
+        // ... and the failure is reported, with the file.
         $this->assertStringContainsString('1 file(s) failed', $output);
+        $this->assertStringContainsString(sprintf('Rejected file "to_%s/garbage.edi"', self::FS_MASK_DBS), $output);
+        // ... and to the cooperative's administrator, with the file as received
+        $this->importFailureNotifier
+            ->notify('DBSCHENKER', Argument::that(fn(array $files): bool =>
+                array_keys($files) === [sprintf('to_%s/garbage.edi', self::FS_MASK_DBS)]
+                && $files[sprintf('to_%s/garbage.edi', self::FS_MASK_DBS)]->content === 'THIS IS NOT AN EDIFACT MESSAGE'
+            ))
+            ->shouldHaveBeenCalledOnce();
 
         // The valid delivery exists.
         $this->assertCount(1, $this->entityManager->getRepository(Delivery::class)->findAll());
 
-        // Acknowledge is all-or-nothing: because a file failed, nothing is
-        // deleted so the good and bad files are both kept for a safe retry.
-        $this->assertCount(
-            2,
-            $this->syncDBSchenkerFs->listContents(sprintf('to_%s', self::FS_MASK_DBS))->toArray()
-        );
+        // Only the bad file is kept on the remote, to be retried
+        $dir_list = $this->syncDBSchenkerFs->listContents(sprintf('to_%s', self::FS_MASK_DBS))->toArray();
+        $this->assertCount(1, $dir_list);
+        $this->assertEquals(sprintf('to_%s/garbage.edi', self::FS_MASK_DBS), $dir_list[0]->path());
+
+        // Next run: the bad file is rejected again, nothing else to do
+        $commandTester->execute([
+            'transporter' => 'DBSCHENKER'
+        ]);
+        $this->assertEquals(Command::FAILURE, $commandTester->getStatusCode());
+        $this->assertStringContainsString('imported 0 tasks (0 already-imported, 0 filtered out by postal code, 1 file(s) failed)', $commandTester->getDisplay());
+        $this->assertCount(1, $this->entityManager->getRepository(Delivery::class)->findAll());
     }
 
-    public function testReprocessingKeptFilesDoesNotDuplicate(): void
+    public function testRejectedFileIsMovedToTheFailedFolder(): void
     {
-        // First run: a valid file alongside a failing one keeps both files
-        // (all-or-nothing acknowledge).
+        $this->params
+            ->get('transporters_config')
+            ->willReturn([
+                'DBSCHENKER' => [
+                    'enabled' => true,
+                    'name' => 'DBSchenker test',
+                    'legal_name' => 'DBSchenker Testing Inc.',
+                    'legal_id' => '0000011',
+                    'sync' => [
+                        'filemask' => self::FS_MASK_DBS,
+                        'uri' => $this->syncDBSchenkerFs,
+                        'failedPath' => 'failed_{filemask}',
+                    ]
+                ],
+            ]);
+
         $this->syncDBSchenkerFs->write(
             sprintf('to_%s/valid.edi', self::FS_MASK_DBS),
             self::EDI_SAMPLE
@@ -670,6 +712,113 @@ class SyncTransportersCommandTest extends KernelTestCase {
             'THIS IS NOT AN EDIFACT MESSAGE'
         );
 
+        $commandTester = new CommandTester($this->initCommand());
+        $commandTester->execute([
+            'transporter' => 'DBSCHENKER'
+        ]);
+
+        $this->assertEquals(Command::FAILURE, $commandTester->getStatusCode());
+        $this->assertStringContainsString('imported 1 tasks', $commandTester->getDisplay());
+
+        // The pull folder is empty, the bad file was set aside
+        $this->assertCount(0, $this->syncDBSchenkerFs->listContents(sprintf('to_%s', self::FS_MASK_DBS))->toArray());
+        $failed = $this->syncDBSchenkerFs->listContents(sprintf('failed_%s', self::FS_MASK_DBS))->toArray();
+        $this->assertCount(1, $failed);
+        $this->assertEquals(sprintf('failed_%s/garbage.edi', self::FS_MASK_DBS), $failed[0]->path());
+
+        // Another bad file with the same name: both are kept
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/garbage.edi', self::FS_MASK_DBS),
+            'STILL NOT AN EDIFACT MESSAGE'
+        );
+        $commandTester->execute([
+            'transporter' => 'DBSCHENKER'
+        ]);
+
+        $this->assertEquals(Command::FAILURE, $commandTester->getStatusCode());
+        $this->assertCount(0, $this->syncDBSchenkerFs->listContents(sprintf('to_%s', self::FS_MASK_DBS))->toArray());
+        $this->assertCount(2, $this->syncDBSchenkerFs->listContents(sprintf('failed_%s', self::FS_MASK_DBS))->toArray());
+        $this->assertEquals(
+            'THIS IS NOT AN EDIFACT MESSAGE',
+            $this->syncDBSchenkerFs->read(sprintf('failed_%s/garbage.edi', self::FS_MASK_DBS))
+        );
+    }
+
+    public function testRetryFailedImportsTheFailedFolder(): void
+    {
+        $this->params
+            ->get('transporters_config')
+            ->willReturn([
+                'DBSCHENKER' => [
+                    'enabled' => true,
+                    'name' => 'DBSchenker test',
+                    'legal_name' => 'DBSchenker Testing Inc.',
+                    'legal_id' => '0000011',
+                    'sync' => [
+                        'filemask' => self::FS_MASK_DBS,
+                        'uri' => $this->syncDBSchenkerFs,
+                        'failedPath' => 'failed_{filemask}',
+                    ]
+                ],
+            ]);
+
+        // Set aside by an earlier run, e.g. while the geocoder was down
+        $this->syncDBSchenkerFs->write(
+            sprintf('failed_%s/valid.edi', self::FS_MASK_DBS),
+            self::EDI_SAMPLE
+        );
+        $this->syncDBSchenkerFs->write(
+            sprintf('failed_%s/garbage.edi', self::FS_MASK_DBS),
+            'THIS IS NOT AN EDIFACT MESSAGE'
+        );
+        // Not part of the retry
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/pickup.edi', self::FS_MASK_DBS),
+            self::EDI_PICKUP_SAMPLE
+        );
+
+        $commandTester = new CommandTester($this->initCommand());
+        $commandTester->execute([
+            'transporter' => 'DBSCHENKER',
+            '--retry-failed' => true,
+        ]);
+
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('Retrying the files of the failed folder', $output);
+        $this->assertStringContainsString('imported 1 tasks (0 already-imported, 0 filtered out by postal code, 1 file(s) failed)', $output);
+        $this->assertEquals(Command::FAILURE, $commandTester->getStatusCode());
+
+        $deliveries = $this->entityManager->getRepository(Delivery::class)->findAll();
+        $this->assertCount(1, $deliveries);
+        $this->assertEquals('JOY0123456789', $deliveries[0]->getExternalReference());
+
+        // The imported file is removed, the bad one stays in the failed folder, once
+        $failed = $this->syncDBSchenkerFs->listContents(sprintf('failed_%s', self::FS_MASK_DBS))->toArray();
+        $this->assertCount(1, $failed);
+        $this->assertEquals(sprintf('failed_%s/garbage.edi', self::FS_MASK_DBS), $failed[0]->path());
+        // The pull folder wasn't touched
+        $this->assertCount(1, $this->syncDBSchenkerFs->listContents(sprintf('to_%s', self::FS_MASK_DBS))->toArray());
+    }
+
+    public function testRetryFailedWithoutFailedPath(): void
+    {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('No failedPath configured for DBSCHENKER, nothing to retry');
+
+        $commandTester = new CommandTester($this->initCommand());
+        $commandTester->execute([
+            'transporter' => 'DBSCHENKER',
+            '--retry-failed' => true,
+        ]);
+    }
+
+    public function testResentFileDoesNotDuplicate(): void
+    {
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/valid.edi', self::FS_MASK_DBS),
+            self::EDI_SAMPLE
+        );
+
         $command = $this->initCommand();
         $commandTester = new CommandTester($command);
         $commandTester->execute([
@@ -677,17 +826,25 @@ class SyncTransportersCommandTest extends KernelTestCase {
         ]);
         $this->assertStringContainsString('imported 1 tasks', $commandTester->getDisplay());
         $this->assertCount(1, $this->entityManager->getRepository(Delivery::class)->findAll());
+        $this->assertCount(1, $this->edifactFs->listContents('/')->toArray());
 
-        // Second run over the same kept files: the valid task is recognised as
+        // The transporter sends the same file again: the task is recognised as
         // already imported (dedup on reference) and skipped, so no duplicate
-        // delivery is created.
+        // delivery is created, and the file isn't archived a second time.
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/valid_again.edi', self::FS_MASK_DBS),
+            self::EDI_SAMPLE
+        );
         $commandTester->execute([
             'transporter' => 'DBSCHENKER'
         ]);
+        $commandTester->assertCommandIsSuccessful();
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('imported 0 tasks', $output);
         $this->assertStringContainsString('1 already-imported', $output);
         $this->assertCount(1, $this->entityManager->getRepository(Delivery::class)->findAll());
+        $this->assertCount(1, $this->edifactFs->listContents('/')->toArray());
+        $this->assertCount(0, $this->syncDBSchenkerFs->listContents(sprintf('to_%s', self::FS_MASK_DBS))->toArray());
     }
 
     public function testFailedOrderCreationLeavesNothingAndIsRetried(): void
@@ -730,9 +887,10 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs,
             $failingOrderManager->reveal(),
-            self::getContainer()->get(IriConverterInterface::class),
+            self::getContainer()->get(PackageMappingResolver::class),
             self::getContainer()->get(TransactionalMessages::class),
-            self::getContainer()->get('doctrine')
+            self::getContainer()->get('doctrine'),
+            $this->importFailureNotifier->reveal()
         );
         $commandTester = new CommandTester($command);
         $commandTester->execute([
@@ -757,11 +915,11 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->assertNotNull($deliveries[0]->getOrder());
         $this->assertCount(2, $this->entityManager->getRepository(Task::class)->findAll());
 
-        // Both files are kept for the retry
-        $this->assertCount(
-            2,
-            $this->syncDBSchenkerFs->listContents(sprintf('to_%s', self::FS_MASK_DBS))->toArray()
-        );
+        // Only the failed file is kept for the retry
+        $dir_list = $this->syncDBSchenkerFs->listContents(sprintf('to_%s', self::FS_MASK_DBS))->toArray();
+        $this->assertCount(1, $dir_list);
+        $this->assertEquals(sprintf('to_%s/a_scontr.edi', self::FS_MASK_DBS), $dir_list[0]->path());
+        $this->assertEquals(Command::FAILURE, $commandTester->getStatusCode());
 
         // Second run: the failed shipment is imported, not skipped
         $commandTester = new CommandTester($this->initCommand());
@@ -771,7 +929,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
 
         $commandTester->assertCommandIsSuccessful();
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('imported 1 tasks (1 already-imported, 0 file(s) failed)', $output);
+        $this->assertStringContainsString('imported 1 tasks (0 already-imported, 0 filtered out by postal code, 0 file(s) failed)', $output);
 
         $this->assertTrue($ediRepo->hasInbound('JOY0123456789', 'DBSCHENKER'));
         $deliveries = $this->entityManager->getRepository(Delivery::class)->findAll();
@@ -1896,6 +2054,156 @@ class SyncTransportersCommandTest extends KernelTestCase {
         ], $dropoff->getMetadata()['transporter_packages']);
     }
 
+    /**
+     * A product type without a package in the mapping is skipped: only the
+     * mapped ones are added, and the count as sent is still kept.
+     */
+    public function testOnlyTheMappedPackagesAreAdded(): void
+    {
+        // Insert edi to sync
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/test.edi', self::FS_MASK_DBS),
+            self::EDI_PACKAGES_SAMPLE
+        );
+
+        // Only HANDLING_UNIT is mapped, PACKAGE is not
+        $iriConverter = self::getContainer()->get(IriConverterInterface::class);
+        $xlIri = $iriConverter->getIriFromResource(
+            $this->entityManager->getRepository(Package::class)->findOneBy(['shortCode' => 'XL'])
+        );
+
+        $command = $this->buildCommandWithConfig([
+            'DBSCHENKER' => [
+                'enabled' => true,
+                'name' => 'DBSchenker test',
+                'legal_name' => 'DBSchenker Testing Inc.',
+                'legal_id' => '0000011',
+                'sync' => [
+                    'filemask' => self::FS_MASK_DBS,
+                    'uri' => $this->syncDBSchenkerFs,
+                ],
+                'package_mapping' => [
+                    'HANDLING_UNIT' => $xlIri,
+                ],
+            ],
+        ]);
+
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'transporter' => 'DBSCHENKER'
+        ]);
+
+        $commandTester->assertCommandIsSuccessful();
+        $this->assertStringContainsString('imported 1 tasks', $commandTester->getDisplay());
+
+        // Read what was saved, not the entities the command built
+        $this->entityManager->clear();
+        $deliveries = $this->entityManager->getRepository(Delivery::class)->findAll();
+        $this->assertCount(1, $deliveries);
+        $dropoff = $deliveries[0]->getDropoff();
+
+        // GID++2:23+3:21' -> the 2 handling units only
+        $this->assertEquals(2, $dropoff->totalPackages());
+        $this->assertCount(1, $dropoff->getPackages());
+        $this->assertEquals('XL', $dropoff->getPackages()->first()->getPackage()->getShortCode());
+
+        $this->assertEquals([
+            ['type' => 'HANDLING_UNIT', 'quantity' => 2],
+            ['type' => 'PACKAGE', 'quantity' => 3],
+        ], $dropoff->getMetadata()['transporter_packages']);
+    }
+
+    /**
+     * A failed shipment resets the entity manager: the mapped packages are
+     * resolved again, so the next shipment gets managed packages and not
+     * the ones of the closed entity manager.
+     */
+    public function testPackageMappingIsResolvedAgainAfterAFailedShipment(): void
+    {
+        // The order of the first shipment can not be created, the second one has packages
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/a_scontr.edi', self::FS_MASK_DBS),
+            self::EDI_SAMPLE
+        );
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/b_packages.edi', self::FS_MASK_DBS),
+            self::EDI_PACKAGES_SAMPLE
+        );
+
+        $iriConverter = self::getContainer()->get(IriConverterInterface::class);
+        $packageRepository = $this->entityManager->getRepository(Package::class);
+        $xlIri = $iriConverter->getIriFromResource($packageRepository->findOneBy(['shortCode' => 'XL']));
+        $smIri = $iriConverter->getIriFromResource($packageRepository->findOneBy(['shortCode' => 'SM']));
+
+        $params = $this->prophesize(ParameterBagInterface::class);
+        $params->get('transporters_config')->willReturn([
+            'DBSCHENKER' => [
+                'enabled' => true,
+                'name' => 'DBSchenker test',
+                'legal_name' => 'DBSchenker Testing Inc.',
+                'legal_id' => '0000011',
+                'sync' => [
+                    'filemask' => self::FS_MASK_DBS,
+                    'uri' => $this->syncDBSchenkerFs,
+                ],
+                'package_mapping' => [
+                    'HANDLING_UNIT' => $xlIri,
+                    'PACKAGE' => $smIri,
+                ],
+            ],
+        ]);
+
+        // Any failure inside the transaction closes the entity manager
+        $realOrderManager = $this->deliveryOrderManager;
+        $failingOrderManager = $this->prophesize(DeliveryOrderManager::class);
+        $failingOrderManager
+            ->createOrder(Argument::cetera())
+            ->will(function (array $args) use ($realOrderManager) {
+                /** @var Delivery $delivery */
+                $delivery = $args[0];
+                if ($delivery->getExternalReference() === 'JOY0123456789') {
+                    throw new \RuntimeException('The order can not be created');
+                }
+
+                return $realOrderManager->createOrder(...$args);
+            });
+
+        $command = new SyncTransportersCommand(
+            'test',
+            $this->entityManager,
+            $params->reveal(),
+            $this->settingManager->reveal(),
+            $this->logger,
+            self::getContainer()->get(ImportFromPoint::class),
+            self::getContainer()->get(ReportFromCC::class),
+            $this->edifactFs,
+            $failingOrderManager->reveal(),
+            self::getContainer()->get(PackageMappingResolver::class),
+            self::getContainer()->get(TransactionalMessages::class),
+            self::getContainer()->get('doctrine'),
+            $this->importFailureNotifier->reveal()
+        );
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'transporter' => 'DBSCHENKER'
+        ]);
+
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('The order can not be created', $output);
+        $this->assertStringContainsString('imported 1 tasks', $output);
+        $this->assertStringContainsString('1 file(s) failed', $output);
+
+        $deliveries = $this->entityManager->getRepository(Delivery::class)->findAll();
+        $this->assertCount(1, $deliveries);
+        $this->assertEquals('JOYPACKAGES0001', $deliveries[0]->getExternalReference());
+
+        $packageQuantities = [];
+        foreach ($deliveries[0]->getDropoff()->getPackages() as $taskPackage) {
+            $packageQuantities[$taskPackage->getPackage()->getShortCode()] = $taskPackage->getQuantity();
+        }
+        $this->assertEquals(['XL' => 2, 'SM' => 3], $packageQuantities);
+    }
+
     public function testValidSyncOnePickupTask(): void
     {
         // Insert edi to sync
@@ -2435,6 +2743,250 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->assertWindowEqualsDay($expectedBefore, $dropoff->getBefore());
     }
 
+    public function testSenderOverrideIsUsedInReports(): void
+    {
+        $this->params = $this->prophesize(ParameterBagInterface::class);
+        $this->params->get('transporters_config')
+            ->willReturn([
+                'TELIAE' => [
+                    'enabled' => true,
+                    'name' => 'Taliae test',
+                    'legal_name' => 'Taliae Testing Inc.',
+                    'legal_id' => '0000044',
+                    'sender_legal_name' => 'Shared Coop',
+                    'sender_legal_id' => '12345678900011',
+                    'sync' => [
+                        'filemask' => self::FS_MASK_TALIAE,
+                        'uri' => $this->syncTaliaeFs,
+                    ]
+                ]
+            ]);
+
+        $this->syncTaliaeFs->write(
+            sprintf('to_%s/test.edi', self::FS_MASK_TALIAE),
+            self::EDI_DISPOR_SAMPLE
+        );
+
+        $command = $this->initCommand();
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(['transporter' => 'TELIAE']);
+        $commandTester->assertCommandIsSuccessful();
+        $this->assertStringContainsString('Reporting as Shared Coop (12345678900011)', $commandTester->getDisplay());
+
+        /** @var Delivery $delivery */
+        $delivery = $this->entityManager->getRepository(Delivery::class)->findOneBy([]);
+        foreach ([$delivery->getPickup(), $delivery->getDropoff()] as $task) {
+            $this->taskManager->start($task);
+            $this->entityManager->flush();
+            $this->taskManager->markAsDone($task);
+            $this->entityManager->flush();
+        }
+
+        $commandTester->execute(['transporter' => 'TELIAE']);
+        $commandTester->assertCommandIsSuccessful();
+
+        $reports = $this->syncTaliaeFs->listContents(sprintf('from_%s', self::FS_MASK_TALIAE))->toArray();
+        $this->assertCount(1, $reports);
+        $report = $this->syncTaliaeFs->read($reports[0]->path());
+
+        $this->assertStringContainsString("UNB+UNOC:1+12345678900011:22+0000044:22", $report);
+        $this->assertStringContainsString("NAD+MS+12345678900011:5++Shared Coop'", $report);
+        $this->assertStringNotContainsString('4447190000', $report);
+        $this->assertStringNotContainsString('Coopcycle Testing Inc.', $report);
+    }
+
+    public function testSenderOverrideRequiresBothNameAndId(): void
+    {
+        $this->params = $this->prophesize(ParameterBagInterface::class);
+        $this->params->get('transporters_config')
+            ->willReturn([
+                'TELIAE' => [
+                    'enabled' => true,
+                    'name' => 'Taliae test',
+                    'legal_name' => 'Taliae Testing Inc.',
+                    'legal_id' => '0000044',
+                    'sender_legal_name' => 'Shared Coop',
+                    'sync' => [
+                        'filemask' => self::FS_MASK_TALIAE,
+                        'uri' => $this->syncTaliaeFs,
+                    ]
+                ]
+            ]);
+
+        $this->expectExceptionMessage('sender_legal_name and sender_legal_id must be set together');
+
+        $commandTester = new CommandTester($this->initCommand());
+        $commandTester->execute(['transporter' => 'TELIAE']);
+    }
+
+    public function testPostalCodeFilterSkipsOtherPostalCodes(): void
+    {
+        $this->params = $this->prophesize(ParameterBagInterface::class);
+        $this->params->get('transporters_config')
+            ->willReturn([
+                'TELIAE' => [
+                    'enabled' => true,
+                    'name' => 'Taliae test',
+                    'legal_name' => 'Taliae Testing Inc.',
+                    'legal_id' => '0000044',
+                    'postal_codes' => ['13'],
+                    'sync' => [
+                        'filemask' => self::FS_MASK_TALIAE,
+                        'uri' => $this->syncTaliaeFs,
+                    ]
+                ]
+            ]);
+
+        $this->syncTaliaeFs->write(
+            sprintf('to_%s/test.edi', self::FS_MASK_TALIAE),
+            self::EDI_DISPOR_SAMPLE
+        );
+
+        $command = $this->initCommand();
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(['transporter' => 'TELIAE']);
+
+        $commandTester->assertCommandIsSuccessful();
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('Postal code filter active: 13', $output);
+        $this->assertStringContainsString(
+            'Task LACOURSERIETEST filtered out by postal code (geocoded: "75011", transporter: "75")',
+            $output
+        );
+        $this->assertStringContainsString('imported 0 tasks', $output);
+        $this->assertStringContainsString('1 filtered out by postal code', $output);
+
+        // The file is still acknowledged on the remote
+        $dir_list = $this->syncTaliaeFs->listContents(sprintf('to_%s', self::FS_MASK_TALIAE))->toArray();
+        $this->assertCount(0, $dir_list);
+
+        $this->assertCount(0, $this->entityManager->getRepository(Delivery::class)->findAll());
+        $this->assertCount(0, $this->entityManager->getRepository(EDIFACTMessage::class)->findAll());
+    }
+
+    public function testPostalCodeFilterImportsMatchingPrefix(): void
+    {
+        $this->params = $this->prophesize(ParameterBagInterface::class);
+        $this->params->get('transporters_config')
+            ->willReturn([
+                'TELIAE' => [
+                    'enabled' => true,
+                    'name' => 'Taliae test',
+                    'legal_name' => 'Taliae Testing Inc.',
+                    'legal_id' => '0000044',
+                    'postal_codes' => ['13', '75'],
+                    'sync' => [
+                        'filemask' => self::FS_MASK_TALIAE,
+                        'uri' => $this->syncTaliaeFs,
+                    ]
+                ]
+            ]);
+
+        $this->syncTaliaeFs->write(
+            sprintf('to_%s/test.edi', self::FS_MASK_TALIAE),
+            self::EDI_DISPOR_SAMPLE
+        );
+
+        $command = $this->initCommand();
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(['transporter' => 'TELIAE']);
+
+        $commandTester->assertCommandIsSuccessful();
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('imported 1 tasks', $output);
+        $this->assertStringContainsString('0 filtered out by postal code', $output);
+
+        $this->assertCount(1, $this->entityManager->getRepository(Delivery::class)->findAll());
+    }
+
+    public function testPostalCodeFilterImportsWhenOnlyTheTransporterPostalCodeMatches(): void
+    {
+        $this->params = $this->prophesize(ParameterBagInterface::class);
+        $this->params->get('transporters_config')
+            ->willReturn([
+                'TELIAE' => [
+                    'enabled' => true,
+                    'name' => 'Taliae test',
+                    'legal_name' => 'Taliae Testing Inc.',
+                    'legal_id' => '0000044',
+                    'postal_codes' => ['75020'],
+                    'sync' => [
+                        'filemask' => self::FS_MASK_TALIAE,
+                        'uri' => $this->syncTaliaeFs,
+                    ]
+                ]
+            ]);
+
+        $this->syncTaliaeFs->write(
+            sprintf('to_%s/test.edi', self::FS_MASK_TALIAE),
+            self::EDI_DISPOR_WRONG_GEOCODING_SAMPLE
+        );
+
+        $command = $this->initCommand();
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(['transporter' => 'TELIAE']);
+
+        $commandTester->assertCommandIsSuccessful();
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('imported 1 tasks', $output);
+        $this->assertStringContainsString('0 filtered out by postal code', $output);
+
+        $deliveries = $this->entityManager->getRepository(Delivery::class)->findAll();
+        $this->assertCount(1, $deliveries);
+
+        /** @var Delivery $delivery */
+        $delivery = array_shift($deliveries);
+
+        // The geocoded postal code doesn't match, only the transporter's one does
+        $this->assertEquals('75011', $delivery->getDropoff()->getAddress()->getPostalCode());
+    }
+
+    public function testPostalCodeFilterImportsAddressesThatFailedToGeocode(): void
+    {
+        $this->params = $this->prophesize(ParameterBagInterface::class);
+        $this->params->get('transporters_config')
+            ->willReturn([
+                'DBSCHENKER' => [
+                    'enabled' => true,
+                    'name' => 'DBSchenker test',
+                    'legal_name' => 'DBSchenker Testing Inc.',
+                    'legal_id' => '0000011',
+                    'postal_codes' => ['13'],
+                    'sync' => [
+                        'filemask' => self::FS_MASK_DBS,
+                        'uri' => $this->syncDBSchenkerFs,
+                    ]
+                ]
+            ]);
+
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/test.edi', self::FS_MASK_DBS),
+            self::INVALID_ADDRESS_EDI_SAMPLE
+        );
+
+        $command = $this->initCommand();
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(['transporter' => 'DBSCHENKER']);
+
+        $commandTester->assertCommandIsSuccessful();
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('imported 1 tasks', $output);
+        $this->assertStringContainsString('0 filtered out by postal code', $output);
+
+        $deliveries = $this->entityManager->getRepository(Delivery::class)->findAll();
+        $this->assertCount(1, $deliveries);
+
+        /** @var Delivery $delivery */
+        $delivery = array_shift($deliveries);
+        $dropoff = $delivery->getDropoff();
+        $this->assertEquals('INVALID ADDRESS', $dropoff->getAddress()->getStreetaddress());
+
+        // The dispatcher decides from the incident
+        $incidents = $this->entityManager->getRepository(Incident::class)->findBy(['task' => $dropoff]);
+        $this->assertCount(1, $incidents);
+        $this->assertEquals('ADDRESS_REVIEW_NEEDED', $incidents[0]->getFailureReasonCode());
+    }
+
     private function assertWindowEqualsDay(\DateTime $expected, ?\DateTime $actual): void
     {
         $this->assertNotNull($actual, 'Window timestamp must not be null');
@@ -2582,9 +3134,10 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs,
             $this->deliveryOrderManager,
-            self::getContainer()->get(IriConverterInterface::class),
+            self::getContainer()->get(PackageMappingResolver::class),
             self::getContainer()->get(TransactionalMessages::class),
-            self::getContainer()->get('doctrine')
+            self::getContainer()->get('doctrine'),
+            $this->importFailureNotifier->reveal()
         );
     }
 

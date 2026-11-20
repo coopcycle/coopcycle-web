@@ -1,0 +1,42 @@
+{
+  "nodes": {
+    "nodes": {
+      "left": {
+        "nodes": {
+          "node": {
+            "nodes": [],
+            "attributes": {
+              "name": "task"
+            }
+          },
+          "attribute": {
+            "isNullSafe": false,
+            "nodes": [],
+            "attributes": {
+              "value": "dropoffRank"
+            }
+          },
+          "arguments": {
+            "nodes": [],
+            "attributes": []
+          }
+        },
+        "attributes": {
+          "type": 1,
+          "is_null_coalesce": false,
+          "is_short_circuited": false
+        }
+      },
+      "right": {
+        "isNullSafe": false,
+        "nodes": [],
+        "attributes": {
+          "value": 1
+        }
+      }
+    },
+    "attributes": {
+      "operator": ">"
+    }
+  }
+}

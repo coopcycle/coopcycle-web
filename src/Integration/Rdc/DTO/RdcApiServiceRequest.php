@@ -164,6 +164,7 @@ final class RdcApiServiceRequest
             postalCode: $address['postalCode'] ?? '',
             city: $address['addressLocality'] ?? '',
             country: $address['addressCountry']['countryCode'] ?? '',
+            name: $this->startLocation['location']['locationName'] ?? '',
         );
     }
 
@@ -177,6 +178,7 @@ final class RdcApiServiceRequest
             postalCode: $address['postalCode'] ?? '',
             city: $address['addressLocality'] ?? '',
             country: $address['addressCountry']['countryCode'] ?? '',
+            name: $this->endLocation['location']['locationName'] ?? '',
         );
     }
 
@@ -200,15 +202,78 @@ final class RdcApiServiceRequest
 
     public function getRecipientContact(): ServiceRequestContact
     {
-        $contact = $this->getContactByRole(ContactRole::RECIPIENT);
-        if ($contact === null) {
+        return $this->buildContact($this->getContactByRole(ContactRole::RECIPIENT));
+    }
+
+    public function getShipperContact(): ServiceRequestContact
+    {
+        return $this->buildContact($this->getContactByRole(ContactRole::SHIPPER));
+    }
+
+    /**
+     * The spec puts the names on `contacts[].persons[]`; the contact-level
+     * `familyName` is kept as a fallback.
+     */
+    private function buildContact(?array $contact): ServiceRequestContact
+    {
+        if (is_null($contact)) {
             return new ServiceRequestContact();
         }
+
+        $person = $contact['persons'][0] ?? [];
+        $name = trim(sprintf('%s %s', $person['givenName'] ?? '', $person['familyName'] ?? ''));
+
         return new ServiceRequestContact(
-            name: $contact['familyName'] ?? '',
-            phone: $contact['telephone'] ?? '',
-            email: $contact['email'] ?? '',
+            name: $name ?: ($contact['familyName'] ?? ''),
+            phone: ($contact['telephone'] ?? '') ?: ($person['telephone'] ?? ''),
+            email: ($contact['email'] ?? '') ?: ($person['email'] ?? ''),
         );
+    }
+
+    /**
+     * Special instructions attached to a location, as opposed to the ones on
+     * the service request itself.
+     */
+    public function getPickupSpecialInstructions(): array
+    {
+        return $this->startLocation['location']['specialInstructions'] ?? [];
+    }
+
+    public function getDropoffSpecialInstructions(): array
+    {
+        return $this->endLocation['location']['specialInstructions'] ?? [];
+    }
+
+    /**
+     * The goods to carry. The pickup loads the same goods the dropoff unloads,
+     * so they are read on the pickup, and on the dropoff only when the pickup
+     * lists none: reading both would count them twice.
+     *
+     * @return BatchOfGoods[]
+     */
+    public function getBatchesOfGoods(): array
+    {
+        return self::batchesOfGoodsAt($this->startLocation)
+            ?: self::batchesOfGoodsAt($this->endLocation);
+    }
+
+    /**
+     * @return BatchOfGoods[]
+     */
+    private static function batchesOfGoodsAt(?array $location): array
+    {
+        $batches = [];
+        foreach ($location['actions'] ?? [] as $action) {
+            foreach ($action['compositionMovements'] ?? [] as $movement) {
+                foreach ($movement['containedBatchesOfGoods'] ?? [] as $batch) {
+                    if (is_array($batch)) {
+                        $batches[] = BatchOfGoods::parse($batch);
+                    }
+                }
+            }
+        }
+
+        return $batches;
     }
 
     public function getBarcode(): ?string
@@ -221,6 +286,11 @@ final class RdcApiServiceRequest
     {
         $ref = $this->getExternalReferenceByType(ExternalReferenceType::REQUESTOR_ID->value);
         return $ref['reference'] ?? null;
+    }
+
+    public function getRequestorName(): ?string
+    {
+        return ($this->requestor['legalEntityName'] ?? '') ?: null;
     }
 
     public function getContractRef(): ?string

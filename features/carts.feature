@@ -485,14 +485,14 @@ Feature: Carts
         "adjustments":{
           "delivery":[
             {
-              "id":2,
+              "id":@integer@,
               "label":"Livraison",
               "amount":350
             }
           ],
           "delivery_promotion":[
             {
-              "id":3,
+              "id":@integer@,
               "label":"Free delivery",
               "amount":-350
             }
@@ -551,7 +551,7 @@ Feature: Carts
         "adjustments":{
           "delivery":[
             {
-              "id":2,
+              "id":@integer@,
               "label":"Livraison",
               "amount":350
             }

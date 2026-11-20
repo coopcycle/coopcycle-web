@@ -1,0 +1,157 @@
+{% extends "admin.html.twig" %}
+
+{% block prepare_title %}
+  {{ add_title_prefix(campaign.name) }}
+{% endblock %}
+
+{% block breadcrumb %}
+<li><a href="{{ path('admin_marketing') }}">{% trans %}marketing.title{% endtrans %}</a></li>
+<li><a href="{{ path('admin_marketing_campaign', { id: campaign.id }) }}">{{ campaign.name }}</a></li>
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('admin-marketing') }}
+{% endblock %}
+
+{% block content %}
+
+{% form_theme form 'bootstrap_3_layout.html.twig' %}
+
+<div class="row">
+  <div class="col-md-8">
+    {{ form_start(form, { attr: { id: 'campaign-form' } }) }}
+      {{ form_row(form.name) }}
+      {{ form_row(form.subject) }}
+
+      <div class="form-group">
+        <label class="control-label">{% trans %}marketing.campaign.field.body{% endtrans %}</label>
+        <div
+          id="campaign-editor"
+          data-editable="{{ campaign.isEditable ? '1' : '0' }}"
+          data-input="{{ form.bodyMjml.vars.id }}"></div>
+        {{ form_widget(form.bodyMjml) }}
+      </div>
+
+      {{ form_row(form.promotionCoupon) }}
+      {{ form_row(form.scheduledAt) }}
+
+      {% if campaign.isEditable %}
+        <button type="submit" class="btn btn-primary">{% trans %}basics.save{% endtrans %}</button>
+      {% endif %}
+    {{ form_end(form) }}
+  </div>
+
+  <div class="col-md-4">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <i class="fa fa-users"></i> {% trans %}marketing.campaign.audience.title{% endtrans %}
+      </div>
+      <div class="panel-body">
+        {% if audience is not null %}
+          <p>
+            <span style="font-size:28px;font-weight:600;">{{ audience.count }}</span>
+            <span class="text-muted">
+              {{ 'marketing.campaign.audience.of_segment'|trans({
+                '%total%': audience.segmentSize,
+                '%segment%': ('rfm.segment.' ~ campaign.segment)|trans,
+              }) }}
+            </span>
+          </p>
+
+          {% if audience.excludedTotal > 0 %}
+            <p class="text-muted" style="margin-bottom:4px;">{% trans %}marketing.campaign.audience.excluded{% endtrans %}</p>
+            <ul class="list-unstyled text-muted" style="margin-bottom:0;">
+              {% if audience.excludedNoConsent > 0 %}
+                <li>{{ 'marketing.campaign.audience.no_consent'|trans({'%count%': audience.excludedNoConsent}) }}</li>
+              {% endif %}
+              {% if audience.excludedSuppressed > 0 %}
+                <li>{{ 'marketing.campaign.audience.suppressed'|trans({'%count%': audience.excludedSuppressed}) }}</li>
+              {% endif %}
+              {% if audience.excludedRecentlyEmailed > 0 %}
+                <li>{{ 'marketing.campaign.audience.recently_emailed'|trans({'%count%': audience.excludedRecentlyEmailed, '%days%': frequency_cap_days}) }}</li>
+              {% endif %}
+              {% if audience.excludedNoEmail > 0 %}
+                <li>{{ 'marketing.campaign.audience.no_email'|trans({'%count%': audience.excludedNoEmail}) }}</li>
+              {% endif %}
+            </ul>
+          {% endif %}
+
+          {% if audience.count == 0 and audience.excludedNoConsent == audience.segmentSize and audience.segmentSize > 0 %}
+            <div class="alert alert-warning" style="margin-top:12px;">
+              {% trans %}marketing.campaign.audience.nobody_consented{% endtrans %}
+            </div>
+          {% endif %}
+        {% else %}
+          <p class="text-muted">{% trans %}marketing.campaign.audience.after_sending{% endtrans %}</p>
+          <ul class="list-unstyled">
+            {% for status, total in stats %}
+              <li>{{ ('marketing.campaign.recipient_status.' ~ status)|trans }}: <strong>{{ total }}</strong></li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <i class="fa fa-envelope-o"></i> {% trans %}marketing.campaign.send_test.title{% endtrans %}
+      </div>
+      <div class="panel-body">
+        {% if is_configured %}
+          <form method="post" action="{{ path('admin_marketing_campaign_send_test', { id: campaign.id }) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('admin_marketing_campaign_send_test') }}">
+            <div class="form-group" style="margin-bottom:8px;">
+              <input type="email" name="email" class="form-control" required
+                     value="{{ app.user.email|default('') }}"
+                     placeholder="{% trans %}marketing.campaign.send_test.placeholder{% endtrans %}">
+            </div>
+            <button type="submit" class="btn btn-default btn-block">
+              <i class="fa fa-paper-plane-o"></i> {% trans %}marketing.campaign.send_test.button{% endtrans %}
+            </button>
+          </form>
+          <p class="text-muted" style="margin-top:8px;margin-bottom:0;">
+            {% trans %}marketing.campaign.send_test.help{% endtrans %}
+          </p>
+        {% else %}
+          <p class="text-muted" style="margin-bottom:0;">{{ 'marketing.not_configured'|trans({'%url%': path('admin_marketing')})|raw }}</p>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if campaign.isEditable %}
+    <div class="panel panel-default">
+      <div class="panel-body">
+        {% if not is_configured %}
+          <p class="text-muted">{{ 'marketing.not_configured'|trans({'%url%': path('admin_marketing')})|raw }}</p>
+        {% elseif not is_active %}
+          <p class="text-muted">{% trans %}marketing.program.inactive_warning{% endtrans %}</p>
+        {% else %}
+          <form method="post" action="{{ path('admin_marketing_campaign_send', { id: campaign.id }) }}"
+                onsubmit="return confirm('{{ 'marketing.campaign.send.confirm'|trans({'%count%': audience ? audience.count : 0})|e('js') }}');">
+            <input type="hidden" name="_token" value="{{ csrf_token('admin_marketing_campaign_send') }}">
+            <button type="submit" class="btn btn-primary btn-block" {{ audience and audience.count > 0 ? '' : 'disabled' }}>
+              <i class="fa fa-paper-plane"></i> {% trans %}marketing.campaign.send.now{% endtrans %}
+            </button>
+          </form>
+          <p class="text-muted" style="margin-top:8px;margin-bottom:0;">
+            {% trans %}marketing.campaign.send.help{% endtrans %}
+          </p>
+        {% endif %}
+
+        <hr>
+        <form method="post" action="{{ path('admin_marketing_campaign_delete', { id: campaign.id }) }}"
+              onsubmit="return confirm('{{ 'marketing.campaign.delete.confirm'|trans|e('js') }}');">
+          <input type="hidden" name="_token" value="{{ csrf_token('admin_marketing_campaign_delete') }}">
+          <button type="submit" class="btn btn-danger btn-sm btn-block">{% trans %}basics.delete{% endtrans %}</button>
+        </form>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+  {{ encore_entry_script_tags('admin-marketing') }}
+{% endblock %}

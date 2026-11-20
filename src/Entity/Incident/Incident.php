@@ -41,31 +41,34 @@ use Symfony\Component\Serializer\Annotation\Groups;
             serialize: false
         ),
         new Get(security: 'is_granted("view", object)'),
-        new Patch(security: 'is_granted("ROLE_COURIER")'),
-        new Put(security: 'is_granted("ROLE_COURIER")'),
+        new Patch(security: 'is_granted("edit", object)'),
+        new Put(security: 'is_granted("edit", object)'),
         new Post(
             uriTemplate: '/incidents/{id}/comments',
             controller: CreateComment::class,
-            security: 'is_granted("ROLE_COURIER")'
+            security: 'is_granted("edit", object)'
         ),
         new Put(
             uriTemplate: '/incidents/{id}/action',
             controller: IncidentAction::class,
-            security: 'is_granted("ROLE_COURIER")'
+            security: 'is_granted("edit", object)'
         ),
+        // Couriers only get the incidents they are concerned with,
+        // @see AppBundle\Api\DataProvider\IncidentCollectionExtension
         new GetCollection(
             security: 'is_granted("ROLE_COURIER")',
             order: ['id' => 'DESC']
         ),
         new Post(
             controller: CreateIncident::class,
-            security: 'is_granted("ROLE_COURIER")'
+            security: 'is_granted("ROLE_COURIER")',
+            securityPostDenormalize: 'is_granted("create", object)'
         ),
         new Post(
             uriTemplate: '/incidents/{id}/metadata',
             processor: AddIncidentMetadataProcessor::class,
             input: IncidentMetadataInput::class,
-            security: 'is_granted("ROLE_COURIER")',
+            security: 'is_granted("edit", object)',
             denormalizationContext: ['groups' => ['incident']],
             status: 200,
         ),
@@ -173,6 +176,14 @@ class Incident implements TaggableInterface {
 
     public function getTask(): Task {
         return $this->task;
+    }
+
+    /**
+     * The task is required, but it is not set yet while an incident is being
+     * created, so anything running before the controller has to check.
+     */
+    public function hasTask(): bool {
+        return isset($this->task);
     }
 
     public function setTask(Task $task): self {

@@ -3,7 +3,6 @@
 namespace AppBundle\Action\Order;
 
 use AppBundle\Api\Dto\PaymentMethodsOutput;
-use AppBundle\Payment\GatewayResolver;
 use AppBundle\Service\PaygreenManager;
 use AppBundle\Service\SettingsManager;
 use Sylius\Component\Payment\Model\PaymentInterface;
@@ -17,7 +16,6 @@ class PaymentMethods
 
     public function __construct(
         private SettingsManager $settingsManager,
-        private GatewayResolver $gatewayResolver,
         private PaygreenManager $paygreenManager,
         bool $cashEnabled,
         bool $edenredEnabled)
@@ -43,7 +41,9 @@ class PaymentMethods
             $output->addMethod('edenred');
         }
 
-        if (!$data->isMultiVendor() && 'paygreen' === $this->gatewayResolver->resolveForOrder($data)) {
+        // Meal vouchers (& Paygreen wallets) do not depend on the gateway used for cards:
+        // a shop may process cards with Stripe & meal vouchers with Paygreen
+        if ($data->supportsPaygreen()) {
             $paygreenPlatforms = $this->paygreenManager->getEnabledPlatforms($data->getRestaurant()->getPaygreenShopId());
 
             if (in_array('restoflash', $paygreenPlatforms)) {

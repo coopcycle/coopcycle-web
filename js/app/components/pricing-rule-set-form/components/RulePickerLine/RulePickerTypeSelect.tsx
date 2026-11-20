@@ -20,10 +20,14 @@ const DELIVERY_TYPES = [
 
 const TASK_TYPES = [
   { name: 'task.type' },
+  { name: 'task.pickupRank' },
+  { name: 'task.dropoffRank' },
   { name: 'pickup.address' },
   { name: 'dropoff.address' },
   { name: "time_range_length(pickup, 'hours')" },
   { name: "time_range_length(dropoff, 'hours')" },
+  { name: 'diff_hours(dropoff)' },
+  { name: 'diff_days(dropoff)' },
   { name: 'weight' },
   { name: 'packages' },
   { name: 'packages.totalVolumeUnits()' },
@@ -72,6 +76,10 @@ function RulePickerType({ ruleTarget, type }: RulePickerTypeProps) {
         return t('RULE_PICKER_LINE_PICKUP_DIFF_HOURS');
       case 'diff_days(pickup)':
         return t('RULE_PICKER_LINE_PICKUP_DIFF_DAYS');
+      case 'diff_hours(dropoff)':
+        return t('RULE_PICKER_LINE_DROPOFF_DIFF_HOURS');
+      case 'diff_days(dropoff)':
+        return t('RULE_PICKER_LINE_DROPOFF_DIFF_DAYS');
       case "time_range_length(pickup, 'hours')":
         return t('RULE_PICKER_LINE_PICKUP_TIME_RANGE_LENGTH_HOURS');
       case "time_range_length(dropoff, 'hours')":
@@ -114,6 +122,10 @@ function RulePickerType({ ruleTarget, type }: RulePickerTypeProps) {
         return t('RULE_PICKER_LINE_VOLUME_UNITS_DELIVERY');
       case 'task.type':
         return t('RULE_PICKER_LINE_TASK_TYPE');
+      case 'task.pickupRank':
+        return t('RULE_PICKER_LINE_TASK_PICKUP_RANK');
+      case 'task.dropoffRank':
+        return t('RULE_PICKER_LINE_TASK_DROPOFF_RANK');
       case 'distance':
         return t('RULE_PICKER_LINE_DISTANCE');
       case 'order.itemsTotal':

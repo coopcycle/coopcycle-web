@@ -1,0 +1,10 @@
+{% extends 'emails/layout.mjml.twig' %}
+
+{% block content %}
+  <mj-text align="left" line-height="20px">
+    {{ 'referral.invitation.body'|trans({'{{referrer_name}}': referrer_name}, 'emails')|raw }}
+  </mj-text>
+  <mj-button href="{{ referral_link }}" background-color="{{ coopcycle_theme_color('primary', '#10ac84') }}" color="{{ coopcycle_theme_color('primary-content', 'white') }}" font-family="Raleway, Arial, sans-serif">
+    {{ 'referral.invitation.cta'|trans({}, 'emails') }}
+  </mj-button>
+{% endblock %}

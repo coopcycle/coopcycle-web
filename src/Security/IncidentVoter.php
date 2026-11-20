@@ -8,7 +8,6 @@ use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2Token;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Webmozart\Assert\Assert;
 
 class IncidentVoter extends Voter
 {
@@ -42,10 +41,6 @@ class IncidentVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
     {
-        if ($this->authorizationChecker->isGranted('ROLE_COURIER')) {
-            return true;
-        }
-
         // We allow stores to access their tasks incidents
         if ($token instanceof OAuth2Token) {
 
@@ -55,7 +50,33 @@ class IncidentVoter extends Voter
 
             $store = $this->storeExtractor->extractStore();
 
+            if (null === $store || !$subject->hasTask()) {
+                return false;
+            }
+
             return $store === $subject->getTask()->getStore();
+        }
+
+        // Dispatchers & admins manage the incidents of the whole instance
+        if ($this->authorizationChecker->isGranted('ROLE_DISPATCHER')) {
+            return true;
+        }
+
+        $user = $token->getUser();
+
+        if (!$user instanceof User) {
+            return false;
+        }
+
+        // Couriers are only allowed to deal with the incidents of the tasks
+        // they are assigned to, or with the ones they reported themselves.
+        if ($this->authorizationChecker->isGranted('ROLE_COURIER')) {
+
+            if ($subject->getCreatedBy() === $user) {
+                return true;
+            }
+
+            return $subject->hasTask() && $subject->getTask()->isAssignedTo($user);
         }
 
         return false;

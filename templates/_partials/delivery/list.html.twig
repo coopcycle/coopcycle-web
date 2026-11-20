@@ -41,9 +41,9 @@
       <td width="20%">
         {% if delivery.owner is not empty %}
           {% if deliveries.route is defined %}
-            <a href="{{ path(deliveries.route, deliveries.params|merge({
-              (deliveries.paginatorOptions.filterFieldParameterName): delivery.owner is instanceof('AppBundle\\Entity\\LocalBusiness') ? 'r.id' : 's.id',
-              (deliveries.paginatorOptions.filterValueParameterName): delivery.owner.id })) }}">
+            {# A single owner at a time, and back to the first page #}
+            <a href="{{ path(deliveries.route, deliveries.params|filter((value, key) => key not in [ 'store', 'restaurant', 'page' ])|merge({
+              (delivery.owner is instanceof('AppBundle\\Entity\\LocalBusiness') ? 'restaurant' : 'store'): delivery.owner.id })) }}">
               {{ delivery.owner.name }}
             </a>
           {% else %}

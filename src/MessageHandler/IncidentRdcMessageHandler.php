@@ -8,10 +8,10 @@ use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskImage;
 use AppBundle\Integration\Rdc\Enum\ActionState;
-use AppBundle\Integration\Rdc\Enum\EventCode;
 use AppBundle\Integration\Rdc\Enum\EventDomain;
 use AppBundle\Integration\Rdc\Enum\EventType;
 use AppBundle\Integration\Rdc\RdcEventDispatcher;
+use AppBundle\Integration\Rdc\RdcIncidentReason;
 use AppBundle\Integration\Rdc\RdcTaskContextResolver;
 use AppBundle\Message\IncidentRdcMessage;
 use Doctrine\ORM\EntityManagerInterface;
@@ -22,6 +22,15 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 #[AsMessageHandler]
 final class IncidentRdcMessageHandler
 {
+    /**
+     * Incidents the back office opens for itself: they say nothing about the
+     * execution, so the requestor must not read them as a failed delivery.
+     */
+    private const INTERNAL_REASON_CODES = [
+        'PRICE_REVIEW_NEEDED',
+        'ADDRESS_REVIEW_NEEDED',
+    ];
+
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly RdcTaskContextResolver $rdcTaskContextResolver,
@@ -46,9 +55,10 @@ final class IncidentRdcMessageHandler
             return;
         }
 
-        if ($incident->getFailureReasonCode() === 'price_review_needed') {
-            $this->logger->info('Skipping RDC incident dispatch: price_review_needed', [
+        if (in_array($incident->getFailureReasonCode(), self::INTERNAL_REASON_CODES, true)) {
+            $this->logger->info('Skipping RDC incident dispatch: internal review', [
                 'incident_id' => $incident->getId(),
+                'failure_reason_code' => $incident->getFailureReasonCode(),
             ]);
             return;
         }
@@ -63,14 +73,14 @@ final class IncidentRdcMessageHandler
             return;
         }
 
-        $code = $task->isPickup() ? EventCode::NOT_COLLECTED : EventCode::NOT_DELIVERED;
+        $reason = RdcIncidentReason::fromFailureReasonCode($incident->getFailureReasonCode(), $task->isPickup());
         $documents = $this->buildDocumentsFromTask($task);
         $actualDateTime = $this->toDateTimeImmutable($incident->getCreatedAt());
         $now = new \DateTimeImmutable();
 
         $payload = [
             'eventType' => EventType::TRANSPORT->value,
-            'code' => $code->value,
+            'code' => $reason->code->value,
             'domain' => EventDomain::ISSUE->value,
             'description' => sprintf('Incident: %s', $incident->getTitle() ?? ''),
             'location' => $this->buildLocationFromTask($task, $actualDateTime),
@@ -78,13 +88,18 @@ final class IncidentRdcMessageHandler
             'creationDateTime' => $now->format(\DateTimeInterface::ATOM),
         ];
 
+        if (!is_null($reason->reasonCode)) {
+            $payload['reasonCode'] = $reason->reasonCode->value;
+        }
+
         $this->eventDispatcher->dispatch($context->client, 'services', $context->serviceId, $payload, $documents);
         $this->eventDispatcher->dispatch($context->client, 'activities', $context->activityId, $payload, $documents);
 
         $this->logger->info('RDC incident event dispatched', [
             'incident_id' => $incident->getId(),
             'task_id' => $task->getId(),
-            'code' => $code->value,
+            'code' => $reason->code->value,
+            'reason_code' => $reason->reasonCode?->value,
             'documents_count' => count($documents),
         ]);
     }

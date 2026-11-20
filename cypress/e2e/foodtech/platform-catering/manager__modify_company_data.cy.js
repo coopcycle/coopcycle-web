@@ -4,9 +4,13 @@ describe('Platform catering; manager; modify company data', () => {
   })
 
   it("should change company (business account's) name", () => {
-    cy.login('manager01', '12345678')
-
+    // Log in from the page itself, so that it is where the login redirects.
+    // Landing on the homepage, then visiting the page, its requests could
+    // still be running and write the session back without the form's CSRF
+    // token, which then rejects the form.
     cy.visit('/profile/business-account')
+    cy.login('manager01', '12345678')
+    cy.urlmatch('/profile/business-account', 'include')
 
     cy.get('#company_name').clear()
     cy.get('#company_name').type('NEW NAME')

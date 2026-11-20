@@ -1,0 +1,7 @@
+# Load with store_with_manual_supplements.yml
+AppBundle\Entity\Delivery\PricingRule:
+  pricing_rule_long_distance:
+    expression: 'distance > 5000'
+    price: 200
+    position: 5
+    ruleSet: '@pricing_rule_set_with_supplements'

@@ -1,7 +1,8 @@
 parameters:
-    # Webhook payloads are posted unsigned by the test suite. This has to be
-    # overridden here rather than in .env.test: .env is loaded first and wins.
-    zelty_webhook_secret: ''
+    # The Zelty webhook endpoints fail closed, so the suite signs its payloads
+    # with this. It has to be set here rather than in .env.test: .env is loaded
+    # first and wins. Keep it non-empty, or every scenario is a 403.
+    zelty_webhook_secret: 'behat_zelty_webhook_secret'
     tile38_fleet_key: '%database_name%_test:fleet'
     tile38_doorstep_chan_namespace: '%database_name%_test'
     typesense_shops_collection_name: "shops_test"
@@ -44,6 +45,17 @@ services:
 
     Symfony\Contracts\HttpClient\HttpClientInterface $urbantzClient: '@urbantz_client_mock'
 
+    # The BOL (logist-x) and its Keycloak: the RDC tests answer for them,
+    # see Tests\AppBundle\Integration\Rdc\FakeBol
+    rdc_client_mock:
+        class: Symfony\Component\HttpClient\MockHttpClient
+        public: true
+
+    AppBundle\Integration\Rdc\Api\RdcClientFactory:
+        arguments:
+            $httpClient: '@rdc_client_mock'
+            $rdcConnections: '%rdc_connections%'
+
     # Push notifications should never actually be sent in the test environment
     # (no FIREBASE_CREDENTIALS is configured, and it would flood the logs with
     # Messenger retry errors otherwise; see also the "the async messages are
@@ -56,6 +68,10 @@ services:
           $databaseName: '%database_name%_test'
           $baseUrl: '%router.request_context.scheme%://%router.request_context.host%'
           $appName: '%env(COOPCYCLE_APP_NAME)%'
+
+    # Found by coopcycle:deliveries:import through their tag, as "fake"
+    Tests\AppBundle\Command\Double\FakeDeliveriesImporter: ~
+    Tests\AppBundle\Command\Double\FakeDeliveriesTransformer: ~
 
     # The transporters of the tests don't come from TRANSPORTERS_CONFIG
     AppBundle\Transporter\Waybill:

@@ -57,6 +57,17 @@ class RdcClient implements RdcClientInterface
         return sprintf('BOL.MEMBER.%s', $this->config->memberProvider);
     }
 
+    /**
+     * Configured with or without the `BOL.MEMBER.` prefix, which the .env.dist
+     * example used to include.
+     */
+    private function getRemoteMemberIdentifier(): string
+    {
+        $member = (string) $this->config->remoteMemberProvider;
+
+        return str_starts_with($member, 'BOL.MEMBER.') ? $member : sprintf('BOL.MEMBER.%s', $member);
+    }
+
     private function getRemoteTokenManager(): TokenManagerInterface
     {
         if (is_null($this->remoteTokenManager)) {
@@ -175,7 +186,7 @@ class RdcClient implements RdcClientInterface
         $tokenManager = $this->getRemoteTokenManager();
         $token = $tokenManager->getValidToken();
         $headers['Authorization'] = sprintf('Bearer %s', $token);
-        $headers['X-BOL-Member-Identifier'] = sprintf('BOL.MEMBER.%s', $this->config->remoteMemberProvider);
+        $headers['X-BOL-Member-Identifier'] = $this->getRemoteMemberIdentifier();
 
         $options = ['headers' => $headers];
 
@@ -187,7 +198,6 @@ class RdcClient implements RdcClientInterface
             'method' => $method,
             'url' => $url,
             'has_body' => !is_null($body),
-            'headers' => $headers,
             'body' => $body,
         ]);
 

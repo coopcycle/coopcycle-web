@@ -41,6 +41,8 @@ use AppBundle\Entity\Model\CustomFailureReasonInterface;
 use AppBundle\Entity\Model\CustomFailureReasonTrait;
 use AppBundle\Entity\Model\OrganizationAwareInterface;
 use AppBundle\Entity\Model\OrganizationAwareTrait;
+use AppBundle\Entity\Model\TaggableInterface;
+use AppBundle\Entity\Model\TaggableTrait;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
 use AppBundle\LoopEat\OAuthCredentialsTrait as LoopEatOAuthCredentialsTrait;
@@ -153,6 +155,7 @@ class LocalBusiness extends BaseLocalBusiness implements
     OrganizationAwareInterface,
     ShippingOptionsInterface,
     CustomFailureReasonInterface,
+    TaggableInterface,
     Vendor,
     SoftDeleteableInterface
 {
@@ -168,6 +171,7 @@ class LocalBusiness extends BaseLocalBusiness implements
     use FulfillmentMethodsTrait;
     use ShippingOptionsTrait;
     use CustomFailureReasonTrait;
+    use TaggableTrait;
 
     /**
      * @var int
@@ -1385,5 +1389,24 @@ class LocalBusiness extends BaseLocalBusiness implements
     protected function resolveDeliveryPerimeterExpression(): string
     {
         return DeliveryPerimeterExpressionResolver::resolve($this);
+    }
+
+    /**
+     * The tags of a restaurant are applied to the tasks of its orders.
+     * They are meant for the dispatchers, not for the customers.
+     *
+     * Overrides TaggableTrait::getTags() to drop its serialization groups.
+     * Restaurants are normalized with the "order" group in public endpoints,
+     * which would expose the tags, and in the API, the "tags" key of a
+     * restaurant already holds its cuisines (see RestaurantNormalizer).
+     */
+    public function getTags(): array
+    {
+        if (is_callable($this->tagsCallable)) {
+            $this->tags = call_user_func($this->tagsCallable);
+            $this->tagsCallable = null;
+        }
+
+        return $this->tags;
     }
 }

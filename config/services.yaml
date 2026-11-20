@@ -12,6 +12,7 @@ imports:
 parameters:
   sylius_cart_restaurant_session_key_name: _coopcycle.sylius.cart.restaurant
   shift_planning_enabled: '%env(bool:SHIFT_PLANNING_ENABLED)%'
+  referral_program_enabled: '%env(bool:REFERRAL_PROGRAM_ENABLED)%'
   apns_default_is_production_env: true
   env(COOPCYCLE_PUBLIC_KEY_FILE): "%kernel.project_dir%/var/jwt/public.pem"
   env(COOPCYCLE_PRIVATE_KEY_FILE): "%kernel.project_dir%/var/jwt/private.pem"
@@ -34,7 +35,6 @@ parameters:
   database_user:     "%env(COOPCYCLE_DB_USER)%"
   database_password: "%env(COOPCYCLE_DB_PASSWORD)%"
   locale_regex: an|ca|fr|en|es|eu|de|hu|it|pl|pt_BR|pt_PT|da
-  rdc_webhook_secret: '%env(default::RDC_WEBHOOK_SECRET)%'
   router.request_context.scheme: 'http'
   router.request_context.host: "%env(APP_HOST)%"
   loopeat_enabled: '%env(bool:LOOPEAT_ENABLED)%'
@@ -109,6 +109,7 @@ services:
       $shopifyApiSecret: '%shopify_api_secret%'
       $shopifyGatewaySecret: '%shopify_gateway_secret%'
       $shopifyThemeExtensionUuid: '%shopify_theme_extension_uuid%'
+      $zeltyWebhookSecret: '%zelty_webhook_secret%'
 
   # For some cache pools, want *STABLE* cache keys between deploys.
   # To achieve this, we *EXPLICITLY* set a namespace,
@@ -153,6 +154,8 @@ services:
 
   AppBundle\Scheduler\:
     resource: '../src/Scheduler/*'
+    arguments:
+      $databaseName: '%database_name%'
 
   AppBundle\Controller\:
     resource: '../src/Controller'
@@ -368,10 +371,46 @@ services:
       $platformLocale: '%env(COOPCYCLE_LOCALE)%'
       $rdcEnabled: '%env(bool:RDC_ENABLED)%'
 
+  AppBundle\Service\Precog\PrecogTracker:
+    arguments:
+      $redis:   '@snc_redis.default'
+      $secret:  '%env(APP_SECRET)%'
+      $enabled: '%env(bool:PRECOG_ENABLED)%'
+
   AppBundle\Controller\Admin\CustomerSegmentationController:
     arguments:
       $rfmEnabled:      '%env(bool:RFM_ENABLED)%'
       $settingsManager: '@AppBundle\Service\SettingsManager'
+
+  AppBundle\Controller\Admin\ReferralProgramController:
+    arguments:
+      $referralProgramEnabled: '%env(bool:REFERRAL_PROGRAM_ENABLED)%'
+
+  AppBundle\Service\Referral\ReferralProgramStatus:
+    arguments:
+      $envEnabled: '%env(bool:REFERRAL_PROGRAM_ENABLED)%'
+
+  AppBundle\Controller\Admin\LoyaltyProgramController:
+    arguments:
+      $loyaltyProgramEnabled: '%env(bool:LOYALTY_PROGRAM_ENABLED)%'
+
+  AppBundle\Service\Loyalty\LoyaltyProgramStatus:
+    arguments:
+      $envEnabled: '%env(bool:LOYALTY_PROGRAM_ENABLED)%'
+
+  AppBundle\Controller\Admin\MarketingController:
+    arguments:
+      $marketingAutomationEnabled: '%env(bool:MARKETING_AUTOMATION_ENABLED)%'
+
+  AppBundle\Service\Marketing\MarketingAutomationStatus:
+    arguments:
+      $envEnabled: '%env(bool:MARKETING_AUTOMATION_ENABLED)%'
+
+  # Used to tell apart two addresses that reach the same mailbox, so someone
+  # can't refer themselves (or an account they already own) with an alias.
+  # The strategies, and crucially their order, are in the factory.
+  RZ\CanonicalEmail\EmailCanonizer:
+    factory: ['AppBundle\Service\Referral\ReferralEmailCanonizerFactory', 'create']
 
   AppBundle\Controller\AssetsController:
     arguments:
@@ -432,6 +471,8 @@ services:
   # IMPORTANT
   # OrderOptionsProcessor MUST be invoked BEFORE OrderFeeProcessor
   # Otherwise, fee calculation may be wrong
+  # Promotions are applied by OrderFeeProcessor, after the delivery amount & the tip,
+  # and before the platform fee, there is no dedicated order processor for promotions
   # We don't tag those services directly, but we use OrderOptionsFeeProcessor
   # We also need to disable auto configuration for these services
   # Otherwise, they will be still added automatically by Sylius; https://github.com/Sylius/Sylius/issues/12389
@@ -447,6 +488,7 @@ services:
     autoconfigure: false # see comment above
     arguments:
       $adjustmentFactory: "@sylius.factory.adjustment"
+      $promotionProcessor: "@sylius.promotion_processor"
     tags:
       - { name: monolog.logger, channel: fee_calculation }
 
@@ -472,14 +514,6 @@ services:
     autoconfigure: false # autoconfigure here duplicates the function of tags, see the comment above
     tags:
       - { name: sylius.order_processor, priority: 96 }
-
-  sylius.order_processing.order_promotion_processor:
-    class: AppBundle\Sylius\OrderProcessing\OrderPromotionProcessor
-    autoconfigure: false # autoconfigure here duplicates the function of tags, see the comment above
-    arguments:
-      - "@sylius.promotion_processor"
-    tags:
-      - { name: sylius.order_processor, priority: 64 }
 
   # Coupon code generation: replace Sylius' hex generator (16 symbols) with an
   # unambiguous 31-symbol alphabet so codes are shorter and human-readable.
@@ -600,6 +634,15 @@ services:
         label: 'sylius.form.promotion_rule.item_total'
         form_type: AppBundle\Form\Sylius\Promotion\Rule\IsItemsTotalAboveConfigurationType
 
+  AppBundle\Sylius\Promotion\Checker\Rule\IsFirstOrderRuleChecker:
+    arguments:
+      - '@sylius.repository.order'
+    tags:
+      - name: sylius.promotion_rule_checker
+        type: is_first_order
+        label: 'promotion_rule.is_first_order'
+        form_type: AppBundle\Form\Sylius\Promotion\Rule\IsFirstOrderConfigurationType
+
   AppBundle\Sylius\Product\ProductOptionValueFactory:
     decorates: sylius.factory.product_option_value
     public: false
@@ -675,6 +718,8 @@ services:
   Symfony\Component\ExpressionLanguage\ExpressionLanguage: '@AppBundle\ExpressionLanguage\ExpressionLanguage'
 
   AppBundle\EventListener\RegistrationListener:
+    arguments:
+      $confirmationEnabled: '%nucleos_profile.registration.confirmation.enabled%'
     tags:
       - { name: kernel.event_subscriber }
 
@@ -735,6 +780,10 @@ services:
 
   AppBundle\Entity\Listener\:
     resource: '../src/Entity/Listener/*'
+
+  AppBundle\Entity\Listener\CustomerListener:
+    tags:
+      - { name: doctrine.orm.entity_listener }
 
   AppBundle\Entity\Listener\TaskListener:
     tags:
@@ -839,6 +888,36 @@ services:
     arguments:
       - AppBundle\Entity\Sylius\Order
     calls: [[setDeliveryRepository, ['@AppBundle\Entity\DeliveryRepository']]]
+
+  AppBundle\Entity\Referral\ReferralRepository:
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\Referral\Referral
+
+  AppBundle\Entity\Loyalty\LoyaltyPointsEntryRepository:
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\Loyalty\LoyaltyPointsEntry
+
+  AppBundle\Entity\Marketing\EmailSuppressionRepository:
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\Marketing\EmailSuppression
+
+  AppBundle\Entity\Marketing\CampaignRepository:
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\Marketing\Campaign
+
+  AppBundle\Entity\Marketing\CampaignRecipientRepository:
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\Marketing\CampaignRecipient
+
+  AppBundle\Entity\OptinConsentRepository:
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\OptinConsent
 
   sylius.repository.order:
     alias: AppBundle\Entity\Sylius\OrderRepository
@@ -1069,6 +1148,7 @@ services:
 
   AppBundle\Transporter\ImportFromPoint: ~
   AppBundle\Transporter\ReportFromCC: ~
+  AppBundle\Transporter\ImportFailureNotifier: ~
   AppBundle\Transporter\EdifactMessageParser:
     arguments:
       $edifactFs: '@edi_messages_filesystem'
@@ -1174,6 +1254,10 @@ services:
     tags:
       - { name: 'api_platform.doctrine.orm.query_extension.collection', priority: -18 }
 
+  AppBundle\Api\DataProvider\IncidentCollectionExtension:
+    tags:
+      - { name: 'api_platform.doctrine.orm.query_extension.collection', priority: -18 }
+
   AppBundle\Api\State\InvoiceLineItemsGroupedByOrganizationProvider:
     arguments:
       $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
@@ -1228,6 +1312,7 @@ services:
   AppBundle\EventSubscriber\ClearTwigCacheSubscriber:
     arguments:
       $annotation: '%restaurant_menu_cache_annotation%'
+      $localeRegex: '%locale_regex%'
 
   AppBundle\EventListener\Upload\UploadListener:
     arguments:
@@ -1459,6 +1544,11 @@ services:
     tags:
       - { name: "kernel.event_listener", event: "kernel.response" }
 
+  AppBundle\Payment\StripeAvailability:
+    arguments:
+      $craueConfig: '@craue_config'
+      $stripeConnectRequired: "%env(bool:STRIPE_CONNECT_REQUIRED)%"
+
   AppBundle\Payment\GatewayResolver:
     arguments:
       $country: '%country_iso%'
@@ -1471,6 +1561,7 @@ services:
         - co
       $forceStripe: "%env(bool:FORCE_STRIPE)%"
       $paygreenEnabled: "%env(bool:PAYGREEN_ENABLED)%"
+      $stripeAvailability: '@AppBundle\Payment\StripeAvailability'
 
   AppBundle\Payment\Gateway\Stripe: ~
   AppBundle\Payment\Gateway\Edenred: ~
@@ -1860,12 +1951,17 @@ services:
       $logger: '@logger'
       $connectionId: ''
 
+  AppBundle\Service\PackageMappingResolver:
+    arguments:
+      $iriConverter: '@api_platform.iri_converter'
+
   AppBundle\Integration\Rdc\Coopcycle\RdcServiceRequestMapper:
     arguments:
       $deliveryManager: '@AppBundle\Service\DeliveryManager'
       $geocoder: '@AppBundle\Service\Geocoder'
       $phoneUtil: '@libphonenumber\PhoneNumberUtil'
       $logger: '@logger'
+      $rdcConnections: '%rdc_connections%'
 
   AppBundle\Integration\Rdc\Coopcycle\RdcServiceRequestProcessor:
     arguments:
@@ -1875,10 +1971,16 @@ services:
       $mapper: '@AppBundle\Integration\Rdc\Coopcycle\RdcServiceRequestMapper'
       $logger: '@logger'
 
+  AppBundle\Integration\Rdc\Coopcycle\RdcServiceRequestUpdater:
+    arguments:
+      $entityManager: '@doctrine.orm.entity_manager'
+      $logger: '@logger'
+
   AppBundle\Controller\Api\RdcWebhookController:
     arguments:
       $logger: '@logger'
       $messageBus: '@messenger.default_bus'
+      $rdcConnections: '%rdc_connections%'
       $rdcEnabled: '%env(bool:RDC_ENABLED)%'
     tags:
       - { name: monolog.logger, channel: rdc }
@@ -1950,14 +2052,6 @@ services:
   AppBundle\Session\NativeSessionStorageFactory:
     decorates: session.storage.factory.native
     arguments: ['@.inner']
-
-  AppBundle\Transporter\Proximus\ProximusImporter:
-    lazy: true
-    arguments:
-      - "%env(PROXIMUS_SYNC_URI)%"
-
-  AppBundle\Transporter\Proximus\ProximusTransformer:
-    lazy: true
 
   sentry.callback.before_send:
     class: 'AppBundle\Service\Sentry'

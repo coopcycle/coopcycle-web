@@ -4,7 +4,7 @@ import { StarFilled } from '@ant-design/icons';
 import { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
-import { usePutShiftMutation } from '../../../api/slice';
+import { usePostShiftMutation, usePutShiftMutation } from '../../../api/slice';
 import { Shift, ShiftActivity } from '../../../api/types';
 import ShiftCard from './ShiftCard';
 import { layoutOverlapping, minutesFromMidnight, shiftIsOnDay } from '../utils/date';
@@ -74,6 +74,7 @@ export default function CalendarGrid({
   const { message } = App.useApp();
 
   const [putShift] = usePutShiftMutation();
+  const [postShift] = usePostShiftMutation();
 
   const days = [...Array(7)].map((_, i) => weekStart.add(i, 'day'));
   const today = dayjs().format('YYYY-MM-DD');
@@ -162,13 +163,12 @@ export default function CalendarGrid({
     setDrag({ ...drag, dayIndex, startMin, endMin, moved });
   };
 
-  const saveDrag = async (current: DragState) => {
+  const saveDrag = async (current: DragState, duplicate: boolean) => {
     const { shift } = current;
     const date = days[current.dayIndex].format('YYYY-MM-DD');
 
     try {
-      await putShift({
-        '@id': shift['@id'],
+      const payload = {
         activity: shift.activity,
         startsAt: `${date}T${toTime(current.startMin)}`,
         endsAt: `${date}T${toTime(current.endMin)}`,
@@ -176,8 +176,10 @@ export default function CalendarGrid({
         breakMinutes: shift.breakMinutes,
         comment: shift.comment,
         users: shift.assignments.map(a => a.user['@id']),
-      }).unwrap();
-      message.success(t('SHIFT_PLANNING_SAVED'));
+        requiredSkills: shift.requiredSkills.map(skill => skill['@id']),
+      };
+      await (duplicate ? postShift(payload) : putShift({ '@id': shift['@id'], ...payload })).unwrap();
+      message.success(t(duplicate ? 'SHIFT_PLANNING_DUPLICATE_SUCCESS' : 'SHIFT_PLANNING_SAVED'));
     } catch {
       message.error(t('SHIFT_PLANNING_ERROR'));
     }
@@ -198,7 +200,7 @@ export default function CalendarGrid({
       didDragRef.current = false;
     }, 0);
 
-    void saveDrag(drag);
+    void saveDrag(drag, drag.mode === 'move' && (e.shiftKey || e.altKey));
   };
 
   const onDragCancel = (e: React.PointerEvent) => {

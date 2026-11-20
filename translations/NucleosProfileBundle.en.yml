@@ -20,4 +20,6 @@ form.registration.username.help: |
   Your username cannot be longer than 15 characters.
   A username can only contain alphanumeric characters (letters A-Z, numbers 0-9) with the exception of underscores.
 
+form.registration.referralCode.label: Referral code (optional)
+
 form.email.help: To send you updates about your order

@@ -12,6 +12,23 @@ use Doctrine\ORM\EntityManagerInterface;
  */
 class RfmSegmentCalculator
 {
+    /**
+     * Every segment buildSql() can assign, in the order the segmentation
+     * page lists them. Kept here rather than duplicated by callers, since
+     * the CASE below is what actually decides them.
+     */
+    public const SEGMENTS = [
+        'champions',
+        'loyal_customers',
+        'potential_loyalists',
+        'recent_customers',
+        'promising',
+        'cant_lose_them',
+        'at_risk',
+        'hibernating',
+        'lost',
+    ];
+
     private const R_DEFAULTS = [30, 90, 365];
     private const F_DEFAULTS = [2, 5, 10];
 

@@ -19,7 +19,8 @@ class MaintenanceManager
         try {
             return $this->authorizationChecker->isGranted('ROLE_ADMIN')
                 || $this->authorizationChecker->isGranted('ROLE_COURIER')
-                || $this->authorizationChecker->isGranted('ROLE_RESTAURANT');
+                || $this->authorizationChecker->isGranted('ROLE_RESTAURANT')
+                || $this->authorizationChecker->isGranted('ROLE_STORE');
         } catch (AuthenticationCredentialsNotFoundException $e) {
             return false;
         }

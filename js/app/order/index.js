@@ -14,6 +14,7 @@ import { I18nextProvider } from 'react-i18next'
 import axios from 'axios'
 
 import i18n, { getCurrencySymbol } from '../i18n'
+import { startPrecogPingIfEnabled } from '../precog/ping'
 import LoopeatModal from './LoopeatModal'
 
 import './index.scss'
@@ -350,6 +351,14 @@ form.addEventListener('submit', async function(event) {
   form.submit()
 })
 
+// When navigating back from the payment page, the browser may restore this page
+// from the back/forward cache, with the loading overlay still visible
+window.addEventListener('pageshow', (event) => {
+  if (event.persisted) {
+    setLoading(false)
+  }
+})
+
 const container = document.getElementById('react-root')
 
 const fulfilmentTimeRangeContainer = document.getElementById('order__fulfilment_time_range__container')
@@ -366,3 +375,7 @@ root.render(
     </I18nextProvider>
   </Provider>
 )
+
+// Dispatch board "precognition": the server decides whether this cart is merely
+// open at checkout or actually ready to be paid for.
+startPrecogPingIfEnabled('checkout', document.querySelector('#js-order-data'))

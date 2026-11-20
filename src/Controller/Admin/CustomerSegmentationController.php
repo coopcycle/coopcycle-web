@@ -11,10 +11,21 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CustomerSegmentationController extends AbstractController
 {
     private const ITEMS_PER_PAGE = 20;
+
+    /**
+     * The customers of a segment are rows (arrays), sorted by KnpPaginator
+     * using property paths, e.g. ?sort=[monetary]&direction=desc
+     */
+    private const SORTABLE_FIELDS = [
+        '[last_order_at]',
+        '[frequency]',
+        '[monetary]',
+    ];
 
     public function __construct(
         private readonly bool                 $rfmEnabled,
@@ -23,7 +34,7 @@ class CustomerSegmentationController extends AbstractController
     ) {}
 
     #[Route('/admin/customers/segmentation', name: 'admin_customer_segmentation', methods: ['GET', 'POST'])]
-    public function __invoke(Request $request, EntityManagerInterface $entityManager, PaginatorInterface $paginator): Response
+    public function __invoke(Request $request, EntityManagerInterface $entityManager, PaginatorInterface $paginator, TranslatorInterface $translator): Response
     {
         if (!$this->rfmEnabled) {
             throw $this->createNotFoundException();
@@ -40,7 +51,7 @@ class CustomerSegmentationController extends AbstractController
                 $this->settingsManager->set($key, (string) $value);
             }
             $this->settingsManager->flush();
-            $this->addFlash('notice', 'rfm.thresholds.saved');
+            $this->addFlash('notice', $translator->trans('rfm.thresholds.saved'));
 
             return $this->redirectToRoute('admin_customer_segmentation');
         }
@@ -69,7 +80,10 @@ class CustomerSegmentationController extends AbstractController
         $customers = $paginator->paginate(
             $activeSegment !== null ? ($segments[$activeSegment] ?? []) : [],
             $request->query->getInt('page', 1),
-            self::ITEMS_PER_PAGE
+            self::ITEMS_PER_PAGE,
+            [
+                PaginatorInterface::SORT_FIELD_ALLOW_LIST => self::SORTABLE_FIELDS,
+            ]
         );
 
         return $this->render('admin/customer_segmentation.html.twig', [

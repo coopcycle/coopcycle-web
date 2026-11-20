@@ -1,7 +1,7 @@
 {% set variant = product|sylius_resolve_variant %}
 
 <div class="flex flex-col justify-between gap-2">
-  <div class="text-left">
+  <div class="text-left wrap-anywhere">
     <h5 class="card-title font-sans">{{ product.name }}</h5>
     {% if product.enabled %}
       {% if product.description is not null %}

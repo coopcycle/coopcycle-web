@@ -1,0 +1,10 @@
+{% extends 'emails/layout.mjml.twig' %}
+
+{% block content %}
+  <mj-text align="left" line-height="20px">
+    {{ 'referral.reward_earned.body'|trans({}, 'emails')|raw }}
+  </mj-text>
+  <mj-text align="center" font-size="20px" font-weight="700" letter-spacing="2px">
+    {{ coupon_code }}
+  </mj-text>
+{% endblock %}

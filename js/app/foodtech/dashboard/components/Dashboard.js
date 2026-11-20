@@ -2,7 +2,8 @@ import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import Modal from 'react-modal'
-import { DatePicker, Slider, Col, Row, Switch, Tooltip } from 'antd'
+import { Button, DatePicker, Slider, Col, Row, Space, Switch, Tooltip } from 'antd'
+import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 import moment from 'moment'
 
 import Column from './Column'
@@ -127,14 +128,24 @@ export default function Dashboard({ onDateChange }) {
         ) }
         <div>
           <AntdConfigProvider>
-            <DatePicker
-              format={ 'll' }
-              defaultValue={ moment(date) }
-              onChange={ (date) => {
-                if (date) {
-                  onDateChange(date)
-                }
-              } } />
+            <Space.Compact>
+              <Button
+                aria-label={ t('PREVIOUS') }
+                icon={ <LeftOutlined /> }
+                onClick={ () => onDateChange(moment(date).subtract(1, 'days')) } />
+              <DatePicker
+                format={ 'll' }
+                defaultValue={ moment(date) }
+                onChange={ (date) => {
+                  if (date) {
+                    onDateChange(date)
+                  }
+                } } />
+              <Button
+                aria-label={ t('NEXT') }
+                icon={ <RightOutlined /> }
+                onClick={ () => onDateChange(moment(date).add(1, 'days')) } />
+            </Space.Compact>
           </AntdConfigProvider>
         </div>
       </div>

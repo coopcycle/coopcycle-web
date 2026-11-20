@@ -19,15 +19,23 @@ use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\OrderProcessing\OrderFeeProcessor;
 use AppBundle\Sylius\Promotion\Action\DeliveryPercentageDiscountPromotionActionCommand;
 use AppBundle\Sylius\Promotion\Action\FixedDiscountPromotionActionCommand;
+use AppBundle\Sylius\Promotion\Action\PercentageDiscountPromotionActionCommand;
 use Doctrine\Common\Collections\ArrayCollection;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
 use Sylius\Component\Order\Model\Adjustment;
 use Sylius\Component\Order\Model\OrderItemInterface;
+use Sylius\Component\Promotion\Action\PromotionActionCommandInterface;
+use Sylius\Component\Promotion\Action\PromotionApplicator;
+use Sylius\Component\Promotion\Checker\Eligibility\PromotionEligibilityCheckerInterface;
 use Sylius\Component\Promotion\Model\Promotion;
 use Sylius\Component\Promotion\Model\PromotionAction;
+use Sylius\Component\Promotion\Processor\PromotionProcessor;
+use Sylius\Component\Promotion\Processor\PromotionProcessorInterface;
+use Sylius\Component\Promotion\Provider\PreQualifiedPromotionsProviderInterface;
 use Sylius\Component\Promotion\Repository\PromotionRepositoryInterface;
+use Sylius\Component\Registry\ServiceRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -55,6 +63,7 @@ class OrderFeeProcessorTest extends KernelTestCase
         $this->pricingManager = $this->prophesize(PricingManager::class);
 
         $this->promotionRepository = $this->prophesize(PromotionRepositoryInterface::class);
+        $this->promotionProcessor = $this->prophesize(PromotionProcessorInterface::class);
 
         $this->orderFeeProcessor = new OrderFeeProcessor(
             $this->adjustmentFactory,
@@ -62,6 +71,7 @@ class OrderFeeProcessorTest extends KernelTestCase
             $this->deliveryManager->reveal(),
             $this->pricingManager->reveal(),
             $this->promotionRepository->reveal(),
+            $this->promotionProcessor->reveal(),
             new NullLogger(),
             new NullLoggingUtils()
         );
@@ -357,6 +367,273 @@ class OrderFeeProcessorTest extends KernelTestCase
 
         $this->assertEquals(550, $order->getFeeTotal());
         $this->assertEquals(350, $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT));
+    }
+
+    public function testDeliveryPercentagePromotionUsesCurrentDeliveryAmount(): void
+    {
+        $pricing = new PricingRuleSet();
+        $contract = self::createContract(550, 0, 0.00, false, null, true, $pricing);
+
+        $restaurant = new Restaurant();
+        $restaurant->setContract($contract);
+
+        $order = new Order();
+        $order->setRestaurant($restaurant);
+        $order->addItem($this->createOrderItem(6500));
+
+        $promotion = new Promotion();
+        $promotion->setCode('DELIVERY_20');
+        $promotion->setName('DELIVERY_20');
+
+        $promotionAction = new PromotionAction();
+        $promotionAction->setType(DeliveryPercentageDiscountPromotionActionCommand::TYPE);
+        $promotionAction->setConfiguration([
+            'percentage' => 0.2,
+        ]);
+
+        $promotion->addAction($promotionAction);
+
+        $this->promotionRepository
+            ->findOneBy(['code' => 'DELIVERY_20'])
+            ->willReturn($promotion);
+
+        $promotionActions = new ServiceRegistry(PromotionActionCommandInterface::class);
+        $promotionActions->register(DeliveryPercentageDiscountPromotionActionCommand::TYPE, new DeliveryPercentageDiscountPromotionActionCommand($this->adjustmentFactory));
+
+        $preQualifiedPromotionsProvider = $this->prophesize(PreQualifiedPromotionsProviderInterface::class);
+        $preQualifiedPromotionsProvider
+            ->getPromotions(Argument::any())
+            ->willReturn([ $promotion ]);
+
+        $promotionEligibilityChecker = $this->prophesize(PromotionEligibilityCheckerInterface::class);
+        $promotionEligibilityChecker
+            ->isEligible(Argument::any(), $promotion)
+            ->willReturn(true);
+
+        $orderFeeProcessor = new OrderFeeProcessor(
+            $this->adjustmentFactory,
+            $this->translator->reveal(),
+            $this->deliveryManager->reveal(),
+            $this->pricingManager->reveal(),
+            $this->promotionRepository->reveal(),
+            new PromotionProcessor(
+                $preQualifiedPromotionsProvider->reveal(),
+                $promotionEligibilityChecker->reveal(),
+                new PromotionApplicator($promotionActions)
+            ),
+            new NullLogger(),
+            new NullLoggingUtils()
+        );
+
+        $delivery = new Delivery();
+
+        $this->deliveryManager
+            ->createFromOrder($order)
+            ->willReturn($delivery);
+
+        // The order was previously processed with a lower delivery price
+        $this->pricingManager
+            ->getPrice($delivery, $pricing)
+            ->willReturn(750);
+
+        $orderFeeProcessor->process($order);
+
+        $this->assertEquals(750, $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT));
+        $this->assertEquals(-150, $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT));
+
+        // The order total reaches another price range
+        $this->pricingManager
+            ->getPrice($delivery, $pricing)
+            ->willReturn(960);
+
+        $orderFeeProcessor->process($order);
+
+        $this->assertEquals(960, $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT));
+        $this->assertEquals(-192, $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT));
+        $this->assertEquals(6500 + 960 - 192, $order->getTotal());
+
+        // The platform fee is decreased with the up-to-date promotion amount
+        $this->assertEquals(550 - 192, $order->getFeeTotal());
+    }
+
+    public function testDeliveryPercentagePromotionWithTakeAway(): void
+    {
+        $contract = self::createContract(550, 350, 0.00);
+
+        $restaurant = new Restaurant();
+        $restaurant->setContract($contract);
+
+        $order = new Order();
+        $order->setRestaurant($restaurant);
+        $order->addItem($this->createOrderItem(2000));
+
+        $promotion = new Promotion();
+        $promotion->setCode('DELIVERY_20');
+        $promotion->setName('DELIVERY_20');
+
+        $promotionAction = new PromotionAction();
+        $promotionAction->setType(DeliveryPercentageDiscountPromotionActionCommand::TYPE);
+        $promotionAction->setConfiguration([
+            'percentage' => 0.2,
+        ]);
+
+        $promotion->addAction($promotionAction);
+
+        $promotionActions = new ServiceRegistry(PromotionActionCommandInterface::class);
+        $promotionActions->register(DeliveryPercentageDiscountPromotionActionCommand::TYPE, new DeliveryPercentageDiscountPromotionActionCommand($this->adjustmentFactory));
+
+        $preQualifiedPromotionsProvider = $this->prophesize(PreQualifiedPromotionsProviderInterface::class);
+        $preQualifiedPromotionsProvider
+            ->getPromotions(Argument::any())
+            ->willReturn([ $promotion ]);
+
+        $promotionEligibilityChecker = $this->prophesize(PromotionEligibilityCheckerInterface::class);
+        $promotionEligibilityChecker
+            ->isEligible(Argument::any(), $promotion)
+            ->willReturn(true);
+
+        $orderFeeProcessor = new OrderFeeProcessor(
+            $this->adjustmentFactory,
+            $this->translator->reveal(),
+            $this->deliveryManager->reveal(),
+            $this->pricingManager->reveal(),
+            $this->promotionRepository->reveal(),
+            new PromotionProcessor(
+                $preQualifiedPromotionsProvider->reveal(),
+                $promotionEligibilityChecker->reveal(),
+                new PromotionApplicator($promotionActions)
+            ),
+            new NullLogger(),
+            new NullLoggingUtils()
+        );
+
+        $orderFeeProcessor->process($order);
+
+        $this->assertEquals(350, $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT));
+        $this->assertEquals(-70, $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT));
+
+        $order->setTakeaway(true);
+
+        $orderFeeProcessor->process($order);
+
+        $this->assertEquals(0, $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT));
+        $this->assertEquals(0, $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT));
+        $this->assertEquals(2000, $order->getTotal());
+    }
+
+    public function testOrderPercentagePromotionIncludesTip(): void
+    {
+        $contract = self::createContract(550, 350, 0.00);
+
+        $restaurant = new Restaurant();
+        $restaurant->setContract($contract);
+
+        $order = new Order();
+        $order->setRestaurant($restaurant);
+        $order->addItem($this->createOrderItem(2000));
+
+        $promotion = new Promotion();
+        $promotion->setCode('ORDER_10');
+        $promotion->setName('ORDER_10');
+
+        $promotionAction = new PromotionAction();
+        $promotionAction->setType(PercentageDiscountPromotionActionCommand::TYPE);
+        $promotionAction->setConfiguration([
+            'percentage' => 0.1,
+            'items_total' => false,
+        ]);
+
+        $promotion->addAction($promotionAction);
+
+        $promotionActions = new ServiceRegistry(PromotionActionCommandInterface::class);
+        $promotionActions->register(PercentageDiscountPromotionActionCommand::TYPE, new PercentageDiscountPromotionActionCommand($this->adjustmentFactory));
+
+        $preQualifiedPromotionsProvider = $this->prophesize(PreQualifiedPromotionsProviderInterface::class);
+        $preQualifiedPromotionsProvider
+            ->getPromotions(Argument::any())
+            ->willReturn([ $promotion ]);
+
+        $promotionEligibilityChecker = $this->prophesize(PromotionEligibilityCheckerInterface::class);
+        $promotionEligibilityChecker
+            ->isEligible(Argument::any(), $promotion)
+            ->willReturn(true);
+
+        $orderFeeProcessor = new OrderFeeProcessor(
+            $this->adjustmentFactory,
+            $this->translator->reveal(),
+            $this->deliveryManager->reveal(),
+            $this->pricingManager->reveal(),
+            $this->promotionRepository->reveal(),
+            new PromotionProcessor(
+                $preQualifiedPromotionsProvider->reveal(),
+                $promotionEligibilityChecker->reveal(),
+                new PromotionApplicator($promotionActions)
+            ),
+            new NullLogger(),
+            new NullLoggingUtils()
+        );
+
+        $orderFeeProcessor->process($order);
+
+        $this->assertEquals(-235, $order->getAdjustmentsTotal(AdjustmentInterface::ORDER_PROMOTION_ADJUSTMENT));
+
+        $order->setTipAmount(300);
+
+        $orderFeeProcessor->process($order);
+
+        $this->assertEquals(300, $order->getAdjustmentsTotal(AdjustmentInterface::TIP_ADJUSTMENT));
+        $this->assertEquals(-265, $order->getAdjustmentsTotal(AdjustmentInterface::ORDER_PROMOTION_ADJUSTMENT));
+    }
+
+    public function testOrderWithoutRestaurantAppliesPromotions(): void
+    {
+        $order = new Order();
+        $order->addItem($this->createOrderItem(1000));
+
+        $promotion = new Promotion();
+        $promotion->setCode('ORDER_10');
+        $promotion->setName('ORDER_10');
+
+        $promotionAction = new PromotionAction();
+        $promotionAction->setType(PercentageDiscountPromotionActionCommand::TYPE);
+        $promotionAction->setConfiguration([
+            'percentage' => 0.1,
+        ]);
+
+        $promotion->addAction($promotionAction);
+
+        $promotionActions = new ServiceRegistry(PromotionActionCommandInterface::class);
+        $promotionActions->register(PercentageDiscountPromotionActionCommand::TYPE, new PercentageDiscountPromotionActionCommand($this->adjustmentFactory));
+
+        $preQualifiedPromotionsProvider = $this->prophesize(PreQualifiedPromotionsProviderInterface::class);
+        $preQualifiedPromotionsProvider
+            ->getPromotions(Argument::any())
+            ->willReturn([ $promotion ]);
+
+        $promotionEligibilityChecker = $this->prophesize(PromotionEligibilityCheckerInterface::class);
+        $promotionEligibilityChecker
+            ->isEligible(Argument::any(), $promotion)
+            ->willReturn(true);
+
+        $orderFeeProcessor = new OrderFeeProcessor(
+            $this->adjustmentFactory,
+            $this->translator->reveal(),
+            $this->deliveryManager->reveal(),
+            $this->pricingManager->reveal(),
+            $this->promotionRepository->reveal(),
+            new PromotionProcessor(
+                $preQualifiedPromotionsProvider->reveal(),
+                $promotionEligibilityChecker->reveal(),
+                new PromotionApplicator($promotionActions)
+            ),
+            new NullLogger(),
+            new NullLoggingUtils()
+        );
+
+        $orderFeeProcessor->process($order);
+
+        $this->assertEquals(-100, $order->getAdjustmentsTotal(AdjustmentInterface::ORDER_PROMOTION_ADJUSTMENT));
+        $this->assertCount(0, $order->getAdjustments(AdjustmentInterface::FEE_ADJUSTMENT));
     }
 
     public function testOrderWithVariableCustomerAmountAndMissingShippingAddress()

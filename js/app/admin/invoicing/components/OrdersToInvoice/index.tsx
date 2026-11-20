@@ -5,6 +5,7 @@ import { Alert, Checkbox, Radio } from 'antd';
 import { Moment } from 'moment';
 
 import Button from '../../../../components/core/Button';
+import { serializeFilterToken } from '../../../../components/SearchQueryBar/queryString';
 import { prepareParams, SettlementFilter } from '../../redux/actions';
 import { useGetPendingInvoiceLineItemsQuery } from '../../../../api/slice';
 import {
@@ -14,6 +15,24 @@ import {
 import ExportModalContent from '../ExportModalContent';
 import OrganizationsTable from '../OrganizationsTable';
 import RangePicker from './RangePicker';
+
+// The orders list, filtered the same way as the "pending" count, so admins
+// can find which orders are holding up invoicing
+function _pendingOrdersUrl(dateRange: Moment[]): string {
+  const q = [
+    serializeFilterToken({ key: 'state', value: 'new' }),
+    serializeFilterToken({ key: 'state', value: 'accepted' }),
+    serializeFilterToken({
+      key: 'date',
+      range: {
+        from: dateRange[0].format('YYYY-MM-DD'),
+        to: dateRange[1].format('YYYY-MM-DD'),
+      },
+    }),
+  ].join(' ');
+
+  return window.Routing.generate('admin_orders', { q });
+}
 
 export default () => {
   const [selectedOrganizationIds, setSelectedOrganizationIds] = useState(
@@ -125,7 +144,7 @@ export default () => {
           </Button>
         </div>
       </div>
-      {pendingCount > 0 && (
+      {pendingCount > 0 && dateRange && (
         <Alert
           style={{ marginTop: '24px' }}
           type="warning"
@@ -133,6 +152,11 @@ export default () => {
           message={t('ADMIN_ORDERS_TO_INVOICE_PENDING_ORDERS_WARNING', {
             count: pendingCount,
           })}
+          action={
+            <a href={_pendingOrdersUrl(dateRange)}>
+              {t('ADMIN_ORDERS_TO_INVOICE_PENDING_ORDERS_LINK')}
+            </a>
+          }
         />
       )}
       <OrganizationsTable

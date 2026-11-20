@@ -19,12 +19,16 @@ const buttonItemLayout = {
 
 export default () => {
 
-  const { polylineStyle, clustersEnabled, useAvatarColors, showWeightAndVolumeUnit, showDistanceAndTime } = useSelector(selectSettings)
+  const { polylineStyle, clustersEnabled, useAvatarColors, showWeightAndVolumeUnit, showDistanceAndTime, precogEnabled } = useSelector(selectSettings)
+  // The deployment flag, not the setting: when the tenant has not turned the
+  // layer on there is nothing for a dispatcher to choose between.
+  const precogAvailable = useSelector(state => Boolean(state.config.precogEnabled))
   const [polylineStyleValue, setPolylineStyleLocal] = useState(polylineStyle)
   const [clustersEnabledValue, setClustersEnabledLocal] = useState(clustersEnabled)
   const [useAvatarColorsValue, setUseAvatarColorsLocal] = useState(useAvatarColors)
   const [showWeightAndVolumeUnitValue, setShowWeightAndVolumeUnitLocal] = useState(showWeightAndVolumeUnit)
   const [showDistanceAndTimeValue, setshowDistanceAndTimeLocal] = useState(showDistanceAndTime)
+  const [precogEnabledValue, setPrecogEnabledLocal] = useState(precogEnabled)
   const dispatch = useDispatch()
 
   const { t } = useTranslation()
@@ -35,7 +39,8 @@ export default () => {
       clustersEnabled: clustersEnabledValue,
       useAvatarColors: useAvatarColorsValue,
       showWeightAndVolumeUnit: showWeightAndVolumeUnitValue,
-      showDistanceAndTime: showDistanceAndTimeValue
+      showDistanceAndTime: showDistanceAndTimeValue,
+      precogEnabled: precogEnabledValue
     }))
     dispatch(closeSettings())
   }
@@ -79,6 +84,15 @@ export default () => {
           <Radio.Button value={ false }>{ t('ADMIN_DASHBOARD_SETTINGS_NO') }</Radio.Button>
         </Radio.Group>
       </Form.Item>
+      { precogAvailable && (
+      <Form.Item label={ t('ADMIN_DASHBOARD_SETTINGS_PRECOG_ENABLED') } { ...formItemLayout }>
+        <Radio.Group defaultValue={ precogEnabled }
+          onChange={ (e) => setPrecogEnabledLocal(e.target.value) }>
+          <Radio.Button value={ true }>{ t('ADMIN_DASHBOARD_SETTINGS_YES') }</Radio.Button>
+          <Radio.Button value={ false }>{ t('ADMIN_DASHBOARD_SETTINGS_NO') }</Radio.Button>
+        </Radio.Group>
+      </Form.Item>
+      ) }
       <Form.Item { ...buttonItemLayout }>
         <button type="button" className="btn btn-block btn-primary" onClick={ () => handleSubmit() }>
           { t('ADMIN_DASHBOARD_FILTERS_APPLY') }

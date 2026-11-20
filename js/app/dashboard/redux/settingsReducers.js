@@ -36,6 +36,9 @@ export const defaultSettings = {
   useAvatarColors: false,
   showDistanceAndTime: true,
   showWeightAndVolumeUnit: true,
+  // Only ever consulted when the deployment has the layer turned on at all,
+  // so defaulting to true means enabling it for a tenant actually shows it.
+  precogEnabled: true,
   toursEnabled: false // is the tour column expanded
 }
 

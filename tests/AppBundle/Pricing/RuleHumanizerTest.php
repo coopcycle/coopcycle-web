@@ -220,6 +220,24 @@ class RuleHumanizerTest extends KernelTestCase
         $this->assertEquals('Délai de préavis pour retrait entre 1 jour et 2 jours - €1.00', $this->humanizer->humanize($rule));
     }
 
+    public function testDiffDaysOfDropoff()
+    {
+        $rule = new PricingRule();
+        $rule->setExpression('diff_days(dropoff, \'< 1\')');
+        $rule->setPrice('100');
+
+        $this->assertEquals('Délai de préavis pour dépôt moins de 1 jour - €1.00', $this->humanizer->humanize($rule));
+    }
+
+    public function testDiffHoursOfDropoff()
+    {
+        $rule = new PricingRule();
+        $rule->setExpression('diff_hours(dropoff, \'< 12\')');
+        $rule->setPrice('100');
+
+        $this->assertEquals('Délai de préavis pour dépôt moins de 12 heures - €1.00', $this->humanizer->humanize($rule));
+    }
+
     public function testOrderItemsTotal()
     {
         $rule = new PricingRule();
@@ -227,6 +245,36 @@ class RuleHumanizerTest extends KernelTestCase
         $rule->setPrice('100');
 
         $this->assertEquals('Total du panier plus de 20 - €1.00', $this->humanizer->humanize($rule));
+    }
+
+    public function testDropoffRank()
+    {
+        $rule = new PricingRule();
+
+        $rule->setExpression('task.dropoffRank > 1');
+        $rule->setPrice('100');
+        $this->assertEquals('Rang du dépôt plus de 1 - €1.00', $this->humanizer->humanize($rule));
+
+        $rule->setExpression('task.dropoffRank == 2');
+        $rule->setPrice('100');
+        $this->assertEquals('Rang du dépôt = 2 - €1.00', $this->humanizer->humanize($rule));
+
+        $rule->setExpression('task.dropoffRank in 2..3');
+        $rule->setPrice('100');
+        $this->assertEquals('Rang du dépôt entre 2 et 3 - €1.00', $this->humanizer->humanize($rule));
+    }
+
+    public function testPickupRank()
+    {
+        $rule = new PricingRule();
+
+        $rule->setExpression('task.pickupRank > 1');
+        $rule->setPrice('100');
+        $this->assertEquals('Rang du retrait plus de 1 - €1.00', $this->humanizer->humanize($rule));
+
+        $rule->setExpression('task.pickupRank in 2..3');
+        $rule->setPrice('100');
+        $this->assertEquals('Rang du retrait entre 2 et 3 - €1.00', $this->humanizer->humanize($rule));
     }
 
     public function testPackagesTotalVolumeUnits()

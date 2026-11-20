@@ -46,6 +46,7 @@ class DeliveryListener
         }
 
         $this->applyStoreTags($delivery);
+        $this->applyRestaurantTags($delivery);
 
         $tasks = $delivery->getTasks();
 
@@ -105,6 +106,24 @@ class DeliveryListener
 
         foreach ($delivery->getTasks() as $task) {
             $task->addTags($tags);
+        }
+    }
+
+    private function applyRestaurantTags(Delivery $delivery)
+    {
+        $order = $delivery->getOrder();
+
+        if (null === $order) {
+            return;
+        }
+
+        // A multi-vendor order (in a hub) has several restaurants
+        foreach ($order->getRestaurants() as $restaurant) {
+            $tags = $restaurant->getTags();
+
+            foreach ($delivery->getTasks() as $task) {
+                $task->addTags($tags);
+            }
         }
     }
 }

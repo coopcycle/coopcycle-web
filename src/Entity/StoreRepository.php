@@ -15,23 +15,4 @@ class StoreRepository extends EntityRepository
     {
         return $this->findOneBy(['rdcConnectionId' => $rdcConnectionId]);
     }
-
-    public function findStoresWithRdcConnection(): array
-    {
-        return $this->createQueryBuilder('s')
-            ->where('s.rdcConnectionId IS NOT NULL')
-            ->getQuery()
-            ->getResult();
-    }
-
-    public function findSingleStore(): ?Store
-    {
-        $stores = $this->findAll();
-
-        if (count($stores) === 1) {
-            return $stores[0];
-        }
-
-        return null;
-    }
 }

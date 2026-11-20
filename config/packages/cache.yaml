@@ -20,6 +20,11 @@ framework:
                 adapters:
                   - cache.adapter.array
                   - cache.app
+            # The scheduler's own state (when each recurring message last ran),
+            # so a worker restart doesn't lose what was due. Redis-backed and
+            # never array-backed: it has to survive the process.
+            scheduler.cache:
+                adapter: cache.app
             version.cache:
                 default_lifetime: 3600
                 adapters:

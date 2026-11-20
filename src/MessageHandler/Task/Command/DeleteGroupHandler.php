@@ -26,7 +26,7 @@ class DeleteGroupHandler
 
             $taskGroup->removeTask($task);
 
-            if (!$task->isAssigned()) {
+            if ($command->shouldCancelTasks() && !$task->isAssigned()) {
                 $tasksToCancel[] = $task;
             }
         }

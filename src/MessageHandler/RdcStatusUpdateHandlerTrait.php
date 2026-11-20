@@ -8,6 +8,7 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskImage;
 use AppBundle\Integration\Rdc\Api\RdcClientFactory;
+use AppBundle\Integration\Rdc\Api\RdcException;
 use AppBundle\Integration\Rdc\Enum\ResponseStatus;
 use AppBundle\Message\RdcDropoffStatusUpdateMessage;
 use AppBundle\Message\RdcPickupStatusUpdateMessage;
@@ -77,8 +78,8 @@ trait RdcStatusUpdateHandlerTrait
         match ([$message->coopcycleStatus, $task->getType()]) {
             [Task::STATUS_DONE, Task::TYPE_PICKUP] => $this->handleStatusDoing($rdcClient, $serviceId, $activityId, $location, $actionTime, $config, $task),
             [Task::STATUS_DONE, Task::TYPE_DROPOFF] => $this->handleStatusDone($rdcClient, $serviceId, $activityId, $location, $actionTime, $config, $task),
-            [Task::STATUS_CANCELLED, Task::TYPE_PICKUP] => $this->handleStatusCancelled($rdcClient, $serviceId, $activityId, $location, $actionTime, $config, $task),
-            [Task::STATUS_CANCELLED, Task::TYPE_DROPOFF] => $this->handleStatusCancelled($rdcClient, $serviceId, $activityId, $location, $actionTime, $config, $task),
+            [Task::STATUS_CANCELLED, Task::TYPE_PICKUP],
+            [Task::STATUS_CANCELLED, Task::TYPE_DROPOFF] => $this->handleStatusCancelled($rdcClient, $serviceId, $activityId, $task),
             default => null
         };
 
@@ -126,13 +127,13 @@ trait RdcStatusUpdateHandlerTrait
         RdcClientInterface $rdcClient,
         string $serviceId,
         string $activityId,
-        array $location,
-        \DateTimeImmutable $actionTime,
-        array $config,
         Task $task
     ): void {
-        $this->patchExecution($rdcClient, 'services', $serviceId, ExecutionStatus::CANCELLED->value, $location, true);
-        $this->patchExecution($rdcClient, 'activities', $activityId, ExecutionStatus::CANCELLED->value, $location, true);
+        // Nothing happened on the spot: only the status changes, without a
+        // location or its timestamps
+        $cancelled = ['executionStatus' => ExecutionStatus::CANCELLED->value];
+        $this->sendPatch($rdcClient, 'services', $serviceId, $cancelled);
+        $this->sendPatch($rdcClient, 'activities', $activityId, $cancelled);
         $this->notifyRemoteCancellation($rdcClient, $task);
     }
 
@@ -151,12 +152,24 @@ trait RdcStatusUpdateHandlerTrait
             return;
         }
 
+        // The requestor cancelled it on its node: nothing to send back
+        if ($task->getDelivery()?->getMetadata()['rdc']['cancelled_by_requestor'] ?? false) {
+            $this->logger->info('Delivery cancelled by its requestor, its service request is left as is', [
+                'lo_uri' => $loUri,
+            ]);
+            return;
+        }
+
         $loRevision = $this->fetchLoRevision($rdcClient, $loUri);
         if (is_null($loRevision)) {
             return;
         }
 
-        $changeRequest = $this->buildCancellationChangeRequest($loRevision, $rdcClient->getMemberIdentifier());
+        $changeRequest = $this->buildCancellationChangeRequest(
+            $loRevision,
+            $rdcClient->getMemberIdentifier(),
+            sprintf('Service livraison %s annulé', $task->getDelivery()->getId())
+        );
         $this->postCancellationChangeRequest($rdcClient, $loUri, $changeRequest);
     }
 
@@ -186,35 +199,44 @@ trait RdcStatusUpdateHandlerTrait
     {
         try {
             $response = $rdcClient->getRemote($loUri);
-            $loRevision = $response->getHeaders(false)['x-revision'][0] ?? null;
 
-            if (is_null($loRevision)) {
-                $this->logger->warning('No revision found in remote response', [
-                    'lo_uri' => $loUri,
-                ]);
+            // A refused read (e.g. a 403 when the ACL doesn't cover us) must
+            // fail the message like the change-request does, so that it's
+            // retried instead of skipping the cancellation.
+            $statusCode = $response->getStatusCode();
+            if ($statusCode >= 400) {
+                throw new \RuntimeException(sprintf('Remote revision read failed: HTTP %d', $statusCode));
             }
-
-            return $loRevision;
         } catch (\Throwable $e) {
             $this->logger->error('Failed to fetch remote revision', [
                 'lo_uri' => $loUri,
                 'error' => $e->getMessage(),
             ]);
-
-            return null;
+            throw $e;
         }
+
+        $loRevision = $response->getHeaders(false)['x-revision'][0] ?? null;
+
+        if (is_null($loRevision)) {
+            $this->logger->warning('No revision found in remote response', [
+                'lo_uri' => $loUri,
+            ]);
+        }
+
+        return $loRevision;
     }
 
-    private function buildCancellationChangeRequest(string $loRevision, string $memberIdentifier): array
+    private function buildCancellationChangeRequest(string $loRevision, string $memberIdentifier, string $description): array
     {
         return [
             'logisticsObjectRevision' => $loRevision,
+            'description' => $description,
             'operations' => [
-    [
-                'op' => 'add',
-                'path' => '/responseStatus',
-                'value' => ResponseStatus::CANCELLED->value,
-    ]
+                [
+                    'op' => 'add',
+                    'path' => '/responseStatus',
+                    'value' => ResponseStatus::CANCELLED->value,
+                ],
             ],
             'requestorMemberIdentifier' => $memberIdentifier,
         ];
@@ -268,7 +290,18 @@ trait RdcStatusUpdateHandlerTrait
             $payload['documents'] = $documents;
         }
 
-        $rdcClient->patch(sprintf('/%s/%s', $resourceType, $resourceId), $payload);
+        $this->sendPatch($rdcClient, $resourceType, $resourceId, $payload);
+    }
+
+    private function sendPatch(RdcClientInterface $rdcClient, string $resourceType, string $resourceId, array $payload): void
+    {
+        // A refused update (the BOL down, a bad payload) must fail the message,
+        // or Messenger considers it delivered and it's lost
+        $path = sprintf('/%s/%s', $resourceType, $resourceId);
+        $response = $rdcClient->patch($path, $payload);
+        if ($response->getStatusCode() >= 400) {
+            throw RdcException::refused(sprintf('PATCH %s', $path), $response);
+        }
     }
 
     private function postEvents(

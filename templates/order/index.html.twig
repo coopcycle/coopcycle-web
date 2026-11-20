@@ -142,7 +142,14 @@
         <!-- React component will be inserted here -->
         <div id="order__fulfilment_time_range__container">
         </div>
-        <div>
+        <div class="flex flex-row items-center">
+          <a class="btn btn-ghost mr-2" href="{{ path((order.isMultiVendor() ? 'hub' : 'restaurant'), {
+              id:   order.vendor.id,
+              slug: order.vendor.name|slugify
+            }) }}" title="{{ 'checkout.previous'|trans }}">
+            <i class="fa fa-arrow-left"></i>
+            <span class="hidden md:inline">{{ 'checkout.previous'|trans }}</span>
+          </a>
           {% if form.quote is defined %}
             {{ form_widget(form.quote, { attr: { class: 'btn-lg btn-default mr-2' } }) }}
           {% endif %}
@@ -212,7 +219,8 @@
 <div id="js-order-data"
      data-order-node-id="{{ order|get_iri_from_item }}"
      data-order-shipping-time-range="{{ shipping_time_range is not null ? shipping_time_range|json_encode|e('html_attr') }}"
-     data-order-access-token="{{ order_access_token is defined ? order_access_token }}"></div>
+     data-order-access-token="{{ order_access_token is defined ? order_access_token }}"
+     data-precog-enabled="{{ precog_enabled ? 'true' : 'false' }}"></div>
 
 <div id="optins"
   data-brand-name={{ coopcycle_setting('brand_name')|json_encode|e('html_attr') }}></div>

@@ -89,7 +89,11 @@ AppBundle\DataType\TsRange:
         - <identity(new \DateTime('today 19:30:00'))>
 
 # 100 foodtech (restaurant) orders, split the same way as package_delivery_orders.yml:
-# a dedicated batch for restaurant_1, and a random pool for the remaining 7 restaurants.
+# a dedicated batch for restaurant_1, and a pool spread over the remaining 7 restaurants.
+# The pool is spread round-robin (not at random) so that every restaurant gets
+# 8 or 9 orders: Doctrine's insert order does not follow the fixtures order, so
+# the restaurant getting id 1 is not necessarily restaurant_1, and tests
+# filtering on "/api/restaurants/1" need it to have orders whichever it is.
 AppBundle\Entity\Sylius\Order:
   foodtech_order_{1..40}:
     __factory:
@@ -105,7 +109,7 @@ AppBundle\Entity\Sylius\Order:
   foodtech_order_{41..100}:
     __factory:
       '@sylius.factory.order::createForRestaurant':
-        - '@foodtech_restaurant_<numberBetween(2, 8)>'
+        - '@foodtech_restaurant_<($current % 7 + 2)>'
     __calls:
       - setNumber: [ "F<current()>" ]
       - setState: [ 'fulfilled' ]
