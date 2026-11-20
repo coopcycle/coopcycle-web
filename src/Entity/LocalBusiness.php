@@ -1066,6 +1066,30 @@ class LocalBusiness extends BaseLocalBusiness implements
         return $this;
     }
 
+    /**
+     * The cuisines this shop serves, by slug.
+     *
+     * `facets.cuisine` holds the same list but translated for display by
+     * RestaurantNormalizer, so it cannot be matched against anything. These
+     * are the raw names, which are what ?cuisine[]= takes and what
+     * /api/shop_cuisines lists, so a client can tell which shops a cuisine
+     * covers without asking the server again.
+     *
+     * @return string[]
+     */
+    #[SerializedName('cuisines')]
+    #[Groups('restaurant_list')]
+    public function getCuisineNames(): array
+    {
+        $names = [];
+
+        foreach ($this->getServesCuisine() as $cuisine) {
+            $names[] = $cuisine->getName();
+        }
+
+        return $names;
+    }
+
     #[SerializedName('facets')]
     #[Groups('restaurant_list')]
     public function getFacets()

@@ -23,6 +23,7 @@ Feature: Manage restaurants
             "cuisine":["Asiatique", "Italienne"],
             "type":"Restaurant"
           },
+          "cuisines":["italian","asian"],
           "@*@": "@*@"
         },
         {
@@ -105,6 +106,7 @@ Feature: Manage restaurants
           "facets": {
             "@*@": "@*@"
           },
+          "cuisines":[],
           "loopeatEnabled":false,
           "loopeatMandatory":false,
           "tags":@array@,
@@ -213,6 +215,27 @@ Feature: Manage restaurants
         {"id":"category|new","filter":"category","value":"new","label":@string@},
         {"id":"category|featured","filter":"category","value":"featured","label":@string@},
         {"id":"category|exclusive","filter":"category","value":"exclusive","label":@string@}
+      ]
+    }
+    """
+
+  Scenario: Retrieve the shop cuisines
+    Given the fixtures files are loaded:
+      | products.yml        |
+      | restaurants.yml     |
+    When I add "Accept" header equal to "application/ld+json"
+    And I send a "GET" request to "/api/shop_cuisines"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+    """
+    {
+      "@context":"/api/contexts/ShopCuisines",
+      "@id":"/api/shop_cuisines",
+      "@type":"ShopCuisines",
+      "cuisines":[
+        {"id":"cuisine|asian","filter":"cuisine","value":"asian","label":"Asiatique","icon":null},
+        {"id":"cuisine|italian","filter":"cuisine","value":"italian","label":"Italienne","icon":"@string@.startsWith('<svg')"}
       ]
     }
     """

@@ -26,8 +26,11 @@ AppBundle\Entity\Address:
 AppBundle\Entity\Cuisine:
   cuisine_asian:
     name: 'asian'
+  # A locally bundled icon, so the rendering is exercised without the suite
+  # reaching out to an icon set over the network.
   cuisine_italian:
     name: 'italian'
+    icon: 'symfony'
 
 AppBundle\Entity\Delivery\PricingRuleSet:
   pricing_rule_set_1:

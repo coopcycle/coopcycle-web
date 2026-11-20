@@ -6,7 +6,10 @@ use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusiness\Collection as ShopCollection;
 use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\UI\HomepageBlock;
+use AppBundle\Entity\Cuisine;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\UX\Icons\Exception\IconNotFoundException;
+use Symfony\UX\Icons\IconRendererInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -22,12 +25,72 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ShopFilterRegistry
 {
+    /**
+     * The size the icons are rendered at. Clients are free to scale them —
+     * every icon carries a viewBox — but they need a number to start from.
+     */
+    private const ICON_SIZE = 48;
+
     public function __construct(
         private EntityManagerInterface $entityManager,
         private LocalBusinessRepository $shopRepository,
         private SettingsManager $settingsManager,
-        private TranslatorInterface $translator)
+        private TranslatorInterface $translator,
+        private IconRendererInterface $iconRenderer)
     {}
+
+    /**
+     * The cuisines worth offering as filters: those at least one shop serves.
+     *
+     * Same shape as getCategories(), so a client can treat a cuisine as one
+     * more filter, plus the icon the /shops page shows above the label.
+     * Sorted by label, which is how they read as a strip; the order of
+     * getCategories() is the instance's own and is left alone.
+     *
+     * @return array<int, array{id: string, filter: string, value: string, label: string, icon: string|null}>
+     */
+    public function getCuisines(): array
+    {
+        $cuisines = array_map(
+            fn (Cuisine $cuisine) => $this->makeCategory(
+                'cuisine',
+                $cuisine->getName(),
+                $cuisine->getName(),
+                'cuisines'
+            ) + ['icon' => $this->renderIcon($cuisine)],
+            $this->shopRepository->findCuisinesByFilters()
+        );
+
+        usort($cuisines, fn (array $a, array $b) => $a['label'] <=> $b['label']);
+
+        return $cuisines;
+    }
+
+    /**
+     * The cuisine's icon as SVG markup, rather than as the name of an icon in
+     * someone else's icon set: the website resolves those names server side
+     * too, and asking every app to reach iconify.design for them would put a
+     * third party between a customer and the shops list.
+     */
+    private function renderIcon(Cuisine $cuisine): ?string
+    {
+        if (!$cuisine->hasIcon()) {
+            return null;
+        }
+
+        try {
+            // An explicit size, because the bundle's default is "1em" and
+            // there is no font size to resolve that against outside a browser.
+            return $this->iconRenderer->renderIcon($cuisine->getIcon(), [
+                'width' => self::ICON_SIZE,
+                'height' => self::ICON_SIZE,
+            ]);
+        } catch (IconNotFoundException) {
+            // A name that no icon set answers to is a configuration slip, not
+            // a reason to drop the cuisine from the list.
+            return null;
+        }
+    }
 
     /**
      * @return array<int, array{id: string, filter: string, value: string, label: string}>
