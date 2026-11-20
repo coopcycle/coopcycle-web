@@ -10,8 +10,10 @@ import {
   Space,
   Checkbox,
   Button,
+  Input,
 } from 'antd';
-import { FilterOutlined } from '@ant-design/icons';
+import { FilterOutlined, SearchOutlined } from '@ant-design/icons';
+import type { FilterDropdownProps } from 'antd/es/table/interface';
 import IncidentItem from './IncidentItem';
 import { useTranslation } from 'react-i18next';
 import { moment } from '../../../../../shared';
@@ -97,7 +99,7 @@ function List() {
 
   const { filters, setFilters, searchParams, onChange, page, setPage } =
     useTableFilters({
-      single: ['status', 'priority'],
+      single: ['status', 'priority', 'orderNumber'],
       initialFilters: { status: ['OPEN'] },
       iriMappings: [
         {
@@ -244,6 +246,36 @@ function List() {
       render: (text: string) => (
         <Tag color={text === 'OPEN' ? 'green' : 'red'}>{text}</Tag>
       ),
+    },
+    {
+      title: t('ORDER_NUMBER'),
+      dataIndex: 'order',
+      key: 'orderNumber',
+      filteredValue: filters.orderNumber || null,
+      filterIcon: <SearchOutlined />,
+      filterDropdown: ({
+        selectedKeys,
+        setSelectedKeys,
+        confirm,
+      }: FilterDropdownProps) => (
+        <div style={{ padding: 8 }} onKeyDown={e => e.stopPropagation()}>
+          <Input.Search
+            allowClear
+            placeholder={t('ORDER_NUMBER')}
+            value={selectedKeys[0] as string}
+            onChange={e =>
+              setSelectedKeys(e.target.value ? [e.target.value] : [])
+            }
+            onSearch={() => confirm()}
+          />
+        </div>
+      ),
+      render: (order: { id: number | null; number: string | null }) =>
+        order?.number ? (
+          <a href={window.Routing.generate('admin_order', { id: order.id })}>
+            {order.number}
+          </a>
+        ) : null,
     },
     {
       title: t('STORE'),
