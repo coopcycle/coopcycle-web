@@ -18,11 +18,29 @@ class DeliveryOrderFilter extends AbstractFilter
             return;
         }
 
-        if (!in_array('dropoff.before', array_keys($context['filters'][$property]))) {
+        // Filters are indexed by query parameter name, so "$value" is either
+        // the "order" array (?order[dropoff.before]=asc) or the value of the
+        // "dropoff.before" parameter itself (?dropoff.before=asc).
+        if (is_array($value)) {
+            if (!array_key_exists('dropoff.before', $value)) {
+                return;
+            }
+
+            $direction = $value['dropoff.before'];
+        } elseif ('dropoff.before' === $property) {
+            $direction = $value;
+        } else {
             return;
         }
 
-        $direction = $context['filters'][$property]['dropoff.before'];
+        if (!is_string($direction)) {
+            return;
+        }
+
+        $direction = strtoupper(trim($direction));
+        if (!in_array($direction, ['ASC', 'DESC'], true)) {
+            return;
+        }
 
         $rootAlias = $queryBuilder->getRootAliases()[0];
 
