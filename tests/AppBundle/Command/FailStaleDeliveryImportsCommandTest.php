@@ -64,6 +64,15 @@ class FailStaleDeliveryImportsCommandTest extends KernelTestCase
         return $queue->getId();
     }
 
+    private function setProgressedAt(int $id, int $minutesAgo): void
+    {
+        $this->entityManager
+            ->createQuery('UPDATE '.DeliveryImportQueue::class.' q SET q.progressedAt = :progressedAt WHERE q.id = :id')
+            ->setParameter('progressedAt', new \DateTime(sprintf('-%d minutes', $minutesAgo)))
+            ->setParameter('id', $id)
+            ->execute();
+    }
+
     private function reload(int $id): DeliveryImportQueue
     {
         // Read the row back rather than whatever the command left in memory
@@ -86,6 +95,8 @@ class FailStaleDeliveryImportsCommandTest extends KernelTestCase
         $freshPending = $this->createImport('fresh-pending.csv', DeliveryImportQueue::STATUS_PENDING, 2, null);
         // Queued a long time ago, but a worker is handling it right now
         $longRunning = $this->createImport('long-running.csv', DeliveryImportQueue::STATUS_STARTED, 180, 5);
+        // The worker died while saving the deliveries
+        $staleSaving = $this->createImport('stale-saving.csv', DeliveryImportQueue::STATUS_SAVING, 180, 180);
 
         $this->entityManager->clear();
 
@@ -93,10 +104,29 @@ class FailStaleDeliveryImportsCommandTest extends KernelTestCase
 
         $this->assertSame(DeliveryImportQueue::STATUS_FAILED, $this->statusOf($staleStarted));
         $this->assertSame(DeliveryImportQueue::STATUS_FAILED, $this->statusOf($stalePending));
+        $this->assertSame(DeliveryImportQueue::STATUS_FAILED, $this->statusOf($staleSaving));
 
         $this->assertSame(DeliveryImportQueue::STATUS_STARTED, $this->statusOf($freshStarted));
         $this->assertSame(DeliveryImportQueue::STATUS_PENDING, $this->statusOf($freshPending));
         $this->assertSame(DeliveryImportQueue::STATUS_STARTED, $this->statusOf($longRunning));
+    }
+
+    public function testAnImportThatKeepsProgressingIsLeftAlone(): void
+    {
+        // Started hours ago on a large file, still reporting its progress
+        $progressing = $this->createImport('large.csv', DeliveryImportQueue::STATUS_STARTED, 300, 300);
+        $this->setProgressedAt($progressing, 1);
+
+        // Started hours ago too, but stopped reporting long ago
+        $stalled = $this->createImport('stalled.csv', DeliveryImportQueue::STATUS_STARTED, 300, 300);
+        $this->setProgressedAt($stalled, 120);
+
+        $this->entityManager->clear();
+
+        $this->commandTester->execute([]);
+
+        $this->assertSame(DeliveryImportQueue::STATUS_STARTED, $this->statusOf($progressing));
+        $this->assertSame(DeliveryImportQueue::STATUS_FAILED, $this->statusOf($stalled));
     }
 
     public function testAFailedImportIsGivenAReason(): void

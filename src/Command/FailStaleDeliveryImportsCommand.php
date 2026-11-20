@@ -46,8 +46,8 @@ class FailStaleDeliveryImportsCommand extends Command
                 'older-than',
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Only fail the imports that have been running for at least this many minutes. '.
-                'Keep it well above the time a large file legitimately takes.',
+                'Only fail the imports that have not moved for at least this many minutes. '.
+                'A running import reports its progress every few rows, so this can stay well below the time a large file takes.',
                 self::DEFAULT_MINUTES
             )
             ->addOption(
@@ -126,12 +126,17 @@ class FailStaleDeliveryImportsCommand extends Command
             ->getRepository(DeliveryImportQueue::class)
             ->createQueryBuilder('q')
             ->andWhere('q.status IN (:statuses)')
-            // An import the worker never picked up is still pending, and has
-            // no startedAt to go by
-            ->andWhere('COALESCE(q.startedAt, q.createdAt) < :threshold')
+            // A large import takes hours, what tells it from a dead one is that it keeps
+            // reporting its progress. An import the worker never picked up is still
+            // pending, and has neither progressedAt nor startedAt to go by.
+            // While saving, nothing is reported: the deliveries are saved in a single
+            // transaction, the progress written meanwhile would not be seen. progressedAt
+            // is when saving started, and a worker dying then rolls the deliveries back.
+            ->andWhere('COALESCE(q.progressedAt, q.startedAt, q.createdAt) < :threshold')
             ->setParameter('statuses', [
                 DeliveryImportQueue::STATUS_PENDING,
                 DeliveryImportQueue::STATUS_STARTED,
+                DeliveryImportQueue::STATUS_SAVING,
             ])
             ->setParameter('threshold', $threshold)
             ->orderBy('q.id', 'ASC')

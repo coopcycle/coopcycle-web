@@ -5,6 +5,7 @@ namespace AppBundle\MessageHandler\Task;
 use AppBundle\Domain\Task\Event as TaskEvent;
 use AppBundle\Domain\Task\Event\TaskUpdated;
 use AppBundle\Service\LiveUpdates;
+use AppBundle\Service\LiveUpdatesSuspension;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
@@ -23,11 +24,19 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 #[AsMessageHandler]
 class PublishLiveUpdate
 {
-    public function __construct(private LiveUpdates $liveUpdates)
+    public function __construct(
+        private LiveUpdates $liveUpdates,
+        private LiveUpdatesSuspension $suspension,
+    )
     {}
 
     public function __invoke(TaskEvent $event)
     {
+        // A job saving a lot of tasks sends a single event instead
+        if ($this->suspension->isSuspended()) {
+            return;
+        }
+
         // A task update is also sent to the courier it is assigned to, so the
         // rider app sees changes to its own task without being a dispatcher.
         if ($event instanceof TaskUpdated) {
