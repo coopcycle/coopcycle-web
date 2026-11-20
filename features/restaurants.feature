@@ -122,6 +122,101 @@ Feature: Manage restaurants
     }
     """
 
+  Scenario: Filter the restaurants list by category
+    Given the fixtures files are loaded:
+      | products.yml        |
+      | restaurants.yml     |
+    Given the current time is "2021-12-10 11:00:00"
+    When I add "Accept" header equal to "application/ld+json"
+    And I send a "GET" request to "/api/restaurants?category=featured"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+    """
+    {
+      "@context":"/api/contexts/Restaurant",
+      "@id":"/api/restaurants",
+      "@type":"hydra:Collection",
+      "hydra:member":[
+        {
+          "@id":"/api/restaurants/1",
+          "@*@": "@*@"
+        }
+      ],
+      "hydra:totalItems":1,
+      "@*@": "@*@"
+    }
+    """
+
+  Scenario: Filter the restaurants list by cuisine
+    Given the fixtures files are loaded:
+      | products.yml        |
+      | restaurants.yml     |
+    Given the current time is "2021-12-10 11:00:00"
+    When I add "Accept" header equal to "application/ld+json"
+    And I send a "GET" request to "/api/restaurants?cuisine[]=italian"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+    """
+    {
+      "@context":"/api/contexts/Restaurant",
+      "@id":"/api/restaurants",
+      "@type":"hydra:Collection",
+      "hydra:member":[
+        {
+          "@id":"/api/restaurants/1",
+          "@*@": "@*@"
+        }
+      ],
+      "hydra:totalItems":1,
+      "@*@": "@*@"
+    }
+    """
+
+  Scenario: An unknown filter value matches no restaurant
+    Given the fixtures files are loaded:
+      | products.yml        |
+      | restaurants.yml     |
+    Given the current time is "2021-12-10 11:00:00"
+    When I add "Accept" header equal to "application/ld+json"
+    And I send a "GET" request to "/api/restaurants?cuisine[]=japanese"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+    """
+    {
+      "@context":"/api/contexts/Restaurant",
+      "@id":"/api/restaurants",
+      "@type":"hydra:Collection",
+      "hydra:member":[],
+      "hydra:totalItems":0,
+      "@*@": "@*@"
+    }
+    """
+
+  Scenario: Retrieve the shop filters
+    Given the fixtures files are loaded:
+      | products.yml        |
+      | restaurants.yml     |
+    When I add "Accept" header equal to "application/ld+json"
+    And I send a "GET" request to "/api/shop_filters"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+    """
+    {
+      "@context":"/api/contexts/ShopFilters",
+      "@id":"/api/shop_filters",
+      "@type":"ShopFilters",
+      "filters":[
+        {"id":"category|new","filter":"category","value":"new","label":@string@},
+        {"id":"category|featured","filter":"category","value":"featured","label":@string@},
+        {"id":"category|exclusive","filter":"category","value":"exclusive","label":@string@}
+      ]
+    }
+    """
+
   Scenario: Retrieve a restaurant
     Given the current time is "2021-12-22 13:00:00"
     And the fixtures files are loaded:
