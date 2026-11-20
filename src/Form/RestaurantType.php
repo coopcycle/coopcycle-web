@@ -128,7 +128,11 @@ class RestaurantType extends LocalBusinessType
                         '%entity%' => 'restaurant',
                     ],
                     'help_html' => true,
-                ));
+                ))
+                ->add('tags', TagsType::class, [
+                    'label' => 'restaurant.form.tags.label',
+                    'help' => 'restaurant.form.tags.help',
+                ]);
 
             if ($this->cashOnDeliveryOptinEnabled) {
                 $builder

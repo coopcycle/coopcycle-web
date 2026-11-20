@@ -1372,6 +1372,8 @@ api_apps.regenerate_secret_warning: Toutes les applications utilisant la clé se
 restaurant.form.cash_on_delivery_enabled.label: Activer le paiement en contre-remboursement
 restaurant.form.cash_on_delivery_enabled.help: Cela permettra aux clients de payer
   en espèces. À utiliser avec précaution.
+restaurant.form.tags.label: Tags à appliquer automatiquement aux tâches
+restaurant.form.tags.help: Ces tags sont ajoutés aux tâches des commandes de ce restaurant.
 store.form.cash_on_delivery_enabled.label: Activer le paiement en contre-remboursement
 store.form.cash_on_delivery_enabled.help: Cela permettra aux clients de payer en
   espèces. À utiliser avec précaution.
