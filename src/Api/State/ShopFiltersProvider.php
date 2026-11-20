@@ -12,7 +12,7 @@ final class ShopFiltersProvider implements ProviderInterface
     public function __construct(private ShopFilterRegistry $shopFilterRegistry)
     {}
 
-    public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
+    public function provide(Operation $operation, array $uriVariables = [], array $context = []): ShopFilters
     {
         return new ShopFilters($this->shopFilterRegistry->getCategories());
     }

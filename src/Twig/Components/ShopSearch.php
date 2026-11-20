@@ -8,7 +8,6 @@ use AppBundle\Doctrine\EntityPreloader\LocalBusinessPreloader;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Business\Context as BusinessContext;
-use AppBundle\Service\SettingsManager;
 use AppBundle\Service\ShopFilterRegistry;
 use AppBundle\Service\TimingRegistry;
 use AppBundle\Utils\RestaurantFilter;
@@ -16,7 +15,6 @@ use AppBundle\Utils\SortableRestaurantIterator;
 use Knp\Component\Pager\PaginatorInterface;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use League\Geotools\Geotools;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -74,8 +72,6 @@ class ShopSearch
         private TimingRegistry $timingRegistry,
         private PaginatorInterface $paginator,
         private LocalBusinessPreloader $preloader,
-        private EntityManagerInterface $entityManager,
-        private SettingsManager $settingsManager,
         private ShopFilterRegistry $shopFilterRegistry)
     {
     }
