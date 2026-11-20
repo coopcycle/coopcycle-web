@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd" xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
+  <entity repository-class="AppBundle\Entity\GiftCard\GiftCardRepository" name="AppBundle\Entity\GiftCard\GiftCard" table="gift_card">
+    <unique-constraints>
+      <unique-constraint name="uniq_gift_card_code" columns="code"/>
+      <!-- One card per purchase charge, so a replayed webhook cannot mint a second one. -->
+      <unique-constraint name="uniq_gift_card_purchase_charge" columns="purchase_charge_id"/>
+      <unique-constraint name="uniq_gift_card_purchase_intent" columns="purchase_payment_intent_id"/>
+    </unique-constraints>
+    <indexes>
+      <!-- Covers the expiry sweep. -->
+      <index name="idx_gift_card_expiry" columns="state,expires_at"/>
+      <!-- Covers "my gift cards", which matches on either address. -->
+      <index name="idx_gift_card_recipient_email" columns="recipient_email"/>
+      <index name="idx_gift_card_purchaser_email" columns="purchaser_email"/>
+    </indexes>
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="code" type="string" column="code" length="32"/>
+    <field name="currencyCode" type="string" column="currency_code" length="3"/>
+    <field name="livemode" type="boolean" column="livemode">
+      <options>
+        <option name="default">false</option>
+      </options>
+    </field>
+    <field name="initialAmount" type="integer" column="initial_amount"/>
+    <field name="balance" type="integer" column="balance">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
+    <field name="state" type="string" column="state" length="16"/>
+    <field name="funding" type="string" column="funding" length="16">
+      <options>
+        <option name="default">funded</option>
+      </options>
+    </field>
+    <field name="purchaserEmail" type="string" column="purchaser_email" length="255" nullable="true"/>
+    <field name="recipientEmail" type="string" column="recipient_email" length="255" nullable="true"/>
+    <field name="recipientName" type="string" column="recipient_name" length="255" nullable="true"/>
+    <field name="message" type="text" column="message" nullable="true"/>
+    <field name="purchasePaymentIntentId" type="string" column="purchase_payment_intent_id" length="255" nullable="true"/>
+    <field name="purchaseChargeId" type="string" column="purchase_charge_id" length="255" nullable="true"/>
+    <field name="expiresAt" type="datetime" column="expires_at" nullable="true"/>
+    <field name="issuedAt" type="datetime" column="issued_at" nullable="true"/>
+    <field name="createdAt" type="datetime" column="created_at">
+      <gedmo:timestampable on="create"/>
+    </field>
+    <field name="updatedAt" type="datetime" column="updated_at">
+      <gedmo:timestampable on="update"/>
+    </field>
+    <many-to-one field="purchaser" target-entity="AppBundle\Entity\Sylius\Customer">
+      <join-columns>
+        <!-- Nullable: guests buy gift cards too. -->
+        <join-column name="purchaser_id" referenced-column-name="id" nullable="true" on-delete="SET NULL"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="restaurant" target-entity="AppBundle\Entity\LocalBusiness">
+      <join-columns>
+        <!-- Null means the card works platform-wide. -->
+        <join-column name="restaurant_id" referenced-column-name="id" nullable="true" on-delete="SET NULL"/>
+      </join-columns>
+    </many-to-one>
+    <one-to-many field="transactions" target-entity="AppBundle\Entity\GiftCard\GiftCardTransaction" mapped-by="giftCard">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+      <order-by>
+        <order-by-field name="id" direction="ASC"/>
+      </order-by>
+    </one-to-many>
+    <one-to-many field="purchaseCharges" target-entity="AppBundle\Entity\GiftCard\GiftCardPurchaseCharge" mapped-by="giftCard">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+      <order-by>
+        <order-by-field name="id" direction="ASC"/>
+      </order-by>
+    </one-to-many>
+  </entity>
+</doctrine-mapping>

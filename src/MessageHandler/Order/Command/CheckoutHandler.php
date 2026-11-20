@@ -5,7 +5,9 @@ namespace AppBundle\MessageHandler\Order\Command;
 use AppBundle\Message\Order\Command\Checkout;
 use AppBundle\Domain\Order\Event;
 use AppBundle\Payment\Gateway;
+use AppBundle\Service\GiftCard\GiftCardManager;
 use AppBundle\Service\LoggingUtils;
+use AppBundle\Service\StripeManager;
 use AppBundle\Utils\OrderTimeHelper;
 use Doctrine\Common\Collections\ArrayCollection;
 use Psr\Log\LoggerInterface;
@@ -26,6 +28,8 @@ class CheckoutHandler
         private Gateway $gateway,
         private OrderTimeHelper $orderTimeHelper,
         private TranslatorInterface $translator,
+        private GiftCardManager $giftCardManager,
+        private StripeManager $stripeManager,
         private LoggerInterface $checkoutLogger,
         private LoggingUtils $loggingUtils)
     {
@@ -80,20 +84,19 @@ class CheckoutHandler
         $payments = $order->getPayments()->filter(
             fn (PaymentInterface $payment): bool => $payment->getState() === PaymentInterface::STATE_CART);
 
-        // Make sure card payment is always *BEFORE* Edenred payment
+        // Authorize the legs in a deliberate order, cheapest-to-undo first.
+        //
+        // The gift card goes before the card. It is the only leg that can
+        // fail for a reason the customer can act on -- the balance moved
+        // between seeing the breakdown and paying -- and it fails locally,
+        // with nothing to undo. Charging the card first and then discovering
+        // the gift card is short would mean refunding real money because of
+        // a race.
+        //
+        // Card before Edenred is the original rule, preserved.
         $iterator = $payments->getIterator();
-        $iterator->uasort(function (PaymentInterface $a, PaymentInterface $b) {
-
-            $methodA = $a->getMethod()->getCode();
-            $methodB = $b->getMethod()->getCode();
-
-            if ($methodA === $methodB) {
-
-                return 0;
-            }
-
-            return $methodA === 'CARD' ? -1 : 1;
-        });
+        $iterator->uasort(fn (PaymentInterface $a, PaymentInterface $b): int =>
+            self::authorizeOrder($a) <=> self::authorizeOrder($b));
         $payments = new ArrayCollection(iterator_to_array($iterator));
 
         foreach ($payments as $payment) {
@@ -131,6 +134,12 @@ class CheckoutHandler
                 $this->checkoutLogger->error(sprintf('CheckoutHandler | CheckoutFailed: %s', $e->getMessage()),
                     ['order' => $this->loggingUtils->getOrderId($order), 'exception' => $e]);
 
+                // Undo whatever the earlier legs already did. Without this a
+                // failed split checkout leaves money reserved on a gift card
+                // and a real authorization sitting on the customer's card
+                // for about a week, for an order that never happened.
+                $this->releaseAuthorizedPayments($payments, $payment);
+
                 // Restore "ASAP" mode, the customer may retry later
                 if ($hasAssignedShippingTimeRange) {
                     $order->setShippingTimeRange(null);
@@ -148,5 +157,44 @@ class CheckoutHandler
         $this->eventBus->dispatch(
             (new Envelope($event))->with(new DispatchAfterCurrentBusStamp())
         );
+    }
+
+    private static function authorizeOrder(PaymentInterface $payment): int
+    {
+        return match ($payment->getMethod()?->getCode()) {
+            'GIFT_CARD' => 0,
+            'CARD' => 1,
+            default => 2,
+        };
+    }
+
+    /**
+     * Releases the legs authorized before the one that failed.
+     *
+     * Every step is wrapped: a cleanup that throws would replace the real
+     * reason the checkout failed with whatever went wrong while tidying up,
+     * and the customer would be told the wrong thing.
+     */
+    private function releaseAuthorizedPayments(iterable $payments, PaymentInterface $failed): void
+    {
+        foreach ($payments as $payment) {
+
+            if ($payment === $failed || $payment->isOffline()) {
+                continue;
+            }
+
+            try {
+                if ('GIFT_CARD' === $payment->getMethod()?->getCode()) {
+                    $this->giftCardManager->release($payment);
+                } elseif ($payment->hasPaymentIntent()) {
+                    $this->stripeManager->cancelIntent($payment);
+                }
+            } catch (\Exception $e) {
+                $this->checkoutLogger->error(
+                    sprintf('CheckoutHandler | could not release payment #%s: %s', $payment->getId(), $e->getMessage()),
+                    ['exception' => $e]
+                );
+            }
+        }
     }
 }

@@ -11,6 +11,7 @@ use AppBundle\Edenred\Client as EdenredClient;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Payment\Gateway;
+use AppBundle\Service\GiftCard\GiftCardManager;
 use AppBundle\Payment\GatewayResolver;
 use AppBundle\Service\NullLoggingUtils;
 use AppBundle\Service\StripeManager;
@@ -61,12 +62,16 @@ class CheckoutHandlerTest extends TestCase
 
         $this->orderTimeHelper = $this->prophesize(OrderTimeHelper::class);
 
+        $this->giftCardManager = $this->prophesize(GiftCardManager::class);
+
         $this->handler = new CheckoutHandler(
             $this->eventBus->reveal(),
             $this->orderNumberAssigner->reveal(),
             $this->gateway,
             $this->orderTimeHelper->reveal(),
             new IdentityTranslator(),
+            $this->giftCardManager->reveal(),
+            $this->stripeManager->reveal(),
             new NullLogger(),
             new NullLoggingUtils()
         );
@@ -383,6 +388,8 @@ class CheckoutHandlerTest extends TestCase
             $this->gateway->reveal(),
             $this->orderTimeHelper->reveal(),
             new IdentityTranslator(),
+            $this->giftCardManager->reveal(),
+            $this->stripeManager->reveal(),
             new NullLogger(),
             new NullLoggingUtils()
         );

@@ -51,6 +51,18 @@ services:
     tags:
       - { name: 'console.command', command: 'coopcycle:loyalty:expire-points' }
 
+  AppBundle\Command\ExpireGiftCardsCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:gift-cards:expire' }
+
+  AppBundle\Command\CheckGiftCardsCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:gift-cards:check' }
+
+  AppBundle\Command\SettlePendingGiftCardOrdersCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:gift-cards:settle-pending' }
+
   AppBundle\Command\SyncPostmarkSuppressionsCommand:
     tags:
       - { name: 'console.command', command: 'coopcycle:marketing:sync-suppressions' }

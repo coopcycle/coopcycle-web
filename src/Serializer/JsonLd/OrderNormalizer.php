@@ -6,6 +6,9 @@ use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\JsonLd\Serializer\ItemNormalizer;
 use ApiPlatform\Metadata\Resource\Factory\ResourceMetadataCollectionFactoryInterface;
 use AppBundle\Edenred\Client as EdenredClient;
+use AppBundle\Service\GiftCard\GiftCardException;
+use AppBundle\Service\GiftCard\GiftCardManager;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusiness\AddressResolver;
 use AppBundle\Entity\Sylius\Order;
@@ -50,9 +53,21 @@ class OrderNormalizer implements NormalizerInterface, ContextAwareDenormalizerIn
         private LoopeatContextInitializer $loopeatContextInitializer,
         private GatewayResolver $paymentGatewayResolver,
         private EdenredClient $edenredClient,
-        private readonly ResourceMetadataCollectionFactoryInterface $resourceMetadataFactory
+        private readonly ResourceMetadataCollectionFactoryInterface $resourceMetadataFactory,
+        private readonly GiftCardManager $giftCardManager
         )
     {}
+
+    private function giftCardErrorParameters(GiftCardException $e): array
+    {
+        $parameters = [];
+
+        foreach ($e->getContext() as $key => $value) {
+            $parameters[sprintf('%%%s%%', $key)] = $value;
+        }
+
+        return $parameters;
+    }
 
     public function normalize($object, $format = null, array $context = array())
     {
@@ -93,6 +108,14 @@ class OrderNormalizer implements NormalizerInterface, ContextAwareDenormalizerIn
                 $object->setShippingAddress($shippingAddress);
                 $data['shippingAddress'] = $shippingAddressData;
             }
+        }
+
+        // What a gift card is covering, so clients can show "- 12,00 EUR"
+        // without recomputing it. Note it does *not* appear in the totals:
+        // a gift card changes who pays, never what the order costs.
+        if (null !== $object->getGiftCard()) {
+            $data['giftCard'] = $object->getGiftCard()->getCode();
+            $data['giftCardAmount'] = $object->getGiftCardTotal();
         }
 
         $restaurant = $object->getRestaurant();
@@ -213,6 +236,29 @@ class OrderNormalizer implements NormalizerInterface, ContextAwareDenormalizerIn
             if ($promotionCoupon = $this->promotionCouponRepository->findOneByCode($data['promotionCoupon'])) {
                 $order->setPromotionCoupon($promotionCoupon);
                 $this->orderProcessor->process($order);
+            }
+        }
+
+        // Shaped like the coupon above, and applied at the same point in the
+        // cart's life. An empty string detaches the card, which is how a
+        // client takes one back off.
+        if ($order->getState() === Order::STATE_CART && array_key_exists('giftCard', $data)) {
+
+            if (empty($data['giftCard'])) {
+                $order->setGiftCard(null);
+                $this->orderProcessor->process($order);
+            } else {
+                try {
+                    $order->setGiftCard($this->giftCardManager->findForOrder($data['giftCard'], $order));
+                    $this->orderProcessor->process($order);
+                } catch (GiftCardException $e) {
+                    // Surfaced as a validation error rather than swallowed:
+                    // a client that sent a code it believes is good needs to
+                    // know which of the several reasons applied.
+                    throw new BadRequestHttpException(
+                        $this->translator->trans($e->getTranslationKey(), $this->giftCardErrorParameters($e))
+                    );
+                }
             }
         }
 

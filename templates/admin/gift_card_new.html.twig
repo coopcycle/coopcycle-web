@@ -1,0 +1,31 @@
+{% extends "admin.html.twig" %}
+
+{% block prepare_title %}
+  {{ add_title_prefix('gift_card.issue.title'|trans) }}
+{% endblock %}
+
+{% block breadcrumb %}
+<li><a href="{{ path('admin_gift_cards') }}">{% trans %}gift_card.title{% endtrans %}</a></li>
+<li>{% trans %}gift_card.issue.title{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+
+{% form_theme form 'bootstrap_3_layout.html.twig' %}
+
+<div class="alert alert-warning" role="alert">
+  <h4><i class="fa fa-exclamation-triangle"></i> {% trans %}gift_card.issue.warning.title{% endtrans %}</h4>
+  <p style="margin:0;">{% trans %}gift_card.issue.warning.body{% endtrans %}</p>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-body">
+    {{ form_start(form) }}
+      {{ form_widget(form) }}
+      <button type="submit" class="btn btn-primary">{% trans %}gift_card.issue.submit{% endtrans %}</button>
+      <a href="{{ path('admin_gift_cards') }}" class="btn btn-default">{% trans %}basics.cancel{% endtrans %}</a>
+    {{ form_end(form) }}
+  </div>
+</div>
+
+{% endblock %}

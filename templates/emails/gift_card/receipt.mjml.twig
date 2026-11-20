@@ -1,0 +1,35 @@
+{% extends 'emails/layout.mjml.twig' %}
+
+{% block content %}
+  <mj-text align="left" line-height="20px">
+    {{ 'gift_card.receipt.body'|trans({}, 'emails')|raw }}
+  </mj-text>
+
+  <mj-table>
+    <tr>
+      <td style="padding:4px 0;">{{ 'gift_card.receipt.amount'|trans({}, 'emails') }}</td>
+      <td style="padding:4px 0;text-align:right;"><strong>{{ gift_card.initialAmount|price_format }}</strong></td>
+    </tr>
+    <tr>
+      <td style="padding:4px 0;">{{ 'gift_card.receipt.code'|trans({}, 'emails') }}</td>
+      <td style="padding:4px 0;text-align:right;"><code>{{ code }}</code></td>
+    </tr>
+    {% if gift_card.recipientEmail %}
+    <tr>
+      <td style="padding:4px 0;">{{ 'gift_card.receipt.sent_to'|trans({}, 'emails') }}</td>
+      <td style="padding:4px 0;text-align:right;">{{ gift_card.recipientEmail }}</td>
+    </tr>
+    {% endif %}
+    <tr>
+      <td style="padding:4px 0;">{{ 'gift_card.receipt.date'|trans({}, 'emails') }}</td>
+      <td style="padding:4px 0;text-align:right;">{{ gift_card.issuedAt|format_datetime('medium', 'short') }}</td>
+    </tr>
+  </mj-table>
+
+  {# A voucher sale is not a supply, so this is a receipt and not a VAT
+     invoice. The wording differs by country, so it comes from settings. #}
+  <mj-text align="left" line-height="18px" font-size="12px" color="#888">
+    {{ 'gift_card.receipt.not_an_invoice'|trans({}, 'emails') }}
+    {% if legal_mention %}<br>{{ legal_mention }}{% endif %}
+  </mj-text>
+{% endblock %}

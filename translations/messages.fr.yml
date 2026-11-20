@@ -1507,6 +1507,7 @@ payment_method:
   edenred: Edenred
   edenred+card: Edenred
   cash_on_delivery: Contre remboursement
+  gift_card: Carte cadeau
 profile.businessAccount: Compte professionnel
 adminDashboard.business_accounts.title: Comptes professionnels
 adminDashboard.business_accounts.createNew: Créer un nouveau compte professionnel
@@ -2253,3 +2254,192 @@ marketing.campaign.send_test.refused: "Postmark a refusé le message : %error%"
 marketing.postmark.info.title: Pourquoi Postmark est-il nécessaire ?
 marketing.postmark.saved: Paramètres Postmark enregistrés.
 marketing.not_configured_here: "Postmark n'est pas encore configuré : rien ne peut être envoyé. Renseignez les paramètres ci-dessus."
+
+# Cartes cadeaux
+gift_card.title: Cartes cadeaux
+gift_card.program.active_label: Les cartes cadeaux sont en vente
+gift_card.program.active_help: >-
+  Les clients peuvent acheter des cartes cadeaux et les utiliser au paiement. Laissez cette
+  option désactivée tant que les montants ci-dessous ne sont pas définis et que la mention
+  légale n'est pas rédigée : l'activer met la page d'achat en ligne.
+gift_card.program.scoping_label: Autoriser les cartes liées à un seul restaurant
+gift_card.program.scoping_help: >-
+  Une carte liée à un restaurant ne peut être utilisée que chez lui. L'argent va toujours à la
+  coopérative, donc le départ d'un restaurant ne rend jamais une carte inutilisable. Demandez
+  conseil à votre comptable : dans certains cas, limiter une carte à un seul vendeur peut
+  changer le moment où la TVA est due.
+gift_card.program.inactive_warning: >-
+  Les cartes cadeaux sont désactivées. Les cartes existantes conservent leur solde et peuvent
+  toujours être remboursées, mais personne ne peut en acheter ni en utiliser.
+gift_card.program.activated: Les cartes cadeaux sont désormais en vente.
+gift_card.program.deactivated: Les cartes cadeaux ne sont plus en vente.
+gift_card.liability.label: Solde en circulation
+gift_card.liability.help: >-
+  Ce que les clients détiennent encore en cartes cadeaux non utilisées. C'est une dette de la
+  coopérative, pas un chiffre d'affaires : une carte cadeau ne devient un revenu qu'une fois
+  dépensée.
+gift_card.settings.configure: Réglages des cartes cadeaux
+gift_card.settings.saved: Réglages des cartes cadeaux enregistrés.
+gift_card.settings.info.title: Comment les cartes cadeaux sont payées et utilisées
+gift_card.settings.info.body: >-
+  L'argent de la vente d'une carte cadeau va à la coopérative, pas à un restaurant. Quand la
+  carte est utilisée, le restaurant reçoit sa part habituelle par virement et la coopérative
+  garde sa commission habituelle : une carte cadeau ne change donc jamais ce que gagne un
+  restaurant sur une commande.
+gift_card.settings.field.minAmount: Montant minimum
+gift_card.settings.field.minAmount.help: La plus petite carte cadeau qu'un client peut acheter.
+gift_card.settings.field.maxAmount: Montant maximum
+gift_card.settings.field.maxAmount.help: >-
+  La plus grande carte cadeau qu'un client peut acheter. Mieux vaut rester raisonnable : une
+  carte volée est une perte que la coopérative assume.
+gift_card.settings.field.denominations: Montants proposés
+gift_card.settings.field.denominations.help: >-
+  Montants proposés sous forme de boutons sur la page d'achat, en euros entiers, séparés par
+  des virgules (par exemple 20, 50, 100). Laissez vide pour que les clients saisissent le
+  montant de leur choix.
+gift_card.settings.field.expiryPolicy: Expiration
+gift_card.settings.field.expiryPolicy.help: >-
+  Si les soldes non utilisés expirent. Par défaut, les cartes expirent au bout d'un an. De
+  nombreux pays encadrent ou interdisent les durées de validité courtes, et certains imposent
+  de reverser les soldes non réclamés à l'État : vérifiez ce qui s'applique chez vous.
+gift_card.settings.expiryPolicy.never: Les cartes n'expirent jamais
+gift_card.settings.expiryPolicy.forfeit: Les cartes expirent et le solde reste à la coopérative
+gift_card.settings.field.validityMonths: Durée de validité (mois)
+gift_card.settings.field.validityMonths.help: >-
+  Durée de vie d'une carte à partir du jour de son achat. Douze mois sauf modification, et sans
+  effet si les cartes n'expirent pas.
+gift_card.settings.field.legalMention: Mention légale sur le reçu
+gift_card.settings.field.legalMention.help: >-
+  Imprimée sur le reçu d'achat. La vente d'une carte cadeau n'est pas une facture de TVA ; en
+  France la mention est « bon à usages multiples, art. 256 ter CGI ». Vérifiez ce qui
+  s'applique là où vous opérez.
+gift_card.list.title: Cartes cadeaux
+gift_card.list.search_placeholder: Code ou e-mail…
+gift_card.list.all_states: Tous les états
+gift_card.list.code: Code
+gift_card.list.state: État
+gift_card.list.initialAmount: Achetée pour
+gift_card.list.balance: Solde
+gift_card.list.recipient: Destinataire
+gift_card.list.scope: Valable chez
+gift_card.list.createdAt: Créée le
+gift_card.list.empty: Aucune carte cadeau pour le moment.
+gift_card.state.pending: En attente de paiement
+gift_card.state.active: Active
+gift_card.state.depleted: Entièrement utilisée
+gift_card.state.expired: Expirée
+gift_card.state.cancelled: Annulée
+gift_card.state.frozen: Bloquée
+gift_card.scope.platform: Partout
+gift_card.funding.funded: Payée
+gift_card.funding.granted: Offerte par la coopérative
+gift_card.granted.label: Offerte
+gift_card.granted.help: Émise par la coopérative, sans paiement en contrepartie.
+gift_card.granted.warning: >-
+  Personne n'a payé cette carte. Quand elle sera utilisée, le restaurant sera tout de même payé
+  en totalité, sur le solde de la coopérative.
+gift_card.detail.funding: Financement
+gift_card.detail.purchaser: Achetée par
+gift_card.detail.expiresAt: Expire le
+gift_card.detail.never_expires: Jamais
+gift_card.detail.purchaseCharge: Paiement Stripe
+gift_card.drift.title: Le solde de cette carte ne correspond pas à son historique
+gift_card.drift.body: >-
+  Le solde enregistré est de %balance% mais les écritures ci-dessous totalisent %ledger%.
+  L'historique fait foi. Merci de signaler ce problème avant que la carte ne soit utilisée.
+gift_card.ledger.title: Historique
+gift_card.ledger.help: >-
+  Tous les mouvements de cette carte. Rien n'y est jamais supprimé ni modifié : les écritures
+  expliquent donc toujours le solde.
+gift_card.ledger.date: Date
+gift_card.ledger.type: Mouvement
+gift_card.ledger.amount: Montant
+gift_card.ledger.order: Commande
+gift_card.ledger.transfer: Virement
+gift_card.ledger.empty: Il ne s'est encore rien passé sur cette carte.
+gift_card.ledger.type.purchase: Achetée
+gift_card.ledger.type.hold: Réservé au paiement
+gift_card.ledger.type.redemption: Dépensé
+gift_card.ledger.type.refund: Recrédité
+gift_card.ledger.type.expiry: Expiré
+gift_card.issue.title: Émettre une carte cadeau
+gift_card.issue.submit: Émettre la carte
+gift_card.issue.created: Carte cadeau %code% émise.
+gift_card.issue.warning.title: Cette action engage l'argent de la coopérative
+gift_card.issue.warning.body: >-
+  Une carte émise ici n'a aucun paiement en contrepartie. Quoi qu'elle achète, le restaurant
+  sera payé en totalité et la coopérative en assumera le coût. À utiliser pour un geste
+  commercial ou une opération marketing, pas pour une vente.
+gift_card.issue.field.amount: Montant
+gift_card.issue.field.recipientEmail: E-mail du destinataire
+gift_card.issue.field.recipientEmail.help: >-
+  Laissez vide pour remettre le code vous-même ; renseignez-le et la carte est envoyée par
+  e-mail immédiatement.
+gift_card.issue.field.recipientName: Nom du destinataire
+gift_card.issue.field.message: Message
+gift_card.issue.field.reason: Motif
+gift_card.issue.field.reason.help: >-
+  Pourquoi la coopérative offre cette carte. Non visible par le client : c'est ce qui rendra
+  cette écriture compréhensible dans un an.
+gift_card.issue.field.restaurant: Restaurant
+gift_card.issue.field.restaurant.help: Laissez vide pour une carte utilisable partout.
+gift_card.issue.field.restaurant.placeholder: Partout
+gift_card.void.action: Annuler cette carte
+gift_card.void.help: Le solde est perdu et le code cesse de fonctionner.
+gift_card.void.confirm: Annuler cette carte cadeau ? Son solde restant sera perdu.
+gift_card.void.done: Carte cadeau %code% annulée.
+gift_card.error.not_found: Ce code de carte cadeau n'existe pas.
+gift_card.error.not_active: Cette carte cadeau ne peut pas être utilisée.
+gift_card.error.expired: Cette carte cadeau a expiré.
+gift_card.error.depleted: Cette carte cadeau a déjà été entièrement utilisée.
+gift_card.error.frozen: Cette carte cadeau est momentanément indisponible.
+gift_card.error.currency_mismatch: Cette carte cadeau est dans une autre devise.
+gift_card.error.livemode_mismatch: Cette carte cadeau ne peut pas être utilisée ici.
+gift_card.error.wrong_restaurant: Cette carte cadeau est utilisable uniquement chez %restaurant%.
+gift_card.error.multi_vendor: Les cartes cadeaux ne peuvent pas être utilisées sur une commande multi-restaurants.
+gift_card.error.meal_voucher: Les cartes cadeaux ne peuvent pas être cumulées avec les titres-restaurant.
+gift_card.error.insufficient_balance: Le solde de cette carte cadeau a changé. Merci de vérifier votre commande.
+gift_card.applied: Carte cadeau appliquée.
+form.checkout.gift_card.label: Carte cadeau
+form.checkout.gift_card.apply: Appliquer
+form.checkout.gift_card.applied: Carte cadeau %code%
+gift_card.purchase.title: Offrir une carte cadeau
+gift_card.purchase.intro: >-
+  Offrez un montant à dépenser sur %brand_name%. Il est utilisable dans n'importe quel
+  restaurant, sur autant de commandes que souhaité, jusqu'à épuisement.
+gift_card.purchase.choose_amount: Choisissez un montant
+gift_card.purchase.card: Payer avec
+gift_card.purchase.submit: Acheter cette carte cadeau
+gift_card.purchase.expires: La carte sera valable jusqu'au %date%.
+gift_card.purchase.no_expiry: La carte n'expire pas.
+gift_card.purchase.invalid: Merci de vérifier le formulaire et de réessayer.
+gift_card.purchase.no_payment_method: Merci de saisir vos informations de carte bancaire.
+gift_card.purchase.failed: Le paiement n'a pas abouti. Merci d'essayer avec une autre carte.
+gift_card.purchase.amount.out_of_range: Merci de choisir un montant entre {{ min }} et {{ max }}.
+gift_card.purchase.field.amount: Montant
+gift_card.purchase.field.recipientName: Pour qui ?
+gift_card.purchase.field.recipientEmail: Son e-mail
+gift_card.purchase.field.recipientEmail.help: >-
+  Nous lui enverrons la carte par e-mail. Laissez vide et nous vous l'enverrons à vous, pour
+  que vous la remettiez vous-même.
+gift_card.purchase.field.message: Un message pour cette personne
+gift_card.purchase.field.purchaserEmail: Votre e-mail
+gift_card.purchase.field.purchaserEmail.help: Pour votre reçu.
+gift_card.purchase.field.restaurant: Restaurant
+gift_card.purchase.field.restaurant.help: >-
+  Choisissez-en un pour que la carte ne soit utilisable que là-bas, ou laissez vide pour une
+  carte utilisable partout.
+gift_card.purchase.field.restaurant.placeholder: N'importe quel restaurant
+gift_card.confirmation.title: Votre carte cadeau est prête
+gift_card.confirmation.sent: Nous l'avons envoyée à %email%.
+gift_card.confirmation.keep: Nous vous l'avons envoyée par e-mail. Voici le code, pour que vous puissiez le transmettre.
+gift_card.confirmation.code: Code
+gift_card.confirmation.how_to_use: Saisissez ce code dans le panier avant de payer.
+gift_card.confirmation.back: Retour aux boutiques
+profile.gift_cards.title: Mes cartes cadeaux
+profile.gift_cards.intro: Les cartes que vous avez achetées et celles qui vous ont été offertes.
+profile.gift_cards.at: utilisable chez %restaurant%
+profile.gift_cards.expires: valable jusqu'au %date%
+profile.gift_cards.of: sur %amount%
+profile.gift_cards.empty: Vous n'avez aucune carte cadeau.
+profile.myGiftCards: Mes cartes cadeaux

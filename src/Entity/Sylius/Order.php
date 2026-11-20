@@ -68,6 +68,7 @@ use AppBundle\Api\Dto\CustomerRecommendationsDto;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\BusinessAccount;
+use AppBundle\Entity\GiftCard\GiftCard;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\LocalBusiness;
@@ -548,6 +549,21 @@ class Order extends BaseOrder implements OrderInterface
     protected $promotionCoupon;
 
     protected $promotions;
+
+    /**
+     * The gift card applied to this cart, if any.
+     *
+     * Deliberately shaped like $promotionCoupon -- something attached to the
+     * cart that OrderPaymentProcessor reads -- and deliberately NOT a choice
+     * in AppBundle\Sylius\Payment\Context, which holds a single,
+     * mutually-exclusive method code. A gift card is not exclusive with
+     * anything: it is an amount applied on top, and the customer still picks
+     * how to pay whatever it doesn't cover.
+     *
+     * Attaching one is intent only. Nothing is debited and no lock is taken
+     * until the payment is authorized at checkout.
+     */
+    protected ?GiftCard $giftCard = null;
 
     protected $reusablePackagingEnabled = false;
 
@@ -1036,6 +1052,58 @@ class Order extends BaseOrder implements OrderInterface
     public function setPromotionCoupon(?PromotionCouponInterface $coupon): void
     {
         $this->promotionCoupon = $coupon;
+    }
+
+    public function getGiftCard(): ?GiftCard
+    {
+        return $this->giftCard;
+    }
+
+    public function setGiftCard(?GiftCard $giftCard): void
+    {
+        $this->giftCard = $giftCard;
+    }
+
+    /**
+     * The gift-card leg of this order, once OrderPaymentProcessor has made
+     * one. Cancelled and failed legs don't count: a checkout that failed and
+     * was retried leaves them behind, and treating one as live would route
+     * the retry down the gift-card money flow with no gift card funding it.
+     */
+    public function getGiftCardPayment(): ?PaymentInterface
+    {
+        $payment = $this->payments->filter(fn (PaymentInterface $payment): bool =>
+            $payment->getMethod()?->getCode() === 'GIFT_CARD'
+                && !in_array($payment->getState(), [
+                    PaymentInterface::STATE_CANCELLED,
+                    PaymentInterface::STATE_FAILED,
+                ], true)
+        )->last();
+
+        return false !== $payment ? $payment : null;
+    }
+
+    /**
+     * Whether this order is settled the gift-card way: charged on the
+     * platform account and transferred to the restaurant afterwards, rather
+     * than split by Stripe Connect at charge time.
+     *
+     * This, not Payment::isComplement(), is the load-bearing question. On an
+     * order a gift card covers entirely there is no complement payment left
+     * to ask.
+     */
+    public function hasGiftCardPayment(): bool
+    {
+        return null !== $this->getGiftCardPayment();
+    }
+
+    /**
+     * How much of this order the gift card is paying for. Zero when there
+     * isn't one, so callers can subtract it unconditionally.
+     */
+    public function getGiftCardTotal(): int
+    {
+        return $this->getGiftCardPayment()?->getAmount() ?? 0;
     }
 
     /**

@@ -43,12 +43,15 @@ class StripeControllerTest extends TestCase
 
         $this->secret = '123456';
 
+        $this->messageBus = $this->prophesize(MessageBusInterface::class);
+
         $this->controller = new StripeController(
             $this->secret,
             true,
             $this->entityManager->reveal(),
             $this->adjustmentFactory->reveal(),
-            new NullLogger()
+            new NullLogger(),
+            $this->messageBus->reveal()
         );
     }
 

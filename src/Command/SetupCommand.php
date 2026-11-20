@@ -247,6 +247,14 @@ class SetupCommand extends Command
                 'countries' => ['fr'],
             ],
             [
+                // Not restricted by country: a gift card is the coop's own
+                // money, with no third-party scheme behind it. Whether it is
+                // offered at all is the GIFT_CARDS_ENABLED flag's business,
+                // not this row's.
+                'code' => 'GIFT_CARD',
+                'name' => 'Gift card',
+            ],
+            [
                 'code' => 'CASH_ON_DELIVERY',
                 'name' => 'Cash on delivery',
                 'countries' => ['mx','ar'],

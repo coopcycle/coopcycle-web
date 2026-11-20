@@ -184,6 +184,15 @@ services:
       $cashEnabled: '%env(bool:CASH_ON_DELIVERY_ENABLED)%'
     tags: [ form.type ]
 
+  # src/Form is not auto-registered, so any type with constructor
+  # dependencies has to be declared here or the form registry will try to
+  # `new` it with no arguments.
+  AppBundle\Form\GiftCard\GiftCardPurchaseType:
+    tags: [ form.type ]
+
+  AppBundle\Form\GiftCard\GiftCardIssueType:
+    tags: [ form.type ]
+
   AppBundle\Form\Type\PriceWithTaxType:
     tags: [ form.type ]
     arguments:

@@ -1,0 +1,78 @@
+{% extends "frontend.html.twig" %}
+
+{% block prepare_title %}
+  {{ add_title_prefix('gift_card.purchase.title'|trans) }}
+{% endblock %}
+
+{% block scripts %}
+  <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
+  {{ encore_entry_script_tags('gift-card-purchase') }}
+{% endblock %}
+
+{% block body %}
+<div class="container mx-auto max-w-2xl px-4 py-8">
+
+  <h1 class="text-2xl font-semibold mb-2">{{ 'gift_card.purchase.title'|trans }}</h1>
+  <p class="text-gray-500 mb-6">
+    {{ 'gift_card.purchase.intro'|trans({ '%brand_name%': coopcycle_setting('brand_name') }) }}
+  </p>
+
+  {% form_theme form '@DaisyuiForm/form/daisyui_layout.html.twig' %}
+
+  {# One form, not two. The Stripe element and the submit button have to
+     live inside the Symfony form: nesting a <form> inside another is
+     invalid HTML, and the parser silently drops the inner one, taking its
+     id with it. #}
+  {{ form_start(form, { attr: {
+    id: 'gift-card-form',
+    'data-purchase-url': path('gift_card_purchase'),
+    'data-confirm-url': path('gift_card_purchase_confirm'),
+    'data-stripe-key': stripe_publishable_key,
+  } }) }}
+
+    {% if denominations|length > 0 %}
+    <div class="mb-4">
+      <label class="block mb-2 font-semibold">{{ 'gift_card.purchase.choose_amount'|trans }}</label>
+      <div class="flex flex-wrap gap-2" id="gift-card-denominations">
+        {% for amount in denominations %}
+          <button type="button" class="btn btn-outline" data-amount="{{ (amount / 100)|number_format(2, '.', '') }}">
+            {{ amount|price_format }}
+          </button>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    {{ form_widget(form) }}
+
+    <div class="mb-4">
+      <label class="block mb-2 font-semibold">{{ 'gift_card.purchase.card'|trans }}</label>
+      {# A plain bordered box, not DaisyUI's `input`: that is a fixed-height
+         flex container and it clips the Stripe iframe mounted inside it.
+         Same treatment as #card-element on the checkout page. #}
+      <div id="gift-card-stripe-element" class="border border-base-300 rounded-md p-3 bg-base-100"></div>
+    </div>
+
+    <div id="gift-card-error" class="alert alert-error mb-4" style="display:none;"></div>
+
+    <button type="submit" id="gift-card-submit" class="btn btn-primary btn-lg btn-block">
+      {{ 'gift_card.purchase.submit'|trans }}
+    </button>
+
+  {{ form_end(form) }}
+
+  <div class="mt-6 text-sm text-gray-500">
+    <p>
+      {% if expires_at %}
+        {{ 'gift_card.purchase.expires'|trans({ '%date%': expires_at|format_datetime('medium', 'none') }) }}
+      {% else %}
+        {{ 'gift_card.purchase.no_expiry'|trans }}
+      {% endif %}
+    </p>
+    {% if legal_mention %}
+      <p class="mt-2">{{ legal_mention }}</p>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

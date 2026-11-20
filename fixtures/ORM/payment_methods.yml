@@ -29,3 +29,8 @@ Sylius\Component\Payment\Model\PaymentMethod:
     currentLocale: fr
     name: Cash on delivery
     enabled: true
+  payment_method_gift_card:
+    code: GIFT_CARD
+    currentLocale: fr
+    name: Gift card
+    enabled: true

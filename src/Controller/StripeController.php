@@ -28,6 +28,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use AppBundle\Entity\GiftCard\GiftCardRepository;
+use AppBundle\Message\GiftCard\SettleGiftCardOrder;
+use AppBundle\Service\GiftCard\GiftCardPurchaseManager;
 
 /**
  * @see https://stripe.com/docs/connect/standard-accounts
@@ -45,7 +48,8 @@ class StripeController extends AbstractController
         bool $debug,
         EntityManagerInterface $entityManager,
         AdjustmentFactoryInterface $adjustmentFactory,
-        LoggerInterface $logger)
+        LoggerInterface $logger,
+        private readonly MessageBusInterface $messageBus)
     {
         $this->secret = $secret;
         $this->debug = $debug;
@@ -160,7 +164,9 @@ class StripeController extends AbstractController
     #[Route(path: '/stripe/webhook', name: 'stripe_webhook', methods: ['POST'])]
     public function webhookAction(Request $request,
         StripeManager $stripeManager,
-        SettingsManager $settingsManager
+        SettingsManager $settingsManager,
+        GiftCardRepository $giftCardRepository,
+        GiftCardPurchaseManager $giftCardPurchaseManager
     ) {
         $this->logger->info('Received webhook');
 
@@ -219,13 +225,17 @@ class StripeController extends AbstractController
 
         switch ($event->type) {
             case Stripe\Event::PAYMENT_INTENT_SUCCEEDED:
-                return $this->handlePaymentIntentSucceeded($event);
+                return $this->handlePaymentIntentSucceeded($event, $giftCardRepository, $giftCardPurchaseManager);
             case Stripe\Event::PAYMENT_INTENT_PAYMENT_FAILED:
                 return $this->handlePaymentIntentPaymentFailed($event);
             case Stripe\Event::CHARGE_CAPTURED:
                 return $this->handleChargeCaptured($event, $stripeManager);
             case Stripe\Event::CHARGE_SUCCEEDED:
                 return $this->handleChargeSucceeded();
+            case Stripe\Event::CHARGE_DISPUTE_CREATED:
+                return $this->handleChargeDispute($event, $giftCardRepository, true);
+            case Stripe\Event::CHARGE_DISPUTE_CLOSED:
+                return $this->handleChargeDispute($event, $giftCardRepository, false);
         }
 
         return new Response('', 200);
@@ -246,11 +256,27 @@ class StripeController extends AbstractController
         return $qb->getQuery()->getOneOrNullResult();
     }
 
-    private function handlePaymentIntentSucceeded(Stripe\Event $event): Response
-    {
+    private function handlePaymentIntentSucceeded(
+        Stripe\Event $event,
+        GiftCardRepository $giftCardRepository,
+        GiftCardPurchaseManager $giftCardPurchaseManager
+    ): Response {
         $paymentIntent = $event->data->object;
 
         $this->logger->info(sprintf('Payment Intent has id "%s"', $paymentIntent->id));
+
+        // Gift card purchases are not orders and have no Payment, so they are
+        // picked off before the lookup below -- which would otherwise find
+        // nothing and log an error for something that is working perfectly.
+        //
+        // This is the backstop, not the main path: the purchase page issues
+        // the card as soon as it confirms the intent, so the buyer sees their
+        // code straight away. This catches the buyer who closed the tab.
+        // GiftCardIssuer takes a lock and checks the state, so whichever of
+        // the two arrives second does nothing.
+        if ($this->handleGiftCardPurchase($paymentIntent, $giftCardRepository, $giftCardPurchaseManager)) {
+            return new Response('', 200);
+        }
 
         $payment = $this->findOneByPaymentIntent($paymentIntent);
 
@@ -261,6 +287,81 @@ class StripeController extends AbstractController
         }
 
         return new Response('', 200);
+    }
+
+    /**
+     * Freezes a gift card while its purchase is being disputed, and thaws it
+     * if the dispute is won.
+     *
+     * Only the card is frozen. Orders it already paid for are left alone:
+     * that food was cooked and delivered, and the restaurant keeps its
+     * money. The loss sits with the platform, which is where fraud losses
+     * belong, and freezing bounds it at whatever is left on the card.
+     */
+    private function handleChargeDispute(
+        Stripe\Event $event,
+        GiftCardRepository $giftCardRepository,
+        bool $opening
+    ): Response {
+        $dispute = $event->data->object;
+
+        $chargeId = is_string($dispute->charge) ? $dispute->charge : $dispute->charge->id;
+
+        $giftCard = $giftCardRepository->findOneByPurchaseChargeId($chargeId);
+
+        if (null === $giftCard) {
+            return new Response('', 200);
+        }
+
+        if ($opening) {
+            $giftCard->freeze();
+            $this->logger->warning(sprintf('Gift card %s frozen: charge %s disputed',
+                $giftCard->getCode(), $chargeId));
+        } elseif ('won' === ($dispute->status ?? null)) {
+            $giftCard->unfreeze();
+            $this->logger->info(sprintf('Gift card %s unfrozen: dispute on %s was won',
+                $giftCard->getCode(), $chargeId));
+        } else {
+            // Lost, or settled against us: the money is gone, so the card
+            // goes with it.
+            $giftCard->cancel();
+            $this->logger->warning(sprintf('Gift card %s cancelled: dispute on %s was lost',
+                $giftCard->getCode(), $chargeId));
+        }
+
+        $this->entityManager->flush();
+
+        return new Response('', 200);
+    }
+
+    /**
+     * @return bool whether this intent was a gift card purchase, and has been
+     *              dealt with
+     */
+    private function handleGiftCardPurchase(
+        $paymentIntent,
+        GiftCardRepository $giftCardRepository,
+        GiftCardPurchaseManager $giftCardPurchaseManager
+    ): bool {
+        $giftCardId = $paymentIntent->metadata->gift_card_id ?? null;
+
+        if (empty($giftCardId)) {
+            return false;
+        }
+
+        $giftCard = $giftCardRepository->find((int) $giftCardId);
+
+        if (null === $giftCard) {
+            $this->logger->error(sprintf('Gift card #%s not found for intent "%s"', $giftCardId, $paymentIntent->id));
+
+            // Still a gift card intent, so don't fall through to the order
+            // lookup: there is no order to find.
+            return true;
+        }
+
+        $giftCardPurchaseManager->issueIfPaid($giftCard, $paymentIntent);
+
+        return true;
     }
 
     private function handlePaymentIntentPaymentFailed(Stripe\Event $event)
@@ -293,6 +394,15 @@ class StripeController extends AbstractController
 
         $this->logger->info(sprintf('Retrieving payment intent "%s"', $charge->payment_intent));
 
+        // A gift card purchase captures automatically and has no Order, so
+        // it should never reach here -- but everything below assumes an
+        // order exists, so say so rather than finding out the hard way.
+        if (!empty($charge->metadata->gift_card_id ?? null)) {
+            $this->logger->info(sprintf('Charge "%s" is a gift card purchase, skipping', $charge->id));
+
+            return new Response('', 200);
+        }
+
         $payment = $this->findOneByPaymentIntent($charge->payment_intent);
 
         if (null === $payment) {
@@ -305,12 +415,39 @@ class StripeController extends AbstractController
             $stripeManager->createTransfersForHub($payment, $charge);
         }
 
-        $stripeFee = $this->getStripeFee($event);
+        // Wrapped: this does a second round trip to Stripe, and until now a
+        // failure here made the whole webhook 500 -- after the transfers
+        // above had already gone out. Stripe then retried, and every vendor
+        // was paid twice.
+        $stripeFee = 0;
+        try {
+            $stripeFee = $this->getStripeFee($event);
+        } catch (\Exception $e) {
+            $this->logger->error(sprintf('Could not retrieve the Stripe fee for charge "%s": %s',
+                $charge->id, $e->getMessage()));
+        }
 
         $this->logger->info(sprintf('Stripe fee  = %d', $stripeFee));
 
         if ($stripeFee > 0) {
             $this->addStripeFeeAdjustment($payment->getOrder(), $stripeFee);
+        }
+
+        $order = $payment->getOrder();
+
+        // Settle *after* the Stripe fee adjustment has been flushed: on a
+        // contract where the restaurant bears the processing fee, the amount
+        // transferred is net of it, and reading it as zero would quietly
+        // hand the restaurant money the co-op has already paid out.
+        //
+        // Dispatched rather than done here, so this handler can return 200
+        // before Stripe loses patience and retries it.
+        if (!$event->account && $order->hasGiftCardPayment()) {
+            $this->messageBus->dispatch(new SettleGiftCardOrder(
+                $order->getId(),
+                $charge->id,
+                (int) ($charge->amount_captured ?? $charge->amount)
+            ));
         }
 
         return new Response('', 200);

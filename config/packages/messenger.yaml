@@ -101,6 +101,13 @@ framework:
             'AppBundle\Message\Zelty\ProcessZeltyCatalog': async
             'AppBundle\Message\RdcMessage': async
             'AppBundle\Message\Marketing\SendCampaignEmail': async
+            # Moving money to a restaurant involves a Stripe round trip and
+            # may have to wait for the platform balance, so it must not be
+            # done inside the webhook that triggers it: a slow handler makes
+            # Stripe retry, and a retried webhook is how vendors came to be
+            # paid twice.
+            'AppBundle\Message\GiftCard\SettleGiftCardOrder': async
+            'AppBundle\Message\GiftCard\GiftCardIssued': async
             'AppBundle\Message\IncidentRdcMessage': async
             # They call the BOL, which must neither slow down nor fail the
             # task update that sent them

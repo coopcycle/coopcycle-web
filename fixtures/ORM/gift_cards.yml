@@ -1,0 +1,69 @@
+# Cards are built through their own methods rather than by setting balance
+# and state directly: those have no setters on purpose, so that nothing can
+# move a balance without going through the entity that guards it.
+AppBundle\Entity\GiftCard\GiftCard:
+  gift_card_active:
+    code: 'ACTIVE234CARD'
+    currencyCode: 'EUR'
+    livemode: false
+    initialAmount: 5000
+    purchaserEmail: 'buyer@coopcycle.org'
+    recipientEmail: 'recipient@coopcycle.org'
+    purchaseChargeId: 'ch_gift_card_active'
+    __calls:
+      - activate: [ 5000 ]
+
+  gift_card_small:
+    code: 'SMALL2345CARD'
+    currencyCode: 'EUR'
+    livemode: false
+    initialAmount: 500
+    purchaserEmail: 'buyer@coopcycle.org'
+    purchaseChargeId: 'ch_gift_card_small'
+    __calls:
+      - activate: [ 500 ]
+
+  # Spent down to nothing, so it reports itself as depleted.
+  gift_card_depleted:
+    code: 'SPENT2345CARD'
+    currencyCode: 'EUR'
+    livemode: false
+    initialAmount: 2000
+    purchaserEmail: 'buyer@coopcycle.org'
+    purchaseChargeId: 'ch_gift_card_depleted'
+    __calls:
+      - activate: [ 2000 ]
+      - debit: [ 2000 ]
+
+  # Still active, but past its date -- which is what a customer hits, rather
+  # than the forfeited state the nightly sweep leaves behind.
+  gift_card_expired:
+    code: 'OLDCARD23456'
+    currencyCode: 'EUR'
+    livemode: false
+    initialAmount: 2000
+    purchaserEmail: 'buyer@coopcycle.org'
+    purchaseChargeId: 'ch_gift_card_expired'
+    __calls:
+      - activate: [ 2000 ]
+      - setExpiresAt: [ '<(new \DateTime("-1 day"))>' ]
+
+AppBundle\Entity\GiftCard\GiftCardTransaction:
+  gift_card_transaction_active:
+    __factory:
+      'AppBundle\Entity\GiftCard\GiftCardTransaction::purchase': [ '@gift_card_active', 5000 ]
+  gift_card_transaction_small:
+    __factory:
+      'AppBundle\Entity\GiftCard\GiftCardTransaction::purchase': [ '@gift_card_small', 500 ]
+  gift_card_transaction_depleted:
+    __factory:
+      'AppBundle\Entity\GiftCard\GiftCardTransaction::purchase': [ '@gift_card_depleted', 2000 ]
+  gift_card_transaction_expired:
+    __factory:
+      'AppBundle\Entity\GiftCard\GiftCardTransaction::purchase': [ '@gift_card_expired', 2000 ]
+
+AppBundle\Entity\GiftCard\GiftCardPurchaseCharge:
+  gift_card_charge_active:
+    __construct: [ '@gift_card_active', 'ch_gift_card_active', 5000, 'EUR' ]
+  gift_card_charge_small:
+    __construct: [ '@gift_card_small', 'ch_gift_card_small', 500, 'EUR' ]
