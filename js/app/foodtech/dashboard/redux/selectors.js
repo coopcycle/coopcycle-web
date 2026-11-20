@@ -121,3 +121,20 @@ export const selectIsCollapsedColumn = createSelector(
   selectCollapsedColumns,
   (id, collapsedColumns) => collapsedColumns.includes(id)
 )
+
+// Not memoized, as the result depends on the current time
+export const selectIsRestaurantClosedUntilTomorrow = state => {
+  const now = moment()
+  const endOfDay = moment().endOf('day')
+
+  // A closing rule is exposed as an OpeningHoursSpecification,
+  // which "closes" at the start of the rule, and "opens" at its end.
+  // The rules may be serialized as an object rather than as an array,
+  // because the collection keeps the keys of the rules it filters.
+  return _.some(state.restaurant?.specialOpeningHoursSpecification, ohs => {
+    const closedFrom = moment(`${ohs.validFrom} ${ohs.closes}`, 'YYYY-MM-DD HH:mm')
+    const closedUntil = moment(`${ohs.validThrough} ${ohs.opens}`, 'YYYY-MM-DD HH:mm')
+
+    return closedFrom.isSameOrBefore(now, 'minute') && closedUntil.isSameOrAfter(endOfDay, 'minute')
+  })
+}

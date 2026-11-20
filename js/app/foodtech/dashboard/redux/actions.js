@@ -28,6 +28,7 @@ export const RESTORE_ORDER_REQUEST_SUCCESS = 'RESTORE_ORDER_REQUEST_SUCCESS'
 export const RESTORE_ORDER_REQUEST_FAILURE = 'RESTORE_ORDER_REQUEST_FAILURE'
 
 export const CHANGE_RESTAURANT_STATE = 'CHANGE_RESTAURANT_STATE'
+export const CLOSE_RESTAURANT_REQUEST_SUCCESS = 'CLOSE_RESTAURANT_REQUEST_SUCCESS'
 
 export const SEARCH_RESULTS = 'SEARCH_RESULTS'
 
@@ -61,6 +62,8 @@ export const fulfillOrderRequestSuccess = createAction(FULFILL_ORDER_REQUEST_SUC
 export const fulfillOrderRequestFailure = createAction(FULFILL_ORDER_REQUEST_FAILURE)
 export const restoreOrderRequestSuccess = createAction(RESTORE_ORDER_REQUEST_SUCCESS)
 export const restoreOrderRequestFailure = createAction(RESTORE_ORDER_REQUEST_FAILURE)
+
+export const closeRestaurantRequestSuccess = createAction(CLOSE_RESTAURANT_REQUEST_SUCCESS)
 
 export const searchResults = createAction(SEARCH_RESULTS, (q, results) => ({ q, results }))
 
@@ -200,6 +203,16 @@ export function changeStatus(restaurant, state) {
   return (dispatch, getState) => {
     const { httpClient } = getState()
     httpClient.put(restaurant['@id'], { state })
+  }
+}
+
+export function closeRestaurant(restaurant) {
+
+  return (dispatch, getState) => {
+    const { httpClient } = getState()
+
+    return httpClient.put(restaurant['@id'] + '/close', {})
+      .then(res => dispatch(closeRestaurantRequestSuccess(res.data)))
   }
 }
 

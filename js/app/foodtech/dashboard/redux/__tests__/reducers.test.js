@@ -1,5 +1,5 @@
 import reducers from '../reducers'
-import { ORDER_CREATED } from '../actions'
+import { ORDER_CREATED, CLOSE_RESTAURANT_REQUEST_SUCCESS } from '../actions'
 
 describe('reducers', () => {
 
@@ -46,6 +46,48 @@ describe('reducers', () => {
     ).toMatchObject({
       date: '2020-05-07',
       orders: []
+    })
+
+  })
+
+  it('should handle closed restaurant', () => {
+
+    const specialOpeningHoursSpecification = [
+      {
+        '@id': '/api/opening_hours_specifications/1',
+        '@type': 'OpeningHoursSpecification',
+        id: 1,
+        opens: '23:59',
+        closes: '00:00',
+        validFrom: '2020-10-02',
+        validThrough: '2020-10-02',
+      }
+    ]
+
+    expect(
+      reducers({
+        restaurant: {
+          '@id': '/api/restaurants/1',
+          name: 'Nodaiwa',
+          state: 'rush',
+          specialOpeningHoursSpecification: [],
+        },
+      }, {
+        type: CLOSE_RESTAURANT_REQUEST_SUCCESS,
+        payload: {
+          '@id': '/api/restaurants/1',
+          name: 'Nodaiwa',
+          state: 'normal',
+          specialOpeningHoursSpecification,
+        }
+      })
+    ).toEqual({
+      restaurant: {
+        '@id': '/api/restaurants/1',
+        name: 'Nodaiwa',
+        state: 'rush',
+        specialOpeningHoursSpecification,
+      },
     })
 
   })
