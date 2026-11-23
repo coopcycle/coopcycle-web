@@ -3,6 +3,7 @@
   <entity name="AppBundle\Entity\Sylius\ProductOptionValue" table="sylius_product_option_value">
     <field name="metadata" type="json" column="metadata" nullable="true"/>
     <field name="price" type="integer" column="price"/>
+    <field name="weight" type="integer" column="weight" nullable="true"/>
     <field name="enabled" column="enabled" type="boolean"/>
     <field name="deletedAt" type="datetime" column="deleted_at" nullable="true"/>
     <gedmo:soft-deleteable field-name="deletedAt" time-aware="false" hard-delete="false" />

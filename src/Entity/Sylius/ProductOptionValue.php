@@ -44,6 +44,13 @@ class ProductOptionValue extends BaseProductOptionValue implements ProductOption
     protected $price = 0;
 
     /**
+     * Weight in grams, added to the weight of the product
+     * @var int|null
+     */
+    #[Assert\GreaterThanOrEqual(0)]
+    protected $weight = null;
+
+    /**
      * Each ProductOptionValue can be linked to zero or one PricingRule.
      * @var PricingRule|null
      */
@@ -79,6 +86,16 @@ class ProductOptionValue extends BaseProductOptionValue implements ProductOption
     public function setPrice(int $price): void
     {
         $this->price = $price;
+    }
+
+    public function getWeight(): ?int
+    {
+        return $this->weight;
+    }
+
+    public function setWeight(?int $weight): void
+    {
+        $this->weight = $weight;
     }
 
     public function getPricingRule(): ?PricingRule

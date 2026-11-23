@@ -12,6 +12,11 @@ interface ProductOptionValueInterface extends BaseProductOptionValueInterface, T
 
     public function setPrice(int $price): void;
 
+    /**
+     * Weight in grams
+     */
+    public function getWeight(): ?int;
+
     public function getPricingRule(): ?PricingRule;
 
     public function setPricingRule(?PricingRule $pricingRule): void;
