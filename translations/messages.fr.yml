@@ -1554,6 +1554,7 @@ deliveries.importing: Le fichier %filename% va bientôt être importé.
 deliveries.imports.created_at: Créé le
 deliveries.imports.progress: Progression
 deliveries.imports.cancel: Annuler
+deliveries.imports.cancel_deliveries: "Annuler les livraisons"
 deliveries.imports.see_file: Voir le fichier
 deliveries.imports.see_errored_file: Voir les erreurs
 deliveries.imports.error.interrupted: "L'import a été interrompu par une erreur inattendue, et aucune livraison n'a été importée. Merci d'importer à nouveau le fichier."

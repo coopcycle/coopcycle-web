@@ -1715,6 +1715,7 @@ deliveries.importing: The file %filename% is being imported.
 deliveries.imports.created_at: Created at
 deliveries.imports.progress: Progress
 deliveries.imports.cancel: Cancel
+deliveries.imports.cancel_deliveries: "Cancel the deliveries"
 deliveries.imports.see_file: See file
 deliveries.imports.see_errored_file: To errors details
 deliveries.imports.error.interrupted: "The import was interrupted by an unexpected error, and no delivery was imported. Please import the file again."

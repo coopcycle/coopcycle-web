@@ -159,7 +159,7 @@ const cancellableImportStatuses = [ 'pending', 'started' ]
 // The values are only written with textContent, there is nothing to escape
 const _t = (key, options = {}) => i18n.t(key, { ...options, interpolation: { escapeValue: false } })
 
-function _importProgressText({ status, startedAt, totalRows, processedRows, errorRows }) {
+function _importProgressText({ status, startedAt, totalRows, processedRows, errorRows, ...cancellation }) {
   // Unknown until a worker has read the file
   if (!totalRows) {
     return ''
@@ -190,7 +190,32 @@ function _importProgressText({ status, startedAt, totalRows, processedRows, erro
     }))
   }
 
-  return parts.join(' · ')
+  return parts.concat(_deliveriesCancellationText(cancellation)).join(' · ')
+}
+
+function _deliveriesCancellationText({ deliveriesCancellation, deliveriesToCancel, cancelledDeliveries, skippedDeliveries }) {
+  if (deliveriesCancellation === 'cancelling') {
+    // Unknown until a worker has looked them up
+    if (deliveriesToCancel === null) {
+      return [ _t('DELIVERY_IMPORT_CANCELLING_DELIVERIES') ]
+    }
+
+    return [ _t('DELIVERY_IMPORT_CANCELLING_DELIVERIES_PROGRESS', {
+      done: (cancelledDeliveries + skippedDeliveries).toLocaleString(),
+      total: deliveriesToCancel.toLocaleString(),
+    }) ]
+  }
+
+  if (deliveriesCancellation === 'cancelled') {
+    const parts = [ _t('DELIVERY_IMPORT_DELIVERIES_CANCELLED', { count: cancelledDeliveries }) ]
+    if (skippedDeliveries > 0) {
+      parts.push(_t('DELIVERY_IMPORT_DELIVERIES_LEFT', { count: skippedDeliveries }))
+    }
+
+    return parts
+  }
+
+  return []
 }
 
 function _renderImportStatus(row, status) {
@@ -203,10 +228,17 @@ function _renderImportProgress(row, progress) {
   row.querySelector('[data-delivery-import-progress]').textContent = _importProgressText(progress)
   row.querySelector('[data-delivery-import-cancel-button]')
     .classList.toggle('d-none', !cancellableImportStatuses.includes(progress.status))
+  // Only once
+  if (progress.deliveriesCancellation) {
+    row.querySelector('[data-delivery-import-cancel-deliveries-button]').classList.add('d-none')
+  }
 }
 
 function _progressFromDataset(el) {
-  const { status, startedAt, totalRows, processedRows, errorRows } = el.dataset
+  const {
+    status, startedAt, totalRows, processedRows, errorRows,
+    deliveriesCancellation, deliveriesToCancel, cancelledDeliveries, skippedDeliveries,
+  } = el.dataset
 
   return {
     status,
@@ -214,7 +246,37 @@ function _progressFromDataset(el) {
     totalRows: totalRows ? parseInt(totalRows, 10) : null,
     processedRows: parseInt(processedRows || '0', 10),
     errorRows: parseInt(errorRows || '0', 10),
+    deliveriesCancellation: deliveriesCancellation || null,
+    deliveriesToCancel: deliveriesToCancel ? parseInt(deliveriesToCancel, 10) : null,
+    cancelledDeliveries: parseInt(cancelledDeliveries || '0', 10),
+    skippedDeliveries: parseInt(skippedDeliveries || '0', 10),
   }
+}
+
+function addCancelDeliveries(el) {
+  el.addEventListener('click', e => {
+
+    e.preventDefault()
+
+    if (!window.confirm(_t('DELIVERY_IMPORT_CANCEL_DELIVERIES_CONFIRM'))) {
+      return
+    }
+
+    const parentEl = e.target.closest('[data-delivery-import]')
+
+    axios({
+      method: 'put',
+      url: parentEl.dataset.deliveryImportCancelDeliveries,
+      headers: {
+        Authorization: `Bearer ${window._auth.jwt}`
+      }
+    }).then(response => {
+      // The worker reports how it goes, this is in case it's busy with something else
+      _renderImportProgress(parentEl, { ...response.data, startedAt: null })
+    }).catch(() => {
+      window.alert(_t('SOMETHING_WENT_WRONG'))
+    })
+  }, false)
 }
 
 function addCancel(el) {
@@ -342,6 +404,10 @@ if (deliveryImports) {
       }
       _renderImportProgress(row, event.data)
       _renderImportStatus(row, event.data.status)
+      // The number of deliveries is only known on reload, but a completed import has some
+      if (event.data.status === 'completed' && !event.data.deliveriesCancellation) {
+        row.querySelector('[data-delivery-import-cancel-deliveries-button]').classList.remove('d-none')
+      }
       if (event.data.status === 'failed') {
         row.classList.add('danger')
         // Its click listener was added with the page: adding it again would open the file twice
@@ -362,6 +428,7 @@ if (deliveryImports) {
     addSpreadsheetView(el.querySelector('[data-delivery-import-view]'))
     addRedownload(el.querySelector('[data-delivery-import-redownload]'))
     addCancel(el.querySelector('[data-delivery-import-cancel-button]'))
+    addCancelDeliveries(el.querySelector('[data-delivery-import-cancel-deliveries-button]'))
     _renderImportProgress(el, _progressFromDataset(el.querySelector('[data-delivery-import-progress]')))
   })
 }

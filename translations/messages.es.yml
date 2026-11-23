@@ -1523,6 +1523,7 @@ deliveries.importing: El fichero %filename% va a ser importado.
 deliveries.imports.created_at: Creado el
 deliveries.imports.progress: Progreso
 deliveries.imports.cancel: Cancelar
+deliveries.imports.cancel_deliveries: "Cancelar las entregas"
 deliveries.imports.see_file: Ver archivo
 deliveries.imports.see_errored_file: Detalles de los errores
 deliveries.imports.error.interrupted: "La importación se interrumpió por un error inesperado, y no se importó ninguna entrega. Por favor, vuelve a importar el fichero."
