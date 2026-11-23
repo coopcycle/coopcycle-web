@@ -50,6 +50,10 @@ class AddressValueResolver implements ArgumentValueResolverInterface
         $data = urldecode(base64_decode($value));
         $data = json_decode($data, true);
 
+        if (!is_array($data)) {
+            return yield null;
+        }
+
         $address = null;
 
         if (is_object($user) && count($user->getAddresses()) > 0 && isset($data['@id'])) {
@@ -63,16 +67,18 @@ class AddressValueResolver implements ArgumentValueResolverInterface
         }
 
         if (isset($data['streetAddress'])) {
+            [ $latitude, $longitude ] = $this->getCoordinates($data);
+
+            // The address will be persisted with the cart,
+            // and it can't be persisted without coordinates
+            if (is_null($latitude) || is_null($longitude)) {
+                return yield null;
+            }
+
             $address = new Address();
 
             $address->setStreetAddress($data['streetAddress']);
-
-            $longitude = $data['longitude'];
-            $latitude = $data['latitude'];
-
-            if ($latitude && $longitude) {
-                $address->setGeo(new GeoCoordinates($latitude, $longitude));
-            }
+            $address->setGeo(new GeoCoordinates($latitude, $longitude));
 
             if (isset($data['provider']) && in_array($data['provider'], Address::PROVIDERS)) {
                 $address->setProvider($data['provider']);
@@ -82,5 +88,23 @@ class AddressValueResolver implements ArgumentValueResolverInterface
         }
 
         yield null;
+    }
+
+    /**
+     * Supports both the flat shape ({"latitude":..,"longitude":..}),
+     * and the JSON-LD shape of a saved address ({"geo":{"latitude":..,"longitude":..}}).
+     *
+     * @return array{0: ?float, 1: ?float}
+     */
+    private function getCoordinates(array $data): array
+    {
+        $latitude = $data['latitude'] ?? $data['geo']['latitude'] ?? null;
+        $longitude = $data['longitude'] ?? $data['geo']['longitude'] ?? null;
+
+        if (!is_numeric($latitude) || !is_numeric($longitude)) {
+            return [ null, null ];
+        }
+
+        return [ (float) $latitude, (float) $longitude ];
     }
 }
