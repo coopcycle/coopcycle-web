@@ -159,6 +159,12 @@ class Geocoder
 
     public function geocode($value, $address = null): ?Address
     {
+        // GeocodeQuery::create() throws on an empty string,
+        // and there is nothing to geocode anyway
+        if ('' === trim((string) $value)) {
+            return null;
+        }
+
         $query = GeocodeQuery::create($value);
 
         $latlng = $this->settingsManager->get('latlng');

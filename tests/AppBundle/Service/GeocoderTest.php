@@ -107,4 +107,25 @@ class GeocoderTest extends TestCase
 
         $this->assertEquals($expected, $address->getStreetAddress());
     }
+
+    public function blankValueProvider()
+    {
+        return [
+            [ null ],
+            [ '' ],
+            [ '   ' ],
+        ];
+    }
+
+    /**
+     * @dataProvider blankValueProvider
+     */
+    public function testGeocodeBlankValueReturnsNull($value)
+    {
+        $this->innerGeocoder
+            ->geocodeQuery(Argument::any())
+            ->shouldNotBeCalled();
+
+        $this->assertNull($this->geocoder->geocode($value));
+    }
 }
