@@ -5,7 +5,7 @@ import axios from 'axios'
 import Papa from 'papaparse'
 import clsx from 'clsx'
 import _ from 'lodash'
-import { Tooltip } from 'antd'
+import { Tooltip, Modal as AntdModal } from 'antd'
 import Modal from 'react-modal'
 
 import React, { useState } from 'react'
@@ -253,28 +253,51 @@ function _progressFromDataset(el) {
   }
 }
 
+function _cancelDeliveriesConfirmContent(filename) {
+  return (
+    <div>
+      <p>{ _t('DELIVERY_IMPORT_CANCEL_DELIVERIES_FILE', { filename }) }</p>
+      {/* The admin's styles remove the bullets of a list */}
+      <ul style={{ listStyle: 'disc', paddingLeft: 20 }}>
+        <li>{ _t('DELIVERY_IMPORT_CANCEL_DELIVERIES_ORDERS') }</li>
+        <li>{ _t('DELIVERY_IMPORT_CANCEL_DELIVERIES_ASSIGNED') }</li>
+        <li>{ _t('DELIVERY_IMPORT_CANCEL_DELIVERIES_UNDER_WAY') }</li>
+      </ul>
+      <p><strong>{ _t('DELIVERY_IMPORT_CANCEL_DELIVERIES_NO_UNDO') }</strong></p>
+    </div>
+  )
+}
+
 function addCancelDeliveries(el) {
   el.addEventListener('click', e => {
 
     e.preventDefault()
 
-    if (!window.confirm(_t('DELIVERY_IMPORT_CANCEL_DELIVERIES_CONFIRM'))) {
-      return
-    }
-
     const parentEl = e.target.closest('[data-delivery-import]')
+    // Only known on page load: an import completed since shows 0
+    const count = parseInt(parentEl.dataset.deliveryImportDeliveries || '0', 10)
 
-    axios({
-      method: 'put',
-      url: parentEl.dataset.deliveryImportCancelDeliveries,
-      headers: {
-        Authorization: `Bearer ${window._auth.jwt}`
-      }
-    }).then(response => {
-      // The worker reports how it goes, this is in case it's busy with something else
-      _renderImportProgress(parentEl, { ...response.data, startedAt: null })
-    }).catch(() => {
-      window.alert(_t('SOMETHING_WENT_WRONG'))
+    AntdModal.confirm({
+      title: count > 0 ?
+        _t('DELIVERY_IMPORT_CANCEL_DELIVERIES_TITLE', { count }) : _t('DELIVERY_IMPORT_CANCEL_DELIVERIES_TITLE_UNKNOWN'),
+      content: _cancelDeliveriesConfirmContent(parentEl.dataset.deliveryImportFilename),
+      okText: _t('DELIVERY_IMPORT_CANCEL_DELIVERIES_OK'),
+      okButtonProps: { danger: true },
+      cancelText: _t('DELIVERY_IMPORT_CANCEL_DELIVERIES_BACK'),
+      width: 520,
+      // The dialog stays open, its button loading, until the request is answered
+      onOk: () => axios({
+        method: 'put',
+        url: parentEl.dataset.deliveryImportCancelDeliveries,
+        headers: {
+          Authorization: `Bearer ${window._auth.jwt}`
+        }
+      }).then(response => {
+        // The worker reports how it goes, this is in case it's busy with something else
+        _renderImportProgress(parentEl, { ...response.data, startedAt: null })
+      }).catch(() => {
+        window.alert(_t('SOMETHING_WENT_WRONG'))
+      }),
     })
   }, false)
 }
