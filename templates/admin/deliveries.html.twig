@@ -104,13 +104,16 @@
   {% endif %}
 
   {% if app.request.query.get('section', 'today') == 'imports' %}
+    {# The deliveries_ ones once the import is over, its deliveries cancelled by a dispatcher: nothing from the file is left either #}
     {% set import_status_icon = {
       'pending': 'clock-o',
       'started': 'play',
       'saving': 'floppy-o',
       'completed': 'check',
       'failed': 'exclamation-triangle',
-      'cancelled': 'ban'
+      'cancelled': 'ban',
+      'deliveries_cancelling': 'spinner fa-spin',
+      'deliveries_cancelled': 'ban'
     } %}
     <div class="text-right my-2">
       <div id="import-datepicker" data-default-date="{{ import_date|date('Y-m-d') }}"></div>
@@ -137,7 +140,7 @@
             data-delivery-import-cancel="{{ path('_api_/delivery_import_queues/{id}/cancel_put', { id: import_queue.id }) }}"
             data-delivery-import-cancel-deliveries="{{ path('_api_/delivery_import_queues/{id}/cancel_deliveries_put', { id: import_queue.id }) }}"
             data-delivery-import-deliveries="{{ imported_deliveries[import_queue.id] ?? 0 }}">
-            <td width="5%"><i class="fa fa-{{ import_status_icon[import_queue.status] }}" data-delivery-import-status></i></td>
+            <td width="5%"><i class="fa fa-{{ import_status_icon[import_queue.deliveriesCancellation ? 'deliveries_' ~ import_queue.deliveriesCancellation : import_queue.status] }}" data-delivery-import-status></i></td>
             <td>{{ import_queue.filename }}</td>
             <td>{{ import_queue.createdAt|time_diff }}</td>
             {# Formatted by list.js, which also keeps it up to date while the file is imported #}

@@ -151,7 +151,10 @@ const importStatusIcon = {
   'saving': 'floppy-o',
   'completed': 'check',
   'failed': 'exclamation-triangle',
-  'cancelled': 'ban'
+  'cancelled': 'ban',
+  // Once the import is over, its deliveries cancelled by a dispatcher: nothing from the file is left either
+  'deliveries_cancelling': 'spinner fa-spin',
+  'deliveries_cancelled': 'ban',
 }
 
 const cancellableImportStatuses = [ 'pending', 'started' ]
@@ -218,10 +221,14 @@ function _deliveriesCancellationText({ deliveriesCancellation, deliveriesToCance
   return []
 }
 
-function _renderImportStatus(row, status) {
-  const statusIcon = row.querySelector('[data-delivery-import-status]')
-  statusIcon.classList.remove(...statusIcon.classList)
-  statusIcon.classList.add('fa', `fa-${importStatusIcon[status]}`)
+// The state of its deliveries, once they are being cancelled, rather than that of the import
+function _displayStatus({ status, deliveriesCancellation }) {
+  return deliveriesCancellation ? `deliveries_${deliveriesCancellation}` : status
+}
+
+function _renderImportStatus(row, importQueue) {
+  // As in the template, an icon can come with a modifier: "spinner fa-spin"
+  row.querySelector('[data-delivery-import-status]').className = `fa fa-${importStatusIcon[_displayStatus(importQueue)]}`
 }
 
 function _renderImportProgress(row, progress) {
@@ -294,6 +301,7 @@ function addCancelDeliveries(el) {
         }
       }).then(response => {
         // The worker reports how it goes, this is in case it's busy with something else
+        _renderImportStatus(parentEl, response.data)
         _renderImportProgress(parentEl, { ...response.data, startedAt: null })
       }).catch(() => {
         window.alert(_t('SOMETHING_WENT_WRONG'))
@@ -322,7 +330,7 @@ function addCancel(el) {
     }).then(response => {
       // The live update is sent from this request, through the async transport:
       // it may wait behind the very import the worker is busy with
-      _renderImportStatus(parentEl, response.data.status)
+      _renderImportStatus(parentEl, response.data)
       _renderImportProgress(parentEl, {
         status: response.data.status,
         startedAt: null,
@@ -426,7 +434,7 @@ if (deliveryImports) {
         return
       }
       _renderImportProgress(row, event.data)
-      _renderImportStatus(row, event.data.status)
+      _renderImportStatus(row, event.data)
       // The number of deliveries is only known on reload, but a completed import has some
       if (event.data.status === 'completed' && !event.data.deliveriesCancellation) {
         row.querySelector('[data-delivery-import-cancel-deliveries-button]').classList.remove('d-none')
