@@ -83,6 +83,12 @@ class DeliveryManager
         $delivery->setDistance($distance);
         $delivery->setDuration($duration);
 
+        // Makes the weight available to the pricing rules
+        $weight = $order->getItemsWeight();
+        if (!is_null($weight)) {
+            $dropoff->setWeight($weight);
+        }
+
         $delivery->setOrder($order);
 
         return $delivery;

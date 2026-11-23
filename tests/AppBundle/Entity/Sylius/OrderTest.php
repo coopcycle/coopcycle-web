@@ -253,4 +253,40 @@ class OrderTest extends TestCase
 
         $this->assertEquals(50, $order->getIncidentTaxTotal());
     }
+
+    private function createOrderItemWithWeight(?int $weight, int $quantity)
+    {
+        $variant = $this->prophesize(ProductVariantInterface::class);
+        $variant->getWeight()->willReturn($weight);
+
+        $item = $this->prophesize(OrderItemInterface::class);
+
+        $item->getVariant()->willReturn($variant->reveal());
+        $item->getTotal()->willReturn(1000);
+        $item->getQuantity()->willReturn($quantity);
+
+        $item->setOrder(Argument::type(OrderInterface::class))->shouldBeCalled();
+
+        return $item->reveal();
+    }
+
+    public function testGetItemsWeight()
+    {
+        $order = new Order();
+        $order->addItem($this->createOrderItemWithWeight(4000, 1));
+        $order->addItem($this->createOrderItemWithWeight(1500, 2));
+        // Has no weight, should be ignored
+        $order->addItem($this->createOrderItemWithWeight(null, 3));
+
+        $this->assertEquals(7000, $order->getItemsWeight());
+    }
+
+    public function testGetItemsWeightIsNullWithoutWeights()
+    {
+        $order = new Order();
+        $order->addItem($this->createOrderItemWithWeight(null, 1));
+        $order->addItem($this->createOrderItemWithWeight(null, 2));
+
+        $this->assertNull($order->getItemsWeight());
+    }
 }
