@@ -9,6 +9,9 @@
     <div class="flex-fill" data-shown="option_value">
       {{ form_widget(form.price) }}
     </div>
+    <div title="{{ 'form.product_option_value.weight.help'|trans|e('html_attr') }}">
+      {{ form_widget(form.weight) }}
+    </div>
     <div class="d-flex align-items-center gap-2">
       <div
         data-search="product"

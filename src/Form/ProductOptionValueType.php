@@ -6,6 +6,7 @@ use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\ProductOptionValue;
 use AppBundle\Form\Type\MoneyType;
+use AppBundle\Form\Type\WeightType;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -35,6 +36,13 @@ class ProductOptionValueType extends AbstractType
             ->add('price', MoneyType::class, [
                 'label' => 'form.product_option_value.price.label',
                 'empty_data' => 0,
+            ])
+            ->add('weight', WeightType::class, [
+                'label' => 'form.product_option_value.weight.label',
+                'attr' => [
+                    'inputmode' => 'decimal',
+                    'placeholder' => 'form.product_option_value.weight.label',
+                ],
             ])
             ->add('product', HiddenType::class, [
                 'label' => 'form.product_option_value.product.label',

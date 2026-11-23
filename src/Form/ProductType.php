@@ -12,6 +12,7 @@ use AppBundle\Entity\Sylius\ProductOption;
 use AppBundle\Enum\Allergen;
 use AppBundle\Enum\RestrictedDiet;
 use AppBundle\Form\Type\PriceWithTaxType;
+use AppBundle\Form\Type\WeightType;
 use AppBundle\Sylius\Product\LazyProductVariantResolverInterface;
 use AppBundle\Sylius\Product\ProductInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -76,6 +77,10 @@ class ProductType extends AbstractType
                 'required' => false,
                 'label' => 'form.product.alcohol.label',
                 'help' => 'form.product.alcohol.help',
+            ])
+            ->add('weight', WeightType::class, [
+                'label' => 'form.product.weight.label',
+                'help' => 'form.product.weight.help',
             ])
             ->add('delete', SubmitType::class, [
                 'label' => 'basics.delete',

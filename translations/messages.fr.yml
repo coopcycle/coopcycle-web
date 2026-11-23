@@ -605,6 +605,8 @@ form.product_option.values.help: Vous devez définir une liste de valeurs pour c
   option
 form.product_option_value.value.label: Valeur
 form.product_option_value.price.label: Prix
+form.product_option_value.weight.label: Poids
+form.product_option_value.weight.help: Poids ajouté au produit quand cette option est choisie (facultatif)
 form.product_option.additional.label: Cette option est un supplément
 form.product_option.additional.help: Le client pourra choisir plusieurs valeurs, sans
   être obligé d'en choisir au moins une
@@ -1357,6 +1359,8 @@ restaurants.meal_vouchers_transactions.title: Transactions titres-restaurant
 form.product.alcohol.label: Ce produit est une boisson alcoolisée
 form.product.alcohol.help: Cochez cette case seulement si ce produit est une boisson
   alcoolisée, comme une bouteille de vin.
+form.product.weight.label: Poids
+form.product.weight.help: Facultatif. Sert à calculer le prix de la livraison quand les règles de prix sont basées sur le poids.
 products.on_demand_delivery.name: Livraison à la demande
 index.view_all: Voir tout
 order.adjustment_type.reusable_packaging.loopeat: Service zéro déchet
