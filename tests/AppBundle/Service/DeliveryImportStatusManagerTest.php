@@ -135,4 +135,56 @@ class DeliveryImportStatusManagerTest extends KernelTestCase
         $this->assertFalse($this->statusManager->cancel($queue));
         $this->assertSame(DeliveryImportQueue::STATUS_COMPLETED, $this->fetchRow($queue)['status']);
     }
+
+    /**
+     * Two dispatchers asking at the same time would send two workers
+     */
+    public function testDeliveriesOfAnImportAreCancelledOnce(): void
+    {
+        $queue = $this->createImport(DeliveryImportQueue::STATUS_COMPLETED);
+
+        $this->assertTrue($this->statusManager->cancellingDeliveries($queue));
+        $this->assertFalse($this->statusManager->cancellingDeliveries($queue));
+
+        $this->assertSame(
+            DeliveryImportQueue::DELIVERIES_CANCELLING,
+            $this->entityManager->getConnection()->fetchOne('SELECT deliveries_cancellation FROM delivery_import_queue WHERE id = ?', [$queue->getId()])
+        );
+    }
+
+    public function testDeliveriesOfAnImportStillRunningAreNotCancelled(): void
+    {
+        foreach ([DeliveryImportQueue::STATUS_PENDING, DeliveryImportQueue::STATUS_STARTED, DeliveryImportQueue::STATUS_SAVING] as $status) {
+            $this->assertFalse($this->statusManager->cancellingDeliveries($this->createImport($status)), $status);
+        }
+    }
+
+    public function testDeliveriesCancellationIsWrittenWithoutAFlush(): void
+    {
+        $queue = $this->createImport(DeliveryImportQueue::STATUS_COMPLETED);
+        $this->statusManager->cancellingDeliveries($queue);
+
+        // The worker clears the entity manager as it goes
+        $this->entityManager->clear();
+
+        $this->statusManager->deliveriesCancelled($queue, 30, 28, 2);
+
+        $this->assertEquals(
+            ['deliveries_cancellation' => 'cancelled', 'deliveries_to_cancel' => 30, 'cancelled_deliveries' => 28, 'skipped_deliveries' => 2],
+            $this->entityManager->getConnection()->fetchAssociative(
+                'SELECT deliveries_cancellation, deliveries_to_cancel, cancelled_deliveries, skipped_deliveries FROM delivery_import_queue WHERE id = ?',
+                [$queue->getId()]
+            )
+        );
+    }
+
+    public function testFailedCancellationCanBeAskedAgain(): void
+    {
+        $queue = $this->createImport(DeliveryImportQueue::STATUS_COMPLETED);
+        $this->statusManager->cancellingDeliveries($queue);
+
+        $this->statusManager->deliveriesCancellationFailed($queue, false);
+
+        $this->assertTrue($this->statusManager->cancellingDeliveries($queue));
+    }
 }

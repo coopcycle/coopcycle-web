@@ -11,6 +11,7 @@ use AppBundle\Entity\Store;
 use AppBundle\Action\Delivery\ImportQueueCsv as CsvController;
 use AppBundle\Action\Delivery\ImportQueueRedownload as RedownloadController;
 use AppBundle\Action\Delivery\ImportQueueCancel as CancelController;
+use AppBundle\Action\Delivery\ImportQueueCancelDeliveries as CancelDeliveriesController;
 use AppBundle\Spreadsheet\SpreadsheetParseResult;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -40,6 +41,15 @@ use Symfony\Component\Validator\Constraints as Assert;
             // The status is written by the controller
             write: false,
             deserialize: false
+        ),
+        new Put(
+            uriTemplate: '/delivery_import_queues/{id}/cancel_deliveries',
+            controller: CancelDeliveriesController::class,
+            openapiContext: ['summary' => 'Cancels the deliveries created by a delivery import, but those already under way'],
+            security: 'is_granted(\'edit\', object)',
+            // Written by the controller, the deliveries are cancelled by a worker
+            write: false,
+            deserialize: false
         )
     ],
     normalizationContext: ['groups' => ['delivery_import_queue']]
@@ -55,6 +65,10 @@ class ImportQueue
     const STATUS_COMPLETED = 'completed';
     const STATUS_FAILED = 'failed';
     const STATUS_CANCELLED = 'cancelled';
+
+    // Cancelling the deliveries of an import, once it's done
+    const DELIVERIES_CANCELLING = 'cancelling';
+    const DELIVERIES_CANCELLED = 'cancelled';
 
     protected $id;
 
@@ -89,6 +103,27 @@ class ImportQueue
      * When the worker last reported its progress, to tell a long import from a dead one
      */
     protected ?\DateTime $progressedAt = null;
+
+    /**
+     * Null until a dispatcher cancels the deliveries of the import
+     */
+    #[Groups(['delivery_import_queue'])]
+    protected ?string $deliveriesCancellation = null;
+
+    /**
+     * Unknown until a worker has looked them up
+     */
+    #[Groups(['delivery_import_queue'])]
+    protected ?int $deliveriesToCancel = null;
+
+    #[Groups(['delivery_import_queue'])]
+    protected int $cancelledDeliveries = 0;
+
+    /**
+     * Already under way, or with an order that can't be cancelled any more
+     */
+    #[Groups(['delivery_import_queue'])]
+    protected int $skippedDeliveries = 0;
 
     public function getId()
     {
@@ -181,5 +216,42 @@ class ImportQueue
     public function isCancellable(): bool
     {
         return in_array($this->status, [self::STATUS_PENDING, self::STATUS_STARTED], true);
+    }
+
+    public function getDeliveriesCancellation(): ?string
+    {
+        return $this->deliveriesCancellation;
+    }
+
+    public function getDeliveriesToCancel(): ?int
+    {
+        return $this->deliveriesToCancel;
+    }
+
+    public function getCancelledDeliveries(): int
+    {
+        return $this->cancelledDeliveries;
+    }
+
+    public function getSkippedDeliveries(): int
+    {
+        return $this->skippedDeliveries;
+    }
+
+    public function setDeliveriesCancellation(?string $deliveriesCancellation, ?int $deliveriesToCancel, int $cancelledDeliveries, int $skippedDeliveries): void
+    {
+        $this->deliveriesCancellation = $deliveriesCancellation;
+        $this->deliveriesToCancel = $deliveriesToCancel;
+        $this->cancelledDeliveries = $cancelledDeliveries;
+        $this->skippedDeliveries = $skippedDeliveries;
+    }
+
+    /**
+     * Once the import is over, and only once: a dispatcher can't cancel them again
+     */
+    public function canCancelDeliveries(): bool
+    {
+        return in_array($this->status, [self::STATUS_COMPLETED, self::STATUS_FAILED], true)
+            && is_null($this->deliveriesCancellation);
     }
 }

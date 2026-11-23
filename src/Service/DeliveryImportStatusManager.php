@@ -16,6 +16,9 @@ use Doctrine\Persistence\ManagerRegistry;
  * An import also ends as failed when the worker gives up on the message, or the
  * sweep closes it because no worker is handling it any more. It ends as
  * cancelled when a dispatcher stops it while it is still pending or started.
+ *
+ * Once it is over, a dispatcher can cancel the deliveries it created, once:
+ * cancelling -> cancelled, the deliveries being cancelled by a worker.
  */
 class DeliveryImportStatusManager
 {
@@ -208,6 +211,82 @@ class DeliveryImportStatusManager
     }
 
     /**
+     * Called by a dispatcher. A compare-and-set, so that two of them asking at the same time
+     * don't send a worker twice.
+     *
+     * @return bool false when the import isn't over, or its deliveries were already cancelled
+     */
+    public function cancellingDeliveries(DeliveryImportQueue $queue): bool
+    {
+        $updated = $this->doctrine->getConnection()->executeStatement(
+            'UPDATE delivery_import_queue SET deliveries_cancellation = :cancelling WHERE id = :id AND status IN (:over) AND deliveries_cancellation IS NULL',
+            [
+                'cancelling' => DeliveryImportQueue::DELIVERIES_CANCELLING,
+                'id' => $queue->getId(),
+                'over' => [DeliveryImportQueue::STATUS_COMPLETED, DeliveryImportQueue::STATUS_FAILED],
+            ],
+            ['over' => ArrayParameterType::STRING]
+        );
+
+        if (1 !== $updated) {
+            return false;
+        }
+
+        $queue->setDeliveriesCancellation(DeliveryImportQueue::DELIVERIES_CANCELLING, null, 0, 0);
+
+        $this->liveUpdates->toDispatchers('delivery_import:updated', $this->toPayload($queue));
+
+        return true;
+    }
+
+    public function deliveriesCancelProgress(DeliveryImportQueue $queue, int $toCancel, int $cancelled, int $skipped): void
+    {
+        $this->writeDeliveriesCancellation($queue, DeliveryImportQueue::DELIVERIES_CANCELLING, $toCancel, $cancelled, $skipped);
+    }
+
+    public function deliveriesCancelled(DeliveryImportQueue $queue, int $toCancel, int $cancelled, int $skipped): void
+    {
+        $this->writeDeliveriesCancellation($queue, DeliveryImportQueue::DELIVERIES_CANCELLED, $toCancel, $cancelled, $skipped);
+    }
+
+    /**
+     * The worker failed. Put back to "cancelling" for the retry to go through,
+     * or, once it's given up on, to nothing for a dispatcher to ask again.
+     */
+    public function deliveriesCancellationFailed(DeliveryImportQueue $queue, bool $willRetry): void
+    {
+        $this->writeDeliveriesCancellation(
+            $queue,
+            $willRetry ? DeliveryImportQueue::DELIVERIES_CANCELLING : null,
+            $queue->getDeliveriesToCancel(),
+            $queue->getCancelledDeliveries(),
+            $queue->getSkippedDeliveries()
+        );
+    }
+
+    /**
+     * A plain update rather than a flush, which would also write whatever else
+     * the worker's unit of work holds
+     */
+    private function writeDeliveriesCancellation(DeliveryImportQueue $queue, ?string $cancellation, ?int $toCancel, int $cancelled, int $skipped): void
+    {
+        $queue->setDeliveriesCancellation($cancellation, $toCancel, $cancelled, $skipped);
+
+        $this->doctrine->getConnection()->update(
+            'delivery_import_queue',
+            [
+                'deliveries_cancellation' => $cancellation,
+                'deliveries_to_cancel' => $toCancel,
+                'cancelled_deliveries' => $cancelled,
+                'skipped_deliveries' => $skipped,
+            ],
+            ['id' => $queue->getId()]
+        );
+
+        $this->liveUpdates->toDispatchers('delivery_import:updated', $this->toPayload($queue));
+    }
+
+    /**
      * Wraps a message that applies to the import as a whole, rather than to
      * one of its rows, in the shape the admin reads errors in.
      */
@@ -232,6 +311,10 @@ class DeliveryImportStatusManager
             'totalRows' => $queue->getTotalRows(),
             'processedRows' => $queue->getProcessedRows(),
             'errorRows' => $queue->getErrorRows(),
+            'deliveriesCancellation' => $queue->getDeliveriesCancellation(),
+            'deliveriesToCancel' => $queue->getDeliveriesToCancel(),
+            'cancelledDeliveries' => $queue->getCancelledDeliveries(),
+            'skippedDeliveries' => $queue->getSkippedDeliveries(),
         ];
     }
 }
