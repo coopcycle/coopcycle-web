@@ -1749,6 +1749,7 @@ deliveries.imports.cancel: Cancel
 deliveries.imports.cancel_deliveries: "Cancel the deliveries"
 deliveries.imports.see_file: See file
 deliveries.imports.continue_mapping: Match the columns
+deliveries.imports.drop_file: Drop this file
 deliveries.imports.mapping_cancelled: "The import of %filename% was dropped, nothing was imported."
 deliveries.imports.unreadable: "That file could not be read. Please check it and import it again."
 deliveries.imports.error.abandoned: "The import was dropped because the columns of the file were never matched to the fields they hold. Nothing was imported, please import the file again."

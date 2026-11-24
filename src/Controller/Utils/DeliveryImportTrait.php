@@ -33,6 +33,11 @@ use Symfony\Component\Messenger\Stamp\DelayStamp;
 trait DeliveryImportTrait
 {
     /**
+     * Dropping an uploaded file is a form of its own, next to the mapping one
+     */
+    const CANCEL_IMPORT_TOKEN_ID = 'delivery_import_cancel';
+
+    /**
      * Keeps an uploaded file and sends its uploader off to map its columns.
      *
      * Nothing is dispatched here: the import sits in "mapping" until the mapping screen
@@ -134,7 +139,15 @@ trait DeliveryImportTrait
             return $this->redirectToRoute($routeTo, ['section' => 'imports']);
         }
 
-        if ('cancel' === $request->request->get('action')) {
+        // Its own form, with its own token: a dispatcher must be able to drop a file
+        // whose columns they never finished matching, which the mapping form itself
+        // would refuse to submit
+        if ($request->request->has('cancel_import')) {
+
+            if (!$this->isCsrfTokenValid(self::CANCEL_IMPORT_TOKEN_ID, $request->request->get('_token'))) {
+                throw $this->createAccessDeniedException();
+            }
+
             $statusManager->cancel($queue);
 
             $this->addFlash(
@@ -209,6 +222,7 @@ trait DeliveryImportTrait
             'form' => $form->createView(),
             'preview' => $preview,
             'cancel_url' => $this->generateUrl($routeTo, ['section' => 'imports']),
+            'cancel_token_id' => self::CANCEL_IMPORT_TOKEN_ID,
         ]);
     }
 

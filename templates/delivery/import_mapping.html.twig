@@ -50,13 +50,20 @@
     </table>
 
     <div class="text-right mb-4">
-      {# Discards the file: nothing of it has been read, there is nothing to undo #}
-      <button type="submit" name="action" value="cancel" class="btn btn-default"
-        formnovalidate>{% trans %}basics.cancel{% endtrans %}</button>
       <button type="submit" class="btn btn-primary">{% trans %}basics.import{% endtrans %}</button>
     </div>
 
   {{ form_end(form) }}
+
+  {# Discards the file. A form of its own, outside the mapping one: it has to work
+     whether or not the columns are all matched yet, and nothing of the file has been
+     read, so there is nothing to undo. #}
+  <form method="post" class="text-right mb-4" data-column-mapping-cancel>
+    <input type="hidden" name="_token" value="{{ csrf_token(cancel_token_id) }}">
+    <button type="submit" name="cancel_import" value="1" class="btn btn-link text-danger">
+      <i class="fa fa-trash-o"></i> {{ 'deliveries.imports.drop_file'|trans }}
+    </button>
+  </form>
 
 {% endblock %}
 

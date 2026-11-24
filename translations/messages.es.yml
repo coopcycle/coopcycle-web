@@ -1557,6 +1557,7 @@ deliveries.imports.cancel: Cancelar
 deliveries.imports.cancel_deliveries: "Cancelar las entregas"
 deliveries.imports.see_file: Ver archivo
 deliveries.imports.continue_mapping: Asociar las columnas
+deliveries.imports.drop_file: Descartar este archivo
 deliveries.imports.mapping_cancelled: "La importación de %filename% se ha descartado, no se ha importado nada."
 deliveries.imports.unreadable: "No se ha podido leer el archivo. Revísalo e impórtalo de nuevo."
 deliveries.imports.error.abandoned: "La importación se ha descartado porque nunca se asociaron las columnas del archivo con los campos que contienen. No se ha importado nada, importa el archivo de nuevo."

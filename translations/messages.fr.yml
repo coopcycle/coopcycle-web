@@ -1557,6 +1557,7 @@ deliveries.imports.cancel: Annuler
 deliveries.imports.cancel_deliveries: "Annuler les livraisons"
 deliveries.imports.see_file: Voir le fichier
 deliveries.imports.continue_mapping: Associer les colonnes
+deliveries.imports.drop_file: Abandonner ce fichier
 deliveries.imports.mapping_cancelled: "L'import de %filename% a été abandonné, rien n'a été importé."
 deliveries.imports.unreadable: "Ce fichier n'a pas pu être lu. Vérifiez-le et importez-le à nouveau."
 deliveries.imports.error.abandoned: "L'import a été abandonné car les colonnes du fichier n'ont jamais été associées aux champs qu'elles contiennent. Rien n'a été importé, importez le fichier à nouveau."
