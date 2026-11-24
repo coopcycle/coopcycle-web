@@ -1035,6 +1035,40 @@ export function updateTour(tour) {
   return {type: UPDATE_TOUR, tour}
 }
 
+export const tasksReloaded = createAction('TASKS_RELOADED')
+
+/**
+ * Loads the tasks & tours of the day shown again, as when the board opens.
+ * For the jobs that save a lot of them at once, e.g. a delivery import: they
+ * send a single event rather than a live update per task and per tour.
+ */
+export function reloadTasksAndTours() {
+  return async function(dispatch, getState) {
+    const { jwt } = getState()
+    const date = selectSelectedDate(getState()).format('YYYY-MM-DD')
+    const httpClient = createClient(dispatch)
+
+    try {
+      const tasks = await httpClient.paginatedRequest({
+        method: 'GET',
+        url: `${ window.Routing.generate('_api_/tasks{._format}_get_collection') }?date=${date}&pagination=true&itemsPerPage=100`,
+        headers: jsonLdHeaders(jwt),
+      })
+      dispatch(tasksReloaded(tasks))
+
+      const toursResponse = await httpClient.request({
+        method: 'GET',
+        url: `${ window.Routing.generate('_api_/tours{._format}_get_collection') }?date=${date}`,
+        headers: jsonLdHeaders(jwt),
+      })
+      toursResponse.data['hydra:member'].forEach(tour => dispatch(updateTour(tour)))
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Could not reload the tasks and tours', error)
+    }
+  }
+}
+
 export function createTask(task) {
 
   return function(dispatch, getState) {

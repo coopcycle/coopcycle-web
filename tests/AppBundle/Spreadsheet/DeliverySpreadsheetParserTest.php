@@ -177,6 +177,101 @@ class DeliverySpreadsheetParserTest extends TestCase
         $this->assertNull($delivery->getExternalReference());
     }
 
+    /**
+     * Every row used to fail on the missing column, one by one, after its addresses
+     * were geocoded: a couple of seconds per row, hours on a large file.
+     */
+    public function testFileWithoutARequiredColumnFailsBeforeAnyRowIsRead()
+    {
+        $filename = realpath(__DIR__ . '/../Resources/spreadsheet/deliveries_missing_pickup_timeslot.csv');
+        $parseResult = $this->parser->parse($filename);
+
+        $this->assertEmpty($parseResult->getData());
+        $this->assertEquals([
+            ['row' => 0, 'errors' => ["Le fichier n'a pas de colonne pickup.timeslot, ajoutez-la et importez à nouveau le fichier"]]
+        ], $parseResult->getNormalizedErrors());
+
+        $this->geocoder->geocode(Argument::any())->shouldNotHaveBeenCalled();
+    }
+
+    /**
+     * A row with an empty time slot or address used to be found out only after
+     * its addresses were geocoded, a couple of seconds per row
+     */
+    public function testFileWithEmptyMandatoryValuesIsRejectedBeforeGeocoding()
+    {
+        $filename = realpath(__DIR__ . '/../Resources/spreadsheet/deliveries_with_empty_values.csv');
+
+        $handledRows = [];
+        $parseResult = $this->parser->parse($filename, [
+            'on_row' => function (int $processedRows) use (&$handledRows) {
+                $handledRows[] = $processedRows;
+            }
+        ]);
+
+        // Not even the valid row: the deliveries are saved all at once, or not at all
+        $this->assertEmpty($parseResult->getData());
+        $this->assertEquals([
+            2 => ['La plage horaire "" dans pickup.timeslot n\'est pas valide'],
+            3 => ['dropoff.address: Impossible de géocoder l\'adresse dropoff'],
+        ], $parseResult->getErrors());
+
+        $this->geocoder->geocode(Argument::any())->shouldNotHaveBeenCalled();
+        $this->assertEmpty($handledRows);
+    }
+
+    /**
+     * Found out after the whole file was geocoded, if at all: on the row itself,
+     * by the validator when saving, or by the database, which rolled back the whole import
+     */
+    public function testFileWithInvalidValuesIsRejectedBeforeGeocoding()
+    {
+        $filename = realpath(__DIR__ . '/../Resources/spreadsheet/deliveries_failing_preflight.csv');
+
+        $parseResult = $this->parser->parse($filename);
+
+        $this->assertEmpty($parseResult->getData());
+        $this->assertEquals([
+            2 => ['pickup.address.telephone: "not a phone" n\'est pas un numéro de téléphone valide'],
+            3 => ['pickup.metadata: "foo" n\'est pas valide, écrivez-le sous la forme clé=valeur, séparés par des espaces'],
+            4 => ['dropoff.packages: "small-box" n\'est pas valide, écrivez-le sous la forme colis=quantité, séparés par des espaces'],
+            6 => ['La date de dépôt doit être postérieure à la date de retrait.'],
+            7 => ['tour.name dépasse 255 caractères'],
+        ], $parseResult->getErrors());
+
+        // Row 5 names an unknown package: it is left out of the delivery, as it always was
+        $this->geocoder->geocode(Argument::any())->shouldNotHaveBeenCalled();
+    }
+
+    public function testProgressIsReportedAfterEachRow()
+    {
+        $filename = realpath(__DIR__ . '/../Resources/spreadsheet/deliveries_invalid_address.csv');
+
+        $calls = [];
+        $this->parser->parse($filename, [
+            'on_row' => function (int $processedRows, int $totalRows, int $errorRows) use (&$calls) {
+                $calls[] = [$processedRows, $totalRows, $errorRows];
+            }
+        ]);
+
+        // One row, which fails on its invalid pickup address
+        $this->assertEquals([[1, 1, 1]], $calls);
+    }
+
+    public function testWhatTheProgressCallbackThrowsStopsTheParsing()
+    {
+        $filename = realpath(__DIR__ . '/../Resources/spreadsheet/deliveries_with_external_reference.csv');
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Stop');
+
+        $this->parser->parse($filename, [
+            'on_row' => function () {
+                throw new \RuntimeException('Stop');
+            }
+        ]);
+    }
+
     public function testWithTour()
     {
         $filename = realpath(__DIR__ . '/../Resources/spreadsheet/deliveries_with_tour.csv');

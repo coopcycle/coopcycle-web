@@ -167,6 +167,31 @@ class ReferralRewardCouponFactoryTest extends TestCase
         self::assertTrue($percentageConfiguration['decrase_platform_fee']);
     }
 
+    /**
+     * The admin configures a percentage reward the way a human says it (10 =
+     * 10%), but PercentageDiscountPromotionActionCommand multiplies the order
+     * total by configuration['percentage'] -- so it has to be stored as a
+     * 0..1 ratio. Writing the human-facing number straight in minted coupons
+     * worth 10x the order.
+     */
+    public function testPercentageRewardIsStoredAsARatio(): void
+    {
+        $referrer = new Customer();
+        $referrer->setFullName('referrer');
+
+        $level = new ReferralLevel();
+        $level->setMinReferralCount(1);
+        $level->setRewardType(PercentageDiscountPromotionActionCommand::TYPE);
+        $level->setRewardPercentage(10);
+        $level->setCouponValidityDays(30);
+        $level->setUsageLimit(1);
+
+        $coupon = $this->createFactory()->createReferrerRewardCoupon($referrer, $level);
+        $configuration = $coupon->getPromotion()->getActions()->first()->getConfiguration();
+
+        self::assertSame(0.1, $configuration['percentage']);
+    }
+
     public function testFreeDeliveryRewardHasNoDecreasePlatformFeeKey(): void
     {
         $referrer = new Customer();

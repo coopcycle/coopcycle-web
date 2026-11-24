@@ -961,6 +961,10 @@ class AdminController extends AbstractController
             ->getQuery()
             ->getResult();
 
+        // A failed import has saved no delivery, or some of them
+        $importedDeliveries = $this->entityManager->getRepository(Delivery::class)
+            ->countByImport(array_map(fn (DeliveryImportQueue $queue) => $queue->getId(), $importQueues));
+
         return $this->render('admin/deliveries.html.twig', $this->auth([
             'deliveries' => $deliveries,
             'filters' => $filters,
@@ -969,6 +973,7 @@ class AdminController extends AbstractController
             'delivery_import_form' => $deliveryImportForm->createView(),
             'delivery_export_form' => $dataExportForm->createView(),
             'import_queues' => $importQueues,
+            'imported_deliveries' => $importedDeliveries,
             'import_date' => $importDate,
             'centrifugo_token' => $centrifugoClient->generateConnectionToken($this->getUser()->getUsername(), (time() + 3600)),
             'centrifugo_channel' => sprintf('%s_events#%s', $this->getParameter('centrifugo_namespace'), $this->getUser()->getUsername()),

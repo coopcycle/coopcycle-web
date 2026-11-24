@@ -1277,6 +1277,10 @@ services:
     tags:
       - { name: 'api_platform.doctrine.orm.query_extension.collection', priority: -18 }
 
+  AppBundle\Api\DataProvider\ShopFilterExtension:
+    tags:
+      - { name: 'api_platform.doctrine.orm.query_extension.collection', priority: -18 }
+
   AppBundle\Api\DataProvider\IncidentCollectionExtension:
     tags:
       - { name: 'api_platform.doctrine.orm.query_extension.collection', priority: -18 }

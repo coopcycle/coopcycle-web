@@ -41,6 +41,8 @@ use AppBundle\Entity\Model\CustomFailureReasonInterface;
 use AppBundle\Entity\Model\CustomFailureReasonTrait;
 use AppBundle\Entity\Model\OrganizationAwareInterface;
 use AppBundle\Entity\Model\OrganizationAwareTrait;
+use AppBundle\Entity\Model\TaggableInterface;
+use AppBundle\Entity\Model\TaggableTrait;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
 use AppBundle\LoopEat\OAuthCredentialsTrait as LoopEatOAuthCredentialsTrait;
@@ -115,9 +117,11 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
             controller: Orders::class,
             security: 'is_granted(\'edit\', object)'
         ),
+        // ?coordinate=lat,lng narrows to the shops that deliver there;
+        // ?category=, ?cuisine[]=, ?type= and ?collection= narrow the same way
+        // the /shops page does (see ShopFilterExtension).
         new GetCollection(
             uriTemplate: '/restaurants',
-            paginationEnabled: false,
             normalizationContext: [
                 'groups' => [
                     'restaurant',
@@ -151,6 +155,7 @@ class LocalBusiness extends BaseLocalBusiness implements
     OrganizationAwareInterface,
     ShippingOptionsInterface,
     CustomFailureReasonInterface,
+    TaggableInterface,
     Vendor,
     SoftDeleteableInterface
 {
@@ -166,6 +171,7 @@ class LocalBusiness extends BaseLocalBusiness implements
     use FulfillmentMethodsTrait;
     use ShippingOptionsTrait;
     use CustomFailureReasonTrait;
+    use TaggableTrait;
 
     /**
      * @var int
@@ -1060,6 +1066,30 @@ class LocalBusiness extends BaseLocalBusiness implements
         return $this;
     }
 
+    /**
+     * The cuisines this shop serves, by slug.
+     *
+     * `facets.cuisine` holds the same list but translated for display by
+     * RestaurantNormalizer, so it cannot be matched against anything. These
+     * are the raw names, which are what ?cuisine[]= takes and what
+     * /api/shop_cuisines lists, so a client can tell which shops a cuisine
+     * covers without asking the server again.
+     *
+     * @return string[]
+     */
+    #[SerializedName('cuisines')]
+    #[Groups('restaurant_list')]
+    public function getCuisineNames(): array
+    {
+        $names = [];
+
+        foreach ($this->getServesCuisine() as $cuisine) {
+            $names[] = $cuisine->getName();
+        }
+
+        return $names;
+    }
+
     #[SerializedName('facets')]
     #[Groups('restaurant_list')]
     public function getFacets()
@@ -1383,5 +1413,24 @@ class LocalBusiness extends BaseLocalBusiness implements
     protected function resolveDeliveryPerimeterExpression(): string
     {
         return DeliveryPerimeterExpressionResolver::resolve($this);
+    }
+
+    /**
+     * The tags of a restaurant are applied to the tasks of its orders.
+     * They are meant for the dispatchers, not for the customers.
+     *
+     * Overrides TaggableTrait::getTags() to drop its serialization groups.
+     * Restaurants are normalized with the "order" group in public endpoints,
+     * which would expose the tags, and in the API, the "tags" key of a
+     * restaurant already holds its cuisines (see RestaurantNormalizer).
+     */
+    public function getTags(): array
+    {
+        if (is_callable($this->tagsCallable)) {
+            $this->tags = call_user_func($this->tagsCallable);
+            $this->tagsCallable = null;
+        }
+
+        return $this->tags;
     }
 }

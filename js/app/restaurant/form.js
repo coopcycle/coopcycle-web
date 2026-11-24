@@ -15,6 +15,7 @@ import i18n from '../i18n'
 import DropzoneWidget from '../widgets/Dropzone'
 import AddressAutosuggestFormGroup from '../widgets/AddressAutosuggestFormGroup'
 import DeliveryZonePicker from '../components/DeliveryZonePicker'
+import TagsSelect from '../components/TagsSelect'
 
 import 'prismjs/themes/prism.css'
 import 'prismjs/plugins/toolbar/prism-toolbar.css'
@@ -267,6 +268,24 @@ $(function() {
         onChange={ cuisines => {
           cuisinesTargetEl.value = JSON.stringify(cuisines || [])
         }} />
+    )
+  }
+
+  const tagsEl = document.querySelector('#restaurant_tags')
+  if (tagsEl) {
+
+    const el = document.createElement('div')
+    tagsEl.closest('.form-group').appendChild(el)
+
+    tagsEl.classList.add('d-none')
+
+    createRoot(el).render(
+      <TagsSelect
+        tags={ JSON.parse(tagsEl.dataset.tags) }
+        defaultValue={ tagsEl.value }
+        onChange={ tags => {
+          tagsEl.value = tags.map(tag => tag.slug).join(' ')
+        } } />
     )
   }
 

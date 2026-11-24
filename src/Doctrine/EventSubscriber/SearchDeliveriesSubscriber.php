@@ -10,7 +10,9 @@ use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
 
 #[AsDoctrineListener(event: Events::onFlush, connection: 'default')]
 #[AsDoctrineListener(event: Events::postFlush, connection: 'default')]
@@ -63,8 +65,15 @@ class SearchDeliveriesSubscriber
 
         $ids = array_map(fn (Delivery $d) => $d->getId(), $this->deliveries);
 
-        $this->messageBus->dispatch(
-            new IndexDeliveries($ids)
-        );
+        $envelope = new Envelope(new IndexDeliveries($ids));
+
+        // When flushing inside a wider transaction (i.e when importing deliveries),
+        // the deliveries are not committed yet, and the worker would not find them.
+        // Wait for the current message to be handled, it's dropped if it fails.
+        if ($args->getObjectManager()->getConnection()->isTransactionActive()) {
+            $envelope = $envelope->with(new DispatchAfterCurrentBusStamp());
+        }
+
+        $this->messageBus->dispatch($envelope);
     }
 }

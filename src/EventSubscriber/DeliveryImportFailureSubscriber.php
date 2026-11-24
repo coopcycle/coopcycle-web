@@ -40,21 +40,11 @@ class DeliveryImportFailureSubscriber implements EventSubscriberInterface
 
     public function onFailure(WorkerMessageFailedEvent $event): void
     {
-        // Another attempt may still succeed, leave the import as it is
-        if ($event->willRetry()) {
-            return;
-        }
-
         $message = $event->getEnvelope()->getMessage();
 
         if (!$message instanceof ImportDeliveries) {
             return;
         }
-
-        $this->logger->error(
-            sprintf('Marking delivery import %s as failed', $message->getFilename()),
-            ['error' => $event->getThrowable()->getMessage()]
-        );
 
         // Whatever failed the message most likely failed a flush, which closes
         // the entity manager, so get a working one before writing the status
@@ -72,9 +62,33 @@ class DeliveryImportFailureSubscriber implements EventSubscriberInterface
             return;
         }
 
-        // The handler flushes as it goes, so the rows handled before the error
-        // are already imported: say so rather than let a dispatcher assume the
-        // file has to be imported again as a whole.
+        // Already finished: cancelled by a dispatcher, or failed by the handler itself when
+        // saving the deliveries failed. Read from the database, the queue in memory is the
+        // one the worker loaded before.
+        $unfinished = [
+            DeliveryImportQueue::STATUS_PENDING,
+            DeliveryImportQueue::STATUS_STARTED,
+            DeliveryImportQueue::STATUS_SAVING,
+        ];
+        if (!in_array($this->statusManager->currentStatus($queue), $unfinished, true)) {
+            return;
+        }
+
+        // Another attempt may still succeed. The handler only imports a pending
+        // file, to not import it twice when the transport redelivers it, so the
+        // import has to be put back in line for the retry to go through.
+        if ($event->willRetry()) {
+            $this->statusManager->requeued($queue);
+            return;
+        }
+
+        $this->logger->error(
+            sprintf('Marking delivery import %s as failed', $message->getFilename()),
+            ['error' => $event->getThrowable()->getMessage()]
+        );
+
+        // The deliveries are saved in a single transaction, rolled back by the handler
+        // when it fails: an error that gets here came before, and nothing was imported.
         $this->statusManager->failed($queue, DeliveryImportStatusManager::errorForWholeImport(
             $this->translator->trans('deliveries.imports.error.interrupted')
         ));

@@ -127,7 +127,13 @@ class SearchController extends AbstractController
     #[Route(path: '/search/geocode', name: 'search_geocode')]
     public function geocodeAction(Request $request, Geocoder $geocoder)
     {
-        if ($address = $geocoder->geocode($request->query->get('address'))) {
+        $value = trim((string) $request->query->get('address'));
+
+        if (empty($value)) {
+            return new JsonResponse([], 400);
+        }
+
+        if ($address = $geocoder->geocode($value)) {
 
             return new JsonResponse([
                 'latitude' => $address->getGeo()->getLatitude(),
@@ -141,7 +147,14 @@ class SearchController extends AbstractController
     #[Route(path: '/search/reverse', name: 'search_reverse')]
     public function reverseAction(Request $request, Geocoder $geocoder)
     {
-        if ($address = $geocoder->reverse($request->query->get('lat'), $request->query->get('lng'))) {
+        $latitude = $request->query->get('lat');
+        $longitude = $request->query->get('lng');
+
+        if (!is_numeric($latitude) || !is_numeric($longitude)) {
+            return new JsonResponse([], 400);
+        }
+
+        if ($address = $geocoder->reverse((float) $latitude, (float) $longitude)) {
 
             return new JsonResponse([
                 'address' => $address->getStreetAddress(),

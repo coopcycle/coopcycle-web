@@ -6,6 +6,7 @@ use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use Carbon\Carbon;
 use DateTimeInterface;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\Expr;
@@ -46,6 +47,43 @@ class DeliveryRepository extends EntityRepository
     public function setSonicNamespace(string $namespace)
     {
         $this->sonicNamespace = $namespace;
+    }
+
+    /**
+     * The deliveries a file import created, found by the import id in their metadata
+     *
+     * @return int[]
+     */
+    public function findIdsByImport(int $importId, int $storeId): array
+    {
+        return array_map('intval', $this->getEntityManager()->getConnection()->fetchFirstColumn(
+            "SELECT id FROM delivery WHERE metadata->>'delivery_import_id' = :import_id AND store_id = :store_id ORDER BY id",
+            ['import_id' => (string) $importId, 'store_id' => $storeId]
+        ));
+    }
+
+    /**
+     * @param int[] $importIds
+     * @return array<int,int> the number of deliveries each import created, by import id
+     */
+    public function countByImport(array $importIds): array
+    {
+        if (empty($importIds)) {
+            return [];
+        }
+
+        $rows = $this->getEntityManager()->getConnection()->fetchAllKeyValue(
+            "SELECT metadata->>'delivery_import_id', COUNT(*) FROM delivery WHERE metadata->>'delivery_import_id' IN (:import_ids) GROUP BY 1",
+            ['import_ids' => array_map('strval', $importIds)],
+            ['import_ids' => ArrayParameterType::STRING]
+        );
+
+        $counts = [];
+        foreach ($rows as $importId => $count) {
+            $counts[(int) $importId] = (int) $count;
+        }
+
+        return $counts;
     }
 
     public function createQueryBuilderWithTasks(): QueryBuilder

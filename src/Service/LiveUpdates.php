@@ -8,12 +8,14 @@ use AppBundle\Domain\SerializableEventInterface;
 use AppBundle\Domain\SilentEventInterface;
 use AppBundle\Message\PublishToCentrifugo;
 use AppBundle\Message\TopBarNotification;
+use AppBundle\Messenger\WorkerMessageContext;
 use AppBundle\Security\UserManager;
 use AppBundle\Service\NotificationPreferences;
 use AppBundle\Sylius\Order\OrderInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\TransportNamesStamp;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -36,6 +38,7 @@ class LiveUpdates
         private MessageBusInterface $messageBus,
         private NotificationPreferences $notificationPreferences,
         private LoggerInterface $realTimeMessageLogger,
+        private WorkerMessageContext $workerMessageContext,
         private string $namespace)
     {
     }
@@ -228,7 +231,34 @@ class LiveUpdates
 
         $payload['version'] = $this->versionOf($payload['data'] ?? null);
 
+        // A worker is already off the request path: through the async transport, the
+        // update would only wait behind the job the worker is busy with -- a delivery
+        // import takes hours -- and behind whatever keeps the other workers busy.
+        if ($this->workerMessageContext->isHandlingMessage()) {
+            $this->publishRightAway($channels, $payload);
+            return;
+        }
+
         $this->messageBus->dispatch(new PublishToCentrifugo($channels, $payload));
+    }
+
+    /**
+     * @param string[] $channels
+     */
+    private function publishRightAway(array $channels, array $payload): void
+    {
+        try {
+            $this->messageBus->dispatch(
+                new PublishToCentrifugo($channels, $payload),
+                [new TransportNamesStamp(['sync'])]
+            );
+        } catch (\Exception $e) {
+            // The async transport used to absorb it: Centrifugo failing must not
+            // fail the job that published, for a dispatch board missing a refresh
+            $this->realTimeMessageLogger->error(sprintf("Could not publish event '%s': %s",
+                $payload['name'] ?? '?',
+                $e->getMessage()));
+        }
     }
 
     /**
