@@ -1,0 +1,65 @@
+{% extends layout %}
+
+{% form_theme form 'bootstrap_3_layout.html.twig' %}
+
+{% block breadcrumb %}
+  <li><a href="{{ cancel_url }}">{% trans %}adminDashboard.deliveries.title{% endtrans %}</a></li>
+  <li>{{ 'import.mapping.title'|trans }}</li>
+{% endblock %}
+
+{% block content %}
+
+  <h4 class="mb-2">{{ 'import.mapping.title'|trans }}</h4>
+  <p class="text-muted">{{ 'import.mapping.help'|trans({ '%filename%': import_queue.filename }) }}</p>
+
+  {{ form_start(form, { attr: { 'data-column-mapping': 'true' } }) }}
+
+    {% if not form.vars.valid %}
+      <div class="alert alert-danger">{{ form_errors(form) }}</div>
+    {% endif %}
+
+    <table class="table table-condensed" data-column-mapping-table>
+      <thead>
+        <tr>
+          <th width="30%">{{ 'import.mapping.column_in_file'|trans }}</th>
+          <th width="30%">{{ 'import.mapping.maps_to'|trans }}</th>
+          <th>{{ 'import.mapping.sample_values'|trans }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for index in preview.columnIndexes %}
+          {% set child = form[index] %}
+          <tr>
+            <td>
+              <label class="control-label" for="{{ child.vars.id }}">{{ child.vars.label }}</label>
+            </td>
+            <td>
+              {{ form_widget(child, { attr: child.vars.attr|merge({ class: 'form-control input-sm' }) }) }}
+            </td>
+            <td class="text-muted small">
+              {% set samples = preview.getSampleValues(index) %}
+              {% if samples is empty %}
+                <em>{{ 'import.mapping.no_values'|trans }}</em>
+              {% else %}
+                {{ samples|slice(0, 3)|join(' · ')|u.truncate(120, '…') }}
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="text-right mb-4">
+      {# Discards the file: nothing of it has been read, there is nothing to undo #}
+      <button type="submit" name="action" value="cancel" class="btn btn-default"
+        formnovalidate>{% trans %}basics.cancel{% endtrans %}</button>
+      <button type="submit" class="btn btn-primary">{% trans %}basics.import{% endtrans %}</button>
+    </div>
+
+  {{ form_end(form) }}
+
+{% endblock %}
+
+{% block scripts %}
+  {{ encore_entry_script_tags('delivery-import-mapping') }}
+{% endblock %}

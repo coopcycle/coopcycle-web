@@ -36,6 +36,7 @@ Encore
   .addEntry('datadog', './js/app/datadog.ts')
   .addEntry('delivery-homepage', './js/app/delivery/homepage.js')
   .addEntry('delivery-list', './js/app/delivery/list.js')
+  .addEntry('delivery-import-mapping', './js/app/delivery/import-mapping.js')
   .addEntry('delivery-map', './js/app/delivery/map.js')
   .addEntry('delivery-embed-start-form', './js/app/delivery/embed-start.js')
   .addEntry('delivery-pricing-rules', './js/app/delivery/pricing/pricing-rules.js')

@@ -782,6 +782,7 @@
         "DELIVERY_IMPORT_PROGRESS_ERRORS_plural": "{{count}} errors",
         "DELIVERY_IMPORT_PROGRESS_REMAINING": "{{duration}} left",
         "DELIVERY_IMPORT_PROGRESS_SAVING": "saving the deliveries",
+        "DELIVERY_IMPORT_WAITING_FOR_MAPPING": "waiting for its columns to be mapped",
         "DELIVERY_IMPORT_CANCEL_CONFIRM": "Cancel this import? No delivery from this file will be created.",
         "DELIVERY_IMPORT_CANCEL_DELIVERIES_TITLE": "Cancel the {{count}} delivery created by this import?",
         "DELIVERY_IMPORT_CANCEL_DELIVERIES_TITLE_plural": "Cancel the {{count}} deliveries created by this import?",

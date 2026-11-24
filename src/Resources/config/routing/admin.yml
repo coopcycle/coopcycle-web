@@ -589,6 +589,7 @@ admin_store_deliveries:
             stores: admin_stores
             store: admin_store
             import_success: admin_deliveries
+            import_mapping: admin_delivery_import_mapping
     methods:  [ GET, POST ]
 
 admin_store_orders_saved:

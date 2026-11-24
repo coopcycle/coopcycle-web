@@ -1398,6 +1398,37 @@ import.successful.rows: 'Se procesó el archivo y se crearon %count% entregas co
   a las filas: %rows%'
 import.delivery.price.error.priceCalculation.row: El precio de la entrega no pudo
   ser calculado para la fila %row_number%
+import.column_group.pickup: Recogida
+import.column_group.dropoff: Entrega
+import.column_group.delivery: General
+import.column.pickup.address: Dirección de recogida
+import.column.pickup.address.name: Nombre de la recogida
+import.column.pickup.address.description: Detalles de la dirección de recogida
+import.column.pickup.address.telephone: Teléfono de la recogida
+import.column.pickup.comments: Comentarios de la recogida
+import.column.pickup.timeslot: Franja horaria de recogida
+import.column.pickup.tags: Etiquetas de la recogida
+import.column.pickup.metadata: Metadatos de la recogida
+import.column.dropoff.address: Dirección de entrega
+import.column.dropoff.address.name: Nombre de la entrega
+import.column.dropoff.address.description: Detalles de la dirección de entrega
+import.column.dropoff.address.telephone: Teléfono de la entrega
+import.column.dropoff.comments: Comentarios de la entrega
+import.column.dropoff.timeslot: Franja horaria de entrega
+import.column.dropoff.packages: Paquetes
+import.column.dropoff.tags: Etiquetas de la entrega
+import.column.dropoff.metadata: Metadatos de la entrega
+import.column.weight: Peso (kg)
+import.column.tour.name: Ruta
+import.column.external_reference: Referencia externa
+import.mapping.title: Asocia las columnas de tu archivo
+import.mapping.help: "Indica qué contiene cada columna de %filename%. Hemos rellenado las que hemos reconocido: revísalas y completa las demás."
+import.mapping.column_in_file: Columna de tu archivo
+import.mapping.maps_to: Contiene
+import.mapping.sample_values: Primeros valores
+import.mapping.no_values: vacío
+import.mapping.ignore: "— no importar esta columna —"
+import.mapping.column.unnamed: "Columna %number% (sin encabezado)"
 import.unsuccessful.rows: "Se encontraron errores y no fue posible crear entregas\
   \ para las filas: %rows%."
 security.login.remember_me: Recordar
@@ -1525,6 +1556,10 @@ deliveries.imports.progress: Progreso
 deliveries.imports.cancel: Cancelar
 deliveries.imports.cancel_deliveries: "Cancelar las entregas"
 deliveries.imports.see_file: Ver archivo
+deliveries.imports.continue_mapping: Asociar las columnas
+deliveries.imports.mapping_cancelled: "La importación de %filename% se ha descartado, no se ha importado nada."
+deliveries.imports.unreadable: "No se ha podido leer el archivo. Revísalo e impórtalo de nuevo."
+deliveries.imports.error.abandoned: "La importación se ha descartado porque nunca se asociaron las columnas del archivo con los campos que contienen. No se ha importado nada, importa el archivo de nuevo."
 deliveries.imports.see_errored_file: Detalles de los errores
 deliveries.imports.error.interrupted: "La importación se interrumpió por un error inesperado, y no se importó ninguna entrega. Por favor, vuelve a importar el fichero."
 deliveries.imports.error.stalled: "La importación se detuvo porque no avanzaba desde hacía un tiempo anormalmente largo, probablemente porque el worker que la procesaba desapareció. No se importó ninguna entrega, por favor, vuelve a importar el fichero."

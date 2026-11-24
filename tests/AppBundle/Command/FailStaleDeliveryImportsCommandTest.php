@@ -187,4 +187,69 @@ class FailStaleDeliveryImportsCommandTest extends KernelTestCase
             $this->commandTester->execute(['--older-than' => 0])
         );
     }
+
+    /**
+     * Nobody ever came back to say which field each column of the file holds, so no worker
+     * will ever pick it up. Cancelled rather than failed: nothing of it was even read.
+     */
+    public function testAnImportNobodyCameBackToMapIsCancelled(): void
+    {
+        $abandoned = $this->createImport('abandoned.csv', DeliveryImportQueue::STATUS_MAPPING, 60 * 48, null);
+        $beingMapped = $this->createImport('being-mapped.csv', DeliveryImportQueue::STATUS_MAPPING, 5, null);
+
+        $this->entityManager->clear();
+
+        $this->commandTester->execute([]);
+
+        $this->assertSame(DeliveryImportQueue::STATUS_CANCELLED, $this->statusOf($abandoned));
+        $this->assertSame(DeliveryImportQueue::STATUS_MAPPING, $this->statusOf($beingMapped));
+    }
+
+    /**
+     * Someone mapping a file over a long lunch is not a stale import: it waits for a
+     * person, not for a worker, and gets far longer than the worker threshold
+     */
+    public function testAnImportWaitingToBeMappedOutlivesTheWorkerThreshold(): void
+    {
+        $queue = $this->createImport('lunch.csv', DeliveryImportQueue::STATUS_MAPPING, 120, null);
+
+        $this->entityManager->clear();
+
+        $this->commandTester->execute([]);
+
+        $this->assertSame(DeliveryImportQueue::STATUS_MAPPING, $this->statusOf($queue));
+    }
+
+    public function testTheMappingThresholdIsConfigurable(): void
+    {
+        $queue = $this->createImport('lunch.csv', DeliveryImportQueue::STATUS_MAPPING, 120, null);
+
+        $this->entityManager->clear();
+
+        $this->commandTester->execute(['--mapping-older-than' => 180]);
+        $this->assertSame(DeliveryImportQueue::STATUS_MAPPING, $this->statusOf($queue));
+
+        $this->commandTester->execute(['--mapping-older-than' => 60]);
+        $this->assertSame(DeliveryImportQueue::STATUS_CANCELLED, $this->statusOf($queue));
+    }
+
+    public function testAnImportWaitingToBeMappedIsLeftAloneOnADryRun(): void
+    {
+        $queue = $this->createImport('abandoned.csv', DeliveryImportQueue::STATUS_MAPPING, 60 * 48, null);
+
+        $this->entityManager->clear();
+
+        $this->commandTester->execute(['--dry-run' => true]);
+
+        $this->assertSame(DeliveryImportQueue::STATUS_MAPPING, $this->statusOf($queue));
+        $this->assertStringContainsString('abandoned.csv', $this->commandTester->getDisplay());
+    }
+
+    public function testAMappingThresholdOfZeroIsRejected(): void
+    {
+        $this->assertSame(
+            \Symfony\Component\Console\Command\Command::INVALID,
+            $this->commandTester->execute(['--mapping-older-than' => 0])
+        );
+    }
 }

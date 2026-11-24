@@ -73,6 +73,10 @@ services:
     tags:
       - { name: validator.constraint_validator }
 
+  AppBundle\Validator\Constraints\ColumnMappingValidator:
+    tags:
+      - { name: validator.constraint_validator }
+
   AppBundle\Validator\Constraints\TaskSpreadsheetValidator:
     tags:
       - { name: validator.constraint_validator }

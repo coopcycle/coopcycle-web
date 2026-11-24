@@ -21,11 +21,21 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  * mid-import (out of memory, a deploy, the host going away), and the import
  * then spins in the admin for good.
  *
+ * It also closes the imports left waiting for a dispatcher to map their columns, which
+ * no worker will ever pick up: those are cancelled rather than failed, nothing of them
+ * having been read, let alone imported.
+ *
  * Meant to be run periodically.
  */
 class FailStaleDeliveryImportsCommand extends Command
 {
     private const DEFAULT_MINUTES = 60;
+
+    /**
+     * An import waiting to be mapped is waiting for a person, who may well be back after
+     * lunch: much longer than the time a worker is given to report its progress.
+     */
+    private const DEFAULT_MAPPING_MINUTES = 24 * 60;
 
     private SymfonyStyle $io;
 
@@ -51,6 +61,14 @@ class FailStaleDeliveryImportsCommand extends Command
                 self::DEFAULT_MINUTES
             )
             ->addOption(
+                'mapping-older-than',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Only cancel the imports waiting for their columns to be mapped when they have been waiting '.
+                'for at least this many minutes. They wait for a dispatcher, so give them much longer.',
+                self::DEFAULT_MAPPING_MINUTES
+            )
+            ->addOption(
                 'dry-run',
                 null,
                 InputOption::VALUE_NONE,
@@ -74,12 +92,27 @@ class FailStaleDeliveryImportsCommand extends Command
             return Command::INVALID;
         }
 
+        $mappingMinutes = (int) $input->getOption('mapping-older-than');
+
+        if ($mappingMinutes < 1) {
+            $this->io->error('--mapping-older-than must be a number of minutes greater than 0');
+
+            return Command::INVALID;
+        }
+
         $threshold = new \DateTime(sprintf('-%d minutes', $minutes));
+
+        $abandoned = $this->cancelAbandonedMappings(
+            new \DateTime(sprintf('-%d minutes', $mappingMinutes)),
+            $dryRun
+        );
 
         $queues = $this->findStaleImports($threshold);
 
         if (0 === count($queues)) {
-            $this->io->success('No stale delivery import');
+            if (0 === $abandoned) {
+                $this->io->success('No stale delivery import');
+            }
 
             return Command::SUCCESS;
         }
@@ -115,6 +148,58 @@ class FailStaleDeliveryImportsCommand extends Command
         $this->io->success(sprintf('Failed %d stale delivery import(s)', count($rows)));
 
         return Command::SUCCESS;
+    }
+
+    /**
+     * Closes the imports nobody came back to map.
+     *
+     * Cancelled, not failed: a failed import is shown as one that went wrong, offers its
+     * errors and its rows to download, and is told to be imported again. None of that
+     * means anything for a file that was never even read.
+     *
+     * @return int how many were cancelled
+     */
+    private function cancelAbandonedMappings(\DateTime $threshold, bool $dryRun): int
+    {
+        /** @var DeliveryImportQueue[] $queues */
+        $queues = $this->entityManager
+            ->getRepository(DeliveryImportQueue::class)
+            ->createQueryBuilder('q')
+            ->andWhere('q.status = :mapping')
+            ->andWhere('q.createdAt < :threshold')
+            ->setParameter('mapping', DeliveryImportQueue::STATUS_MAPPING)
+            ->setParameter('threshold', $threshold)
+            ->orderBy('q.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        if (0 === count($queues)) {
+            return 0;
+        }
+
+        $rows = [];
+
+        foreach ($queues as $queue) {
+            $rows[] = [
+                $queue->getId(),
+                $queue->getFilename(),
+                $queue->getCreatedAt()->format('Y-m-d H:i:s'),
+            ];
+
+            if (!$dryRun) {
+                $this->statusManager->cancel($queue);
+            }
+        }
+
+        $this->io->table(['Id', 'File', 'Created at'], $rows);
+
+        if ($dryRun) {
+            $this->io->note(sprintf('Dry run, %d import(s) waiting to be mapped were left alone', count($rows)));
+        } else {
+            $this->io->success(sprintf('Cancelled %d import(s) nobody came back to map', count($rows)));
+        }
+
+        return count($rows);
     }
 
     /**

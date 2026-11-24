@@ -627,6 +627,7 @@
         "DELIVERY_IMPORT_PROGRESS_ERRORS_plural": "{{count}} errores",
         "DELIVERY_IMPORT_PROGRESS_REMAINING": "quedan {{duration}}",
         "DELIVERY_IMPORT_PROGRESS_SAVING": "guardando las entregas",
+        "DELIVERY_IMPORT_WAITING_FOR_MAPPING": "esperando la asignaci\u00f3n de las columnas",
         "DELIVERY_IMPORT_CANCEL_CONFIRM": "¿Cancelar esta importación? No se creará ninguna entrega de este fichero.",
         "DELIVERY_IMPORT_CANCEL_DELIVERIES_TITLE": "¿Cancelar la entrega creada por esta importación?",
         "DELIVERY_IMPORT_CANCEL_DELIVERIES_TITLE_plural": "¿Cancelar las {{count}} entregas creadas por esta importación?",

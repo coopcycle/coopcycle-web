@@ -357,4 +357,92 @@ class ImportDeliveriesHandlerTest extends TestCase
 
         $statusManager->completed($queue)->shouldHaveBeenCalled();
     }
+
+    /**
+     * The mapping a dispatcher picked on the mapping screen is what the file is read with
+     */
+    public function testTheColumnMappingOfTheImportIsUsedToReadTheFile(): void
+    {
+        $queue = $this->createQueue(new Store(), 42);
+        $queue->setColumnMapping([0 => 'pickup.address', 2 => 'dropoff.address']);
+
+        $parser = $this->prophesize(DeliverySpreadsheetParser::class);
+        $parser->parse(Argument::type('string'), Argument::any())->willReturn(new SpreadsheetParseResult());
+
+        $handler = $this->createHandler(
+            $this->createEntityManager($queue),
+            $parser,
+            $this->createStatusManager($queue, true, false)
+        );
+        $handler(new ImportDeliveries('deliveries.csv'));
+
+        $parser->parse(
+            Argument::type('string'),
+            Argument::withEntry('column_mapping', [0 => 'pickup.address', 2 => 'dropoff.address'])
+        )->shouldHaveBeenCalled();
+    }
+
+    /**
+     * An import from the API, or one sent before the mapping screen existed and still in
+     * the transport across the deploy, is read by the names in its header row
+     */
+    public function testAnImportWithoutAColumnMappingIsReadByItsHeader(): void
+    {
+        $queue = $this->createQueue(new Store(), 42);
+
+        $parser = $this->prophesize(DeliverySpreadsheetParser::class);
+        $parser->parse(Argument::type('string'), Argument::any())->willReturn(new SpreadsheetParseResult());
+
+        $handler = $this->createHandler(
+            $this->createEntityManager($queue),
+            $parser,
+            $this->createStatusManager($queue, true, false)
+        );
+        $handler(new ImportDeliveries('deliveries.csv'));
+
+        $parser->parse(Argument::type('string'), Argument::not(Argument::withKey('column_mapping')))
+            ->shouldHaveBeenCalled();
+    }
+
+    /**
+     * The options the message carries are the API's own, and the queue must not undo them
+     */
+    public function testTheOptionsOfTheMessageSurviveTheColumnMapping(): void
+    {
+        $queue = $this->createQueue(new Store(), 42);
+        $queue->setColumnMapping([0 => 'pickup.address']);
+
+        $parser = $this->prophesize(DeliverySpreadsheetParser::class);
+        $parser->parse(Argument::type('string'), Argument::any())->willReturn(new SpreadsheetParseResult());
+
+        $handler = $this->createHandler(
+            $this->createEntityManager($queue),
+            $parser,
+            $this->createStatusManager($queue, true, false)
+        );
+        $handler(new ImportDeliveries('deliveries.csv', ['create_task_if_address_not_geocoded' => true]));
+
+        $parser->parse(
+            Argument::type('string'),
+            Argument::withEntry('create_task_if_address_not_geocoded', true)
+        )->shouldHaveBeenCalled();
+    }
+
+    /**
+     * A file still waiting for its columns to be mapped is not one to import
+     */
+    public function testImportWaitingForItsColumnsToBeMappedIsLeftAlone(): void
+    {
+        $queue = $this->createQueue(new Store(), 42, DeliveryImportQueue::STATUS_MAPPING);
+
+        $parser = $this->prophesize(DeliverySpreadsheetParser::class);
+        $statusManager = $this->prophesize(DeliveryImportStatusManager::class);
+
+        $handler = $this->createHandler($this->createEntityManager($queue), $parser, $statusManager);
+        $handler(new ImportDeliveries('deliveries.csv'));
+
+        $parser->parse(Argument::cetera())->shouldNotHaveBeenCalled();
+        $statusManager->started(Argument::cetera())->shouldNotHaveBeenCalled();
+        $this->assertSame(DeliveryImportQueue::STATUS_MAPPING, $queue->getStatus());
+    }
 }
