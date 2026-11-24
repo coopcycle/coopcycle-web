@@ -1603,8 +1603,7 @@ import.mapping.title: Match the columns of your file
 import.mapping.help: "Tell us what each column of %filename% holds. We have filled in the ones we recognised, so check them over and set the rest."
 import.mapping.column_in_file: Column in your file
 import.mapping.maps_to: Holds
-import.mapping.sample_values: First values
-import.mapping.no_values: empty
+import.mapping.row: "Row %number%"
 import.mapping.ignore: "— do not import this column —"
 import.mapping.column.unnamed: "Column %number% (no header)"
 import.unsuccessful.rows: "There were errors and deliveries could not be created for rows: %rows%."

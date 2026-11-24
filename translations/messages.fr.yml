@@ -1715,8 +1715,7 @@ import.mapping.title: Associez les colonnes de votre fichier
 import.mapping.help: "Indiquez ce que contient chaque colonne de %filename%. Nous avons rempli celles que nous avons reconnues : vérifiez-les et complétez les autres."
 import.mapping.column_in_file: Colonne de votre fichier
 import.mapping.maps_to: Contient
-import.mapping.sample_values: Premières valeurs
-import.mapping.no_values: vide
+import.mapping.row: "Ligne %number%"
 import.mapping.ignore: "— ne pas importer cette colonne —"
 import.mapping.column.unnamed: "Colonne %number% (sans en-tête)"
 import.unsuccessful.rows: "Il y a eu des erreurs et les livraisons n'ont pas pu être créées pour les lignes : %rows%"

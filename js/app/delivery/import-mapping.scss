@@ -1,0 +1,18 @@
+/*
+ * The mapping table shows the file as it is — one column per column of the file — so it
+ * is as wide as the file and scrolls sideways inside .table-responsive. The leftmost
+ * column says what each row is.
+ */
+
+[data-column-mapping-table] {
+  th,
+  td {
+    vertical-align: middle !important;
+    white-space: nowrap;
+  }
+
+  // Wide enough for the field names in the selects, which are the longest text here.
+  thead th:not(:first-child) {
+    min-width: 220px;
+  }
+}

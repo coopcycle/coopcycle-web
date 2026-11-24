@@ -1425,8 +1425,7 @@ import.mapping.title: Asocia las columnas de tu archivo
 import.mapping.help: "Indica qué contiene cada columna de %filename%. Hemos rellenado las que hemos reconocido: revísalas y completa las demás."
 import.mapping.column_in_file: Columna de tu archivo
 import.mapping.maps_to: Contiene
-import.mapping.sample_values: Primeros valores
-import.mapping.no_values: vacío
+import.mapping.row: "Fila %number%"
 import.mapping.ignore: "— no importar esta columna —"
 import.mapping.column.unnamed: "Columna %number% (sin encabezado)"
 import.unsuccessful.rows: "Se encontraron errores y no fue posible crear entregas\
