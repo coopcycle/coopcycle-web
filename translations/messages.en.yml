@@ -2462,6 +2462,7 @@ gift_card.error.multi_vendor: Gift cards can't be used on orders from several re
 gift_card.error.meal_voucher: Gift cards can't be combined with meal vouchers.
 gift_card.error.insufficient_balance: This gift card's balance has changed. Please check your order again.
 payment_method.gift_card: Gift card
+navbar.giftCards: Gift cards
 gift_card.purchase.title: Buy a gift card
 gift_card.purchase.intro: >-
   Give someone an amount to spend on %brand_name%. They can use it at any restaurant, over as

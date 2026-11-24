@@ -2412,6 +2412,7 @@ gift_card.applied: Carte cadeau appliquée.
 form.checkout.gift_card.label: Carte cadeau
 form.checkout.gift_card.apply: Appliquer
 form.checkout.gift_card.applied: Carte cadeau %code%
+navbar.giftCards: Cartes cadeaux
 gift_card.purchase.title: Offrir une carte cadeau
 gift_card.purchase.intro: >-
   Offrez un montant à dépenser sur %brand_name%. Il est utilisable dans n'importe quel
