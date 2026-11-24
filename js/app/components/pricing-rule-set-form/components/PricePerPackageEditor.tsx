@@ -124,6 +124,7 @@ export default ({ defaultValue, onChange }: Props) => {
               {t('PRICE_RANGE_EDITOR.PER_PACKAGE_STARTING')}
             </span>
             <input
+              data-testid="rule-per-package-offset-input"
               type="number"
               defaultValue={offset}
               size="4"
@@ -135,7 +136,7 @@ export default ({ defaultValue, onChange }: Props) => {
                 setOffset(parseInt(e.target.value, 10));
                 onChange({
                   packageName,
-                  unitPrice: parseFloat(e.target.value) * 100,
+                  unitPrice,
                   offset: parseInt(e.target.value, 10),
                   discountPrice,
                 });
