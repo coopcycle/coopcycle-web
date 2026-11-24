@@ -188,6 +188,8 @@ trait DeliveryImportTrait
         $form = $this->createForm(DeliveryImportMappingType::class, null, [
             'columns' => $columns,
             'file_columns' => $preview->getHeader(),
+            #FIXME; normally cypress e2e tests run with CSRF protection enabled, but once in a while CSRF tokens are not saved in the session (removed?) for this form
+            'csrf_protection' => 'test' !== $this->getParameter('kernel.environment'),
         ]);
 
         // What the file looks like it holds, for the dispatcher to correct rather than fill in
