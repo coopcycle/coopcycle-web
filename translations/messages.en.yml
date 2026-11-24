@@ -2482,6 +2482,7 @@ gift_card.purchase.field.recipientEmail: Their email
 gift_card.purchase.field.recipientEmail.help: >-
   We'll email them the card. Leave it empty and we'll send it to you instead, so you can hand
   it over yourself.
+gift_card.purchase.field.recipientEmailConfirm: Confirm their email
 gift_card.purchase.field.message: A message for them
 gift_card.purchase.field.purchaserEmail: Your email
 gift_card.purchase.field.purchaserEmail.help: For your receipt.

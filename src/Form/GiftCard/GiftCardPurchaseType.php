@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -46,10 +47,27 @@ class GiftCardPurchaseType extends AbstractType
                 'label' => 'gift_card.purchase.field.recipientName',
                 'required' => false,
             ])
-            ->add('recipientEmail', EmailType::class, [
-                'label' => 'gift_card.purchase.field.recipientEmail',
-                'help' => 'gift_card.purchase.field.recipientEmail.help',
+            // Asked for twice, because this is the only address the code is
+            // ever sent to and a typo hands a working gift card to a stranger
+            // -- or to nobody. Assert\Email() can't catch that: "gmial.com"
+            // is perfectly good syntax. Retyping it is the only check there
+            // is short of verifying deliverability.
+            //
+            // Still optional: both boxes left empty means the buyer is
+            // handing the card over themselves, and the code goes to them.
+            // RepeatedType maps back to a single string, so everything
+            // downstream still reads $data['recipientEmail'].
+            ->add('recipientEmail', RepeatedType::class, [
+                'type' => EmailType::class,
                 'required' => false,
+                'invalid_message' => 'gift_card.purchase.recipientEmail.mismatch',
+                'first_options' => [
+                    'label' => 'gift_card.purchase.field.recipientEmail',
+                    'help' => 'gift_card.purchase.field.recipientEmail.help',
+                ],
+                'second_options' => [
+                    'label' => 'gift_card.purchase.field.recipientEmailConfirm',
+                ],
                 'constraints' => [new Assert\Email()],
             ])
             ->add('message', TextareaType::class, [

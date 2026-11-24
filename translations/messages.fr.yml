@@ -2432,6 +2432,7 @@ gift_card.purchase.field.recipientEmail: Son e-mail
 gift_card.purchase.field.recipientEmail.help: >-
   Nous lui enverrons la carte par e-mail. Laissez vide et nous vous l'enverrons à vous, pour
   que vous la remettiez vous-même.
+gift_card.purchase.field.recipientEmailConfirm: Confirmez son e-mail
 gift_card.purchase.field.message: Un message pour cette personne
 gift_card.purchase.field.purchaserEmail: Votre e-mail
 gift_card.purchase.field.purchaserEmail.help: Pour votre reçu.
