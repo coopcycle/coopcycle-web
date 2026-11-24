@@ -5,13 +5,15 @@ import axios from 'axios'
 import Papa from 'papaparse'
 import clsx from 'clsx'
 import _ from 'lodash'
-import { Tooltip } from 'antd'
+import { Tooltip, Modal as AntdModal } from 'antd'
 import Modal from 'react-modal'
 
 import React, { useState } from 'react'
 import Spreadsheet from 'react-spreadsheet'
 import { render } from 'react-dom'
 import { createCentrifuge, subscribe } from '../centrifugo/client'
+import i18n from '../i18n'
+import moment from 'moment'
 
 import './list.scss'
 
@@ -146,8 +148,200 @@ function SpreadsheetViewer({ data, errors }) {
 const importStatusIcon = {
   'pending': 'clock-o',
   'started': 'play',
+  'saving': 'floppy-o',
   'completed': 'check',
-  'failed': 'exclamation-triangle'
+  'failed': 'exclamation-triangle',
+  'cancelled': 'ban',
+  // Once the import is over, its deliveries cancelled by a dispatcher: nothing from the file is left either
+  'deliveries_cancelling': 'spinner fa-spin',
+  'deliveries_cancelled': 'ban',
+}
+
+const cancellableImportStatuses = [ 'pending', 'started' ]
+
+// The values are only written with textContent, there is nothing to escape
+const _t = (key, options = {}) => i18n.t(key, { ...options, interpolation: { escapeValue: false } })
+
+function _importProgressText({ status, startedAt, totalRows, processedRows, errorRows, ...cancellation }) {
+  // Unknown until a worker has read the file
+  if (!totalRows) {
+    return ''
+  }
+
+  const parts = [
+    _t('DELIVERY_IMPORT_PROGRESS_ROWS', {
+      processed: processedRows.toLocaleString(),
+      total: totalRows.toLocaleString(),
+      percent: Math.floor(processedRows / totalRows * 100),
+    })
+  ]
+
+  if (errorRows > 0) {
+    parts.push(_t('DELIVERY_IMPORT_PROGRESS_ERRORS', { count: errorRows }))
+  }
+
+  if (status === 'saving') {
+    parts.push(_t('DELIVERY_IMPORT_PROGRESS_SAVING'))
+  }
+
+  if (status === 'started' && startedAt && processedRows > 0 && processedRows < totalRows) {
+    const elapsedSeconds = moment().diff(moment(startedAt), 'seconds')
+    const remainingSeconds = elapsedSeconds / processedRows * (totalRows - processedRows)
+
+    parts.push(_t('DELIVERY_IMPORT_PROGRESS_REMAINING', {
+      duration: moment.duration(remainingSeconds, 'seconds').humanize()
+    }))
+  }
+
+  return parts.concat(_deliveriesCancellationText(cancellation)).join(' · ')
+}
+
+function _deliveriesCancellationText({ deliveriesCancellation, deliveriesToCancel, cancelledDeliveries, skippedDeliveries }) {
+  if (deliveriesCancellation === 'cancelling') {
+    // Unknown until a worker has looked them up
+    if (deliveriesToCancel === null) {
+      return [ _t('DELIVERY_IMPORT_CANCELLING_DELIVERIES') ]
+    }
+
+    return [ _t('DELIVERY_IMPORT_CANCELLING_DELIVERIES_PROGRESS', {
+      done: (cancelledDeliveries + skippedDeliveries).toLocaleString(),
+      total: deliveriesToCancel.toLocaleString(),
+    }) ]
+  }
+
+  if (deliveriesCancellation === 'cancelled') {
+    const parts = [ _t('DELIVERY_IMPORT_DELIVERIES_CANCELLED', { count: cancelledDeliveries }) ]
+    if (skippedDeliveries > 0) {
+      parts.push(_t('DELIVERY_IMPORT_DELIVERIES_LEFT', { count: skippedDeliveries }))
+    }
+
+    return parts
+  }
+
+  return []
+}
+
+// The state of its deliveries, once they are being cancelled, rather than that of the import
+function _displayStatus({ status, deliveriesCancellation }) {
+  return deliveriesCancellation ? `deliveries_${deliveriesCancellation}` : status
+}
+
+function _renderImportStatus(row, importQueue) {
+  // As in the template, an icon can come with a modifier: "spinner fa-spin"
+  row.querySelector('[data-delivery-import-status]').className = `fa fa-${importStatusIcon[_displayStatus(importQueue)]}`
+}
+
+function _renderImportProgress(row, progress) {
+  row.querySelector('[data-delivery-import-progress]').textContent = _importProgressText(progress)
+  row.querySelector('[data-delivery-import-cancel-button]')
+    .classList.toggle('d-none', !cancellableImportStatuses.includes(progress.status))
+  // Only once
+  if (progress.deliveriesCancellation) {
+    row.querySelector('[data-delivery-import-cancel-deliveries-button]').classList.add('d-none')
+  }
+}
+
+function _progressFromDataset(el) {
+  const {
+    status, startedAt, totalRows, processedRows, errorRows,
+    deliveriesCancellation, deliveriesToCancel, cancelledDeliveries, skippedDeliveries,
+  } = el.dataset
+
+  return {
+    status,
+    startedAt: startedAt || null,
+    totalRows: totalRows ? parseInt(totalRows, 10) : null,
+    processedRows: parseInt(processedRows || '0', 10),
+    errorRows: parseInt(errorRows || '0', 10),
+    deliveriesCancellation: deliveriesCancellation || null,
+    deliveriesToCancel: deliveriesToCancel ? parseInt(deliveriesToCancel, 10) : null,
+    cancelledDeliveries: parseInt(cancelledDeliveries || '0', 10),
+    skippedDeliveries: parseInt(skippedDeliveries || '0', 10),
+  }
+}
+
+function _cancelDeliveriesConfirmContent(filename) {
+  return (
+    <div>
+      <p>{ _t('DELIVERY_IMPORT_CANCEL_DELIVERIES_FILE', { filename }) }</p>
+      {/* The admin's styles remove the bullets of a list */}
+      <ul style={{ listStyle: 'disc', paddingLeft: 20 }}>
+        <li>{ _t('DELIVERY_IMPORT_CANCEL_DELIVERIES_ORDERS') }</li>
+        <li>{ _t('DELIVERY_IMPORT_CANCEL_DELIVERIES_ASSIGNED') }</li>
+        <li>{ _t('DELIVERY_IMPORT_CANCEL_DELIVERIES_UNDER_WAY') }</li>
+      </ul>
+      <p><strong>{ _t('DELIVERY_IMPORT_CANCEL_DELIVERIES_NO_UNDO') }</strong></p>
+    </div>
+  )
+}
+
+function addCancelDeliveries(el) {
+  el.addEventListener('click', e => {
+
+    e.preventDefault()
+
+    const parentEl = e.target.closest('[data-delivery-import]')
+    // Only known on page load: an import completed since shows 0
+    const count = parseInt(parentEl.dataset.deliveryImportDeliveries || '0', 10)
+
+    AntdModal.confirm({
+      title: count > 0 ?
+        _t('DELIVERY_IMPORT_CANCEL_DELIVERIES_TITLE', { count }) : _t('DELIVERY_IMPORT_CANCEL_DELIVERIES_TITLE_UNKNOWN'),
+      content: _cancelDeliveriesConfirmContent(parentEl.dataset.deliveryImportFilename),
+      okText: _t('DELIVERY_IMPORT_CANCEL_DELIVERIES_OK'),
+      okButtonProps: { danger: true },
+      cancelText: _t('DELIVERY_IMPORT_CANCEL_DELIVERIES_BACK'),
+      width: 520,
+      // The dialog stays open, its button loading, until the request is answered
+      onOk: () => axios({
+        method: 'put',
+        url: parentEl.dataset.deliveryImportCancelDeliveries,
+        headers: {
+          Authorization: `Bearer ${window._auth.jwt}`
+        }
+      }).then(response => {
+        // The worker reports how it goes, this is in case it's busy with something else
+        _renderImportStatus(parentEl, response.data)
+        _renderImportProgress(parentEl, { ...response.data, startedAt: null })
+      }).catch(() => {
+        window.alert(_t('SOMETHING_WENT_WRONG'))
+      }),
+    })
+  }, false)
+}
+
+function addCancel(el) {
+  el.addEventListener('click', e => {
+
+    e.preventDefault()
+
+    if (!window.confirm(_t('DELIVERY_IMPORT_CANCEL_CONFIRM'))) {
+      return
+    }
+
+    const parentEl = e.target.closest('[data-delivery-import]')
+
+    axios({
+      method: 'put',
+      url: parentEl.dataset.deliveryImportCancel,
+      headers: {
+        Authorization: `Bearer ${window._auth.jwt}`
+      }
+    }).then(response => {
+      // The live update is sent from this request, through the async transport:
+      // it may wait behind the very import the worker is busy with
+      _renderImportStatus(parentEl, response.data)
+      _renderImportProgress(parentEl, {
+        status: response.data.status,
+        startedAt: null,
+        totalRows: response.data.totalRows,
+        processedRows: response.data.processedRows,
+        errorRows: response.data.errorRows,
+      })
+    }).catch(() => {
+      window.alert(_t('SOMETHING_WENT_WRONG'))
+    })
+  }, false)
 }
 
 function addSpreadsheetView(viewIcon) {
@@ -235,17 +429,24 @@ if (deliveryImports) {
     const { event } = data
     if (event.name === 'delivery_import:updated') {
       const row = document.querySelector(`[data-delivery-import-filename="${event.data.filename}"]`)
-      const statusIcon = row.querySelector('[data-delivery-import-status]')
-      const viewIcon = row.querySelector('[data-delivery-import-view]')
-      const downloadIcon = row.querySelector('[data-delivery-import-redownload]')
-      statusIcon.classList.remove(...statusIcon.classList)
-      statusIcon.classList.add('fa', `fa-${importStatusIcon[event.data.status]}`)
+      // An import from another day than the one displayed
+      if (!row) {
+        return
+      }
+      _renderImportProgress(row, event.data)
+      _renderImportStatus(row, event.data)
+      // The number of deliveries is only known on reload, but a completed import has some
+      if (event.data.status === 'completed' && !event.data.deliveriesCancellation) {
+        row.querySelector('[data-delivery-import-cancel-deliveries-button]').classList.remove('d-none')
+      }
       if (event.data.status === 'failed') {
         row.classList.add('danger')
-        viewIcon.classList.remove('d-none')
-        downloadIcon.classList.remove('d-none')
-        addSpreadsheetView(viewIcon)
-        addRedownload(downloadIcon)
+        // Its click listener was added with the page: adding it again would open the file twice
+        const viewLink = row.querySelector('[data-delivery-import-view]')
+        if (viewLink.dataset.errorsLabel) {
+          viewLink.textContent = viewLink.dataset.errorsLabel
+          viewLink.classList.add('text-danger')
+        }
       }
     }
   })
@@ -257,6 +458,9 @@ if (deliveryImports) {
   deliveryImports.querySelectorAll('[data-delivery-import]').forEach(el => {
     addSpreadsheetView(el.querySelector('[data-delivery-import-view]'))
     addRedownload(el.querySelector('[data-delivery-import-redownload]'))
+    addCancel(el.querySelector('[data-delivery-import-cancel-button]'))
+    addCancelDeliveries(el.querySelector('[data-delivery-import-cancel-deliveries-button]'))
+    _renderImportProgress(el, _progressFromDataset(el.querySelector('[data-delivery-import-progress]')))
   })
 }
 

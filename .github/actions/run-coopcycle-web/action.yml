@@ -39,13 +39,27 @@ runs:
       # osrm-routed only reads data.osrm* (see docker/osrm/start.sh), so the ~180 MB
       # source extract does not need to be carried around in the cache.
       docker compose run -T --rm osrm rm -f /data/data.osm.pbf
-  - name: Start Docker containers
+  - name: Start PHP
     shell: bash
-    # specify -f docker-compose.yml explicitly, because we don't want to load docker-compose.override.yml
-    run: docker compose -f docker-compose.yml up -d
+    # Alone first: the worker shares its code and its cache, and boots the app as soon as
+    # php is started, while php still installs the dependencies and clears the cache.
+    # Specify -f docker-compose.yml explicitly, because we don't want to load docker-compose.override.yml
+    run: docker compose -f docker-compose.yml up -d php
   - name: Wait for PHP-FPM
     shell: bash
-    run: until docker inspect --format='{{ .State.Health.Status }}' $(docker compose ps -q php) | grep -wq healthy; do sleep 5; done
+    # Until it is healthy, rather than the 3 healthchecks after which "up" gives up on it,
+    # but not once its startup script has failed, which stops it
+    run: |
+      until docker inspect --format='{{ .State.Health.Status }}' $(docker compose ps -q php) | grep -wq healthy; do
+        if [ "$(docker inspect --format='{{ .State.Running }}' $(docker compose ps -a -q php))" != "true" ]; then
+          echo "The php container has stopped"
+          exit 1
+        fi
+        sleep 5
+      done
+  - name: Start Docker containers
+    shell: bash
+    run: docker compose -f docker-compose.yml up -d
   - name: Wait webpack
     if: inputs.wait-for-webpack == 'true'
     shell: bash
@@ -59,3 +73,8 @@ runs:
   - name: Validate database schema
     shell: bash
     run: docker compose exec -T php bin/console doctrine:schema:validate --env=test --skip-sync
+  - name: Show the PHP logs
+    if: failure()
+    shell: bash
+    # What the startup script printed, which the steps above don't show
+    run: docker compose -f docker-compose.yml logs --no-color --tail=200 php php_worker

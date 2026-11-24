@@ -72,6 +72,11 @@ class SpreadsheetParseResult
         }
     }
 
+    /**
+     * Errors are added to a row as it is parsed, so the answer changes between calls
+     *
+     * @phpstan-impure
+     */
     public function rowHasErrors($rowNumber)
     {
         return array_key_exists($rowNumber, $this->errors);

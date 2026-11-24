@@ -1569,6 +1569,11 @@ tasks.mark_as_done.has_previous: 'Task #%failed_task% could not be completed bec
 import.errors.at.row: Errors at row %row_number%
 import.address.geocode.error: Could not geocode address %failed_address%
 import.time.range.error: Time range "%value%" in %key% is not valid
+import.columns.missing: "The file has no %columns% column, add it and import the file again"
+import.telephone.error: "%key%: \"%value%\" is not a valid phone number"
+import.metadata.error: "%key%: \"%value%\" is not valid, write it as key=value, separated by spaces"
+import.packages.error: "%key%: \"%value%\" is not valid, write it as package=quantity, separated by spaces"
+import.value.too_long: "%key% is longer than %max% characters"
 import.successful.rows: 'Your file was processed and %count% deliveries were created for rows: %rows%'
 import.delivery.price.error.priceCalculation.row: The delivery price could not be calculated for row %row_number%
 import.unsuccessful.rows: "There were errors and deliveries could not be created for rows: %rows%."
@@ -1708,10 +1713,14 @@ error.return_to_homepage: Return to homepage
 deliveries.imports: Imported files
 deliveries.importing: The file %filename% is being imported.
 deliveries.imports.created_at: Created at
+deliveries.imports.progress: Progress
+deliveries.imports.cancel: Cancel
+deliveries.imports.cancel_deliveries: "Cancel the deliveries"
 deliveries.imports.see_file: See file
 deliveries.imports.see_errored_file: To errors details
-deliveries.imports.error.interrupted: The import was interrupted by an unexpected error and did not finish. The lines handled before it may already have been imported, please check them before importing this file again.
-deliveries.imports.error.stalled: The import was stopped because it had not finished after an unusually long time, most likely because the worker handling it went away. The lines handled before that may already have been imported, please check them before importing this file again.
+deliveries.imports.error.interrupted: "The import was interrupted by an unexpected error, and no delivery was imported. Please import the file again."
+deliveries.imports.error.stalled: "The import was stopped because it had not made any progress for an unusually long time, most likely because the worker handling it went away. No delivery was imported, please import the file again."
+deliveries.imports.error.rolled_back: "Saving the deliveries failed on this line, and none were imported. Please import the file again."
 business.account.settings.link: Link with my account
 form.business_restaurant_group.restaurants_with_menu: Restaurants with menu
 form.business_restaurant_group.restaurant: Restaurant

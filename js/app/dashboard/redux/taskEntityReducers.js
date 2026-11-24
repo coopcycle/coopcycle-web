@@ -8,6 +8,7 @@ import {
   ADD_TASKS_TO_GROUP_SUCCESS,
   MODIFY_TASK_LIST_REQUEST,
   MODIFY_TASK_LIST_REQUEST_FAILURE,
+  tasksReloaded,
 } from './actions'
 import { taskAdapter } from '../../coopcycle-frontend-js/logistics/redux'
 
@@ -46,6 +47,9 @@ export default (state = initialState, action) => {
   switch (action.type) {
     case UPDATE_TASK:
       return taskAdapter.upsertOne(state, action.task)
+
+    case tasksReloaded.type:
+      return taskAdapter.upsertMany(state, action.payload)
 
     case MODIFY_TASK_LIST_REQUEST:
     case MODIFY_TASK_LIST_REQUEST_FAILURE:

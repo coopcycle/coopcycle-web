@@ -15,6 +15,30 @@
     <field name="startedAt" type="datetime" column="started_at" nullable="true" />
     <field name="finishedAt" type="datetime" column="finished_at" nullable="true" />
     <field name="errors" type="json" column="errors" nullable="true" />
+    <field name="totalRows" type="integer" column="total_rows" nullable="true" />
+    <field name="processedRows" type="integer" column="processed_rows" nullable="false">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
+    <field name="errorRows" type="integer" column="error_rows" nullable="false">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
+    <field name="progressedAt" type="datetime" column="progressed_at" nullable="true" />
+    <field name="deliveriesCancellation" type="string" column="deliveries_cancellation" nullable="true" length="16"/>
+    <field name="deliveriesToCancel" type="integer" column="deliveries_to_cancel" nullable="true" />
+    <field name="cancelledDeliveries" type="integer" column="cancelled_deliveries" nullable="false">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
+    <field name="skippedDeliveries" type="integer" column="skipped_deliveries" nullable="false">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
     <many-to-one field="store" target-entity="AppBundle\Entity\Store" />
   </entity>
 </doctrine-mapping>
