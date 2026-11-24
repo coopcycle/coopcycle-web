@@ -383,6 +383,7 @@ dashboard_store_deliveries:
         routes:
             stores: dashboard_stores
             store: dashboard_store
+            import_success: dashboard
     methods:  [ GET, POST ]
 
 dashboard_delivery:

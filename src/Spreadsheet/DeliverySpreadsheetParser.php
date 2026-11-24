@@ -11,6 +11,9 @@ use AppBundle\Entity\Task;
 use AppBundle\Exception\DateTimeParseException;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\SettingsManager;
+use AppBundle\Spreadsheet\Column\ColumnDefinition;
+use AppBundle\Spreadsheet\Column\ColumnGroup;
+use AppBundle\Spreadsheet\Column\ColumnType;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -22,16 +25,6 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
 {
     use ParsePackagesTrait;
     use ParseMetadataTrait;
-
-    /**
-     * A row without one of these columns can't be turned into a delivery
-     */
-    const REQUIRED_COLUMNS = [
-        'pickup.address',
-        'pickup.timeslot',
-        'dropoff.address',
-        'dropoff.timeslot',
-    ];
 
     /**
      * The size of the string columns, the address and tour names
@@ -398,7 +391,7 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
         // All the rows have the same keys, taken from the header
         $columns = array_keys(reset($data));
 
-        return array_values(array_diff(self::REQUIRED_COLUMNS, $columns));
+        return array_values(array_diff($this->getRequiredColumnKeys(), $columns));
     }
 
     private function setup(): void
@@ -485,6 +478,125 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
             $tags = array_map([$this->slugify, 'slugify'], $slugs);
             $task->addTags($tags);
         }
+    }
+
+    /**
+     * Every column a delivery can be imported from, in the order the example file has them.
+     *
+     * The aliases are what a file that doesn't use our own names tends to call the column.
+     * They say which of pickup and dropoff a column is about where they can: a timeslot
+     * column named "créneau" alone is deliberately left for the user to assign, as putting
+     * a dropoff time on a pickup is both easy to do and hard to notice.
+     *
+     * @inheritdoc
+     */
+    public function getColumns(): array
+    {
+        return [
+            new ColumnDefinition('pickup.address', ColumnType::Address, ColumnGroup::Pickup, true, [
+                'pickup address', 'pickup street address', 'collection address', 'sender address',
+                'adresse enlevement', 'adresse de retrait', 'adresse expediteur', 'adresse depart',
+                'direccion recogida', 'direccion de origen',
+            ]),
+            new ColumnDefinition('pickup.address.name', ColumnType::Text, ColumnGroup::Pickup, false, [
+                'pickup name', 'pickup contact', 'sender name', 'sender',
+                'nom enlevement', 'nom expediteur', 'expediteur',
+                'nombre recogida', 'remitente',
+            ]),
+            new ColumnDefinition('pickup.address.description', ColumnType::Text, ColumnGroup::Pickup, false, [
+                'pickup address description', 'pickup details', 'pickup instructions',
+                'complement adresse enlevement', 'complement enlevement', 'details enlevement',
+                'detalles recogida',
+            ]),
+            new ColumnDefinition('pickup.address.telephone', ColumnType::Phone, ColumnGroup::Pickup, false, [
+                'pickup telephone', 'pickup phone', 'pickup phone number', 'sender phone',
+                'telephone enlevement', 'tel enlevement', 'telephone expediteur',
+                'telefono recogida',
+            ]),
+            new ColumnDefinition('pickup.comments', ColumnType::Text, ColumnGroup::Pickup, false, [
+                'pickup comments', 'pickup note', 'pickup notes',
+                'commentaire enlevement', 'commentaires enlevement', 'note enlevement',
+                'comentarios recogida',
+            ]),
+            new ColumnDefinition('pickup.timeslot', ColumnType::Timeslot, ColumnGroup::Pickup, true, [
+                'pickup timeslot', 'pickup time slot', 'pickup time', 'pickup date', 'pickup window',
+                'creneau enlevement', 'creneau de retrait', 'horaire enlevement', 'date enlevement',
+                'franja recogida', 'horario recogida',
+            ]),
+            new ColumnDefinition('pickup.tags', ColumnType::Tags, ColumnGroup::Pickup, false, [
+                'pickup tags', 'pickup labels',
+                'etiquettes enlevement', 'tags enlevement',
+                'etiquetas recogida',
+            ]),
+            new ColumnDefinition('pickup.metadata', ColumnType::Metadata, ColumnGroup::Pickup, false, [
+                'pickup metadata',
+                'metadonnees enlevement',
+                'metadatos recogida',
+            ]),
+            new ColumnDefinition('dropoff.address', ColumnType::Address, ColumnGroup::Dropoff, true, [
+                'dropoff address', 'drop off address', 'delivery address', 'recipient address',
+                'shipping address', 'destination address',
+                'adresse livraison', 'adresse de livraison', 'adresse destinataire', 'adresse arrivee',
+                'direccion entrega', 'direccion de destino',
+            ]),
+            new ColumnDefinition('dropoff.address.name', ColumnType::Text, ColumnGroup::Dropoff, false, [
+                'dropoff name', 'dropoff contact', 'recipient name', 'recipient', 'customer name',
+                'nom livraison', 'nom destinataire', 'destinataire', 'nom client',
+                'nombre entrega', 'destinatario',
+            ]),
+            new ColumnDefinition('dropoff.address.description', ColumnType::Text, ColumnGroup::Dropoff, false, [
+                'dropoff address description', 'dropoff details', 'dropoff instructions',
+                'delivery instructions',
+                'complement adresse livraison', 'complement livraison', 'details livraison',
+                'detalles entrega',
+            ]),
+            new ColumnDefinition('dropoff.address.telephone', ColumnType::Phone, ColumnGroup::Dropoff, false, [
+                'dropoff telephone', 'dropoff phone', 'dropoff phone number', 'recipient phone',
+                'customer phone',
+                'telephone livraison', 'tel livraison', 'telephone destinataire', 'telephone client',
+                'telefono entrega',
+            ]),
+            new ColumnDefinition('dropoff.comments', ColumnType::Text, ColumnGroup::Dropoff, false, [
+                'dropoff comments', 'dropoff note', 'dropoff notes', 'delivery comments',
+                'commentaire livraison', 'commentaires livraison', 'note livraison',
+                'comentarios entrega',
+            ]),
+            new ColumnDefinition('dropoff.timeslot', ColumnType::Timeslot, ColumnGroup::Dropoff, true, [
+                'dropoff timeslot', 'dropoff time slot', 'dropoff time', 'dropoff date',
+                'delivery timeslot', 'delivery time', 'delivery date', 'dropoff window',
+                'creneau livraison', 'creneau de livraison', 'horaire livraison', 'date livraison',
+                'franja entrega', 'horario entrega',
+            ]),
+            new ColumnDefinition('dropoff.packages', ColumnType::Packages, ColumnGroup::Dropoff, false, [
+                'packages', 'dropoff packages', 'parcels', 'colis',
+                'paquets', 'paquetes', 'bultos',
+            ]),
+            new ColumnDefinition('dropoff.tags', ColumnType::Tags, ColumnGroup::Dropoff, false, [
+                'dropoff tags', 'dropoff labels',
+                'etiquettes livraison', 'tags livraison',
+                'etiquetas entrega',
+            ]),
+            new ColumnDefinition('dropoff.metadata', ColumnType::Metadata, ColumnGroup::Dropoff, false, [
+                'dropoff metadata',
+                'metadonnees livraison',
+                'metadatos entrega',
+            ]),
+            new ColumnDefinition('weight', ColumnType::Number, ColumnGroup::Delivery, false, [
+                'weight', 'weight kg', 'total weight',
+                'poids', 'poids kg', 'poids total',
+                'peso',
+            ]),
+            new ColumnDefinition('tour.name', ColumnType::Text, ColumnGroup::Delivery, false, [
+                'tour', 'tour name', 'round', 'round name',
+                'tournee', 'nom tournee', 'nom de la tournee',
+                'ruta', 'nombre ruta',
+            ]),
+            new ColumnDefinition('external_reference', ColumnType::Text, ColumnGroup::Delivery, false, [
+                'external reference', 'reference', 'order reference', 'order id', 'order number',
+                'reference externe', 'reference commande', 'numero de commande', 'num commande',
+                'referencia', 'referencia externa', 'numero de pedido',
+            ]),
+        ];
     }
 
     public function getExampleData(): array

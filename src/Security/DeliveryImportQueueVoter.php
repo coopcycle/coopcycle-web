@@ -27,7 +27,7 @@ class DeliveryImportQueueVoter extends Voter
         $user = $token->getUser();
 
         if ($this->authorizationChecker->isGranted('ROLE_STORE')
-            && is_object($user) && is_callable([ $user, 'ownsStore' ]) && $user->ownsStore($subject)) {
+            && is_object($user) && is_callable([ $user, 'ownsStore' ]) && $user->ownsStore($subject->getStore())) {
             return true;
         }
 

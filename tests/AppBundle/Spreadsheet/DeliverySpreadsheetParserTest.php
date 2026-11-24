@@ -283,4 +283,169 @@ class DeliverySpreadsheetParserTest extends TestCase
         $result = array_shift($data);
         $this->assertEquals($result['tourName'], 'test route');
     }
+
+    /**
+     * A file whose columns are named anything at all, read through the mapping the user
+     * picked on the mapping screen
+     */
+    public function testWithColumnMapping()
+    {
+        $filename = realpath(__DIR__ . '/../Resources/spreadsheet/deliveries_custom_headers.csv');
+
+        $parseResult = $this->parser->parse($filename, [
+            'column_mapping' => [
+                1 => 'pickup.address',
+                2 => 'pickup.timeslot',
+                3 => 'dropoff.address',
+                4 => 'dropoff.timeslot',
+                5 => 'dropoff.address.telephone',
+                6 => 'weight',
+            ],
+        ]);
+
+        $this->assertFalse($parseResult->hasErrors());
+
+        $data = $parseResult->getData();
+        $this->assertCount(2, $data);
+
+        /** @var Delivery $delivery */
+        $delivery = array_shift($data)['delivery'];
+
+        $this->assertEquals('street address', $delivery->getPickup()->getAddress()->getStreetAddress());
+        $this->assertEquals(
+            '2019-12-12 10:00',
+            $delivery->getPickup()->getAfter()->format('Y-m-d H:i')
+        );
+        $this->assertEquals(
+            '2019-12-12 13:00',
+            $delivery->getDropoff()->getBefore()->format('Y-m-d H:i')
+        );
+        // 5.5 kg, in grams
+        $this->assertEquals(5500, $delivery->getWeight());
+    }
+
+    /**
+     * The columns left out of the mapping, here the two the import has no use for,
+     * are not read at all
+     */
+    public function testColumnsLeftOutOfTheMappingAreIgnored()
+    {
+        $filename = realpath(__DIR__ . '/../Resources/spreadsheet/deliveries_custom_headers.csv');
+
+        $parseResult = $this->parser->parse($filename, [
+            'column_mapping' => [
+                1 => 'pickup.address',
+                2 => 'pickup.timeslot',
+                3 => 'dropoff.address',
+                4 => 'dropoff.timeslot',
+            ],
+        ]);
+
+        $this->assertFalse($parseResult->hasErrors());
+
+        $data = $parseResult->getData();
+        /** @var Delivery $delivery */
+        $delivery = array_shift($data)['delivery'];
+
+        $this->assertNull($delivery->getWeight());
+        $this->assertNull($delivery->getDropoff()->getAddress()->getTelephone());
+    }
+
+    /**
+     * A mapping without one of the columns a delivery can't do without is rejected as a
+     * whole, as a file missing the column is
+     */
+    public function testColumnMappingMissingARequiredColumn()
+    {
+        $filename = realpath(__DIR__ . '/../Resources/spreadsheet/deliveries_custom_headers.csv');
+
+        $parseResult = $this->parser->parse($filename, [
+            'column_mapping' => [
+                1 => 'pickup.address',
+                3 => 'dropoff.address',
+            ],
+        ]);
+
+        $this->assertTrue($parseResult->hasErrors());
+    }
+
+    /**
+     * Without a mapping the columns are read by their header name, as they always were:
+     * the API and the files already on their way through the queue depend on it
+     */
+    public function testWithoutColumnMappingTheHeaderIsStillUsed()
+    {
+        $filename = realpath(__DIR__ . '/../Resources/spreadsheet/deliveries_with_tour.csv');
+
+        $parseResult = $this->parser->parse($filename, ['column_mapping' => []]);
+        $data = $parseResult->getData();
+
+        $result = array_shift($data);
+        $this->assertEquals('test route', $result['tourName']);
+    }
+
+    /**
+     * Only the first sheet is imported: the header used to be taken from the last sheet of
+     * the file and the rows piled up across all of them
+     */
+    public function testOnlyTheFirstSheetIsRead()
+    {
+        $filename = realpath(__DIR__ . '/../Resources/spreadsheet/deliveries_two_sheets.xlsx');
+
+        $parseResult = $this->parser->parse($filename);
+
+        $this->assertFalse($parseResult->hasErrors());
+        $this->assertCount(1, $parseResult->getData());
+    }
+
+    public function testPreviewReadsTheFirstSheetAndItsHeader()
+    {
+        $filename = realpath(__DIR__ . '/../Resources/spreadsheet/deliveries_custom_headers.csv');
+
+        $preview = $this->parser->preview($filename);
+
+        $this->assertSame([
+            'Dossier',
+            'Adresse enlèvement',
+            'Créneau enlèvement',
+            'Adresse livraison',
+            'Créneau livraison',
+            'Téléphone livraison',
+            'Poids',
+            'Chauffeur',
+        ], $preview->getHeader());
+
+        $this->assertCount(2, $preview->getRows());
+        // As the reader hands them over, which is what the import reads too
+        $this->assertSame(['5.5', '8'], $preview->getSampleValues(6));
+    }
+
+    public function testPreviewStopsAfterTheRowsAskedFor()
+    {
+        $filename = realpath(__DIR__ . '/../Resources/spreadsheet/deliveries_custom_headers.csv');
+
+        $preview = $this->parser->preview($filename, 1);
+
+        $this->assertCount(1, $preview->getRows());
+        $this->assertFalse($preview->isEmpty());
+    }
+
+    public function testRequiredColumnsComeFromTheColumnDefinitions()
+    {
+        $this->assertEquals(
+            ['pickup.address', 'pickup.timeslot', 'dropoff.address', 'dropoff.timeslot'],
+            $this->parser->getRequiredColumnKeys()
+        );
+    }
+
+    /**
+     * Every field the parser reads has to be offered on the mapping screen, or a file
+     * carrying it could not be mapped to it
+     */
+    public function testEveryExampleColumnIsDescribed()
+    {
+        $exampleColumns = array_keys($this->parser->getExampleData()[0]);
+
+        $this->assertEmpty(array_diff($exampleColumns, $this->parser->getColumnKeys()));
+    }
 }
