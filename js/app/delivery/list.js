@@ -8,9 +8,9 @@ import _ from 'lodash'
 import { Tooltip, Modal as AntdModal } from 'antd'
 import Modal from 'react-modal'
 
-import React, { useState } from 'react'
+import React from 'react'
 import Spreadsheet from 'react-spreadsheet'
-import { render } from 'react-dom'
+import { render, unmountComponentAtNode } from 'react-dom'
 import { createCentrifuge, subscribe } from '../centrifugo/client'
 import i18n from '../i18n'
 import moment from 'moment'
@@ -88,13 +88,11 @@ if (searchEl && searchWidgetEl) {
   })
 }
 
-function SpreadsheetViewer({ data, errors }) {
-
-  const [ isOpen, setIsOpen ] = useState(true)
+function SpreadsheetViewer({ data, errors, onClose }) {
 
   function closeModal(e) {
     e.preventDefault()
-    setIsOpen(false)
+    onClose()
   }
 
   const errorsByRow = _.keyBy(errors, error => error.row)
@@ -102,11 +100,13 @@ function SpreadsheetViewer({ data, errors }) {
 
   return (
     <Modal
-      isOpen={ isOpen }
+      isOpen={ true }
       className="ReactModal__Content--delivery-import-spreadsheet"
       shouldCloseOnOverlayClick={ true }
+      onRequestClose={ onClose }
     >
-      <header className="text-right mb-4"><a href="#" onClick={ closeModal }><i className="fa fa-close fa-2x text-muted" /></a></header>
+      <header className="delivery-import-spreadsheet__header text-right"><a href="#" onClick={ closeModal }><i className="fa fa-close fa-2x text-muted" /></a></header>
+      <div className="delivery-import-spreadsheet__body">
       <Spreadsheet
       data={ data }
       // https://github.com/iddan/react-spreadsheet/blob/5751105cd84db1bb745fa37d399ebedcb48220df/src/RowIndicator.tsx
@@ -141,6 +141,7 @@ function SpreadsheetViewer({ data, errors }) {
         );
       } }
       />
+      </div>
     </Modal>
   )
 }
@@ -377,10 +378,12 @@ function addSpreadsheetView(viewIcon) {
 
       const data = parseResult.data.map(row => row.map(value => ({ value })))
 
+      const container = document.getElementById('delivery_import_spreadsheet')
+
       render(<SpreadsheetViewer
-        key={ parentEl.dataset.deliveryImportQueue }
         data={ data }
-        errors={ errors } />, document.getElementById('delivery_import_spreadsheet'))
+        errors={ errors }
+        onClose={ () => unmountComponentAtNode(container) } />, container)
     })
   }, false)
 }

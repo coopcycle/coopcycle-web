@@ -1,8 +1,27 @@
 @import '~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss';
 
-.ReactModal__Content--delivery-import-spreadsheet {
+// The modal itself must not scroll, otherwise the close icon scrolls away with the
+// spreadsheet: only the body below the header does, on both axes.
+// The class is doubled to win over the `overflow: auto` of the base `.ReactModal__Content`.
+.ReactModal__Content.ReactModal__Content--delivery-import-spreadsheet {
   width: calc(100% - 40px);
   height: calc(100% - 40px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  .delivery-import-spreadsheet__header {
+    flex: 0 0 auto;
+    margin-bottom: 1rem;
+  }
+
+  .delivery-import-spreadsheet__body {
+    flex: 1 1 auto;
+    // Without it the body refuses to shrink below the spreadsheet's own height,
+    // and the whole modal overflows instead
+    min-height: 0;
+    overflow: auto;
+  }
 }
 
 // Highlight clickable delivery list rows on hover
