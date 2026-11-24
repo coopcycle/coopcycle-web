@@ -22,6 +22,15 @@
     min-height: 0;
     overflow: auto;
   }
+
+  // While the file and its errors load, and when they fail to
+  .delivery-import-spreadsheet__placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
 }
 
 // Highlight clickable delivery list rows on hover

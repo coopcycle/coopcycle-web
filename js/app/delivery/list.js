@@ -88,7 +88,7 @@ if (searchEl && searchWidgetEl) {
   })
 }
 
-function SpreadsheetViewer({ data, errors, onClose }) {
+function SpreadsheetViewer({ data, errors, status, onClose }) {
 
   function closeModal(e) {
     e.preventDefault()
@@ -107,6 +107,19 @@ function SpreadsheetViewer({ data, errors, onClose }) {
     >
       <header className="delivery-import-spreadsheet__header text-right"><a href="#" onClick={ closeModal }><i className="fa fa-close fa-2x text-muted" /></a></header>
       <div className="delivery-import-spreadsheet__body">
+      { status === 'loading' &&
+      <div className="delivery-import-spreadsheet__placeholder text-muted">
+        <i className="fa fa-spinner fa-spin fa-3x mb-3" />
+        <span>{ _t('LOADING') }</span>
+      </div>
+      }
+      { status === 'failed' &&
+      <div className="delivery-import-spreadsheet__placeholder text-danger">
+        <i className="fa fa-exclamation-triangle fa-3x mb-3" />
+        <span>{ _t('SOMETHING_WENT_WRONG') }</span>
+      </div>
+      }
+      { status === 'loaded' &&
       <Spreadsheet
       data={ data }
       // https://github.com/iddan/react-spreadsheet/blob/5751105cd84db1bb745fa37d399ebedcb48220df/src/RowIndicator.tsx
@@ -141,9 +154,20 @@ function SpreadsheetViewer({ data, errors, onClose }) {
         );
       } }
       />
+      }
       </div>
     </Modal>
   )
+}
+
+function renderSpreadsheetViewer({ status, data, errors }) {
+  const container = document.getElementById('delivery_import_spreadsheet')
+
+  render(<SpreadsheetViewer
+    status={ status }
+    data={ data }
+    errors={ errors }
+    onClose={ () => unmountComponentAtNode(container) } />, container)
 }
 
 const importStatusIcon = {
@@ -352,6 +376,10 @@ function addSpreadsheetView(viewIcon) {
 
     e.preventDefault()
 
+    // The file and its errors take a few seconds to come back: the modal opens right away,
+    // on a spinner, and is filled in once they have
+    renderSpreadsheetViewer({ status: 'loading' })
+
     Promise.all(
       [
         axios({
@@ -378,12 +406,9 @@ function addSpreadsheetView(viewIcon) {
 
       const data = parseResult.data.map(row => row.map(value => ({ value })))
 
-      const container = document.getElementById('delivery_import_spreadsheet')
-
-      render(<SpreadsheetViewer
-        data={ data }
-        errors={ errors }
-        onClose={ () => unmountComponentAtNode(container) } />, container)
+      renderSpreadsheetViewer({ status: 'loaded', data, errors })
+    }).catch(() => {
+      renderSpreadsheetViewer({ status: 'failed' })
     })
   }, false)
 }
