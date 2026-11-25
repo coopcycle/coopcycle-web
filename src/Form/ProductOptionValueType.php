@@ -37,13 +37,6 @@ class ProductOptionValueType extends AbstractType
                 'label' => 'form.product_option_value.price.label',
                 'empty_data' => 0,
             ])
-            ->add('weight', WeightType::class, [
-                'label' => 'form.product_option_value.weight.label',
-                'attr' => [
-                    'inputmode' => 'decimal',
-                    'placeholder' => 'form.product_option_value.weight.label',
-                ],
-            ])
             ->add('product', HiddenType::class, [
                 'label' => 'form.product_option_value.product.label',
                 'required' => false,
@@ -60,6 +53,16 @@ class ProductOptionValueType extends AbstractType
                 'label' => 'basics.enabled',
                 'required' => false,
             ]);
+
+        if ($options['with_weight']) {
+            $builder->add('weight', WeightType::class, [
+                'label' => 'form.product_option_value.weight.label',
+                'attr' => [
+                    'inputmode' => 'decimal',
+                    'placeholder' => 'form.product_option_value.weight.label',
+                ],
+            ]);
+        }
 
         $builder->get('product')
             ->addModelTransformer(new CallbackTransformer(
@@ -119,6 +122,8 @@ class ProductOptionValueType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => ProductOptionValue::class,
+            'with_weight' => false,
         ));
+        $resolver->setAllowedTypes('with_weight', 'bool');
     }
 }

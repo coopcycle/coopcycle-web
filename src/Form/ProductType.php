@@ -6,6 +6,7 @@ use AppBundle\Entity\BusinessRestaurantGroup;
 use AppBundle\Entity\BusinessRestaurantGroupPriceWithTax;
 use AppBundle\Entity\BusinessRestaurantGroupRestaurantMenu;
 use AppBundle\Entity\ReusablePackaging;
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusiness\CatalogInterface;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\ProductOption;
@@ -78,13 +79,17 @@ class ProductType extends AbstractType
                 'label' => 'form.product.alcohol.label',
                 'help' => 'form.product.alcohol.help',
             ])
-            ->add('weight', WeightType::class, [
-                'label' => 'form.product.weight.label',
-                'help' => 'form.product.weight.help',
-            ])
             ->add('delete', SubmitType::class, [
                 'label' => 'basics.delete',
             ]);
+
+        // The weight is only used by pricing rules
+        if ($options['owner'] instanceof LocalBusiness && $options['owner']->getContract()?->isVariablePriceEnabled()) {
+            $builder->add('weight', WeightType::class, [
+                'label' => 'form.product.weight.label',
+                'help' => 'form.product.weight.help',
+            ]);
+        }
 
         $builder->add('allergens', ChoiceType::class, [
             'label' => 'form.product.allergens.label',

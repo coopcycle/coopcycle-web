@@ -959,7 +959,9 @@ trait RestaurantTrait
 
         $routes = $request->attributes->get('routes');
 
-        $form = $this->createForm(ProductOptionType::class, $productOption);
+        $form = $this->createForm(ProductOptionType::class, $productOption, [
+            'with_weight' => $restaurant->getContract()?->isVariablePriceEnabled() ?? false,
+        ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -1005,7 +1007,10 @@ trait RestaurantTrait
         $productOption = $productOptionFactory
             ->createNew();
 
-        $form = $this->createForm(ProductOptionType::class, $productOption);
+        // The preview receives the whole form, including the weight when it's displayed
+        $form = $this->createForm(ProductOptionType::class, $productOption, [
+            'with_weight' => true,
+        ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -1056,7 +1061,9 @@ trait RestaurantTrait
 
         $routes = $request->attributes->get('routes');
 
-        $form = $this->createForm(ProductOptionType::class, $productOption);
+        $form = $this->createForm(ProductOptionType::class, $productOption, [
+            'with_weight' => $restaurant->getContract()?->isVariablePriceEnabled() ?? false,
+        ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

@@ -94,11 +94,13 @@
 
   {{ form_row(form.options, { attr: { class: "product__form__options--sortable" } }) }}
 
+  {% if form.weight is defined %}
   <div class="row">
     <div class="col-sm-6">
       {{ form_row(form.weight) }}
     </div>
   </div>
+  {% endif %}
 
   <section class="mb-4">
     <div class="row">

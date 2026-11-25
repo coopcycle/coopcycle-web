@@ -137,6 +137,15 @@ class Contract
     }
 
     /**
+     * Whether one of the amounts is calculated with a pricing rule set,
+     * i.e the pricing rules may use the weight of the products.
+     */
+    public function isVariablePriceEnabled(): bool
+    {
+        return $this->isVariableDeliveryPriceEnabled() || $this->isVariableCustomerAmountEnabled();
+    }
+
+    /**
      * @return PricingRuleSet|null
      */
     public function getVariableDeliveryPrice()
