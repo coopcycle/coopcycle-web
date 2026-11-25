@@ -54,11 +54,19 @@ class DeliveryRepository extends EntityRepository
      *
      * @return int[]
      */
-    public function findIdsByImport(int $importId, int $storeId): array
+    public function findIdsByImport(int $importId, ?int $storeId = null): array
     {
+        $sql = "SELECT id FROM delivery WHERE metadata->>'delivery_import_id' = :import_id";
+        $parameters = ['import_id' => (string) $importId];
+
+        if (!is_null($storeId)) {
+            $sql .= ' AND store_id = :store_id';
+            $parameters['store_id'] = $storeId;
+        }
+
         return array_map('intval', $this->getEntityManager()->getConnection()->fetchFirstColumn(
-            "SELECT id FROM delivery WHERE metadata->>'delivery_import_id' = :import_id AND store_id = :store_id ORDER BY id",
-            ['import_id' => (string) $importId, 'store_id' => $storeId]
+            $sql.' ORDER BY id',
+            $parameters
         ));
     }
 

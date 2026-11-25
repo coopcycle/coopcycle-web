@@ -168,6 +168,10 @@ services:
     tags:
       - { name: 'app.import_canceller', key: 'deliveries' }
 
+  AppBundle\Import\TaskImportCanceller:
+    tags:
+      - { name: 'app.import_canceller', key: 'tasks' }
+
   AppBundle\Import\ImportRegistry:
     arguments:
       $handlers: !tagged_locator { tag: 'app.import_handler', index_by: 'key' }
