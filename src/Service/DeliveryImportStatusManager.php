@@ -42,8 +42,8 @@ class DeliveryImportStatusManager
     }
 
     /**
-     * Puts an import that failed with a retry to come back in line, as the
-     * handler leaves alone the imports that are not pending.
+     * Puts an import that failed with a retry to come back in line, as
+     * DeliveryImporter leaves alone the imports that are not pending.
      */
     public function requeued(DeliveryImportQueue $queue): void
     {

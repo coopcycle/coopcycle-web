@@ -15,7 +15,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * Marks a delivery import as failed once it is given up on.
  *
- * ImportDeliveriesHandler only moves the queue out of "started" when it runs
+ * DeliveryImporter only moves the queue out of "started" when it runs
  * to completion, so an error escaping it (a deadlock, a timeout, ...) used to
  * leave the import spinning forever in the admin, with no way to tell that it
  * had been dropped.
@@ -62,7 +62,7 @@ class DeliveryImportFailureSubscriber implements EventSubscriberInterface
             return;
         }
 
-        // Already finished: cancelled by a dispatcher, or failed by the handler itself when
+        // Already finished: cancelled by a dispatcher, or failed by DeliveryImporter itself when
         // saving the deliveries failed. Read from the database, the queue in memory is the
         // one the worker loaded before.
         $unfinished = [
@@ -74,7 +74,7 @@ class DeliveryImportFailureSubscriber implements EventSubscriberInterface
             return;
         }
 
-        // Another attempt may still succeed. The handler only imports a pending
+        // Another attempt may still succeed. DeliveryImporter only imports a pending
         // file, to not import it twice when the transport redelivers it, so the
         // import has to be put back in line for the retry to go through.
         if ($event->willRetry()) {
@@ -87,7 +87,7 @@ class DeliveryImportFailureSubscriber implements EventSubscriberInterface
             ['error' => $event->getThrowable()->getMessage()]
         );
 
-        // The deliveries are saved in a single transaction, rolled back by the handler
+        // The deliveries are saved in a single transaction, rolled back by DeliveryImporter
         // when it fails: an error that gets here came before, and nothing was imported.
         $this->statusManager->failed($queue, DeliveryImportStatusManager::errorForWholeImport(
             $this->translator->trans('deliveries.imports.error.interrupted')
