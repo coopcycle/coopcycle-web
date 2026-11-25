@@ -1628,7 +1628,7 @@ services:
   AppBundle\Security\DeliveryQuoteVoter:
     tags: ['security.voter']
 
-  AppBundle\Security\DeliveryImportQueueVoter:
+  AppBundle\Security\ImportQueueVoter:
     tags: ['security.voter']
 
   AppBundle\Security\TimeSlotVoter:

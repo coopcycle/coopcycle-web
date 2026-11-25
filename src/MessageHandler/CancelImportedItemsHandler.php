@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace AppBundle\MessageHandler;
 
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
+use AppBundle\Entity\ImportQueue;
 use AppBundle\Entity\DeliveryRepository;
 use AppBundle\Entity\Task;
-use AppBundle\Message\CancelImportedDeliveries;
-use AppBundle\Service\DeliveryImportStatusManager;
+use AppBundle\Message\CancelsImportedItems;
+use AppBundle\Service\ImportStatusManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\TaskManager;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -27,18 +27,18 @@ use Symfony\Component\Messenger\Exception\HandlerFailedException;
  * It can be run again on the same import: the deliveries already cancelled count as such.
  */
 #[AsMessageHandler]
-class CancelImportedDeliveriesHandler
+class CancelImportedItemsHandler
 {
     /**
      * Flushed, and the progress reported, every few deliveries: there can be more than a thousand.
      * Their orders are cancelled once the message is handled, failing it if that fails:
-     * see CancelImportedDeliveriesFailureSubscriber.
+     * see CancelImportedItemsFailureSubscriber.
      */
     const BATCH_SIZE = 25;
 
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private DeliveryImportStatusManager $statusManager,
+        private ImportStatusManager $statusManager,
         private TaskManager $taskManager,
         private OrderManager $orderManager,
         private StateMachineFactoryInterface $stateMachineFactory,
@@ -47,22 +47,22 @@ class CancelImportedDeliveriesHandler
     {
     }
 
-    public function __invoke(CancelImportedDeliveries $message): void
+    public function __invoke(CancelsImportedItems $message): void
     {
-        /** @var ?DeliveryImportQueue $queue */
-        $queue = $this->entityManager->find(DeliveryImportQueue::class, $message->getImportId());
+        /** @var ?ImportQueue $queue */
+        $queue = $this->entityManager->find(ImportQueue::class, $message->getImportId());
 
         if (is_null($queue)) {
             $this->logger->error(sprintf('Could not find delivery import #%d to cancel its deliveries', $message->getImportId()));
             return;
         }
 
-        $storeId = $queue->getStore()->getId();
+        $storeId = $queue->getStore()?->getId();
 
         // A message handed out again once it's done
-        if (DeliveryImportQueue::DELIVERIES_CANCELLING !== $queue->getDeliveriesCancellation()) {
+        if (ImportQueue::ITEMS_CANCELLING !== $queue->getItemsCancellation()) {
             $this->logger->info(
-                sprintf('Not cancelling the deliveries of import %s, they are %s', $queue->getFilename(), $queue->getDeliveriesCancellation() ?? 'not to be cancelled'),
+                sprintf('Not cancelling the deliveries of import %s, they are %s', $queue->getFilename(), $queue->getItemsCancellation() ?? 'not to be cancelled'),
                 ['store_id' => $storeId]
             );
             return;
@@ -76,7 +76,7 @@ class CancelImportedDeliveriesHandler
         $cancelled = 0;
         $skipped = 0;
 
-        $this->statusManager->deliveriesCancelProgress($queue, $toCancel, $cancelled, $skipped);
+        $this->statusManager->itemsCancelProgress($queue, $toCancel, $cancelled, $skipped);
 
         foreach (array_chunk($ids, self::BATCH_SIZE) as $batch) {
             foreach ($batch as $id) {
@@ -94,10 +94,10 @@ class CancelImportedDeliveriesHandler
             // once the whole message is (see DispatchAfterCurrentBusStamp), and need them
             $this->entityManager->flush();
 
-            $this->statusManager->deliveriesCancelProgress($queue, $toCancel, $cancelled, $skipped);
+            $this->statusManager->itemsCancelProgress($queue, $toCancel, $cancelled, $skipped);
         }
 
-        $this->statusManager->deliveriesCancelled($queue, $toCancel, $cancelled, $skipped);
+        $this->statusManager->itemsCancelled($queue, $toCancel, $cancelled, $skipped);
 
         $this->logger->info(
             sprintf('Cancelled %d of the %d deliveries of import %s, %d left as is', $cancelled, $toCancel, $queue->getFilename(), $skipped),
@@ -108,7 +108,7 @@ class CancelImportedDeliveriesHandler
     /**
      * @return bool whether the delivery is cancelled, now or already
      */
-    private function cancel(Delivery $delivery, int $storeId): bool
+    private function cancel(Delivery $delivery, ?int $storeId): bool
     {
         $tasks = array_values($delivery->getTasks('not task.isCancelled()'));
         $order = $delivery->getOrder();

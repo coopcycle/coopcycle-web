@@ -1,17 +1,16 @@
 <?php
 
-namespace AppBundle\Action\Delivery;
+namespace AppBundle\Action\Import;
 
-use AppBundle\Entity\Delivery\ImportQueue;
+use AppBundle\Entity\ImportQueue;
 use AppBundle\Spreadsheet\DeliverySpreadsheetParser;
-use League\Csv\Writer;
 use League\Flysystem\Filesystem;
 use Oneup\UploaderBundle\Uploader\File\FlysystemFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class ImportQueueRedownload
+class Csv
 {
     public function __construct(
         private Filesystem $deliveryImportsFilesystem,
@@ -22,26 +21,10 @@ class ImportQueueRedownload
     {
         $file = new FlysystemFile($data->getFilename(), $this->deliveryImportsFilesystem);
 
-        $errors = $data->getErrors();
-
-        $rawData = $this->spreadsheetParser->toRawData($file);
-
-        $rowsWithErrors = array_map(fn ($error) => $error['row'], $errors);
-
-        $records = array_filter($rawData, function($value, $key) use ($rowsWithErrors) {
-            return in_array($key, $rowsWithErrors);
-        }, ARRAY_FILTER_USE_BOTH);
-
-        $csv = Writer::createFromString();
-
-        $csv->insertOne($rawData[0]);
-        $csv->insertAll($records);
-
-        $response = new Response($csv->toString());
+        $response = new Response($this->spreadsheetParser->toCsv($file));
         $response->headers->add(['Content-Type' => 'text/csv']);
 
         return $response;
     }
 }
-
 

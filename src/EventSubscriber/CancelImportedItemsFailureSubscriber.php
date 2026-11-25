@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace AppBundle\EventSubscriber;
 
-use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
-use AppBundle\Message\CancelImportedDeliveries;
-use AppBundle\Service\DeliveryImportStatusManager;
+use AppBundle\Entity\ImportQueue;
+use AppBundle\Message\CancelsImportedItems;
+use AppBundle\Service\ImportStatusManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
@@ -14,15 +14,15 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\Event\WorkerMessageFailedEvent;
 
 /**
- * CancelImportedDeliveriesHandler writes that the deliveries are cancelled before
+ * CancelImportedItemsHandler writes that the deliveries are cancelled before
  * their orders are, which happens once the message is handled. When that fails, the
  * message is retried, which the handler only goes through while they are "cancelling".
  */
-class CancelImportedDeliveriesFailureSubscriber implements EventSubscriberInterface
+class CancelImportedItemsFailureSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private readonly ManagerRegistry $doctrine,
-        private readonly DeliveryImportStatusManager $statusManager,
+        private readonly ImportStatusManager $statusManager,
         private readonly LoggerInterface $logger
     )
     {
@@ -39,7 +39,7 @@ class CancelImportedDeliveriesFailureSubscriber implements EventSubscriberInterf
     {
         $message = $event->getEnvelope()->getMessage();
 
-        if (!$message instanceof CancelImportedDeliveries) {
+        if (!$message instanceof CancelsImportedItems) {
             return;
         }
 
@@ -50,19 +50,19 @@ class CancelImportedDeliveriesFailureSubscriber implements EventSubscriberInterf
             $entityManager = $this->doctrine->resetManager();
         }
 
-        /** @var ?DeliveryImportQueue $queue */
-        $queue = $entityManager->find(DeliveryImportQueue::class, $message->getImportId());
+        /** @var ?ImportQueue $queue */
+        $queue = $entityManager->find(ImportQueue::class, $message->getImportId());
 
         if (is_null($queue)) {
             return;
         }
 
         $this->logger->error(
-            sprintf('Cancelling the deliveries of import %s failed%s', $queue->getFilename(), $event->willRetry() ? ', retrying' : ''),
-            ['store_id' => $queue->getStore()->getId(), 'error' => $event->getThrowable()->getMessage()]
+            sprintf('Cancelling what import %s created failed%s', $queue->getFilename(), $event->willRetry() ? ', retrying' : ''),
+            ['store_id' => $queue->getStore()?->getId(), 'error' => $event->getThrowable()->getMessage()]
         );
 
-        // The deliveries cancelled so far count as such on the next attempt
-        $this->statusManager->deliveriesCancellationFailed($queue, $event->willRetry());
+        // What was cancelled so far counts as such on the next attempt
+        $this->statusManager->itemsCancellationFailed($queue, $event->willRetry());
     }
 }

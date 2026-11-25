@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\AppBundle\MessageHandler;
 
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
+use AppBundle\Entity\ImportQueue;
 use AppBundle\Entity\TourRepository;
 use AppBundle\Message\ImportDeliveries;
 use AppBundle\MessageHandler\ImportDeliveriesHandler;
@@ -13,7 +13,7 @@ use AppBundle\Service\DeliveryCreatedNotifier;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\LiveUpdatesSuspension;
 use AppBundle\Service\DeliveryOrderManager;
-use AppBundle\Service\DeliveryImportStatusManager;
+use AppBundle\Service\ImportStatusManager;
 use AppBundle\Spreadsheet\DeliverySpreadsheetParser;
 use AppBundle\Spreadsheet\SpreadsheetParseResult;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -56,7 +56,7 @@ class ImportDeliveriesHandlerFunctionalTest extends KernelTestCase
             __DIR__.'/../../../fixtures/ORM/stores.yml'
         ]);
 
-        $queue = new DeliveryImportQueue();
+        $queue = new ImportQueue(ImportQueue::TYPE_DELIVERIES);
         $queue->setStore($this->fixtures['store_1']);
         $queue->setFilename(self::FILENAME);
 
@@ -78,7 +78,7 @@ class ImportDeliveriesHandlerFunctionalTest extends KernelTestCase
             $parser,
             $validator->reveal(),
             $deliveryOrderManager,
-            self::getContainer()->get(DeliveryImportStatusManager::class),
+            self::getContainer()->get(ImportStatusManager::class),
             $this->prophesize(DeliveryManager::class)->reveal(),
             new NullLogger(),
             self::getContainer()->get(TourRepository::class),
@@ -119,10 +119,10 @@ class ImportDeliveriesHandlerFunctionalTest extends KernelTestCase
 
         $this->assertCount(0, $this->entityManager->getRepository(Delivery::class)->findAll());
 
-        /** @var DeliveryImportQueue $queue */
-        $queue = $this->entityManager->getRepository(DeliveryImportQueue::class)->findOneByFilename(self::FILENAME);
+        /** @var ImportQueue $queue */
+        $queue = $this->entityManager->getRepository(ImportQueue::class)->findOneByFilename(self::FILENAME);
 
-        $this->assertEquals(DeliveryImportQueue::STATUS_FAILED, $queue->getStatus());
+        $this->assertEquals(ImportQueue::STATUS_FAILED, $queue->getStatus());
         $this->assertEquals([
             [
                 'row' => $failedRow,
@@ -177,7 +177,7 @@ class ImportDeliveriesHandlerFunctionalTest extends KernelTestCase
         });
         // A failing flush closes the entity manager
         $deliveryOrderManager->createOrder(Argument::is($second), Argument::any())->will(function () use ($entityManager) {
-            $invalid = new DeliveryImportQueue();
+            $invalid = new ImportQueue(ImportQueue::TYPE_DELIVERIES);
             $invalid->setStatus('longer than the column allows');
             $entityManager->persist($invalid);
             $entityManager->flush();
@@ -211,7 +211,7 @@ class ImportDeliveriesHandlerFunctionalTest extends KernelTestCase
         $deliveryOrderManager = $this->prophesize(DeliveryOrderManager::class);
         // Persisted after the order was flushed
         $deliveryOrderManager->createOrder(Argument::is($first), Argument::any())->will(function () use ($entityManager, $order) {
-            $invalid = new DeliveryImportQueue();
+            $invalid = new ImportQueue(ImportQueue::TYPE_DELIVERIES);
             $invalid->setStatus('longer than the column allows');
             $entityManager->persist($invalid);
 
@@ -234,9 +234,9 @@ class ImportDeliveriesHandlerFunctionalTest extends KernelTestCase
 
     public function testFinishedImportIsSkipped(): void
     {
-        /** @var DeliveryImportQueue $queue */
-        $queue = $this->entityManager->getRepository(DeliveryImportQueue::class)->findOneByFilename(self::FILENAME);
-        $queue->setStatus(DeliveryImportQueue::STATUS_COMPLETED);
+        /** @var ImportQueue $queue */
+        $queue = $this->entityManager->getRepository(ImportQueue::class)->findOneByFilename(self::FILENAME);
+        $queue->setStatus(ImportQueue::STATUS_COMPLETED);
         $this->entityManager->flush();
 
         $parser = $this->prophesize(DeliverySpreadsheetParser::class);

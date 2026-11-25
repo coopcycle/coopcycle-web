@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\AppBundle\Service;
 
-use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
-use AppBundle\Service\DeliveryImportStatusManager;
+use AppBundle\Entity\ImportQueue;
+use AppBundle\Service\ImportStatusManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -15,10 +15,10 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
  * each with its own copy of the import in memory: what they tell each other
  * goes through the database.
  */
-class DeliveryImportStatusManagerTest extends KernelTestCase
+class ImportStatusManagerTest extends KernelTestCase
 {
     private EntityManager $entityManager;
-    private DeliveryImportStatusManager $statusManager;
+    private ImportStatusManager $statusManager;
 
     protected function setUp(): void
     {
@@ -28,7 +28,7 @@ class DeliveryImportStatusManagerTest extends KernelTestCase
         $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
         $this->entityManager->beginTransaction();
 
-        $this->statusManager = self::getContainer()->get(DeliveryImportStatusManager::class);
+        $this->statusManager = self::getContainer()->get(ImportStatusManager::class);
     }
 
     protected function tearDown(): void
@@ -40,9 +40,9 @@ class DeliveryImportStatusManagerTest extends KernelTestCase
         parent::tearDown();
     }
 
-    private function createImport(string $status): DeliveryImportQueue
+    private function createImport(string $status): ImportQueue
     {
-        $queue = new DeliveryImportQueue();
+        $queue = new ImportQueue(ImportQueue::TYPE_DELIVERIES);
         $queue->setFilename('deliveries.csv');
         $queue->setStatus($status);
 
@@ -52,20 +52,20 @@ class DeliveryImportStatusManagerTest extends KernelTestCase
         return $queue;
     }
 
-    private function fetchRow(DeliveryImportQueue $queue): array
+    private function fetchRow(ImportQueue $queue): array
     {
         return $this->entityManager->getConnection()->fetchAssociative(
-            'SELECT status, total_rows, processed_rows, error_rows, progressed_at FROM delivery_import_queue WHERE id = ?',
+            'SELECT status, total_rows, processed_rows, error_rows, progressed_at FROM import_queue WHERE id = ?',
             [$queue->getId()]
         );
     }
 
     public function testProgressIsWrittenWithoutAFlush(): void
     {
-        $queue = $this->createImport(DeliveryImportQueue::STATUS_STARTED);
+        $queue = $this->createImport(ImportQueue::STATUS_STARTED);
 
         // Something else the worker has in the unit of work, halfway through the file
-        $other = new DeliveryImportQueue();
+        $other = new ImportQueue(ImportQueue::TYPE_DELIVERIES);
         $other->setFilename('other.csv');
         $this->entityManager->persist($other);
 
@@ -83,29 +83,29 @@ class DeliveryImportStatusManagerTest extends KernelTestCase
 
     public function testCancellationIsReadFromTheDatabase(): void
     {
-        $queue = $this->createImport(DeliveryImportQueue::STATUS_STARTED);
+        $queue = $this->createImport(ImportQueue::STATUS_STARTED);
 
         $this->assertFalse($this->statusManager->isCancelled($queue));
 
         // As the admin would, behind the back of the worker's copy
         $this->entityManager->getConnection()->update(
-            'delivery_import_queue',
-            ['status' => DeliveryImportQueue::STATUS_CANCELLED],
+            'import_queue',
+            ['status' => ImportQueue::STATUS_CANCELLED],
             ['id' => $queue->getId()]
         );
 
-        $this->assertSame(DeliveryImportQueue::STATUS_STARTED, $queue->getStatus());
+        $this->assertSame(ImportQueue::STATUS_STARTED, $queue->getStatus());
         $this->assertTrue($this->statusManager->isCancelled($queue));
     }
 
     public function testPendingOrStartedImportCanBeCancelled(): void
     {
-        foreach ([DeliveryImportQueue::STATUS_PENDING, DeliveryImportQueue::STATUS_STARTED] as $status) {
+        foreach ([ImportQueue::STATUS_PENDING, ImportQueue::STATUS_STARTED] as $status) {
             $queue = $this->createImport($status);
 
             $this->assertTrue($this->statusManager->cancel($queue));
 
-            $this->assertSame(DeliveryImportQueue::STATUS_CANCELLED, $this->fetchRow($queue)['status']);
+            $this->assertSame(ImportQueue::STATUS_CANCELLED, $this->fetchRow($queue)['status']);
             $this->assertFalse($queue->isCancellable());
         }
     }
@@ -117,23 +117,23 @@ class DeliveryImportStatusManagerTest extends KernelTestCase
      */
     public function testCancelAndSavingExcludeEachOther(): void
     {
-        $cancelledFirst = $this->createImport(DeliveryImportQueue::STATUS_STARTED);
+        $cancelledFirst = $this->createImport(ImportQueue::STATUS_STARTED);
         $this->assertTrue($this->statusManager->cancel($cancelledFirst));
         $this->assertFalse($this->statusManager->saving($cancelledFirst));
-        $this->assertSame(DeliveryImportQueue::STATUS_CANCELLED, $this->fetchRow($cancelledFirst)['status']);
+        $this->assertSame(ImportQueue::STATUS_CANCELLED, $this->fetchRow($cancelledFirst)['status']);
 
-        $savingFirst = $this->createImport(DeliveryImportQueue::STATUS_STARTED);
+        $savingFirst = $this->createImport(ImportQueue::STATUS_STARTED);
         $this->assertTrue($this->statusManager->saving($savingFirst));
         $this->assertFalse($this->statusManager->cancel($savingFirst));
-        $this->assertSame(DeliveryImportQueue::STATUS_SAVING, $this->fetchRow($savingFirst)['status']);
+        $this->assertSame(ImportQueue::STATUS_SAVING, $this->fetchRow($savingFirst)['status']);
     }
 
     public function testFinishedImportCanNotBeCancelled(): void
     {
-        $queue = $this->createImport(DeliveryImportQueue::STATUS_COMPLETED);
+        $queue = $this->createImport(ImportQueue::STATUS_COMPLETED);
 
         $this->assertFalse($this->statusManager->cancel($queue));
-        $this->assertSame(DeliveryImportQueue::STATUS_COMPLETED, $this->fetchRow($queue)['status']);
+        $this->assertSame(ImportQueue::STATUS_COMPLETED, $this->fetchRow($queue)['status']);
     }
 
     /**
@@ -141,38 +141,38 @@ class DeliveryImportStatusManagerTest extends KernelTestCase
      */
     public function testDeliveriesOfAnImportAreCancelledOnce(): void
     {
-        $queue = $this->createImport(DeliveryImportQueue::STATUS_COMPLETED);
+        $queue = $this->createImport(ImportQueue::STATUS_COMPLETED);
 
-        $this->assertTrue($this->statusManager->cancellingDeliveries($queue));
-        $this->assertFalse($this->statusManager->cancellingDeliveries($queue));
+        $this->assertTrue($this->statusManager->cancellingItems($queue));
+        $this->assertFalse($this->statusManager->cancellingItems($queue));
 
         $this->assertSame(
-            DeliveryImportQueue::DELIVERIES_CANCELLING,
-            $this->entityManager->getConnection()->fetchOne('SELECT deliveries_cancellation FROM delivery_import_queue WHERE id = ?', [$queue->getId()])
+            ImportQueue::ITEMS_CANCELLING,
+            $this->entityManager->getConnection()->fetchOne('SELECT items_cancellation FROM import_queue WHERE id = ?', [$queue->getId()])
         );
     }
 
     public function testDeliveriesOfAnImportStillRunningAreNotCancelled(): void
     {
-        foreach ([DeliveryImportQueue::STATUS_PENDING, DeliveryImportQueue::STATUS_STARTED, DeliveryImportQueue::STATUS_SAVING] as $status) {
-            $this->assertFalse($this->statusManager->cancellingDeliveries($this->createImport($status)), $status);
+        foreach ([ImportQueue::STATUS_PENDING, ImportQueue::STATUS_STARTED, ImportQueue::STATUS_SAVING] as $status) {
+            $this->assertFalse($this->statusManager->cancellingItems($this->createImport($status)), $status);
         }
     }
 
     public function testDeliveriesCancellationIsWrittenWithoutAFlush(): void
     {
-        $queue = $this->createImport(DeliveryImportQueue::STATUS_COMPLETED);
-        $this->statusManager->cancellingDeliveries($queue);
+        $queue = $this->createImport(ImportQueue::STATUS_COMPLETED);
+        $this->statusManager->cancellingItems($queue);
 
         // The worker clears the entity manager as it goes
         $this->entityManager->clear();
 
-        $this->statusManager->deliveriesCancelled($queue, 30, 28, 2);
+        $this->statusManager->itemsCancelled($queue, 30, 28, 2);
 
         $this->assertEquals(
-            ['deliveries_cancellation' => 'cancelled', 'deliveries_to_cancel' => 30, 'cancelled_deliveries' => 28, 'skipped_deliveries' => 2],
+            ['items_cancellation' => 'cancelled', 'items_to_cancel' => 30, 'cancelled_items' => 28, 'skipped_items' => 2],
             $this->entityManager->getConnection()->fetchAssociative(
-                'SELECT deliveries_cancellation, deliveries_to_cancel, cancelled_deliveries, skipped_deliveries FROM delivery_import_queue WHERE id = ?',
+                'SELECT items_cancellation, items_to_cancel, cancelled_items, skipped_items FROM import_queue WHERE id = ?',
                 [$queue->getId()]
             )
         );
@@ -180,29 +180,29 @@ class DeliveryImportStatusManagerTest extends KernelTestCase
 
     public function testFailedCancellationCanBeAskedAgain(): void
     {
-        $queue = $this->createImport(DeliveryImportQueue::STATUS_COMPLETED);
-        $this->statusManager->cancellingDeliveries($queue);
+        $queue = $this->createImport(ImportQueue::STATUS_COMPLETED);
+        $this->statusManager->cancellingItems($queue);
 
-        $this->statusManager->deliveriesCancellationFailed($queue, false);
+        $this->statusManager->itemsCancellationFailed($queue, false);
 
-        $this->assertTrue($this->statusManager->cancellingDeliveries($queue));
+        $this->assertTrue($this->statusManager->cancellingItems($queue));
     }
 
     public function testMappingAnImportHandsItToAWorker(): void
     {
-        $queue = $this->createImport(DeliveryImportQueue::STATUS_MAPPING);
+        $queue = $this->createImport(ImportQueue::STATUS_MAPPING);
 
         $this->assertTrue($this->statusManager->queued($queue, [0 => 'pickup.address']));
 
         $this->assertEquals(
-            DeliveryImportQueue::STATUS_PENDING,
+            ImportQueue::STATUS_PENDING,
             $this->fetchRow($queue)['status']
         );
         $this->assertEquals([0 => 'pickup.address'], $queue->getColumnMapping());
         $this->assertEquals(
             ['0' => 'pickup.address'],
             json_decode($this->entityManager->getConnection()->fetchOne(
-                'SELECT column_mapping FROM delivery_import_queue WHERE id = ?',
+                'SELECT column_mapping FROM import_queue WHERE id = ?',
                 [$queue->getId()]
             ), true)
         );
@@ -214,7 +214,7 @@ class DeliveryImportStatusManagerTest extends KernelTestCase
      */
     public function testAnImportIsOnlyHandedToAWorkerOnce(): void
     {
-        $queue = $this->createImport(DeliveryImportQueue::STATUS_MAPPING);
+        $queue = $this->createImport(ImportQueue::STATUS_MAPPING);
 
         $this->assertTrue($this->statusManager->queued($queue, [0 => 'pickup.address']));
         $this->assertFalse($this->statusManager->queued($queue, [0 => 'dropoff.address']));
@@ -227,15 +227,15 @@ class DeliveryImportStatusManagerTest extends KernelTestCase
      */
     public function testAnImportWaitingToBeMappedCanBeCancelled(): void
     {
-        $queue = $this->createImport(DeliveryImportQueue::STATUS_MAPPING);
+        $queue = $this->createImport(ImportQueue::STATUS_MAPPING);
 
         $this->assertTrue($this->statusManager->cancel($queue));
-        $this->assertEquals(DeliveryImportQueue::STATUS_CANCELLED, $this->fetchRow($queue)['status']);
+        $this->assertEquals(ImportQueue::STATUS_CANCELLED, $this->fetchRow($queue)['status']);
     }
 
     public function testACancelledImportIsNotHandedToAWorker(): void
     {
-        $queue = $this->createImport(DeliveryImportQueue::STATUS_MAPPING);
+        $queue = $this->createImport(ImportQueue::STATUS_MAPPING);
         $this->statusManager->cancel($queue);
 
         $this->assertFalse($this->statusManager->queued($queue, [0 => 'pickup.address']));
@@ -247,7 +247,7 @@ class DeliveryImportStatusManagerTest extends KernelTestCase
      */
     public function testEveryCancellableStatusIsActuallyCancellable(): void
     {
-        foreach (DeliveryImportQueue::CANCELLABLE_STATUSES as $status) {
+        foreach (ImportQueue::CANCELLABLE_STATUSES as $status) {
             $queue = $this->createImport($status);
 
             $this->assertTrue($queue->isCancellable(), sprintf('%s is cancellable', $status));
@@ -259,12 +259,12 @@ class DeliveryImportStatusManagerTest extends KernelTestCase
     {
         $others = array_diff(
             [
-                DeliveryImportQueue::STATUS_SAVING,
-                DeliveryImportQueue::STATUS_COMPLETED,
-                DeliveryImportQueue::STATUS_FAILED,
-                DeliveryImportQueue::STATUS_CANCELLED,
+                ImportQueue::STATUS_SAVING,
+                ImportQueue::STATUS_COMPLETED,
+                ImportQueue::STATUS_FAILED,
+                ImportQueue::STATUS_CANCELLED,
             ],
-            DeliveryImportQueue::CANCELLABLE_STATUSES
+            ImportQueue::CANCELLABLE_STATUSES
         );
 
         foreach ($others as $status) {

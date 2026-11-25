@@ -2,11 +2,11 @@
 
 namespace AppBundle\Controller\Utils;
 
-use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
+use AppBundle\Entity\ImportQueue;
 use AppBundle\Entity\Store;
 use AppBundle\Form\DeliveryImportMappingType;
 use AppBundle\Message\ImportDeliveries;
-use AppBundle\Service\DeliveryImportStatusManager;
+use AppBundle\Service\ImportStatusManager;
 use AppBundle\Spreadsheet\Column\ColumnDetector;
 use AppBundle\Spreadsheet\Column\ColumnMapping;
 use AppBundle\Spreadsheet\DeliverySpreadsheetParser;
@@ -60,9 +60,9 @@ trait DeliveryImportTrait
         /** @var UploadedFile $uploadedFile */
         $uploadedFile = $form->get('file')->getData();
 
-        $queue = new DeliveryImportQueue();
+        $queue = new ImportQueue(ImportQueue::TYPE_DELIVERIES);
         $queue->setStore($store);
-        $queue->setStatus(DeliveryImportQueue::STATUS_MAPPING);
+        $queue->setStatus(ImportQueue::STATUS_MAPPING);
 
         $entityManager->persist($queue);
         $entityManager->flush();
@@ -119,14 +119,14 @@ trait DeliveryImportTrait
         Filesystem $filesystem,
         DeliverySpreadsheetParser $parser,
         ColumnDetector $detector,
-        DeliveryImportStatusManager $statusManager,
+        ImportStatusManager $statusManager,
         MessageBusInterface $messageBus,
         LoggerInterface $logger,
         string $routeTo,
     )
     {
-        /** @var ?DeliveryImportQueue $queue */
-        $queue = $entityManager->getRepository(DeliveryImportQueue::class)->find($id);
+        /** @var ?ImportQueue $queue */
+        $queue = $entityManager->getRepository(ImportQueue::class)->find($id);
 
         if (is_null($queue)) {
             throw $this->createNotFoundException();
@@ -233,7 +233,7 @@ trait DeliveryImportTrait
     /**
      * The readers want a file on disk, the imports live on a filesystem that may not be one
      */
-    private function toTempFile(Filesystem $filesystem, DeliveryImportQueue $queue): string
+    private function toTempFile(Filesystem $filesystem, ImportQueue $queue): string
     {
         $tempnam = tempnam(sys_get_temp_dir(), 'coopcycle_delivery_import_mapping');
 

@@ -26,7 +26,7 @@ use AppBundle\Entity\Cuisine;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\DeliveryRepository;
-use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
+use AppBundle\Entity\ImportQueue;
 use AppBundle\Entity\EmployeeProfile;
 use AppBundle\Entity\EmployeeProfileRepository;
 use AppBundle\Entity\HolidayRequestRepository;
@@ -56,7 +56,7 @@ use AppBundle\Form\BannerType;
 use AppBundle\Form\CustomizeType;
 use AppBundle\Form\DataExportType;
 use AppBundle\Form\DeliveryImportType;
-use AppBundle\Service\DeliveryImportStatusManager;
+use AppBundle\Service\ImportStatusManager;
 use AppBundle\Spreadsheet\Column\ColumnDetector;
 use AppBundle\Spreadsheet\DeliverySpreadsheetParser;
 use AppBundle\Form\EmbedSettingsType;
@@ -1016,7 +1016,7 @@ class AdminController extends AbstractController
 
         $importDate = new \DateTime($request->query->get('date', 'now'));
 
-        $importQueues = $this->entityManager->getRepository(DeliveryImportQueue::class)
+        $importQueues = $this->entityManager->getRepository(ImportQueue::class)
             ->createQueryBuilder('diq')
             ->andWhere('DATE(diq.createdAt) = :import_date')
             ->orderBy('diq.createdAt', 'DESC')
@@ -1026,7 +1026,7 @@ class AdminController extends AbstractController
 
         // A failed import has saved no delivery, or some of them
         $importedDeliveries = $this->entityManager->getRepository(Delivery::class)
-            ->countByImport(array_map(fn (DeliveryImportQueue $queue) => $queue->getId(), $importQueues));
+            ->countByImport(array_map(fn (ImportQueue $queue) => $queue->getId(), $importQueues));
 
         return $this->render('admin/deliveries.html.twig', $this->auth([
             'deliveries' => $deliveries,
@@ -1050,7 +1050,7 @@ class AdminController extends AbstractController
         Filesystem $deliveryImportsFilesystem,
         DeliverySpreadsheetParser $spreadsheetParser,
         ColumnDetector $columnDetector,
-        DeliveryImportStatusManager $statusManager,
+        ImportStatusManager $statusManager,
         MessageBusInterface $messageBus,
     )
     {

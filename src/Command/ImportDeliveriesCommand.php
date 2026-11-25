@@ -3,7 +3,7 @@
 namespace AppBundle\Command;
 
 use ApiPlatform\Api\IriConverterInterface;
-use AppBundle\Entity\Delivery\ImportQueue;
+use AppBundle\Entity\ImportQueue;
 use AppBundle\Entity\Store;
 use AppBundle\Message\ImportDeliveries;
 use AppBundle\Transporter\ImportFailureNotifier;
@@ -204,7 +204,7 @@ class ImportDeliveriesCommand extends Command {
 
     private function process(Store $store, string $csv): ImportQueue
     {
-        $queue = new ImportQueue();
+        $queue = new ImportQueue(ImportQueue::TYPE_DELIVERIES);
 
         $queue->setStore($store);
 

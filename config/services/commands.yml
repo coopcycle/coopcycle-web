@@ -19,9 +19,11 @@ services:
     tags:
       - { name: 'console.command', command: 'coopcycle:orders:repair-missing-delivery-price' }
 
-  AppBundle\Command\FailStaleDeliveryImportsCommand:
+  AppBundle\Command\FailStaleImportsCommand:
     tags:
-      - { name: 'console.command', command: 'coopcycle:deliveries:fail-stale-imports' }
+      # The second name is the one the deployments' cron entries call. A lazily loaded
+      # command takes its aliases from here, not from setAliases() in configure().
+      - { name: 'console.command', command: 'coopcycle:imports:fail-stale|coopcycle:deliveries:fail-stale-imports' }
 
   # Replace Sylius' generate-coupons command with our subclass that adds
   # --prefix / --suffix. Registered under the vendor service id so the existing

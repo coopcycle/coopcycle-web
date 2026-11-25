@@ -2,8 +2,8 @@
 
 namespace AppBundle\Command;
 
-use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
-use AppBundle\Service\DeliveryImportStatusManager;
+use AppBundle\Entity\ImportQueue;
+use AppBundle\Service\ImportStatusManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -13,10 +13,10 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Closes the delivery imports that no worker is handling any more.
+ * Closes the imports that no worker is handling any more.
  *
  * An import is moved out of "pending"/"started" by the worker, either by the
- * handler finishing or by DeliveryImportFailureSubscriber when the message is
+ * handler finishing or by ImportFailureSubscriber when the message is
  * given up on. Neither runs if the worker never picks the message up, or dies
  * mid-import (out of memory, a deploy, the host going away), and the import
  * then spins in the admin for good.
@@ -27,7 +27,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  *
  * Meant to be run periodically.
  */
-class FailStaleDeliveryImportsCommand extends Command
+class FailStaleImportsCommand extends Command
 {
     private const DEFAULT_MINUTES = 60;
 
@@ -41,7 +41,7 @@ class FailStaleDeliveryImportsCommand extends Command
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly DeliveryImportStatusManager $statusManager,
+        private readonly ImportStatusManager $statusManager,
         private readonly TranslatorInterface $translator
     ) {
         parent::__construct();
@@ -50,8 +50,10 @@ class FailStaleDeliveryImportsCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('coopcycle:deliveries:fail-stale-imports')
-            ->setDescription('Fails the delivery imports left unfinished by a worker that is gone')
+            ->setName('coopcycle:imports:fail-stale')
+            // The old name, which the deployments' cron entries still call
+            ->setAliases(['coopcycle:deliveries:fail-stale-imports'])
+            ->setDescription('Fails the imports left unfinished by a worker that is gone')
             ->addOption(
                 'older-than',
                 null,
@@ -111,7 +113,7 @@ class FailStaleDeliveryImportsCommand extends Command
 
         if (0 === count($queues)) {
             if (0 === $abandoned) {
-                $this->io->success('No stale delivery import');
+                $this->io->success('No stale import');
             }
 
             return Command::SUCCESS;
@@ -132,7 +134,7 @@ class FailStaleDeliveryImportsCommand extends Command
             if (!$dryRun) {
                 $this->statusManager->failed(
                     $queue,
-                    DeliveryImportStatusManager::errorForWholeImport($message)
+                    ImportStatusManager::errorForWholeImport($message)
                 );
             }
         }
@@ -145,7 +147,7 @@ class FailStaleDeliveryImportsCommand extends Command
             return Command::SUCCESS;
         }
 
-        $this->io->success(sprintf('Failed %d stale delivery import(s)', count($rows)));
+        $this->io->success(sprintf('Failed %d stale import(s)', count($rows)));
 
         return Command::SUCCESS;
     }
@@ -161,13 +163,13 @@ class FailStaleDeliveryImportsCommand extends Command
      */
     private function cancelAbandonedMappings(\DateTime $threshold, bool $dryRun): int
     {
-        /** @var DeliveryImportQueue[] $queues */
+        /** @var ImportQueue[] $queues */
         $queues = $this->entityManager
-            ->getRepository(DeliveryImportQueue::class)
+            ->getRepository(ImportQueue::class)
             ->createQueryBuilder('q')
             ->andWhere('q.status = :mapping')
             ->andWhere('q.createdAt < :threshold')
-            ->setParameter('mapping', DeliveryImportQueue::STATUS_MAPPING)
+            ->setParameter('mapping', ImportQueue::STATUS_MAPPING)
             ->setParameter('threshold', $threshold)
             ->orderBy('q.id', 'ASC')
             ->getQuery()
@@ -203,25 +205,25 @@ class FailStaleDeliveryImportsCommand extends Command
     }
 
     /**
-     * @return DeliveryImportQueue[]
+     * @return ImportQueue[]
      */
     private function findStaleImports(\DateTime $threshold): array
     {
         return $this->entityManager
-            ->getRepository(DeliveryImportQueue::class)
+            ->getRepository(ImportQueue::class)
             ->createQueryBuilder('q')
             ->andWhere('q.status IN (:statuses)')
             // A large import takes hours, what tells it from a dead one is that it keeps
             // reporting its progress. An import the worker never picked up is still
             // pending, and has neither progressedAt nor startedAt to go by.
-            // While saving, nothing is reported: the deliveries are saved in a single
-            // transaction, the progress written meanwhile would not be seen. progressedAt
-            // is when saving started, and a worker dying then rolls the deliveries back.
+            // While saving, nothing is reported: a file is saved in a single transaction,
+            // the progress written meanwhile would not be seen. progressedAt is when
+            // saving started, and a worker dying then rolls it all back.
             ->andWhere('COALESCE(q.progressedAt, q.startedAt, q.createdAt) < :threshold')
             ->setParameter('statuses', [
-                DeliveryImportQueue::STATUS_PENDING,
-                DeliveryImportQueue::STATUS_STARTED,
-                DeliveryImportQueue::STATUS_SAVING,
+                ImportQueue::STATUS_PENDING,
+                ImportQueue::STATUS_STARTED,
+                ImportQueue::STATUS_SAVING,
             ])
             ->setParameter('threshold', $threshold)
             ->orderBy('q.id', 'ASC')

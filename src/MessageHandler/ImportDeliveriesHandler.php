@@ -2,13 +2,13 @@
 
 namespace AppBundle\MessageHandler;
 
-use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
+use AppBundle\Entity\ImportQueue;
 use AppBundle\Entity\Tour;
 use AppBundle\Entity\TourRepository;
 use AppBundle\Exception\DeliveryImportCancelledException;
 use AppBundle\Message\ImportDeliveries;
 use AppBundle\Service\DeliveryCreatedNotifier;
-use AppBundle\Service\DeliveryImportStatusManager;
+use AppBundle\Service\ImportStatusManager;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\LiveUpdatesSuspension;
 use AppBundle\Service\DeliveryOrderManager;
@@ -39,7 +39,7 @@ class ImportDeliveriesHandler
         private DeliverySpreadsheetParser $spreadsheetParser,
         private ValidatorInterface $validator,
         private DeliveryOrderManager $deliveryOrderManager,
-        private DeliveryImportStatusManager $statusManager,
+        private ImportStatusManager $statusManager,
         private DeliveryManager $deliveryManager,
         private LoggerInterface $logger,
         private TourRepository $tourRepository,
@@ -66,7 +66,7 @@ class ImportDeliveriesHandler
         }
 
         $queue = $this->entityManager
-            ->getRepository(DeliveryImportQueue::class)
+            ->getRepository(ImportQueue::class)
             ->findOneByFilename($message->getFilename());
 
         if (null === $queue) {
@@ -81,7 +81,7 @@ class ImportDeliveriesHandler
         // after an hour, which a large file easily takes: without this, a second
         // worker would import the same file alongside the first one.
         // A message retried after an error was put back to pending, see DeliveryImportFailureSubscriber.
-        if (DeliveryImportQueue::STATUS_PENDING !== $queue->getStatus()) {
+        if (ImportQueue::STATUS_PENDING !== $queue->getStatus()) {
             $this->logger->info(
                 sprintf('Not importing deliveries from %s, the import is %s', $message->getFilename(), $queue->getStatus()),
                 ['store_id' => $store->getId()]
@@ -189,7 +189,7 @@ class ImportDeliveriesHandler
      *
      * @return string[] the days the tasks saved are on, as Y-m-d
      */
-    private function saveDeliveries(DeliveryImportQueue $queue, SpreadsheetParseResult $result, ?int &$rowNumber): array
+    private function saveDeliveries(ImportQueue $queue, SpreadsheetParseResult $result, ?int &$rowNumber): array
     {
         $store = $queue->getStore();
 
@@ -278,9 +278,9 @@ class ImportDeliveriesHandler
             $this->doctrine->resetManager();
         }
 
-        /** @var ?DeliveryImportQueue $queue */
+        /** @var ?ImportQueue $queue */
         $queue = $this->doctrine->getManager()
-            ->getRepository(DeliveryImportQueue::class)
+            ->getRepository(ImportQueue::class)
             ->findOneBy(['filename' => $filename]);
 
         if (is_null($queue)) {
@@ -295,7 +295,7 @@ class ImportDeliveriesHandler
         $this->statusManager->failed($queue, $errors);
     }
 
-    private function onRow(DeliveryImportQueue $queue, int $processedRows, int $totalRows, int $errorRows): void
+    private function onRow(ImportQueue $queue, int $processedRows, int $totalRows, int $errorRows): void
     {
         $isFirstOrLastRow = 1 === $processedRows || $totalRows === $processedRows;
 
@@ -313,7 +313,7 @@ class ImportDeliveriesHandler
     /**
      * @throws DeliveryImportCancelledException
      */
-    private function stopIfCancelled(DeliveryImportQueue $queue): void
+    private function stopIfCancelled(ImportQueue $queue): void
     {
         if ($this->statusManager->isCancelled($queue)) {
             throw new DeliveryImportCancelledException(sprintf('The import of %s was cancelled', $queue->getFilename()));

@@ -179,9 +179,9 @@ const importStatusIcon = {
   'completed': 'check',
   'failed': 'exclamation-triangle',
   'cancelled': 'ban',
-  // Once the import is over, its deliveries cancelled by a dispatcher: nothing from the file is left either
-  'deliveries_cancelling': 'spinner fa-spin',
-  'deliveries_cancelled': 'ban',
+  // Once the import is over and what it created was cancelled by a dispatcher: nothing from the file is left either
+  'items_cancelling': 'spinner fa-spin',
+  'items_cancelled': 'ban',
 }
 
 // Kept in step with ImportQueue::CANCELLABLE_STATUSES
@@ -226,26 +226,26 @@ function _importProgressText({ status, startedAt, totalRows, processedRows, erro
     }))
   }
 
-  return parts.concat(_deliveriesCancellationText(cancellation)).join(' · ')
+  return parts.concat(_itemsCancellationText(cancellation)).join(' · ')
 }
 
-function _deliveriesCancellationText({ deliveriesCancellation, deliveriesToCancel, cancelledDeliveries, skippedDeliveries }) {
-  if (deliveriesCancellation === 'cancelling') {
+function _itemsCancellationText({ itemsCancellation, itemsToCancel, cancelledItems, skippedItems }) {
+  if (itemsCancellation === 'cancelling') {
     // Unknown until a worker has looked them up
-    if (deliveriesToCancel === null) {
+    if (itemsToCancel === null) {
       return [ _t('DELIVERY_IMPORT_CANCELLING_DELIVERIES') ]
     }
 
     return [ _t('DELIVERY_IMPORT_CANCELLING_DELIVERIES_PROGRESS', {
-      done: (cancelledDeliveries + skippedDeliveries).toLocaleString(),
-      total: deliveriesToCancel.toLocaleString(),
+      done: (cancelledItems + skippedItems).toLocaleString(),
+      total: itemsToCancel.toLocaleString(),
     }) ]
   }
 
-  if (deliveriesCancellation === 'cancelled') {
-    const parts = [ _t('DELIVERY_IMPORT_DELIVERIES_CANCELLED', { count: cancelledDeliveries }) ]
-    if (skippedDeliveries > 0) {
-      parts.push(_t('DELIVERY_IMPORT_DELIVERIES_LEFT', { count: skippedDeliveries }))
+  if (itemsCancellation === 'cancelled') {
+    const parts = [ _t('DELIVERY_IMPORT_DELIVERIES_CANCELLED', { count: cancelledItems }) ]
+    if (skippedItems > 0) {
+      parts.push(_t('DELIVERY_IMPORT_DELIVERIES_LEFT', { count: skippedItems }))
     }
 
     return parts
@@ -254,9 +254,9 @@ function _deliveriesCancellationText({ deliveriesCancellation, deliveriesToCance
   return []
 }
 
-// The state of its deliveries, once they are being cancelled, rather than that of the import
-function _displayStatus({ status, deliveriesCancellation }) {
-  return deliveriesCancellation ? `deliveries_${deliveriesCancellation}` : status
+// The state of what it created, once that is being cancelled, rather than that of the import
+function _displayStatus({ status, itemsCancellation }) {
+  return itemsCancellation ? `items_${itemsCancellation}` : status
 }
 
 function _renderImportStatus(row, importQueue) {
@@ -269,7 +269,7 @@ function _renderImportProgress(row, progress) {
   row.querySelector('[data-delivery-import-cancel-button]')
     .classList.toggle('d-none', !cancellableImportStatuses.includes(progress.status))
   // Only once
-  if (progress.deliveriesCancellation) {
+  if (progress.itemsCancellation) {
     row.querySelector('[data-delivery-import-cancel-deliveries-button]').classList.add('d-none')
   }
 }
@@ -277,7 +277,7 @@ function _renderImportProgress(row, progress) {
 function _progressFromDataset(el) {
   const {
     status, startedAt, totalRows, processedRows, errorRows,
-    deliveriesCancellation, deliveriesToCancel, cancelledDeliveries, skippedDeliveries,
+    itemsCancellation, itemsToCancel, cancelledItems, skippedItems,
   } = el.dataset
 
   return {
@@ -286,10 +286,10 @@ function _progressFromDataset(el) {
     totalRows: totalRows ? parseInt(totalRows, 10) : null,
     processedRows: parseInt(processedRows || '0', 10),
     errorRows: parseInt(errorRows || '0', 10),
-    deliveriesCancellation: deliveriesCancellation || null,
-    deliveriesToCancel: deliveriesToCancel ? parseInt(deliveriesToCancel, 10) : null,
-    cancelledDeliveries: parseInt(cancelledDeliveries || '0', 10),
-    skippedDeliveries: parseInt(skippedDeliveries || '0', 10),
+    itemsCancellation: itemsCancellation || null,
+    itemsToCancel: itemsToCancel ? parseInt(itemsToCancel, 10) : null,
+    cancelledItems: parseInt(cancelledItems || '0', 10),
+    skippedItems: parseInt(skippedItems || '0', 10),
   }
 }
 
@@ -463,7 +463,7 @@ if (deliveryImports) {
 
   subscribe(centrifuge, deliveryImports.dataset.centrifugoChannel, function(data) {
     const { event } = data
-    if (event.name === 'delivery_import:updated') {
+    if (event.name === 'import:updated') {
       const row = document.querySelector(`[data-delivery-import-filename="${event.data.filename}"]`)
       // An import from another day than the one displayed
       if (!row) {
@@ -472,7 +472,7 @@ if (deliveryImports) {
       _renderImportProgress(row, event.data)
       _renderImportStatus(row, event.data)
       // The number of deliveries is only known on reload, but a completed import has some
-      if (event.data.status === 'completed' && !event.data.deliveriesCancellation) {
+      if (event.data.status === 'completed' && !event.data.itemsCancellation) {
         row.querySelector('[data-delivery-import-cancel-deliveries-button]').classList.remove('d-none')
       }
       if (event.data.status === 'failed') {

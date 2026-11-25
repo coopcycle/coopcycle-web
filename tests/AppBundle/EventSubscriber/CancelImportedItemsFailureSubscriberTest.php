@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\AppBundle\EventSubscriber;
 
-use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
+use AppBundle\Entity\ImportQueue;
 use AppBundle\Entity\Store;
-use AppBundle\EventSubscriber\CancelImportedDeliveriesFailureSubscriber;
-use AppBundle\Message\CancelImportedDeliveries;
+use AppBundle\EventSubscriber\CancelImportedItemsFailureSubscriber;
+use AppBundle\Message\CancelImportedItems;
 use AppBundle\Message\ImportDeliveries;
-use AppBundle\Service\DeliveryImportStatusManager;
+use AppBundle\Service\ImportStatusManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use PHPUnit\Framework\TestCase;
@@ -19,31 +19,31 @@ use Psr\Log\NullLogger;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Event\WorkerMessageFailedEvent;
 
-class CancelImportedDeliveriesFailureSubscriberTest extends TestCase
+class CancelImportedItemsFailureSubscriberTest extends TestCase
 {
     use ProphecyTrait;
 
     private $statusManager;
-    private DeliveryImportQueue $queue;
-    private CancelImportedDeliveriesFailureSubscriber $subscriber;
+    private ImportQueue $queue;
+    private CancelImportedItemsFailureSubscriber $subscriber;
 
     public function setUp(): void
     {
-        $this->queue = new DeliveryImportQueue();
+        $this->queue = new ImportQueue(ImportQueue::TYPE_DELIVERIES);
         $this->queue->setStore(new Store());
         $this->queue->setFilename('deliveries.csv');
 
         $entityManager = $this->prophesize(EntityManagerInterface::class);
         $entityManager->isOpen()->willReturn(true);
-        $entityManager->find(DeliveryImportQueue::class, 18)->willReturn($this->queue);
+        $entityManager->find(ImportQueue::class, 18)->willReturn($this->queue);
 
         $doctrine = $this->prophesize(ManagerRegistry::class);
         $doctrine->getManager()->willReturn($entityManager->reveal());
 
-        $this->statusManager = $this->prophesize(DeliveryImportStatusManager::class);
-        $this->statusManager->deliveriesCancellationFailed(Argument::cetera())->will(function () {});
+        $this->statusManager = $this->prophesize(ImportStatusManager::class);
+        $this->statusManager->itemsCancellationFailed(Argument::cetera())->will(function () {});
 
-        $this->subscriber = new CancelImportedDeliveriesFailureSubscriber(
+        $this->subscriber = new CancelImportedItemsFailureSubscriber(
             $doctrine->reveal(),
             $this->statusManager->reveal(),
             new NullLogger()
@@ -66,9 +66,9 @@ class CancelImportedDeliveriesFailureSubscriberTest extends TestCase
      */
     public function testCancellationIsPutBackForTheRetry(): void
     {
-        $this->subscriber->onFailure($this->failedEvent(new CancelImportedDeliveries(18), true));
+        $this->subscriber->onFailure($this->failedEvent(new CancelImportedItems(18), true));
 
-        $this->statusManager->deliveriesCancellationFailed($this->queue, true)->shouldHaveBeenCalledOnce();
+        $this->statusManager->itemsCancellationFailed($this->queue, true)->shouldHaveBeenCalledOnce();
     }
 
     /**
@@ -76,15 +76,15 @@ class CancelImportedDeliveriesFailureSubscriberTest extends TestCase
      */
     public function testCancellationGivenUpOnIsReset(): void
     {
-        $this->subscriber->onFailure($this->failedEvent(new CancelImportedDeliveries(18), false));
+        $this->subscriber->onFailure($this->failedEvent(new CancelImportedItems(18), false));
 
-        $this->statusManager->deliveriesCancellationFailed($this->queue, false)->shouldHaveBeenCalledOnce();
+        $this->statusManager->itemsCancellationFailed($this->queue, false)->shouldHaveBeenCalledOnce();
     }
 
     public function testOtherMessagesAreIgnored(): void
     {
         $this->subscriber->onFailure($this->failedEvent(new ImportDeliveries('deliveries.csv'), false));
 
-        $this->statusManager->deliveriesCancellationFailed(Argument::cetera())->shouldNotHaveBeenCalled();
+        $this->statusManager->itemsCancellationFailed(Argument::cetera())->shouldNotHaveBeenCalled();
     }
 }

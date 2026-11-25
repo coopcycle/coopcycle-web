@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Tests\AppBundle\MessageHandler;
 
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
+use AppBundle\Entity\ImportQueue;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\TourRepository;
 use AppBundle\Message\ImportDeliveries;
 use AppBundle\MessageHandler\ImportDeliveriesHandler;
 use AppBundle\Service\DeliveryCreatedNotifier;
-use AppBundle\Service\DeliveryImportStatusManager;
+use AppBundle\Service\ImportStatusManager;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\LiveUpdatesSuspension;
 use AppBundle\Service\DeliveryOrderManager;
@@ -67,18 +67,18 @@ class ImportDeliveriesHandlerTest extends TestCase
         $filesystem->write('deliveries.csv', 'pickup.address,dropoff.address');
 
         $repository = new class($queue) extends EntityRepository {
-            public function __construct(private readonly DeliveryImportQueue $queue)
+            public function __construct(private readonly ImportQueue $queue)
             {
             }
 
-            public function findOneByFilename(string $filename): ?DeliveryImportQueue
+            public function findOneByFilename(string $filename): ?ImportQueue
             {
                 return $filename === $this->queue->getFilename() ? $this->queue : null;
             }
         };
 
         $entityManager = $this->prophesize(EntityManagerInterface::class);
-        $entityManager->getRepository(DeliveryImportQueue::class)->willReturn($repository);
+        $entityManager->getRepository(ImportQueue::class)->willReturn($repository);
         $entityManager->flush()->shouldBeCalled();
         $entityManager->beginTransaction()->will(function () {});
         $entityManager->commit()->will(function () {});
@@ -150,15 +150,15 @@ class ImportDeliveriesHandlerTest extends TestCase
         $statusManager->failed(Argument::cetera())->shouldNotHaveBeenCalled();
     }
 
-    private function createQueue(Store $store, int $id, string $status = DeliveryImportQueue::STATUS_PENDING): DeliveryImportQueue
+    private function createQueue(Store $store, int $id, string $status = ImportQueue::STATUS_PENDING): ImportQueue
     {
-        $queue = new DeliveryImportQueue();
+        $queue = new ImportQueue(ImportQueue::TYPE_DELIVERIES);
         $queue->setStore($store);
         $queue->setFilename('deliveries.csv');
         $queue->setStatus($status);
 
         // Set by the database
-        (new \ReflectionProperty(DeliveryImportQueue::class, 'id'))->setValue($queue, $id);
+        (new \ReflectionProperty(ImportQueue::class, 'id'))->setValue($queue, $id);
 
         return $queue;
     }
@@ -166,21 +166,21 @@ class ImportDeliveriesHandlerTest extends TestCase
     /**
      * The repository is an anonymous class, as findOneByFilename() is a magic method Prophecy can't double
      */
-    private function createEntityManager(DeliveryImportQueue $queue)
+    private function createEntityManager(ImportQueue $queue)
     {
         $repository = new class($queue) extends EntityRepository {
-            public function __construct(private readonly DeliveryImportQueue $queue)
+            public function __construct(private readonly ImportQueue $queue)
             {
             }
 
-            public function findOneByFilename(string $filename): ?DeliveryImportQueue
+            public function findOneByFilename(string $filename): ?ImportQueue
             {
                 return $filename === $this->queue->getFilename() ? $this->queue : null;
             }
         };
 
         $entityManager = $this->prophesize(EntityManagerInterface::class);
-        $entityManager->getRepository(DeliveryImportQueue::class)->willReturn($repository);
+        $entityManager->getRepository(ImportQueue::class)->willReturn($repository);
         $entityManager->persist(Argument::any())->willReturn(null);
         $entityManager->flush()->willReturn(null);
         $entityManager->beginTransaction()->will(function () {});
@@ -193,9 +193,9 @@ class ImportDeliveriesHandlerTest extends TestCase
      * @param bool $saving whether the import can still be moved to "saving" once the file is read
      * @param bool ...$isCancelled what each cancellation check returns, in turn
      */
-    private function createStatusManager(DeliveryImportQueue $queue, bool $saving, bool ...$isCancelled)
+    private function createStatusManager(ImportQueue $queue, bool $saving, bool ...$isCancelled)
     {
-        $statusManager = $this->prophesize(DeliveryImportStatusManager::class);
+        $statusManager = $this->prophesize(ImportStatusManager::class);
         $statusManager->started($queue)->will(function () {});
         $statusManager->progress($queue, Argument::cetera())->will(function () {});
         $statusManager->completed($queue)->will(function () {});
@@ -237,14 +237,14 @@ class ImportDeliveriesHandlerTest extends TestCase
     public function testImportThatIsNotPendingIsLeftAlone(): void
     {
         foreach ([
-            DeliveryImportQueue::STATUS_STARTED,
-            DeliveryImportQueue::STATUS_CANCELLED,
-            DeliveryImportQueue::STATUS_COMPLETED,
+            ImportQueue::STATUS_STARTED,
+            ImportQueue::STATUS_CANCELLED,
+            ImportQueue::STATUS_COMPLETED,
         ] as $status) {
             $queue = $this->createQueue(new Store(), 42, $status);
 
             $parser = $this->prophesize(DeliverySpreadsheetParser::class);
-            $statusManager = $this->prophesize(DeliveryImportStatusManager::class);
+            $statusManager = $this->prophesize(ImportStatusManager::class);
 
             $handler = $this->createHandler($this->createEntityManager($queue), $parser, $statusManager);
             $handler(new ImportDeliveries('deliveries.csv'));
@@ -433,16 +433,16 @@ class ImportDeliveriesHandlerTest extends TestCase
      */
     public function testImportWaitingForItsColumnsToBeMappedIsLeftAlone(): void
     {
-        $queue = $this->createQueue(new Store(), 42, DeliveryImportQueue::STATUS_MAPPING);
+        $queue = $this->createQueue(new Store(), 42, ImportQueue::STATUS_MAPPING);
 
         $parser = $this->prophesize(DeliverySpreadsheetParser::class);
-        $statusManager = $this->prophesize(DeliveryImportStatusManager::class);
+        $statusManager = $this->prophesize(ImportStatusManager::class);
 
         $handler = $this->createHandler($this->createEntityManager($queue), $parser, $statusManager);
         $handler(new ImportDeliveries('deliveries.csv'));
 
         $parser->parse(Argument::cetera())->shouldNotHaveBeenCalled();
         $statusManager->started(Argument::cetera())->shouldNotHaveBeenCalled();
-        $this->assertSame(DeliveryImportQueue::STATUS_MAPPING, $queue->getStatus());
+        $this->assertSame(ImportQueue::STATUS_MAPPING, $queue->getStatus());
     }
 }

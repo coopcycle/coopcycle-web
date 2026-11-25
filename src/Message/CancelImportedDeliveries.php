@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace AppBundle\Message;
 
 /**
- * Cancels the deliveries a file import created, but those already under way
+ * @deprecated kept only for the messages dispatched before CancelImportedItems replaced
+ *             it and still in the transport. Delete once they have been handled.
  */
-class CancelImportedDeliveries
+class CancelImportedDeliveries implements CancelsImportedItems
 {
     public function __construct(private readonly int $importId)
     {

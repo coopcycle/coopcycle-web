@@ -2,7 +2,7 @@
 
 namespace AppBundle\Action\Delivery;
 
-use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
+use AppBundle\Entity\ImportQueue;
 use AppBundle\Message\ImportDeliveries;
 use AppBundle\Security\TokenStoreExtractor;
 use DateTime;
@@ -28,7 +28,7 @@ class BulkAsync
 
     public function __invoke()
     {
-        $queue = new DeliveryImportQueue();
+        $queue = new ImportQueue(ImportQueue::TYPE_DELIVERIES);
 
         $store = $this->storeExtractor->extractStore();
 

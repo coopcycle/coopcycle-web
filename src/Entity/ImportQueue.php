@@ -1,69 +1,79 @@
 <?php
 
-namespace AppBundle\Entity\Delivery;
+namespace AppBundle\Entity;
 
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\ApiProperty;
-use ApiPlatform\Metadata\ApiFilter;
-use AppBundle\Entity\Store;
-use AppBundle\Action\Delivery\ImportQueueCsv as CsvController;
-use AppBundle\Action\Delivery\ImportQueueRedownload as RedownloadController;
-use AppBundle\Action\Delivery\ImportQueueCancel as CancelController;
-use AppBundle\Action\Delivery\ImportQueueCancelDeliveries as CancelDeliveriesController;
-use AppBundle\Spreadsheet\SpreadsheetParseResult;
+use AppBundle\Entity\Model\OrganizationAwareInterface;
+use AppBundle\Entity\Model\OrganizationAwareTrait;
+use AppBundle\Action\Import\Csv as CsvController;
+use AppBundle\Action\Import\Redownload as RedownloadController;
+use AppBundle\Action\Import\Cancel as CancelController;
+use AppBundle\Action\Import\CancelItems as CancelItemsController;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * One uploaded spreadsheet, from the moment it lands to the moment what it holds is saved.
+ *
+ * The kind of thing a file creates is the only difference between one import and another:
+ * everything here — the statuses, the column mapping, the progress, the errors, cancelling
+ * the import and cancelling what it created — is the same for all of them.
+ *
+ * @see \AppBundle\Import\ImportHandlerInterface for what each kind does with the rows
+ */
 #[ApiResource(
-    shortName: 'DeliveryImportQueue',
+    shortName: 'ImportQueue',
     operations: [
-        new Get(normalizationContext: ['groups' => ['delivery_import_queue']],
+        new Get(normalizationContext: ['groups' => ['import_queue']],
             security: 'is_granted(\'view\', object)'),
         new Get(
-            uriTemplate: '/delivery_import_queues/{id}/csv',
+            uriTemplate: '/import_queues/{id}/csv',
             controller: CsvController::class,
             security: 'is_granted(\'view\', object)'
         ),
         new Get(
-            uriTemplate: '/delivery_import_queues/{id}/redownload',
+            uriTemplate: '/import_queues/{id}/redownload',
             controller: RedownloadController::class,
             security: 'is_granted(\'view\', object)'
         ),
         new Put(
-            uriTemplate: '/delivery_import_queues/{id}/cancel',
+            uriTemplate: '/import_queues/{id}/cancel',
             controller: CancelController::class,
-            openapiContext: ['summary' => 'Cancels a delivery import that is pending or in progress'],
+            openapiContext: ['summary' => 'Cancels an import that is pending or in progress'],
             security: 'is_granted(\'edit\', object)',
             // The status is written by the controller
             write: false,
             deserialize: false
         ),
         new Put(
-            uriTemplate: '/delivery_import_queues/{id}/cancel_deliveries',
-            controller: CancelDeliveriesController::class,
-            openapiContext: ['summary' => 'Cancels the deliveries created by a delivery import, but those already under way'],
+            uriTemplate: '/import_queues/{id}/cancel_items',
+            controller: CancelItemsController::class,
+            openapiContext: ['summary' => 'Cancels what an import created, but what is already under way'],
             security: 'is_granted(\'edit\', object)',
-            // Written by the controller, the deliveries are cancelled by a worker
+            // Written by the controller, the items are cancelled by a worker
             write: false,
             deserialize: false
         )
     ],
-    normalizationContext: ['groups' => ['delivery_import_queue']]
+    normalizationContext: ['groups' => ['import_queue']]
 )]
-class ImportQueue
+class ImportQueue implements OrganizationAwareInterface
 {
     use Timestampable;
+    use OrganizationAwareTrait;
+
+    const TYPE_DELIVERIES = 'deliveries';
+    const TYPE_TASKS = 'tasks';
 
     // Uploaded, waiting for a dispatcher to say which field each of its columns holds.
     // A worker never picks one up: the handler only imports a pending import.
     const STATUS_MAPPING = 'mapping';
     const STATUS_PENDING = 'pending';
     const STATUS_STARTED = 'started';
-    // The file is read, its deliveries are being saved: too late to cancel
+    // The file is read, what it holds is being saved: too late to cancel
     const STATUS_SAVING = 'saving';
     const STATUS_COMPLETED = 'completed';
     const STATUS_FAILED = 'failed';
@@ -73,7 +83,7 @@ class ImportQueue
      * The statuses a dispatcher can cancel an import in: it has not saved anything yet.
      *
      * @see self::isCancellable()
-     * @see \AppBundle\Service\DeliveryImportStatusManager::cancel()
+     * @see \AppBundle\Service\ImportStatusManager::cancel()
      */
     const CANCELLABLE_STATUSES = [
         self::STATUS_MAPPING,
@@ -81,25 +91,36 @@ class ImportQueue
         self::STATUS_STARTED,
     ];
 
-    // Cancelling the deliveries of an import, once it's done
-    const DELIVERIES_CANCELLING = 'cancelling';
-    const DELIVERIES_CANCELLED = 'cancelled';
+    // Cancelling what an import created, once it's done
+    const ITEMS_CANCELLING = 'cancelling';
+    const ITEMS_CANCELLED = 'cancelled';
 
     protected $id;
 
+    /**
+     * What the rows of the file are: deliveries or tasks. Decides which parser reads it,
+     * which filesystem holds it and what is made of its rows.
+     */
+    #[Groups(['import_queue'])]
+    protected string $type;
+
     protected string $filename;
 
-    protected Store $store;
+    /**
+     * The store a delivery import belongs to. Null for the imports that have none,
+     * a task import for instance.
+     */
+    protected ?Store $store = null;
 
     #[Assert\Type(type: 'string')]
-    #[Groups(['delivery_import_queue'])]
+    #[Groups(['import_queue'])]
     protected $status = self::STATUS_PENDING;
 
     protected $startedAt;
 
     protected $finishedAt;
 
-    #[Groups(['delivery_import_queue'])]
+    #[Groups(['import_queue'])]
     protected array $errors = [];
 
     /**
@@ -113,15 +134,22 @@ class ImportQueue
     protected ?array $columnMapping = null;
 
     /**
+     * What the dispatcher chose when uploading the file, handed to the parser by the
+     * worker: the date a task import defaults its rows to, for instance. The options
+     * carried by the message itself win over these.
+     */
+    protected ?array $options = null;
+
+    /**
      * Unknown until a worker has read the file
      */
-    #[Groups(['delivery_import_queue'])]
+    #[Groups(['import_queue'])]
     protected ?int $totalRows = null;
 
-    #[Groups(['delivery_import_queue'])]
+    #[Groups(['import_queue'])]
     protected int $processedRows = 0;
 
-    #[Groups(['delivery_import_queue'])]
+    #[Groups(['import_queue'])]
     protected int $errorRows = 0;
 
     /**
@@ -130,37 +158,57 @@ class ImportQueue
     protected ?\DateTime $progressedAt = null;
 
     /**
-     * Null until a dispatcher cancels the deliveries of the import
+     * Null until a dispatcher cancels what the import created
      */
-    #[Groups(['delivery_import_queue'])]
-    protected ?string $deliveriesCancellation = null;
+    #[Groups(['import_queue'])]
+    protected ?string $itemsCancellation = null;
 
     /**
      * Unknown until a worker has looked them up
      */
-    #[Groups(['delivery_import_queue'])]
-    protected ?int $deliveriesToCancel = null;
+    #[Groups(['import_queue'])]
+    protected ?int $itemsToCancel = null;
 
-    #[Groups(['delivery_import_queue'])]
-    protected int $cancelledDeliveries = 0;
+    #[Groups(['import_queue'])]
+    protected int $cancelledItems = 0;
 
     /**
-     * Already under way, or with an order that can't be cancelled any more
+     * Already under way, or that can't be cancelled any more
      */
-    #[Groups(['delivery_import_queue'])]
-    protected int $skippedDeliveries = 0;
+    #[Groups(['import_queue'])]
+    protected int $skippedItems = 0;
+
+    public function __construct(string $type)
+    {
+        $this->type = $type;
+    }
 
     public function getId()
     {
         return $this->id;
     }
 
-    public function setStore(Store $store)
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    public function isDeliveries(): bool
+    {
+        return self::TYPE_DELIVERIES === $this->type;
+    }
+
+    public function isTasks(): bool
+    {
+        return self::TYPE_TASKS === $this->type;
+    }
+
+    public function setStore(?Store $store)
     {
         $this->store = $store;
     }
 
-    public function getStore(): Store
+    public function getStore(): ?Store
     {
         return $this->store;
     }
@@ -221,6 +269,16 @@ class ImportQueue
         $this->columnMapping = $columnMapping;
     }
 
+    public function getOptions(): array
+    {
+        return $this->options ?? [];
+    }
+
+    public function setOptions(?array $options): void
+    {
+        $this->options = $options;
+    }
+
     public function isWaitingForMapping(): bool
     {
         return self::STATUS_MAPPING === $this->status;
@@ -262,47 +320,47 @@ class ImportQueue
     /**
      * Whether a dispatcher can still stop the import.
      *
-     * Kept in step with the statuses DeliveryImportStatusManager::cancel() writes over.
+     * Kept in step with the statuses ImportStatusManager::cancel() writes over.
      */
     public function isCancellable(): bool
     {
         return in_array($this->status, self::CANCELLABLE_STATUSES, true);
     }
 
-    public function getDeliveriesCancellation(): ?string
+    public function getItemsCancellation(): ?string
     {
-        return $this->deliveriesCancellation;
+        return $this->itemsCancellation;
     }
 
-    public function getDeliveriesToCancel(): ?int
+    public function getItemsToCancel(): ?int
     {
-        return $this->deliveriesToCancel;
+        return $this->itemsToCancel;
     }
 
-    public function getCancelledDeliveries(): int
+    public function getCancelledItems(): int
     {
-        return $this->cancelledDeliveries;
+        return $this->cancelledItems;
     }
 
-    public function getSkippedDeliveries(): int
+    public function getSkippedItems(): int
     {
-        return $this->skippedDeliveries;
+        return $this->skippedItems;
     }
 
-    public function setDeliveriesCancellation(?string $deliveriesCancellation, ?int $deliveriesToCancel, int $cancelledDeliveries, int $skippedDeliveries): void
+    public function setItemsCancellation(?string $itemsCancellation, ?int $itemsToCancel, int $cancelledItems, int $skippedItems): void
     {
-        $this->deliveriesCancellation = $deliveriesCancellation;
-        $this->deliveriesToCancel = $deliveriesToCancel;
-        $this->cancelledDeliveries = $cancelledDeliveries;
-        $this->skippedDeliveries = $skippedDeliveries;
+        $this->itemsCancellation = $itemsCancellation;
+        $this->itemsToCancel = $itemsToCancel;
+        $this->cancelledItems = $cancelledItems;
+        $this->skippedItems = $skippedItems;
     }
 
     /**
      * Once the import is over, and only once: a dispatcher can't cancel them again
      */
-    public function canCancelDeliveries(): bool
+    public function canCancelItems(): bool
     {
         return in_array($this->status, [self::STATUS_COMPLETED, self::STATUS_FAILED], true)
-            && is_null($this->deliveriesCancellation);
+            && is_null($this->itemsCancellation);
     }
 }

@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Tests\AppBundle\MessageHandler;
 
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
+use AppBundle\Entity\ImportQueue;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
-use AppBundle\Message\CancelImportedDeliveries;
-use AppBundle\MessageHandler\CancelImportedDeliveriesHandler;
-use AppBundle\Service\DeliveryImportStatusManager;
+use AppBundle\Message\CancelImportedItems;
+use AppBundle\MessageHandler\CancelImportedItemsHandler;
+use AppBundle\Service\ImportStatusManager;
 use AppBundle\Service\DeliveryOrderManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
@@ -19,11 +19,11 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\ReceivedStamp;
 
-class CancelImportedDeliveriesHandlerTest extends KernelTestCase
+class CancelImportedItemsHandlerTest extends KernelTestCase
 {
     private EntityManagerInterface $entityManager;
     private array $fixtures;
-    private DeliveryImportQueue $queue;
+    private ImportQueue $queue;
 
     public function setUp(): void
     {
@@ -42,10 +42,10 @@ class CancelImportedDeliveriesHandlerTest extends KernelTestCase
             __DIR__.'/../../../fixtures/ORM/stores.yml',
         ]);
 
-        $this->queue = new DeliveryImportQueue();
+        $this->queue = new ImportQueue(ImportQueue::TYPE_DELIVERIES);
         $this->queue->setStore($this->fixtures['store_1']);
         $this->queue->setFilename('deliveries.csv');
-        $this->queue->setStatus(DeliveryImportQueue::STATUS_COMPLETED);
+        $this->queue->setStatus(ImportQueue::STATUS_COMPLETED);
 
         $this->entityManager->persist($this->queue);
         $this->entityManager->flush();
@@ -72,13 +72,13 @@ class CancelImportedDeliveriesHandlerTest extends KernelTestCase
 
     private function cancelDeliveries(): void
     {
-        $statusManager = self::getContainer()->get(DeliveryImportStatusManager::class);
-        $this->assertTrue($statusManager->cancellingDeliveries($this->queue));
+        $statusManager = self::getContainer()->get(ImportStatusManager::class);
+        $this->assertTrue($statusManager->cancellingItems($this->queue));
 
         // As received by a worker: the events it causes, cancelling the orders,
         // are only handled once the message is
         self::getContainer()->get(MessageBusInterface::class)->dispatch(
-            new CancelImportedDeliveries($this->queue->getId()),
+            new CancelImportedItems($this->queue->getId()),
             [new ReceivedStamp('async')]
         );
 
@@ -122,12 +122,12 @@ class CancelImportedDeliveriesHandlerTest extends KernelTestCase
             $this->assertEquals(Task::STATUS_TODO, $task->getStatus());
         }
 
-        $queue = $this->entityManager->find(DeliveryImportQueue::class, $this->queue->getId());
-        $this->assertEquals(DeliveryImportQueue::DELIVERIES_CANCELLED, $queue->getDeliveriesCancellation());
-        $this->assertEquals(3, $queue->getDeliveriesToCancel());
+        $queue = $this->entityManager->find(ImportQueue::class, $this->queue->getId());
+        $this->assertEquals(ImportQueue::ITEMS_CANCELLED, $queue->getItemsCancellation());
+        $this->assertEquals(3, $queue->getItemsToCancel());
         // The one cancelled since by a dispatcher counts as cancelled
-        $this->assertEquals(2, $queue->getCancelledDeliveries());
-        $this->assertEquals(1, $queue->getSkippedDeliveries());
+        $this->assertEquals(2, $queue->getCancelledItems());
+        $this->assertEquals(1, $queue->getSkippedItems());
     }
 
     /**
@@ -161,8 +161,8 @@ class CancelImportedDeliveriesHandlerTest extends KernelTestCase
         }
         $this->entityManager->flush();
 
-        $handler = self::getContainer()->get(CancelImportedDeliveriesHandler::class);
-        $handler(new CancelImportedDeliveries($this->queue->getId()));
+        $handler = self::getContainer()->get(CancelImportedItemsHandler::class);
+        $handler(new CancelImportedItems($this->queue->getId()));
 
         $this->entityManager->clear();
 

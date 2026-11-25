@@ -2,25 +2,25 @@
 
 declare(strict_types=1);
 
-namespace Tests\AppBundle\Action\Delivery;
+namespace Tests\AppBundle\Action\Import;
 
-use AppBundle\Action\Delivery\ImportQueueCancel;
-use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
+use AppBundle\Action\Import\Cancel;
+use AppBundle\Entity\ImportQueue;
 use AppBundle\Entity\Store;
-use AppBundle\Service\DeliveryImportStatusManager;
+use AppBundle\Service\ImportStatusManager;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class ImportQueueCancelTest extends TestCase
+class CancelTest extends TestCase
 {
     use ProphecyTrait;
 
-    private function createQueue(string $status): DeliveryImportQueue
+    private function createQueue(string $status): ImportQueue
     {
-        $queue = new DeliveryImportQueue();
+        $queue = new ImportQueue(ImportQueue::TYPE_DELIVERIES);
         $queue->setStore(new Store());
         $queue->setFilename('deliveries.csv');
         $queue->setStatus($status);
@@ -30,13 +30,13 @@ class ImportQueueCancelTest extends TestCase
 
     public function testPendingAndStartedImportsCanBeCancelled(): void
     {
-        foreach ([DeliveryImportQueue::STATUS_PENDING, DeliveryImportQueue::STATUS_STARTED] as $status) {
+        foreach ([ImportQueue::STATUS_PENDING, ImportQueue::STATUS_STARTED] as $status) {
             $queue = $this->createQueue($status);
 
-            $statusManager = $this->prophesize(DeliveryImportStatusManager::class);
+            $statusManager = $this->prophesize(ImportStatusManager::class);
             $statusManager->cancel($queue)->willReturn(true);
 
-            $action = new ImportQueueCancel($statusManager->reveal(), new NullLogger());
+            $action = new Cancel($statusManager->reveal(), new NullLogger());
 
             $this->assertSame($queue, $action($queue));
 
@@ -46,15 +46,15 @@ class ImportQueueCancelTest extends TestCase
 
     public function testFinishedImportCanNotBeCancelled(): void
     {
-        $statusManager = $this->prophesize(DeliveryImportStatusManager::class);
+        $statusManager = $this->prophesize(ImportStatusManager::class);
 
-        $action = new ImportQueueCancel($statusManager->reveal(), new NullLogger());
+        $action = new Cancel($statusManager->reveal(), new NullLogger());
 
         $this->expectException(BadRequestHttpException::class);
         $this->expectExceptionMessage('The import is completed, it can not be cancelled');
 
         try {
-            $action($this->createQueue(DeliveryImportQueue::STATUS_COMPLETED));
+            $action($this->createQueue(ImportQueue::STATUS_COMPLETED));
         } finally {
             $statusManager->cancel(Argument::any())->shouldNotHaveBeenCalled();
         }
@@ -65,13 +65,13 @@ class ImportQueueCancelTest extends TestCase
      */
     public function testImportSavedInTheMeantimeCanNotBeCancelled(): void
     {
-        $queue = $this->createQueue(DeliveryImportQueue::STATUS_STARTED);
+        $queue = $this->createQueue(ImportQueue::STATUS_STARTED);
 
-        $statusManager = $this->prophesize(DeliveryImportStatusManager::class);
+        $statusManager = $this->prophesize(ImportStatusManager::class);
         $statusManager->cancel($queue)->willReturn(false);
-        $statusManager->currentStatus($queue)->willReturn(DeliveryImportQueue::STATUS_SAVING);
+        $statusManager->currentStatus($queue)->willReturn(ImportQueue::STATUS_SAVING);
 
-        $action = new ImportQueueCancel($statusManager->reveal(), new NullLogger());
+        $action = new Cancel($statusManager->reveal(), new NullLogger());
 
         $this->expectException(BadRequestHttpException::class);
         $this->expectExceptionMessage('The import is saving, it can not be cancelled');

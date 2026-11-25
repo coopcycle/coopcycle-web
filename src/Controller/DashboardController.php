@@ -10,7 +10,7 @@ use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\CubeJs\TokenFactory as CubeJsTokenFactory;
 use AppBundle\Entity\DeliveryRepository;
-use AppBundle\Service\DeliveryImportStatusManager;
+use AppBundle\Service\ImportStatusManager;
 use AppBundle\Spreadsheet\Column\ColumnDetector;
 use AppBundle\Spreadsheet\DeliverySpreadsheetParser;
 use AppBundle\Sylius\Taxation\TaxesHelper;
@@ -154,7 +154,7 @@ class DashboardController extends AbstractController
         Filesystem $deliveryImportsFilesystem,
         DeliverySpreadsheetParser $spreadsheetParser,
         ColumnDetector $columnDetector,
-        DeliveryImportStatusManager $statusManager,
+        ImportStatusManager $statusManager,
         MessageBusInterface $messageBus,
         LoggerInterface $logger,
     )

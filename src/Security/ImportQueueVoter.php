@@ -2,12 +2,12 @@
 
 namespace AppBundle\Security;
 
-use AppBundle\Entity\Delivery\ImportQueue;
+use AppBundle\Entity\ImportQueue;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
-class DeliveryImportQueueVoter extends Voter
+class ImportQueueVoter extends Voter
 {
     public function __construct(private AuthorizationCheckerInterface $authorizationChecker)
     {
@@ -26,8 +26,13 @@ class DeliveryImportQueueVoter extends Voter
 
         $user = $token->getUser();
 
-        if ($this->authorizationChecker->isGranted('ROLE_STORE')
-            && is_object($user) && is_callable([ $user, 'ownsStore' ]) && $user->ownsStore($subject->getStore())) {
+        // An import with no store, a task import for instance, belongs to the co-op
+        // rather than to one of its stores: there is nothing here for a store user.
+        $store = $subject->getStore();
+
+        if (!is_null($store)
+            && $this->authorizationChecker->isGranted('ROLE_STORE')
+            && is_object($user) && is_callable([ $user, 'ownsStore' ]) && $user->ownsStore($store)) {
             return true;
         }
 

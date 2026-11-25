@@ -2,11 +2,11 @@
 
 namespace Tests\AppBundle\EventSubscriber;
 
-use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
+use AppBundle\Entity\ImportQueue;
 use AppBundle\EventSubscriber\DeliveryImportFailureSubscriber;
 use AppBundle\Message\ImportDeliveries;
 use AppBundle\Message\ImportTasks;
-use AppBundle\Service\DeliveryImportStatusManager;
+use AppBundle\Service\ImportStatusManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectRepository;
@@ -35,14 +35,14 @@ class DeliveryImportFailureSubscriberTest extends TestCase
         $this->entityManager = $this->prophesize(EntityManagerInterface::class);
         $this->entityManager->isOpen()->willReturn(true);
         $this->entityManager
-            ->getRepository(DeliveryImportQueue::class)
+            ->getRepository(ImportQueue::class)
             ->willReturn($this->repository->reveal());
 
         $this->doctrine = $this->prophesize(ManagerRegistry::class);
         $this->doctrine->getManager()->willReturn($this->entityManager->reveal());
 
-        $this->statusManager = $this->prophesize(DeliveryImportStatusManager::class);
-        $this->statusManager->currentStatus(Argument::any())->willReturn(DeliveryImportQueue::STATUS_STARTED);
+        $this->statusManager = $this->prophesize(ImportStatusManager::class);
+        $this->statusManager->currentStatus(Argument::any())->willReturn(ImportQueue::STATUS_STARTED);
         $this->statusManager->requeued(Argument::cetera())->will(function () {});
         $this->statusManager->failed(Argument::cetera())->will(function () {});
 
@@ -74,9 +74,9 @@ class DeliveryImportFailureSubscriberTest extends TestCase
 
     public function testQueueIsMarkedAsFailedWhenTheMessageIsDropped()
     {
-        $queue = new DeliveryImportQueue();
+        $queue = new ImportQueue(ImportQueue::TYPE_DELIVERIES);
         $queue->setFilename('import.csv');
-        $queue->setStatus(DeliveryImportQueue::STATUS_STARTED);
+        $queue->setStatus(ImportQueue::STATUS_STARTED);
 
         $this->repository->findOneBy(['filename' => 'import.csv'])->willReturn($queue);
 
@@ -89,9 +89,9 @@ class DeliveryImportFailureSubscriberTest extends TestCase
 
     public function testQueueIsPutBackInLineWhileTheMessageIsStillRetried()
     {
-        $queue = new DeliveryImportQueue();
+        $queue = new ImportQueue(ImportQueue::TYPE_DELIVERIES);
         $queue->setFilename('import.csv');
-        $queue->setStatus(DeliveryImportQueue::STATUS_STARTED);
+        $queue->setStatus(ImportQueue::STATUS_STARTED);
 
         $this->repository->findOneBy(Argument::cetera())->willReturn($queue);
 
@@ -104,12 +104,12 @@ class DeliveryImportFailureSubscriberTest extends TestCase
 
     public function testCancelledQueueIsLeftAlone()
     {
-        $queue = new DeliveryImportQueue();
+        $queue = new ImportQueue(ImportQueue::TYPE_DELIVERIES);
         $queue->setFilename('import.csv');
-        $queue->setStatus(DeliveryImportQueue::STATUS_STARTED);
+        $queue->setStatus(ImportQueue::STATUS_STARTED);
 
         $this->repository->findOneBy(Argument::cetera())->willReturn($queue);
-        $this->statusManager->currentStatus($queue)->willReturn(DeliveryImportQueue::STATUS_CANCELLED);
+        $this->statusManager->currentStatus($queue)->willReturn(ImportQueue::STATUS_CANCELLED);
 
         $this->subscriber->onFailure($this->failedEvent(new ImportDeliveries('import.csv'), false));
         $this->subscriber->onFailure($this->failedEvent(new ImportDeliveries('import.csv'), true));
@@ -124,12 +124,12 @@ class DeliveryImportFailureSubscriberTest extends TestCase
      */
     public function testQueueFailedByTheHandlerIsLeftAlone()
     {
-        $queue = new DeliveryImportQueue();
+        $queue = new ImportQueue(ImportQueue::TYPE_DELIVERIES);
         $queue->setFilename('import.csv');
-        $queue->setStatus(DeliveryImportQueue::STATUS_SAVING);
+        $queue->setStatus(ImportQueue::STATUS_SAVING);
 
         $this->repository->findOneBy(Argument::cetera())->willReturn($queue);
-        $this->statusManager->currentStatus($queue)->willReturn(DeliveryImportQueue::STATUS_FAILED);
+        $this->statusManager->currentStatus($queue)->willReturn(ImportQueue::STATUS_FAILED);
 
         $this->subscriber->onFailure($this->failedEvent(new ImportDeliveries('import.csv'), false));
 
@@ -148,9 +148,9 @@ class DeliveryImportFailureSubscriberTest extends TestCase
 
     public function testEntityManagerIsResetWhenItWasClosedByTheFailure()
     {
-        $queue = new DeliveryImportQueue();
+        $queue = new ImportQueue(ImportQueue::TYPE_DELIVERIES);
         $queue->setFilename('import.csv');
-        $queue->setStatus(DeliveryImportQueue::STATUS_STARTED);
+        $queue->setStatus(ImportQueue::STATUS_STARTED);
 
         $closed = $this->prophesize(EntityManagerInterface::class);
         $closed->isOpen()->willReturn(false);
