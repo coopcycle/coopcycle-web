@@ -77,6 +77,12 @@ adminDashboard.users.edit.addStore: Add a store
 adminDashboard.users.edit.addRestaurant: Add a restaurant
 adminDashboard.users.createNew: Add user
 adminDashboard.users.invite: Invite user
+adminDashboard.users.invite.pending: Invitations sent
+adminDashboard.users.invite.pending.empty: No pending invitation.
+adminDashboard.users.invite.grants: Grants
+adminDashboard.users.invite.invited_by: Invited by
+adminDashboard.users.invite.sent_at: Sent
+adminDashboard.users.invite.not_sent: Not sent
 adminDashboard.users.orders_count: Number of orders
 adminDashboard.users.registered_at: Registered
 adminDashboard.users.last_order: Last order

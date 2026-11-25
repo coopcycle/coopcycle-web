@@ -666,7 +666,66 @@ class AdminController extends AbstractController
 
         return $this->render('admin/user_invite.html.twig', [
             'form' => $form->createView(),
+            'invitations' => $this->getPendingInvitations($objectManager),
         ]);
+    }
+
+    /**
+     * Invitations which have been sent but not accepted yet ; accepted
+     * invitations are removed when the user defines their password.
+     *
+     * @return array<int, array{invitation: Invitation, roles: string[], restaurants: LocalBusiness[], stores: Store[]}>
+     */
+    private function getPendingInvitations(EntityManagerInterface $objectManager): array
+    {
+        $invitations = $objectManager->getRepository(Invitation::class)
+            ->createQueryBuilder('i')
+            // Business account invitations have their own lifecycle,
+            // they are not sent from this page
+            ->leftJoin(BusinessAccountInvitation::class, 'bai', Expr\Join::WITH, 'bai.invitation = i')
+            ->andWhere('bai.id IS NULL')
+            ->addOrderBy('i.sentAt', 'DESC')
+            ->addOrderBy('i.email', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        if (empty($invitations)) {
+            return [];
+        }
+
+        $restaurantIds = [];
+        $storeIds = [];
+        foreach ($invitations as $invitation) {
+            $grants = $invitation->getGrants();
+            $restaurantIds = array_merge($restaurantIds, $grants['restaurants'] ?? []);
+            $storeIds = array_merge($storeIds, $grants['stores'] ?? []);
+        }
+
+        $restaurants = [];
+        if (!empty($restaurantIds)) {
+            foreach ($objectManager->getRepository(LocalBusiness::class)->findBy(['id' => array_unique($restaurantIds)]) as $restaurant) {
+                $restaurants[$restaurant->getId()] = $restaurant;
+            }
+        }
+
+        $stores = [];
+        if (!empty($storeIds)) {
+            foreach ($objectManager->getRepository(Store::class)->findBy(['id' => array_unique($storeIds)]) as $store) {
+                $stores[$store->getId()] = $store;
+            }
+        }
+
+        return array_map(function(Invitation $invitation) use ($restaurants, $stores) {
+
+            $grants = $invitation->getGrants();
+
+            return [
+                'invitation' => $invitation,
+                'roles' => $grants['roles'] ?? [],
+                'restaurants' => array_values(array_intersect_key($restaurants, array_flip($grants['restaurants'] ?? []))),
+                'stores' => array_values(array_intersect_key($stores, array_flip($grants['stores'] ?? []))),
+            ];
+        }, $invitations);
     }
 
     #[Route(path: '/admin/user/{username}', name: 'admin_user_details')]

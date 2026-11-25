@@ -26,6 +26,58 @@
         <hr>
         <button type="submit" class="btn btn-block btn-lg btn-primary">{{ 'basics.send_invitation'|trans }}</button>
       {{ form_end(form) }}
+
+      <h3 class="page-header mt-5">
+        {{ 'adminDashboard.users.invite.pending'|trans }}
+      </h3>
+      {% if invitations is empty %}
+        <div class="alert alert-info">
+          {{ 'adminDashboard.users.invite.pending.empty'|trans }}
+        </div>
+      {% else %}
+        <table class="table table-condensed">
+          <thead>
+            <tr>
+              <th>{{ 'profile.email'|trans }}</th>
+              <th>{{ 'adminDashboard.users.invite.grants'|trans }}</th>
+              <th>{{ 'adminDashboard.users.invite.invited_by'|trans }}</th>
+              <th>{{ 'adminDashboard.users.invite.sent_at'|trans }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in invitations %}
+              <tr>
+                <td>{{ item.invitation.email }}</td>
+                <td>
+                  {% for role in item.roles %}
+                    <span class="label label-default">{{ ('roles.' ~ role)|trans }}</span>
+                  {% endfor %}
+                  {% for restaurant in item.restaurants %}
+                    <span class="label label-info">{{ restaurant.name }}</span>
+                  {% endfor %}
+                  {% for store in item.stores %}
+                    <span class="label label-info">{{ store.name }}</span>
+                  {% endfor %}
+                </td>
+                <td>
+                  {% if item.invitation.user %}
+                    {{ item.invitation.user.username }}
+                  {% else %}
+                    &mdash;
+                  {% endif %}
+                </td>
+                <td>
+                  {% if item.invitation.sentAt %}
+                    {{ item.invitation.sentAt|format_datetime('short', 'short') }}
+                  {% else %}
+                    <span class="text-muted">{{ 'adminDashboard.users.invite.not_sent'|trans }}</span>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% endif %}
     </div>
   </div>
 {% endblock %}
