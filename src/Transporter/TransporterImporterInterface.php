@@ -18,8 +18,10 @@ interface TransporterImporterInterface {
     public function pull(array $options = []): array;
 
     /**
-     * Called once the pulled contents were queued.
-     * @param array<array-key,string> $rejected Contents that couldn't be transformed: reasons, keyed like pull()
+     * Called once the pulled contents were imported.
+     * @param array<array-key,string> $rejected Contents that weren't imported, nothing of them was saved:
+     *                                          they couldn't be transformed, or saving them failed.
+     *                                          Reasons, keyed like pull()
      */
     public function flush(bool $dry_run = false, array $rejected = []): void;
 }

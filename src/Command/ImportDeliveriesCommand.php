@@ -5,29 +5,34 @@ namespace AppBundle\Command;
 use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\Delivery\ImportQueue;
 use AppBundle\Entity\Store;
-use AppBundle\Message\ImportDeliveries;
+use AppBundle\Service\DeliveryImporter;
+use AppBundle\Service\DeliveryImportStatusManager;
 use AppBundle\Transporter\ImportFailureNotifier;
 use AppBundle\Transporter\RejectedFile;
 use AppBundle\Transporter\TransporterImporterInterface;
 use AppBundle\Transporter\TransporterTransformerInterface;
 use DateTime;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Hashids\Hashids;
 use League\Csv\Reader;
 use League\Flysystem\Filesystem;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Command\LockableTrait;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Messenger\Stamp\DelayStamp;
 use Symfony\Contracts\Service\ServiceProviderInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Imports the files here, rather than through the worker: the importer is told
+ * which ones could not be imported, so it can keep them, and the output is what was saved.
+ */
 class ImportDeliveriesCommand extends Command {
 
+    use LockableTrait;
 
     private InputInterface $input;
     private OutputInterface $output;
@@ -38,10 +43,11 @@ class ImportDeliveriesCommand extends Command {
     private ?TransporterTransformerInterface $transformer = null;
 
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
+        // Resolved on each file rather than injected: a failed import resets the entity manager
+        private readonly ManagerRegistry $doctrine,
         private readonly IriConverterInterface $iriConverter,
         private readonly Hashids $hashids8,
-        private readonly MessageBusInterface $messageBus,
+        private readonly DeliveryImporter $deliveryImporter,
         private readonly Filesystem $deliveryImportsFilesystem,
         /** @var ServiceProviderInterface<TransporterImporterInterface> */
         private readonly ServiceProviderInterface $importers,
@@ -49,6 +55,9 @@ class ImportDeliveriesCommand extends Command {
         private readonly ServiceProviderInterface $transformers,
         private readonly LoggerInterface $transporterLogger,
         private readonly ImportFailureNotifier $importFailureNotifier,
+        private readonly DeliveryImportStatusManager $statusManager,
+        private readonly TranslatorInterface $translator,
+        private readonly string $appName,
     )
     {
         parent::__construct();
@@ -114,13 +123,36 @@ class ImportDeliveriesCommand extends Command {
 
         $this->setup();
 
+        // The files are only let go of once imported, which can take a while:
+        // a run started in the meantime would pull them again, and import them twice
+        if ($this->importer instanceof TransporterImporterInterface && !$this->lock(sprintf(
+            '%s_%s_%s.lock',
+            $this->appName,
+            $this->getName(),
+            $this->input->getOption('importer')
+        ))) {
+            $this->output->writeln('The command is already running in another process.');
+            return Command::SUCCESS;
+        }
+
+        try {
+            return $this->import();
+        } finally {
+            $this->release();
+        }
+    }
+
+    private function import(): int {
         // Fetch content via the importer
         $csvs = $this->getCSVcontents();
         if (is_null($csvs)) {
             throw new \InvalidArgumentException('No CSV content or importer specified');
         }
 
-        // Transform everything before queuing anything. A file that can't be transformed
+        // As received, for the administrator to be sent a file that wasn't imported
+        $received = $csvs;
+
+        // Transform everything before importing anything. A file that can't be transformed
         // is rejected on its own, the others still go through: the importer is told on
         // flush(), so it can set it aside instead of pulling it again on every run.
         $rejected = [];
@@ -145,18 +177,43 @@ class ImportDeliveriesCommand extends Command {
             $csvs = $transformed;
         }
 
-        foreach ($csvs as $csv) {
-
-            // Dry run, console output then continue
-            if ($this->dryRun) {
+        $failed = false;
+        if ($this->dryRun) {
+            foreach ($csvs as $csv) {
                 $this->output->writeln($csv);
-                continue;
             }
 
-            $this->process(
-                $this->iriConverter->getResourceFromIri($this->input->getArgument('store')),
-                $csv
+            $deliveries_count = array_sum(
+                array_map(
+                    // Not a line count: quoted fields may span several lines.
+                    // Without header offset, as a malformed header would throw here.
+                    fn(string $csv): int => max(0, count(Reader::fromString($csv)) - 1),
+                    $csvs
+                )
             );
+
+            $this->output->writeln(">> {$deliveries_count} deliveries to import");
+        } else {
+            foreach ($csvs as $key => $csv) {
+                [$saved, $status, $error] = $this->process($csv);
+
+                $this->output->writeln(sprintf('>> "%s": %d deliveries imported, the import is %s', $key, $saved, $status));
+
+                // Some rows may have failed validation, the import tells which
+                $failed = $failed || ImportQueue::STATUS_FAILED === $status;
+
+                if (is_null($error)) {
+                    continue;
+                }
+
+                $this->output->writeln(sprintf('<error>Failed to import "%s": %s</error>', $key, $error));
+
+                // Nothing of it was saved: the importer keeps it, to be pulled again on the next run.
+                // A file given on the command line can just be given again.
+                if ($this->importer instanceof TransporterImporterInterface) {
+                    $rejected[$key] = new RejectedFile((string) $key, $error, $received[$key]);
+                }
+            }
         }
 
         if ($this->importer instanceof TransporterImporterInterface) {
@@ -168,19 +225,7 @@ class ImportDeliveriesCommand extends Command {
             $this->importFailureNotifier->notify($this->input->getOption('importer'), $rejected);
         }
 
-        // Count deliveries
-        $deliveries_count = array_sum(
-            array_map(
-                // Not a line count: quoted fields may span several lines.
-                // Without header offset, as a malformed header would throw here.
-                fn(string $csv): int => max(0, count(Reader::fromString($csv)) - 1),
-                $csvs
-            )
-        );
-
-        $this->output->writeln(">> {$deliveries_count} deliveries imported");
-
-        return empty($rejected) ? Command::SUCCESS : Command::FAILURE;
+        return empty($rejected) && !$failed ? Command::SUCCESS : Command::FAILURE;
     }
 
 
@@ -192,7 +237,7 @@ class ImportDeliveriesCommand extends Command {
             if (empty($csv)) {
                 return null;
             }
-            return [$csv];
+            return [$csvPath => $csv];
         }
 
         if ($this->importer instanceof TransporterImporterInterface) {
@@ -202,14 +247,22 @@ class ImportDeliveriesCommand extends Command {
         return null;
     }
 
-    private function process(Store $store, string $csv): ImportQueue
+    /**
+     * @return array{0: int, 1: string, 2: ?string} The number of deliveries saved, the status
+     *                                               of the import, and why nothing was saved
+     *                                               when it failed without saving any
+     */
+    private function process(string $csv): array
     {
-        $queue = new ImportQueue();
+        /** @var Store $store */
+        $store = $this->iriConverter->getResourceFromIri($this->input->getArgument('store'));
 
+        $queue = new ImportQueue();
         $queue->setStore($store);
 
-        $this->entityManager->persist($queue);
-        $this->entityManager->flush();
+        $entityManager = $this->doctrine->getManager();
+        $entityManager->persist($queue);
+        $entityManager->flush();
 
         $now = new DateTime();
         $nowFormatted = $now->format('Y-m-d_G:i:s');
@@ -219,14 +272,37 @@ class ImportDeliveriesCommand extends Command {
         $this->deliveryImportsFilesystem->write($filename, $csv);
 
         $queue->setFilename($filename);
-        $this->entityManager->flush();
+        $entityManager->flush();
 
-        $this->messageBus->dispatch(
-            new ImportDeliveries($filename, ['create_task_if_address_not_geocoded' => true]),
-            [ new DelayStamp(5000) ]
-        );
+        $saved = 0;
+        $error = null;
+        try {
+            $saved = $this->deliveryImporter->import($filename, ['create_task_if_address_not_geocoded' => true]);
+        } catch (\Throwable $e) {
+            $error = $e->getMessage();
 
-        return $queue;
+            $this->transporterLogger->error(
+                sprintf('Importing deliveries from %s failed: %s', $filename, $error),
+                ['importer' => $this->input->getOption('importer'), 'store' => $this->input->getArgument('store')]
+            );
+
+            // The importer marks the import as failed when saving the deliveries fails,
+            // the worker otherwise (see DeliveryImportFailureSubscriber), which isn't there
+            $unfinished = $this->statusManager->findUnfinished($filename);
+            if (null !== $unfinished) {
+                $this->statusManager->failed($unfinished, DeliveryImportStatusManager::errorForWholeImport(
+                    $this->translator->trans('deliveries.imports.error.interrupted')
+                ));
+            }
+        }
+
+        $status = $this->statusManager->currentStatus($queue);
+
+        if ($saved > 0 || ImportQueue::STATUS_FAILED !== $status) {
+            return [$saved, $status, null];
+        }
+
+        return [0, $status, $error ?? 'No delivery could be imported, see the errors of the import'];
     }
 
 }

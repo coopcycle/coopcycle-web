@@ -257,6 +257,7 @@ services:
       # Named with #[AsTaggedItem('name')], see TransporterImporterInterface
       $importers: !tagged_locator { tag: coopcycle.deliveries_importer }
       $transformers: !tagged_locator { tag: coopcycle.deliveries_transformer }
+      $appName: '%env(COOPCYCLE_APP_NAME)%'
     tags:
       - { name: 'console.command', command: 'coopcycle:deliveries:import' }
 
