@@ -3,6 +3,8 @@
 namespace AppBundle\Command;
 
 use AppBundle\Entity\ImportQueue;
+use AppBundle\Import\ImportHandlerInterface;
+use AppBundle\Import\ImportRegistry;
 use AppBundle\Service\ImportStatusManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -42,6 +44,7 @@ class FailStaleImportsCommand extends Command
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly ImportStatusManager $statusManager,
+        private readonly ImportRegistry $registry,
         private readonly TranslatorInterface $translator
     ) {
         parent::__construct();
@@ -119,8 +122,6 @@ class FailStaleImportsCommand extends Command
             return Command::SUCCESS;
         }
 
-        $message = $this->translator->trans('deliveries.imports.error.stalled');
-
         $rows = [];
 
         foreach ($queues as $queue) {
@@ -132,9 +133,14 @@ class FailStaleImportsCommand extends Command
             ];
 
             if (!$dryRun) {
+                // Worded for what the file held: a dispatcher is not told their task
+                // import failed to import deliveries
+                $errorKey = $this->registry->handlerFor($queue->getType())
+                    ->errorKey(ImportHandlerInterface::ERROR_STALLED);
+
                 $this->statusManager->failed(
                     $queue,
-                    ImportStatusManager::errorForWholeImport($message)
+                    ImportStatusManager::errorForWholeImport($this->translator->trans($errorKey))
                 );
             }
         }

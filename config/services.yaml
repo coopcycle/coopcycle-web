@@ -160,6 +160,10 @@ services:
     tags:
       - { name: 'app.import_handler', key: 'deliveries' }
 
+  AppBundle\Import\TaskImportHandler:
+    tags:
+      - { name: 'app.import_handler', key: 'tasks' }
+
   AppBundle\Import\DeliveryImportCanceller:
     tags:
       - { name: 'app.import_canceller', key: 'deliveries' }

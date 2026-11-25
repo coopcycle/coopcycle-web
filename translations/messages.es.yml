@@ -1589,6 +1589,10 @@ deliveries.imports.see_errored_file: Detalles de los errores
 deliveries.imports.error.interrupted: "La importación se interrumpió por un error inesperado, y no se importó ninguna entrega. Por favor, vuelve a importar el fichero."
 deliveries.imports.error.stalled: "La importación se detuvo porque no avanzaba desde hacía un tiempo anormalmente largo, probablemente porque el worker que la procesaba desapareció. No se importó ninguna entrega, por favor, vuelve a importar el fichero."
 deliveries.imports.error.rolled_back: "Guardar las entregas falló en esta línea, y no se importó ninguna. Por favor, vuelve a importar el fichero."
+tasks.imports.error.abandoned: "La importación se ha descartado porque nunca se asociaron las columnas del archivo con los campos que contienen. No se ha importado nada, importa el archivo de nuevo."
+tasks.imports.error.interrupted: "La importación se interrumpió por un error inesperado, y no se importó ninguna tarea. Por favor, vuelve a importar el fichero."
+tasks.imports.error.stalled: "La importación se detuvo porque no avanzaba desde hacía un tiempo anormalmente largo, probablemente porque el worker que la procesaba desapareció. No se importó ninguna tarea, por favor, vuelve a importar el fichero."
+tasks.imports.error.rolled_back: "Guardar las tareas falló en esta línea, y no se importó ninguna. Por favor, vuelve a importar el fichero."
 business.account.settings.link: Asociar a mi cuenta
 form.business_restaurant_group.restaurants_with_menu: Restaurantes con menú
 form.business_restaurant_group.restaurant: Restaurante

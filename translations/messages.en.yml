@@ -1787,6 +1787,10 @@ deliveries.imports.see_errored_file: To errors details
 deliveries.imports.error.interrupted: "The import was interrupted by an unexpected error, and no delivery was imported. Please import the file again."
 deliveries.imports.error.stalled: "The import was stopped because it had not made any progress for an unusually long time, most likely because the worker handling it went away. No delivery was imported, please import the file again."
 deliveries.imports.error.rolled_back: "Saving the deliveries failed on this line, and none were imported. Please import the file again."
+tasks.imports.error.abandoned: "The import was dropped because the columns of the file were never matched to the fields they hold. Nothing was imported, please import the file again."
+tasks.imports.error.interrupted: "The import was interrupted by an unexpected error, and no task was imported. Please import the file again."
+tasks.imports.error.stalled: "The import was stopped because it had not made any progress for an unusually long time, most likely because the worker handling it went away. No task was imported, please import the file again."
+tasks.imports.error.rolled_back: "Saving the tasks failed on this line, and none were imported. Please import the file again."
 business.account.settings.link: Link with my account
 form.business_restaurant_group.restaurants_with_menu: Restaurants with menu
 form.business_restaurant_group.restaurant: Restaurant

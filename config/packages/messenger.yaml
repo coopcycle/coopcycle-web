@@ -94,6 +94,7 @@ framework:
             'AppBundle\Message\IndexDeliveries': async
             'AppBundle\Message\WoopitDocumentWebhook': async
             'AppBundle\Message\ImportDeliveries': async
+            'AppBundle\Message\ImportTasksFromFile': async
             'AppBundle\Message\CancelImportedItems': async
             # Deprecated, for the messages dispatched before CancelImportedItems replaced it
             'AppBundle\Message\CancelImportedDeliveries': async

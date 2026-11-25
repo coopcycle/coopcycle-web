@@ -1571,6 +1571,10 @@ deliveries.imports.see_errored_file: Voir les erreurs
 deliveries.imports.error.interrupted: "L'import a été interrompu par une erreur inattendue, et aucune livraison n'a été importée. Merci d'importer à nouveau le fichier."
 deliveries.imports.error.stalled: "L'import a été arrêté car il n'avançait plus depuis un temps anormalement long, probablement parce que le worker qui le traitait a disparu. Aucune livraison n'a été importée, merci d'importer à nouveau le fichier."
 deliveries.imports.error.rolled_back: "L'enregistrement des livraisons a échoué sur cette ligne, et aucune n'a été importée. Merci d'importer à nouveau le fichier."
+tasks.imports.error.abandoned: "L'import a été abandonné car les colonnes du fichier n'ont jamais été associées aux champs qu'elles contiennent. Rien n'a été importé, importez le fichier à nouveau."
+tasks.imports.error.interrupted: "L'import a été interrompu par une erreur inattendue, et aucune tâche n'a été importée. Merci d'importer à nouveau le fichier."
+tasks.imports.error.stalled: "L'import a été arrêté car il n'avançait plus depuis un temps anormalement long, probablement parce que le worker qui le traitait a disparu. Aucune tâche n'a été importée, merci d'importer à nouveau le fichier."
+tasks.imports.error.rolled_back: "L'enregistrement des tâches a échoué sur cette ligne, et aucune n'a été importée. Merci d'importer à nouveau le fichier."
 adminDashboard.business_restaurant_groups.title: Groupes de restaurants d'entreprise
 registration.flow.finish: "Terminer mon inscription"
 form.settings.company_legal_name.label: "Nom légal de l'entreprise"
