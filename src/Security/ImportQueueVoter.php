@@ -7,6 +7,13 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
+/**
+ * Who may look at an import and act on it.
+ *
+ * The imports tab lives behind ^/admin, which opens to ROLE_DISPATCHER: the dispatchers
+ * who import the files are granted what they can already see, rather than being shown a
+ * list whose every button answers 403.
+ */
 class ImportQueueVoter extends Voter
 {
     public function __construct(private AuthorizationCheckerInterface $authorizationChecker)
@@ -20,7 +27,8 @@ class ImportQueueVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
     {
-        if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+        // ROLE_ADMIN includes ROLE_DISPATCHER
+        if ($this->authorizationChecker->isGranted('ROLE_DISPATCHER')) {
             return true;
         }
 
