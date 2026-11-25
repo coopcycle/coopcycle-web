@@ -84,7 +84,7 @@ class ProductType extends AbstractType
             ]);
 
         // The weight is only used by pricing rules
-        if ($options['owner'] instanceof LocalBusiness && $options['owner']->getContract()?->isVariablePriceEnabled()) {
+        if ($options['owner'] instanceof LocalBusiness && $options['owner']->getContract()->isVariablePriceEnabled()) {
             $builder->add('weight', WeightType::class, [
                 'label' => 'form.product.weight.label',
                 'help' => 'form.product.weight.help',
