@@ -18,6 +18,7 @@ use Nucleos\UserBundle\Model\UserManager;
 use libphonenumber\PhoneNumber;
 use libphonenumber\PhoneNumberUtil;
 use Prophecy\Argument;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TaskSpreadsheetParserTest extends TestCase
 {
@@ -58,6 +59,9 @@ class TaskSpreadsheetParserTest extends TestCase
                 return $taskList;
             });
 
+        $translator = $this->prophesize(TranslatorInterface::class);
+        $translator->trans(Argument::cetera())->will(fn ($args) => $args[0]);
+
         return new TaskSpreadsheetParser(
             $this->geocoder->reveal(),
             new Slugify(),
@@ -66,6 +70,7 @@ class TaskSpreadsheetParserTest extends TestCase
             'fr',
             $this->entityManager->reveal(),
             $this->taskListProvider->reveal(),
+            $translator->reveal(),
         );
     }
 
@@ -94,6 +99,26 @@ class TaskSpreadsheetParserTest extends TestCase
         $this->assertCount(5, $tasks);
     }
 
+    /**
+     * The column is in kilograms. Its value used to be converted and then dropped on the
+     * floor, so a file's weights never reached the tasks at all.
+     */
+    public function testWeightIsReadInKilograms()
+    {
+        $this->mockDependencies();
+
+        $filename = realpath(__DIR__ . '/../Resources/spreadsheet/tasks.csv');
+        $tasks = $this->parser->parse($filename);
+
+        // Row 2, a pickup: weight is not a dropoff's alone
+        $this->assertSame(2500, $tasks[0]->getWeight());
+        // Row 3 and 4, dropoffs
+        $this->assertSame(15000, $tasks[1]->getWeight());
+        $this->assertSame(50000, $tasks[2]->getWeight());
+        // Row 6, with no weight at all
+        $this->assertNull($tasks[4]->getWeight());
+    }
+
     public function testCsvSemicolon()
     {
         $this->mockDependencies();
@@ -107,7 +132,7 @@ class TaskSpreadsheetParserTest extends TestCase
     public function testCsvWithGeocoderError()
     {
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessageMatches('/^Could not geocode address/');
+        $this->expectExceptionMessage('import.address.geocode.error');
 
         $this->geocoder
             ->geocode(Argument::type('string'))
@@ -130,7 +155,7 @@ class TaskSpreadsheetParserTest extends TestCase
     public function testXlsxWithGeocoderError()
     {
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessageMatches('/^Could not geocode address/');
+        $this->expectExceptionMessage('import.address.geocode.error');
 
         $this->geocoder
             ->geocode(Argument::type('string'))
@@ -153,7 +178,7 @@ class TaskSpreadsheetParserTest extends TestCase
     public function testOdsWithGeocoderError()
     {
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessageMatches('/^Could not geocode address/');
+        $this->expectExceptionMessage('import.address.geocode.error');
 
         $this->geocoder
             ->geocode(Argument::type('string'))

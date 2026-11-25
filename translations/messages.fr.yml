@@ -1686,6 +1686,7 @@ vehicles.breadcrumb.help: "Définir la flotte de véhicules"
 tasks.mark_as_done.has_previous: "La tâche #%failed_task% n'a pas pu être complétée car elle a une tâche précédente #%previous_task% qui doit être complétée en premier."
 import.errors.at.row: "Erreurs à la ligne %row_number%"
 import.address.geocode.error: "Impossible de géocoder l'adresse %failed_address%"
+import.address.reverse_geocode.error: Aucune adresse trouvée aux coordonnées %coordinates%
 import.time.range.error: "La plage horaire \"%value%\" dans %key% n'est pas valide"
 import.columns.missing: "Le fichier n'a pas de colonne %columns%, ajoutez-la et importez à nouveau le fichier"
 import.telephone.error: "%key%: \"%value%\" n'est pas un numéro de téléphone valide"

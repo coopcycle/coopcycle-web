@@ -1388,6 +1388,7 @@ tasks.mark_as_done.has_previous: 'La tarea #%failed_task% no puede finalizarse p
   tiene una tarea previa #%previous_task% que debe ser finalizada antes.'
 import.errors.at.row: Errores en fila %row_number%
 import.address.geocode.error: No se pudo geocodificar la dirección %failed_address%
+import.address.reverse_geocode.error: No se ha encontrado ninguna dirección en las coordenadas %coordinates%
 import.time.range.error: Rango de tiempo "%value%" en %key% no es válido
 import.columns.missing: "El fichero no tiene la columna %columns%, añádela y vuelve a importar el fichero"
 import.telephone.error: "%key%: \"%value%\" no es un número de teléfono válido"

@@ -14,6 +14,7 @@ use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManager;
 use PhpUnitsOfMeasure\PhysicalQuantity\Mass;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
 
@@ -35,7 +36,8 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
         UserManager $userManager,
         string $countryCode,
         EntityManagerInterface $entityManager,
-        private TaskListProvider $taskListProvider)
+        private TaskListProvider $taskListProvider,
+        private TranslatorInterface $translator)
     {
         $this->geocoder = $geocoder;
         $this->slugify = $slugify;
@@ -106,8 +108,9 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
 
             if (isset($record[$addressHeader]) && !empty($record[$addressHeader])) {
                 if (!$address = $this->geocoder->geocode($record[$addressHeader])) {
-                    // TODO Translate
-                    throw new \Exception(sprintf('Could not geocode address %s', $record[$addressHeader]));
+                    throw new \Exception($this->translator->trans('import.address.geocode.error', [
+                        '%failed_address%' => $record[$addressHeader],
+                    ]));
                 }
             }
 
@@ -119,8 +122,9 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
             if (isset($record[$latlngHeader]) && !empty($record[$latlngHeader])) {
                 [ $latitude, $longitude ] = array_map('floatval', explode(',', $record[$latlngHeader]));
                 if (!$address = $this->geocoder->reverse($latitude, $longitude)) {
-                    // TODO Translate
-                    throw new \Exception(sprintf('Could not reverse geocode %s', $record[$latlngHeader]));
+                    throw new \Exception($this->translator->trans('import.address.reverse_geocode.error', [
+                        '%coordinates%' => $record[$latlngHeader],
+                    ]));
                 }
             }
 
@@ -190,8 +194,8 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
                 $this->parseAndApplyPackages($task, $record['packages']);
             }
 
-            if (isset($record['weight']) && !empty($record['weight']) && $task->isDropoff()) {
-                $this->applyWeight($record['weight']);
+            if (isset($record['weight']) && is_numeric($record['weight'])) {
+                $task->setWeight($this->applyWeight($record['weight']));
             }
 
             if (isset($record['group']) && !empty(trim($record['group']))) {
@@ -305,10 +309,13 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
         return $taskGroup;
     }
 
-    private function applyWeight($weight)
+    /**
+     * The column is in kilograms, a task's weight is in grams
+     */
+    private function applyWeight($weight): int
     {
         $mass = new Mass($weight, 'kg');
 
-        return $mass->toUnit('g');
+        return (int) $mass->toUnit('g');
     }
 }
