@@ -59,7 +59,7 @@
       path: path('admin_deliveries', { section: 'past' })
     },
     {
-      title: 'deliveries.imports'|trans,
+      title: 'imports.title'|trans,
       active: app.request.query.get('section', 'today') == 'imports',
       path: path('admin_deliveries', { section: 'imports' })
     },
@@ -120,33 +120,33 @@
       <div id="import-datepicker" data-default-date="{{ import_date|date('Y-m-d') }}"></div>
     </div>
     <table class="table mb-4"
-      data-delivery-imports
+      data-imports
       data-centrifugo-token="{{ centrifugo_token }}"
       data-centrifugo-channel="{{ centrifugo_channel }}">
       <thead>
         <th></th>
         <th>{{ 'form.delivery_import.file.label'|trans }}</th>
-        <th>{{ 'deliveries.imports.created_at'|trans }}</th>
-        <th>{{ 'deliveries.imports.progress'|trans }}</th>
+        <th>{{ 'imports.created_at'|trans }}</th>
+        <th>{{ 'imports.progress'|trans }}</th>
         <th></th>
       </thead>
       <tbody>
         {% for import_queue in import_queues %}
           <tr class="{{ import_queue.status == 'failed' ? 'danger' : '' }}"
-            data-delivery-import
-            data-delivery-import-filename="{{ import_queue.filename }}"
-            data-delivery-import-queue="{{ path('_api_/import_queues/{id}{._format}_get', { id: import_queue.id }) }}"
-            data-delivery-import-csv="{{ path('_api_/import_queues/{id}/csv_get', { id: import_queue.id }) }}"
-            data-delivery-import-redownload="{{ path('_api_/import_queues/{id}/redownload_get', { id: import_queue.id }) }}"
-            data-delivery-import-cancel="{{ path('_api_/import_queues/{id}/cancel_put', { id: import_queue.id }) }}"
-            data-delivery-import-cancel-deliveries="{{ path('_api_/import_queues/{id}/cancel_items_put', { id: import_queue.id }) }}"
-            data-delivery-import-deliveries="{{ imported_deliveries[import_queue.id] ?? 0 }}">
-            <td width="5%"><i class="fa fa-{{ import_status_icon[import_queue.itemsCancellation ? 'items_' ~ import_queue.itemsCancellation : import_queue.status] }}" data-delivery-import-status></i></td>
+            data-import
+            data-import-filename="{{ import_queue.filename }}"
+            data-import-queue="{{ path('_api_/import_queues/{id}{._format}_get', { id: import_queue.id }) }}"
+            data-import-csv="{{ path('_api_/import_queues/{id}/csv_get', { id: import_queue.id }) }}"
+            data-import-redownload="{{ path('_api_/import_queues/{id}/redownload_get', { id: import_queue.id }) }}"
+            data-import-cancel="{{ path('_api_/import_queues/{id}/cancel_put', { id: import_queue.id }) }}"
+            data-import-cancel-items="{{ path('_api_/import_queues/{id}/cancel_items_put', { id: import_queue.id }) }}"
+            data-import-created="{{ imported_deliveries[import_queue.id] ?? 0 }}">
+            <td width="5%"><i class="fa fa-{{ import_status_icon[import_queue.itemsCancellation ? 'items_' ~ import_queue.itemsCancellation : import_queue.status] }}" data-import-status></i></td>
             <td>{{ import_queue.filename }}</td>
             <td>{{ import_queue.createdAt|time_diff }}</td>
             {# Formatted by list.js, which also keeps it up to date while the file is imported #}
             <td class="text-muted"
-              data-delivery-import-progress
+              data-import-progress
               data-status="{{ import_queue.status }}"
               data-started-at="{{ import_queue.startedAt ? import_queue.startedAt|date('c') : '' }}"
               data-total-rows="{{ import_queue.totalRows }}"
@@ -157,32 +157,32 @@
               data-cancelled-items="{{ import_queue.cancelledItems }}"
               data-skipped-items="{{ import_queue.skippedItems }}"></td>
             <td class="text-right">
-              <a href="#" class="mr-3 text-danger{{ import_queue.cancellable ? '' : ' d-none' }}" data-delivery-import-cancel-button>
-                <i class="fa fa-ban"></i> {{ 'deliveries.imports.cancel'|trans }}
+              <a href="#" class="mr-3 text-danger{{ import_queue.cancellable ? '' : ' d-none' }}" data-import-cancel-button>
+                <i class="fa fa-ban"></i> {{ 'imports.cancel'|trans }}
               </a>
               {# Hidden by list.js once they are being cancelled #}
-              <a href="#" class="mr-3 text-danger{{ import_queue.canCancelItems and (imported_deliveries[import_queue.id] ?? 0) > 0 ? '' : ' d-none' }}" data-delivery-import-cancel-deliveries-button>
-                <i class="fa fa-ban"></i> {{ 'deliveries.imports.cancel_deliveries'|trans }}
+              <a href="#" class="mr-3 text-danger{{ import_queue.canCancelItems and (imported_deliveries[import_queue.id] ?? 0) > 0 ? '' : ' d-none' }}" data-import-cancel-items-button>
+                <i class="fa fa-ban"></i> {{ ('imports.cancel_' ~ import_queue.type)|trans }}
               </a>
               {% if import_queue.waitingForMapping %}
                 {# Nothing of the file has been read yet: there is no spreadsheet to show,
                    only the columns left to map #}
                 <a class="mr-3 text-underline" href="{{ path('admin_import_mapping', { id: import_queue.id }) }}">
-                  {{ 'deliveries.imports.continue_mapping'|trans }}
+                  {{ 'imports.continue_mapping'|trans }}
                 </a>
               {% elseif import_queue.status == 'failed' %}
-                <a href="#" class="mr-3 text-danger text-underline" data-delivery-import-view>
-                  {{ 'deliveries.imports.see_errored_file'|trans }}
+                <a href="#" class="mr-3 text-danger text-underline" data-import-view>
+                  {{ 'imports.see_errored_file'|trans }}
                 </a>
               {% else %}
                 {# Switched to the errors by list.js, when the import fails while the page is open #}
-                <a href="#" class="mr-3 text-underline" data-delivery-import-view
-                  data-errors-label="{{ 'deliveries.imports.see_errored_file'|trans }}">
-                  {{ 'deliveries.imports.see_file'|trans }}
+                <a href="#" class="mr-3 text-underline" data-import-view
+                  data-errors-label="{{ 'imports.see_errored_file'|trans }}">
+                  {{ 'imports.see_file'|trans }}
                 </a>
               {% endif %}
               {% if not import_queue.waitingForMapping %}
-                <a href="#" data-delivery-import-redownload>
+                <a href="#" data-import-redownload>
                   <i class="fa fa-download"></i>
                 </a>
               {% endif %}
@@ -191,7 +191,7 @@
         {% endfor %}
       </tbody>
     </table>
-    <div id="delivery_import_spreadsheet"></div>
+    <div id="import_spreadsheet"></div>
   {% else %}
     {% include '_partials/delivery/list.html.twig' with { with_store: true } %}
     <nav class="text-center">

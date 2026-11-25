@@ -1555,19 +1555,20 @@ error.404: Page non trouvée.
 error.502: Le serveur a dépassé sa capacité. Veuillez réessayer plus tard.
 error.504: Le serveur a mis trop de temps à répondre.
 error.return_to_homepage: Retourner à la page d'accueil
-deliveries.imports: Fichiers importés
-deliveries.importing: Le fichier %filename% va bientôt être importé.
-deliveries.imports.created_at: Créé le
-deliveries.imports.progress: Progression
-deliveries.imports.cancel: Annuler
-deliveries.imports.cancel_deliveries: "Annuler les livraisons"
-deliveries.imports.see_file: Voir le fichier
-deliveries.imports.continue_mapping: Associer les colonnes
-deliveries.imports.drop_file: Abandonner ce fichier
-deliveries.imports.mapping_cancelled: "L'import de %filename% a été abandonné, rien n'a été importé."
-deliveries.imports.unreadable: "Ce fichier n'a pas pu être lu. Vérifiez-le et importez-le à nouveau."
+imports.title: Fichiers importés
+imports.importing: Le fichier %filename% va bientôt être importé.
+imports.created_at: Créé le
+imports.progress: Progression
+imports.cancel: Annuler
+imports.cancel_deliveries: "Annuler les livraisons"
+imports.cancel_tasks: "Annuler les tâches"
+imports.see_file: Voir le fichier
+imports.continue_mapping: Associer les colonnes
+imports.drop_file: Abandonner ce fichier
+imports.mapping_cancelled: "L'import de %filename% a été abandonné, rien n'a été importé."
+imports.unreadable: "Ce fichier n'a pas pu être lu. Vérifiez-le et importez-le à nouveau."
 deliveries.imports.error.abandoned: "L'import a été abandonné car les colonnes du fichier n'ont jamais été associées aux champs qu'elles contiennent. Rien n'a été importé, importez le fichier à nouveau."
-deliveries.imports.see_errored_file: Voir les erreurs
+imports.see_errored_file: Voir les erreurs
 deliveries.imports.error.interrupted: "L'import a été interrompu par une erreur inattendue, et aucune livraison n'a été importée. Merci d'importer à nouveau le fichier."
 deliveries.imports.error.stalled: "L'import a été arrêté car il n'avançait plus depuis un temps anormalement long, probablement parce que le worker qui le traitait a disparu. Aucune livraison n'a été importée, merci d'importer à nouveau le fichier."
 deliveries.imports.error.rolled_back: "L'enregistrement des livraisons a échoué sur cette ligne, et aucune n'a été importée. Merci d'importer à nouveau le fichier."
@@ -1798,7 +1799,7 @@ form.billing_method.unit: "Par unité"
 form.billing_method.percentage: "Pourcentage du montant de la commande"
 order.export.heading.billing_method: "Méthode de facturation"
 order.export.heading.applied_billing: "Facturation appliquée"
-deliveries.import_upload_error: "Le fichier n'a pas pu être téléchargé. Veuillez réessayer plus tard."
+imports.upload_error: "Le fichier n'a pas pu être téléchargé. Veuillez réessayer plus tard."
 form.task_export.colisactiv.label: Exporter au format ColivActiv
 form.task_export.colisactiv_all.label: Exporter au format ColivActiv incluant toutes les tâches non terminées
 form.local_business.iso_code.fr.siret.help: Trouvez le numéro SIRET sur <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">l'Annuaire des Entreprises</a>

@@ -64,7 +64,7 @@ context('Import deliveries with a column mapping (role: admin)', () => {
     cy.consumeMessages(30)
 
     cy.reload()
-    cy.get('i.fa-check[data-delivery-import-status]').should('exist')
+    cy.get('i.fa-check[data-import-status]').should('exist')
 
     // The deliveries were read through the mapping, priced and saved
     cy.get('[data-testid="tab:/admin/deliveries"]').click()
@@ -81,6 +81,6 @@ context('Import deliveries with a column mapping (role: admin)', () => {
     cy.urlmatch(/\/admin\/deliveries$/)
     cy.urlmatch('section=imports', 'include', 'search')
 
-    cy.get('i.fa-ban[data-delivery-import-status]').should('exist')
+    cy.get('i.fa-ban[data-import-status]').should('exist')
   })
 })

@@ -1405,7 +1405,7 @@ registration.info.text: Na %brandName% si můžete objednat jídlo z restaurací
   k uberizaci naší společnosti!
 registration.step.invitation.copy.link: Zkopírujte níže uvedený odkaz a pošlete ho
   svým kolegům
-deliveries.importing: Soubor %filename% je importován.
+imports.importing: Soubor %filename% je importován.
 form.product.business_restaurant_group.price_definition.label: Definice cen pro podnikatelské
   skupiny restaurací
 business_restaurant_group.form.invalid: Vyskytly se chyby nebo chybějící informace,
@@ -1639,8 +1639,8 @@ error.404: Stránka nenalezena.
 error.502: Server má překročenou kapacitu. Zkuste to prosím později.
 error.504: Odpověď serveru trvala příliš dlouho.
 error.return_to_homepage: Zpět na domovskou stránku
-deliveries.imports: Importované soubory
-deliveries.imports.created_at: Vytvořeno v
+imports.title: Importované soubory
+imports.created_at: Vytvořeno v
 business.account.settings.link: Propojení s mým účtem
 form.business_restaurant_group.restaurants_with_menu: Restaurace s jídelním lístkem
 form.business_restaurant_group.restaurant: Restaurace
@@ -1686,7 +1686,7 @@ form.billing_method.unit: Na jednotku
 form.billing_method.percentage: Procento z částky objednávky
 order.export.heading.billing_method: Způsob účtování
 order.export.heading.applied_billing: Použité účtování
-deliveries.import_upload_error: Soubor se nepodařilo nahrát. Zkuste to prosím později.
+imports.upload_error: Soubor se nepodařilo nahrát. Zkuste to prosím později.
 organizations.breadcrumb: Organizace
 organizations.new: Nová organizace
 order.export.heading.incidents: Incidenty
@@ -1735,7 +1735,7 @@ adminDashboard.invoicing.docs_path: /cs/web/admin/dodavky/fakturace/
 adminDashboard.invoicing.help: Připravit faktury
 adminDashboard.invoicing.line_item.order_number: Objednávka č. %number%
 form.settings.accounting_account.label: Účetní kód
-deliveries.imports.see_errored_file: Detaily o chybách
+imports.see_errored_file: Detaily o chybách
 loopeat.incident.unexpected_returns: Neočekávaný počet vrácení bezodpadových obalů
 form.store.urbantz_hub_id: Urbantz Hub Id
 form.payment.edenred.refund_amount.help: Edenred nepodporuje částečné náhrady.
@@ -1743,4 +1743,4 @@ restaurant.form.use_paygreen.label: Použijte Paygreen pro tento obchod
 restaurant.meal_vouchers_transactions.emitter: Vydavatel
 form.settings.version: verze
 order.export.heading.incident_adjustments: Úpravy incidentu
-deliveries.imports.see_file: Viz soubor
+imports.see_file: Viz soubor

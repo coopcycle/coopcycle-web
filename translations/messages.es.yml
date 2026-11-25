@@ -1573,19 +1573,20 @@ registration.confirm.invitation.link.title: "Usa el siguiente enlace para invita
   \ a tus colegas de trabajo a unirse"
 registration.step.invitation.copy.button: "Copiar el enlace"
 registration.step.invitation.link.copied: "Copiado"
-deliveries.imports: Ficheros importados
-deliveries.importing: El fichero %filename% va a ser importado.
-deliveries.imports.created_at: Creado el
-deliveries.imports.progress: Progreso
-deliveries.imports.cancel: Cancelar
-deliveries.imports.cancel_deliveries: "Cancelar las entregas"
-deliveries.imports.see_file: Ver archivo
-deliveries.imports.continue_mapping: Asociar las columnas
-deliveries.imports.drop_file: Descartar este archivo
-deliveries.imports.mapping_cancelled: "La importación de %filename% se ha descartado, no se ha importado nada."
-deliveries.imports.unreadable: "No se ha podido leer el archivo. Revísalo e impórtalo de nuevo."
+imports.title: Ficheros importados
+imports.importing: El fichero %filename% va a ser importado.
+imports.created_at: Creado el
+imports.progress: Progreso
+imports.cancel: Cancelar
+imports.cancel_deliveries: "Cancelar las entregas"
+imports.cancel_tasks: "Cancelar las tareas"
+imports.see_file: Ver archivo
+imports.continue_mapping: Asociar las columnas
+imports.drop_file: Descartar este archivo
+imports.mapping_cancelled: "La importación de %filename% se ha descartado, no se ha importado nada."
+imports.unreadable: "No se ha podido leer el archivo. Revísalo e impórtalo de nuevo."
 deliveries.imports.error.abandoned: "La importación se ha descartado porque nunca se asociaron las columnas del archivo con los campos que contienen. No se ha importado nada, importa el archivo de nuevo."
-deliveries.imports.see_errored_file: Detalles de los errores
+imports.see_errored_file: Detalles de los errores
 deliveries.imports.error.interrupted: "La importación se interrumpió por un error inesperado, y no se importó ninguna entrega. Por favor, vuelve a importar el fichero."
 deliveries.imports.error.stalled: "La importación se detuvo porque no avanzaba desde hacía un tiempo anormalmente largo, probablemente porque el worker que la procesaba desapareció. No se importó ninguna entrega, por favor, vuelve a importar el fichero."
 deliveries.imports.error.rolled_back: "Guardar las entregas falló en esta línea, y no se importó ninguna. Por favor, vuelve a importar el fichero."
@@ -1727,7 +1728,7 @@ error.502: El servidor está al límite de su capacidad. Por favor, inténtelo d
 form.settings.company_legal_name.help: Introduzca el nombre legal completo de la empresa
   tal y como aparece en sus documentos oficiales.
 form.billing_method.percentage: Porcentaje del importe del pedido
-deliveries.import_upload_error: El archivo no se ha podido cargar. Por favor, inténtelo
+imports.upload_error: El archivo no se ha podido cargar. Por favor, inténtelo
   más tarde.
 restaurant.form.deposit_refund_enabled.docs_path: /en/admin/restaurants/general-settings/#deposit-refund
 restaurant.form.quotes_allowed.docs_path: /en/admin/restaurants/general-settings/#quotes-allowed

@@ -104,7 +104,7 @@ trait ImportTrait
 
             $this->addFlash(
                 'error',
-                $this->translator->trans('deliveries.import_upload_error')
+                $this->translator->trans('imports.upload_error')
             );
         }
 
@@ -161,7 +161,7 @@ trait ImportTrait
 
             $this->addFlash(
                 'notice',
-                $this->translator->trans('deliveries.imports.mapping_cancelled', [
+                $this->translator->trans('imports.mapping_cancelled', [
                     '%filename%' => $queue->getFilename(),
                 ])
             );
@@ -183,7 +183,7 @@ trait ImportTrait
 
             $statusManager->cancel($queue);
 
-            $this->addFlash('error', $this->translator->trans('deliveries.imports.unreadable'));
+            $this->addFlash('error', $this->translator->trans('imports.unreadable'));
 
             return $this->redirectToRoute($routeTo, ['section' => 'imports']);
         } finally {
@@ -221,7 +221,7 @@ trait ImportTrait
 
                 $this->addFlash(
                     'notice',
-                    $this->translator->trans('deliveries.importing', ['%filename%' => $queue->getFilename()])
+                    $this->translator->trans('imports.importing', ['%filename%' => $queue->getFilename()])
                 );
             }
 

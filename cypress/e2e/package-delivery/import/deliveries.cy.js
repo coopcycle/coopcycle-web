@@ -45,7 +45,7 @@ context('Import deliveries (role: admin)', () => {
     //   // The first attempt most likely fails, hence attempts = 4
     //
     //   cy.get('body').then($body => {
-    //     if ($body.find('i.fa-check[data-delivery-import-status]').length) {
+    //     if ($body.find('i.fa-check[data-import-status]').length) {
     //       // Element exists, proceed
     //     } else {
     //       // Element does not exist, refresh and retry
@@ -59,7 +59,7 @@ context('Import deliveries (role: admin)', () => {
     // checkImportStatus()
 
     cy.reload()
-    cy.get('i.fa-check[data-delivery-import-status]').should('exist')
+    cy.get('i.fa-check[data-import-status]').should('exist')
 
     cy.get('[data-testid="tab:/admin/deliveries"]').click()
 

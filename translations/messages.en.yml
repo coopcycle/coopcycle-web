@@ -1771,19 +1771,20 @@ error.404: Page not found.
 error.502: The server is over capacity. Please try again later.
 error.504: The server took too much time to respond.
 error.return_to_homepage: Return to homepage
-deliveries.imports: Imported files
-deliveries.importing: The file %filename% is being imported.
-deliveries.imports.created_at: Created at
-deliveries.imports.progress: Progress
-deliveries.imports.cancel: Cancel
-deliveries.imports.cancel_deliveries: "Cancel the deliveries"
-deliveries.imports.see_file: See file
-deliveries.imports.continue_mapping: Match the columns
-deliveries.imports.drop_file: Drop this file
-deliveries.imports.mapping_cancelled: "The import of %filename% was dropped, nothing was imported."
-deliveries.imports.unreadable: "That file could not be read. Please check it and import it again."
+imports.title: Imported files
+imports.importing: The file %filename% is being imported.
+imports.created_at: Created at
+imports.progress: Progress
+imports.cancel: Cancel
+imports.cancel_deliveries: "Cancel the deliveries"
+imports.cancel_tasks: "Cancel the tasks"
+imports.see_file: See file
+imports.continue_mapping: Match the columns
+imports.drop_file: Drop this file
+imports.mapping_cancelled: "The import of %filename% was dropped, nothing was imported."
+imports.unreadable: "That file could not be read. Please check it and import it again."
 deliveries.imports.error.abandoned: "The import was dropped because the columns of the file were never matched to the fields they hold. Nothing was imported, please import the file again."
-deliveries.imports.see_errored_file: To errors details
+imports.see_errored_file: To errors details
 deliveries.imports.error.interrupted: "The import was interrupted by an unexpected error, and no delivery was imported. Please import the file again."
 deliveries.imports.error.stalled: "The import was stopped because it had not made any progress for an unusually long time, most likely because the worker handling it went away. No delivery was imported, please import the file again."
 deliveries.imports.error.rolled_back: "Saving the deliveries failed on this line, and none were imported. Please import the file again."
@@ -1858,7 +1859,7 @@ form.billing_method.unit: Per unit
 form.billing_method.percentage: Percentage of order amount
 order.export.heading.billing_method: Billing method
 order.export.heading.applied_billing: Applied billing
-deliveries.import_upload_error: The file couldn't be uploaded. Please try again later.
+imports.upload_error: The file couldn't be uploaded. Please try again later.
 organizations.breadcrumb: Organizations
 organizations.new: New organization
 loopeat.incident.unexpected_returns: Unexpected number of zero waste returns

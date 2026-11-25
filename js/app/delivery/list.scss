@@ -3,19 +3,19 @@
 // The modal itself must not scroll, otherwise the close icon scrolls away with the
 // spreadsheet: only the body below the header does, on both axes.
 // The class is doubled to win over the `overflow: auto` of the base `.ReactModal__Content`.
-.ReactModal__Content.ReactModal__Content--delivery-import-spreadsheet {
+.ReactModal__Content.ReactModal__Content--import-spreadsheet {
   width: calc(100% - 40px);
   height: calc(100% - 40px);
   display: flex;
   flex-direction: column;
   overflow: hidden;
 
-  .delivery-import-spreadsheet__header {
+  .import-spreadsheet__header {
     flex: 0 0 auto;
     margin-bottom: 1rem;
   }
 
-  .delivery-import-spreadsheet__body {
+  .import-spreadsheet__body {
     flex: 1 1 auto;
     // Without it the body refuses to shrink below the spreadsheet's own height,
     // and the whole modal overflows instead
@@ -24,7 +24,7 @@
   }
 
   // While the file and its errors load, and when they fail to
-  .delivery-import-spreadsheet__placeholder {
+  .import-spreadsheet__placeholder {
     display: flex;
     flex-direction: column;
     align-items: center;
