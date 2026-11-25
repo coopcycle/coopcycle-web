@@ -612,6 +612,7 @@
         "DELIVERY_IMPORT_PROGRESS_ERRORS_plural": "{{count}} erreurs",
         "DELIVERY_IMPORT_PROGRESS_REMAINING": "encore {{duration}}",
         "DELIVERY_IMPORT_PROGRESS_SAVING": "enregistrement des livraisons",
+        "DELIVERY_IMPORT_WAITING_FOR_MAPPING": "en attente de l\u0027association des colonnes",
         "DELIVERY_IMPORT_CANCEL_CONFIRM": "Annuler cet import ? Aucune livraison de ce fichier ne sera créée.",
         "DELIVERY_IMPORT_CANCEL_DELIVERIES_TITLE": "Annuler la livraison créée par cet import ?",
         "DELIVERY_IMPORT_CANCEL_DELIVERIES_TITLE_plural": "Annuler les {{count}} livraisons créées par cet import ?",

@@ -11,11 +11,13 @@ use Doctrine\Persistence\ManagerRegistry;
  * Writes the status of a delivery import, and tells the dispatch board about
  * it so that the admin reflects it without a reload.
  *
- * pending -> started (reading the file) -> saving (saving the deliveries) -> completed or failed.
+ * mapping (waiting for a dispatcher to map its columns) -> pending -> started (reading
+ * the file) -> saving (saving the deliveries) -> completed or failed.
  *
  * An import also ends as failed when the worker gives up on the message, or the
  * sweep closes it because no worker is handling it any more. It ends as
- * cancelled when a dispatcher stops it while it is still pending or started.
+ * cancelled when a dispatcher stops it before it has saved anything, or when the sweep
+ * closes one left waiting for its columns to be mapped.
  *
  * Once it is over, a dispatcher can cancel the deliveries it created, once:
  * cancelling -> cancelled, the deliveries being cancelled by a worker.
@@ -95,7 +97,7 @@ class DeliveryImportStatusManager
      * Called by a dispatcher. A compare-and-set, as the worker may be moving the
      * import to "saving" at the same time: one of the two wins, never both.
      *
-     * @return bool false when the import was no longer pending or started
+     * @return bool false when the import had gone too far to be cancelled
      */
     public function cancel(DeliveryImportQueue $queue): bool
     {
@@ -107,7 +109,7 @@ class DeliveryImportStatusManager
                 'cancelled' => DeliveryImportQueue::STATUS_CANCELLED,
                 'finished_at' => $finishedAt,
                 'id' => $queue->getId(),
-                'cancellable' => [DeliveryImportQueue::STATUS_PENDING, DeliveryImportQueue::STATUS_STARTED],
+                'cancellable' => DeliveryImportQueue::CANCELLABLE_STATUSES,
             ],
             [
                 'finished_at' => Types::DATETIME_MUTABLE,
@@ -121,6 +123,41 @@ class DeliveryImportStatusManager
 
         $queue->setStatus(DeliveryImportQueue::STATUS_CANCELLED);
         $queue->setFinishedAt($finishedAt);
+
+        $this->liveUpdates->toDispatchers('delivery_import:updated', $this->toPayload($queue));
+
+        return true;
+    }
+
+    /**
+     * Called when a dispatcher has said which field each column of the file holds: the
+     * import is now one a worker can pick up.
+     *
+     * A compare-and-set, so that submitting the mapping screen twice, with a double click
+     * or with the back button, hands the file to a worker once and once only.
+     *
+     * @param array<int,string> $columnMapping
+     * @return bool false when the import was no longer waiting for a mapping
+     */
+    public function queued(DeliveryImportQueue $queue, array $columnMapping): bool
+    {
+        $updated = $this->doctrine->getConnection()->executeStatement(
+            'UPDATE delivery_import_queue SET status = :pending, column_mapping = :column_mapping WHERE id = :id AND status = :mapping',
+            [
+                'pending' => DeliveryImportQueue::STATUS_PENDING,
+                'column_mapping' => $columnMapping,
+                'id' => $queue->getId(),
+                'mapping' => DeliveryImportQueue::STATUS_MAPPING,
+            ],
+            ['column_mapping' => Types::JSON]
+        );
+
+        if (1 !== $updated) {
+            return false;
+        }
+
+        $queue->setStatus(DeliveryImportQueue::STATUS_PENDING);
+        $queue->setColumnMapping($columnMapping);
 
         $this->liveUpdates->toDispatchers('delivery_import:updated', $this->toPayload($queue));
 

@@ -13,7 +13,6 @@ use AppBundle\Entity\Address;
 use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryRepository;
-use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
 use AppBundle\Entity\Invitation;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
@@ -26,7 +25,6 @@ use AppBundle\Form\StoreAddressesType;
 use AppBundle\Form\StoreType;
 use AppBundle\Form\AddressType;
 use AppBundle\Form\DeliveryImportType;
-use AppBundle\Message\ImportDeliveries;
 use AppBundle\Pricing\OrderDuplicate;
 use AppBundle\Pricing\PricingManager;
 use AppBundle\Service\DeliveryManager;
@@ -41,8 +39,6 @@ use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use League\Flysystem\Filesystem;
-use League\Flysystem\FilesystemException;
-use League\Flysystem\UnableToWriteFile;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use ShipMonk\DoctrineEntityPreloader\EntityPreloader;
 use Knp\Component\Pager\PaginatorInterface;
@@ -50,7 +46,6 @@ use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -58,13 +53,14 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Messenger\Stamp\DelayStamp;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Vich\UploaderBundle\Storage\StorageInterface;
 
 trait StoreTrait
 {
+    use DeliveryImportTrait;
+
     use InjectAuthTrait;
 
     /**
@@ -567,7 +563,8 @@ trait StoreTrait
                 messageBus: $messageBus,
                 slugify: $slugify,
                 routeTo: $routes['import_success'],
-                logger: $logger
+                logger: $logger,
+                mappingRoute: $routes['import_mapping'],
             );
         }
 
@@ -1003,73 +1000,4 @@ trait StoreTrait
         return $response;
     }
 
-    protected function handleDeliveryImportForStore(
-        Store $store,
-        FormInterface $form,
-        EntityManagerInterface $entityManager,
-        Hashids $hashids,
-        Filesystem $filesystem,
-        MessageBusInterface $messageBus,
-        SlugifyInterface $slugify,
-        string $routeTo,
-        LoggerInterface $logger,
-    )
-    {
-
-        /** @var UploadedFile $uploadedFile */
-        $uploadedFile = $form->get('file')->getData();
-
-        $queue = new DeliveryImportQueue();
-        $queue->setStore($store);
-
-        $entityManager->persist($queue);
-        $entityManager->flush();
-
-        // slugify to get a safe filename. it may return an empty string but we had a hash afterwards so it should be alright.
-        $filename = $slugify->slugify($uploadedFile->getClientOriginalName());
-        $filename = substr($filename, 0, -4); // remove .csv extension in filename
-        $filename = substr($filename, 0, 100); // limit the filename length
-
-        $filename = sprintf(
-            '%s_%s.%s',
-            $filename,
-            $hashids->encode($queue->getId()),
-            $uploadedFile->guessExtension()
-        );
-
-        try {
-
-            $filesystem->write($filename, $uploadedFile->getContent());
-
-            $queue->setFilename($filename);
-            $entityManager->flush();
-
-            $messageBus->dispatch(
-                new ImportDeliveries($filename),
-                [ new DelayStamp(5000) ]
-            );
-
-            $this->addFlash(
-                'notice',
-                $this->translator->trans('deliveries.importing', ['%filename%' => $filename])
-            );
-
-        } catch (FilesystemException | UnableToWriteFile $e) {
-
-            $logger->error('Error while writing delivery import file', [
-                'exception' => $e,
-                'filename' => $filename,
-            ]);
-
-            $entityManager->remove($queue);
-            $entityManager->flush();
-
-            $this->addFlash(
-                'error',
-                $this->translator->trans('deliveries.import_upload_error')
-            );
-        }
-
-        return $this->redirectToRoute($routeTo, ['section' => 'imports']);
-    }
 }

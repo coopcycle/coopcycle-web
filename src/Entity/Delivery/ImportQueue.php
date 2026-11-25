@@ -58,6 +58,9 @@ class ImportQueue
 {
     use Timestampable;
 
+    // Uploaded, waiting for a dispatcher to say which field each of its columns holds.
+    // A worker never picks one up: the handler only imports a pending import.
+    const STATUS_MAPPING = 'mapping';
     const STATUS_PENDING = 'pending';
     const STATUS_STARTED = 'started';
     // The file is read, its deliveries are being saved: too late to cancel
@@ -65,6 +68,18 @@ class ImportQueue
     const STATUS_COMPLETED = 'completed';
     const STATUS_FAILED = 'failed';
     const STATUS_CANCELLED = 'cancelled';
+
+    /**
+     * The statuses a dispatcher can cancel an import in: it has not saved anything yet.
+     *
+     * @see self::isCancellable()
+     * @see \AppBundle\Service\DeliveryImportStatusManager::cancel()
+     */
+    const CANCELLABLE_STATUSES = [
+        self::STATUS_MAPPING,
+        self::STATUS_PENDING,
+        self::STATUS_STARTED,
+    ];
 
     // Cancelling the deliveries of an import, once it's done
     const DELIVERIES_CANCELLING = 'cancelling';
@@ -86,6 +101,16 @@ class ImportQueue
 
     #[Groups(['delivery_import_queue'])]
     protected array $errors = [];
+
+    /**
+     * Which field each column of the file holds, as picked on the mapping screen,
+     * by column index. Null for an import that is waiting for one, and for the
+     * imports that predate the mapping screen and the files sent to the API,
+     * which are read by their header names.
+     *
+     * @var ?array<int,string>
+     */
+    protected ?array $columnMapping = null;
 
     /**
      * Unknown until a worker has read the file
@@ -180,6 +205,27 @@ class ImportQueue
         return $this->errors;
     }
 
+    /**
+     * @return ?array<int,string>
+     */
+    public function getColumnMapping(): ?array
+    {
+        return $this->columnMapping;
+    }
+
+    /**
+     * @param ?array<int,string> $columnMapping
+     */
+    public function setColumnMapping(?array $columnMapping): void
+    {
+        $this->columnMapping = $columnMapping;
+    }
+
+    public function isWaitingForMapping(): bool
+    {
+        return self::STATUS_MAPPING === $this->status;
+    }
+
     public function getStartedAt(): ?\DateTime
     {
         return $this->startedAt;
@@ -213,9 +259,14 @@ class ImportQueue
         $this->progressedAt = new \DateTime();
     }
 
+    /**
+     * Whether a dispatcher can still stop the import.
+     *
+     * Kept in step with the statuses DeliveryImportStatusManager::cancel() writes over.
+     */
     public function isCancellable(): bool
     {
-        return in_array($this->status, [self::STATUS_PENDING, self::STATUS_STARTED], true);
+        return in_array($this->status, self::CANCELLABLE_STATUSES, true);
     }
 
     public function getDeliveriesCancellation(): ?string

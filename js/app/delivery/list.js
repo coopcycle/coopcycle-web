@@ -171,6 +171,8 @@ function renderSpreadsheetViewer({ status, data, errors }) {
 }
 
 const importStatusIcon = {
+  // Uploaded, waiting for a dispatcher to say which field each of its columns holds
+  'mapping': 'hand-pointer-o',
   'pending': 'clock-o',
   'started': 'play',
   'saving': 'floppy-o',
@@ -182,12 +184,18 @@ const importStatusIcon = {
   'deliveries_cancelled': 'ban',
 }
 
-const cancellableImportStatuses = [ 'pending', 'started' ]
+// Kept in step with ImportQueue::CANCELLABLE_STATUSES
+const cancellableImportStatuses = [ 'mapping', 'pending', 'started' ]
 
 // The values are only written with textContent, there is nothing to escape
 const _t = (key, options = {}) => i18n.t(key, { ...options, interpolation: { escapeValue: false } })
 
 function _importProgressText({ status, startedAt, totalRows, processedRows, errorRows, ...cancellation }) {
+  // Nothing of the file has been read yet, and nothing will be until its columns are mapped
+  if (status === 'mapping') {
+    return _t('DELIVERY_IMPORT_WAITING_FOR_MAPPING')
+  }
+
   // Unknown until a worker has read the file
   if (!totalRows) {
     return ''

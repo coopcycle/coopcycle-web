@@ -106,6 +106,7 @@
   {% if app.request.query.get('section', 'today') == 'imports' %}
     {# The deliveries_ ones once the import is over, its deliveries cancelled by a dispatcher: nothing from the file is left either #}
     {% set import_status_icon = {
+      'mapping': 'hand-pointer-o',
       'pending': 'clock-o',
       'started': 'play',
       'saving': 'floppy-o',
@@ -163,7 +164,13 @@
               <a href="#" class="mr-3 text-danger{{ import_queue.canCancelDeliveries and (imported_deliveries[import_queue.id] ?? 0) > 0 ? '' : ' d-none' }}" data-delivery-import-cancel-deliveries-button>
                 <i class="fa fa-ban"></i> {{ 'deliveries.imports.cancel_deliveries'|trans }}
               </a>
-              {% if import_queue.status == 'failed' %}
+              {% if import_queue.waitingForMapping %}
+                {# Nothing of the file has been read yet: there is no spreadsheet to show,
+                   only the columns left to map #}
+                <a class="mr-3 text-underline" href="{{ path('admin_delivery_import_mapping', { id: import_queue.id }) }}">
+                  {{ 'deliveries.imports.continue_mapping'|trans }}
+                </a>
+              {% elseif import_queue.status == 'failed' %}
                 <a href="#" class="mr-3 text-danger text-underline" data-delivery-import-view>
                   {{ 'deliveries.imports.see_errored_file'|trans }}
                 </a>
@@ -174,9 +181,11 @@
                   {{ 'deliveries.imports.see_file'|trans }}
                 </a>
               {% endif %}
-              <a href="#" data-delivery-import-redownload>
-                <i class="fa fa-download"></i>
-              </a>
+              {% if not import_queue.waitingForMapping %}
+                <a href="#" data-delivery-import-redownload>
+                  <i class="fa fa-download"></i>
+                </a>
+              {% endif %}
             </td>
           </tr>
         {% endfor %}

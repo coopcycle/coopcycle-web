@@ -187,4 +187,91 @@ class DeliveryImportStatusManagerTest extends KernelTestCase
 
         $this->assertTrue($this->statusManager->cancellingDeliveries($queue));
     }
+
+    public function testMappingAnImportHandsItToAWorker(): void
+    {
+        $queue = $this->createImport(DeliveryImportQueue::STATUS_MAPPING);
+
+        $this->assertTrue($this->statusManager->queued($queue, [0 => 'pickup.address']));
+
+        $this->assertEquals(
+            DeliveryImportQueue::STATUS_PENDING,
+            $this->fetchRow($queue)['status']
+        );
+        $this->assertEquals([0 => 'pickup.address'], $queue->getColumnMapping());
+        $this->assertEquals(
+            ['0' => 'pickup.address'],
+            json_decode($this->entityManager->getConnection()->fetchOne(
+                'SELECT column_mapping FROM delivery_import_queue WHERE id = ?',
+                [$queue->getId()]
+            ), true)
+        );
+    }
+
+    /**
+     * Submitting the mapping screen twice, with a double click or with the back button,
+     * would otherwise hand the same file to two workers
+     */
+    public function testAnImportIsOnlyHandedToAWorkerOnce(): void
+    {
+        $queue = $this->createImport(DeliveryImportQueue::STATUS_MAPPING);
+
+        $this->assertTrue($this->statusManager->queued($queue, [0 => 'pickup.address']));
+        $this->assertFalse($this->statusManager->queued($queue, [0 => 'dropoff.address']));
+
+        $this->assertEquals([0 => 'pickup.address'], $queue->getColumnMapping());
+    }
+
+    /**
+     * A dispatcher who uploaded the wrong file can drop it from the mapping screen
+     */
+    public function testAnImportWaitingToBeMappedCanBeCancelled(): void
+    {
+        $queue = $this->createImport(DeliveryImportQueue::STATUS_MAPPING);
+
+        $this->assertTrue($this->statusManager->cancel($queue));
+        $this->assertEquals(DeliveryImportQueue::STATUS_CANCELLED, $this->fetchRow($queue)['status']);
+    }
+
+    public function testACancelledImportIsNotHandedToAWorker(): void
+    {
+        $queue = $this->createImport(DeliveryImportQueue::STATUS_MAPPING);
+        $this->statusManager->cancel($queue);
+
+        $this->assertFalse($this->statusManager->queued($queue, [0 => 'pickup.address']));
+    }
+
+    /**
+     * The statuses the entity says can be cancelled are the ones cancel() writes over:
+     * two lists, in two places, that have to say the same thing
+     */
+    public function testEveryCancellableStatusIsActuallyCancellable(): void
+    {
+        foreach (DeliveryImportQueue::CANCELLABLE_STATUSES as $status) {
+            $queue = $this->createImport($status);
+
+            $this->assertTrue($queue->isCancellable(), sprintf('%s is cancellable', $status));
+            $this->assertTrue($this->statusManager->cancel($queue), sprintf('%s can be cancelled', $status));
+        }
+    }
+
+    public function testTheOtherStatusesCannotBeCancelled(): void
+    {
+        $others = array_diff(
+            [
+                DeliveryImportQueue::STATUS_SAVING,
+                DeliveryImportQueue::STATUS_COMPLETED,
+                DeliveryImportQueue::STATUS_FAILED,
+                DeliveryImportQueue::STATUS_CANCELLED,
+            ],
+            DeliveryImportQueue::CANCELLABLE_STATUSES
+        );
+
+        foreach ($others as $status) {
+            $queue = $this->createImport($status);
+
+            $this->assertFalse($queue->isCancellable(), sprintf('%s is not cancellable', $status));
+            $this->assertFalse($this->statusManager->cancel($queue), sprintf('%s cannot be cancelled', $status));
+        }
+    }
 }

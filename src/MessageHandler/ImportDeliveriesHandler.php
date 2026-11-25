@@ -93,10 +93,16 @@ class ImportDeliveriesHandler
         $this->statusManager->started($queue);
 
         try {
-            $result = $this->spreadsheetParser->parse($tempnam, array_merge($message->getOptions(), [
-                'on_row' => fn (int $processedRows, int $totalRows, int $errorRows)
-                    => $this->onRow($queue, $processedRows, $totalRows, $errorRows),
-            ]));
+            $result = $this->spreadsheetParser->parse($tempnam, array_merge(
+                $message->getOptions(),
+                // Picked on the mapping screen. An import without one, from the API or
+                // sent before the mapping screen existed, is read by its header names.
+                is_null($queue->getColumnMapping()) ? [] : ['column_mapping' => $queue->getColumnMapping()],
+                [
+                    'on_row' => fn (int $processedRows, int $totalRows, int $errorRows)
+                        => $this->onRow($queue, $processedRows, $totalRows, $errorRows),
+                ]
+            ));
 
             // It is only checked every few rows while reading the file: check once more,
             // in the same statement that makes the import impossible to cancel from now on

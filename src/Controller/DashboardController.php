@@ -10,6 +10,9 @@ use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\CubeJs\TokenFactory as CubeJsTokenFactory;
 use AppBundle\Entity\DeliveryRepository;
+use AppBundle\Service\DeliveryImportStatusManager;
+use AppBundle\Spreadsheet\Column\ColumnDetector;
+use AppBundle\Spreadsheet\DeliverySpreadsheetParser;
 use AppBundle\Sylius\Taxation\TaxesHelper;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -110,6 +113,7 @@ class DashboardController extends AbstractController
 
             $routes = $request->attributes->has('routes') ? $request->attributes->get('routes') : [];
             $routes['import_success'] = 'dashboard';
+            $routes['import_mapping'] = 'dashboard_delivery_import_mapping';
             $routes['stores'] = 'dashboard';
             $routes['store'] = 'dashboard_store';
 
@@ -138,5 +142,34 @@ class DashboardController extends AbstractController
         }
 
         return $this->redirectToRoute('profile_edit');
+    }
+
+    /**
+     * A store owner saying which field each column of the file they uploaded holds
+     */
+    public function deliveryImportMappingAction(
+        int $id,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        Filesystem $deliveryImportsFilesystem,
+        DeliverySpreadsheetParser $spreadsheetParser,
+        ColumnDetector $columnDetector,
+        DeliveryImportStatusManager $statusManager,
+        MessageBusInterface $messageBus,
+        LoggerInterface $logger,
+    )
+    {
+        return $this->handleDeliveryImportMapping(
+            id: $id,
+            request: $request,
+            entityManager: $entityManager,
+            filesystem: $deliveryImportsFilesystem,
+            parser: $spreadsheetParser,
+            detector: $columnDetector,
+            statusManager: $statusManager,
+            messageBus: $messageBus,
+            logger: $logger,
+            routeTo: 'dashboard',
+        );
     }
 }

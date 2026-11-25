@@ -20,6 +20,17 @@ context('Import deliveries (role: admin)', () => {
       '#import-deliveries-modal > .modal-dialog > .modal-content > .modal-footer > .btn-primary',
     ).click()
 
+    // The columns of the file are matched to the fields they hold before it is imported.
+    // This one uses our own column names, so they are all recognised already.
+    cy.urlmatch(/\/admin\/deliveries\/imports\/\d+\/mapping$/)
+
+    cy.get('[data-column-mapping-choice="0"]').should('have.value', 'pickup.address')
+    cy.get('[data-column-mapping-choice="5"]').should('have.value', 'pickup.timeslot')
+    cy.get('[data-column-mapping-choice="8"]').should('have.value', 'dropoff.address')
+    cy.get('[data-column-mapping-choice="13"]').should('have.value', 'dropoff.timeslot')
+
+    cy.get('form[data-column-mapping] button[type=submit]:not([name])').click()
+
     cy.wait(1000)
     cy.urlmatch(/\/admin\/deliveries$/)
     cy.urlmatch('section=imports', 'include', 'search')

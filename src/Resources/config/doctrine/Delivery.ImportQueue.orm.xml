@@ -15,6 +15,7 @@
     <field name="startedAt" type="datetime" column="started_at" nullable="true" />
     <field name="finishedAt" type="datetime" column="finished_at" nullable="true" />
     <field name="errors" type="json" column="errors" nullable="true" />
+    <field name="columnMapping" type="json" column="column_mapping" nullable="true" />
     <field name="totalRows" type="integer" column="total_rows" nullable="true" />
     <field name="processedRows" type="integer" column="processed_rows" nullable="false">
       <options>

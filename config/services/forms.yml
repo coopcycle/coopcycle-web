@@ -14,6 +14,14 @@ services:
 
   AppBundle\Spreadsheet\ProductSpreadsheetParser: ~
 
+  AppBundle\Spreadsheet\Column\ColumnDetector:
+    arguments:
+      $countryCode: '%country_iso%'
+
+  AppBundle\Form\DeliveryImportMappingType:
+    tags:
+      - { name: form.type }
+
   AppBundle\Form\RegistrationType:
     arguments:
       $splitTermsAndConditionsAndPrivacyPolicy: '%env(bool:SPLIT_TERMS_AND_CONDITIONS_AND_PRIVACY_POLICY)%'

@@ -56,6 +56,9 @@ use AppBundle\Form\BannerType;
 use AppBundle\Form\CustomizeType;
 use AppBundle\Form\DataExportType;
 use AppBundle\Form\DeliveryImportType;
+use AppBundle\Service\DeliveryImportStatusManager;
+use AppBundle\Spreadsheet\Column\ColumnDetector;
+use AppBundle\Spreadsheet\DeliverySpreadsheetParser;
 use AppBundle\Form\EmbedSettingsType;
 use AppBundle\Form\EmployeeProfileType;
 use AppBundle\Form\GeoJSONUploadType;
@@ -840,6 +843,7 @@ class AdminController extends AbstractController
                     slugify: $slugify,
                     routeTo: 'admin_deliveries',
                     logger: $this->logger,
+                    mappingRoute: 'admin_delivery_import_mapping',
                 );
             } else {
                 $this->logger->warning('Delivery import form is not valid', [
@@ -978,6 +982,31 @@ class AdminController extends AbstractController
             'centrifugo_token' => $centrifugoClient->generateConnectionToken($this->getUser()->getUsername(), (time() + 3600)),
             'centrifugo_channel' => sprintf('%s_events#%s', $this->getParameter('centrifugo_namespace'), $this->getUser()->getUsername()),
         ]));
+    }
+
+    #[Route(path: '/admin/deliveries/imports/{id}/mapping', name: 'admin_delivery_import_mapping', defaults: ['layout' => 'admin.html.twig'], requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    public function deliveryImportMappingAction(
+        int $id,
+        Request $request,
+        Filesystem $deliveryImportsFilesystem,
+        DeliverySpreadsheetParser $spreadsheetParser,
+        ColumnDetector $columnDetector,
+        DeliveryImportStatusManager $statusManager,
+        MessageBusInterface $messageBus,
+    )
+    {
+        return $this->handleDeliveryImportMapping(
+            id: $id,
+            request: $request,
+            entityManager: $this->entityManager,
+            filesystem: $deliveryImportsFilesystem,
+            parser: $spreadsheetParser,
+            detector: $columnDetector,
+            statusManager: $statusManager,
+            messageBus: $messageBus,
+            logger: $this->logger,
+            routeTo: 'admin_deliveries',
+        );
     }
 
     protected function getDeliveryRoutes()

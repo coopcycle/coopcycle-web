@@ -1576,6 +1576,36 @@ import.packages.error: "%key%: \"%value%\" is not valid, write it as package=qua
 import.value.too_long: "%key% is longer than %max% characters"
 import.successful.rows: 'Your file was processed and %count% deliveries were created for rows: %rows%'
 import.delivery.price.error.priceCalculation.row: The delivery price could not be calculated for row %row_number%
+import.column_group.pickup: Pickup
+import.column_group.dropoff: Dropoff
+import.column_group.delivery: Delivery
+import.column.pickup.address: Pickup address
+import.column.pickup.address.name: Pickup name
+import.column.pickup.address.description: Pickup address details
+import.column.pickup.address.telephone: Pickup phone number
+import.column.pickup.comments: Pickup comments
+import.column.pickup.timeslot: Pickup time slot
+import.column.pickup.tags: Pickup tags
+import.column.pickup.metadata: Pickup metadata
+import.column.dropoff.address: Dropoff address
+import.column.dropoff.address.name: Dropoff name
+import.column.dropoff.address.description: Dropoff address details
+import.column.dropoff.address.telephone: Dropoff phone number
+import.column.dropoff.comments: Dropoff comments
+import.column.dropoff.timeslot: Dropoff time slot
+import.column.dropoff.packages: Packages
+import.column.dropoff.tags: Dropoff tags
+import.column.dropoff.metadata: Dropoff metadata
+import.column.weight: Weight (kg)
+import.column.tour.name: Tour
+import.column.external_reference: External reference
+import.mapping.title: Match the columns of your file
+import.mapping.help: "Tell us what each column of %filename% holds. We have filled in the ones we recognised, so check them over and set the rest."
+import.mapping.column_in_file: Column in your file
+import.mapping.maps_to: Holds
+import.mapping.row: "Row %number%"
+import.mapping.ignore: "— do not import this column —"
+import.mapping.column.unnamed: "Column %number% (no header)"
 import.unsuccessful.rows: "There were errors and deliveries could not be created for rows: %rows%."
 security.login.remember_me: Remember me
 stores.filters.input.placeholder: "Search by address, name or #id"
@@ -1717,6 +1747,11 @@ deliveries.imports.progress: Progress
 deliveries.imports.cancel: Cancel
 deliveries.imports.cancel_deliveries: "Cancel the deliveries"
 deliveries.imports.see_file: See file
+deliveries.imports.continue_mapping: Match the columns
+deliveries.imports.drop_file: Drop this file
+deliveries.imports.mapping_cancelled: "The import of %filename% was dropped, nothing was imported."
+deliveries.imports.unreadable: "That file could not be read. Please check it and import it again."
+deliveries.imports.error.abandoned: "The import was dropped because the columns of the file were never matched to the fields they hold. Nothing was imported, please import the file again."
 deliveries.imports.see_errored_file: To errors details
 deliveries.imports.error.interrupted: "The import was interrupted by an unexpected error, and no delivery was imported. Please import the file again."
 deliveries.imports.error.stalled: "The import was stopped because it had not made any progress for an unusually long time, most likely because the worker handling it went away. No delivery was imported, please import the file again."

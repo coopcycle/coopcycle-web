@@ -13,6 +13,9 @@ class Spreadsheet extends Constraint
     public $missingColumnsMessage = 'spreadsheet.missing_columns';
     public $alternativeColumnsMessage = 'spreadsheet.alternative_columns';
     public $csvEncodingMessage = 'spreadsheet.csv_encoding';
+    public $unreadableMessage = 'spreadsheet.unreadable';
+    public $missingHeaderMessage = 'spreadsheet.missing_header';
+    public $emptyMessage = 'spreadsheet.empty';
 
     public function __construct(?string $type = null, ?array $options = null, ?array $groups = null, $payload = null)
     {
