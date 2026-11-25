@@ -18,7 +18,7 @@ services:
     arguments:
       $countryCode: '%country_iso%'
 
-  AppBundle\Form\DeliveryImportMappingType:
+  AppBundle\Form\ImportMappingType:
     tags:
       - { name: form.type }
 

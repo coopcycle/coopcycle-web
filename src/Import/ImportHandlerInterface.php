@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace AppBundle\Import;
 
 use AppBundle\Entity\ImportQueue;
+use AppBundle\Message\RunsImport;
 use AppBundle\Spreadsheet\AbstractSpreadsheetParser;
 use AppBundle\Spreadsheet\SpreadsheetParseResult;
 use League\Flysystem\Filesystem;
@@ -36,6 +37,12 @@ interface ImportHandlerInterface
     public function getFilesystem(): Filesystem;
 
     public function getParser(): AbstractSpreadsheetParser;
+
+    /**
+     * The message that asks a worker to import this file. One class per kind, so that a
+     * message already in the transport when a release lands still reaches its handler.
+     */
+    public function createMessage(ImportQueue $queue): RunsImport;
 
     /**
      * The options to read the file with, under those the message carries

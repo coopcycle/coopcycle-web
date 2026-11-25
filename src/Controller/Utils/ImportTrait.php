@@ -4,12 +4,11 @@ namespace AppBundle\Controller\Utils;
 
 use AppBundle\Entity\ImportQueue;
 use AppBundle\Entity\Store;
-use AppBundle\Form\DeliveryImportMappingType;
-use AppBundle\Message\ImportDeliveries;
+use AppBundle\Form\ImportMappingType;
+use AppBundle\Import\ImportRegistry;
 use AppBundle\Service\ImportStatusManager;
 use AppBundle\Spreadsheet\Column\ColumnDetector;
 use AppBundle\Spreadsheet\Column\ColumnMapping;
-use AppBundle\Spreadsheet\DeliverySpreadsheetParser;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
@@ -24,18 +23,18 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
 
 /**
- * Importing deliveries from a spreadsheet, in two steps.
+ * Importing a spreadsheet, whatever its rows hold, in two steps.
  *
  * The file is uploaded and kept, and the import waits: a file is of no use until we know
  * which field each of its columns holds. A dispatcher says so on the mapping screen, and
  * only then is the file handed to a worker.
  */
-trait DeliveryImportTrait
+trait ImportTrait
 {
     /**
      * Dropping an uploaded file is a form of its own, next to the mapping one
      */
-    const CANCEL_IMPORT_TOKEN_ID = 'delivery_import_cancel';
+    const CANCEL_IMPORT_TOKEN_ID = 'import_cancel';
 
     /**
      * Keeps an uploaded file and sends its uploader off to map its columns.
@@ -43,25 +42,30 @@ trait DeliveryImportTrait
      * Nothing is dispatched here: the import sits in "mapping" until the mapping screen
      * is confirmed, and a worker only ever picks up a pending import.
      */
-    protected function handleDeliveryImportForStore(
-        Store $store,
+    protected function handleImportUpload(
+        string $type,
+        ?Store $store,
+        array $options,
         FormInterface $form,
         EntityManagerInterface $entityManager,
         Hashids $hashids,
         Filesystem $filesystem,
-        MessageBusInterface $messageBus,
         SlugifyInterface $slugify,
         string $routeTo,
         LoggerInterface $logger,
-        string $mappingRoute = 'admin_delivery_import_mapping',
+        string $mappingRoute = 'admin_import_mapping',
     )
     {
 
         /** @var UploadedFile $uploadedFile */
         $uploadedFile = $form->get('file')->getData();
 
-        $queue = new ImportQueue(ImportQueue::TYPE_DELIVERIES);
+        $queue = new ImportQueue($type);
         $queue->setStore($store);
+        // Which the tasks of a task import are saved with, and which scopes them when
+        // they are cancelled
+        $queue->setOrganization($store?->getOrganization());
+        $queue->setOptions(empty($options) ? null : $options);
         $queue->setStatus(ImportQueue::STATUS_MAPPING);
 
         $entityManager->persist($queue);
@@ -90,7 +94,7 @@ trait DeliveryImportTrait
 
         } catch (FilesystemException | UnableToWriteFile $e) {
 
-            $logger->error('Error while writing delivery import file', [
+            $logger->error('Error while writing import file', [
                 'exception' => $e,
                 'filename' => $filename,
             ]);
@@ -112,12 +116,11 @@ trait DeliveryImportTrait
      * mapping suggested from their names and their values, and hands the file to a worker
      * once a dispatcher has confirmed it.
      */
-    protected function handleDeliveryImportMapping(
+    protected function handleImportMapping(
         int $id,
         Request $request,
         EntityManagerInterface $entityManager,
-        Filesystem $filesystem,
-        DeliverySpreadsheetParser $parser,
+        ImportRegistry $registry,
         ColumnDetector $detector,
         ImportStatusManager $statusManager,
         MessageBusInterface $messageBus,
@@ -133,6 +136,10 @@ trait DeliveryImportTrait
         }
 
         $this->denyAccessUnlessGranted('edit', $queue);
+
+        $importHandler = $registry->handlerFor($queue->getType());
+        $filesystem = $importHandler->getFilesystem();
+        $parser = $importHandler->getParser();
 
         // Already mapped and on its way, or dropped: there is nothing left to map
         if (!$queue->isWaitingForMapping()) {
@@ -169,7 +176,7 @@ trait DeliveryImportTrait
 
             $preview = $parser->preview($tempnam);
         } catch (\Exception $e) {
-            $logger->error('Could not read a delivery import file to map its columns', [
+            $logger->error('Could not read an import file to map its columns', [
                 'exception' => $e,
                 'filename' => $queue->getFilename(),
             ]);
@@ -187,9 +194,10 @@ trait DeliveryImportTrait
 
         $columns = $parser->getColumns();
 
-        $form = $this->createForm(DeliveryImportMappingType::class, null, [
+        $form = $this->createForm(ImportMappingType::class, null, [
             'columns' => $columns,
             'file_columns' => $preview->getHeader(),
+            'import_type' => $queue->getType(),
             #FIXME; normally cypress e2e tests run with CSRF protection enabled, but once in a while CSRF tokens are not saved in the session (removed?) for this form
             'csrf_protection' => 'test' !== $this->getParameter('kernel.environment'),
         ]);
@@ -207,7 +215,7 @@ trait DeliveryImportTrait
             if ($statusManager->queued($queue, $mapping->toArray())) {
 
                 $messageBus->dispatch(
-                    new ImportDeliveries($queue->getFilename(), [], $queue->getId()),
+                    $importHandler->createMessage($queue),
                     [ new DelayStamp(5000) ]
                 );
 
@@ -220,7 +228,7 @@ trait DeliveryImportTrait
             return $this->redirectToRoute($routeTo, ['section' => 'imports']);
         }
 
-        return $this->render('delivery/import_mapping.html.twig', [
+        return $this->render('import/mapping.html.twig', [
             'layout' => $request->attributes->get('layout'),
             'import_queue' => $queue,
             'form' => $form->createView(),
@@ -235,7 +243,7 @@ trait DeliveryImportTrait
      */
     private function toTempFile(Filesystem $filesystem, ImportQueue $queue): string
     {
-        $tempnam = tempnam(sys_get_temp_dir(), 'coopcycle_delivery_import_mapping');
+        $tempnam = tempnam(sys_get_temp_dir(), 'coopcycle_import_mapping');
 
         if (false === file_put_contents($tempnam, $filesystem->read($queue->getFilename()))) {
             throw new \Exception(sprintf('Could not write temp file %s', $tempnam));

@@ -2,12 +2,14 @@
 
 namespace AppBundle\Form;
 
+use AppBundle\Entity\ImportQueue;
 use AppBundle\Spreadsheet\Column\ColumnDefinition;
 use AppBundle\Spreadsheet\Column\ColumnGroup;
 use AppBundle\Validator\Constraints\ColumnMapping as AssertColumnMapping;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -15,9 +17,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  * Which field each column of an uploaded file holds.
  *
  * One choice per column of the file, keyed by its position: a file can have two columns
- * with the same header, or none at all, and they still have to be told apart.
+ * with the same header, or none at all, and they still have to be told apart. The fields
+ * on offer are the ones the parser of that kind of import describes.
  */
-class DeliveryImportMappingType extends AbstractType
+class ImportMappingType extends AbstractType
 {
     public function __construct(private TranslatorInterface $translator)
     {}
@@ -65,12 +68,18 @@ class DeliveryImportMappingType extends AbstractType
         $resolver->setDefaults([
             // The data is the mapping itself, a plain array of column index => field
             'data_class' => null,
-            'constraints' => [new AssertColumnMapping()],
+            'import_type' => ImportQueue::TYPE_DELIVERIES,
+        ]);
+
+        // The constraint checks the mapping against the columns of that kind of import
+        $resolver->setNormalizer('constraints', fn (Options $options, $value) => [
+            new AssertColumnMapping(['type' => $options['import_type']]),
         ]);
 
         $resolver->setRequired(['columns', 'file_columns']);
         // ColumnDefinition[], and the header row of the file by column index
         $resolver->setAllowedTypes('columns', 'array');
         $resolver->setAllowedTypes('file_columns', 'array');
+        $resolver->setAllowedTypes('import_type', 'string');
     }
 }

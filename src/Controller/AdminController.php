@@ -27,6 +27,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\DeliveryRepository;
 use AppBundle\Entity\ImportQueue;
+use AppBundle\Import\ImportRegistry;
 use AppBundle\Entity\EmployeeProfile;
 use AppBundle\Entity\EmployeeProfileRepository;
 use AppBundle\Entity\HolidayRequestRepository;
@@ -892,17 +893,18 @@ class AdminController extends AbstractController
             if ($deliveryImportForm->isValid()) {
                 $store = $deliveryImportForm->get('store')->getData();
 
-                return $this->handleDeliveryImportForStore(
+                return $this->handleImportUpload(
+                    type: ImportQueue::TYPE_DELIVERIES,
                     store: $store,
+                    options: [],
                     form: $deliveryImportForm,
                     entityManager: $this->entityManager,
                     hashids: $hashids8,
                     filesystem: $deliveryImportsFilesystem,
-                    messageBus: $messageBus,
                     slugify: $slugify,
                     routeTo: 'admin_deliveries',
                     logger: $this->logger,
-                    mappingRoute: 'admin_delivery_import_mapping',
+                    mappingRoute: 'admin_import_mapping',
                 );
             } else {
                 $this->logger->warning('Delivery import form is not valid', [
@@ -1043,23 +1045,21 @@ class AdminController extends AbstractController
         ]));
     }
 
-    #[Route(path: '/admin/deliveries/imports/{id}/mapping', name: 'admin_delivery_import_mapping', defaults: ['layout' => 'admin.html.twig'], requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
-    public function deliveryImportMappingAction(
+    #[Route(path: '/admin/imports/{id}/mapping', name: 'admin_import_mapping', defaults: ['layout' => 'admin.html.twig'], requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    public function importMappingAction(
         int $id,
         Request $request,
-        Filesystem $deliveryImportsFilesystem,
-        DeliverySpreadsheetParser $spreadsheetParser,
+        ImportRegistry $importRegistry,
         ColumnDetector $columnDetector,
         ImportStatusManager $statusManager,
         MessageBusInterface $messageBus,
     )
     {
-        return $this->handleDeliveryImportMapping(
+        return $this->handleImportMapping(
             id: $id,
             request: $request,
             entityManager: $this->entityManager,
-            filesystem: $deliveryImportsFilesystem,
-            parser: $spreadsheetParser,
+            registry: $importRegistry,
             detector: $columnDetector,
             statusManager: $statusManager,
             messageBus: $messageBus,

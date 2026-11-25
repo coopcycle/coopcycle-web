@@ -6,6 +6,8 @@ namespace AppBundle\Import;
 
 use AppBundle\Doctrine\EventSubscriber\TaskSubscriber\TaskListProvider;
 use AppBundle\Entity\ImportQueue;
+use AppBundle\Message\ImportTasksFromFile;
+use AppBundle\Message\RunsImport;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Spreadsheet\AbstractSpreadsheetParser;
@@ -48,6 +50,11 @@ class TaskImportHandler implements ImportHandlerInterface
     public function getParser(): AbstractSpreadsheetParser
     {
         return $this->parser;
+    }
+
+    public function createMessage(ImportQueue $queue): RunsImport
+    {
+        return new ImportTasksFromFile($queue->getFilename(), [], $queue->getId());
     }
 
     /**

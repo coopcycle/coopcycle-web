@@ -2,7 +2,7 @@
 
 namespace Tests\AppBundle\Form;
 
-use AppBundle\Form\DeliveryImportMappingType;
+use AppBundle\Form\ImportMappingType;
 use AppBundle\Spreadsheet\Column\ColumnDefinition;
 use AppBundle\Spreadsheet\Column\ColumnGroup;
 use AppBundle\Spreadsheet\Column\ColumnType;
@@ -23,7 +23,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  * One choice per column of the file, keyed by position, with the fields a delivery can't
  * do without made sure of before the file is handed to a worker.
  */
-class DeliveryImportMappingTypeTest extends TypeTestCase
+class ImportMappingTypeTest extends TypeTestCase
 {
     private const HEADER = [
         0 => 'Adresse enlèvement',
@@ -63,7 +63,7 @@ class DeliveryImportMappingTypeTest extends TypeTestCase
             ->getValidator();
 
         return [
-            new PreloadedExtension([new DeliveryImportMappingType($translator)], []),
+            new PreloadedExtension([new ImportMappingType($translator)], []),
             new ValidatorExtension($validator),
         ];
     }
@@ -84,7 +84,7 @@ class DeliveryImportMappingTypeTest extends TypeTestCase
 
     private function createMappingForm(array $header = self::HEADER)
     {
-        return $this->factory->create(DeliveryImportMappingType::class, null, [
+        return $this->factory->create(ImportMappingType::class, null, [
             'columns' => $this->columns(),
             'file_columns' => $header,
         ]);

@@ -20,7 +20,7 @@ context('Import deliveries with a column mapping (role: admin)', () => {
       '#import-deliveries-modal > .modal-dialog > .modal-content > .modal-footer > .btn-primary',
     ).click()
 
-    cy.urlmatch(/\/admin\/deliveries\/imports\/\d+\/mapping$/)
+    cy.urlmatch(/\/admin\/imports\/\d+\/mapping$/)
   }
 
   it('imports a file whose columns are named anything at all', function () {
@@ -49,7 +49,7 @@ context('Import deliveries with a column mapping (role: admin)', () => {
 
     // A delivery can't be imported without both addresses
     cy.get('form[data-column-mapping] button[type=submit]:not([name])').click()
-    cy.urlmatch(/\/admin\/deliveries\/imports\/\d+\/mapping$/)
+    cy.urlmatch(/\/admin\/imports\/\d+\/mapping$/)
     cy.get('.alert-danger').should('exist')
 
     cy.get('[data-column-mapping-choice="1"]').select('pickup.address')

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace AppBundle\Import;
 
 use AppBundle\Entity\ImportQueue;
+use AppBundle\Message\ImportDeliveries;
+use AppBundle\Message\RunsImport;
 use AppBundle\Entity\Tour;
 use AppBundle\Entity\TourRepository;
 use AppBundle\Service\DeliveryCreatedNotifier;
@@ -53,6 +55,11 @@ class DeliveryImportHandler implements ImportHandlerInterface
     public function getParser(): AbstractSpreadsheetParser
     {
         return $this->parser;
+    }
+
+    public function createMessage(ImportQueue $queue): RunsImport
+    {
+        return new ImportDeliveries($queue->getFilename(), [], $queue->getId());
     }
 
     public function defaultOptions(ImportQueue $queue): array

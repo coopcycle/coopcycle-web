@@ -22,7 +22,7 @@ context('Import deliveries (role: admin)', () => {
 
     // The columns of the file are matched to the fields they hold before it is imported.
     // This one uses our own column names, so they are all recognised already.
-    cy.urlmatch(/\/admin\/deliveries\/imports\/\d+\/mapping$/)
+    cy.urlmatch(/\/admin\/imports\/\d+\/mapping$/)
 
     cy.get('[data-column-mapping-choice="0"]').should('have.value', 'pickup.address')
     cy.get('[data-column-mapping-choice="5"]').should('have.value', 'pickup.timeslot')

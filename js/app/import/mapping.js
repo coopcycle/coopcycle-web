@@ -6,7 +6,7 @@
  * selects point at the same field, by showing the fields already spoken for as taken.
  */
 
-import './import-mapping.scss'
+import './mapping.scss'
 
 const SELECT_SELECTOR = 'select[data-column-mapping-choice]'
 

@@ -14,6 +14,7 @@ use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryRepository;
 use AppBundle\Entity\Invitation;
+use AppBundle\Entity\ImportQueue;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\OrderRepository;
@@ -59,7 +60,7 @@ use Vich\UploaderBundle\Storage\StorageInterface;
 
 trait StoreTrait
 {
-    use DeliveryImportTrait;
+    use ImportTrait;
 
     use InjectAuthTrait;
 
@@ -554,13 +555,14 @@ trait StoreTrait
         if ($deliveryImportForm->isSubmitted() && $deliveryImportForm->isValid()) {
             $this->accessControl($store, 'edit_delivery');
 
-            return $this->handleDeliveryImportForStore(
+            return $this->handleImportUpload(
+                type: ImportQueue::TYPE_DELIVERIES,
                 store: $store,
+                options: [],
                 form: $deliveryImportForm,
                 entityManager: $entityManager,
                 hashids: $hashids8,
                 filesystem: $deliveryImportsFilesystem,
-                messageBus: $messageBus,
                 slugify: $slugify,
                 routeTo: $routes['import_success'],
                 logger: $logger,

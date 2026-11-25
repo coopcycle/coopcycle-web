@@ -167,7 +167,7 @@
               {% if import_queue.waitingForMapping %}
                 {# Nothing of the file has been read yet: there is no spreadsheet to show,
                    only the columns left to map #}
-                <a class="mr-3 text-underline" href="{{ path('admin_delivery_import_mapping', { id: import_queue.id }) }}">
+                <a class="mr-3 text-underline" href="{{ path('admin_import_mapping', { id: import_queue.id }) }}">
                   {{ 'deliveries.imports.continue_mapping'|trans }}
                 </a>
               {% elseif import_queue.status == 'failed' %}
