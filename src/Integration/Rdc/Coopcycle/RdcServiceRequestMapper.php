@@ -179,6 +179,11 @@ class RdcServiceRequestMapper
             $entityAddress->setGeo($geocoded->getGeo());
         }
 
+        // Some providers send the address as one line, with no postal code apart
+        if (empty($entityAddress->getPostalCode()) && !empty($geocoded?->getPostalCode())) {
+            $entityAddress->setPostalCode($geocoded->getPostalCode());
+        }
+
         return $entityAddress;
     }
 

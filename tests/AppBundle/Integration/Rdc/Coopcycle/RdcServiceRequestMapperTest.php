@@ -799,6 +799,42 @@ class RdcServiceRequestMapperTest extends TestCase
         $this->assertSame('JANE DOE', $delivery->getDropoff()->getAddress()->getContactName());
     }
 
+    public function testMapToDeliveryTakesThePostalCodeFromTheGeocoderWhenTheRequestHasNone(): void
+    {
+        $apiRequest = \AppBundle\Integration\Rdc\DTO\RdcApiServiceRequest::parse([
+            'startLocation' => ['location' => ['address' => [
+                'addressLines' => ['Place des Grands Hommes, Bordeaux, France'],
+            ]]],
+            'endLocation' => ['location' => ['address' => [
+                'addressLines' => ['8 rue de la Solidarité'],
+                'postalCode' => '69100',
+                'addressLocality' => 'Villeurbanne',
+            ]]],
+            'externalReferences' => [
+                ['externalReferenceType' => 'REQUESTOR_LABEL_ID', 'reference' => '637900000'],
+            ],
+        ]);
+
+        $geocoded = new \AppBundle\Entity\Address();
+        $geocoded->setPostalCode('33000');
+        $geocoder = $this->prophesize(Geocoder::class);
+        $geocoder->geocode(Argument::any())->willReturn($geocoded);
+
+        $mapper = new RdcServiceRequestMapper(
+            $this->prophesize(DeliveryManager::class)->reveal(),
+            $geocoder->reveal(),
+            $this->prophesize(PhoneNumberUtil::class)->reveal(),
+            new NullLogger(),
+            $this->prophesize(PackageMappingResolver::class)->reveal(),
+        );
+
+        $delivery = $mapper->mapToDelivery($apiRequest, new Store());
+
+        $this->assertSame('33000', $delivery->getPickup()->getAddress()->getPostalCode());
+        // The one the request sends wins
+        $this->assertSame('69100', $delivery->getDropoff()->getAddress()->getPostalCode());
+    }
+
     public function testMapToDeliveryPrefersRecipientContactNameOverLocationName(): void
     {
         $base = $this->buildApiRequestWithBarcode('TEST-CONTACT');
