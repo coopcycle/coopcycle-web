@@ -20,6 +20,7 @@ use AppBundle\Transporter\ImportFromPoint;
 use AppBundle\Transporter\RejectedFile;
 use AppBundle\Transporter\ReportFromCC;
 use AppBundle\Transporter\TransporterHelpers;
+use AppBundle\Utils\PostalCodeFilter;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -61,9 +62,9 @@ class SyncTransportersCommand extends Command {
     /** @var array<string,string> */
     private array $packageMapping = [];
 
-    //TODO: Temporary, for a special case in Paris
-    /** @var array<int,string> */
-    private array $postalCodes = [];
+    // Several instances can receive the same transporter files, each one only
+    // keeps the shipments of its area
+    private ?PostalCodeFilter $postalCodeFilter = null;
 
     private ?string $companyLegalName;
     private ?string $companyLegalID;
@@ -194,10 +195,10 @@ class SyncTransportersCommand extends Command {
             $this->importFromPoint->setPackageMapping(
                 $this->resolvePackageMapping($this->packageMapping, $this->transporter, $this->store)
             );
-            $this->postalCodes = array_map(fn($c) => (string) $c, $config['postal_codes'] ?? []);
-            if (!empty($this->postalCodes)) {
+            $this->postalCodeFilter = new PostalCodeFilter($config['postal_codes'] ?? []);
+            if ($this->postalCodeFilter->isEnabled()) {
                 // Makes a typo in the config key visible: no line, no filter
-                $message = sprintf('Postal code filter active: %s', implode(', ', $this->postalCodes));
+                $message = sprintf('Postal code filter active: %s', implode(', ', $this->postalCodeFilter->getPrefixes()));
                 $output->writeln($message);
                 $this->transporterLogger->info($message, ['transporter' => $this->transporter]);
             }
@@ -647,10 +648,9 @@ class SyncTransportersCommand extends Command {
         return true;
     }
 
-    //TODO: Temporary, see $postalCodes
     private function isPostalCodeAllowed(Task $task, Point $point): bool
     {
-        if (empty($this->postalCodes)) {
+        if (!$this->postalCodeFilter?->isEnabled()) {
             return true;
         }
 
@@ -666,13 +666,8 @@ class SyncTransportersCommand extends Command {
         $recipients = $point->getNamesAndAddresses(NameAndAddressType::RECIPIENT);
         $fromTransporter = trim(($recipients[0] ?? null)?->getPostalCode() ?? '');
 
-        foreach ($this->postalCodes as $prefix) {
-            if (str_starts_with($geocoded, $prefix)) {
-                return true;
-            }
-            if (!empty($fromTransporter) && str_starts_with($fromTransporter, $prefix)) {
-                return true;
-            }
+        if ($this->postalCodeFilter->matches($geocoded, $fromTransporter)) {
+            return true;
         }
 
         $message = sprintf(
