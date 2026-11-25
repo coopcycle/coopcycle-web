@@ -1970,6 +1970,7 @@ services:
       $serviceFacade: '@AppBundle\Integration\Rdc\Api\RdcServiceFacade'
       $mapper: '@AppBundle\Integration\Rdc\Coopcycle\RdcServiceRequestMapper'
       $logger: '@logger'
+      $rdcConnections: '%rdc_connections%'
 
   AppBundle\Integration\Rdc\Coopcycle\RdcServiceRequestUpdater:
     arguments:
