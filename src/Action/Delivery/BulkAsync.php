@@ -50,7 +50,7 @@ class BulkAsync
         $this->entityManager->flush();
 
         $this->messageBus->dispatch(
-            new ImportDeliveries($filename, ['create_task_if_address_not_geocoded' => true]),
+            new ImportDeliveries($filename, ['create_task_if_address_not_geocoded' => true], $queue->getId()),
             [ new DelayStamp(5000) ]
         );
 

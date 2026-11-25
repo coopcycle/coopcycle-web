@@ -10,7 +10,9 @@ use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\TourRepository;
 use AppBundle\Message\ImportDeliveries;
-use AppBundle\MessageHandler\ImportDeliveriesHandler;
+use AppBundle\Import\DeliveryImportHandler;
+use AppBundle\Import\ImportRegistry;
+use AppBundle\MessageHandler\RunImportHandler;
 use AppBundle\Service\DeliveryCreatedNotifier;
 use AppBundle\Service\ImportStatusManager;
 use AppBundle\Service\DeliveryManager;
@@ -30,13 +32,14 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * An imported delivery that matched none of the pricing rules was saved without an order,
  * so it could never be priced, and the import was marked as failed.
  */
-class ImportDeliveriesHandlerTest extends TestCase
+class RunImportHandlerTest extends TestCase
 {
     use ProphecyTrait;
 
@@ -66,19 +69,8 @@ class ImportDeliveriesHandlerTest extends TestCase
         $filesystem = new Filesystem(new InMemoryFilesystemAdapter());
         $filesystem->write('deliveries.csv', 'pickup.address,dropoff.address');
 
-        $repository = new class($queue) extends EntityRepository {
-            public function __construct(private readonly ImportQueue $queue)
-            {
-            }
-
-            public function findOneByFilename(string $filename): ?ImportQueue
-            {
-                return $filename === $this->queue->getFilename() ? $this->queue : null;
-            }
-        };
-
         $entityManager = $this->prophesize(EntityManagerInterface::class);
-        $entityManager->getRepository(ImportQueue::class)->willReturn($repository);
+        $entityManager->getRepository(ImportQueue::class)->willReturn(self::createRepository($queue));
         $entityManager->flush()->shouldBeCalled();
         $entityManager->beginTransaction()->will(function () {});
         $entityManager->commit()->will(function () {});
@@ -115,20 +107,16 @@ class ImportDeliveriesHandlerTest extends TestCase
 
         $statusManager = $this->createStatusManager($queue, true, false);
 
-        $handler = new ImportDeliveriesHandler(
-            $entityManager->reveal(),
-            $filesystem,
-            $parser->reveal(),
-            $validator->reveal(),
-            $deliveryOrderManager->reveal(),
-            $statusManager->reveal(),
-            $this->prophesize(DeliveryManager::class)->reveal(),
-            new NullLogger(),
-            $this->prophesize(TourRepository::class)->reveal(),
-            $this->prophesize(DeliveryCreatedNotifier::class)->reveal(),
-            $this->prophesize(TranslatorInterface::class)->reveal(),
-            $this->liveUpdatesSuspension,
-            $this->prophesize(ManagerRegistry::class)->reveal()
+        $handler = $this->createHandlerWith(
+            $entityManager,
+            $statusManager,
+            $this->createImportHandler(
+                $entityManager,
+                $filesystem,
+                $parser,
+                $validator->reveal(),
+                $deliveryOrderManager->reveal()
+            )
         );
 
         $handler(new ImportDeliveries('deliveries.csv'));
@@ -164,20 +152,31 @@ class ImportDeliveriesHandlerTest extends TestCase
     }
 
     /**
-     * The repository is an anonymous class, as findOneByFilename() is a magic method Prophecy can't double
+     * An anonymous class rather than a double: find() and findOneBy() are final on
+     * EntityRepository
      */
-    private function createEntityManager(ImportQueue $queue)
+    private static function createRepository(ImportQueue $queue): EntityRepository
     {
-        $repository = new class($queue) extends EntityRepository {
+        return new class($queue) extends EntityRepository {
             public function __construct(private readonly ImportQueue $queue)
             {
             }
 
-            public function findOneByFilename(string $filename): ?ImportQueue
+            public function find($id, $lockMode = null, $lockVersion = null): ?ImportQueue
             {
-                return $filename === $this->queue->getFilename() ? $this->queue : null;
+                return $id === $this->queue->getId() ? $this->queue : null;
+            }
+
+            public function findOneBy(array $criteria, ?array $orderBy = null): ?ImportQueue
+            {
+                return ($criteria['filename'] ?? null) === $this->queue->getFilename() ? $this->queue : null;
             }
         };
+    }
+
+    private function createEntityManager(ImportQueue $queue)
+    {
+        $repository = self::createRepository($queue);
 
         $entityManager = $this->prophesize(EntityManagerInterface::class);
         $entityManager->getRepository(ImportQueue::class)->willReturn($repository);
@@ -208,24 +207,61 @@ class ImportDeliveriesHandlerTest extends TestCase
         return $statusManager;
     }
 
-    private function createHandler($entityManager, $parser, $statusManager): ImportDeliveriesHandler
+    private function createHandler($entityManager, $parser, $statusManager): RunImportHandler
     {
         $filesystem = new Filesystem(new InMemoryFilesystemAdapter());
         $filesystem->write('deliveries.csv', 'pickup.address,dropoff.address');
 
-        return new ImportDeliveriesHandler(
+        return $this->createHandlerWith(
+            $entityManager,
+            $statusManager,
+            $this->createImportHandler(
+                $entityManager,
+                $filesystem,
+                $parser,
+                $this->prophesize(ValidatorInterface::class)->reveal(),
+                $this->prophesize(DeliveryOrderManager::class)->reveal()
+            )
+        );
+    }
+
+    /**
+     * The real delivery handler over doubled collaborators: what it does with a row is
+     * what the skeleton around it is being tested with.
+     */
+    private function createImportHandler(
+        $entityManager,
+        Filesystem $filesystem,
+        $parser,
+        ValidatorInterface $validator,
+        DeliveryOrderManager $deliveryOrderManager
+    ): DeliveryImportHandler {
+        return new DeliveryImportHandler(
             $entityManager->reveal(),
             $filesystem,
             $parser->reveal(),
-            $this->prophesize(ValidatorInterface::class)->reveal(),
-            $this->prophesize(DeliveryOrderManager::class)->reveal(),
-            $statusManager->reveal(),
+            $validator,
+            $deliveryOrderManager,
             $this->prophesize(DeliveryManager::class)->reveal(),
-            new NullLogger(),
             $this->prophesize(TourRepository::class)->reveal(),
-            $this->prophesize(DeliveryCreatedNotifier::class)->reveal(),
-            $this->prophesize(TranslatorInterface::class)->reveal(),
+            $this->prophesize(DeliveryCreatedNotifier::class)->reveal()
+        );
+    }
+
+    private function createHandlerWith($entityManager, $statusManager, DeliveryImportHandler $importHandler): RunImportHandler
+    {
+        $registry = new ImportRegistry(
+            new ServiceLocator([ImportQueue::TYPE_DELIVERIES => fn () => $importHandler]),
+            new ServiceLocator([])
+        );
+
+        return new RunImportHandler(
+            $entityManager->reveal(),
+            $registry,
+            $statusManager->reveal(),
             $this->liveUpdatesSuspension,
+            $this->prophesize(TranslatorInterface::class)->reveal(),
+            new NullLogger(),
             $this->prophesize(ManagerRegistry::class)->reveal()
         );
     }

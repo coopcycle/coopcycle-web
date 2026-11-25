@@ -207,7 +207,7 @@ trait DeliveryImportTrait
             if ($statusManager->queued($queue, $mapping->toArray())) {
 
                 $messageBus->dispatch(
-                    new ImportDeliveries($queue->getFilename()),
+                    new ImportDeliveries($queue->getFilename(), [], $queue->getId()),
                     [ new DelayStamp(5000) ]
                 );
 

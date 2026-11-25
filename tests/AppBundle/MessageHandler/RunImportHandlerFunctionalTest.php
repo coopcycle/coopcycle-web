@@ -8,7 +8,9 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\ImportQueue;
 use AppBundle\Entity\TourRepository;
 use AppBundle\Message\ImportDeliveries;
-use AppBundle\MessageHandler\ImportDeliveriesHandler;
+use AppBundle\Import\DeliveryImportHandler;
+use AppBundle\Import\ImportRegistry;
+use AppBundle\MessageHandler\RunImportHandler;
 use AppBundle\Service\DeliveryCreatedNotifier;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\LiveUpdatesSuspension;
@@ -28,9 +30,10 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class ImportDeliveriesHandlerFunctionalTest extends KernelTestCase
+class RunImportHandlerFunctionalTest extends KernelTestCase
 {
     use ProphecyTrait;
 
@@ -64,7 +67,7 @@ class ImportDeliveriesHandlerFunctionalTest extends KernelTestCase
         $this->entityManager->flush();
     }
 
-    private function createHandler(DeliverySpreadsheetParser $parser, DeliveryOrderManager $deliveryOrderManager): ImportDeliveriesHandler
+    private function createHandler(DeliverySpreadsheetParser $parser, DeliveryOrderManager $deliveryOrderManager): RunImportHandler
     {
         $filesystem = new Filesystem(new InMemoryFilesystemAdapter());
         $filesystem->write(self::FILENAME, 'not parsed, the parser is mocked');
@@ -72,19 +75,29 @@ class ImportDeliveriesHandlerFunctionalTest extends KernelTestCase
         $validator = $this->prophesize(ValidatorInterface::class);
         $validator->validate(Argument::any())->willReturn(new ConstraintViolationList());
 
-        return new ImportDeliveriesHandler(
+        $importHandler = new DeliveryImportHandler(
             $this->entityManager,
             $filesystem,
             $parser,
             $validator->reveal(),
             $deliveryOrderManager,
-            self::getContainer()->get(ImportStatusManager::class),
             $this->prophesize(DeliveryManager::class)->reveal(),
-            new NullLogger(),
             self::getContainer()->get(TourRepository::class),
             self::getContainer()->get(DeliveryCreatedNotifier::class),
-            self::getContainer()->get(TranslatorInterface::class),
+        );
+
+        $registry = new ImportRegistry(
+            new ServiceLocator([ImportQueue::TYPE_DELIVERIES => fn () => $importHandler]),
+            new ServiceLocator([])
+        );
+
+        return new RunImportHandler(
+            $this->entityManager,
+            $registry,
+            self::getContainer()->get(ImportStatusManager::class),
             self::getContainer()->get(LiveUpdatesSuspension::class),
+            self::getContainer()->get(TranslatorInterface::class),
+            new NullLogger(),
             self::getContainer()->get('doctrine'),
         );
     }
@@ -154,7 +167,7 @@ class ImportDeliveriesHandlerFunctionalTest extends KernelTestCase
             $handler(new ImportDeliveries(self::FILENAME));
             $this->fail('An exception should have been thrown');
         } catch (UnrecoverableMessageHandlingException $e) {
-            $this->assertEquals(sprintf('Importing deliveries from %s failed: Deadlock detected', self::FILENAME), $e->getMessage());
+            $this->assertEquals(sprintf('Importing %s failed: Deadlock detected', self::FILENAME), $e->getMessage());
         }
 
         $this->assertNothingWasImported();
@@ -189,7 +202,7 @@ class ImportDeliveriesHandlerFunctionalTest extends KernelTestCase
             $handler(new ImportDeliveries(self::FILENAME));
             $this->fail('An exception should have been thrown');
         } catch (UnrecoverableMessageHandlingException $e) {
-            $this->assertStringStartsWith(sprintf('Importing deliveries from %s failed: ', self::FILENAME), $e->getMessage());
+            $this->assertStringStartsWith(sprintf('Importing %s failed: ', self::FILENAME), $e->getMessage());
         }
 
         $this->assertTrue($this->entityManager->isOpen());
@@ -225,7 +238,7 @@ class ImportDeliveriesHandlerFunctionalTest extends KernelTestCase
             $handler(new ImportDeliveries(self::FILENAME));
             $this->fail('An exception should have been thrown');
         } catch (UnrecoverableMessageHandlingException $e) {
-            $this->assertStringStartsWith(sprintf('Importing deliveries from %s failed: ', self::FILENAME), $e->getMessage());
+            $this->assertStringStartsWith(sprintf('Importing %s failed: ', self::FILENAME), $e->getMessage());
         }
 
         $deliveryOrderManager->createOrder(Argument::is($second), Argument::any())->shouldNotHaveBeenCalled();

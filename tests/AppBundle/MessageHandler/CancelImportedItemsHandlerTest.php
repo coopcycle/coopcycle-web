@@ -52,7 +52,7 @@ class CancelImportedItemsHandlerTest extends KernelTestCase
     }
 
     /**
-     * As saved by ImportDeliveriesHandler, with its order
+     * As saved by DeliveryImportHandler, with its order
      */
     private function importDelivery(Store $store, string $date): Delivery
     {

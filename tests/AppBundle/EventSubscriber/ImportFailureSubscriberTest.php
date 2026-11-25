@@ -3,7 +3,9 @@
 namespace Tests\AppBundle\EventSubscriber;
 
 use AppBundle\Entity\ImportQueue;
-use AppBundle\EventSubscriber\DeliveryImportFailureSubscriber;
+use AppBundle\EventSubscriber\ImportFailureSubscriber;
+use AppBundle\Import\DeliveryImportHandler;
+use AppBundle\Import\ImportRegistry;
 use AppBundle\Message\ImportDeliveries;
 use AppBundle\Message\ImportTasks;
 use AppBundle\Service\ImportStatusManager;
@@ -16,9 +18,10 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Event\WorkerMessageFailedEvent;
+use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class DeliveryImportFailureSubscriberTest extends TestCase
+class ImportFailureSubscriberTest extends TestCase
 {
     use ProphecyTrait;
 
@@ -26,7 +29,7 @@ class DeliveryImportFailureSubscriberTest extends TestCase
     private $entityManager;
     private $repository;
     private $statusManager;
-    private DeliveryImportFailureSubscriber $subscriber;
+    private ImportFailureSubscriber $subscriber;
 
     public function setUp(): void
     {
@@ -49,8 +52,17 @@ class DeliveryImportFailureSubscriberTest extends TestCase
         $translator = $this->prophesize(TranslatorInterface::class);
         $translator->trans(Argument::cetera())->willReturn('Import interrupted');
 
-        $this->subscriber = new DeliveryImportFailureSubscriber(
+        $importHandler = $this->prophesize(DeliveryImportHandler::class);
+        $importHandler->errorKey(Argument::any())->willReturn('deliveries.imports.error.interrupted');
+
+        $registry = new ImportRegistry(
+            new ServiceLocator([ImportQueue::TYPE_DELIVERIES => fn () => $importHandler->reveal()]),
+            new ServiceLocator([])
+        );
+
+        $this->subscriber = new ImportFailureSubscriber(
             $this->doctrine->reveal(),
+            $registry,
             $this->statusManager->reveal(),
             $translator->reveal(),
             $this->prophesize(LoggerInterface::class)->reveal()

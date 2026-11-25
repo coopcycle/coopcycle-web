@@ -3,7 +3,9 @@
 namespace AppBundle\EventSubscriber;
 
 use AppBundle\Entity\ImportQueue;
-use AppBundle\Message\ImportDeliveries;
+use AppBundle\Import\ImportHandlerInterface;
+use AppBundle\Import\ImportRegistry;
+use AppBundle\Message\RunsImport;
 use AppBundle\Service\ImportStatusManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -13,17 +15,18 @@ use Symfony\Component\Messenger\Event\WorkerMessageFailedEvent;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Marks a delivery import as failed once it is given up on.
+ * Marks an import as failed once it is given up on.
  *
- * ImportDeliveriesHandler only moves the queue out of "started" when it runs
+ * RunImportHandler only moves the queue out of "started" when it runs
  * to completion, so an error escaping it (a deadlock, a timeout, ...) used to
  * leave the import spinning forever in the admin, with no way to tell that it
  * had been dropped.
  */
-class DeliveryImportFailureSubscriber implements EventSubscriberInterface
+class ImportFailureSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private readonly ManagerRegistry $doctrine,
+        private readonly ImportRegistry $registry,
         private readonly ImportStatusManager $statusManager,
         private readonly TranslatorInterface $translator,
         private readonly LoggerInterface $logger
@@ -42,7 +45,7 @@ class DeliveryImportFailureSubscriber implements EventSubscriberInterface
     {
         $message = $event->getEnvelope()->getMessage();
 
-        if (!$message instanceof ImportDeliveries) {
+        if (!$message instanceof RunsImport) {
             return;
         }
 
@@ -54,9 +57,14 @@ class DeliveryImportFailureSubscriber implements EventSubscriberInterface
             $entityManager = $this->doctrine->resetManager();
         }
 
-        $queue = $entityManager
-            ->getRepository(ImportQueue::class)
-            ->findOneBy(['filename' => $message->getFilename()]);
+        $repository = $entityManager->getRepository(ImportQueue::class);
+
+        $queueId = $message->getQueueId();
+
+        // The messages dispatched before the id was carried only have the filename
+        $queue = is_null($queueId)
+            ? $repository->findOneBy(['filename' => $message->getFilename()])
+            : $repository->find($queueId);
 
         if (null === $queue) {
             return;
@@ -83,14 +91,17 @@ class DeliveryImportFailureSubscriber implements EventSubscriberInterface
         }
 
         $this->logger->error(
-            sprintf('Marking delivery import %s as failed', $message->getFilename()),
-            ['error' => $event->getThrowable()->getMessage()]
+            sprintf('Marking import %s as failed', $message->getFilename()),
+            ['import_id' => $queue->getId(), 'import_type' => $queue->getType(), 'error' => $event->getThrowable()->getMessage()]
         );
 
-        // The deliveries are saved in a single transaction, rolled back by the handler
-        // when it fails: an error that gets here came before, and nothing was imported.
+        // A file is saved in a single transaction, rolled back by the handler when it
+        // fails: an error that gets here came before, and nothing was imported.
+        $errorKey = $this->registry->handlerFor($queue->getType())
+            ->errorKey(ImportHandlerInterface::ERROR_INTERRUPTED);
+
         $this->statusManager->failed($queue, ImportStatusManager::errorForWholeImport(
-            $this->translator->trans('deliveries.imports.error.interrupted')
+            $this->translator->trans($errorKey)
         ));
     }
 }
