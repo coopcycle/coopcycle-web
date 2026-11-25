@@ -110,6 +110,11 @@
 
   {% if app.request.query.get('section', 'today') == 'imports' %}
     {# The items_ ones once the import is over and what it created was cancelled by a dispatcher: nothing from the file is left either #}
+    {# Duplicated in js/app/delivery/list.js, which renders the rows as they change #}
+    {% set import_type_icon = {
+      'deliveries': 'cube',
+      'tasks': 'map-marker'
+    } %}
     {% set import_status_icon = {
       'mapping': 'hand-pointer-o',
       'pending': 'clock-o',
@@ -130,6 +135,7 @@
       data-centrifugo-channel="{{ centrifugo_channel }}">
       <thead>
         <th></th>
+        <th></th>
         <th>{{ 'form.delivery_import.file.label'|trans }}</th>
         <th>{{ 'imports.created_at'|trans }}</th>
         <th>{{ 'imports.progress'|trans }}</th>
@@ -145,9 +151,21 @@
             data-import-redownload="{{ path('_api_/import_queues/{id}/redownload_get', { id: import_queue.id }) }}"
             data-import-cancel="{{ path('_api_/import_queues/{id}/cancel_put', { id: import_queue.id }) }}"
             data-import-cancel-items="{{ path('_api_/import_queues/{id}/cancel_items_put', { id: import_queue.id }) }}"
-            data-import-created="{{ imported_deliveries[import_queue.id] ?? 0 }}">
+            data-import-type="{{ import_queue.type }}"
+            data-import-created="{{ imported_items[import_queue.id] ?? 0 }}">
+            <td width="5%">
+              <i class="fa fa-{{ import_type_icon[import_queue.type] }}" data-toggle="tooltip"
+                title="{{ ('imports.type.' ~ import_queue.type)|trans }}"></i>
+            </td>
             <td width="5%"><i class="fa fa-{{ import_status_icon[import_queue.itemsCancellation ? 'items_' ~ import_queue.itemsCancellation : import_queue.status] }}" data-import-status></i></td>
-            <td>{{ import_queue.filename }}</td>
+            <td>
+              {{ import_queue.filename }}
+              {% if import_queue.options.date is defined %}
+                {# The list is filed by the day the file was uploaded, which is not
+                   necessarily the day its tasks are for #}
+                <span class="text-muted small ml-2">{{ 'imports.for_date'|trans({ '%date%': import_queue.options.date|date('d/m/Y') }) }}</span>
+              {% endif %}
+            </td>
             <td>{{ import_queue.createdAt|time_diff }}</td>
             {# Formatted by list.js, which also keeps it up to date while the file is imported #}
             <td class="text-muted"
@@ -166,7 +184,7 @@
                 <i class="fa fa-ban"></i> {{ 'imports.cancel'|trans }}
               </a>
               {# Hidden by list.js once they are being cancelled #}
-              <a href="#" class="mr-3 text-danger{{ import_queue.canCancelItems and (imported_deliveries[import_queue.id] ?? 0) > 0 ? '' : ' d-none' }}" data-import-cancel-items-button>
+              <a href="#" class="mr-3 text-danger{{ import_queue.canCancelItems and (imported_items[import_queue.id] ?? 0) > 0 ? '' : ' d-none' }}" data-import-cancel-items-button>
                 <i class="fa fa-ban"></i> {{ ('imports.cancel_' ~ import_queue.type)|trans }}
               </a>
               {% if import_queue.waitingForMapping %}

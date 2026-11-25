@@ -1777,6 +1777,9 @@ error.502: The server is over capacity. Please try again later.
 error.504: The server took too much time to respond.
 error.return_to_homepage: Return to homepage
 imports.title: Imported files
+imports.type.deliveries: A file of deliveries
+imports.type.tasks: A file of tasks
+imports.for_date: "for %date%"
 imports.importing: The file %filename% is being imported.
 imports.created_at: Created at
 imports.progress: Progress

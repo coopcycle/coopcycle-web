@@ -1026,16 +1026,19 @@ class AdminController extends AbstractController
         $importDate = new \DateTime($request->query->get('date', 'now'));
 
         $importQueues = $this->entityManager->getRepository(ImportQueue::class)
-            ->createQueryBuilder('diq')
-            ->andWhere('DATE(diq.createdAt) = :import_date')
-            ->orderBy('diq.createdAt', 'DESC')
+            ->createQueryBuilder('iq')
+            ->andWhere('DATE(iq.createdAt) = :import_date')
+            ->orderBy('iq.createdAt', 'DESC')
             ->setParameter('import_date', $importDate->format('Y-m-d'))
             ->getQuery()
             ->getResult();
 
-        // A failed import has saved no delivery, or some of them
-        $importedDeliveries = $this->entityManager->getRepository(Delivery::class)
-            ->countByImport(array_map(fn (ImportQueue $queue) => $queue->getId(), $importQueues));
+        $importIds = array_map(fn (ImportQueue $queue) => $queue->getId(), $importQueues);
+
+        // What each import created, which says whether there is anything to cancel. A
+        // failed import has saved none of them, or some.
+        $importedItems = $this->entityManager->getRepository(Delivery::class)->countByImport($importIds)
+            + $this->entityManager->getRepository(Task::class)->countByImport($importIds);
 
         return $this->render('admin/deliveries.html.twig', $this->auth([
             'deliveries' => $deliveries,
@@ -1045,7 +1048,7 @@ class AdminController extends AbstractController
             'import_form' => $importForm->createView(),
             'delivery_export_form' => $dataExportForm->createView(),
             'import_queues' => $importQueues,
-            'imported_deliveries' => $importedDeliveries,
+            'imported_items' => $importedItems,
             'import_date' => $importDate,
             'centrifugo_token' => $centrifugoClient->generateConnectionToken($this->getUser()->getUsername(), (time() + 3600)),
             'centrifugo_channel' => sprintf('%s_events#%s', $this->getParameter('centrifugo_namespace'), $this->getUser()->getUsername()),

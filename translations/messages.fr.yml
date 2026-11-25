@@ -1561,6 +1561,9 @@ error.502: Le serveur a dépassé sa capacité. Veuillez réessayer plus tard.
 error.504: Le serveur a mis trop de temps à répondre.
 error.return_to_homepage: Retourner à la page d'accueil
 imports.title: Fichiers importés
+imports.type.deliveries: Un fichier de livraisons
+imports.type.tasks: Un fichier de tâches
+imports.for_date: "pour le %date%"
 imports.importing: Le fichier %filename% va bientôt être importé.
 imports.created_at: Créé le
 imports.progress: Progression

@@ -191,7 +191,13 @@ const cancellableImportStatuses = [ 'mapping', 'pending', 'started' ]
 // The values are only written with textContent, there is nothing to escape
 const _t = (key, options = {}) => i18n.t(key, { ...options, interpolation: { escapeValue: false } })
 
-function _importProgressText({ status, startedAt, totalRows, processedRows, errorRows, ...cancellation }) {
+/**
+ * The strings that name what the file held come in a family per kind: interpolating the
+ * noun would get the plural rules wrong in half the languages.
+ */
+const _tKind = (key, type, options = {}) => _t(`${key}_${type.toUpperCase()}`, options)
+
+function _importProgressText({ status, type, startedAt, totalRows, processedRows, errorRows, ...cancellation }) {
   // Nothing of the file has been read yet, and nothing will be until its columns are mapped
   if (status === 'mapping') {
     return _t('IMPORT_WAITING_FOR_MAPPING')
@@ -215,7 +221,7 @@ function _importProgressText({ status, startedAt, totalRows, processedRows, erro
   }
 
   if (status === 'saving') {
-    parts.push(_t('IMPORT_PROGRESS_SAVING_DELIVERIES'))
+    parts.push(_tKind('IMPORT_PROGRESS_SAVING', type))
   }
 
   if (status === 'started' && startedAt && processedRows > 0 && processedRows < totalRows) {
@@ -227,26 +233,26 @@ function _importProgressText({ status, startedAt, totalRows, processedRows, erro
     }))
   }
 
-  return parts.concat(_itemsCancellationText(cancellation)).join(' · ')
+  return parts.concat(_itemsCancellationText(type, cancellation)).join(' · ')
 }
 
-function _itemsCancellationText({ itemsCancellation, itemsToCancel, cancelledItems, skippedItems }) {
+function _itemsCancellationText(type, { itemsCancellation, itemsToCancel, cancelledItems, skippedItems }) {
   if (itemsCancellation === 'cancelling') {
     // Unknown until a worker has looked them up
     if (itemsToCancel === null) {
-      return [ _t('IMPORT_CANCELLING_DELIVERIES') ]
+      return [ _tKind('IMPORT_CANCELLING', type) ]
     }
 
-    return [ _t('IMPORT_CANCELLING_DELIVERIES_PROGRESS', {
+    return [ _tKind('IMPORT_CANCELLING_PROGRESS', type, {
       done: (cancelledItems + skippedItems).toLocaleString(),
       total: itemsToCancel.toLocaleString(),
     }) ]
   }
 
   if (itemsCancellation === 'cancelled') {
-    const parts = [ _t('IMPORT_DELIVERIES_CANCELLED', { count: cancelledItems }) ]
+    const parts = [ _tKind('IMPORT_CANCELLED', type, { count: cancelledItems }) ]
     if (skippedItems > 0) {
-      parts.push(_t('IMPORT_DELIVERIES_LEFT', { count: skippedItems }))
+      parts.push(_tKind('IMPORT_LEFT', type, { count: skippedItems }))
     }
 
     return parts
@@ -266,7 +272,10 @@ function _renderImportStatus(row, importQueue) {
 }
 
 function _renderImportProgress(row, progress) {
-  row.querySelector('[data-import-progress]').textContent = _importProgressText(progress)
+  row.querySelector('[data-import-progress]').textContent = _importProgressText({
+    type: row.dataset.importType,
+    ...progress,
+  })
   row.querySelector('[data-import-cancel-button]')
     .classList.toggle('d-none', !cancellableImportStatuses.includes(progress.status))
   // Only once
@@ -294,42 +303,44 @@ function _progressFromDataset(el) {
   }
 }
 
-function _cancelDeliveriesConfirmContent(filename) {
+function _cancelItemsConfirmContent(type, filename) {
   return (
     <div>
-      <p>{ _t('IMPORT_CANCEL_DELIVERIES_FILE', { filename }) }</p>
+      <p>{ _tKind('IMPORT_CANCEL_FILE', type, { filename }) }</p>
       {/* The admin's styles remove the bullets of a list */}
       <ul style={{ listStyle: 'disc', paddingLeft: 20 }}>
-        <li>{ _t('IMPORT_CANCEL_DELIVERIES_ORDERS') }</li>
-        <li>{ _t('IMPORT_CANCEL_DELIVERIES_ASSIGNED') }</li>
-        <li>{ _t('IMPORT_CANCEL_DELIVERIES_UNDER_WAY') }</li>
+        {/* Only a delivery has an order to be cancelled with it */}
+        { type === 'deliveries' && <li>{ _t('IMPORT_CANCEL_DELIVERIES_ORDERS') }</li> }
+        <li>{ _tKind('IMPORT_CANCEL_ASSIGNED', type) }</li>
+        <li>{ _tKind('IMPORT_CANCEL_UNDER_WAY', type) }</li>
       </ul>
-      <p><strong>{ _t('IMPORT_CANCEL_DELIVERIES_NO_UNDO') }</strong></p>
+      <p><strong>{ _t('IMPORT_CANCEL_NO_UNDO') }</strong></p>
     </div>
   )
 }
 
-function addCancelDeliveries(el) {
+function addCancelItems(el) {
   el.addEventListener('click', e => {
 
     e.preventDefault()
 
     const parentEl = e.target.closest('[data-import]')
+    const type = parentEl.dataset.importType
     // Only known on page load: an import completed since shows 0
-    const count = parseInt(parentEl.dataset.deliveryImportDeliveries || '0', 10)
+    const count = parseInt(parentEl.dataset.importCreated || '0', 10)
 
     AntdModal.confirm({
       title: count > 0 ?
-        _t('IMPORT_CANCEL_DELIVERIES_TITLE', { count }) : _t('IMPORT_CANCEL_DELIVERIES_TITLE_UNKNOWN'),
-      content: _cancelDeliveriesConfirmContent(parentEl.dataset.deliveryImportFilename),
-      okText: _t('IMPORT_CANCEL_DELIVERIES_OK'),
+        _tKind('IMPORT_CANCEL_TITLE', type, { count }) : _tKind('IMPORT_CANCEL_TITLE_UNKNOWN', type),
+      content: _cancelItemsConfirmContent(type, parentEl.dataset.importFilename),
+      okText: _tKind('IMPORT_CANCEL_OK', type),
       okButtonProps: { danger: true },
-      cancelText: _t('IMPORT_CANCEL_DELIVERIES_BACK'),
+      cancelText: _t('IMPORT_CANCEL_BACK'),
       width: 520,
       // The dialog stays open, its button loading, until the request is answered
       onOk: () => axios({
         method: 'put',
-        url: parentEl.dataset.deliveryImportCancelDeliveries,
+        url: parentEl.dataset.importCancelItems,
         headers: {
           Authorization: `Bearer ${window._auth.jwt}`
         }
@@ -349,7 +360,7 @@ function addCancel(el) {
 
     e.preventDefault()
 
-    if (!window.confirm(_t('IMPORT_CANCEL_CONFIRM'))) {
+    if (!window.confirm(_tKind('IMPORT_CANCEL_CONFIRM', e.target.closest('[data-import]').dataset.importType))) {
       return
     }
 
@@ -357,7 +368,7 @@ function addCancel(el) {
 
     axios({
       method: 'put',
-      url: parentEl.dataset.deliveryImportCancel,
+      url: parentEl.dataset.importCancel,
       headers: {
         Authorization: `Bearer ${window._auth.jwt}`
       }
@@ -393,14 +404,14 @@ function addSpreadsheetView(viewIcon) {
       [
         axios({
           method: 'get',
-          url: parentEl.dataset.deliveryImportCsv,
+          url: parentEl.dataset.importCsv,
           headers: {
             Authorization: `Bearer ${window._auth.jwt}`
           }
         }),
         axios({
           method: 'get',
-          url: parentEl.dataset.deliveryImportQueue,
+          url: parentEl.dataset.importQueue,
           headers: {
             Authorization: `Bearer ${window._auth.jwt}`
           }
@@ -431,13 +442,13 @@ function addRedownload(el) {
 
     axios({
       method: 'get',
-      url: parentEl.dataset.deliveryImportRedownload,
+      url: parentEl.dataset.importRedownload,
       headers: {
         Authorization: `Bearer ${window._auth.jwt}`
       }
     }).then(response => {
 
-      const basenameWithoutExtension = parentEl.dataset.deliveryImportFilename.replace(/\.[^/.]+$/, "")
+      const basenameWithoutExtension = parentEl.dataset.importFilename.replace(/\.[^/.]+$/, "")
 
       const file = new File([ response.data ], `${basenameWithoutExtension}.csv`, {
         type: 'text/csv',
@@ -496,7 +507,7 @@ if (deliveryImports) {
     addSpreadsheetView(el.querySelector('[data-import-view]'))
     addRedownload(el.querySelector('[data-import-redownload]'))
     addCancel(el.querySelector('[data-import-cancel-button]'))
-    addCancelDeliveries(el.querySelector('[data-import-cancel-items-button]'))
+    addCancelItems(el.querySelector('[data-import-cancel-items-button]'))
     _renderImportProgress(el, _progressFromDataset(el.querySelector('[data-import-progress]')))
   })
 }

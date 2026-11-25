@@ -1579,6 +1579,9 @@ registration.confirm.invitation.link.title: "Usa el siguiente enlace para invita
 registration.step.invitation.copy.button: "Copiar el enlace"
 registration.step.invitation.link.copied: "Copiado"
 imports.title: Ficheros importados
+imports.type.deliveries: Un archivo de entregas
+imports.type.tasks: Un archivo de tareas
+imports.for_date: "para el %date%"
 imports.importing: El fichero %filename% va a ser importado.
 imports.created_at: Creado el
 imports.progress: Progreso
