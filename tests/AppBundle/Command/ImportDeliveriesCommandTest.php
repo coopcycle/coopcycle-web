@@ -133,9 +133,11 @@ class ImportDeliveriesCommandTest extends KernelTestCase
 
         (new ORMPurger($container->get(EntityManagerInterface::class)))->purge();
 
+        // With the default setup (channels, settings…): the tests that run after this one rely on it
         $fixtures = $container->get('fidry_alice_data_fixtures.loader.doctrine')->load([
+            __DIR__.'/../../../fixtures/ORM/setup_default.yml',
             __DIR__.'/../../../fixtures/ORM/stores.yml'
-        ]);
+        ], $_SERVER);
 
         // The notifier sends emails, it's checked on its own
         $container->set(ImportFailureNotifier::class, $this->prophesize(ImportFailureNotifier::class)->reveal());
