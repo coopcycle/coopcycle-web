@@ -76,6 +76,11 @@ final class RdcMessageHandler
             throw $e;
         }
 
+        // Filtered out by postal code: the claim is kept, nothing to do on a replay
+        if (is_null($delivery)) {
+            return;
+        }
+
         $this->logger->info('RDC delivery processed', [
             'event_hash' => $eventHash,
             'lo_uri' => $message->loUri,

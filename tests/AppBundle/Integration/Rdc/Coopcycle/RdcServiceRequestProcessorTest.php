@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\AppBundle\Integration\Rdc\Coopcycle;
 
+use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryRepository;
 use AppBundle\Entity\Store;
@@ -176,6 +177,80 @@ class RdcServiceRequestProcessorTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
 
         $this->processor->process(new RdcApiServiceRequest(), new Store(), self::LO_URI, 1);
+    }
+
+    public function testAServiceRequestOutsideThePostalCodesIsLeftUnanswered(): void
+    {
+        $this->deliveryRepository->method('findByLoUri')->willReturn(null);
+        $this->mapper->method('mapToDelivery')->willReturn($this->delivery('69002', '69100'));
+        $this->deliveryOrderManager->expects($this->never())->method('createOrder');
+        $this->serviceFacade->expects($this->never())->method('createService');
+        $this->serviceFacade->expects($this->never())->method('notifyOriginNode');
+
+        $result = $this->processorWithPostalCodes(['75', '92'])->process($this->apiRequest(), $this->store(), self::LO_URI, 1);
+
+        $this->assertNull($result);
+    }
+
+    public function testAServiceRequestIsKeptWhenItsPickupOrItsDropoffMatches(): void
+    {
+        $this->deliveryRepository->method('findByLoUri')->willReturn(null);
+        $this->mapper->method('mapToDelivery')->willReturnOnConsecutiveCalls(
+            $this->delivery('41100', '75015'),
+            $this->delivery('75015', '41100'),
+        );
+        $this->deliveryOrderManager->expects($this->exactly(2))->method('createOrder');
+        $this->serviceFacade->method('createService')->willReturn('svc-1');
+        $this->serviceFacade->method('createActivity')->willReturn('act-1');
+
+        $processor = $this->processorWithPostalCodes(['75']);
+
+        $this->assertNotNull($processor->process($this->apiRequest(), $this->store(), self::LO_URI, 1));
+        $this->assertNotNull($processor->process($this->apiRequest(), $this->store(), self::LO_URI, 1));
+    }
+
+    public function testAServiceRequestWithNoPostalCodeAtAllIsKept(): void
+    {
+        // Geocoding failed and the request had none: the dispatcher reviews it
+        $this->deliveryRepository->method('findByLoUri')->willReturn(null);
+        $this->mapper->method('mapToDelivery')->willReturn($this->delivery(null, null));
+        $this->deliveryOrderManager->expects($this->once())->method('createOrder');
+        $this->serviceFacade->method('createService')->willReturn('svc-1');
+        $this->serviceFacade->method('createActivity')->willReturn('act-1');
+
+        $this->assertNotNull(
+            $this->processorWithPostalCodes(['75'])->process($this->apiRequest(), $this->store(), self::LO_URI, 1)
+        );
+    }
+
+    private function processorWithPostalCodes(array $postalCodes): RdcServiceRequestProcessor
+    {
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager->method('getRepository')->with(Delivery::class)->willReturn($this->deliveryRepository);
+
+        return new RdcServiceRequestProcessor(
+            $entityManager,
+            $this->deliveryOrderManager,
+            $this->serviceFacade,
+            $this->mapper,
+            new NullLogger(),
+            ['BOL.MEMBER.PROVIDER' => ['postalCodes' => $postalCodes]],
+        );
+    }
+
+    private function delivery(?string $pickupPostalCode, ?string $dropoffPostalCode): Delivery
+    {
+        $delivery = new Delivery();
+
+        $pickupAddress = new Address();
+        $pickupAddress->setPostalCode($pickupPostalCode);
+        $delivery->getPickup()->setAddress($pickupAddress);
+
+        $dropoffAddress = new Address();
+        $dropoffAddress->setPostalCode($dropoffPostalCode);
+        $delivery->getDropoff()->setAddress($dropoffAddress);
+
+        return $delivery;
     }
 
     /**
