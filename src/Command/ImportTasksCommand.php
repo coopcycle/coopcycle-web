@@ -7,6 +7,7 @@ use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Message\ImportTasks;
 use AppBundle\Service\RemotePushNotificationManager;
 use AppBundle\Service\LiveUpdates;
+use AppBundle\Doctrine\EventSubscriber\TaskSubscriber\TaskListProvider;
 use AppBundle\Spreadsheet\TaskSpreadsheetParser;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
@@ -36,7 +37,8 @@ class ImportTasksCommand extends Command
         TaskSpreadsheetParser $spreadsheetParser,
         ValidatorInterface $validator,
         LiveUpdates $liveUpdates,
-        string $secret)
+        string $secret,
+        private TaskListProvider $taskListProvider)
     {
         $this->objectManager = $objectManager;
         $this->taskImportsFilesystem = $taskImportsFilesystem;
@@ -116,14 +118,24 @@ class ImportTasksCommand extends Command
 
         try {
 
-            $tasks = $this->spreadsheetParser->parse($tempnam, [
+            $result = $this->spreadsheetParser->parse($tempnam, [
                 'date' => $date
             ]);
 
-            $this->io->text(sprintf('Importing %d tasks…', count($tasks)));
+            // As it always has, this fails the whole file on the first thing wrong with it
+            if ($result->hasErrors()) {
+                $errors = $result->getSortedErrors();
+                $firstRow = reset($errors);
 
-            foreach ($tasks as $task) {
-                $violations = $this->validator->validate($task);
+                throw new \Exception($firstRow[0] ?? 'Could not read the file');
+            }
+
+            $rows = $result->getData();
+
+            $this->io->text(sprintf('Importing %d tasks…', count($rows)));
+
+            foreach ($rows as $row) {
+                $violations = $this->validator->validate($row['task']);
                 if (count($violations) > 0) {
                     throw new \Exception($violations->get(0)->getMessage());
                 }
@@ -141,8 +153,20 @@ class ImportTasksCommand extends Command
             return 1;
         }
 
-        foreach ($tasks as $task) {
+        foreach ($rows as $row) {
+            $task = $row['task'];
+
+            // Every task of the file goes into the group the token names, whatever the
+            // group column says
             $task->setGroup($taskGroup);
+
+            if (!is_null($row['assign'])) {
+                [ $user, $assignAt ] = $row['assign'];
+                $this->taskListProvider
+                    ->getTaskListForUserAndDate($assignAt, $user)
+                    ->appendTask($task);
+            }
+
             $this->objectManager->persist($task);
         }
 

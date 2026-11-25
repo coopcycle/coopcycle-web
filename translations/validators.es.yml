@@ -49,8 +49,9 @@ spreadsheet.missing_columns: Debe definir una columna « %column% » o una colum
 spreadsheet.alternative_columns: Debe definir una columna « %column% » o una columna
   « %other_column% », pero no ambas
 spreadsheet.csv_encoding: Los archivos CSV deben estar codificados en UTF-8
-import.mapping.error.missing_columns: "Una entrega no se puede importar sin %columns%: indica qué columna contiene cada uno de esos campos."
+import.mapping.error.missing_columns: "Este archivo no se puede importar sin %columns%: indica qué columna contiene cada uno de esos campos."
 import.mapping.error.duplicate_columns: "Dos columnas están asociadas a %columns%: cada campo solo puede provenir de una columna."
+import.mapping.error.one_of_columns: "Este archivo no se puede importar sin uno de estos campos: %columns%. Indica qué columna contiene uno de ellos."
 spreadsheet.unreadable: No se ha podido leer este archivo. Se pueden importar hojas de cálculo en CSV, ODS y XLSX.
 spreadsheet.missing_header: La primera fila del archivo debe nombrar sus columnas
 spreadsheet.empty: Este archivo no tiene ninguna fila que importar

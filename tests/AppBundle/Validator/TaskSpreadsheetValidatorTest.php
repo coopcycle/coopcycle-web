@@ -2,10 +2,9 @@
 
 namespace AppBundle\Validator;
 
-use AppBundle\Doctrine\EventSubscriber\TaskSubscriber\TaskListProvider;
-use AppBundle\Entity\TaskList;
 use AppBundle\Service\Geocoder;
 use AppBundle\Spreadsheet\TaskSpreadsheetParser;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use AppBundle\Validator\Constraints\Spreadsheet as SpreadsheetConstraint;
 use AppBundle\Validator\Constraints\TaskSpreadsheetValidator;
 use Cocur\Slugify\Slugify;
@@ -30,17 +29,6 @@ class TaskSpreadsheetValidatorTest extends ConstraintValidatorTestCase
         $this->userManager = $this->prophesize(UserManager::class);
         $this->entityManager = $this->prophesize(EntityManagerInterface::class);
 
-        $this->taskListProvider = $this->prophesize(TaskListProvider::class);
-        $this->taskListProvider
-            ->getTaskListForUserAndDate(\Prophecy\Argument::cetera())
-            ->will(function ($args) {
-                $taskList = new TaskList();
-                $taskList->setDate($args[0]);
-                $taskList->setCourier($args[1]);
-
-                return $taskList;
-            });
-
         $this->parser = new TaskSpreadsheetParser(
             $this->geocoder->reveal(),
             new Slugify(),
@@ -48,7 +36,7 @@ class TaskSpreadsheetValidatorTest extends ConstraintValidatorTestCase
             $this->userManager->reveal(),
             'fr',
             $this->entityManager->reveal(),
-            $this->taskListProvider->reveal(),
+            $this->prophesize(TranslatorInterface::class)->reveal(),
         );
 
         $adapter = new LocalFilesystemAdapter(realpath(__DIR__ . '/../Resources/spreadsheet/'));

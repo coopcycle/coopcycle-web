@@ -12,12 +12,13 @@ class ColumnMapping extends Constraint
 {
     public $missingColumnsMessage = 'import.mapping.error.missing_columns';
     public $duplicateColumnsMessage = 'import.mapping.error.duplicate_columns';
+    public $oneOfColumnsMessage = 'import.mapping.error.one_of_columns';
 
     /**
-     * @var string the parser whose columns the mapping is checked against,
-     *   as AppBundle\Validator\Constraints\Spreadsheet names them
+     * @var string the kind of import whose columns the mapping is checked against,
+     *   as AppBundle\Entity\ImportQueue::TYPE_* names them
      */
-    public $type = 'delivery';
+    public $type = 'deliveries';
 
     public function getTargets(): string|array
     {

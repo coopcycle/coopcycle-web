@@ -1577,6 +1577,12 @@ import.address.geocode.error: Could not geocode address %failed_address%
 import.address.reverse_geocode.error: Could not find an address at the coordinates %coordinates%
 import.time.range.error: Time range "%value%" in %key% is not valid
 import.columns.missing: "The file has no %columns% column, add it and import the file again"
+import.columns.one_of.missing: "The file has no %columns% column, add one of them and import the file again"
+import.address.missing: "The row says neither an address nor coordinates"
+import.coordinates.error: "%key%: \"%value%\" is not a pair of coordinates, write it as latitude,longitude"
+import.type.error: "type: \"%value%\" is not valid, write %types%"
+import.weight.error: "%key%: \"%value%\" is not a number"
+import.ref.duplicate: "ref: \"%value%\" is already used on row %row% of this file"
 import.telephone.error: "%key%: \"%value%\" is not a valid phone number"
 import.metadata.error: "%key%: \"%value%\" is not valid, write it as key=value, separated by spaces"
 import.packages.error: "%key%: \"%value%\" is not valid, write it as package=quantity, separated by spaces"
@@ -1586,6 +1592,8 @@ import.delivery.price.error.priceCalculation.row: The delivery price could not b
 import.column_group.pickup: Pickup
 import.column_group.dropoff: Dropoff
 import.column_group.delivery: Delivery
+import.column_group.address: Address
+import.column_group.task: Task
 import.column.pickup.address: Pickup address
 import.column.pickup.address.name: Pickup name
 import.column.pickup.address.description: Pickup address details
@@ -1606,6 +1614,22 @@ import.column.dropoff.metadata: Dropoff metadata
 import.column.weight: Weight (kg)
 import.column.tour.name: Tour
 import.column.external_reference: External reference
+import.column.address: Address
+import.column.latlong: Coordinates (latitude,longitude)
+import.column.address.name: Name
+import.column.address.description: Address details
+import.column.address.telephone: Phone number
+import.column.address.contactName: Contact name
+import.column.type: Pickup or dropoff
+import.column.timeslot: Time slot
+import.column.after: Not before
+import.column.before: Not after
+import.column.comments: Comments
+import.column.tags: Tags
+import.column.ref: Reference
+import.column.packages: Packages
+import.column.group: Task group
+import.column.assign: Assigned to (username:date)
 import.mapping.title: Match the columns of your file
 import.mapping.help: "Tell us what each column of %filename% holds. We have filled in the ones we recognised, so check them over and set the rest."
 import.mapping.column_in_file: Column in your file

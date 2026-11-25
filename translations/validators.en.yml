@@ -76,8 +76,9 @@ spreadsheet.missing_column: You must provide a « %column% » column
 spreadsheet.missing_columns: You must provide a « %column% » or a « %other_column% » column
 spreadsheet.alternative_columns: You must provide a « %column% » or a « %other_column% » column, not both
 spreadsheet.csv_encoding: CSV files must be encoded in UTF-8
-import.mapping.error.missing_columns: "A delivery can't be imported without %columns%: say which column holds each of them."
+import.mapping.error.missing_columns: "This file can't be imported without %columns%: say which column holds each of them."
 import.mapping.error.duplicate_columns: "Two columns are set to %columns%: each field can only come from one column."
+import.mapping.error.one_of_columns: "This file can't be imported without one of %columns%: say which column holds one of them."
 spreadsheet.unreadable: This file could not be read. Spreadsheets in CSV, ODS and XLSX can be imported.
 spreadsheet.missing_header: The first row of the file must name its columns
 spreadsheet.empty: This file has no rows to import

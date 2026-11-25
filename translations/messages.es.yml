@@ -1391,6 +1391,12 @@ import.address.geocode.error: No se pudo geocodificar la dirección %failed_addr
 import.address.reverse_geocode.error: No se ha encontrado ninguna dirección en las coordenadas %coordinates%
 import.time.range.error: Rango de tiempo "%value%" en %key% no es válido
 import.columns.missing: "El fichero no tiene la columna %columns%, añádela y vuelve a importar el fichero"
+import.columns.one_of.missing: "El archivo no tiene ninguna columna %columns%, añade una e importa el archivo de nuevo"
+import.address.missing: "La fila no indica ni dirección ni coordenadas"
+import.coordinates.error: "%key%: \"%value%\" no es un par de coordenadas, escríbelo como latitud,longitud"
+import.type.error: "type: \"%value%\" no es válido, escribe %types%"
+import.weight.error: "%key%: \"%value%\" no es un número"
+import.ref.duplicate: "ref: \"%value%\" ya se usa en la fila %row% de este archivo"
 import.telephone.error: "%key%: \"%value%\" no es un número de teléfono válido"
 import.metadata.error: "%key%: \"%value%\" no es válido, escríbelo como clave=valor, separados por espacios"
 import.packages.error: "%key%: \"%value%\" no es válido, escríbelo como paquete=cantidad, separados por espacios"
@@ -1402,6 +1408,8 @@ import.delivery.price.error.priceCalculation.row: El precio de la entrega no pud
 import.column_group.pickup: Recogida
 import.column_group.dropoff: Entrega
 import.column_group.delivery: General
+import.column_group.address: Dirección
+import.column_group.task: Tarea
 import.column.pickup.address: Dirección de recogida
 import.column.pickup.address.name: Nombre de la recogida
 import.column.pickup.address.description: Detalles de la dirección de recogida
@@ -1422,6 +1430,22 @@ import.column.dropoff.metadata: Metadatos de la entrega
 import.column.weight: Peso (kg)
 import.column.tour.name: Ruta
 import.column.external_reference: Referencia externa
+import.column.address: Dirección
+import.column.latlong: Coordenadas (latitud,longitud)
+import.column.address.name: Nombre
+import.column.address.description: Detalles de la dirección
+import.column.address.telephone: Número de teléfono
+import.column.address.contactName: Nombre de contacto
+import.column.type: Recogida o entrega
+import.column.timeslot: Franja horaria
+import.column.after: No antes de
+import.column.before: No después de
+import.column.comments: Comentarios
+import.column.tags: Etiquetas
+import.column.ref: Referencia
+import.column.packages: Paquetes
+import.column.group: Grupo de tareas
+import.column.assign: "Asignada a (usuario:fecha)"
 import.mapping.title: Asocia las columnas de tu archivo
 import.mapping.help: "Indica qué contiene cada columna de %filename%. Hemos rellenado las que hemos reconocido: revísalas y completa las demás."
 import.mapping.column_in_file: Columna de tu archivo

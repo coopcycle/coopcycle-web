@@ -6,10 +6,14 @@ use AppBundle\Form\DeliveryImportMappingType;
 use AppBundle\Spreadsheet\Column\ColumnDefinition;
 use AppBundle\Spreadsheet\Column\ColumnGroup;
 use AppBundle\Spreadsheet\Column\ColumnType;
+use AppBundle\Entity\ImportQueue;
+use AppBundle\Import\DeliveryImportHandler;
+use AppBundle\Import\ImportRegistry;
 use AppBundle\Spreadsheet\DeliverySpreadsheetParser;
 use AppBundle\Validator\Constraints\ColumnMappingValidator;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\Form\Test\TypeTestCase;
 use Symfony\Component\Validator\ConstraintValidatorFactory;
 use Symfony\Component\Validator\Validation;
@@ -42,10 +46,19 @@ class DeliveryImportMappingTypeTest extends TypeTestCase
             'dropoff.address',
             'dropoff.timeslot',
         ]);
+        $parser->method('getRequiredColumnGroups')->willReturn([]);
+
+        $importHandler = $this->createMock(DeliveryImportHandler::class);
+        $importHandler->method('getParser')->willReturn($parser);
+
+        $registry = new ImportRegistry(
+            new ServiceLocator([ImportQueue::TYPE_DELIVERIES => fn () => $importHandler]),
+            new ServiceLocator([])
+        );
 
         $validator = Validation::createValidatorBuilder()
             ->setConstraintValidatorFactory(new ConstraintValidatorFactory([
-                ColumnMappingValidator::class => new ColumnMappingValidator($parser, $translator),
+                ColumnMappingValidator::class => new ColumnMappingValidator($registry, $translator),
             ]))
             ->getValidator();
 
