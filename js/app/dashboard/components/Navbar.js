@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import moment from 'moment'
@@ -21,16 +21,12 @@ import {
   PlusOutlined,
   EllipsisOutlined,
   ClockCircleOutlined,
-  ExclamationCircleOutlined,
-  SyncOutlined,
 } from '@ant-design/icons'
-import _ from 'lodash'
 
 import {
   openFiltersModal,
   resetFilters,
   openSettings,
-  openImportModal,
   openExportModal,
   openNewTaskModal,
   openNewRecurrenceRuleModal,
@@ -113,53 +109,6 @@ const ExportButton = ({ onClick }) => {
       }}>
       {t('ADMIN_DASHBOARD_NAV_EXPORT')}
     </Button>
-  )
-}
-
-const ImportButton = ({ onClick }) => {
-  const { t } = useTranslation()
-  const dispatch = useDispatch()
-
-  return (
-    <Button
-      type="text"
-      icon={<i className="fa fa-upload mr-2" aria-hidden="true" />}
-      onClick={() => {
-        dispatch(openImportModal())
-        if (onClick) {
-          onClick()
-        }
-      }}>
-      {t('ADMIN_DASHBOARD_NAV_IMPORT')}
-    </Button>
-  )
-}
-
-const ImportItem = ({ token, message }) => {
-  return (
-    <Tooltip title={message}>
-      {message ? (
-        <Tag icon={<ExclamationCircleOutlined />} color="warning">
-          {token}
-        </Tag>
-      ) : (
-        <Tag icon={<SyncOutlined spin />} color="processing">
-          {token}
-        </Tag>
-      )}
-    </Tooltip>
-  )
-}
-
-const ImportsStatus = ({ imports }) => {
-  if (_.size(imports) === 0) return null
-
-  return (
-    <Space>
-      {_.map(imports, (message, token) => (
-        <ImportItem key={token} token={token} message={message} />
-      ))}
-    </Space>
   )
 }
 
@@ -352,23 +301,6 @@ const NavbarAntd = () => {
   const screens = useBreakpoint()
   const [isOverflowMenuVisible, setIsOverflowMenuVisible] = useState(false)
 
-  const imports = useSelector(state => state.imports)
-
-  // Effect for handling imports popover (equivalent to componentDidUpdate)
-  useEffect(() => {
-    _.map(imports, (message, token) => {
-      const $target = $(`#task-import-${token}`)
-      if (message && !$target.data('bs.popover')) {
-        $target.popover({
-          html: true,
-          container: 'body',
-          placement: 'bottom',
-          content: message,
-        })
-      }
-    })
-  }, [imports])
-
   if (screens.xl) {
     return (
       <Bar>
@@ -377,8 +309,6 @@ const NavbarAntd = () => {
 
           <Space>
             <ExportButton />
-            <ImportButton />
-            <ImportsStatus imports={imports} />
           </Space>
 
           <SearchInput />
@@ -404,8 +334,6 @@ const NavbarAntd = () => {
           <Space>
             <DateNavigation />
 
-            <ImportsStatus imports={imports} />
-
             <SearchInput />
 
             <Filters />
@@ -428,7 +356,6 @@ const NavbarAntd = () => {
           setIsOverflowMenuVisible={setIsOverflowMenuVisible}>
           <>
             <ExportButton onClick={() => setIsOverflowMenuVisible(false)} />
-            <ImportButton onClick={() => setIsOverflowMenuVisible(false)} />
             <SettingsButton
               withLabel
               onClick={() => setIsOverflowMenuVisible(false)}
@@ -445,8 +372,6 @@ const NavbarAntd = () => {
         <Space>
           <DateNavigation />
 
-          <ImportsStatus imports={imports} />
-
           <SearchInput />
 
           <Filters />
@@ -462,7 +387,6 @@ const NavbarAntd = () => {
         setIsOverflowMenuVisible={setIsOverflowMenuVisible}>
         <>
           <ExportButton onClick={() => setIsOverflowMenuVisible(false)} />
-          <ImportButton onClick={() => setIsOverflowMenuVisible(false)} />
           <CreateNewOrderButton />
           <Button
             type="text"

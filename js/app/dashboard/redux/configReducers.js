@@ -4,8 +4,6 @@ const initialState = {
   centrifugoEventsChannel: 'coopcycle_events',
   stores: [],
   tags: [],
-  uploaderEndpoint: '',
-  exampleSpreadsheetUrl: '#',
   couriersList: [],
   nav: '',
   initialTask: null,

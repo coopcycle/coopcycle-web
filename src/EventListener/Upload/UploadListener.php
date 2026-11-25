@@ -164,6 +164,12 @@ final class UploadListener
         $this->appCache->delete('content.company_logo.base_64');
     }
 
+    /**
+     * The legacy task import: no queue row, no progress, no way to stop it, and the whole
+     * file is given up on at the first thing wrong with it. No screen posts here any more
+     * — /admin/deliveries imports a file of tasks through the import queue — and it is
+     * kept for whatever still calls the endpoint, alongside coopcycle:tasks:import.
+     */
     private function onTasksUpload(PostPersistEvent $event)
     {
         $file = $event->getFile();

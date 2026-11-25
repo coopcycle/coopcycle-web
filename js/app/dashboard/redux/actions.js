@@ -66,12 +66,6 @@ export const LOAD_TASK_EVENTS_REQUEST = 'LOAD_TASK_EVENTS_REQUEST'
 export const LOAD_TASK_EVENTS_SUCCESS = 'LOAD_TASK_EVENTS_SUCCESS'
 export const LOAD_TASK_EVENTS_FAILURE = 'LOAD_TASK_EVENTS_FAILURE'
 
-export const ADD_IMPORT = 'ADD_IMPORT'
-export const IMPORT_SUCCESS = 'IMPORT_SUCCESS'
-export const IMPORT_ERROR = 'IMPORT_ERROR'
-export const OPEN_IMPORT_MODAL = 'OPEN_IMPORT_MODAL'
-export const CLOSE_IMPORT_MODAL = 'CLOSE_IMPORT_MODAL'
-
 export const OPEN_EXPORT_MODAL = 'OPEN_EXPORT_MODAL'
 export const CLOSE_EXPORT_MODAL = 'CLOSE_EXPORT_MODAL'
 
@@ -334,18 +328,6 @@ export function setFilterValue(key, value) {
 
 export function resetFilters() {
   return { type: RESET_FILTERS }
-}
-
-export function addImport(token) {
-  return { type: ADD_IMPORT, token }
-}
-
-export function importSuccess(token) {
-  return { type: IMPORT_SUCCESS, token }
-}
-
-export function importError(token, message) {
-  return { type: IMPORT_ERROR, token, message }
 }
 
 /**
@@ -973,16 +955,8 @@ export function loadTaskEventsFailure(error) {
   return { type: LOAD_TASK_EVENTS_FAILURE, error }
 }
 
-export function openImportModal() {
-  return { type: OPEN_IMPORT_MODAL }
-}
-
 export function showRecurrenceRules(isChecked) {
   return { type: SHOW_RECURRENCE_RULES, isChecked }
-}
-
-export function closeImportModal() {
-  return { type: CLOSE_IMPORT_MODAL }
 }
 
 export function removeTask(task) {

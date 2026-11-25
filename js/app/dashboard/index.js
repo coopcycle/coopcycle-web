@@ -85,8 +85,6 @@ async function start(tasksRequest, tasksListsRequest, toursRequest) {
       centrifugoEventsChannel: dashboardEl.dataset.centrifugoEventsChannel,
       stores: JSON.parse(dashboardEl.dataset.stores),
       tags: JSON.parse(dashboardEl.dataset.tags),
-      uploaderEndpoint: dashboardEl.dataset.uploaderEndpoint,
-      exampleSpreadsheetUrl: dashboardEl.dataset.exampleSpreadsheetUrl,
       couriersList: JSON.parse(dashboardEl.dataset.couriersList),
       nav: dashboardEl.dataset.nav,
       pickupClusterAddresses: JSON.parse(dashboardEl.dataset.pickupClusterAddresses),
