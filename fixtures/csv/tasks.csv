@@ -1,0 +1,4 @@
+type,address,address.name,address.telephone,address.contactName,comments,tags,timeslot,packages,weight,group,ref
+pickup,"44 rue de rivoli paris","Awesome business",+33612345678,"John Doe","Fragile","warn","2019-12-12 10:00 - 2019-12-12 11:00","small-box=1",5.5,"Morning round","TASK-001"
+dropoff,"24 rue de la paix paris","Nice customer",+33612345678,"Jane Doe",,"heavy","2019-12-12 12:00 - 2019-12-12 13:00","big-box=2",12.0,"Morning round","TASK-002"
+dropoff,"48 rue de rivoli paris","Another customer",+33612345678,,,,"2019-12-12 14:00 - 2019-12-12 15:00",,3.25,,"TASK-003"

@@ -1232,6 +1232,11 @@ food_establishment.BAKERY: Boulangerie
 order.export.heading.fulfillment_method: Réalisation
 basics.view_example: Voir un exemple
 form.delivery_import.store.label: Magasin
+form.import.type.label: Que contient ce fichier ?
+form.import.type.deliveries: Des livraisons
+form.import.type.tasks: Des tâches
+form.import.date.label: Date
+form.import.date.help: Le jour des tâches du fichier, pour les lignes qui n'indiquent pas de date.
 form.time_slot.choices.error.empty: La liste de choix ne peut pas être vide
 store.FLORIST: Fleuriste
 order.list.reorder: Commander de nouveau

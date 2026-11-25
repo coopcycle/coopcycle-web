@@ -56,7 +56,7 @@ use AppBundle\Form\ApiAppType;
 use AppBundle\Form\BannerType;
 use AppBundle\Form\CustomizeType;
 use AppBundle\Form\DataExportType;
-use AppBundle\Form\DeliveryImportType;
+use AppBundle\Form\ImportType;
 use AppBundle\Service\ImportStatusManager;
 use AppBundle\Spreadsheet\Column\ColumnDetector;
 use AppBundle\Spreadsheet\DeliverySpreadsheetParser;
@@ -876,39 +876,46 @@ class AdminController extends AbstractController
         PaginatorInterface $paginator,
         DeliveryRepository $deliveryRepository,
         Hashids $hashids8,
-        Filesystem $deliveryImportsFilesystem,
+        ImportRegistry $importRegistry,
         MessageBusInterface $messageBus,
         CentrifugoClient $centrifugoClient,
         SlugifyInterface $slugify,
     )
     {
-        $deliveryImportForm = $this->createForm(DeliveryImportType::class, null, [
+        $importForm = $this->createForm(ImportType::class, null, [
             'with_store' => true,
+            'with_tasks' => true,
             #FIXME; normally cypress e2e tests run with CSRF protection enabled, but once in a while CSRF tokens are not saved in the session (removed?) for this form
             'csrf_protection' => 'test' !== $this->environment
         ]);
 
-        $deliveryImportForm->handleRequest($request);
-        if ($deliveryImportForm->isSubmitted()) {
-            if ($deliveryImportForm->isValid()) {
-                $store = $deliveryImportForm->get('store')->getData();
+        $importForm->handleRequest($request);
+        if ($importForm->isSubmitted()) {
+            if ($importForm->isValid()) {
+                $type = ImportType::importType($importForm);
+
+                // A delivery goes to a store, a task to a date: whichever the dispatcher
+                // chose, the other field was never filled in
+                $isTasks = ImportQueue::TYPE_TASKS === $type;
 
                 return $this->handleImportUpload(
-                    type: ImportQueue::TYPE_DELIVERIES,
-                    store: $store,
-                    options: [],
-                    form: $deliveryImportForm,
+                    type: $type,
+                    store: $isTasks ? null : $importForm->get('store')->getData(),
+                    options: $isTasks
+                        ? ['date' => $importForm->get('date')->getData()->format('Y-m-d')]
+                        : [],
+                    form: $importForm,
                     entityManager: $this->entityManager,
                     hashids: $hashids8,
-                    filesystem: $deliveryImportsFilesystem,
+                    filesystem: $importRegistry->handlerFor($type)->getFilesystem(),
                     slugify: $slugify,
                     routeTo: 'admin_deliveries',
                     logger: $this->logger,
                     mappingRoute: 'admin_import_mapping',
                 );
             } else {
-                $this->logger->warning('Delivery import form is not valid', [
-                    'errors' => $deliveryImportForm->getErrors(true, false),
+                $this->logger->warning('Import form is not valid', [
+                    'errors' => $importForm->getErrors(true, false),
                 ]);
             }
         }
@@ -1035,7 +1042,7 @@ class AdminController extends AbstractController
             'filters' => $filters,
             'routes' => $this->getDeliveryRoutes(),
             'stores' => $stores,
-            'delivery_import_form' => $deliveryImportForm->createView(),
+            'import_form' => $importForm->createView(),
             'delivery_export_form' => $dataExportForm->createView(),
             'import_queues' => $importQueues,
             'imported_deliveries' => $importedDeliveries,

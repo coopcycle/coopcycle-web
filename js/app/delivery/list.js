@@ -16,6 +16,7 @@ import i18n from '../i18n'
 import moment from 'moment'
 
 import './list.scss'
+import initImportModal from './import-modal'
 
 // Enable Bootstrap tooltips
 // https://getbootstrap.com/docs/3.4/javascript/#tooltips
@@ -509,3 +510,5 @@ if (deliveryImportsDatePicker) {
     }
   });
 }
+
+initImportModal()

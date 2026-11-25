@@ -170,7 +170,7 @@ services:
   AppBundle\Form\Type\MoneyType:
     tags: [ form.type ]
 
-  AppBundle\Form\DeliveryImportType:
+  AppBundle\Form\ImportType:
     tags: [ form.type ]
 
   AppBundle\Form\TimeSlotType:

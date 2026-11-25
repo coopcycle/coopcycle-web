@@ -1131,6 +1131,11 @@ delivery.import.success_message: Your file was successfully processed, %count% d
   have been created
 form.delivery_import.file.label: File
 form.delivery_import.store.label: Store
+form.import.type.label: What does this file hold?
+form.import.type.deliveries: Deliveries
+form.import.type.tasks: Tasks
+form.import.date.label: Date
+form.import.date.help: The day the tasks of the file are for, for the rows that say no date of their own.
 basics.view_example: View example
 profile.loopeat.connect: Connect my %name% account
 profile.loopeat.connected: '%name% account connected'

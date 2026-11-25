@@ -4,7 +4,7 @@
   {{ add_title_prefix('adminDashboard.deliveries.title'|trans) }}
 {% endblock %}
 
-{% form_theme delivery_import_form 'bootstrap_3_horizontal_layout.html.twig' %}
+{% form_theme import_form 'bootstrap_3_horizontal_layout.html.twig' %}
 {% if is_granted('ROLE_ADMIN') %}
 {% form_theme delivery_export_form 'form/deliveries_export.html.twig' %}
 {% endif %}
@@ -16,7 +16,7 @@
       <input type="text" class="form-control" placeholder="{{ 'stores.filters.input.placeholder'|trans|e('html_attr') }}" name="q" value="{{ filters.query }}">
     </form>
     <div class="text-right">
-      <a href="#" class="btn btn-sm btn-default mr-4" data-toggle="modal" data-target="#import-deliveries-modal">
+      <a href="#" class="btn btn-sm btn-default mr-4" data-toggle="modal" data-target="#import-modal">
         <i class="fa fa-upload"></i> {% trans %}basics.import{% endtrans %}
       </a>
       {% if is_granted('ROLE_ADMIN') %}
@@ -28,11 +28,16 @@
     </div>
   </div>
 
-  {% if delivery_import_form.vars.submitted and not delivery_import_form.file.vars.valid %}
+  {% if import_form.vars.submitted and not import_form.vars.valid %}
     <div class="alert alert-danger">
       <ul class="list-unstyled">
-      {% for error in delivery_import_form.file.vars.errors %}
+      {% for error in import_form.vars.errors %}
         <li>{{ error.message }}</li>
+      {% endfor %}
+      {% for child in import_form.children %}
+        {% for error in child.vars.errors %}
+          <li>{{ error.message }}</li>
+        {% endfor %}
       {% endfor %}
       </ul>
     </div>
@@ -201,23 +206,28 @@
 
 
 
-  <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="import-deliveries-modal-label" id="import-deliveries-modal">
+  {# One modal for both kinds: the fields and the example file of the kind that isn't
+     chosen are hidden by import-modal.js #}
+  <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="import-modal-label" id="import-modal">
     <div class="modal-dialog" role="document">
-      {{ form_start(delivery_import_form, { attr: { class: 'modal-content' } }) }}
+      {{ form_start(import_form, { attr: { class: 'modal-content' } }) }}
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="import-deliveries-modal-label">{% trans %}basics.import{% endtrans %}</h4>
+          <h4 class="modal-title" id="import-modal-label">{% trans %}basics.import{% endtrans %}</h4>
         </div>
         <div class="modal-body">
-          {{ form_row(delivery_import_form.store) }}
-          {{ form_row(delivery_import_form.file) }}
+          {{ form_row(import_form.type) }}
+          {{ form_row(import_form.store) }}
+          {{ form_row(import_form.date) }}
+          {{ form_row(import_form.file) }}
         </div>
         <div class="modal-footer">
-          <a class="mr-4" href="{{ path('spreadsheet_example_deliveries') }}">{{ 'spreadsheet.download_example'|trans }}</a>
+          <a class="mr-4" href="{{ path('spreadsheet_example_deliveries') }}" data-import-kind-link="deliveries">{{ 'spreadsheet.download_example'|trans }}</a>
+          <a class="mr-4" href="{{ path('spreadsheet_example_tasks') }}" data-import-kind-link="tasks">{{ 'spreadsheet.download_example'|trans }}</a>
           <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}basics.cancel{% endtrans %}</button>
-          <button type="submit" class="btn btn-primary">{% trans %}basics.import{% endtrans %}</button>
+          <button type="submit" class="btn btn-primary" data-testid="import-submit">{% trans %}basics.import{% endtrans %}</button>
         </div>
-      {{ form_end(delivery_import_form) }}
+      {{ form_end(import_form) }}
     </div>
   </div>
 

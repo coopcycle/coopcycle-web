@@ -25,7 +25,7 @@ use AppBundle\Form\AddUserType;
 use AppBundle\Form\StoreAddressesType;
 use AppBundle\Form\StoreType;
 use AppBundle\Form\AddressType;
-use AppBundle\Form\DeliveryImportType;
+use AppBundle\Form\ImportType;
 use AppBundle\Pricing\OrderDuplicate;
 use AppBundle\Pricing\PricingManager;
 use AppBundle\Service\DeliveryManager;
@@ -549,7 +549,7 @@ trait StoreTrait
 
         $routes = $request->attributes->get('routes');
 
-        $deliveryImportForm = $this->createForm(DeliveryImportType::class);
+        $deliveryImportForm = $this->createForm(ImportType::class);
 
         $deliveryImportForm->handleRequest($request);
         if ($deliveryImportForm->isSubmitted() && $deliveryImportForm->isValid()) {

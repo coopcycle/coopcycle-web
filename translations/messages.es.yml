@@ -904,6 +904,11 @@ restaurant.contract.variableDeliveryPriceEnabled.label: Habilite la cantidad var
 restaurant.contract.variableDeliveryPriceEnabled.disclaimer: La cantidad se calcula
   dinámicamente
 form.delivery_import.store.label: Tienda
+form.import.type.label: "¿Qué contiene este archivo?"
+form.import.type.deliveries: Entregas
+form.import.type.tasks: Tareas
+form.import.date.label: Fecha
+form.import.date.help: El día de las tareas del archivo, para las filas que no indican ninguna fecha.
 basics.view_example: Ver ejemplo
 task.receipt.greeting: Querido cliente,
 basics.close: Cerca
