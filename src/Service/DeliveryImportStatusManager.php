@@ -5,6 +5,7 @@ namespace AppBundle\Service;
 use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -83,6 +84,40 @@ class DeliveryImportStatusManager
     public function isCancelled(DeliveryImportQueue $queue): bool
     {
         return DeliveryImportQueue::STATUS_CANCELLED === $this->currentStatus($queue);
+    }
+
+    /**
+     * The import of a file, when an error stopped it before it could finish.
+     * Whatever failed it most likely failed a flush, which closes the entity manager:
+     * the import is read with a working one, for its status to be written.
+     *
+     * @return ?DeliveryImportQueue null when it's over: cancelled by a dispatcher, or
+     *                              failed by DeliveryImporter itself when saving the deliveries failed
+     */
+    public function findUnfinished(string $filename): ?DeliveryImportQueue
+    {
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $this->doctrine->getManager();
+        if (!$entityManager->isOpen()) {
+            $entityManager = $this->doctrine->resetManager();
+        }
+
+        $queue = $entityManager
+            ->getRepository(DeliveryImportQueue::class)
+            ->findOneBy(['filename' => $filename]);
+
+        if (null === $queue) {
+            return null;
+        }
+
+        // Read from the database, the import in memory may be the one loaded before
+        $unfinished = [
+            DeliveryImportQueue::STATUS_PENDING,
+            DeliveryImportQueue::STATUS_STARTED,
+            DeliveryImportQueue::STATUS_SAVING,
+        ];
+
+        return in_array($this->currentStatus($queue), $unfinished, true) ? $queue : null;
     }
 
     public function currentStatus(DeliveryImportQueue $queue): string

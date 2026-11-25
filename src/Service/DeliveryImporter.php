@@ -23,7 +23,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  * Saves the deliveries of a file uploaded to the delivery imports filesystem,
  * for the import queued with it.
  *
- * Run by the worker for a file uploaded from the admin or the API, see ImportDeliveriesHandler.
+ * Run by the worker for a file uploaded from the admin or the API (see ImportDeliveriesHandler),
+ * and by `coopcycle:deliveries:import`, which waits for it to tell what was saved.
  */
 class DeliveryImporter
 {
