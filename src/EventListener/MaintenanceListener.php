@@ -45,7 +45,7 @@ class MaintenanceListener
 
         $maintenance = $this->redis->get('maintenance');
 
-        if ($maintenance && !$this->maintenance->canBypass()) {
+        if ($maintenance && !$this->maintenance->isAllowed($request) && !$this->maintenance->canBypass()) {
 
             foreach ($this->patterns as $pattern) {
                 if (preg_match($pattern, rawurldecode($request->getPathInfo()))) {

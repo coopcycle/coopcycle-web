@@ -42,6 +42,9 @@ final class MaintenanceSubscriber implements EventSubscriberInterface
             return;
         }
 
+        if ($this->maintenance->isAllowed($event->getRequest())) {
+            return;
+        }
 
         if ($this->maintenance->canBypass()) {
             return;
