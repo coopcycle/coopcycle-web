@@ -11,6 +11,7 @@ use AppBundle\Service\Loyalty\InsufficientLoyaltyPointsException;
 use AppBundle\Service\Loyalty\LoyaltyPointsManager;
 use AppBundle\Service\Promotion\CustomerRewardCouponFactory;
 use AppBundle\Service\SettingsManager;
+use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Promotion\Action\FixedDiscountPromotionActionCommand;
 use AppBundle\Sylius\Promotion\PromotionCouponInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -71,13 +72,20 @@ class LoyaltyPointsManagerTest extends TestCase
         return $reward;
     }
 
-    private function orderWorth(int $itemsTotal): Order
+    /**
+     * $discount is the discount as a positive number of cents, the way an
+     * admin would describe it; on the order it lives as a negative
+     * ORDER_PROMOTION_ADJUSTMENT.
+     */
+    private function orderWorth(int $itemsTotal, int $discount = 0): Order
     {
         $customer = new Customer();
 
         $order = $this->prophesize(Order::class);
         $order->getCustomer()->willReturn($customer);
         $order->getItemsTotal()->willReturn($itemsTotal);
+        $order->getAdjustmentsTotal(AdjustmentInterface::ORDER_PROMOTION_ADJUSTMENT)
+            ->willReturn($discount * -1);
         $order->getId()->willReturn(1);
 
         return $order->reveal();
@@ -103,6 +111,26 @@ class LoyaltyPointsManagerTest extends TestCase
     public function testDropsPartialPoints(): void
     {
         self::assertSame(9, $this->manager->calculatePoints($this->orderWorth(999)));
+    }
+
+    /**
+     * Discounts are order-level adjustments, so they're absent from
+     * getItemsTotal(): points have to be earned on what was actually paid,
+     * or a coupon would hand out a second benefit on top of itself.
+     */
+    public function testEarnsOnTheDiscountedTotal(): void
+    {
+        // 20 € of food, 5 € off -> 15 points, not 20.
+        self::assertSame(15, $this->manager->calculatePoints($this->orderWorth(2000, 500)));
+    }
+
+    /**
+     * A fixed discount can be worth more than the items it applies to; that
+     * earns nothing, never a negative balance.
+     */
+    public function testEarnsNothingWhenTheDiscountCoversEverything(): void
+    {
+        self::assertSame(0, $this->manager->calculatePoints($this->orderWorth(300, 500)));
     }
 
     public function testCreditsTheOrderWithAnExpiryDate(): void
