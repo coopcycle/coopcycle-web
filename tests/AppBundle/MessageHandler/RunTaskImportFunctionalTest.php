@@ -11,6 +11,7 @@ use AppBundle\Entity\ImportQueue;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Import\ImportRegistry;
+use AppBundle\Import\ImportRunner;
 use AppBundle\Import\TaskImportHandler;
 use AppBundle\Message\ImportTasksFromFile;
 use AppBundle\MessageHandler\RunImportHandler;
@@ -110,7 +111,7 @@ class RunTaskImportFunctionalTest extends KernelTestCase
             new ServiceLocator([])
         );
 
-        return new RunImportHandler(
+        return new RunImportHandler(new ImportRunner(
             $this->entityManager,
             $registry,
             self::getContainer()->get(ImportStatusManager::class),
@@ -118,7 +119,7 @@ class RunTaskImportFunctionalTest extends KernelTestCase
             self::getContainer()->get(TranslatorInterface::class),
             new NullLogger(),
             self::getContainer()->get('doctrine'),
-        );
+        ));
     }
 
     public function testAFileOfTasksIsImported(): void

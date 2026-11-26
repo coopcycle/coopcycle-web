@@ -86,7 +86,7 @@ class TaskImportHandler implements ImportHandlerInterface
 
     public function save(ImportQueue $queue, SpreadsheetParseResult $result, ?int &$rowNumber): array
     {
-        $dates = [];
+        $saved = [];
 
         // Made here rather than while reading the file: nothing is written until the rows
         // are known to be good, and a rollback has to undo all of it
@@ -142,14 +142,28 @@ class TaskImportHandler implements ImportHandlerInterface
 
             $this->entityManager->persist($task);
 
+            // Flushed per row, so that a failure points at the row it happened on
+            $this->entityManager->flush();
+
+            $saved[] = $task;
+        }
+
+        return $saved;
+    }
+
+    /**
+     * @param Task[] $saved
+     */
+    public function datesOf(array $saved): array
+    {
+        $dates = [];
+
+        foreach ($saved as $task) {
             foreach ([$task->getAfter(), $task->getBefore()] as $date) {
                 if (!is_null($date)) {
                     $dates[$date->format('Y-m-d')] = true;
                 }
             }
-
-            // Flushed per row, so that a failure points at the row it happened on
-            $this->entityManager->flush();
         }
 
         $dates = array_keys($dates);

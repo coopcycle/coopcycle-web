@@ -8,10 +8,8 @@ use AppBundle\Import\DeliveryImportHandler;
 use AppBundle\Import\ImportRegistry;
 use AppBundle\Message\ImportDeliveries;
 use AppBundle\Message\ImportTasks;
+use AppBundle\Message\ImportTasksFromFile;
 use AppBundle\Service\ImportStatusManager;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Persistence\ObjectRepository;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -25,33 +23,20 @@ class ImportFailureSubscriberTest extends TestCase
 {
     use ProphecyTrait;
 
-    private $doctrine;
-    private $entityManager;
-    private $repository;
     private $statusManager;
     private ImportFailureSubscriber $subscriber;
 
     public function setUp(): void
     {
-        $this->repository = $this->prophesize(ObjectRepository::class);
-
-        $this->entityManager = $this->prophesize(EntityManagerInterface::class);
-        $this->entityManager->isOpen()->willReturn(true);
-        $this->entityManager
-            ->getRepository(ImportQueue::class)
-            ->willReturn($this->repository->reveal());
-
-        $this->doctrine = $this->prophesize(ManagerRegistry::class);
-        $this->doctrine->getManager()->willReturn($this->entityManager->reveal());
-
         $this->statusManager = $this->prophesize(ImportStatusManager::class);
-        $this->statusManager->currentStatus(Argument::any())->willReturn(ImportQueue::STATUS_STARTED);
+        $this->statusManager->findUnfinished(Argument::cetera())->willReturn(null);
         $this->statusManager->requeued(Argument::cetera())->will(function () {});
         $this->statusManager->failed(Argument::cetera())->will(function () {});
 
         $translator = $this->prophesize(TranslatorInterface::class);
         $translator->trans(Argument::cetera())->willReturn('Import interrupted');
 
+        // What the import is tells the dispatcher what went wrong with it
         $importHandler = $this->prophesize(DeliveryImportHandler::class);
         $importHandler->errorKey(Argument::any())->willReturn('deliveries.imports.error.interrupted');
 
@@ -61,7 +46,6 @@ class ImportFailureSubscriberTest extends TestCase
         );
 
         $this->subscriber = new ImportFailureSubscriber(
-            $this->doctrine->reveal(),
             $registry,
             $this->statusManager->reveal(),
             $translator->reveal(),
@@ -84,13 +68,20 @@ class ImportFailureSubscriberTest extends TestCase
         return $event;
     }
 
-    public function testQueueIsMarkedAsFailedWhenTheMessageIsDropped()
+    private function unfinishedImport(): ImportQueue
     {
         $queue = new ImportQueue(ImportQueue::TYPE_DELIVERIES);
         $queue->setFilename('import.csv');
         $queue->setStatus(ImportQueue::STATUS_STARTED);
 
-        $this->repository->findOneBy(['filename' => 'import.csv'])->willReturn($queue);
+        $this->statusManager->findUnfinished('import.csv', Argument::any())->willReturn($queue);
+
+        return $queue;
+    }
+
+    public function testQueueIsMarkedAsFailedWhenTheMessageIsDropped()
+    {
+        $queue = $this->unfinishedImport();
 
         $this->subscriber->onFailure($this->failedEvent(new ImportDeliveries('import.csv'), false));
 
@@ -101,28 +92,20 @@ class ImportFailureSubscriberTest extends TestCase
 
     public function testQueueIsPutBackInLineWhileTheMessageIsStillRetried()
     {
-        $queue = new ImportQueue(ImportQueue::TYPE_DELIVERIES);
-        $queue->setFilename('import.csv');
-        $queue->setStatus(ImportQueue::STATUS_STARTED);
-
-        $this->repository->findOneBy(Argument::cetera())->willReturn($queue);
+        $queue = $this->unfinishedImport();
 
         $this->subscriber->onFailure($this->failedEvent(new ImportDeliveries('import.csv'), true));
 
-        // The handler skips the imports that aren't pending, the retry would do nothing otherwise
+        // The runner skips the imports that aren't pending, the retry would do nothing otherwise
         $this->statusManager->requeued($queue)->shouldHaveBeenCalled();
         $this->statusManager->failed(Argument::cetera())->shouldNotHaveBeenCalled();
     }
 
-    public function testCancelledQueueIsLeftAlone()
+    /**
+     * Cancelled by a dispatcher, or failed by the runner itself when saving what it read failed
+     */
+    public function testFinishedQueueIsLeftAlone()
     {
-        $queue = new ImportQueue(ImportQueue::TYPE_DELIVERIES);
-        $queue->setFilename('import.csv');
-        $queue->setStatus(ImportQueue::STATUS_STARTED);
-
-        $this->repository->findOneBy(Argument::cetera())->willReturn($queue);
-        $this->statusManager->currentStatus($queue)->willReturn(ImportQueue::STATUS_CANCELLED);
-
         $this->subscriber->onFailure($this->failedEvent(new ImportDeliveries('import.csv'), false));
         $this->subscriber->onFailure($this->failedEvent(new ImportDeliveries('import.csv'), true));
 
@@ -131,23 +114,22 @@ class ImportFailureSubscriberTest extends TestCase
     }
 
     /**
-     * Saving the deliveries failed: the handler rolled them back, marked the import as
-     * failed with the row it stopped on, and threw so that the message is not retried
+     * A file of tasks is run by the same worker, and gives up the same way
      */
-    public function testQueueFailedByTheHandlerIsLeftAlone()
+    public function testATaskImportIsMarkedAsFailedToo()
     {
-        $queue = new ImportQueue(ImportQueue::TYPE_DELIVERIES);
-        $queue->setFilename('import.csv');
-        $queue->setStatus(ImportQueue::STATUS_SAVING);
+        $queue = $this->unfinishedImport();
 
-        $this->repository->findOneBy(Argument::cetera())->willReturn($queue);
-        $this->statusManager->currentStatus($queue)->willReturn(ImportQueue::STATUS_FAILED);
+        $this->subscriber->onFailure($this->failedEvent(new ImportTasksFromFile('import.csv'), false));
 
-        $this->subscriber->onFailure($this->failedEvent(new ImportDeliveries('import.csv'), false));
-
-        $this->statusManager->failed(Argument::cetera())->shouldNotHaveBeenCalled();
+        $this->statusManager
+            ->failed($queue, [['row' => 0, 'errors' => ['Import interrupted']]])
+            ->shouldHaveBeenCalled();
     }
 
+    /**
+     * The legacy task import, which is not run by this worker at all
+     */
     public function testOtherMessagesAreIgnored()
     {
         $this->subscriber->onFailure($this->failedEvent(
@@ -156,24 +138,5 @@ class ImportFailureSubscriberTest extends TestCase
         ));
 
         $this->statusManager->failed(Argument::cetera())->shouldNotHaveBeenCalled();
-    }
-
-    public function testEntityManagerIsResetWhenItWasClosedByTheFailure()
-    {
-        $queue = new ImportQueue(ImportQueue::TYPE_DELIVERIES);
-        $queue->setFilename('import.csv');
-        $queue->setStatus(ImportQueue::STATUS_STARTED);
-
-        $closed = $this->prophesize(EntityManagerInterface::class);
-        $closed->isOpen()->willReturn(false);
-        $this->doctrine->getManager()->willReturn($closed->reveal());
-        $this->doctrine->resetManager()->willReturn($this->entityManager->reveal());
-
-        $this->repository->findOneBy(['filename' => 'import.csv'])->willReturn($queue);
-
-        $this->subscriber->onFailure($this->failedEvent(new ImportDeliveries('import.csv'), false));
-
-        // The queue is looked up on the manager that replaced the closed one
-        $this->statusManager->failed($queue, Argument::any())->shouldHaveBeenCalled();
     }
 }

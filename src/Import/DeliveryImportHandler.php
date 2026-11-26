@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace AppBundle\Import;
 
+use AppBundle\Entity\Delivery;
 use AppBundle\Entity\ImportQueue;
 use AppBundle\Message\ImportDeliveries;
 use AppBundle\Message\RunsImport;
@@ -95,7 +96,7 @@ class DeliveryImportHandler implements ImportHandlerInterface
     {
         $store = $queue->getStore();
 
-        $dates = [];
+        $saved = [];
 
         foreach ($result->getData() as $rowNumber => $deliveryImportData) {
 
@@ -124,14 +125,6 @@ class DeliveryImportHandler implements ImportHandlerInterface
             $store->addDelivery($delivery);
             $this->entityManager->persist($delivery);
 
-            foreach ($delivery->getTasks() as $task) {
-                foreach ([$task->getAfter(), $task->getBefore()] as $date) {
-                    if (!is_null($date)) {
-                        $dates[$date->format('Y-m-d')] = true;
-                    }
-                }
-            }
-
             // When no rule matches, the order gets a placeholder price of 0
             // and an incident for a dispatcher to review it, as with the API.
             // The delivery is imported anyway: without an order, it could never be priced.
@@ -158,6 +151,28 @@ class DeliveryImportHandler implements ImportHandlerInterface
             // The order is flushed while it's created, not what comes after it: flushed with
             // the next row, a failure would point at that row
             $this->entityManager->flush();
+
+            $saved[] = $delivery;
+        }
+
+        return $saved;
+    }
+
+    /**
+     * @param Delivery[] $saved
+     */
+    public function datesOf(array $saved): array
+    {
+        $dates = [];
+
+        foreach ($saved as $delivery) {
+            foreach ($delivery->getTasks() as $task) {
+                foreach ([$task->getAfter(), $task->getBefore()] as $date) {
+                    if (!is_null($date)) {
+                        $dates[$date->format('Y-m-d')] = true;
+                    }
+                }
+            }
         }
 
         $dates = array_keys($dates);

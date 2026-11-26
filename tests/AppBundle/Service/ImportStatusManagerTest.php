@@ -274,4 +274,35 @@ class ImportStatusManagerTest extends KernelTestCase
             $this->assertFalse($this->statusManager->cancel($queue), sprintf('%s cannot be cancelled', $status));
         }
     }
+
+    public function testUnfinishedImportIsFound(): void
+    {
+        $queue = $this->createImport(ImportQueue::STATUS_STARTED);
+
+        $this->assertSame($queue, $this->statusManager->findUnfinished('deliveries.csv'));
+    }
+
+    public function testFinishedImportIsNotFound(): void
+    {
+        $queue = $this->createImport(ImportQueue::STATUS_STARTED);
+
+        // Failed by ImportRunner, while this copy of the import still says "started"
+        $this->entityManager->getConnection()->update('import_queue', ['status' => ImportQueue::STATUS_FAILED], ['id' => $queue->getId()]);
+
+        $this->assertNull($this->statusManager->findUnfinished('deliveries.csv'));
+    }
+
+    public function testUnfinishedImportIsFoundOnceTheEntityManagerWasClosed(): void
+    {
+        $queue = $this->createImport(ImportQueue::STATUS_SAVING);
+
+        // As a failed flush does
+        $this->entityManager->close();
+
+        $found = $this->statusManager->findUnfinished('deliveries.csv');
+
+        $this->assertNotNull($found);
+        $this->assertSame($queue->getId(), $found->getId());
+        $this->assertTrue(self::getContainer()->get('doctrine')->getManager()->isOpen());
+    }
 }

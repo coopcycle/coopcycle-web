@@ -99,12 +99,14 @@ class TaskImportHandlerTest extends TestCase
         $result->addData(2, $this->row($first));
         $result->addData(3, $this->row($second));
 
-        $dates = $this->save($queue, $result);
+        $saved = $this->save($queue, $result);
 
         $this->entityManager->persist(Argument::type(Task::class))->shouldHaveBeenCalledTimes(2);
 
+        $this->assertSame([$first, $second], $saved);
+
         // The days whose boards have to reload
-        $this->assertSame(['2026-11-25', '2026-11-26'], $dates);
+        $this->assertSame(['2026-11-25', '2026-11-26'], $this->handler->datesOf($saved));
     }
 
     /**

@@ -61,10 +61,17 @@ interface ImportHandlerInterface
      * @param ?int $rowNumber set to the row being saved, for the error to point at it
      *                        when saving fails
      *
-     * @return string[] the days the tasks saved are on, as Y-m-d, for the boards
-     *                  showing one of them to reload
+     * @return object[] what was saved, without the rows that failed validation
      */
     public function save(ImportQueue $queue, SpreadsheetParseResult $result, ?int &$rowNumber): array;
+
+    /**
+     * @param object[] $saved as returned by save()
+     *
+     * @return string[] the days their tasks are on, as Y-m-d, for the boards showing
+     *                  one of those days to reload
+     */
+    public function datesOf(array $saved): array;
 
     /**
      * Called once the transaction is committed

@@ -5,6 +5,7 @@ namespace AppBundle\Service;
 use AppBundle\Entity\ImportQueue;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -42,8 +43,8 @@ class ImportStatusManager
     }
 
     /**
-     * Puts an import that failed with a retry to come back in line, as the
-     * handler leaves alone the imports that are not pending.
+     * Puts an import that failed with a retry to come back in line, as
+     * the runner leaves alone the imports that are not pending.
      */
     public function requeued(ImportQueue $queue): void
     {
@@ -83,6 +84,45 @@ class ImportStatusManager
     public function isCancelled(ImportQueue $queue): bool
     {
         return ImportQueue::STATUS_CANCELLED === $this->currentStatus($queue);
+    }
+
+    /**
+     * The import of a file, when an error stopped it before it could finish.
+     * Whatever failed it most likely failed a flush, which closes the entity manager:
+     * the import is read with a working one, for its status to be written.
+     *
+     * @param ?int $queueId the import the message named, when it carries one: a filename
+     *                      is unique by construction, but only by construction
+     *
+     * @return ?ImportQueue null when it's over: cancelled by a dispatcher, or failed by
+     *                      the runner itself when saving what the file held failed
+     */
+    public function findUnfinished(string $filename, ?int $queueId = null): ?ImportQueue
+    {
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $this->doctrine->getManager();
+        if (!$entityManager->isOpen()) {
+            $entityManager = $this->doctrine->resetManager();
+        }
+
+        $repository = $entityManager->getRepository(ImportQueue::class);
+
+        $queue = is_null($queueId)
+            ? $repository->findOneBy(['filename' => $filename])
+            : $repository->find($queueId);
+
+        if (null === $queue) {
+            return null;
+        }
+
+        // Read from the database, the import in memory may be the one loaded before
+        $unfinished = [
+            ImportQueue::STATUS_PENDING,
+            ImportQueue::STATUS_STARTED,
+            ImportQueue::STATUS_SAVING,
+        ];
+
+        return in_array($this->currentStatus($queue), $unfinished, true) ? $queue : null;
     }
 
     public function currentStatus(ImportQueue $queue): string
