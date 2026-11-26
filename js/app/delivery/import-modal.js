@@ -52,4 +52,11 @@ export default function initImportModal() {
   $(modal).on('shown.bs.modal', sync)
 
   sync()
+
+  // Linked to from elsewhere, the dispatch board's Import button above all: the screen
+  // opens on the dialog, on the kind the link asked for. The server checked the kind
+  // and has already ticked it.
+  if (modal.dataset.importOpen) {
+    $(modal).modal('show')
+  }
 }

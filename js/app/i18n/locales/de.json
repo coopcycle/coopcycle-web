@@ -68,6 +68,7 @@
         "ADMIN_DASHBOARD_TASK_TIME_RANGE": "Zwischen {{after}} und {{before}}",
         "ADMIN_DASHBOARD_TASK_ASSIGNED_TO": "Zugeteilt an {{username}}",
         "ADMIN_DASHBOARD_UNASSIGN_TASK": "Aufgabe #{{id}} wegnehmen",
+        "ADMIN_DASHBOARD_NAV_IMPORT": "Importieren",
         "ADMIN_DASHBOARD_NAV_EXPORT": "Exportieren",
         "ADMIN_DASHBOARD_NAV_FILTERS": "Filter",
         "ADMIN_DASHBOARD_NAV_FILTERS_CLEAR": "Löschen",

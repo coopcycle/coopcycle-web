@@ -73,6 +73,7 @@
         "ADMIN_DASHBOARD_TASK_ASSIGNED_TO": "Atribuído a {{username}}",
         "ADMIN_DASHBOARD_UNASSIGN_TASK": "Desassociar tarefa #{{id}}",
         "ADMIN_DASHBOARD_UNASSIGN_TASKS_MULTI": "Desassociar {{count}} tarefa(s)",
+        "ADMIN_DASHBOARD_NAV_IMPORT": "Importar",
         "ADMIN_DASHBOARD_NAV_EXPORT": "Exportar",
         "ADMIN_DASHBOARD_NAV_FILTERS": "Filtros",
         "ADMIN_DASHBOARD_NAV_FILTERS_CLEAR": "Limpar",

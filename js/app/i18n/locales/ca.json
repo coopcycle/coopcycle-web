@@ -243,6 +243,7 @@
         "ADMIN_DASHBOARD_NAV_FILTERS_CLEAR": "Eliminar",
         "ADMIN_DASHBOARD_NAV_FILTERS": "Filtres",
         "ADMIN_DASHBOARD_NAV_EXPORT": "Exportar",
+        "ADMIN_DASHBOARD_NAV_IMPORT": "Importar",
         "ADMIN_DASHBOARD_TASK_ASSIGNED_TO": "Assignat a {{username}}",
         "ADMIN_DASHBOARD_TASK_TIME_RANGE": "Entre {{after}} i {{before}}",
         "ADMIN_DASHBOARD_FILTERS_APPLY": "Aplicar",

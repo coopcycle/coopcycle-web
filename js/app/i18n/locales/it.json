@@ -215,6 +215,7 @@
         "ADMIN_DASHBOARD_TASK_TIME_RANGE": "Tra {{after}} e {{before}}",
         "ADMIN_DASHBOARD_TASK_ASSIGNED_TO": "Assegnato a {{username}}",
         "ADMIN_DASHBOARD_UNASSIGN_TASKS_MULTI": "Disassegnare {{count}} incarico(hi)",
+        "ADMIN_DASHBOARD_NAV_IMPORT": "Importare",
         "ADMIN_DASHBOARD_NAV_EXPORT": "Esportare",
         "ADMIN_DASHBOARD_NAV_FILTERS": "Filtri",
         "ADMIN_DASHBOARD_NAV_FILTERS_CLEAR": "Eliminare",

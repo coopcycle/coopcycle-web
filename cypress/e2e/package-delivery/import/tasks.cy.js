@@ -78,6 +78,35 @@ context('Import tasks (role: admin)', () => {
       'contain',
       'Morning round',
     )
+
+    // The board imports by sending the dispatcher to this screen, in a tab of its own.
+    // By the link rather than by its label, which is translated.
+    cy.get('a[href="/admin/deliveries?upload=tasks"]')
+      .should('have.attr', 'target', '_blank')
+  })
+
+  /**
+   * Where the board's Import button lands: the screen opens on its upload dialog, set
+   * to the kind of file the link asked for.
+   */
+  it('opens the upload dialog from a link', function () {
+    cy.visit('/admin/deliveries?upload=tasks')
+
+    cy.get('#import-modal').should('be.visible')
+    cy.get('[data-import-kind] input[value="tasks"]').should('be.checked')
+    cy.get('[data-import-kind-field="tasks"]').should('be.visible')
+    cy.get('[data-import-kind-field="deliveries"]').should('not.be.visible')
+
+    // Deliveries are linked to the same way
+    cy.visit('/admin/deliveries?upload=deliveries')
+
+    cy.get('#import-modal').should('be.visible')
+    cy.get('[data-import-kind] input[value="deliveries"]').should('be.checked')
+
+    // Anything else is no instruction at all
+    cy.visit('/admin/deliveries?upload=bogus')
+
+    cy.get('#import-modal').should('not.be.visible')
   })
 
   /**

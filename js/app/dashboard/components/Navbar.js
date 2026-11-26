@@ -112,6 +112,27 @@ const ExportButton = ({ onClick }) => {
   )
 }
 
+/**
+ * Importing happens on /admin/deliveries, where the import can be followed, stopped and
+ * undone. A tab of its own: the board is what the dispatcher was doing, and an import is
+ * a few minutes of watching a progress bar.
+ */
+const ImportButton = ({ onClick }) => {
+  const { t } = useTranslation()
+
+  return (
+    <Button
+      type="text"
+      icon={<i className="fa fa-upload mr-2" aria-hidden="true" />}
+      href={window.Routing.generate('admin_deliveries', { upload: 'tasks' })}
+      target="_blank"
+      rel="noopener"
+      onClick={onClick}>
+      {t('ADMIN_DASHBOARD_NAV_IMPORT')}
+    </Button>
+  )
+}
+
 const Filters = ({ withOpenLabel = false, withClearLabel = false }) => {
   const { t } = useTranslation()
   const dispatch = useDispatch()
@@ -309,6 +330,7 @@ const NavbarAntd = () => {
 
           <Space>
             <ExportButton />
+            <ImportButton />
           </Space>
 
           <SearchInput />
@@ -356,6 +378,7 @@ const NavbarAntd = () => {
           setIsOverflowMenuVisible={setIsOverflowMenuVisible}>
           <>
             <ExportButton onClick={() => setIsOverflowMenuVisible(false)} />
+            <ImportButton onClick={() => setIsOverflowMenuVisible(false)} />
             <SettingsButton
               withLabel
               onClick={() => setIsOverflowMenuVisible(false)}
@@ -387,6 +410,7 @@ const NavbarAntd = () => {
         setIsOverflowMenuVisible={setIsOverflowMenuVisible}>
         <>
           <ExportButton onClick={() => setIsOverflowMenuVisible(false)} />
+          <ImportButton onClick={() => setIsOverflowMenuVisible(false)} />
           <CreateNewOrderButton />
           <Button
             type="text"

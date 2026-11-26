@@ -37,7 +37,7 @@ class ImportType extends AbstractType
                     'form.import.type.deliveries' => ImportQueue::TYPE_DELIVERIES,
                     'form.import.type.tasks' => ImportQueue::TYPE_TASKS,
                 ],
-                'data' => ImportQueue::TYPE_DELIVERIES,
+                'data' => $options['import_type'],
                 'attr' => ['data-import-kind' => true],
             ]);
         }
@@ -107,6 +107,9 @@ class ImportType extends AbstractType
         $resolver->setDefaults(array(
             'with_store' => false,
             'with_tasks' => false,
+            // Which kind the dialog opens on, for the screens that link to it saying
+            // what they want to import
+            'import_type' => ImportQueue::TYPE_DELIVERIES,
             // Only the chosen kind's own fields are checked: the other's are not even shown
             'validation_groups' => function (FormInterface $form) {
                 return ['Default', self::importType($form)];

@@ -118,6 +118,7 @@
         "ADMIN_DASHBOARD_NAV_FILTERS_CLEAR": "Wyczyść",
         "ADMIN_DASHBOARD_NAV_FILTERS": "Filtry",
         "ADMIN_DASHBOARD_NAV_EXPORT": "Eksportuj",
+        "ADMIN_DASHBOARD_NAV_IMPORT": "Importuj",
         "ADMIN_DASHBOARD_UNASSIGN_TASKS_MULTI": "Cofnij przypisanie {{count}} zadania/zadań",
         "ADMIN_DASHBOARD_UNASSIGN_TASK": "Cofnij przypisanie zadanie #{{id}}",
         "ADMIN_DASHBOARD_TASK_ASSIGNED_TO": "Przypisany do {{username}}",

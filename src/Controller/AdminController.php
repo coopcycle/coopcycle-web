@@ -882,9 +882,19 @@ class AdminController extends AbstractController
         SlugifyInterface $slugify,
     )
     {
+        // Linked to from elsewhere — the dispatch board's Import button — to land on
+        // this screen with the upload dialog already open on the right kind of file.
+        // Not "import": this form is named after its own class, so a query parameter of
+        // that name is read as the form's data and the page answers 400.
+        $openImport = $request->query->get('upload');
+        if (!in_array($openImport, [ImportQueue::TYPE_DELIVERIES, ImportQueue::TYPE_TASKS], true)) {
+            $openImport = null;
+        }
+
         $importForm = $this->createForm(ImportType::class, null, [
             'with_store' => true,
             'with_tasks' => true,
+            'import_type' => $openImport ?? ImportQueue::TYPE_DELIVERIES,
             #FIXME; normally cypress e2e tests run with CSRF protection enabled, but once in a while CSRF tokens are not saved in the session (removed?) for this form
             'csrf_protection' => 'test' !== $this->environment
         ]);
@@ -1046,6 +1056,7 @@ class AdminController extends AbstractController
             'routes' => $this->getDeliveryRoutes(),
             'stores' => $stores,
             'import_form' => $importForm->createView(),
+            'open_import' => $openImport,
             'delivery_export_form' => $dataExportForm->createView(),
             'import_queues' => $importQueues,
             'imported_items' => $importedItems,

@@ -226,7 +226,8 @@
 
   {# One modal for both kinds: the fields and the example file of the kind that isn't
      chosen are hidden by import-modal.js #}
-  <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="import-modal-label" id="import-modal">
+  <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="import-modal-label" id="import-modal"
+    {% if open_import %}data-import-open="{{ open_import }}"{% endif %}>
     <div class="modal-dialog" role="document">
       {{ form_start(import_form, { attr: { class: 'modal-content' } }) }}
         <div class="modal-header">
