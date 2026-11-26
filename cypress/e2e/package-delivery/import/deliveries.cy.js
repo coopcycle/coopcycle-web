@@ -14,11 +14,15 @@ context('Import deliveries (role: admin)', () => {
   it('imports deliveries', function () {
     cy.visit('/admin/deliveries')
 
-    cy.get('[data-target="#import-deliveries-modal"]').click()
+    cy.get('[data-target="#import-modal"]').click()
+
+    // The modal imports both kinds of file, and deliveries is the one it opens on
+    cy.get('[data-import-kind] input[value="deliveries"]').should('be.checked')
+    cy.get('[data-import-kind-field="deliveries"]').should('be.visible')
+    cy.get('[data-import-kind-field="tasks"]').should('not.be.visible')
+
     cy.get('input[type=file]').selectFile('fixtures/csv/deliveries.csv')
-    cy.get(
-      '#import-deliveries-modal > .modal-dialog > .modal-content > .modal-footer > .btn-primary',
-    ).click()
+    cy.get('[data-testid="import-submit"]').click()
 
     // The columns of the file are matched to the fields they hold before it is imported.
     // This one uses our own column names, so they are all recognised already.

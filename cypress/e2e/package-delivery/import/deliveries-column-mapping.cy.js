@@ -14,11 +14,9 @@ context('Import deliveries with a column mapping (role: admin)', () => {
   const uploadFile = file => {
     cy.visit('/admin/deliveries')
 
-    cy.get('[data-target="#import-deliveries-modal"]').click()
+    cy.get('[data-target="#import-modal"]').click()
     cy.get('input[type=file]').selectFile(file)
-    cy.get(
-      '#import-deliveries-modal > .modal-dialog > .modal-content > .modal-footer > .btn-primary',
-    ).click()
+    cy.get('[data-testid="import-submit"]').click()
 
     cy.urlmatch(/\/admin\/imports\/\d+\/mapping$/)
   }

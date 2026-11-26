@@ -3,6 +3,7 @@
 namespace AppBundle\Form;
 
 use AppBundle\Entity\ImportQueue;
+use Carbon\Carbon;
 use AppBundle\Entity\Store;
 use AppBundle\Validator\Constraints\Spreadsheet as AssertSpreadsheet;
 use Doctrine\ORM\EntityRepository;
@@ -64,7 +65,11 @@ class ImportType extends AbstractType
                 'label' => 'form.delivery_import.store.label',
                 'mapped' => false,
                 // Asked for a delivery import only, so the browser can't insist on it
+                // when the field is hidden. No empty choice all the same: a store has
+                // always been picked for you, and leaving it blank is not a mapping of
+                // anything — the constraint below is the guard.
                 'required' => false,
+                'placeholder' => false,
                 'row_attr' => ['data-import-kind-field' => ImportQueue::TYPE_DELIVERIES],
                 'class' => Store::class,
                 'query_builder' => function (EntityRepository $er) {
@@ -87,7 +92,8 @@ class ImportType extends AbstractType
                 'required' => false,
                 'widget' => 'single_text',
                 'html5' => true,
-                'data' => new \DateTime('today'),
+                // Carbon, not new DateTime: the clock is mocked through it
+                'data' => Carbon::today(),
                 'row_attr' => ['data-import-kind-field' => ImportQueue::TYPE_TASKS],
                 'constraints' => [
                     new NotNull(groups: [ImportQueue::TYPE_TASKS]),
