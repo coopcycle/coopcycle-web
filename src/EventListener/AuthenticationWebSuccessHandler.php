@@ -61,7 +61,9 @@ class AuthenticationWebSuccessHandler implements AuthenticationSuccessHandlerInt
 
             if (is_object($user) && is_callable([ $user, 'hasRole' ])) {
 
-                if ($user->hasRole('ROLE_DISPATCHER')) {
+                // hasRole() ignores the role hierarchy, so ROLE_ADMIN has to be checked on its own:
+                // admins who aren't explicitly dispatchers landed on the homepage.
+                if ($user->hasRole('ROLE_ADMIN') || $user->hasRole('ROLE_DISPATCHER')) {
                     return new RedirectResponse($this->router->generate('admin_index'));
                 }
 
