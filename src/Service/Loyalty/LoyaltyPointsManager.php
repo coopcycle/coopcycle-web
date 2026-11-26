@@ -8,6 +8,7 @@ use AppBundle\Entity\Loyalty\LoyaltyReward;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Service\Promotion\CustomerRewardCouponFactory;
 use AppBundle\Service\SettingsManager;
+use AppBundle\Sylius\Order\AdjustmentInterface;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -99,9 +100,10 @@ class LoyaltyPointsManager
     }
 
     /**
-     * Points are earned on the items total: the food, excluding the delivery
-     * fee (an order-level adjustment, not part of this), so a longer -- and
-     * for the co-op, costlier -- delivery doesn't earn more than a short one.
+     * Points are earned on the items total *net of order-level discounts*:
+     * the food, excluding the delivery fee (an order-level adjustment, not
+     * part of this), so a longer -- and for the co-op, costlier -- delivery
+     * doesn't earn more than a short one.
      *
      * Returns null when the order earns nothing, which is also the case for
      * an order that has already been credited: the entry holds the order it
@@ -145,7 +147,34 @@ class LoyaltyPointsManager
 
         // Totals are in cents, and partial points are dropped rather than
         // rounded, so an order can never earn more than it was worth.
-        return intdiv($order->getItemsTotal() * $pointsPerCurrencyUnit, 100);
+        return intdiv($this->getEarningBase($order) * $pointsPerCurrencyUnit, 100);
+    }
+
+    /**
+     * What the customer actually paid for the food.
+     *
+     * getItemsTotal() is the undiscounted sum of the items: promotions --
+     * manual coupons, referral rewards, and the reward coupons this very
+     * program hands out -- are ORDER_PROMOTION_ADJUSTMENT rows added to the
+     * *order*, not to the items (see FixedDiscount/PercentageDiscount
+     * PromotionActionCommand), so they never show up there. Earning on the
+     * gross total meant a EUR 20 order paid EUR 15 with a EUR 5 coupon still
+     * earned 20 points, stacking the discount with the points it didn't buy
+     * -- and, with a loyalty reward coupon, partly refunding the points just
+     * spent on it.
+     *
+     * Delivery promotions are deliberately left out: the delivery fee isn't
+     * in getItemsTotal() either, so subtracting a discount on it would take
+     * away points for something that never earned any.
+     *
+     * Adjustment amounts are negative, hence the addition; clamped at 0
+     * because a fixed discount can be larger than the items it applies to.
+     */
+    private function getEarningBase(OrderInterface $order): int
+    {
+        $discount = $order->getAdjustmentsTotal(AdjustmentInterface::ORDER_PROMOTION_ADJUSTMENT);
+
+        return max(0, $order->getItemsTotal() + $discount);
     }
 
     private function calculateExpiryDate(): ?\DateTime
