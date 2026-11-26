@@ -1039,6 +1039,10 @@ services:
     arguments:
       $isDemo: "%is_demo%"
 
+  AppBundle\Security\TwoFactor\TwoFactorFormAccessDeniedHandler:
+    arguments:
+      $successHandler: '@coopcycle.two_factor_success_handler'
+
   AppBundle\Service\RemotePushNotificationManager: ~
 
   AppBundle\Geocoder\RateLimiterStore:

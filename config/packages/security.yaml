@@ -369,6 +369,7 @@ security:
                 auth_form_path: 2fa_login
                 check_path: 2fa_login_check
                 success_handler: coopcycle.two_factor_success_handler
+            access_denied_handler: AppBundle\Security\TwoFactor\TwoFactorFormAccessDeniedHandler
             logout: true
             remember_me:
                 secret: '%secret%'
