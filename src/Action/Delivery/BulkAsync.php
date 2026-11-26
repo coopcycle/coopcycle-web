@@ -2,7 +2,7 @@
 
 namespace AppBundle\Action\Delivery;
 
-use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
+use AppBundle\Entity\ImportQueue;
 use AppBundle\Message\ImportDeliveries;
 use AppBundle\Security\TokenStoreExtractor;
 use DateTime;
@@ -28,7 +28,7 @@ class BulkAsync
 
     public function __invoke()
     {
-        $queue = new DeliveryImportQueue();
+        $queue = new ImportQueue(ImportQueue::TYPE_DELIVERIES);
 
         $store = $this->storeExtractor->extractStore();
 
@@ -50,7 +50,7 @@ class BulkAsync
         $this->entityManager->flush();
 
         $this->messageBus->dispatch(
-            new ImportDeliveries($filename, ['create_task_if_address_not_geocoded' => true]),
+            new ImportDeliveries($filename, ['create_task_if_address_not_geocoded' => true], $queue->getId()),
             [ new DelayStamp(5000) ]
         );
 

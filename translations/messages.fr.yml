@@ -1232,6 +1232,11 @@ food_establishment.BAKERY: Boulangerie
 order.export.heading.fulfillment_method: Réalisation
 basics.view_example: Voir un exemple
 form.delivery_import.store.label: Magasin
+form.import.type.label: Que contient ce fichier ?
+form.import.type.deliveries: Des livraisons
+form.import.type.tasks: Des tâches
+form.import.date.label: Date
+form.import.date.help: Le jour des tâches du fichier, pour les lignes qui n'indiquent pas de date.
 form.time_slot.choices.error.empty: La liste de choix ne peut pas être vide
 store.FLORIST: Fleuriste
 order.list.reorder: Commander de nouveau
@@ -1555,22 +1560,30 @@ error.404: Page non trouvée.
 error.502: Le serveur a dépassé sa capacité. Veuillez réessayer plus tard.
 error.504: Le serveur a mis trop de temps à répondre.
 error.return_to_homepage: Retourner à la page d'accueil
-deliveries.imports: Fichiers importés
-deliveries.importing: Le fichier %filename% va bientôt être importé.
-deliveries.imports.created_at: Créé le
-deliveries.imports.progress: Progression
-deliveries.imports.cancel: Annuler
-deliveries.imports.cancel_deliveries: "Annuler les livraisons"
-deliveries.imports.see_file: Voir le fichier
-deliveries.imports.continue_mapping: Associer les colonnes
-deliveries.imports.drop_file: Abandonner ce fichier
-deliveries.imports.mapping_cancelled: "L'import de %filename% a été abandonné, rien n'a été importé."
-deliveries.imports.unreadable: "Ce fichier n'a pas pu être lu. Vérifiez-le et importez-le à nouveau."
+imports.title: Fichiers importés
+imports.type.deliveries: Un fichier de livraisons
+imports.type.tasks: Un fichier de tâches
+imports.for_date: "pour le %date%"
+imports.importing: Le fichier %filename% va bientôt être importé.
+imports.created_at: Créé le
+imports.progress: Progression
+imports.cancel: Annuler
+imports.cancel_deliveries: "Annuler les livraisons"
+imports.cancel_tasks: "Annuler les tâches"
+imports.see_file: Voir le fichier
+imports.continue_mapping: Associer les colonnes
+imports.drop_file: Abandonner ce fichier
+imports.mapping_cancelled: "L'import de %filename% a été abandonné, rien n'a été importé."
+imports.unreadable: "Ce fichier n'a pas pu être lu. Vérifiez-le et importez-le à nouveau."
 deliveries.imports.error.abandoned: "L'import a été abandonné car les colonnes du fichier n'ont jamais été associées aux champs qu'elles contiennent. Rien n'a été importé, importez le fichier à nouveau."
-deliveries.imports.see_errored_file: Voir les erreurs
+imports.see_errored_file: Voir les erreurs
 deliveries.imports.error.interrupted: "L'import a été interrompu par une erreur inattendue, et aucune livraison n'a été importée. Merci d'importer à nouveau le fichier."
 deliveries.imports.error.stalled: "L'import a été arrêté car il n'avançait plus depuis un temps anormalement long, probablement parce que le worker qui le traitait a disparu. Aucune livraison n'a été importée, merci d'importer à nouveau le fichier."
 deliveries.imports.error.rolled_back: "L'enregistrement des livraisons a échoué sur cette ligne, et aucune n'a été importée. Merci d'importer à nouveau le fichier."
+tasks.imports.error.abandoned: "L'import a été abandonné car les colonnes du fichier n'ont jamais été associées aux champs qu'elles contiennent. Rien n'a été importé, importez le fichier à nouveau."
+tasks.imports.error.interrupted: "L'import a été interrompu par une erreur inattendue, et aucune tâche n'a été importée. Merci d'importer à nouveau le fichier."
+tasks.imports.error.stalled: "L'import a été arrêté car il n'avançait plus depuis un temps anormalement long, probablement parce que le worker qui le traitait a disparu. Aucune tâche n'a été importée, merci d'importer à nouveau le fichier."
+tasks.imports.error.rolled_back: "L'enregistrement des tâches a échoué sur cette ligne, et aucune n'a été importée. Merci d'importer à nouveau le fichier."
 adminDashboard.business_restaurant_groups.title: Groupes de restaurants d'entreprise
 registration.flow.finish: "Terminer mon inscription"
 form.settings.company_legal_name.label: "Nom légal de l'entreprise"
@@ -1686,8 +1699,15 @@ vehicles.breadcrumb.help: "Définir la flotte de véhicules"
 tasks.mark_as_done.has_previous: "La tâche #%failed_task% n'a pas pu être complétée car elle a une tâche précédente #%previous_task% qui doit être complétée en premier."
 import.errors.at.row: "Erreurs à la ligne %row_number%"
 import.address.geocode.error: "Impossible de géocoder l'adresse %failed_address%"
+import.address.reverse_geocode.error: Aucune adresse trouvée aux coordonnées %coordinates%
 import.time.range.error: "La plage horaire \"%value%\" dans %key% n'est pas valide"
 import.columns.missing: "Le fichier n'a pas de colonne %columns%, ajoutez-la et importez à nouveau le fichier"
+import.columns.one_of.missing: "Le fichier n'a pas de colonne %columns%, ajoutez-en une et importez le fichier à nouveau"
+import.address.missing: "La ligne n'indique ni adresse ni coordonnées"
+import.coordinates.error: "%key% : \"%value%\" n'est pas un couple de coordonnées, écrivez-le sous la forme latitude,longitude"
+import.type.error: "type : \"%value%\" n'est pas valide, écrivez %types%"
+import.weight.error: "%key% : \"%value%\" n'est pas un nombre"
+import.ref.duplicate: "ref : \"%value%\" est déjà utilisé à la ligne %row% de ce fichier"
 import.telephone.error: "%key%: \"%value%\" n'est pas un numéro de téléphone valide"
 import.metadata.error: "%key%: \"%value%\" n'est pas valide, écrivez-le sous la forme clé=valeur, séparés par des espaces"
 import.packages.error: "%key%: \"%value%\" n'est pas valide, écrivez-le sous la forme colis=quantité, séparés par des espaces"
@@ -1697,6 +1717,8 @@ import.delivery.price.error.priceCalculation.row: "Le prix de la livraison n'a p
 import.column_group.pickup: Enlèvement
 import.column_group.dropoff: Livraison
 import.column_group.delivery: Général
+import.column_group.address: Adresse
+import.column_group.task: Tâche
 import.column.pickup.address: Adresse d'enlèvement
 import.column.pickup.address.name: Nom de l'enlèvement
 import.column.pickup.address.description: Complément d'adresse d'enlèvement
@@ -1717,6 +1739,22 @@ import.column.dropoff.metadata: Métadonnées de livraison
 import.column.weight: Poids (kg)
 import.column.tour.name: Tournée
 import.column.external_reference: Référence externe
+import.column.address: Adresse
+import.column.latlong: Coordonnées (latitude,longitude)
+import.column.address.name: Nom
+import.column.address.description: Complément d'adresse
+import.column.address.telephone: Numéro de téléphone
+import.column.address.contactName: Nom du contact
+import.column.type: Enlèvement ou livraison
+import.column.timeslot: Créneau horaire
+import.column.after: Pas avant
+import.column.before: Pas après
+import.column.comments: Commentaires
+import.column.tags: Étiquettes
+import.column.ref: Référence
+import.column.packages: Colis
+import.column.group: Groupe de tâches
+import.column.assign: "Assignée à (identifiant:date)"
 import.mapping.title: Associez les colonnes de votre fichier
 import.mapping.help: "Indiquez ce que contient chaque colonne de %filename%. Nous avons rempli celles que nous avons reconnues : vérifiez-les et complétez les autres."
 import.mapping.column_in_file: Colonne de votre fichier
@@ -1769,7 +1807,7 @@ form.billing_method.unit: "Par unité"
 form.billing_method.percentage: "Pourcentage du montant de la commande"
 order.export.heading.billing_method: "Méthode de facturation"
 order.export.heading.applied_billing: "Facturation appliquée"
-deliveries.import_upload_error: "Le fichier n'a pas pu être téléchargé. Veuillez réessayer plus tard."
+imports.upload_error: "Le fichier n'a pas pu être téléchargé. Veuillez réessayer plus tard."
 form.task_export.colisactiv.label: Exporter au format ColivActiv
 form.task_export.colisactiv_all.label: Exporter au format ColivActiv incluant toutes les tâches non terminées
 form.local_business.iso_code.fr.siret.help: Trouvez le numéro SIRET sur <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">l'Annuaire des Entreprises</a>

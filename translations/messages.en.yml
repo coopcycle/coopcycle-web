@@ -1131,6 +1131,11 @@ delivery.import.success_message: Your file was successfully processed, %count% d
   have been created
 form.delivery_import.file.label: File
 form.delivery_import.store.label: Store
+form.import.type.label: What does this file hold?
+form.import.type.deliveries: Deliveries
+form.import.type.tasks: Tasks
+form.import.date.label: Date
+form.import.date.help: The day the tasks of the file are for, for the rows that say no date of their own.
 basics.view_example: View example
 profile.loopeat.connect: Connect my %name% account
 profile.loopeat.connected: '%name% account connected'
@@ -1574,8 +1579,15 @@ form.task_export.format.label: Export format
 tasks.mark_as_done.has_previous: 'Task #%failed_task% could not be completed because it has a previous task #%previous_task% which must be completed first.'
 import.errors.at.row: Errors at row %row_number%
 import.address.geocode.error: Could not geocode address %failed_address%
+import.address.reverse_geocode.error: Could not find an address at the coordinates %coordinates%
 import.time.range.error: Time range "%value%" in %key% is not valid
 import.columns.missing: "The file has no %columns% column, add it and import the file again"
+import.columns.one_of.missing: "The file has no %columns% column, add one of them and import the file again"
+import.address.missing: "The row says neither an address nor coordinates"
+import.coordinates.error: "%key%: \"%value%\" is not a pair of coordinates, write it as latitude,longitude"
+import.type.error: "type: \"%value%\" is not valid, write %types%"
+import.weight.error: "%key%: \"%value%\" is not a number"
+import.ref.duplicate: "ref: \"%value%\" is already used on row %row% of this file"
 import.telephone.error: "%key%: \"%value%\" is not a valid phone number"
 import.metadata.error: "%key%: \"%value%\" is not valid, write it as key=value, separated by spaces"
 import.packages.error: "%key%: \"%value%\" is not valid, write it as package=quantity, separated by spaces"
@@ -1585,6 +1597,8 @@ import.delivery.price.error.priceCalculation.row: The delivery price could not b
 import.column_group.pickup: Pickup
 import.column_group.dropoff: Dropoff
 import.column_group.delivery: Delivery
+import.column_group.address: Address
+import.column_group.task: Task
 import.column.pickup.address: Pickup address
 import.column.pickup.address.name: Pickup name
 import.column.pickup.address.description: Pickup address details
@@ -1605,6 +1619,22 @@ import.column.dropoff.metadata: Dropoff metadata
 import.column.weight: Weight (kg)
 import.column.tour.name: Tour
 import.column.external_reference: External reference
+import.column.address: Address
+import.column.latlong: Coordinates (latitude,longitude)
+import.column.address.name: Name
+import.column.address.description: Address details
+import.column.address.telephone: Phone number
+import.column.address.contactName: Contact name
+import.column.type: Pickup or dropoff
+import.column.timeslot: Time slot
+import.column.after: Not before
+import.column.before: Not after
+import.column.comments: Comments
+import.column.tags: Tags
+import.column.ref: Reference
+import.column.packages: Packages
+import.column.group: Task group
+import.column.assign: Assigned to (username:date)
 import.mapping.title: Match the columns of your file
 import.mapping.help: "Tell us what each column of %filename% holds. We have filled in the ones we recognised, so check them over and set the rest."
 import.mapping.column_in_file: Column in your file
@@ -1746,22 +1776,30 @@ error.404: Page not found.
 error.502: The server is over capacity. Please try again later.
 error.504: The server took too much time to respond.
 error.return_to_homepage: Return to homepage
-deliveries.imports: Imported files
-deliveries.importing: The file %filename% is being imported.
-deliveries.imports.created_at: Created at
-deliveries.imports.progress: Progress
-deliveries.imports.cancel: Cancel
-deliveries.imports.cancel_deliveries: "Cancel the deliveries"
-deliveries.imports.see_file: See file
-deliveries.imports.continue_mapping: Match the columns
-deliveries.imports.drop_file: Drop this file
-deliveries.imports.mapping_cancelled: "The import of %filename% was dropped, nothing was imported."
-deliveries.imports.unreadable: "That file could not be read. Please check it and import it again."
+imports.title: Imported files
+imports.type.deliveries: A file of deliveries
+imports.type.tasks: A file of tasks
+imports.for_date: "for %date%"
+imports.importing: The file %filename% is being imported.
+imports.created_at: Created at
+imports.progress: Progress
+imports.cancel: Cancel
+imports.cancel_deliveries: "Cancel the deliveries"
+imports.cancel_tasks: "Cancel the tasks"
+imports.see_file: See file
+imports.continue_mapping: Match the columns
+imports.drop_file: Drop this file
+imports.mapping_cancelled: "The import of %filename% was dropped, nothing was imported."
+imports.unreadable: "That file could not be read. Please check it and import it again."
 deliveries.imports.error.abandoned: "The import was dropped because the columns of the file were never matched to the fields they hold. Nothing was imported, please import the file again."
-deliveries.imports.see_errored_file: To errors details
+imports.see_errored_file: To errors details
 deliveries.imports.error.interrupted: "The import was interrupted by an unexpected error, and no delivery was imported. Please import the file again."
 deliveries.imports.error.stalled: "The import was stopped because it had not made any progress for an unusually long time, most likely because the worker handling it went away. No delivery was imported, please import the file again."
 deliveries.imports.error.rolled_back: "Saving the deliveries failed on this line, and none were imported. Please import the file again."
+tasks.imports.error.abandoned: "The import was dropped because the columns of the file were never matched to the fields they hold. Nothing was imported, please import the file again."
+tasks.imports.error.interrupted: "The import was interrupted by an unexpected error, and no task was imported. Please import the file again."
+tasks.imports.error.stalled: "The import was stopped because it had not made any progress for an unusually long time, most likely because the worker handling it went away. No task was imported, please import the file again."
+tasks.imports.error.rolled_back: "Saving the tasks failed on this line, and none were imported. Please import the file again."
 business.account.settings.link: Link with my account
 form.business_restaurant_group.restaurants_with_menu: Restaurants with menu
 form.business_restaurant_group.restaurant: Restaurant
@@ -1829,7 +1867,7 @@ form.billing_method.unit: Per unit
 form.billing_method.percentage: Percentage of order amount
 order.export.heading.billing_method: Billing method
 order.export.heading.applied_billing: Applied billing
-deliveries.import_upload_error: The file couldn't be uploaded. Please try again later.
+imports.upload_error: The file couldn't be uploaded. Please try again later.
 organizations.breadcrumb: Organizations
 organizations.new: New organization
 loopeat.incident.unexpected_returns: Unexpected number of zero waste returns

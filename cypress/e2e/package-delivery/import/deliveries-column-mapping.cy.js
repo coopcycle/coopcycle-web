@@ -14,13 +14,11 @@ context('Import deliveries with a column mapping (role: admin)', () => {
   const uploadFile = file => {
     cy.visit('/admin/deliveries')
 
-    cy.get('[data-target="#import-deliveries-modal"]').click()
+    cy.get('[data-target="#import-modal"]').click()
     cy.get('input[type=file]').selectFile(file)
-    cy.get(
-      '#import-deliveries-modal > .modal-dialog > .modal-content > .modal-footer > .btn-primary',
-    ).click()
+    cy.get('[data-testid="import-submit"]').click()
 
-    cy.urlmatch(/\/admin\/deliveries\/imports\/\d+\/mapping$/)
+    cy.urlmatch(/\/admin\/imports\/\d+\/mapping$/)
   }
 
   it('imports a file whose columns are named anything at all', function () {
@@ -49,7 +47,7 @@ context('Import deliveries with a column mapping (role: admin)', () => {
 
     // A delivery can't be imported without both addresses
     cy.get('form[data-column-mapping] button[type=submit]:not([name])').click()
-    cy.urlmatch(/\/admin\/deliveries\/imports\/\d+\/mapping$/)
+    cy.urlmatch(/\/admin\/imports\/\d+\/mapping$/)
     cy.get('.alert-danger').should('exist')
 
     cy.get('[data-column-mapping-choice="1"]').select('pickup.address')
@@ -64,7 +62,7 @@ context('Import deliveries with a column mapping (role: admin)', () => {
     cy.consumeMessages(30)
 
     cy.reload()
-    cy.get('i.fa-check[data-delivery-import-status]').should('exist')
+    cy.get('i.fa-check[data-import-status]').should('exist')
 
     // The deliveries were read through the mapping, priced and saved
     cy.get('[data-testid="tab:/admin/deliveries"]').click()
@@ -81,6 +79,6 @@ context('Import deliveries with a column mapping (role: admin)', () => {
     cy.urlmatch(/\/admin\/deliveries$/)
     cy.urlmatch('section=imports', 'include', 'search')
 
-    cy.get('i.fa-ban[data-delivery-import-status]').should('exist')
+    cy.get('i.fa-ban[data-import-status]').should('exist')
   })
 })

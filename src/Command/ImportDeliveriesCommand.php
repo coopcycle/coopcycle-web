@@ -3,10 +3,10 @@
 namespace AppBundle\Command;
 
 use ApiPlatform\Api\IriConverterInterface;
-use AppBundle\Entity\Delivery\ImportQueue;
+use AppBundle\Entity\ImportQueue;
 use AppBundle\Entity\Store;
-use AppBundle\Service\DeliveryImporter;
-use AppBundle\Service\DeliveryImportStatusManager;
+use AppBundle\Import\ImportRunner;
+use AppBundle\Service\ImportStatusManager;
 use AppBundle\Transporter\ImportFailureNotifier;
 use AppBundle\Transporter\RejectedFile;
 use AppBundle\Transporter\TransporterImporterInterface;
@@ -47,7 +47,7 @@ class ImportDeliveriesCommand extends Command {
         private readonly ManagerRegistry $doctrine,
         private readonly IriConverterInterface $iriConverter,
         private readonly Hashids $hashids8,
-        private readonly DeliveryImporter $deliveryImporter,
+        private readonly ImportRunner $importRunner,
         private readonly Filesystem $deliveryImportsFilesystem,
         /** @var ServiceProviderInterface<TransporterImporterInterface> */
         private readonly ServiceProviderInterface $importers,
@@ -55,7 +55,7 @@ class ImportDeliveriesCommand extends Command {
         private readonly ServiceProviderInterface $transformers,
         private readonly LoggerInterface $transporterLogger,
         private readonly ImportFailureNotifier $importFailureNotifier,
-        private readonly DeliveryImportStatusManager $statusManager,
+        private readonly ImportStatusManager $statusManager,
         private readonly TranslatorInterface $translator,
         private readonly string $appName,
     )
@@ -257,8 +257,9 @@ class ImportDeliveriesCommand extends Command {
         /** @var Store $store */
         $store = $this->iriConverter->getResourceFromIri($this->input->getArgument('store'));
 
-        $queue = new ImportQueue();
+        $queue = new ImportQueue(ImportQueue::TYPE_DELIVERIES);
         $queue->setStore($store);
+        $queue->setOrganization($store->getOrganization());
 
         $entityManager = $this->doctrine->getManager();
         $entityManager->persist($queue);
@@ -277,7 +278,11 @@ class ImportDeliveriesCommand extends Command {
         $saved = 0;
         $error = null;
         try {
-            $saved = $this->deliveryImporter->import($filename, ['create_task_if_address_not_geocoded' => true]);
+            $saved = $this->importRunner->run(
+                $filename,
+                ['create_task_if_address_not_geocoded' => true],
+                $queue->getId()
+            );
         } catch (\Throwable $e) {
             $error = $e->getMessage();
 
@@ -286,11 +291,11 @@ class ImportDeliveriesCommand extends Command {
                 ['importer' => $this->input->getOption('importer'), 'store' => $this->input->getArgument('store')]
             );
 
-            // The importer marks the import as failed when saving the deliveries fails,
-            // the worker otherwise (see DeliveryImportFailureSubscriber), which isn't there
+            // The runner marks the import as failed when saving what it read fails,
+            // the worker otherwise (see ImportFailureSubscriber), which isn't there
             $unfinished = $this->statusManager->findUnfinished($filename);
             if (null !== $unfinished) {
-                $this->statusManager->failed($unfinished, DeliveryImportStatusManager::errorForWholeImport(
+                $this->statusManager->failed($unfinished, ImportStatusManager::errorForWholeImport(
                     $this->translator->trans('deliveries.imports.error.interrupted')
                 ));
             }

@@ -10,7 +10,8 @@ use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\CubeJs\TokenFactory as CubeJsTokenFactory;
 use AppBundle\Entity\DeliveryRepository;
-use AppBundle\Service\DeliveryImportStatusManager;
+use AppBundle\Import\ImportRegistry;
+use AppBundle\Service\ImportStatusManager;
 use AppBundle\Spreadsheet\Column\ColumnDetector;
 use AppBundle\Spreadsheet\DeliverySpreadsheetParser;
 use AppBundle\Sylius\Taxation\TaxesHelper;
@@ -113,7 +114,7 @@ class DashboardController extends AbstractController
 
             $routes = $request->attributes->has('routes') ? $request->attributes->get('routes') : [];
             $routes['import_success'] = 'dashboard';
-            $routes['import_mapping'] = 'dashboard_delivery_import_mapping';
+            $routes['import_mapping'] = 'dashboard_import_mapping';
             $routes['stores'] = 'dashboard';
             $routes['store'] = 'dashboard_store';
 
@@ -147,24 +148,22 @@ class DashboardController extends AbstractController
     /**
      * A store owner saying which field each column of the file they uploaded holds
      */
-    public function deliveryImportMappingAction(
+    public function importMappingAction(
         int $id,
         Request $request,
         EntityManagerInterface $entityManager,
-        Filesystem $deliveryImportsFilesystem,
-        DeliverySpreadsheetParser $spreadsheetParser,
+        ImportRegistry $importRegistry,
         ColumnDetector $columnDetector,
-        DeliveryImportStatusManager $statusManager,
+        ImportStatusManager $statusManager,
         MessageBusInterface $messageBus,
         LoggerInterface $logger,
     )
     {
-        return $this->handleDeliveryImportMapping(
+        return $this->handleImportMapping(
             id: $id,
             request: $request,
             entityManager: $entityManager,
-            filesystem: $deliveryImportsFilesystem,
-            parser: $spreadsheetParser,
+            registry: $importRegistry,
             detector: $columnDetector,
             statusManager: $statusManager,
             messageBus: $messageBus,

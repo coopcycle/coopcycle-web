@@ -10,11 +10,26 @@ use Symfony\Component\Validator\Exception\UnexpectedValueException;
 
 class TaskSpreadsheetValidator extends ConstraintValidator
 {
+    use SpreadsheetReadabilityTrait;
+
     public function __construct(private TaskSpreadsheetParser $parser)
     {}
 
     public function validate($value, Constraint $constraint)
     {
+        if (null === $value) {
+            return;
+        }
+
+        // The columns will be matched to the fields they hold, so what the header says
+        // is beside the point: the file only has to be readable
+        if ($constraint->mapped) {
+            $this->validateReadability($value, $constraint, $this->parser);
+
+            return;
+        }
+
+        // The dispatch board's uploader and the API read the file by its header names
         if (!$value instanceof FlysystemFile) {
             throw new UnexpectedValueException($value, FlysystemFile::class);
         }

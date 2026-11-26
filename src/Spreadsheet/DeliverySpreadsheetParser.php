@@ -26,11 +26,6 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
     use ParsePackagesTrait;
     use ParseMetadataTrait;
 
-    /**
-     * The size of the string columns, the address and tour names
-     */
-    const MAX_TEXT_LENGTH = 255;
-
     private $defaultCoordinates;
 
     public function __construct(

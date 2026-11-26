@@ -9,12 +9,61 @@ use AppBundle\Entity\TaskList;
 use DateTime;
 use AppBundle\Utils\Barcode\Barcode;
 use AppBundle\Utils\Barcode\BarcodeUtils;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\Expr;
 
 class TaskRepository extends EntityRepository
 {
+    /**
+     * The tasks a file import created, found by the import id in their metadata.
+     *
+     * The twin of DeliveryRepository::findIdsByImport(), scoped by organization rather
+     * than by store: a task import has none.
+     *
+     * @return int[]
+     */
+    public function findIdsByImport(int $importId, ?int $organizationId = null): array
+    {
+        $sql = "SELECT id FROM task WHERE metadata->>'task_import_id' = :import_id";
+        $parameters = ['import_id' => (string) $importId];
+
+        if (!is_null($organizationId)) {
+            $sql .= ' AND organization_id = :organization_id';
+            $parameters['organization_id'] = $organizationId;
+        }
+
+        return array_map('intval', $this->getEntityManager()->getConnection()->fetchFirstColumn(
+            $sql.' ORDER BY id',
+            $parameters
+        ));
+    }
+
+    /**
+     * @param int[] $importIds
+     * @return array<int,int> the number of tasks each import created, by import id
+     */
+    public function countByImport(array $importIds): array
+    {
+        if (empty($importIds)) {
+            return [];
+        }
+
+        $rows = $this->getEntityManager()->getConnection()->fetchAllKeyValue(
+            "SELECT metadata->>'task_import_id', COUNT(*) FROM task WHERE metadata->>'task_import_id' IN (:import_ids) GROUP BY 1",
+            ['import_ids' => array_map('strval', $importIds)],
+            ['import_ids' => ArrayParameterType::STRING]
+        );
+
+        $counts = [];
+        foreach ($rows as $importId => $count) {
+            $counts[(int) $importId] = (int) $count;
+        }
+
+        return $counts;
+    }
+
     public function findUnassignedByDate(\DateTime $date)
     {
         $start = clone $date;

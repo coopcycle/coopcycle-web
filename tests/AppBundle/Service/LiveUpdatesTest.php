@@ -146,7 +146,7 @@ class LiveUpdatesTest extends TestCase
         $this->messageBusMock
             ->dispatch(
                 Argument::that(fn ($message) => $message instanceof PublishToCentrifugo
-                    && 'delivery_import:updated' === $message->event['name']),
+                    && 'import:updated' === $message->event['name']),
                 Argument::that(fn (array $stamps) => 1 === count($stamps)
                     && $stamps[0] instanceof TransportNamesStamp
                     && ['sync'] === $stamps[0]->getTransportNames())
@@ -156,7 +156,7 @@ class LiveUpdatesTest extends TestCase
 
         $this->workerMessageContext->onReceived();
 
-        $this->liveUpdates->toDispatchers('delivery_import:updated', ['status' => 'started']);
+        $this->liveUpdates->toDispatchers('import:updated', ['status' => 'started']);
     }
 
     public function testWorkerIsNotFailedWhenCentrifugoFails(): void
@@ -172,10 +172,10 @@ class LiveUpdatesTest extends TestCase
 
         $this->workerMessageContext->onReceived();
 
-        $this->liveUpdates->toDispatchers('delivery_import:updated', ['status' => 'started']);
+        $this->liveUpdates->toDispatchers('import:updated', ['status' => 'started']);
 
         $this->realTimeMessageLoggerMock
-            ->error("Could not publish event 'delivery_import:updated': Centrifugo timed out")
+            ->error("Could not publish event 'import:updated': Centrifugo timed out")
             ->shouldHaveBeenCalledOnce();
     }
 
@@ -194,7 +194,7 @@ class LiveUpdatesTest extends TestCase
         $this->workerMessageContext->onReceived();
         $this->workerMessageContext->onDone();
 
-        $this->liveUpdates->toDispatchers('delivery_import:updated', ['status' => 'started']);
+        $this->liveUpdates->toDispatchers('import:updated', ['status' => 'started']);
     }
 
     public function testToUserAndDispatchers_userNotAdmin(): void

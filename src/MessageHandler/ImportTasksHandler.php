@@ -8,6 +8,7 @@ use AppBundle\Entity\Task\ImportQueue as TaskImportQueue;
 use AppBundle\Message\ImportTasks;
 use AppBundle\Service\RemotePushNotificationManager;
 use AppBundle\Service\LiveUpdates;
+use AppBundle\Doctrine\EventSubscriber\TaskSubscriber\TaskListProvider;
 use AppBundle\Spreadsheet\TaskSpreadsheetParser;
 use Doctrine\DBAL\Exception\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
@@ -32,7 +33,8 @@ class ImportTasksHandler
         TaskSpreadsheetParser $spreadsheetParser,
         ValidatorInterface $validator,
         LiveUpdates $liveUpdates,
-        LoggerInterface $logger)
+        LoggerInterface $logger,
+        private TaskListProvider $taskListProvider)
     {
         $this->objectManager = $objectManager;
         $this->taskImportsFilesystem = $taskImportsFilesystem;
@@ -40,6 +42,23 @@ class ImportTasksHandler
         $this->validator = $validator;
         $this->liveUpdates = $liveUpdates;
         $this->logger = $logger;
+    }
+
+    /**
+     * @param array<string,TaskGroup> $groups the groups made for this file so far
+     */
+    private function getOrCreateTaskGroup(string $groupName, array &$groups): TaskGroup
+    {
+        if (!array_key_exists($groupName, $groups)) {
+            $taskGroup = new TaskGroup();
+            $taskGroup->setName($groupName);
+
+            $this->objectManager->persist($taskGroup);
+
+            $groups[$groupName] = $taskGroup;
+        }
+
+        return $groups[$groupName];
     }
 
     public function __invoke(ImportTasks $message)
@@ -59,14 +78,26 @@ class ImportTasksHandler
 
         try {
 
-            $tasks = $this->spreadsheetParser->parse($tempnam, [
+            $result = $this->spreadsheetParser->parse($tempnam, [
                 'date' => $message->getDate()
             ]);
 
-            $this->logger->info(sprintf('Importing %d tasks…', count($tasks)));
+            // This path fails the whole file on the first thing wrong with it, as it
+            // always has: its callers, the API among them, report one error and no rows.
+            // The import screen is the one that reports them row by row.
+            if ($result->hasErrors()) {
+                $errors = $result->getSortedErrors();
+                $firstRow = reset($errors);
 
-            foreach ($tasks as $task) {
-                $violations = $this->validator->validate($task);
+                throw new \Exception($firstRow[0] ?? 'Could not read the file');
+            }
+
+            $rows = $result->getData();
+
+            $this->logger->info(sprintf('Importing %d tasks…', count($rows)));
+
+            foreach ($rows as $row) {
+                $violations = $this->validator->validate($row['task']);
                 if (count($violations) > 0) {
                     throw new \Exception($violations->get(0)->getMessage());
                 }
@@ -88,8 +119,26 @@ class ImportTasksHandler
 
         try {
             $taskGroup = null;
+            // The parser leaves the groups to be made here, so that nothing is written
+            // before the rows are known to be good
+            $namedGroups = [];
 
-            foreach ($tasks as $task) {
+            foreach ($rows as $row) {
+                $task = $row['task'];
+
+                if (!is_null($row['groupName'])) {
+                    $task->setGroup($this->getOrCreateTaskGroup($row['groupName'], $namedGroups));
+                }
+
+                if (!is_null($row['assign'])) {
+                    [ $user, $assignAt ] = $row['assign'];
+                    // The task list (its date + courier) is the source of truth for the
+                    // assignment; appendTask() also sets task.assignedTo.
+                    $this->taskListProvider
+                        ->getTaskListForUserAndDate($assignAt, $user)
+                        ->appendTask($task);
+                }
+
                 if (null === $task->getGroup()) {
                     // if a group was not provided for the task
                     // we add it to the default group for Imports

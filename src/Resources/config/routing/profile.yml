@@ -384,13 +384,13 @@ dashboard_store_deliveries:
             stores: dashboard_stores
             store: dashboard_store
             import_success: dashboard
-            import_mapping: dashboard_delivery_import_mapping
+            import_mapping: dashboard_import_mapping
     methods:  [ GET, POST ]
 
-dashboard_delivery_import_mapping:
-    path: /dashboard/deliveries/imports/{id}/mapping
+dashboard_import_mapping:
+    path: /dashboard/imports/{id}/mapping
     defaults:
-        _controller: AppBundle\Controller\DashboardController::deliveryImportMappingAction
+        _controller: AppBundle\Controller\DashboardController::importMappingAction
         layout: 'dashboard.html.twig'
     requirements:
         id: '\d+'

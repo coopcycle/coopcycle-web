@@ -1080,9 +1080,9 @@ registration.step.invitation.copy.link: Kopiere den Link unten und schicke Ihn a
 registration.step.invitation.copy.button: Link kopieren
 registration.step.invitation.link.copied: kopiert
 error.return_to_homepage: Zurück zur Startseite
-deliveries.imports: Importierte Dateien
-deliveries.importing: Die Datei %filename% wird importiert.
-deliveries.imports.created_at: Erstellt am
+imports.title: Importierte Dateien
+imports.importing: Die Datei %filename% wird importiert.
+imports.created_at: Erstellt am
 form.settings.company_legal_id.help: Diese Nummer findet sich in offiziellen Dokumenten
   des Unternehmens wie Rechnungen oder Impressum
 registration.email.taken.loggin.warning_message: Passwort eingeben um einzuloggen.

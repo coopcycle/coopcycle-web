@@ -4,7 +4,7 @@
   {{ add_title_prefix('adminDashboard.deliveries.title'|trans) }}
 {% endblock %}
 
-{% form_theme delivery_import_form 'bootstrap_3_horizontal_layout.html.twig' %}
+{% form_theme import_form 'bootstrap_3_horizontal_layout.html.twig' %}
 {% if is_granted('ROLE_ADMIN') %}
 {% form_theme delivery_export_form 'form/deliveries_export.html.twig' %}
 {% endif %}
@@ -16,7 +16,7 @@
       <input type="text" class="form-control" placeholder="{{ 'stores.filters.input.placeholder'|trans|e('html_attr') }}" name="q" value="{{ filters.query }}">
     </form>
     <div class="text-right">
-      <a href="#" class="btn btn-sm btn-default mr-4" data-toggle="modal" data-target="#import-deliveries-modal">
+      <a href="#" class="btn btn-sm btn-default mr-4" data-toggle="modal" data-target="#import-modal">
         <i class="fa fa-upload"></i> {% trans %}basics.import{% endtrans %}
       </a>
       {% if is_granted('ROLE_ADMIN') %}
@@ -28,11 +28,16 @@
     </div>
   </div>
 
-  {% if delivery_import_form.vars.submitted and not delivery_import_form.file.vars.valid %}
+  {% if import_form.vars.submitted and not import_form.vars.valid %}
     <div class="alert alert-danger">
       <ul class="list-unstyled">
-      {% for error in delivery_import_form.file.vars.errors %}
+      {% for error in import_form.vars.errors %}
         <li>{{ error.message }}</li>
+      {% endfor %}
+      {% for child in import_form.children %}
+        {% for error in child.vars.errors %}
+          <li>{{ error.message }}</li>
+        {% endfor %}
       {% endfor %}
       </ul>
     </div>
@@ -59,7 +64,7 @@
       path: path('admin_deliveries', { section: 'past' })
     },
     {
-      title: 'deliveries.imports'|trans,
+      title: 'imports.title'|trans,
       active: app.request.query.get('section', 'today') == 'imports',
       path: path('admin_deliveries', { section: 'imports' })
     },
@@ -104,7 +109,12 @@
   {% endif %}
 
   {% if app.request.query.get('section', 'today') == 'imports' %}
-    {# The deliveries_ ones once the import is over, its deliveries cancelled by a dispatcher: nothing from the file is left either #}
+    {# The items_ ones once the import is over and what it created was cancelled by a dispatcher: nothing from the file is left either #}
+    {# Duplicated in js/app/delivery/list.js, which renders the rows as they change #}
+    {% set import_type_icon = {
+      'deliveries': 'cube',
+      'tasks': 'map-marker'
+    } %}
     {% set import_status_icon = {
       'mapping': 'hand-pointer-o',
       'pending': 'clock-o',
@@ -113,76 +123,89 @@
       'completed': 'check',
       'failed': 'exclamation-triangle',
       'cancelled': 'ban',
-      'deliveries_cancelling': 'spinner fa-spin',
-      'deliveries_cancelled': 'ban'
+      'items_cancelling': 'spinner fa-spin',
+      'items_cancelled': 'ban'
     } %}
     <div class="text-right my-2">
       <div id="import-datepicker" data-default-date="{{ import_date|date('Y-m-d') }}"></div>
     </div>
     <table class="table mb-4"
-      data-delivery-imports
+      data-imports
       data-centrifugo-token="{{ centrifugo_token }}"
       data-centrifugo-channel="{{ centrifugo_channel }}">
       <thead>
         <th></th>
+        <th></th>
         <th>{{ 'form.delivery_import.file.label'|trans }}</th>
-        <th>{{ 'deliveries.imports.created_at'|trans }}</th>
-        <th>{{ 'deliveries.imports.progress'|trans }}</th>
+        <th>{{ 'imports.created_at'|trans }}</th>
+        <th>{{ 'imports.progress'|trans }}</th>
         <th></th>
       </thead>
       <tbody>
         {% for import_queue in import_queues %}
           <tr class="{{ import_queue.status == 'failed' ? 'danger' : '' }}"
-            data-delivery-import
-            data-delivery-import-filename="{{ import_queue.filename }}"
-            data-delivery-import-queue="{{ path('_api_/delivery_import_queues/{id}{._format}_get', { id: import_queue.id }) }}"
-            data-delivery-import-csv="{{ path('_api_/delivery_import_queues/{id}/csv_get', { id: import_queue.id }) }}"
-            data-delivery-import-redownload="{{ path('_api_/delivery_import_queues/{id}/redownload_get', { id: import_queue.id }) }}"
-            data-delivery-import-cancel="{{ path('_api_/delivery_import_queues/{id}/cancel_put', { id: import_queue.id }) }}"
-            data-delivery-import-cancel-deliveries="{{ path('_api_/delivery_import_queues/{id}/cancel_deliveries_put', { id: import_queue.id }) }}"
-            data-delivery-import-deliveries="{{ imported_deliveries[import_queue.id] ?? 0 }}">
-            <td width="5%"><i class="fa fa-{{ import_status_icon[import_queue.deliveriesCancellation ? 'deliveries_' ~ import_queue.deliveriesCancellation : import_queue.status] }}" data-delivery-import-status></i></td>
-            <td>{{ import_queue.filename }}</td>
+            data-import
+            data-import-filename="{{ import_queue.filename }}"
+            data-import-queue="{{ path('_api_/import_queues/{id}{._format}_get', { id: import_queue.id }) }}"
+            data-import-csv="{{ path('_api_/import_queues/{id}/csv_get', { id: import_queue.id }) }}"
+            data-import-redownload="{{ path('_api_/import_queues/{id}/redownload_get', { id: import_queue.id }) }}"
+            data-import-cancel="{{ path('_api_/import_queues/{id}/cancel_put', { id: import_queue.id }) }}"
+            data-import-cancel-items="{{ path('_api_/import_queues/{id}/cancel_items_put', { id: import_queue.id }) }}"
+            data-import-type="{{ import_queue.type }}"
+            data-import-created="{{ imported_items[import_queue.id] ?? 0 }}">
+            <td width="5%">
+              <i class="fa fa-{{ import_type_icon[import_queue.type] }}" data-toggle="tooltip"
+                title="{{ ('imports.type.' ~ import_queue.type)|trans }}"></i>
+            </td>
+            <td width="5%"><i class="fa fa-{{ import_status_icon[import_queue.itemsCancellation ? 'items_' ~ import_queue.itemsCancellation : import_queue.status] }}" data-import-status></i></td>
+            <td>
+              {{ import_queue.filename }}
+              {% if import_queue.options.date is defined %}
+                {# The list is filed by the day the file was uploaded, which is not
+                   necessarily the day its tasks are for #}
+                <span class="text-muted small ml-2">{{ 'imports.for_date'|trans({ '%date%': import_queue.options.date|date('d/m/Y') }) }}</span>
+              {% endif %}
+            </td>
             <td>{{ import_queue.createdAt|time_diff }}</td>
             {# Formatted by list.js, which also keeps it up to date while the file is imported #}
             <td class="text-muted"
-              data-delivery-import-progress
+              data-import-progress
               data-status="{{ import_queue.status }}"
               data-started-at="{{ import_queue.startedAt ? import_queue.startedAt|date('c') : '' }}"
               data-total-rows="{{ import_queue.totalRows }}"
               data-processed-rows="{{ import_queue.processedRows }}"
               data-error-rows="{{ import_queue.errorRows }}"
-              data-deliveries-cancellation="{{ import_queue.deliveriesCancellation }}"
-              data-deliveries-to-cancel="{{ import_queue.deliveriesToCancel }}"
-              data-cancelled-deliveries="{{ import_queue.cancelledDeliveries }}"
-              data-skipped-deliveries="{{ import_queue.skippedDeliveries }}"></td>
+              data-items-cancellation="{{ import_queue.itemsCancellation }}"
+              data-items-to-cancel="{{ import_queue.itemsToCancel }}"
+              data-cancelled-items="{{ import_queue.cancelledItems }}"
+              data-skipped-items="{{ import_queue.skippedItems }}"></td>
             <td class="text-right">
-              <a href="#" class="mr-3 text-danger{{ import_queue.cancellable ? '' : ' d-none' }}" data-delivery-import-cancel-button>
-                <i class="fa fa-ban"></i> {{ 'deliveries.imports.cancel'|trans }}
+              <a href="#" class="mr-3 text-danger{{ import_queue.cancellable ? '' : ' d-none' }}" data-import-cancel-button>
+                <i class="fa fa-ban"></i> {{ 'imports.cancel'|trans }}
               </a>
               {# Hidden by list.js once they are being cancelled #}
-              <a href="#" class="mr-3 text-danger{{ import_queue.canCancelDeliveries and (imported_deliveries[import_queue.id] ?? 0) > 0 ? '' : ' d-none' }}" data-delivery-import-cancel-deliveries-button>
-                <i class="fa fa-ban"></i> {{ 'deliveries.imports.cancel_deliveries'|trans }}
+              <a href="#" class="mr-3 text-danger{{ import_queue.canCancelItems and (imported_items[import_queue.id] ?? 0) > 0 ? '' : ' d-none' }}" data-import-cancel-items-button>
+                <i class="fa fa-ban"></i> {{ ('imports.cancel_' ~ import_queue.type)|trans }}
               </a>
               {% if import_queue.waitingForMapping %}
                 {# Nothing of the file has been read yet: there is no spreadsheet to show,
                    only the columns left to map #}
-                <a class="mr-3 text-underline" href="{{ path('admin_delivery_import_mapping', { id: import_queue.id }) }}">
-                  {{ 'deliveries.imports.continue_mapping'|trans }}
+                <a class="mr-3 text-underline" href="{{ path('admin_import_mapping', { id: import_queue.id }) }}">
+                  {{ 'imports.continue_mapping'|trans }}
                 </a>
               {% elseif import_queue.status == 'failed' %}
-                <a href="#" class="mr-3 text-danger text-underline" data-delivery-import-view>
-                  {{ 'deliveries.imports.see_errored_file'|trans }}
+                <a href="#" class="mr-3 text-danger text-underline" data-import-view>
+                  {{ 'imports.see_errored_file'|trans }}
                 </a>
               {% else %}
                 {# Switched to the errors by list.js, when the import fails while the page is open #}
-                <a href="#" class="mr-3 text-underline" data-delivery-import-view
-                  data-errors-label="{{ 'deliveries.imports.see_errored_file'|trans }}">
-                  {{ 'deliveries.imports.see_file'|trans }}
+                <a href="#" class="mr-3 text-underline" data-import-view
+                  data-errors-label="{{ 'imports.see_errored_file'|trans }}">
+                  {{ 'imports.see_file'|trans }}
                 </a>
               {% endif %}
               {% if not import_queue.waitingForMapping %}
-                <a href="#" data-delivery-import-redownload>
+                <a href="#" data-import-redownload>
                   <i class="fa fa-download"></i>
                 </a>
               {% endif %}
@@ -191,7 +214,7 @@
         {% endfor %}
       </tbody>
     </table>
-    <div id="delivery_import_spreadsheet"></div>
+    <div id="import_spreadsheet"></div>
   {% else %}
     {% include '_partials/delivery/list.html.twig' with { with_store: true } %}
     <nav class="text-center">
@@ -201,23 +224,29 @@
 
 
 
-  <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="import-deliveries-modal-label" id="import-deliveries-modal">
+  {# One modal for both kinds: the fields and the example file of the kind that isn't
+     chosen are hidden by import-modal.js #}
+  <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="import-modal-label" id="import-modal"
+    {% if open_import %}data-import-open="{{ open_import }}"{% endif %}>
     <div class="modal-dialog" role="document">
-      {{ form_start(delivery_import_form, { attr: { class: 'modal-content' } }) }}
+      {{ form_start(import_form, { attr: { class: 'modal-content' } }) }}
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="import-deliveries-modal-label">{% trans %}basics.import{% endtrans %}</h4>
+          <h4 class="modal-title" id="import-modal-label">{% trans %}basics.import{% endtrans %}</h4>
         </div>
         <div class="modal-body">
-          {{ form_row(delivery_import_form.store) }}
-          {{ form_row(delivery_import_form.file) }}
+          {{ form_row(import_form.type) }}
+          {{ form_row(import_form.store) }}
+          {{ form_row(import_form.date) }}
+          {{ form_row(import_form.file) }}
         </div>
         <div class="modal-footer">
-          <a class="mr-4" href="{{ path('spreadsheet_example_deliveries') }}">{{ 'spreadsheet.download_example'|trans }}</a>
+          <a class="mr-4" href="{{ path('spreadsheet_example_deliveries') }}" data-import-kind-link="deliveries">{{ 'spreadsheet.download_example'|trans }}</a>
+          <a class="mr-4" href="{{ path('spreadsheet_example_tasks') }}" data-import-kind-link="tasks">{{ 'spreadsheet.download_example'|trans }}</a>
           <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}basics.cancel{% endtrans %}</button>
-          <button type="submit" class="btn btn-primary">{% trans %}basics.import{% endtrans %}</button>
+          <button type="submit" class="btn btn-primary" data-testid="import-submit">{% trans %}basics.import{% endtrans %}</button>
         </div>
-      {{ form_end(delivery_import_form) }}
+      {{ form_end(import_form) }}
     </div>
   </div>
 

@@ -1,8 +1,6 @@
 import {
   setGeolocation,
   updateTask,
-  importSuccess,
-  importError,
   taskListsUpdated,
   SET_FILTER_VALUE,
   RESET_FILTERS,
@@ -14,6 +12,7 @@ import {
   setOptimResult,
   setMapFilterValue,
   updateTour,
+  reloadTasksAndTours,
   precogUpdated,
   precogGone,
   precogSynced,
@@ -149,11 +148,12 @@ export const socketIO = ({ dispatch, getState }) => {
         case 'task:unassigned':
           dispatch(updateTask(event.data.task))
           break
-        case 'task_import:success':
-          dispatch(importSuccess(event.data.token))
-          break
-        case 'task_import:failure':
-          dispatch(importError(event.data.token, event.data.message))
+        // An import saves a lot of tasks and tours at once, without a live update per
+        // task: it says which days it touched, and the board shown reloads once
+        case 'import:saved':
+          if (event.data.dates.includes(currentDate.format('YYYY-MM-DD'))) {
+            dispatch(reloadTasksAndTours())
+          }
           break
         case 'tour:created':
         case 'tour:updated':

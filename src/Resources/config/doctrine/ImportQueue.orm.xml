@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd" xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
+  <entity name="AppBundle\Entity\ImportQueue" table="import_queue">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="type" type="string" column="type" nullable="false" length="16"/>
+    <field name="status" type="string" column="status" nullable="false" length="16"/>
+    <field name="filename" type="string" column="filename" nullable="true"/>
+    <field name="createdAt" type="datetime" column="created_at">
+      <gedmo:timestampable on="create"/>
+    </field>
+    <field name="updatedAt" type="datetime" column="updated_at">
+      <gedmo:timestampable on="update"/>
+    </field>
+    <field name="startedAt" type="datetime" column="started_at" nullable="true" />
+    <field name="finishedAt" type="datetime" column="finished_at" nullable="true" />
+    <field name="errors" type="json" column="errors" nullable="true" />
+    <field name="columnMapping" type="json" column="column_mapping" nullable="true" />
+    <field name="options" type="json" column="options" nullable="true" />
+    <field name="totalRows" type="integer" column="total_rows" nullable="true" />
+    <field name="processedRows" type="integer" column="processed_rows" nullable="false">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
+    <field name="errorRows" type="integer" column="error_rows" nullable="false">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
+    <field name="progressedAt" type="datetime" column="progressed_at" nullable="true" />
+    <field name="itemsCancellation" type="string" column="items_cancellation" nullable="true" length="16"/>
+    <field name="itemsToCancel" type="integer" column="items_to_cancel" nullable="true" />
+    <field name="cancelledItems" type="integer" column="cancelled_items" nullable="false">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
+    <field name="skippedItems" type="integer" column="skipped_items" nullable="false">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
+    <many-to-one field="store" target-entity="AppBundle\Entity\Store" />
+    <many-to-one field="organization" target-entity="AppBundle\Entity\Organization">
+      <join-columns>
+        <join-column name="organization_id" referenced-column-name="id" nullable="true" on-delete="SET NULL"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>
+

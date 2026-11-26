@@ -21,6 +21,12 @@ abstract class AbstractSpreadsheetParser
      */
     const PREVIEW_ROWS = 5;
 
+    /**
+     * What the text columns hold, as a longer value doesn't fit and fails the whole
+     * import when it's saved
+     */
+    const MAX_TEXT_LENGTH = 255;
+
     const MIME_TYPE_ODS = [
         'application/vnd.oasis.opendocument.spreadsheet'
     ];
@@ -118,6 +124,19 @@ abstract class AbstractSpreadsheetParser
             fn (ColumnDefinition $column) => $column->key,
             array_filter($this->getColumns(), fn (ColumnDefinition $column) => $column->isRequired())
         ));
+    }
+
+    /**
+     * The fields a file has to carry one of, when either will do.
+     *
+     * An address can be given as an address or as coordinates, which getRequiredColumnKeys()
+     * can't say: it would ask for both.
+     *
+     * @return array<int,string[]> each entry a list of keys, one of which must be mapped
+     */
+    public function getRequiredColumnGroups(): array
+    {
+        return [];
     }
 
     abstract public function parseData(array $data, array $options = []): array | SpreadsheetParseResult;

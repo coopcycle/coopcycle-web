@@ -23,11 +23,6 @@ import {
   LOAD_TASK_EVENTS_REQUEST,
   LOAD_TASK_EVENTS_SUCCESS,
   LOAD_TASK_EVENTS_FAILURE,
-  ADD_IMPORT,
-  IMPORT_SUCCESS,
-  IMPORT_ERROR,
-  OPEN_IMPORT_MODAL,
-  CLOSE_IMPORT_MODAL,
   CLEAR_SELECTED_TASKS,
   RIGHT_PANEL_MORE_THAN_HALF,
   RIGHT_PANEL_LESS_THAN_HALF,
@@ -86,8 +81,6 @@ const initialState = {
   settingsModalIsOpen: false,
   isLoadingTaskEvents: false,
   taskEvents: {},
-  imports: {},
-  importModalIsOpen: false,
   rightPanelSplitDirection: 'vertical',
   recurrenceRuleModalIsOpen: false,
   currentRecurrenceRule: null,
@@ -295,17 +288,6 @@ export const settingsModalIsOpen = (state = initialState.settingsModalIsOpen, ac
   }
 }
 
-export const importModalIsOpen = (state = false, action) => {
-  switch(action.type) {
-  case OPEN_IMPORT_MODAL:
-    return true
-  case CLOSE_IMPORT_MODAL:
-    return false
-  default:
-    return state
-  }
-}
-
 export const isLoadingTaskEvents = (state = initialState.isLoadingTaskEvents, action) => {
   switch (action.type) {
   case LOAD_TASK_EVENTS_REQUEST:
@@ -327,27 +309,6 @@ export const taskEvents = (state = initialState.taskEvents, action) => {
       ...state,
       [action.task['@id']]: action.events
     }
-  }
-
-  return state
-}
-
-export const imports = (state = initialState.imports, action) => {
-  switch (action.type) {
-  case ADD_IMPORT:
-    return {
-      ...state,
-      [ action.token ]: '',
-    }
-  case IMPORT_SUCCESS:
-    return _.omit(state, [ action.token ])
-  case IMPORT_ERROR:
-    return {
-      ...state,
-      [ action.token ]: action.message,
-    }
-  case OPEN_IMPORT_MODAL:
-    return {}
   }
 
   return state

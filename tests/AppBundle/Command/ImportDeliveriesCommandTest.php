@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\AppBundle\Command;
 
-use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
-use AppBundle\Exception\DeliveryImportRolledBackException;
-use AppBundle\Service\DeliveryImporter;
-use AppBundle\Service\DeliveryImportStatusManager;
+use AppBundle\Entity\ImportQueue;
+use AppBundle\Exception\ImportRolledBackException;
+use AppBundle\Import\ImportRunner;
+use AppBundle\Service\ImportStatusManager;
 use AppBundle\Transporter\ImportFailureNotifier;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManagerInterface;
@@ -121,7 +121,7 @@ class ImportDeliveriesCommandTest extends KernelTestCase
     /**
      * Loads a store, and puts a double in place of the importer, which ends each import the way $import says
      *
-     * @param \Closure(DeliveryImportQueue): int $import Given the import, returns the number of deliveries saved
+     * @param \Closure(ImportQueue): int $import Given the import, returns the number of deliveries saved
      * @return string The IRI of the store
      */
     private function importWith(\Closure $import): string
@@ -142,19 +142,19 @@ class ImportDeliveriesCommandTest extends KernelTestCase
         // The notifier sends emails, it's checked on its own
         $container->set(ImportFailureNotifier::class, $this->prophesize(ImportFailureNotifier::class)->reveal());
 
-        $importer = $this->prophesize(DeliveryImporter::class);
+        $importer = $this->prophesize(ImportRunner::class);
         $importer
-            ->import(Argument::type('string'), ['create_task_if_address_not_geocoded' => true])
+            ->run(Argument::type('string'), ['create_task_if_address_not_geocoded' => true], Argument::type('int'))
             ->will(function (array $args) use ($import, $container): int {
                 $queue = $container->get('doctrine')->getManager()
-                    ->getRepository(DeliveryImportQueue::class)
+                    ->getRepository(ImportQueue::class)
                     ->findOneBy(['filename' => $args[0]]);
 
-                $container->get(DeliveryImportStatusManager::class)->started($queue);
+                $container->get(ImportStatusManager::class)->started($queue);
 
                 return $import($queue);
             });
-        $container->set(DeliveryImporter::class, $importer->reveal());
+        $container->set(ImportRunner::class, $importer->reveal());
 
         return sprintf('/api/stores/%d', $fixtures['store_1']->getId());
     }
@@ -173,8 +173,8 @@ class ImportDeliveriesCommandTest extends KernelTestCase
 
     public function testImportedFileIsLetGoOf(): void
     {
-        $store = $this->importWith(function (DeliveryImportQueue $queue): int {
-            self::getContainer()->get(DeliveryImportStatusManager::class)->completed($queue);
+        $store = $this->importWith(function (ImportQueue $queue): int {
+            self::getContainer()->get(ImportStatusManager::class)->completed($queue);
 
             return 2;
         });
@@ -195,9 +195,9 @@ class ImportDeliveriesCommandTest extends KernelTestCase
      */
     public function testFileIsKeptWhenSavingItWasRolledBack(): void
     {
-        $store = $this->importWith(function (DeliveryImportQueue $queue): int {
-            self::getContainer()->get(DeliveryImportStatusManager::class)->failed($queue);
-            throw new DeliveryImportRolledBackException('Deadlock detected');
+        $store = $this->importWith(function (ImportQueue $queue): int {
+            self::getContainer()->get(ImportStatusManager::class)->failed($queue);
+            throw new ImportRolledBackException('Deadlock detected');
         });
 
         $tester = $this->execute($store);
@@ -232,8 +232,8 @@ class ImportDeliveriesCommandTest extends KernelTestCase
 
     public function testFileIsKeptWhenNoRowCouldBeSaved(): void
     {
-        $store = $this->importWith(function (DeliveryImportQueue $queue): int {
-            self::getContainer()->get(DeliveryImportStatusManager::class)->failed($queue, [
+        $store = $this->importWith(function (ImportQueue $queue): int {
+            self::getContainer()->get(ImportStatusManager::class)->failed($queue, [
                 ['row' => 2, 'errors' => ['dropoff.address is not valid']],
                 ['row' => 3, 'errors' => ['dropoff.address is not valid']],
             ]);
@@ -255,8 +255,8 @@ class ImportDeliveriesCommandTest extends KernelTestCase
      */
     public function testFileIsLetGoOfWhenSomeRowsWereSaved(): void
     {
-        $store = $this->importWith(function (DeliveryImportQueue $queue): int {
-            self::getContainer()->get(DeliveryImportStatusManager::class)->failed($queue, [
+        $store = $this->importWith(function (ImportQueue $queue): int {
+            self::getContainer()->get(ImportStatusManager::class)->failed($queue, [
                 ['row' => 3, 'errors' => ['dropoff.address is not valid']],
             ]);
 

@@ -9,6 +9,13 @@ class Spreadsheet extends Constraint
 {
     public $type;
 
+    /**
+     * Whether the columns of the file will be matched to the fields they hold before it
+     * is read. A file that will be mapped is only checked for being readable: what its
+     * columns are called is beside the point.
+     */
+    public $mapped = false;
+
     public $missingColumnMessage = 'spreadsheet.missing_column';
     public $missingColumnsMessage = 'spreadsheet.missing_columns';
     public $alternativeColumnsMessage = 'spreadsheet.alternative_columns';

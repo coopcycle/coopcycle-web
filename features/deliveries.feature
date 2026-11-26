@@ -3646,9 +3646,9 @@ Feature: Deliveries
     And the JSON should match:
       """
       {
-        "@context": "/api/contexts/DeliveryImportQueue",
-        "@id": "@string@.startsWith('/api/delivery_import_queues/')",
-        "@type": "DeliveryImportQueue"
+        "@context": "/api/contexts/ImportQueue",
+        "@id": "@string@.startsWith('/api/import_queues/')",
+        "@type": "ImportQueue"
       }
       """
 

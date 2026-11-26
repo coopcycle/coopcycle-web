@@ -152,6 +152,31 @@ services:
   AppBundle\MessageHandler\:
     resource: '../src/MessageHandler/*'
 
+  AppBundle\Import\:
+    resource: '../src/Import/*'
+
+  # Keyed by the import type, so resolving one doesn't build what the others need
+  AppBundle\Import\DeliveryImportHandler:
+    tags:
+      - { name: 'app.import_handler', key: 'deliveries' }
+
+  AppBundle\Import\TaskImportHandler:
+    tags:
+      - { name: 'app.import_handler', key: 'tasks' }
+
+  AppBundle\Import\DeliveryImportCanceller:
+    tags:
+      - { name: 'app.import_canceller', key: 'deliveries' }
+
+  AppBundle\Import\TaskImportCanceller:
+    tags:
+      - { name: 'app.import_canceller', key: 'tasks' }
+
+  AppBundle\Import\ImportRegistry:
+    arguments:
+      $handlers: !tagged_locator { tag: 'app.import_handler', index_by: 'key' }
+      $cancellers: !tagged_locator { tag: 'app.import_canceller', index_by: 'key' }
+
   AppBundle\Scheduler\:
     resource: '../src/Scheduler/*'
     arguments:
@@ -1628,7 +1653,7 @@ services:
   AppBundle\Security\DeliveryQuoteVoter:
     tags: ['security.voter']
 
-  AppBundle\Security\DeliveryImportQueueVoter:
+  AppBundle\Security\ImportQueueVoter:
     tags: ['security.voter']
 
   AppBundle\Security\TimeSlotVoter:

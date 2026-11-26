@@ -3,7 +3,7 @@
 namespace AppBundle\Validator\Constraints;
 
 use AppBundle\Spreadsheet\Column\ColumnMapping as ColumnMappingValue;
-use AppBundle\Spreadsheet\DeliverySpreadsheetParser;
+use AppBundle\Import\ImportRegistry;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;
@@ -16,7 +16,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ColumnMappingValidator extends ConstraintValidator
 {
     public function __construct(
-        private DeliverySpreadsheetParser $deliveryParser,
+        private ImportRegistry $registry,
         private TranslatorInterface $translator,
     ) {}
 
@@ -32,7 +32,7 @@ class ColumnMappingValidator extends ConstraintValidator
 
         $mapping = ColumnMappingValue::fromArray($value);
 
-        $parser = $this->parserFor($constraint->type);
+        $parser = $this->registry->parserFor($constraint->type);
 
         // Every row would fail on a column that isn't there, so the file is of no use
         // until it is mapped: the import is never started without one
@@ -43,6 +43,20 @@ class ColumnMappingValidator extends ConstraintValidator
                 ->setParameter('%columns%', implode(', ', array_map(
                     fn (string $key) => $this->translator->trans(sprintf('import.column.%s', $key)),
                     $missing
+                )))
+                ->addViolation();
+        }
+
+        // A field that can be given in more than one way, an address or its coordinates
+        foreach ($parser->getRequiredColumnGroups() as $group) {
+            if (!empty(array_intersect($group, $mapping->mappedKeys()))) {
+                continue;
+            }
+
+            $this->context->buildViolation($constraint->oneOfColumnsMessage)
+                ->setParameter('%columns%', implode(', ', array_map(
+                    fn (string $key) => $this->translator->trans(sprintf('import.column.%s', $key)),
+                    $group
                 )))
                 ->addViolation();
         }
@@ -58,13 +72,5 @@ class ColumnMappingValidator extends ConstraintValidator
                 )))
                 ->addViolation();
         }
-    }
-
-    private function parserFor(string $type): DeliverySpreadsheetParser
-    {
-        return match ($type) {
-            'delivery' => $this->deliveryParser,
-            default => throw new \InvalidArgumentException(sprintf('No column mapping for "%s"', $type)),
-        };
     }
 }

@@ -18,7 +18,7 @@ services:
     arguments:
       $countryCode: '%country_iso%'
 
-  AppBundle\Form\DeliveryImportMappingType:
+  AppBundle\Form\ImportMappingType:
     tags:
       - { name: form.type }
 
@@ -170,7 +170,7 @@ services:
   AppBundle\Form\Type\MoneyType:
     tags: [ form.type ]
 
-  AppBundle\Form\DeliveryImportType:
+  AppBundle\Form\ImportType:
     tags: [ form.type ]
 
   AppBundle\Form\TimeSlotType:

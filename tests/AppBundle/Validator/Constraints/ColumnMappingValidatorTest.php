@@ -2,9 +2,13 @@
 
 namespace Tests\AppBundle\Validator\Constraints;
 
+use AppBundle\Entity\ImportQueue;
+use AppBundle\Import\DeliveryImportHandler;
+use AppBundle\Import\ImportRegistry;
 use AppBundle\Spreadsheet\DeliverySpreadsheetParser;
 use AppBundle\Validator\Constraints\ColumnMapping;
 use AppBundle\Validator\Constraints\ColumnMappingValidator;
+use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -23,12 +27,21 @@ class ColumnMappingValidatorTest extends ConstraintValidatorTestCase
             'dropoff.address',
             'dropoff.timeslot',
         ]);
+        $parser->method('getRequiredColumnGroups')->willReturn([]);
+
+        $importHandler = $this->createMock(DeliveryImportHandler::class);
+        $importHandler->method('getParser')->willReturn($parser);
+
+        $registry = new ImportRegistry(
+            new ServiceLocator([ImportQueue::TYPE_DELIVERIES => fn () => $importHandler]),
+            new ServiceLocator([])
+        );
 
         $translator = $this->createMock(TranslatorInterface::class);
         // The column names are spelled out to the user, the keys are ours
         $translator->method('trans')->willReturnCallback(fn (string $key) => $key);
 
-        return new ColumnMappingValidator($parser, $translator);
+        return new ColumnMappingValidator($registry, $translator);
     }
 
     private function fullMapping(): array

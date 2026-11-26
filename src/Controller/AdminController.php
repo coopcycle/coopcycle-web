@@ -26,7 +26,8 @@ use AppBundle\Entity\Cuisine;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\DeliveryRepository;
-use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
+use AppBundle\Entity\ImportQueue;
+use AppBundle\Import\ImportRegistry;
 use AppBundle\Entity\EmployeeProfile;
 use AppBundle\Entity\EmployeeProfileRepository;
 use AppBundle\Entity\HolidayRequestRepository;
@@ -55,8 +56,8 @@ use AppBundle\Form\ApiAppType;
 use AppBundle\Form\BannerType;
 use AppBundle\Form\CustomizeType;
 use AppBundle\Form\DataExportType;
-use AppBundle\Form\DeliveryImportType;
-use AppBundle\Service\DeliveryImportStatusManager;
+use AppBundle\Form\ImportType;
+use AppBundle\Service\ImportStatusManager;
 use AppBundle\Spreadsheet\Column\ColumnDetector;
 use AppBundle\Spreadsheet\DeliverySpreadsheetParser;
 use AppBundle\Form\EmbedSettingsType;
@@ -875,38 +876,56 @@ class AdminController extends AbstractController
         PaginatorInterface $paginator,
         DeliveryRepository $deliveryRepository,
         Hashids $hashids8,
-        Filesystem $deliveryImportsFilesystem,
+        ImportRegistry $importRegistry,
         MessageBusInterface $messageBus,
         CentrifugoClient $centrifugoClient,
         SlugifyInterface $slugify,
     )
     {
-        $deliveryImportForm = $this->createForm(DeliveryImportType::class, null, [
+        // Linked to from elsewhere — the dispatch board's Import button — to land on
+        // this screen with the upload dialog already open on the right kind of file.
+        // Not "import": this form is named after its own class, so a query parameter of
+        // that name is read as the form's data and the page answers 400.
+        $openImport = $request->query->get('upload');
+        if (!in_array($openImport, [ImportQueue::TYPE_DELIVERIES, ImportQueue::TYPE_TASKS], true)) {
+            $openImport = null;
+        }
+
+        $importForm = $this->createForm(ImportType::class, null, [
             'with_store' => true,
+            'with_tasks' => true,
+            'import_type' => $openImport ?? ImportQueue::TYPE_DELIVERIES,
             #FIXME; normally cypress e2e tests run with CSRF protection enabled, but once in a while CSRF tokens are not saved in the session (removed?) for this form
             'csrf_protection' => 'test' !== $this->environment
         ]);
 
-        $deliveryImportForm->handleRequest($request);
-        if ($deliveryImportForm->isSubmitted()) {
-            if ($deliveryImportForm->isValid()) {
-                $store = $deliveryImportForm->get('store')->getData();
+        $importForm->handleRequest($request);
+        if ($importForm->isSubmitted()) {
+            if ($importForm->isValid()) {
+                $type = ImportType::importType($importForm);
 
-                return $this->handleDeliveryImportForStore(
-                    store: $store,
-                    form: $deliveryImportForm,
+                // A delivery goes to a store, a task to a date: whichever the dispatcher
+                // chose, the other field was never filled in
+                $isTasks = ImportQueue::TYPE_TASKS === $type;
+
+                return $this->handleImportUpload(
+                    type: $type,
+                    store: $isTasks ? null : $importForm->get('store')->getData(),
+                    options: $isTasks
+                        ? ['date' => $importForm->get('date')->getData()->format('Y-m-d')]
+                        : [],
+                    form: $importForm,
                     entityManager: $this->entityManager,
                     hashids: $hashids8,
-                    filesystem: $deliveryImportsFilesystem,
-                    messageBus: $messageBus,
+                    filesystem: $importRegistry->handlerFor($type)->getFilesystem(),
                     slugify: $slugify,
                     routeTo: 'admin_deliveries',
                     logger: $this->logger,
-                    mappingRoute: 'admin_delivery_import_mapping',
+                    mappingRoute: 'admin_import_mapping',
                 );
             } else {
-                $this->logger->warning('Delivery import form is not valid', [
-                    'errors' => $deliveryImportForm->getErrors(true, false),
+                $this->logger->warning('Import form is not valid', [
+                    'errors' => $importForm->getErrors(true, false),
                 ]);
             }
         }
@@ -1016,50 +1035,52 @@ class AdminController extends AbstractController
 
         $importDate = new \DateTime($request->query->get('date', 'now'));
 
-        $importQueues = $this->entityManager->getRepository(DeliveryImportQueue::class)
-            ->createQueryBuilder('diq')
-            ->andWhere('DATE(diq.createdAt) = :import_date')
-            ->orderBy('diq.createdAt', 'DESC')
+        $importQueues = $this->entityManager->getRepository(ImportQueue::class)
+            ->createQueryBuilder('iq')
+            ->andWhere('DATE(iq.createdAt) = :import_date')
+            ->orderBy('iq.createdAt', 'DESC')
             ->setParameter('import_date', $importDate->format('Y-m-d'))
             ->getQuery()
             ->getResult();
 
-        // A failed import has saved no delivery, or some of them
-        $importedDeliveries = $this->entityManager->getRepository(Delivery::class)
-            ->countByImport(array_map(fn (DeliveryImportQueue $queue) => $queue->getId(), $importQueues));
+        $importIds = array_map(fn (ImportQueue $queue) => $queue->getId(), $importQueues);
+
+        // What each import created, which says whether there is anything to cancel. A
+        // failed import has saved none of them, or some.
+        $importedItems = $this->entityManager->getRepository(Delivery::class)->countByImport($importIds)
+            + $this->entityManager->getRepository(Task::class)->countByImport($importIds);
 
         return $this->render('admin/deliveries.html.twig', $this->auth([
             'deliveries' => $deliveries,
             'filters' => $filters,
             'routes' => $this->getDeliveryRoutes(),
             'stores' => $stores,
-            'delivery_import_form' => $deliveryImportForm->createView(),
+            'import_form' => $importForm->createView(),
+            'open_import' => $openImport,
             'delivery_export_form' => $dataExportForm->createView(),
             'import_queues' => $importQueues,
-            'imported_deliveries' => $importedDeliveries,
+            'imported_items' => $importedItems,
             'import_date' => $importDate,
             'centrifugo_token' => $centrifugoClient->generateConnectionToken($this->getUser()->getUsername(), (time() + 3600)),
             'centrifugo_channel' => sprintf('%s_events#%s', $this->getParameter('centrifugo_namespace'), $this->getUser()->getUsername()),
         ]));
     }
 
-    #[Route(path: '/admin/deliveries/imports/{id}/mapping', name: 'admin_delivery_import_mapping', defaults: ['layout' => 'admin.html.twig'], requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
-    public function deliveryImportMappingAction(
+    #[Route(path: '/admin/imports/{id}/mapping', name: 'admin_import_mapping', defaults: ['layout' => 'admin.html.twig'], requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    public function importMappingAction(
         int $id,
         Request $request,
-        Filesystem $deliveryImportsFilesystem,
-        DeliverySpreadsheetParser $spreadsheetParser,
+        ImportRegistry $importRegistry,
         ColumnDetector $columnDetector,
-        DeliveryImportStatusManager $statusManager,
+        ImportStatusManager $statusManager,
         MessageBusInterface $messageBus,
     )
     {
-        return $this->handleDeliveryImportMapping(
+        return $this->handleImportMapping(
             id: $id,
             request: $request,
             entityManager: $this->entityManager,
-            filesystem: $deliveryImportsFilesystem,
-            parser: $spreadsheetParser,
+            registry: $importRegistry,
             detector: $columnDetector,
             statusManager: $statusManager,
             messageBus: $messageBus,

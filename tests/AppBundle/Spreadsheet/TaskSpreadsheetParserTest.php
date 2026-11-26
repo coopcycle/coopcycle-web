@@ -2,12 +2,10 @@
 
 namespace Tests\AppBundle\Spreadsheet;
 
-use AppBundle\Doctrine\EventSubscriber\TaskSubscriber\TaskListProvider;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Tag;
-use AppBundle\Entity\TaskList;
 use AppBundle\Service\Geocoder;
 use AppBundle\Spreadsheet\AbstractSpreadsheetParser;
 use AppBundle\Spreadsheet\TaskSpreadsheetParser;
@@ -18,6 +16,7 @@ use Nucleos\UserBundle\Model\UserManager;
 use libphonenumber\PhoneNumber;
 use libphonenumber\PhoneNumberUtil;
 use Prophecy\Argument;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TaskSpreadsheetParserTest extends TestCase
 {
@@ -47,16 +46,8 @@ class TaskSpreadsheetParserTest extends TestCase
             ->getRepository(Package::class)
             ->willReturn($this->packageRepository->reveal());
 
-        $this->taskListProvider = $this->prophesize(TaskListProvider::class);
-        $this->taskListProvider
-            ->getTaskListForUserAndDate(Argument::cetera())
-            ->will(function ($args) {
-                $taskList = new TaskList();
-                $taskList->setDate($args[0]);
-                $taskList->setCourier($args[1]);
-
-                return $taskList;
-            });
+        $translator = $this->prophesize(TranslatorInterface::class);
+        $translator->trans(Argument::cetera())->will(fn ($args) => $args[0]);
 
         return new TaskSpreadsheetParser(
             $this->geocoder->reveal(),
@@ -65,23 +56,40 @@ class TaskSpreadsheetParserTest extends TestCase
             $this->userManager->reveal(),
             'fr',
             $this->entityManager->reveal(),
-            $this->taskListProvider->reveal(),
+            $translator->reveal(),
         );
     }
 
     private function mockDependencies()
     {
+        // One address per call, not one shared by every row: a row's name, description
+        // and phone number are set on it
         $this->geocoder
             ->geocode(Argument::type('string'))
-            ->willReturn(new Address());
+            ->will(fn () => new Address());
 
         $this->geocoder
             ->reverse(Argument::type('float'), Argument::type('float'))
-            ->willReturn(new Address());
+            ->will(fn () => new Address());
 
         $this->phoneNumberUtil
             ->parse(Argument::any(), Argument::type('string'))
             ->willReturn(new PhoneNumber());
+    }
+
+    /**
+     * @return \AppBundle\Entity\Task[] the tasks of a result, by row number
+     */
+    private function parseTasks(string $filename): array
+    {
+        $result = $this->parser->parse($filename);
+
+        $this->assertFalse($result->hasErrors(), sprintf(
+            'The file was read with errors: %s',
+            json_encode($result->getSortedErrors())
+        ));
+
+        return array_map(fn (array $row) => $row['task'], $result->getData());
     }
 
     public function testCsv()
@@ -89,9 +97,28 @@ class TaskSpreadsheetParserTest extends TestCase
         $this->mockDependencies();
 
         $filename = realpath(__DIR__ . '/../Resources/spreadsheet/tasks.csv');
-        $tasks = $this->parser->parse($filename);
 
-        $this->assertCount(5, $tasks);
+        $this->assertCount(5, $this->parseTasks($filename));
+    }
+
+    /**
+     * The column is in kilograms. Its value used to be converted and then dropped on the
+     * floor, so a file's weights never reached the tasks at all.
+     */
+    public function testWeightIsReadInKilograms()
+    {
+        $this->mockDependencies();
+
+        $filename = realpath(__DIR__ . '/../Resources/spreadsheet/tasks.csv');
+        $tasks = $this->parseTasks($filename);
+
+        // Row 2, a pickup: weight is not a dropoff's alone
+        $this->assertSame(2500, $tasks[1]->getWeight());
+        // Row 3 and 4, dropoffs
+        $this->assertSame(15000, $tasks[2]->getWeight());
+        $this->assertSame(50000, $tasks[3]->getWeight());
+        // Row 6, with no weight at all
+        $this->assertNull($tasks[5]->getWeight());
     }
 
     public function testCsvSemicolon()
@@ -99,22 +126,30 @@ class TaskSpreadsheetParserTest extends TestCase
         $this->mockDependencies();
 
         $filename = realpath(__DIR__ . '/../Resources/spreadsheet/tasks.semicolon.csv');
-        $tasks = $this->parser->parse($filename);
 
-        $this->assertCount(5, $tasks);
+        $this->assertCount(5, $this->parseTasks($filename));
     }
 
+    /**
+     * A row that can't be geocoded is reported on its row and the rest of the file is
+     * still read: a thousand-row file is worth fixing in one go.
+     */
     public function testCsvWithGeocoderError()
     {
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessageMatches('/^Could not geocode address/');
+        $this->mockDependencies();
 
         $this->geocoder
             ->geocode(Argument::type('string'))
             ->willReturn(null);
 
         $filename = realpath(__DIR__ . '/../Resources/spreadsheet/tasks.csv');
-        $tasks = $this->parser->parse($filename);
+        $result = $this->parser->parse($filename);
+
+        $this->assertTrue($result->hasErrors());
+        // Every row of the file says an address, and none of them geocodes
+        $this->assertCount(5, $result->getSortedErrors());
+        $this->assertSame(['import.address.geocode.error'], $result->getSortedErrors()[2]);
+        $this->assertEmpty($result->getData());
     }
 
     public function testXlsx()
@@ -122,22 +157,23 @@ class TaskSpreadsheetParserTest extends TestCase
         $this->mockDependencies();
 
         $filename = realpath(__DIR__ . '/../Resources/spreadsheet/tasks.xlsx');
-        $tasks = $this->parser->parse($filename);
 
-        $this->assertCount(5, $tasks);
+        $this->assertCount(5, $this->parseTasks($filename));
     }
 
     public function testXlsxWithGeocoderError()
     {
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessageMatches('/^Could not geocode address/');
+        $this->mockDependencies();
 
         $this->geocoder
             ->geocode(Argument::type('string'))
             ->willReturn(null);
 
         $filename = realpath(__DIR__ . '/../Resources/spreadsheet/tasks.xlsx');
-        $tasks = $this->parser->parse($filename);
+        $result = $this->parser->parse($filename);
+
+        $this->assertTrue($result->hasErrors());
+        $this->assertEmpty($result->getData());
     }
 
     public function testOds()
@@ -145,40 +181,56 @@ class TaskSpreadsheetParserTest extends TestCase
         $this->mockDependencies();
 
         $filename = realpath(__DIR__ . '/../Resources/spreadsheet/tasks.ods');
-        $tasks = $this->parser->parse($filename);
 
-        $this->assertCount(5, $tasks);
+        $this->assertCount(5, $this->parseTasks($filename));
     }
 
     public function testOdsWithGeocoderError()
     {
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessageMatches('/^Could not geocode address/');
+        $this->mockDependencies();
 
         $this->geocoder
             ->geocode(Argument::type('string'))
             ->willReturn(null);
 
         $filename = realpath(__DIR__ . '/../Resources/spreadsheet/tasks.ods');
-        $tasks = $this->parser->parse($filename);
+        $result = $this->parser->parse($filename);
+
+        $this->assertTrue($result->hasErrors());
+        $this->assertEmpty($result->getData());
     }
 
+    /**
+     * The parser reads who a row is assigned to and leaves it at that: appending the task
+     * to a courier's list writes to a list that is already saved, which only the caller
+     * may do, inside its transaction.
+     */
     public function testCsvWithAssignColumn()
     {
         $this->mockDependencies();
 
         $filename = realpath(__DIR__ . '/../Resources/spreadsheet/tasks_assign.csv');
-        $tasks = $this->parser->parse($filename);
+        $result = $this->parser->parse($filename);
 
-        $this->assertCount(5, $tasks);
+        $this->assertFalse($result->hasErrors());
 
-        foreach ($tasks as $task) {
-            if ($task->getAddress()->getName() === 'Fleurs Express') {
-                $this->assertTrue($task->isAssigned());
-                $this->assertTrue($task->isAssignedTo($this->bob));
-                break;
-            }
-        }
+        $rows = $result->getData();
+        $this->assertCount(5, $rows);
+
+        $assigned = array_values(array_filter(
+            $rows,
+            fn (array $row) => 'Fleurs Express' === $row['task']->getAddress()->getName()
+        ));
+
+        $this->assertCount(1, $assigned);
+        $this->assertNotNull($assigned[0]['assign']);
+
+        [ $user, $date ] = $assigned[0]['assign'];
+        $this->assertSame($this->bob, $user);
+        $this->assertInstanceOf(\DateTime::class, $date);
+
+        // Nothing was written while reading the file
+        $this->assertFalse($assigned[0]['task']->isAssigned());
     }
 
     public function parseTimeWindowProvider()
@@ -242,9 +294,8 @@ class TaskSpreadsheetParserTest extends TestCase
         $this->mockDependencies();
 
         $filename = realpath(__DIR__ . '/../Resources/spreadsheet/tasks_with_accents.csv');
-        $tasks = $this->parser->parse($filename);
 
-        $this->assertCount(1, $tasks);
+        $this->assertCount(1, $this->parseTasks($filename));
 
         $this->geocoder->geocode('Calle 181b #16-13, Bogotá, Colombia')->shouldHaveBeenCalled();
     }

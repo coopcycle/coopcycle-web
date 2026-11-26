@@ -16,6 +16,7 @@ import i18n from '../i18n'
 import moment from 'moment'
 
 import './list.scss'
+import initImportModal from './import-modal'
 
 // Enable Bootstrap tooltips
 // https://getbootstrap.com/docs/3.4/javascript/#tooltips
@@ -101,20 +102,20 @@ function SpreadsheetViewer({ data, errors, status, onClose }) {
   return (
     <Modal
       isOpen={ true }
-      className="ReactModal__Content--delivery-import-spreadsheet"
+      className="ReactModal__Content--import-spreadsheet"
       shouldCloseOnOverlayClick={ true }
       onRequestClose={ onClose }
     >
-      <header className="delivery-import-spreadsheet__header text-right"><a href="#" onClick={ closeModal }><i className="fa fa-close fa-2x text-muted" /></a></header>
-      <div className="delivery-import-spreadsheet__body">
+      <header className="import-spreadsheet__header text-right"><a href="#" onClick={ closeModal }><i className="fa fa-close fa-2x text-muted" /></a></header>
+      <div className="import-spreadsheet__body">
       { status === 'loading' &&
-      <div className="delivery-import-spreadsheet__placeholder text-muted">
+      <div className="import-spreadsheet__placeholder text-muted">
         <i className="fa fa-spinner fa-spin fa-3x mb-3" />
         <span>{ _t('LOADING') }</span>
       </div>
       }
       { status === 'failed' &&
-      <div className="delivery-import-spreadsheet__placeholder text-danger">
+      <div className="import-spreadsheet__placeholder text-danger">
         <i className="fa fa-exclamation-triangle fa-3x mb-3" />
         <span>{ _t('SOMETHING_WENT_WRONG') }</span>
       </div>
@@ -161,7 +162,7 @@ function SpreadsheetViewer({ data, errors, status, onClose }) {
 }
 
 function renderSpreadsheetViewer({ status, data, errors }) {
-  const container = document.getElementById('delivery_import_spreadsheet')
+  const container = document.getElementById('import_spreadsheet')
 
   render(<SpreadsheetViewer
     status={ status }
@@ -179,9 +180,9 @@ const importStatusIcon = {
   'completed': 'check',
   'failed': 'exclamation-triangle',
   'cancelled': 'ban',
-  // Once the import is over, its deliveries cancelled by a dispatcher: nothing from the file is left either
-  'deliveries_cancelling': 'spinner fa-spin',
-  'deliveries_cancelled': 'ban',
+  // Once the import is over and what it created was cancelled by a dispatcher: nothing from the file is left either
+  'items_cancelling': 'spinner fa-spin',
+  'items_cancelled': 'ban',
 }
 
 // Kept in step with ImportQueue::CANCELLABLE_STATUSES
@@ -190,10 +191,16 @@ const cancellableImportStatuses = [ 'mapping', 'pending', 'started' ]
 // The values are only written with textContent, there is nothing to escape
 const _t = (key, options = {}) => i18n.t(key, { ...options, interpolation: { escapeValue: false } })
 
-function _importProgressText({ status, startedAt, totalRows, processedRows, errorRows, ...cancellation }) {
+/**
+ * The strings that name what the file held come in a family per kind: interpolating the
+ * noun would get the plural rules wrong in half the languages.
+ */
+const _tKind = (key, type, options = {}) => _t(`${key}_${type.toUpperCase()}`, options)
+
+function _importProgressText({ status, type, startedAt, totalRows, processedRows, errorRows, ...cancellation }) {
   // Nothing of the file has been read yet, and nothing will be until its columns are mapped
   if (status === 'mapping') {
-    return _t('DELIVERY_IMPORT_WAITING_FOR_MAPPING')
+    return _t('IMPORT_WAITING_FOR_MAPPING')
   }
 
   // Unknown until a worker has read the file
@@ -202,7 +209,7 @@ function _importProgressText({ status, startedAt, totalRows, processedRows, erro
   }
 
   const parts = [
-    _t('DELIVERY_IMPORT_PROGRESS_ROWS', {
+    _t('IMPORT_PROGRESS_ROWS', {
       processed: processedRows.toLocaleString(),
       total: totalRows.toLocaleString(),
       percent: Math.floor(processedRows / totalRows * 100),
@@ -210,42 +217,42 @@ function _importProgressText({ status, startedAt, totalRows, processedRows, erro
   ]
 
   if (errorRows > 0) {
-    parts.push(_t('DELIVERY_IMPORT_PROGRESS_ERRORS', { count: errorRows }))
+    parts.push(_t('IMPORT_PROGRESS_ERRORS', { count: errorRows }))
   }
 
   if (status === 'saving') {
-    parts.push(_t('DELIVERY_IMPORT_PROGRESS_SAVING'))
+    parts.push(_tKind('IMPORT_PROGRESS_SAVING', type))
   }
 
   if (status === 'started' && startedAt && processedRows > 0 && processedRows < totalRows) {
     const elapsedSeconds = moment().diff(moment(startedAt), 'seconds')
     const remainingSeconds = elapsedSeconds / processedRows * (totalRows - processedRows)
 
-    parts.push(_t('DELIVERY_IMPORT_PROGRESS_REMAINING', {
+    parts.push(_t('IMPORT_PROGRESS_REMAINING', {
       duration: moment.duration(remainingSeconds, 'seconds').humanize()
     }))
   }
 
-  return parts.concat(_deliveriesCancellationText(cancellation)).join(' · ')
+  return parts.concat(_itemsCancellationText(type, cancellation)).join(' · ')
 }
 
-function _deliveriesCancellationText({ deliveriesCancellation, deliveriesToCancel, cancelledDeliveries, skippedDeliveries }) {
-  if (deliveriesCancellation === 'cancelling') {
+function _itemsCancellationText(type, { itemsCancellation, itemsToCancel, cancelledItems, skippedItems }) {
+  if (itemsCancellation === 'cancelling') {
     // Unknown until a worker has looked them up
-    if (deliveriesToCancel === null) {
-      return [ _t('DELIVERY_IMPORT_CANCELLING_DELIVERIES') ]
+    if (itemsToCancel === null) {
+      return [ _tKind('IMPORT_CANCELLING', type) ]
     }
 
-    return [ _t('DELIVERY_IMPORT_CANCELLING_DELIVERIES_PROGRESS', {
-      done: (cancelledDeliveries + skippedDeliveries).toLocaleString(),
-      total: deliveriesToCancel.toLocaleString(),
+    return [ _tKind('IMPORT_CANCELLING_PROGRESS', type, {
+      done: (cancelledItems + skippedItems).toLocaleString(),
+      total: itemsToCancel.toLocaleString(),
     }) ]
   }
 
-  if (deliveriesCancellation === 'cancelled') {
-    const parts = [ _t('DELIVERY_IMPORT_DELIVERIES_CANCELLED', { count: cancelledDeliveries }) ]
-    if (skippedDeliveries > 0) {
-      parts.push(_t('DELIVERY_IMPORT_DELIVERIES_LEFT', { count: skippedDeliveries }))
+  if (itemsCancellation === 'cancelled') {
+    const parts = [ _tKind('IMPORT_CANCELLED', type, { count: cancelledItems }) ]
+    if (skippedItems > 0) {
+      parts.push(_tKind('IMPORT_LEFT', type, { count: skippedItems }))
     }
 
     return parts
@@ -254,30 +261,33 @@ function _deliveriesCancellationText({ deliveriesCancellation, deliveriesToCance
   return []
 }
 
-// The state of its deliveries, once they are being cancelled, rather than that of the import
-function _displayStatus({ status, deliveriesCancellation }) {
-  return deliveriesCancellation ? `deliveries_${deliveriesCancellation}` : status
+// The state of what it created, once that is being cancelled, rather than that of the import
+function _displayStatus({ status, itemsCancellation }) {
+  return itemsCancellation ? `items_${itemsCancellation}` : status
 }
 
 function _renderImportStatus(row, importQueue) {
   // As in the template, an icon can come with a modifier: "spinner fa-spin"
-  row.querySelector('[data-delivery-import-status]').className = `fa fa-${importStatusIcon[_displayStatus(importQueue)]}`
+  row.querySelector('[data-import-status]').className = `fa fa-${importStatusIcon[_displayStatus(importQueue)]}`
 }
 
 function _renderImportProgress(row, progress) {
-  row.querySelector('[data-delivery-import-progress]').textContent = _importProgressText(progress)
-  row.querySelector('[data-delivery-import-cancel-button]')
+  row.querySelector('[data-import-progress]').textContent = _importProgressText({
+    type: row.dataset.importType,
+    ...progress,
+  })
+  row.querySelector('[data-import-cancel-button]')
     .classList.toggle('d-none', !cancellableImportStatuses.includes(progress.status))
   // Only once
-  if (progress.deliveriesCancellation) {
-    row.querySelector('[data-delivery-import-cancel-deliveries-button]').classList.add('d-none')
+  if (progress.itemsCancellation) {
+    row.querySelector('[data-import-cancel-items-button]').classList.add('d-none')
   }
 }
 
 function _progressFromDataset(el) {
   const {
     status, startedAt, totalRows, processedRows, errorRows,
-    deliveriesCancellation, deliveriesToCancel, cancelledDeliveries, skippedDeliveries,
+    itemsCancellation, itemsToCancel, cancelledItems, skippedItems,
   } = el.dataset
 
   return {
@@ -286,49 +296,51 @@ function _progressFromDataset(el) {
     totalRows: totalRows ? parseInt(totalRows, 10) : null,
     processedRows: parseInt(processedRows || '0', 10),
     errorRows: parseInt(errorRows || '0', 10),
-    deliveriesCancellation: deliveriesCancellation || null,
-    deliveriesToCancel: deliveriesToCancel ? parseInt(deliveriesToCancel, 10) : null,
-    cancelledDeliveries: parseInt(cancelledDeliveries || '0', 10),
-    skippedDeliveries: parseInt(skippedDeliveries || '0', 10),
+    itemsCancellation: itemsCancellation || null,
+    itemsToCancel: itemsToCancel ? parseInt(itemsToCancel, 10) : null,
+    cancelledItems: parseInt(cancelledItems || '0', 10),
+    skippedItems: parseInt(skippedItems || '0', 10),
   }
 }
 
-function _cancelDeliveriesConfirmContent(filename) {
+function _cancelItemsConfirmContent(type, filename) {
   return (
     <div>
-      <p>{ _t('DELIVERY_IMPORT_CANCEL_DELIVERIES_FILE', { filename }) }</p>
+      <p>{ _tKind('IMPORT_CANCEL_FILE', type, { filename }) }</p>
       {/* The admin's styles remove the bullets of a list */}
       <ul style={{ listStyle: 'disc', paddingLeft: 20 }}>
-        <li>{ _t('DELIVERY_IMPORT_CANCEL_DELIVERIES_ORDERS') }</li>
-        <li>{ _t('DELIVERY_IMPORT_CANCEL_DELIVERIES_ASSIGNED') }</li>
-        <li>{ _t('DELIVERY_IMPORT_CANCEL_DELIVERIES_UNDER_WAY') }</li>
+        {/* Only a delivery has an order to be cancelled with it */}
+        { type === 'deliveries' && <li>{ _t('IMPORT_CANCEL_DELIVERIES_ORDERS') }</li> }
+        <li>{ _tKind('IMPORT_CANCEL_ASSIGNED', type) }</li>
+        <li>{ _tKind('IMPORT_CANCEL_UNDER_WAY', type) }</li>
       </ul>
-      <p><strong>{ _t('DELIVERY_IMPORT_CANCEL_DELIVERIES_NO_UNDO') }</strong></p>
+      <p><strong>{ _t('IMPORT_CANCEL_NO_UNDO') }</strong></p>
     </div>
   )
 }
 
-function addCancelDeliveries(el) {
+function addCancelItems(el) {
   el.addEventListener('click', e => {
 
     e.preventDefault()
 
-    const parentEl = e.target.closest('[data-delivery-import]')
+    const parentEl = e.target.closest('[data-import]')
+    const type = parentEl.dataset.importType
     // Only known on page load: an import completed since shows 0
-    const count = parseInt(parentEl.dataset.deliveryImportDeliveries || '0', 10)
+    const count = parseInt(parentEl.dataset.importCreated || '0', 10)
 
     AntdModal.confirm({
       title: count > 0 ?
-        _t('DELIVERY_IMPORT_CANCEL_DELIVERIES_TITLE', { count }) : _t('DELIVERY_IMPORT_CANCEL_DELIVERIES_TITLE_UNKNOWN'),
-      content: _cancelDeliveriesConfirmContent(parentEl.dataset.deliveryImportFilename),
-      okText: _t('DELIVERY_IMPORT_CANCEL_DELIVERIES_OK'),
+        _tKind('IMPORT_CANCEL_TITLE', type, { count }) : _tKind('IMPORT_CANCEL_TITLE_UNKNOWN', type),
+      content: _cancelItemsConfirmContent(type, parentEl.dataset.importFilename),
+      okText: _tKind('IMPORT_CANCEL_OK', type),
       okButtonProps: { danger: true },
-      cancelText: _t('DELIVERY_IMPORT_CANCEL_DELIVERIES_BACK'),
+      cancelText: _t('IMPORT_CANCEL_BACK'),
       width: 520,
       // The dialog stays open, its button loading, until the request is answered
       onOk: () => axios({
         method: 'put',
-        url: parentEl.dataset.deliveryImportCancelDeliveries,
+        url: parentEl.dataset.importCancelItems,
         headers: {
           Authorization: `Bearer ${window._auth.jwt}`
         }
@@ -348,15 +360,15 @@ function addCancel(el) {
 
     e.preventDefault()
 
-    if (!window.confirm(_t('DELIVERY_IMPORT_CANCEL_CONFIRM'))) {
+    if (!window.confirm(_tKind('IMPORT_CANCEL_CONFIRM', e.target.closest('[data-import]').dataset.importType))) {
       return
     }
 
-    const parentEl = e.target.closest('[data-delivery-import]')
+    const parentEl = e.target.closest('[data-import]')
 
     axios({
       method: 'put',
-      url: parentEl.dataset.deliveryImportCancel,
+      url: parentEl.dataset.importCancel,
       headers: {
         Authorization: `Bearer ${window._auth.jwt}`
       }
@@ -380,7 +392,7 @@ function addCancel(el) {
 function addSpreadsheetView(viewIcon) {
   viewIcon.addEventListener('click', e => {
 
-    const parentEl = e.target.closest('[data-delivery-import]')
+    const parentEl = e.target.closest('[data-import]')
 
     e.preventDefault()
 
@@ -392,14 +404,14 @@ function addSpreadsheetView(viewIcon) {
       [
         axios({
           method: 'get',
-          url: parentEl.dataset.deliveryImportCsv,
+          url: parentEl.dataset.importCsv,
           headers: {
             Authorization: `Bearer ${window._auth.jwt}`
           }
         }),
         axios({
           method: 'get',
-          url: parentEl.dataset.deliveryImportQueue,
+          url: parentEl.dataset.importQueue,
           headers: {
             Authorization: `Bearer ${window._auth.jwt}`
           }
@@ -426,17 +438,17 @@ function addRedownload(el) {
 
     e.preventDefault()
 
-    const parentEl = e.target.closest('[data-delivery-import]')
+    const parentEl = e.target.closest('[data-import]')
 
     axios({
       method: 'get',
-      url: parentEl.dataset.deliveryImportRedownload,
+      url: parentEl.dataset.importRedownload,
       headers: {
         Authorization: `Bearer ${window._auth.jwt}`
       }
     }).then(response => {
 
-      const basenameWithoutExtension = parentEl.dataset.deliveryImportFilename.replace(/\.[^/.]+$/, "")
+      const basenameWithoutExtension = parentEl.dataset.importFilename.replace(/\.[^/.]+$/, "")
 
       const file = new File([ response.data ], `${basenameWithoutExtension}.csv`, {
         type: 'text/csv',
@@ -456,15 +468,15 @@ function addRedownload(el) {
   }, false)
 }
 
-const deliveryImports = document.querySelector('[data-delivery-imports]')
+const deliveryImports = document.querySelector('[data-imports]')
 if (deliveryImports) {
 
   const centrifuge = createCentrifuge(deliveryImports.dataset.centrifugoToken)
 
   subscribe(centrifuge, deliveryImports.dataset.centrifugoChannel, function(data) {
     const { event } = data
-    if (event.name === 'delivery_import:updated') {
-      const row = document.querySelector(`[data-delivery-import-filename="${event.data.filename}"]`)
+    if (event.name === 'import:updated') {
+      const row = document.querySelector(`[data-import-filename="${event.data.filename}"]`)
       // An import from another day than the one displayed
       if (!row) {
         return
@@ -472,13 +484,13 @@ if (deliveryImports) {
       _renderImportProgress(row, event.data)
       _renderImportStatus(row, event.data)
       // The number of deliveries is only known on reload, but a completed import has some
-      if (event.data.status === 'completed' && !event.data.deliveriesCancellation) {
-        row.querySelector('[data-delivery-import-cancel-deliveries-button]').classList.remove('d-none')
+      if (event.data.status === 'completed' && !event.data.itemsCancellation) {
+        row.querySelector('[data-import-cancel-items-button]').classList.remove('d-none')
       }
       if (event.data.status === 'failed') {
         row.classList.add('danger')
         // Its click listener was added with the page: adding it again would open the file twice
-        const viewLink = row.querySelector('[data-delivery-import-view]')
+        const viewLink = row.querySelector('[data-import-view]')
         if (viewLink.dataset.errorsLabel) {
           viewLink.textContent = viewLink.dataset.errorsLabel
           viewLink.classList.add('text-danger')
@@ -489,14 +501,14 @@ if (deliveryImports) {
 
   centrifuge.connect()
 
-  Modal.setAppElement('#delivery_import_spreadsheet')
+  Modal.setAppElement('#import_spreadsheet')
 
-  deliveryImports.querySelectorAll('[data-delivery-import]').forEach(el => {
-    addSpreadsheetView(el.querySelector('[data-delivery-import-view]'))
-    addRedownload(el.querySelector('[data-delivery-import-redownload]'))
-    addCancel(el.querySelector('[data-delivery-import-cancel-button]'))
-    addCancelDeliveries(el.querySelector('[data-delivery-import-cancel-deliveries-button]'))
-    _renderImportProgress(el, _progressFromDataset(el.querySelector('[data-delivery-import-progress]')))
+  deliveryImports.querySelectorAll('[data-import]').forEach(el => {
+    addSpreadsheetView(el.querySelector('[data-import-view]'))
+    addRedownload(el.querySelector('[data-import-redownload]'))
+    addCancel(el.querySelector('[data-import-cancel-button]'))
+    addCancelItems(el.querySelector('[data-import-cancel-items-button]'))
+    _renderImportProgress(el, _progressFromDataset(el.querySelector('[data-import-progress]')))
   })
 }
 
@@ -509,3 +521,5 @@ if (deliveryImportsDatePicker) {
     }
   });
 }
+
+initImportModal()

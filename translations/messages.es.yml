@@ -904,6 +904,11 @@ restaurant.contract.variableDeliveryPriceEnabled.label: Habilite la cantidad var
 restaurant.contract.variableDeliveryPriceEnabled.disclaimer: La cantidad se calcula
   dinámicamente
 form.delivery_import.store.label: Tienda
+form.import.type.label: "¿Qué contiene este archivo?"
+form.import.type.deliveries: Entregas
+form.import.type.tasks: Tareas
+form.import.date.label: Fecha
+form.import.date.help: El día de las tareas del archivo, para las filas que no indican ninguna fecha.
 basics.view_example: Ver ejemplo
 task.receipt.greeting: Querido cliente,
 basics.close: Cerca
@@ -1388,8 +1393,15 @@ tasks.mark_as_done.has_previous: 'La tarea #%failed_task% no puede finalizarse p
   tiene una tarea previa #%previous_task% que debe ser finalizada antes.'
 import.errors.at.row: Errores en fila %row_number%
 import.address.geocode.error: No se pudo geocodificar la dirección %failed_address%
+import.address.reverse_geocode.error: No se ha encontrado ninguna dirección en las coordenadas %coordinates%
 import.time.range.error: Rango de tiempo "%value%" en %key% no es válido
 import.columns.missing: "El fichero no tiene la columna %columns%, añádela y vuelve a importar el fichero"
+import.columns.one_of.missing: "El archivo no tiene ninguna columna %columns%, añade una e importa el archivo de nuevo"
+import.address.missing: "La fila no indica ni dirección ni coordenadas"
+import.coordinates.error: "%key%: \"%value%\" no es un par de coordenadas, escríbelo como latitud,longitud"
+import.type.error: "type: \"%value%\" no es válido, escribe %types%"
+import.weight.error: "%key%: \"%value%\" no es un número"
+import.ref.duplicate: "ref: \"%value%\" ya se usa en la fila %row% de este archivo"
 import.telephone.error: "%key%: \"%value%\" no es un número de teléfono válido"
 import.metadata.error: "%key%: \"%value%\" no es válido, escríbelo como clave=valor, separados por espacios"
 import.packages.error: "%key%: \"%value%\" no es válido, escríbelo como paquete=cantidad, separados por espacios"
@@ -1401,6 +1413,8 @@ import.delivery.price.error.priceCalculation.row: El precio de la entrega no pud
 import.column_group.pickup: Recogida
 import.column_group.dropoff: Entrega
 import.column_group.delivery: General
+import.column_group.address: Dirección
+import.column_group.task: Tarea
 import.column.pickup.address: Dirección de recogida
 import.column.pickup.address.name: Nombre de la recogida
 import.column.pickup.address.description: Detalles de la dirección de recogida
@@ -1421,6 +1435,22 @@ import.column.dropoff.metadata: Metadatos de la entrega
 import.column.weight: Peso (kg)
 import.column.tour.name: Ruta
 import.column.external_reference: Referencia externa
+import.column.address: Dirección
+import.column.latlong: Coordenadas (latitud,longitud)
+import.column.address.name: Nombre
+import.column.address.description: Detalles de la dirección
+import.column.address.telephone: Número de teléfono
+import.column.address.contactName: Nombre de contacto
+import.column.type: Recogida o entrega
+import.column.timeslot: Franja horaria
+import.column.after: No antes de
+import.column.before: No después de
+import.column.comments: Comentarios
+import.column.tags: Etiquetas
+import.column.ref: Referencia
+import.column.packages: Paquetes
+import.column.group: Grupo de tareas
+import.column.assign: "Asignada a (usuario:fecha)"
 import.mapping.title: Asocia las columnas de tu archivo
 import.mapping.help: "Indica qué contiene cada columna de %filename%. Hemos rellenado las que hemos reconocido: revísalas y completa las demás."
 import.mapping.column_in_file: Columna de tu archivo
@@ -1548,22 +1578,30 @@ registration.confirm.invitation.link.title: "Usa el siguiente enlace para invita
   \ a tus colegas de trabajo a unirse"
 registration.step.invitation.copy.button: "Copiar el enlace"
 registration.step.invitation.link.copied: "Copiado"
-deliveries.imports: Ficheros importados
-deliveries.importing: El fichero %filename% va a ser importado.
-deliveries.imports.created_at: Creado el
-deliveries.imports.progress: Progreso
-deliveries.imports.cancel: Cancelar
-deliveries.imports.cancel_deliveries: "Cancelar las entregas"
-deliveries.imports.see_file: Ver archivo
-deliveries.imports.continue_mapping: Asociar las columnas
-deliveries.imports.drop_file: Descartar este archivo
-deliveries.imports.mapping_cancelled: "La importación de %filename% se ha descartado, no se ha importado nada."
-deliveries.imports.unreadable: "No se ha podido leer el archivo. Revísalo e impórtalo de nuevo."
+imports.title: Ficheros importados
+imports.type.deliveries: Un archivo de entregas
+imports.type.tasks: Un archivo de tareas
+imports.for_date: "para el %date%"
+imports.importing: El fichero %filename% va a ser importado.
+imports.created_at: Creado el
+imports.progress: Progreso
+imports.cancel: Cancelar
+imports.cancel_deliveries: "Cancelar las entregas"
+imports.cancel_tasks: "Cancelar las tareas"
+imports.see_file: Ver archivo
+imports.continue_mapping: Asociar las columnas
+imports.drop_file: Descartar este archivo
+imports.mapping_cancelled: "La importación de %filename% se ha descartado, no se ha importado nada."
+imports.unreadable: "No se ha podido leer el archivo. Revísalo e impórtalo de nuevo."
 deliveries.imports.error.abandoned: "La importación se ha descartado porque nunca se asociaron las columnas del archivo con los campos que contienen. No se ha importado nada, importa el archivo de nuevo."
-deliveries.imports.see_errored_file: Detalles de los errores
+imports.see_errored_file: Detalles de los errores
 deliveries.imports.error.interrupted: "La importación se interrumpió por un error inesperado, y no se importó ninguna entrega. Por favor, vuelve a importar el fichero."
 deliveries.imports.error.stalled: "La importación se detuvo porque no avanzaba desde hacía un tiempo anormalmente largo, probablemente porque el worker que la procesaba desapareció. No se importó ninguna entrega, por favor, vuelve a importar el fichero."
 deliveries.imports.error.rolled_back: "Guardar las entregas falló en esta línea, y no se importó ninguna. Por favor, vuelve a importar el fichero."
+tasks.imports.error.abandoned: "La importación se ha descartado porque nunca se asociaron las columnas del archivo con los campos que contienen. No se ha importado nada, importa el archivo de nuevo."
+tasks.imports.error.interrupted: "La importación se interrumpió por un error inesperado, y no se importó ninguna tarea. Por favor, vuelve a importar el fichero."
+tasks.imports.error.stalled: "La importación se detuvo porque no avanzaba desde hacía un tiempo anormalmente largo, probablemente porque el worker que la procesaba desapareció. No se importó ninguna tarea, por favor, vuelve a importar el fichero."
+tasks.imports.error.rolled_back: "Guardar las tareas falló en esta línea, y no se importó ninguna. Por favor, vuelve a importar el fichero."
 business.account.settings.link: Asociar a mi cuenta
 form.business_restaurant_group.restaurants_with_menu: Restaurantes con menú
 form.business_restaurant_group.restaurant: Restaurante
@@ -1698,7 +1736,7 @@ error.502: El servidor está al límite de su capacidad. Por favor, inténtelo d
 form.settings.company_legal_name.help: Introduzca el nombre legal completo de la empresa
   tal y como aparece en sus documentos oficiales.
 form.billing_method.percentage: Porcentaje del importe del pedido
-deliveries.import_upload_error: El archivo no se ha podido cargar. Por favor, inténtelo
+imports.upload_error: El archivo no se ha podido cargar. Por favor, inténtelo
   más tarde.
 restaurant.form.deposit_refund_enabled.docs_path: /en/admin/restaurants/general-settings/#deposit-refund
 restaurant.form.quotes_allowed.docs_path: /en/admin/restaurants/general-settings/#quotes-allowed
