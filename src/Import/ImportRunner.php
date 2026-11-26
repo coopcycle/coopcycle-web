@@ -60,8 +60,27 @@ class ImportRunner
      */
     public function run(string $filename, array $options = [], ?int $queueId = null): int
     {
+        // A worker imports one file among other messages, and the command imports several
+        // files in a row: leaving them off would silence every notification that comes after
+        $pushNotificationsWereEnabled = RemotePushNotificationManager::isEnabled();
         RemotePushNotificationManager::disable();
 
+        try {
+            return $this->doRun($filename, $options, $queueId);
+        } finally {
+            if ($pushNotificationsWereEnabled) {
+                RemotePushNotificationManager::enable();
+            }
+        }
+    }
+
+    /**
+     * @param array<string,mixed> $options
+     *
+     * @throws ImportRolledBackException
+     */
+    private function doRun(string $filename, array $options, ?int $queueId): int
+    {
         $queue = $this->findQueue($filename, $queueId);
 
         if (null === $queue) {

@@ -51,11 +51,30 @@ class ImportRunnerTest extends TestCase
 
     protected function tearDown(): void
     {
-        // The runner disables push notifications for the whole process,
-        // the tests running after this one expect them to be enabled
+        // A failing test may leave them off, and the whole process shares the flag
         RemotePushNotificationManager::enable();
 
         parent::tearDown();
+    }
+
+    /**
+     * Push notifications are silenced while a file is imported, so a courier is not
+     * told about every task it brings in. The flag is static and the process goes on
+     * to other messages (and, for the command, to other files), so it has to come back.
+     */
+    public function testPushNotificationsAreOnAgainAfterTheImport(): void
+    {
+        $queue = $this->createQueue(new Store(), 42, ImportQueue::STATUS_COMPLETED);
+
+        $importer = $this->createImporter(
+            $this->createEntityManager($queue),
+            $this->prophesize(DeliverySpreadsheetParser::class),
+            $this->prophesize(ImportStatusManager::class)
+        );
+
+        $importer->run('deliveries.csv');
+
+        $this->assertTrue(RemotePushNotificationManager::isEnabled());
     }
 
     public function testDeliveryWithoutPricingRuleGetsAnOrderToReview(): void
