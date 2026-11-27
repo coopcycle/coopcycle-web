@@ -2,6 +2,7 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Entity\OrderTransfer;
 use AppBundle\Entity\User;
 use Carbon\Carbon;
 use Psr\Log\LoggerInterface;
@@ -37,6 +38,18 @@ class StripeManager
             return;
         }
 
+        // An order part-paid by a gift card is settled from the platform
+        // balance, not split by Connect at charge time -- so the charge must
+        // stay on the platform account. Clearing this is also what keeps a
+        // later refund on the same account as the charge.
+        //
+        // @see GiftCardSettlement for the other half: paying the restaurant.
+        if ($order->hasGiftCardPayment()) {
+            $payment->setStripeUserId(null);
+
+            return;
+        }
+
         $restaurant = $order->getRestaurant();
 
         $livemode = $this->settingsManager->isStripeLivemode();
@@ -54,6 +67,12 @@ class StripeManager
         $order = $payment->getOrder();
 
         if (!$order->hasVendor() || $order->isMultiVendor()) {
+            return $options;
+        }
+
+        // Same reason as configurePayment(): a gift-card order is charged on
+        // the platform account, never directly on the restaurant's.
+        if ($order->hasGiftCardPayment()) {
             return $options;
         }
 
@@ -79,9 +98,19 @@ class StripeManager
             return $payload;
         }
 
-        // If it is a complementary payment,
-        // we do not take application fee
-        if ($payment->isMealVoucherComplement()) {
+        // Neither a fee nor a transfer goes on this charge when it is only
+        // part of the order.
+        //
+        // For a meal voucher complement that is because the restaurant
+        // collected the voucher directly and the co-op invoices its fee
+        // separately. For a gift-card order it is because the whole order is
+        // settled afterwards, by transfer from the platform balance.
+        //
+        // Either way, putting them here would simply fail: Stripe rejects an
+        // application fee larger than the charge, and transfer_data.amount is
+        // computed from the *order* total, which exceeds what was taken once
+        // the order is split.
+        if ($payment->isComplement() || $order->hasGiftCardPayment()) {
 
             return $this->addCustomerParameter($payment, $payload);
         }
@@ -158,6 +187,13 @@ class StripeManager
             'capture_method' => 'manual'
             // 'statement_descriptor' => '...',
         ];
+
+        // Groups the charge with the transfers that will later pay the
+        // restaurant out of it. Costs nothing, and during an incident it is
+        // the only way to ask Stripe "what belongs to this order".
+        if ($order->hasGiftCardPayment()) {
+            $payload['transfer_group'] = OrderTransfer::transferGroupFor($order);
+        }
 
         $this->configurePayment($payment);
 
@@ -264,6 +300,116 @@ class StripeManager
         return Stripe\Refund::create($args, $stripeOptions);
     }
 
+    /**
+     * Cancels an authorization that is no longer wanted.
+     *
+     * Checkout authorizes each leg of a split order in turn, and if a later
+     * one fails the earlier ones were, until now, simply abandoned -- which
+     * leaves a real hold on the customer's card for about a week, for an
+     * order that never happened. Gift cards make split checkouts common
+     * enough that this had to stop being acceptable.
+     */
+    public function cancelIntent(PaymentInterface $payment): ?Stripe\PaymentIntent
+    {
+        if (!$payment->hasPaymentIntent()) {
+            return null;
+        }
+
+        $this->setupStripeApi();
+
+        $stripeOptions = $this->getStripeOptions($payment);
+
+        $intent = Stripe\PaymentIntent::retrieve($payment->getPaymentIntent(), $stripeOptions);
+
+        if (!in_array($intent->status, [
+            Stripe\PaymentIntent::STATUS_REQUIRES_CAPTURE,
+            Stripe\PaymentIntent::STATUS_REQUIRES_CONFIRMATION,
+            Stripe\PaymentIntent::STATUS_REQUIRES_ACTION,
+            Stripe\PaymentIntent::STATUS_REQUIRES_PAYMENT_METHOD,
+        ], true)) {
+            return $intent;
+        }
+
+        $this->logger->info(sprintf('Cancelling payment intent "%s"', $intent->id));
+
+        return $intent->cancel();
+    }
+
+    /**
+     * Moves money from the platform balance to a connected account.
+     *
+     * `sourceTransaction` names the charge the money comes from. Stripe then
+     * waits for those funds to settle instead of requiring an available
+     * platform balance, and caps the total transferred out of a charge at
+     * the charge itself -- which is what makes it safe to pay a restaurant
+     * weeks after a gift card was bought.
+     *
+     * The idempotency key is a 24-hour guard, good for a webhook retry storm
+     * and nothing longer. The durable guard is the OrderTransfer row written
+     * before this is called, and its unique index.
+     */
+    public function createTransfer(
+        string $destination,
+        int $amount,
+        string $currency,
+        ?string $sourceTransaction,
+        string $transferGroup,
+        string $idempotencyKey
+    ): Stripe\Transfer {
+        $this->setupStripeApi();
+
+        $payload = [
+            'amount' => $amount,
+            'currency' => strtolower($currency),
+            'destination' => $destination,
+            'transfer_group' => $transferGroup,
+        ];
+
+        if (null !== $sourceTransaction) {
+            // @see https://stripe.com/docs/connect/charges-transfers#transfer-availability
+            $payload['source_transaction'] = $sourceTransaction;
+        }
+
+        $this->logger->info(sprintf('StripeManager::createTransfer | %s', json_encode($payload)));
+
+        return Stripe\Transfer::create($payload, ['idempotency_key' => $idempotencyKey]);
+    }
+
+    /**
+     * Takes back money already sent to a connected account, when an order is
+     * refunded and the restaurant is the one bearing it.
+     */
+    public function createTransferReversal(
+        string $transferId,
+        int $amount,
+        string $idempotencyKey
+    ): Stripe\TransferReversal {
+        $this->setupStripeApi();
+
+        $this->logger->info(sprintf('StripeManager::createTransferReversal | %s | %d', $transferId, $amount));
+
+        return Stripe\Transfer::createReversal(
+            $transferId,
+            ['amount' => $amount],
+            ['idempotency_key' => $idempotencyKey]
+        );
+    }
+
+    /**
+     * Pays each vendor of a hub order their share of one platform charge.
+     *
+     * This used to create transfers with no idempotency key and no local
+     * record. `charge.captured` is handled synchronously and does more work
+     * *after* this returns, so a Stripe hiccup there made the webhook fail,
+     * Stripe retried it, and every vendor was paid again. The key below
+     * closes that window.
+     *
+     * Still missing, and worth a follow-up: the OrderTransfer rows that
+     * gift-card settlement writes. An idempotency key only lasts 24 hours,
+     * so a replay a week later would still double-pay, and without the
+     * transfer ids these payouts cannot be reversed when an order is
+     * refunded. @see AppBundle\Service\GiftCard\GiftCardSettlement
+     */
     public function createTransfersForHub(PaymentInterface $payment, Stripe\StripeObject $charge)
     {
         $order = $payment->getOrder();
@@ -293,13 +439,14 @@ class StripeManager
 
                 if ($transferAmount > 0) {
                     // @see https://stripe.com/docs/connect/charges-transfers
-                    Stripe\Transfer::create([
-                        'amount' => $transferAmount,
-                        'currency' => strtolower($payment->getCurrencyCode()),
-                        'destination' => $stripeAccount->getStripeUserId(),
-                        // @see https://stripe.com/docs/connect/charges-transfers#transfer-availability
-                        'source_transaction' => $charge->id,
-                    ]);
+                    $this->createTransfer(
+                        destination: $stripeAccount->getStripeUserId(),
+                        amount: $transferAmount,
+                        currency: $payment->getCurrencyCode(),
+                        sourceTransaction: $charge->id,
+                        transferGroup: OrderTransfer::transferGroupFor($order),
+                        idempotencyKey: sprintf('hub_%d_restaurant_%d', $order->getId(), $restaurant->getId())
+                    );
                 }
             }
         }

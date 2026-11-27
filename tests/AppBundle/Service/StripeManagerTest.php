@@ -52,9 +52,15 @@ class StripeManagerTest extends TestCase
         );
     }
 
-    private function createRestaurant($stripeUserId = null, $paysStripeFee = true)
+    private function createRestaurant($stripeUserId = null, $paysStripeFee = true, $id = 1)
     {
         $restaurant = $this->prophesize(Restaurant::class);
+
+        // Part of the idempotency key for the transfer, which is what stops
+        // a retried webhook paying the same vendor twice.
+        $restaurant
+            ->getId()
+            ->willReturn($id);
 
         if ($stripeUserId) {
             $stripeAccount = $this->prophesize(StripeAccount::class);
@@ -110,6 +116,9 @@ class StripeManagerTest extends TestCase
         $restaurant = $this->createRestaurant('acct_123456');
 
         $order = $this->prophesize(OrderInterface::class);
+        // None of these orders carries a gift card; the gift-card money
+        // flow has its own tests.
+        $order->hasGiftCardPayment()->willReturn(false);
         $order
             ->hasVendor()
             ->willReturn(true);
@@ -135,10 +144,16 @@ class StripeManagerTest extends TestCase
 
         $stripeAccount = $this->prophesize(StripeAccount::class);
         $order = $this->prophesize(OrderInterface::class);
+        // None of these orders carries a gift card; the gift-card money
+        // flow has its own tests.
+        $order->hasGiftCardPayment()->willReturn(false);
         $contract = $this->prophesize(Contract::class);
 
-        $restaurant1 = $this->createRestaurant('acct_123', $paysStripeFee = true);
-        $restaurant2 = $this->createRestaurant('acct_456', $paysStripeFee = true);
+        // Distinct ids on purpose: the transfers must not share an
+        // idempotency key, or Stripe would treat the second vendor's payout
+        // as a replay of the first and the second would never be paid.
+        $restaurant1 = $this->createRestaurant('acct_123', $paysStripeFee = true, 1);
+        $restaurant2 = $this->createRestaurant('acct_456', $paysStripeFee = true, 2);
 
         $hub = $this->prophesize(Hub::class);
         $hub
@@ -148,6 +163,9 @@ class StripeManagerTest extends TestCase
         $order
             ->getNumber()
             ->willReturn('000001');
+        $order
+            ->getId()
+            ->willReturn(1);
         $order
             ->getTotal()
             ->willReturn(3000);
@@ -187,12 +205,14 @@ class StripeManagerTest extends TestCase
             'amount' => 1130, // = 1700 - (750 * 0.76),
             'currency' => 'eur',
             'destination' => 'acct_123',
+            'transfer_group' => 'order_1',
             'source_transaction' => 'ch_123456',
         ]);
         $this->shouldSendStripeRequest('POST', '/v1/transfers', [
             'amount' => 370, // = 550 - (750 * 0.24),
             'currency' => 'eur',
             'destination' => 'acct_456',
+            'transfer_group' => 'order_1',
             'source_transaction' => 'ch_123456',
         ]);
 
@@ -211,10 +231,16 @@ class StripeManagerTest extends TestCase
 
         $stripeAccount = $this->prophesize(StripeAccount::class);
         $order = $this->prophesize(OrderInterface::class);
+        // None of these orders carries a gift card; the gift-card money
+        // flow has its own tests.
+        $order->hasGiftCardPayment()->willReturn(false);
         $contract = $this->prophesize(Contract::class);
 
-        $restaurant1 = $this->createRestaurant('acct_123', $paysStripeFee = true);
-        $restaurant2 = $this->createRestaurant('acct_456', $paysStripeFee = true);
+        // Distinct ids on purpose: the transfers must not share an
+        // idempotency key, or Stripe would treat the second vendor's payout
+        // as a replay of the first and the second would never be paid.
+        $restaurant1 = $this->createRestaurant('acct_123', $paysStripeFee = true, 1);
+        $restaurant2 = $this->createRestaurant('acct_456', $paysStripeFee = true, 2);
 
         $hub = $this->prophesize(Hub::class);
         $hub
@@ -224,6 +250,9 @@ class StripeManagerTest extends TestCase
         $order
             ->getNumber()
             ->willReturn('000001');
+        $order
+            ->getId()
+            ->willReturn(1);
         $order
             ->getTotal()
             ->willReturn(3000);
@@ -260,6 +289,7 @@ class StripeManagerTest extends TestCase
             'amount' => 1130, // = 1700 - (750 * 0.76),
             'currency' => 'eur',
             'destination' => 'acct_123',
+            'transfer_group' => 'order_1',
             'source_transaction' => 'ch_123456',
         ]);
 
@@ -281,6 +311,9 @@ class StripeManagerTest extends TestCase
         $restaurant = $this->createRestaurant('acct_123456');
 
         $order = $this->prophesize(OrderInterface::class);
+        // None of these orders carries a gift card; the gift-card money
+        // flow has its own tests.
+        $order->hasGiftCardPayment()->willReturn(false);
         $order
             ->getId()
             ->willReturn(1);
@@ -330,6 +363,9 @@ class StripeManagerTest extends TestCase
         $restaurant = $this->createRestaurant();
 
         $order = $this->prophesize(OrderInterface::class);
+        // None of these orders carries a gift card; the gift-card money
+        // flow has its own tests.
+        $order->hasGiftCardPayment()->willReturn(false);
         $order
             ->getId()
             ->willReturn(1);
@@ -403,6 +439,9 @@ class StripeManagerTest extends TestCase
         $restaurant = $this->createRestaurant();
 
         $order = $this->prophesize(OrderInterface::class);
+        // None of these orders carries a gift card; the gift-card money
+        // flow has its own tests.
+        $order->hasGiftCardPayment()->willReturn(false);
         $order
             ->getId()
             ->willReturn(1);
@@ -480,6 +519,9 @@ class StripeManagerTest extends TestCase
             ->willReturn($user->reveal());
 
         $order = $this->prophesize(OrderInterface::class);
+        // None of these orders carries a gift card; the gift-card money
+        // flow has its own tests.
+        $order->hasGiftCardPayment()->willReturn(false);
 
         $order
             ->getCustomer()
@@ -525,6 +567,9 @@ class StripeManagerTest extends TestCase
             ->willReturn(true);
 
         $order = $this->prophesize(OrderInterface::class);
+        // None of these orders carries a gift card; the gift-card money
+        // flow has its own tests.
+        $order->hasGiftCardPayment()->willReturn(false);
         $order
             ->getId()
             ->willReturn(1);
@@ -578,6 +623,9 @@ class StripeManagerTest extends TestCase
             ->willReturn(false);
 
         $order = $this->prophesize(OrderInterface::class);
+        // None of these orders carries a gift card; the gift-card money
+        // flow has its own tests.
+        $order->hasGiftCardPayment()->willReturn(false);
         $order
             ->getId()
             ->willReturn(1);
@@ -630,6 +678,9 @@ class StripeManagerTest extends TestCase
         $restaurant = $this->createRestaurant('acct_123456');
 
         $order = $this->prophesize(OrderInterface::class);
+        // None of these orders carries a gift card; the gift-card money
+        // flow has its own tests.
+        $order->hasGiftCardPayment()->willReturn(false);
         $order
             ->getId()
             ->willReturn(1);
@@ -689,6 +740,9 @@ class StripeManagerTest extends TestCase
         $restaurant = $this->createRestaurant('acct_123456');
 
         $order = $this->prophesize(OrderInterface::class);
+        // None of these orders carries a gift card; the gift-card money
+        // flow has its own tests.
+        $order->hasGiftCardPayment()->willReturn(false);
         $order
             ->getId()
             ->willReturn(1);
@@ -752,6 +806,9 @@ class StripeManagerTest extends TestCase
     public function testAttachPaymentMethodToCustomer()
     {
         $order = $this->prophesize(OrderInterface::class);
+        // None of these orders carries a gift card; the gift-card money
+        // flow has its own tests.
+        $order->hasGiftCardPayment()->willReturn(false);
 
         $user = $this->prophesize(User::class);
 

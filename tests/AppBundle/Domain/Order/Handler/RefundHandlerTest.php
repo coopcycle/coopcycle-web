@@ -8,6 +8,7 @@ use AppBundle\Entity\Refund;
 use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Payment\Gateway;
+use AppBundle\Service\GiftCard\OrderTransferReversal;
 use AppBundle\Payment\GatewayResolver;
 use AppBundle\Service\PaygreenManager;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -43,13 +44,17 @@ class RefundHandlerTest extends KernelTestCase
         $this->stateMachineFactory = self::getContainer()->get(FactoryInterface::class);
         $this->eventBus = $this->prophesize(MessageBusInterface::class);
 
+        $this->orderTransferReversal = $this->prophesize(OrderTransferReversal::class);
+
+        // The event bus used to be passed here too; the constructor has
+        // never taken one, and PHP was quietly dropping it.
         $this->handler = new RefundHandler(
             $this->gateway->reveal(),
             $this->gatewayResolver->reveal(),
             $this->paygreenClient->reveal(),
             $this->paygreenManager->reveal(),
             $this->stateMachineFactory,
-            $this->eventBus->reveal()
+            $this->orderTransferReversal->reveal()
         );
     }
 

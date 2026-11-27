@@ -33,6 +33,7 @@ Encore
   .addEntry('email-editor', './js/app/admin/email-editor/index.js')
   .addEntry('customize-shop-collection', './js/app/customize/shop-collection.js')
   .addEntry('dashboard', './js/app/dashboard/index.js')
+  .addEntry('gift-card-purchase', './js/app/gift-card/purchase.js')
   .addEntry('datadog', './js/app/datadog.ts')
   .addEntry('delivery-homepage', './js/app/delivery/homepage.js')
   .addEntry('delivery-list', './js/app/delivery/list.js')

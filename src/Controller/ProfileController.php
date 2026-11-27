@@ -10,7 +10,9 @@ use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Edenred\Authentication as EdenredAuthentication;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\GiftCard\GiftCardRepository;
 use AppBundle\Entity\Loyalty\LoyaltyPointsEntryRepository;
+use AppBundle\Service\GiftCard\GiftCardStatus;
 use AppBundle\Entity\Loyalty\LoyaltyReward;
 use AppBundle\Entity\Referral\Referral;
 use AppBundle\Entity\Referral\ReferralLevel;
@@ -473,6 +475,28 @@ class ProfileController extends AbstractController
             'levels' => $levels,
             'successful_referral_count' => $successfulReferralCount,
             'referrals' => $referrals,
+        ]));
+    }
+
+    #[Route(path: '/profile/gift-cards', name: 'profile_gift_cards')]
+    public function giftCardsAction(
+        GiftCardRepository $giftCardRepository,
+        GiftCardStatus $giftCardStatus)
+    {
+        if (!$giftCardStatus->isActive()) {
+            throw $this->createNotFoundException();
+        }
+
+        $customer = $this->getUser()->getCustomer();
+
+        return $this->render('profile/gift_cards.html.twig', $this->auth([
+            // Both the cards they bought and the ones addressed to them: a
+            // card is often bought for someone else, and the buyer still
+            // wants to see it was used.
+            'gift_cards' => $giftCardRepository
+                ->createForCustomerQueryBuilder($customer)
+                ->getQuery()
+                ->getResult(),
         ]));
     }
 

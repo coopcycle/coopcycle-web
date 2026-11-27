@@ -20,6 +20,15 @@ class CreateWebhookEndpoint
             'charge.captured',
             'charge.succeeded',
             'charge.updated',
+            // A disputed gift card purchase has to stop the card being spent
+            // while the dispute runs; otherwise the co-op pays restaurants
+            // out of money it is about to lose.
+            //
+            // Adding these means existing instances must re-run app:setup --
+            // CreateWebhookEndpointHandler updates enabled_events on the
+            // endpoint it already created.
+            'charge.dispute.created',
+            'charge.dispute.closed',
             // Used for Giropay legacy integration
             'source.chargeable',
             'source.failed',

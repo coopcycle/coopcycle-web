@@ -6,6 +6,7 @@ use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\BusinessAccount;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\GiftCard\GiftCard;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
@@ -78,6 +79,12 @@ interface OrderInterface extends
     public function getFeeTotal(): int;
 
     public function getRevenue(): int;
+
+    /**
+     * What Stripe charged in processing fees on this order, recorded as a
+     * neutral adjustment when the charge is captured.
+     */
+    public function getStripeFeeTotal(): int;
 
     public function getRestaurant(): ?LocalBusiness;
 
@@ -183,6 +190,25 @@ interface OrderInterface extends
 
 
     public function getLastPaymentByMethod(string|array $method, ?string $state = null): ?PaymentInterface;
+
+    /**
+     * The gift card applied to this cart, if any. Attaching one does not
+     * change the order total -- a gift card is a means of payment, not a
+     * discount.
+     */
+    public function getGiftCard(): ?GiftCard;
+
+    public function setGiftCard(?GiftCard $giftCard): void;
+
+    public function getGiftCardPayment(): ?PaymentInterface;
+
+    /**
+     * Whether this order settles the gift-card way: charged on the platform
+     * account, then transferred to the restaurant.
+     */
+    public function hasGiftCardPayment(): bool;
+
+    public function getGiftCardTotal(): int;
 
     public function isFoodtech(): bool;
 

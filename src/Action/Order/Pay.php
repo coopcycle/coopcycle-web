@@ -52,7 +52,24 @@ class Pay
             throw new BadRequestHttpException('Mandatory parameters are missing');
         }
 
-        $payment = $data->getLastPayment(PaymentInterface::STATE_CART);
+        // Every branch below is about the leg the client is actually paying
+        // -- a card, a wallet, cash. The gift card leg has no client-side
+        // step at all: it was authorized server-side at checkout. Taking
+        // "the last cart payment" would hand them that leg whenever it
+        // happened to be created last.
+        $payment = $data->getLastPaymentByMethod('CARD', PaymentInterface::STATE_CART)
+            ?? $data->getLastPayment(PaymentInterface::STATE_CART);
+
+        // A gift card covering the whole order leaves nothing to charge, so
+        // there is no card leg and nothing for the client to do. Same shape
+        // as the free-order branch above: check out and hand back the order.
+        if (null !== $payment && $payment->getMethod()?->getCode() === 'GIFT_CARD') {
+
+            $this->orderManager->checkout($data);
+            $this->entityManager->flush();
+
+            return $data;
+        }
 
         if (isset($body['paymentOrderId'])) {
             return $this->handlePaygreenPaymentOrder($data, $payment, $body);

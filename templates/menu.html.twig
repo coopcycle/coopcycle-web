@@ -44,6 +44,14 @@
             <input type="text" class="input input-bordered w-full lg:w-auto" placeholder="{{ 'basics.search'|trans }}" />
           </div>
         </li>
+        {% if gift_cards_active() %}
+        <li>
+          <a href="{{ path('gift_cards') }}" data-testid="nav-gift-cards">
+            <i class="fa fa-gift mr-1" aria-hidden="true"></i>
+            <span>{% trans %}navbar.giftCards{% endtrans %}</span>
+          </a>
+        </li>
+        {% endif %}
         {% if coopcycle_setting('foodtech_enabled') %}
         <li {{ react_component('NavBarCart', { 'url': path('cart_json'), 'href': path('order') }) }}>
             <a href="#">

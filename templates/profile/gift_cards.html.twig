@@ -1,0 +1,46 @@
+{% extends "profile.html.twig" %}
+
+{% block content %}
+
+<div class="mb-8">
+  <h2 class="text-xl font-semibold mb-2">{{ 'profile.gift_cards.title'|trans }}</h2>
+  <p class="mb-4 text-gray-500">{{ 'profile.gift_cards.intro'|trans }}</p>
+
+  {% if gift_cards|length > 0 %}
+    <div class="flex flex-col gap-4">
+      {% for gift_card in gift_cards %}
+      <div class="card bg-base-100 shadow">
+        <div class="card-body">
+          <div class="flex items-center justify-between gap-4">
+            <div>
+              <code class="text-lg">{{ gift_card.code }}</code>
+              <div class="text-sm text-gray-500">
+                {{ ('gift_card.state.' ~ gift_card.state)|trans }}
+                {% if not gift_card.platformWide %}
+                  — {{ 'profile.gift_cards.at'|trans({ '%restaurant%': gift_card.restaurant.name }) }}
+                {% endif %}
+                {% if gift_card.expiresAt %}
+                  — {{ 'profile.gift_cards.expires'|trans({ '%date%': gift_card.expiresAt|format_datetime('medium', 'none') }) }}
+                {% endif %}
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-xl font-semibold">{{ gift_card.balance|price_format }}</div>
+              {% if gift_card.balance != gift_card.initialAmount %}
+                <div class="text-sm text-gray-500">
+                  {{ 'profile.gift_cards.of'|trans({ '%amount%': gift_card.initialAmount|price_format }) }}
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-gray-500">{{ 'profile.gift_cards.empty'|trans }}</p>
+    <a href="{{ path('gift_cards') }}" class="btn btn-primary mt-4">{{ 'gift_card.purchase.title'|trans }}</a>
+  {% endif %}
+</div>
+
+{% endblock %}

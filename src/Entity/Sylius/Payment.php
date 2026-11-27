@@ -8,6 +8,8 @@ use ApiPlatform\Metadata\Post;
 use AppBundle\Api\Dto\PaymentRefundInput;
 use AppBundle\Api\State\CreatePaymentRefundProcessor;
 use AppBundle\Sylius\Payment\EdenredTrait;
+use AppBundle\Sylius\Payment\GiftCardTrait;
+use AppBundle\Sylius\Payment\MealVoucherPaymentMethods;
 use AppBundle\Sylius\Payment\MercadopagoTrait;
 use AppBundle\Sylius\Payment\PaygreenTrait;
 use AppBundle\Sylius\Payment\RefundTrait;
@@ -39,6 +41,7 @@ class Payment extends BasePayment implements OrderAwareInterface
     use PaygreenTrait;
     use RefundTrait;
     use EdenredTrait;
+    use GiftCardTrait;
     use PawapayTrait;
 
     protected $order;
@@ -78,20 +81,42 @@ class Payment extends BasePayment implements OrderAwareInterface
         return null !== $method && $method->getCode() === 'CASH_ON_DELIVERY';
     }
 
-    /**
-     * Determines if the payment is a meal voucher "complement",
-     * i.e to pay the remaining amount that can't be paid via meal vouchers.
-     */
-    public function isMealVoucherComplement(): bool
+    public function isGiftCard(): bool
     {
-        if ($this->getMethod()?->getCode() === 'CARD') {
-            $edenredPayments = $this->getOrder()->getPayments()->filter(function (self $payment): bool {
-                return $payment->getMethod()->getCode() === 'EDENRED' && $payment->getState() === self::STATE_CART;
-            });
+        return $this->getMethod()?->getCode() === 'GIFT_CARD';
+    }
 
-            return count($edenredPayments) > 0;
+    /**
+     * Whether this card payment is only covering what something else
+     * couldn't: the rest of an order already part-paid by a meal voucher or
+     * a gift card.
+     *
+     * It matters to StripeManager, which must not put a platform fee or a
+     * Connect transfer on a charge that is a fraction of the order -- Stripe
+     * rejects a fee larger than the charge, and a transfer computed from the
+     * order total exceeds what was actually taken.
+     *
+     * Replaces isMealVoucherComplement(), which hardcoded EDENRED and only
+     * looked at payments in `cart` state. The state filter is widened to
+     * "not cancelled or failed" because a retried checkout leaves dead legs
+     * behind, and a dead leg is not something this payment is complementing.
+     *
+     * Note this is *not* the question to ask about gift-card orders in
+     * general: a card covering the whole order leaves no complement to ask.
+     * Use OrderInterface::hasGiftCardPayment() for that.
+     */
+    public function isComplement(): bool
+    {
+        if ($this->getMethod()?->getCode() !== 'CARD') {
+            return false;
         }
 
-        return false;
+        $codes = array_merge(MealVoucherPaymentMethods::CODES, ['GIFT_CARD']);
+
+        return $this->getOrder()->getPayments()->exists(
+            fn ($key, self $payment): bool => $payment !== $this
+                && in_array($payment->getMethod()?->getCode(), $codes, true)
+                && !in_array($payment->getState(), [self::STATE_CANCELLED, self::STATE_FAILED], true)
+        );
     }
 }

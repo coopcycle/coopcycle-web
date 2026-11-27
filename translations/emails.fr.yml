@@ -201,6 +201,26 @@ shift_week.published.subject: "Planning publié pour la semaine du %date%"
 shift_week.published.intro: "Le planning des créneaux de la semaine du %date% a été publié."
 shift_week.published.cta: "Vous pouvez maintenant consulter vos créneaux et postuler aux créneaux ouverts."
 shift_week.published.button: "Voir les créneaux"
+
+gift_card.subject: "On vous a offert une carte cadeau %brand_name%"
+gift_card.greeting: "Bonjour %name%, on vous a offert une carte cadeau."
+gift_card.greeting_anonymous: "Bonjour, on vous a offert une carte cadeau."
+gift_card.body: |
+  Pour l'utiliser, saisissez ce code dans votre panier avant de payer. Vous n'êtes pas obligé
+  de tout dépenser d'un coup : le reste demeure sur la carte pour la prochaine fois.
+gift_card.restricted: "Cette carte est utilisable chez %restaurant%."
+gift_card.expires: "Valable jusqu'au %date%."
+gift_card.no_expiry: "Cette carte n'expire pas."
+gift_card.receipt.subject: "Votre achat de carte cadeau"
+gift_card.receipt.body: |
+  Merci. Voici le détail de la carte cadeau que vous avez achetée.
+gift_card.receipt.amount: Montant
+gift_card.receipt.code: Code
+gift_card.receipt.sent_to: Envoyée à
+gift_card.receipt.date: Date
+gift_card.receipt.not_an_invoice: >-
+  Ceci est un reçu, pas une facture. La vente d'une carte cadeau n'est pas soumise à la TVA ;
+  celle-ci s'applique aux commandes réglées avec la carte.
 admin.import_failed.subject: "Échec de l'import : %source%"
 admin.import_failed.body: |
   Bonjour,

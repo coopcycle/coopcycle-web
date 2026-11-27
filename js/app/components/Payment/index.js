@@ -12,6 +12,7 @@ import { Disclaimer } from './cashOnDelivery'
 
 import { disableBtn, enableBtn } from '../../widgets/button'
 import PaymentMethodPicker from './PaymentMethodPicker'
+import GiftCardDetails from './GiftCardDetails'
 import {
   selectOrderNodeId,
   selectShippingTimeRange,
@@ -90,6 +91,23 @@ export default function(formSelector, options) {
       </div>`
   }
 
+  /**
+   * A gift card covering the whole order leaves nothing to charge, so there
+   * is no card payment and no reason to ask for a card. Show what the card
+   * paid and stop there -- collecting card details we will never use is a
+   * good way to lose a customer at the last step.
+   */
+  const showGiftCardOnly = orderPayments => {
+    const giftCard = _.find(orderPayments, p => p.method.code === 'GIFT_CARD')
+    const el = document.getElementById('card-element')
+
+    el.innerHTML = ''
+
+    if (giftCard) {
+      render(<GiftCardDetails giftCard={giftCard.amount} card={0} />, el)
+    }
+  }
+
   let cc
   let payments = []
   let gatewayForCard = 'stripe'
@@ -161,29 +179,34 @@ export default function(formSelector, options) {
       savedPaymentMethod = document.querySelector(options.savedPaymentMethodElement).getAttribute('value')
     }
 
+    // Nothing left to charge: a gift card covered the order, or it is being
+    // paid on delivery. There is no card element to read, so reaching for
+    // one throws and the customer is left on a page that will not submit.
+    // Hand it to the server and let it finish the checkout.
+    const hasCard = !!_.find(payments, p => p.method.code === 'CARD')
+
+    if (!hasCard) {
+      form.submit()
+
+      return
+    }
+
     if (methods.length === 1 && containsMethod(methods, 'card')) {
       handleCardPayment(savedPaymentMethod)
     } else {
-
-      const hasCard = !!_.find(payments, p => p.method.code === 'CARD')
 
       const selectedMethod =
         form.querySelector('input[name="checkout_payment[method]"]:checked').value
 
       switch (selectedMethod) {
+        // Both of these have a card complement to charge; the cases without
+        // one were handled above.
         case 'edenred':
-          // It means the whole amount can be paid with Edenred (ex. click & collect)
-          if (!hasCard) {
-            form.submit()
-          } else {
-            handleCardPayment(savedPaymentMethod)
-          }
+        case 'card':
+          handleCardPayment(savedPaymentMethod)
           break
         case 'cash_on_delivery':
           form.submit()
-          break
-        case 'card':
-          handleCardPayment(savedPaymentMethod)
           break
       }
     }
@@ -296,9 +319,9 @@ export default function(formSelector, options) {
                   document.getElementById('card-errors').textContent = e.message
                 })
             } else {
-              // TODO
-              // Here no need to enter credit card details or what
-              // Maybe, add a confirmation step?
+              // Nothing left to charge: a gift card covered the order.
+              cc && cc.unmount()
+              showGiftCardOnly(response.data.payments)
               enableBtn(submitButton)
             }
 
@@ -343,6 +366,18 @@ export default function(formSelector, options) {
 
         // This will be used later in handlePayment function
         payments = response.data.payments
+
+        // Same check onSelect makes. Without it, an order already paid for
+        // in full by a gift card still puts a card form in front of the
+        // customer -- and leaves the skeleton up forever if they ignore it.
+        const hasCard = !!_.find(response.data.payments, p => p.method.code === 'CARD')
+
+        if (!hasCard) {
+          showGiftCardOnly(response.data.payments)
+          enableBtn(submitButton)
+
+          return
+        }
 
         cc.mount(document.getElementById('card-element'), 'card', response.data, options).then((shouldEnableBtn = true) => {
           shouldEnableBtn && enableBtn(submitButton)

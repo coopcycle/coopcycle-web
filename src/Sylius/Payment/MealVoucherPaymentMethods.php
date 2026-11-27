@@ -11,7 +11,7 @@ namespace AppBundle\Sylius\Payment;
  * collected by the restaurant directly, with no automatic split — so
  * CoopCycle has to separately invoice the restaurant for its platform fee.
  *
- * @see \AppBundle\Entity\Sylius\Payment::isMealVoucherComplement()
+ * @see \AppBundle\Entity\Sylius\Payment::isComplement()
  * @see \AppBundle\Service\StripeManager::configureCreateIntentPayload()
  */
 final class MealVoucherPaymentMethods

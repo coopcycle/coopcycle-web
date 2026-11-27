@@ -2,6 +2,8 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Entity\GiftCard\GiftCard;
+use AppBundle\Service\GiftCard\GiftCardCodeGenerator;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\BusinessAccount;
 use AppBundle\Entity\Invitation;
@@ -464,6 +466,48 @@ class EmailManager
             'user' => $invitation->getUser(),
             'invitation' => $invitation,
             'account' => $account,
+        ]));
+
+        return $this->createHtmlMessageWithReplyTo($subject, $body);
+    }
+
+    /**
+     * The card itself, for whoever it was bought for.
+     *
+     * Deliberately a separate message from the buyer's receipt: these go to
+     * two different people, and putting the amount paid in front of the
+     * recipient would rather spoil the gift.
+     */
+    public function createGiftCardMessage(GiftCard $giftCard)
+    {
+        $subject = $this->translator->trans('gift_card.subject', [
+            '%brand_name%' => $this->settingsManager->get('brand_name'),
+        ], 'emails');
+
+        $body = $this->mjml->render($this->templating->render('emails/gift_card/gift_card.mjml.twig', [
+            'gift_card' => $giftCard,
+            'code' => GiftCardCodeGenerator::format($giftCard->getCode()),
+        ]));
+
+        return $this->createHtmlMessageWithReplyTo($subject, $body);
+    }
+
+    /**
+     * The buyer's receipt.
+     *
+     * Not a VAT invoice, and it has to say so: selling a multi-purpose
+     * voucher is outside the scope of VAT until the voucher is spent. The
+     * wording is a per-instance setting, because what has to be said depends
+     * on where the co-op operates.
+     */
+    public function createGiftCardReceiptMessage(GiftCard $giftCard, ?string $legalMention = null)
+    {
+        $subject = $this->translator->trans('gift_card.receipt.subject', [], 'emails');
+
+        $body = $this->mjml->render($this->templating->render('emails/gift_card/receipt.mjml.twig', [
+            'gift_card' => $giftCard,
+            'code' => GiftCardCodeGenerator::format($giftCard->getCode()),
+            'legal_mention' => $legalMention,
         ]));
 
         return $this->createHtmlMessageWithReplyTo($subject, $body);
