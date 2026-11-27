@@ -1,15 +1,26 @@
 snc_redis:
     clients:
+        # The clients below reuse their connection between requests
+        # (phpredis pconnect) rather than opening one and AUTHenticating on
+        # every request. The bundle keys the pool on the client alias, so these
+        # keep separate sockets despite sharing a DSN -- which matters, since
+        # `default` applies a key prefix the others do not.
+        #
+        # This relies on the server's idle `timeout` being 0. If that ever
+        # changes, Redis will close sockets the pool still believes are open.
         default:
             type: phpredis
             alias: default
             dsn: "%env(COOPCYCLE_REDIS_DSN)%"
             options:
                 prefix: "%database_name%:"
+                connection_persistent: true
         session:
             type: phpredis
             alias: session
             dsn: "%env(COOPCYCLE_REDIS_DSN)%"
+            options:
+                connection_persistent: true
         tile38:
             type: phpredis
             alias: tile38
@@ -17,7 +28,13 @@ snc_redis:
             options:
                 # https://github.com/phpredis/phpredis/issues/70#issuecomment-348997806
                 read_write_timeout: -1
+                # Deliberately NOT persistent: reads here block indefinitely, so
+                # a reused socket risks picking up a reply the previous request
+                # never finished consuming.
+                connection_persistent: false
         shared:
             type: phpredis
             alias: shared
             dsn: "%env(COOPCYCLE_REDIS_DSN)%"
+            options:
+                connection_persistent: true
