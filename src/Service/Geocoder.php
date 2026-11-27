@@ -5,11 +5,11 @@ namespace AppBundle\Service;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Geocoder\Provider\AddokWithProximityProvider;
+use AppBundle\Geocoder\Provider\HouseNumberAwareChain;
 use AppBundle\Utils\GeoUtils;
 use Geocoder\Geocoder as GeocoderInterface;
 use Geocoder\Location;
 use Geocoder\Model\Bounds;
-use Geocoder\Provider\Chain\Chain as ChainProvider;
 use Geocoder\Provider\GeocodeEarth\GeocodeEarth as GeocodeEarthProvider;
 use Geocoder\Provider\GoogleMaps\GoogleMaps as GoogleMapsProvider;
 use Geocoder\Provider\GoogleMaps\Model\GoogleAddress;
@@ -78,7 +78,7 @@ class Geocoder
                 $providers[] = $this->createGeocodeEarthProvider();
             }
 
-            $provider = new ChainProvider($providers);
+            $provider = new HouseNumberAwareChain($providers);
             $provider->setLogger($this->logger);
             $this->geocoder = new StatefulGeocoder($provider, $this->locale);
         }
