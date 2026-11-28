@@ -7,6 +7,10 @@ import ShippingTimeRange from '../../../components/ShippingTimeRange'
 import Avatar from '../../../components/Avatar'
 import PaymentMethodIcon from '../../../components/Payment/PaymentMethodIcon'
 
+// Card is the default payment method, and needs no special action from dispatchers,
+// so we only show the payment method when it is something else (cash, meal vouchers…)
+const shouldShowPaymentMethod = (order) => !!order.paymentMethod && order.paymentMethod.toUpperCase() !== 'CARD'
+
 export default withTranslation()(({ order, onClick }) => {
 
   return (
@@ -28,7 +32,9 @@ export default withTranslation()(({ order, onClick }) => {
             { order.notes && <i className="fa fa-comments ml-4"></i> }
           </li>
           <li><i className="fa fa-money"></i> { (order.total / 100).formatMoney() }</li>
-          <li><PaymentMethodIcon code={ order.paymentMethod } size="xs" /></li>
+          { shouldShowPaymentMethod(order) && (
+            <li><PaymentMethodIcon code={ order.paymentMethod } size="xs" /></li>
+          ) }
           { order.assignedTo && (
             <li>
               <Avatar username={ order.assignedTo } />
