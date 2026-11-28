@@ -48,7 +48,7 @@ function StickyOrder() {
   )
 }
 
-// desktop only
+// in the restaurant header, on all screen sizes
 const fulfilmentDetailsContainer = document.getElementById(
   'restaurant__fulfilment-details__container',
 )
