@@ -221,6 +221,26 @@ class ProductVariant extends BaseProductVariant implements ProductVariantInterfa
         return new ProductVariantTranslation();
     }
 
+    /**
+     * Variants are created on the fly for each combination of option values,
+     * so the weight is not stored, it's computed from the product & the option values.
+     * Returns null when neither the product nor the option values have a weight.
+     */
+    public function getWeight(): ?int
+    {
+        $weight = $this->getProduct()?->getWeight();
+
+        foreach ($this->getOptionValues() as $optionValue) {
+            if (is_null($optionValue->getWeight())) {
+                continue;
+            }
+
+            $weight = ($weight ?? 0) + ($optionValue->getWeight() * $this->getQuantityForOptionValue($optionValue));
+        }
+
+        return $weight;
+    }
+
     public function getOptionValuesPrice(): ?int
     {
         $price = 0;

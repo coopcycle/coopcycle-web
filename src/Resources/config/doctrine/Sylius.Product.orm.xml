@@ -13,6 +13,7 @@
         <option name="default">0</option>
       </options>
     </field>
+    <field name="weight" type="integer" column="weight" nullable="true"/>
     <gedmo:soft-deleteable field-name="deletedAt" time-aware="false" hard-delete="false" />
     <one-to-many field="options" target-entity="AppBundle\Entity\Sylius\ProductOptions" mapped-by="product" orphan-removal="true" fetch="EAGER">
       <cascade>

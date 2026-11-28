@@ -43,6 +43,9 @@ class ProductOptionType extends AbstractType
             ->add('valuesRange', MinMaxType::class)
             ->add('values', CollectionType::class, [
                 'entry_type' => ProductOptionValueType::class,
+                'entry_options' => [
+                    'with_weight' => $options['with_weight'],
+                ],
                 'allow_add' => true,
                 'allow_delete' => true,
                 'by_reference' => false,
@@ -70,6 +73,8 @@ class ProductOptionType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => ProductOption::class,
+            'with_weight' => false,
         ));
+        $resolver->setAllowedTypes('with_weight', 'bool');
     }
 }

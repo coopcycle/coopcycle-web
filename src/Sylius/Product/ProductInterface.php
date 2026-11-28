@@ -18,6 +18,11 @@ interface ProductInterface extends BaseProductInterface
 
     public function isAlcohol(): bool;
 
+    /**
+     * Weight in grams
+     */
+    public function getWeight(): ?int;
+
     public function isReusablePackagingEnabled(): bool;
 
     public function hasReusablePackagings(): bool;

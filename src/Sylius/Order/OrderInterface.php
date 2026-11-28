@@ -111,6 +111,11 @@ interface OrderInterface extends
 
     public function getItemsTotalExcludingTax(): int;
 
+    /**
+     * Weight of the items in grams
+     */
+    public function getItemsWeight(): ?int;
+
     /*
      * @return UserInterface|null
      */

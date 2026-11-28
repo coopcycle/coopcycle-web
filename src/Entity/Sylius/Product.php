@@ -73,6 +73,12 @@ class Product extends BaseProduct implements ProductInterface, Comparable, SoftD
     protected $restaurant;
     protected $alcohol = false;
 
+    /**
+     * Weight in grams, used to compute the weight of the delivery
+     */
+    #[Assert\GreaterThanOrEqual(0)]
+    protected $weight = null;
+
     public function __construct()
     {
         parent::__construct();
@@ -292,6 +298,16 @@ class Product extends BaseProduct implements ProductInterface, Comparable, SoftD
     public function setAlcohol(bool $alcohol)
     {
         $this->alcohol = $alcohol;
+    }
+
+    public function getWeight(): ?int
+    {
+        return $this->weight;
+    }
+
+    public function setWeight(?int $weight): void
+    {
+        $this->weight = $weight;
     }
 
     public function isOptionEnabled(ProductOptionInterface $option): bool

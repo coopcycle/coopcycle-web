@@ -6,12 +6,14 @@ use AppBundle\Entity\BusinessRestaurantGroup;
 use AppBundle\Entity\BusinessRestaurantGroupPriceWithTax;
 use AppBundle\Entity\BusinessRestaurantGroupRestaurantMenu;
 use AppBundle\Entity\ReusablePackaging;
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusiness\CatalogInterface;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\ProductOption;
 use AppBundle\Enum\Allergen;
 use AppBundle\Enum\RestrictedDiet;
 use AppBundle\Form\Type\PriceWithTaxType;
+use AppBundle\Form\Type\WeightType;
 use AppBundle\Sylius\Product\LazyProductVariantResolverInterface;
 use AppBundle\Sylius\Product\ProductInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -80,6 +82,14 @@ class ProductType extends AbstractType
             ->add('delete', SubmitType::class, [
                 'label' => 'basics.delete',
             ]);
+
+        // The weight is only used by pricing rules
+        if ($options['owner'] instanceof LocalBusiness && $options['owner']->getContract()->isVariablePriceEnabled()) {
+            $builder->add('weight', WeightType::class, [
+                'label' => 'form.product.weight.label',
+                'help' => 'form.product.weight.help',
+            ]);
+        }
 
         $builder->add('allergens', ChoiceType::class, [
             'label' => 'form.product.allergens.label',

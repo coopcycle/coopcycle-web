@@ -753,6 +753,8 @@ form.product_option.additional.help: The customer can choose several values, wit
 form.product_option.preview_title: Option preview
 form.product_option_value.value.label: Value
 form.product_option_value.price.label: Price
+form.product_option_value.weight.label: Weight
+form.product_option_value.weight.help: Weight added to the product when this option is chosen (optional)
 form.checkout_address.notes.label: Leave a note for the restaurant
 form.checkout_address.notes.placeholder: "Example: without sauce, without tomatoes…\n"
 form.checkout_address.notes.help: Your note will be forwarded to the restaurant
@@ -1480,6 +1482,8 @@ restaurants.meal_vouchers_transactions.amount: Amount paid with Edenred
 restaurants.meal_vouchers_transactions.title: Meal vouchers transactions
 form.product.alcohol.label: This product is an alcoholic beverage
 form.product.alcohol.help: Check this box only if this product is an alcoholic beverage, like a bottle of wine.
+form.product.weight.label: Weight
+form.product.weight.help: Optional. Used to calculate the delivery price when the pricing rules are based on weight.
 form.checkout_address.reusable_packaging_vytal_enabled.label: I want to use Vytal containers
 vytal.code.disclaimer: Open the Vytal app, generate a delivery token, then enter it below. <a href="https://www.vytal.org/bestellen" target="_blank">Learn more</a>
 restaurant.form.section.vytal: Vytal

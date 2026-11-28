@@ -491,6 +491,8 @@ form.product_option.values.title: Valores
 form.product_option.values.help: Debes definir una lista de valores para esta opción
 form.product_option_value.value.label: Valor
 form.product_option_value.price.label: Precio
+form.product_option_value.weight.label: Peso
+form.product_option_value.weight.help: Peso que se añade al producto cuando se elige esta opción (opcional)
 form.product_option.additional.label: Esta opción es adicional
 form.product_option.additional.help: El cliente puede elegir varios valores, sin tener
   que elegir al menos uno
@@ -1350,6 +1352,8 @@ form.checkout_address.reusable_packaging_vytal_enabled.label: Quiero usar conten
 form.product.alcohol.help: Marca esta opción únicamente si este producto es una bebida
   alcohólica, como una botella de vino.
 form.product.alcohol.label: Este producto es una bebida alcohólica
+form.product.weight.label: Peso
+form.product.weight.help: Opcional. Se usa para calcular el precio de la entrega cuando las reglas de precio se basan en el peso.
 restaurants.meal_vouchers_transactions.title: Transacciones Edenred
 restaurants.meal_vouchers_transactions.amount: Cantidad pagada con Edenred
 restaurants.meal_vouchers_transactions.disclaimer: Esta página muestra todos los pedidos

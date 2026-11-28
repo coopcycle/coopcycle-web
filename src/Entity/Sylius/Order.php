@@ -698,6 +698,26 @@ class Order extends BaseOrder implements OrderInterface
         return $this->getItemsTotal() - $this->getItemsTaxTotal();
     }
 
+    /**
+     * Returns null when none of the items have a weight,
+     * so that orders of shops not using weights are not affected.
+     */
+    public function getItemsWeight(): ?int
+    {
+        $weight = null;
+
+        foreach ($this->items as $item) {
+            $itemWeight = $item->getVariant()?->getWeight();
+            if (is_null($itemWeight)) {
+                continue;
+            }
+
+            $weight = ($weight ?? 0) + ($itemWeight * $item->getQuantity());
+        }
+
+        return $weight;
+    }
+
     public function getItemsTaxTotalByRate($taxRate): int
     {
         if ($taxRate instanceof TaxRateInterface) {

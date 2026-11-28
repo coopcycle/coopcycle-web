@@ -6,6 +6,7 @@ use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\ProductOptionValue;
 use AppBundle\Form\Type\MoneyType;
+use AppBundle\Form\Type\WeightType;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -52,6 +53,16 @@ class ProductOptionValueType extends AbstractType
                 'label' => 'basics.enabled',
                 'required' => false,
             ]);
+
+        if ($options['with_weight']) {
+            $builder->add('weight', WeightType::class, [
+                'label' => 'form.product_option_value.weight.label',
+                'attr' => [
+                    'inputmode' => 'decimal',
+                    'placeholder' => 'form.product_option_value.weight.label',
+                ],
+            ]);
+        }
 
         $builder->get('product')
             ->addModelTransformer(new CallbackTransformer(
@@ -111,6 +122,8 @@ class ProductOptionValueType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => ProductOptionValue::class,
+            'with_weight' => false,
         ));
+        $resolver->setAllowedTypes('with_weight', 'bool');
     }
 }

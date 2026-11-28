@@ -34,4 +34,9 @@ interface ProductVariantInterface extends BaseProductVariantInterface, TaxableIn
      * Used for On Demand Delivery products
      */
     public function getOptionValuesPrice(): ?int;
+
+    /**
+     * Weight in grams, computed from the product & the option values
+     */
+    public function getWeight(): ?int;
 }
